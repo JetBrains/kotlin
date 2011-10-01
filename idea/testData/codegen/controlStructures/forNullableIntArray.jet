@@ -1,0 +1,16 @@
+fun box() : String {
+    val b : Array<Int?> = Array<Int?> (5)
+    var i = 0
+    var sum = 0
+    while(i < 5) {
+       b[i] = i++
+    }
+    sum = 0
+    for (el in b) {
+        sum = sum + (el ?: 0)
+    }
+    System.out?.println(sum)
+    if(sum != 10) return "b failed"
+
+    return "OK"
+}

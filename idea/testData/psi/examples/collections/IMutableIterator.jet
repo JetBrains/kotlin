@@ -1,4 +1,4 @@
-virtual class IMutableIterator<out T> : IIterator<T> {
+open class IMutableIterator<out T> : IIterator<T> {
   fun remove() : T
 
 /*

@@ -2,14 +2,6 @@
 <project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
-    <buildFile url="file://$PROJECT_DIR$/idea/buildLexer.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
     <buildFile url="file://$PROJECT_DIR$/grammar/buildGrammarLexer.xml">
       <additionalClassPath />
       <antReference projectDefault="true" />
@@ -19,6 +11,14 @@
       <properties />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/confluence/buildConfluenceLexer.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
+      <properties />
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/compiler/frontend/buildLexer.xml">
       <additionalClassPath />
       <antReference projectDefault="true" />
       <customJdkName value="" />

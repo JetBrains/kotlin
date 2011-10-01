@@ -19,7 +19,7 @@ public class JetCodeConformanceTest extends TestCase {
         TestSuite suite = new TestSuite();
         TestSuite ats = new TestSuite("Side-effect-free at()'s in assertions");
         suite.addTest(ats);
-        File parsingSourceDir = new File("./idea/src/org/jetbrains/jet/lang/parsing");
+        File parsingSourceDir = new File("./compiler/frontend/src/org/jetbrains/jet/lang/parsing");
         for (File sourceFile : parsingSourceDir.listFiles()) {
             if (sourceFile.getName().endsWith(".java")) {
                 ats.addTest(new JetCodeConformanceTest(sourceFile.getName(), sourceFile));

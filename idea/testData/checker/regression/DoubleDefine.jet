@@ -11,8 +11,8 @@ fun takeFirst(expr: StringBuilder): Char {
 
 fun evaluateArg(expr: AbstractStringBuilder, numbers: ArrayList<Int>): Int {
   if (expr.length() == 0) throw Exception("Syntax error: Character expected");
-  val c = takeFirst<error>(expr)</error>
-  if (c <error>>=</error> '0' && c <error><=</error> '9') {
+  val c = takeFirst(<error>expr</error>)
+  if (c >= '0' && c <= '9') {
     val n = c - '0'
     if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)
     numbers.remove(n)

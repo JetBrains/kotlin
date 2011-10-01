@@ -1,9 +1,9 @@
 class <error>X</error> {
-  val x : Int
+  val <error>x</error> : Int
 }
 
-class Y() {
-  val x : Int
+open class Y() {
+  val x : Int = 2
 }
 
 class Y1 {

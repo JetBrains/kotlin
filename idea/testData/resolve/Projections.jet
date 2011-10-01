@@ -18,8 +18,8 @@ class Inv<T>() {
 fun testInOut() {
   In<String>().`In.f:T->Unit`f("1");
   (return : In<in String>).`In.f:T->Unit`f("1");
-  (return : In<out String>).`!`f("1")
-  (return : In<*>).`!`f("1");
+  (return : In<out String>).`In.f:Int->Int`f("1")
+  (return : In<*>).`In.f:Int->Int`f("1");
 
   In<String>().`In.f:Int->Int`f(1);
   (return : In<in String>).`In.f:Int->Int`f(1);

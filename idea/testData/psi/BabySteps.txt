@@ -47,7 +47,9 @@ JetFile: BabySteps.jet
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('d')
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('d')
               PsiElement(EQ)('=')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('0')

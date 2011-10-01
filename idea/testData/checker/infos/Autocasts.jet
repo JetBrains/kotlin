@@ -1,4 +1,4 @@
-class A() {
+<info>open</info> class A() {
   fun foo() {}
 }
 
@@ -216,3 +216,40 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> =
 fun illegalTupleReturnType(a: Any): (Any, String) = (a, <error>a</error>)
 
 fun declarationInsidePattern(x: (Any, Any)): String = when(x) { is (val a is String, *) => <info descr="Automatically cast to String">a</info>; else => "something" }
+
+fun mergeAutocasts(a: Any?) {
+  if (a is String || a is Int) {
+    a.<error>compareTo</error>("")
+    a.toString()
+  }
+  if (a is Int || a is String) {
+    a.<error>compareTo</error>("")
+  }
+  when (a) {
+    is String, is Any => a.<error>compareTo</error>("")
+  }
+  if (a is String && a is Any) {
+    val i: Int = <info descr="Automatically cast to String">a</info>.compareTo("")
+  }
+  if (a is String && <info descr="Automatically cast to String">a</info>.compareTo("") == 0) {}
+  if (a is String || a.<error>compareTo</error>("") == 0) {}
+}
+
+//mutability
+fun f(): String {
+    var a: Any = 11
+    if (a is String) {
+        val i: String = <error>a</error>
+        <error>a</error>.compareTo("f")
+        val f: Function0<String> = { <error>a</error> }
+        return <error>a</error>
+    }
+    return ""
+}
+
+fun foo(var a: Any): Int {
+    if (a is Int) {
+        return <error>a</error>
+    }
+    return 1
+}

@@ -4,77 +4,77 @@ class NotRange1() {
 
 }
 
-class NotRange2() {
-  fun iterator() : Unit
+abstract class NotRange2() {
+  abstract fun iterator() : Unit
 }
 
-class ImproperIterator1 {
-  fun hasNext() : Boolean
+abstract class ImproperIterator1 {
+  abstract fun hasNext() : Boolean
 }
 
-class NotRange3() {
-  fun iterator() : ImproperIterator1
+abstract class NotRange3() {
+  abstract fun iterator() : ImproperIterator1
 }
 
-class ImproperIterator2 {
-  fun next() : Boolean
+abstract class ImproperIterator2 {
+  abstract fun next() : Boolean
 }
 
-class NotRange4() {
-  fun iterator() : ImproperIterator2
+abstract class NotRange4() {
+  abstract fun iterator() : ImproperIterator2
 }
 
-class ImproperIterator3 {
-  fun hasNext() : Int
-  fun next() : Int
+abstract class ImproperIterator3 {
+  abstract fun hasNext() : Int
+  abstract fun next() : Int
 }
 
-class NotRange5() {
-  fun iterator() : ImproperIterator3
+abstract class NotRange5() {
+  abstract fun iterator() : ImproperIterator3
 }
 
-class AmbiguousHasNextIterator {
-  fun hasNext() : Boolean
+abstract class AmbiguousHasNextIterator {
+  abstract fun hasNext() : Boolean
   val hasNext : Boolean get() = false
-  fun next() : Int
+  abstract fun next() : Int
 }
 
-class NotRange6() {
-  fun iterator() : AmbiguousHasNextIterator
+abstract class NotRange6() {
+  abstract fun iterator() : AmbiguousHasNextIterator
 }
 
-class ImproperIterator4 {
+abstract class ImproperIterator4 {
   val hasNext : Int get() = 1
-  fun next() : Int
+  abstract fun next() : Int
 }
 
-class NotRange7() {
-  fun iterator() : ImproperIterator3
+abstract class NotRange7() {
+  abstract fun iterator() : ImproperIterator3
 }
 
-class GoodIterator {
-  fun hasNext() : Boolean
-  fun next() : Int
+abstract class GoodIterator {
+  abstract fun hasNext() : Boolean
+  abstract fun next() : Int
 }
 
-class Range0() {
-  fun iterator() : GoodIterator
+abstract class Range0() {
+  abstract fun iterator() : GoodIterator
 }
 
-class Range1() {
-  fun iterator() : Iterator<Int>
+abstract class Range1() {
+  abstract fun iterator() : Iterator<Int>
 }
 
-fun test() {
-  for (i in <error>NotRange1()</error>);
-  for (i in <error>NotRange2()</error>);
-  for (i in <error>NotRange3()</error>);
-  for (i in <error>NotRange4()</error>);
-  for (i in <error>NotRange5()</error>);
-  for (i in <error>NotRange6()</error>);
-  for (i in <error>NotRange7()</error>);
-  for (i in Range0());
-  for (i in Range1());
+fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRange4: NotRange4, notRange5: NotRange5, notRange6: NotRange6, notRange7: NotRange7, range0: Range0, range1: Range1) {
+  for (i in <error>notRange1</error>);
+  for (i in <error>notRange2</error>);
+  for (i in <error>notRange3</error>);
+  for (i in <error>notRange4</error>);
+  for (i in <error>notRange5</error>);
+  for (i in <error>notRange6</error>);
+  for (i in <error>notRange7</error>);
+  for (i in range0);
+  for (i in range1);
 
   for (i in (ArrayList<Int>() : List<Int>));
 }

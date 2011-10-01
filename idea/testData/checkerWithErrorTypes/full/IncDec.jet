@@ -1,0 +1,46 @@
+class IncDec() {
+  fun inc() : IncDec = this
+  fun dec() : IncDec = this
+}
+
+fun testIncDec() {
+  var x = IncDec()
+  x++
+  ++x
+  x--
+  --x
+  x = x++
+  x = x--
+  x = ++x
+  x = --x
+}
+
+class WrongIncDec() {
+  fun inc() : Int = 1
+  fun dec() : Int = 1
+}
+
+fun testWrongIncDec() {
+  var x = WrongIncDec()
+  x<!RESULT_TYPE_MISMATCH!>++<!>
+  <!RESULT_TYPE_MISMATCH!>++<!>x
+  x<!RESULT_TYPE_MISMATCH!>--<!>
+  <!RESULT_TYPE_MISMATCH!>--<!>x
+}
+
+class UnitIncDec() {
+  fun inc() : Unit {}
+  fun dec() : Unit {}
+}
+
+fun testUnitIncDec() {
+  var x = UnitIncDec()
+  x++
+  ++x
+  x--
+  --x
+  x = <!TYPE_MISMATCH!>x++<!>
+  x = <!TYPE_MISMATCH!>x--<!>
+  x = <!TYPE_MISMATCH!>++x<!>
+  x = <!TYPE_MISMATCH!>--x<!>
+}

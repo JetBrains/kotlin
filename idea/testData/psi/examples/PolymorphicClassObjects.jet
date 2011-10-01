@@ -1,9 +1,9 @@
-virtual class Builder<E, R> {
+open class Builder<E, R> {
   [operator] fun plusAssign(item : E)
   fun result() : R
 }
 
-virtual class Buildable {
+open class Buildable {
   fun newBuilder<E, R>() : Builder<E, R>
 }
 

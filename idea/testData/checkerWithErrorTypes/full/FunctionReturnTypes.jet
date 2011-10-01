@@ -1,0 +1,166 @@
+fun none() {}
+
+fun unitEmptyInfer() {}
+fun unitEmpty() : Unit {}
+fun unitEmptyReturn() : Unit {return}
+fun unitIntReturn() : Unit {return <!TYPE_MISMATCH!>1<!>}
+fun unitUnitReturn() : Unit {return ()}
+fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!>}
+fun test2() : Any = @a {return@a 1}
+fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
+
+fun bbb() {
+  return <!TYPE_MISMATCH!>1<!>
+}
+
+fun foo(expr: StringBuilder): Int {
+  val c = 'a'
+  when(c) {
+    0.chr => throw Exception("zero")
+    else => throw Exception("nonzero" + c)
+  }
+}
+
+
+fun unitShort() : Unit = ()
+fun unitShortConv() : Unit = <!TYPE_MISMATCH!>1<!>
+fun unitShortNull() : Unit = <!TYPE_MISMATCH!>null<!>
+
+fun intEmpty() : Int <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!>
+fun intShortInfer() = 1
+fun intShort() : Int = 1
+//fun intBlockInfer()  {1}
+fun intBlock() : Int {return 1}
+fun intBlock() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1<!>}
+
+fun intString(): Int = <!TYPE_MISMATCH!>"s"<!>
+fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
+
+fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
+fun blockReturnValueTypeMismatch() : Int {return <!ERROR_COMPILE_TIME_VALUE!>3.4<!>}
+fun blockReturnValueTypeMatch() : Int {return 1}
+fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>()<!>}
+
+fun blockAndAndMismatch() : Int {
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>true && false<!>
+}
+fun blockAndAndMismatch() : Int {
+  return <!TYPE_MISMATCH!>true && false<!>
+}
+fun blockAndAndMismatch() : Int {
+  <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) && (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
+}
+
+fun blockAndAndMismatch() : Int {
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>true || false<!>
+}
+fun blockAndAndMismatch() : Int {
+  return <!TYPE_MISMATCH!>true || false<!>
+}
+fun blockAndAndMismatch() : Int {
+  <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) || (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  return if (1 > 2) <!ERROR_COMPILE_TIME_VALUE!>1.0<!> else <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  return <!TYPE_MISMATCH!>if (1 > 2) 1<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  return <!TYPE_MISMATCH!>if (1 > 2) else 1<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
+  else return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
+  return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
+  return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1.0<!>
+  else <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>2.0<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    1.0
+  else 2.0
+  return 1
+}
+fun blockReturnValueTypeMatch() : Int {
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>if (1 > 2)
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1.0<!><!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  return <!TYPE_MISMATCH!>if (1 > 2)
+    1<!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>if (1 > 2)
+  else <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1.0<!><!>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    return 1
+  else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
+}
+fun blockNoReturnIfValDeclaration(): Int {
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>val x = 1<!>
+}
+fun blockNoReturnIfEmptyIf(): Int {
+  if (1 < 2) <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!> else <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!>
+}
+fun blockNoReturnIfUnitInOneBranch(): Int {
+  if (1 < 2) {
+    return 1
+  } else {
+    if (3 < 4) <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{
+    }<!> else {
+      return 2
+    }
+  }
+}
+fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else <!TYPE_MISMATCH!>{}<!>
+fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else 2
+
+val a = <!RETURN_NOT_ALLOWED!>return 1<!>
+
+class A() {
+  this(a : Int) : this() {
+    if (a == 1)
+      return
+    return <!TYPE_MISMATCH!>1<!>
+  }
+
+}
+fun illegalConstantBody(): Int = <!TYPE_MISMATCH!>"s"<!>
+fun illegalConstantBlock(): String {
+    return <!ERROR_COMPILE_TIME_VALUE!>1<!>
+}
+fun illegalIfBody(): Int =
+    if (1 < 2) <!ERROR_COMPILE_TIME_VALUE!>'a'<!> else { <!ERROR_COMPILE_TIME_VALUE!>1.0<!> }
+fun illegalIfBlock(): Boolean {
+    if (1 < 2)
+        return false
+    else { return <!ERROR_COMPILE_TIME_VALUE!>1<!> }
+}
+fun illegalReturnIf(): Char {
+    return if (1 < 2) 'a' else { <!ERROR_COMPILE_TIME_VALUE!>1<!> }
+}
+
+fun returnNothing(): Nothing {
+    throw 1
+}
+fun f(): Int {
+    if (1 < 2) { return 1 } else returnNothing()
+}
+
+fun f(): Int = if (1 < 2) 1 else returnNothing()

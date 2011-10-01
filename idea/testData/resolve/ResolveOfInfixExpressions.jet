@@ -62,15 +62,15 @@ fun <T> tt(t : T) : T {
   val x : List<Int> = 0
   x`java::java.util.List.get()`[1]
   val foo = `Bar()`Bar()
-  foo`!`[null, 1]
+  foo`!!`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]
   foo`set1`[1] = ""
-  foo`!`[1, 2] = ""
+  foo`set1`[1, 2] = ""
   x`java::java.util.List.set()`[1] = null
   (x`java::java.util.List.set()`[1]) = null
-  x`!`[null] = null
-  (x`!`[null, 2]) = null
+  x`java::java.util.List.set()`[null] = null
+  (x`java::java.util.List.set()`[null, 2]) = null
   (`not`!foo)[1]`:std::Char`
   val y = Bar()
   y`inc`++

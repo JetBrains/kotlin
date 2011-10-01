@@ -415,7 +415,28 @@ JetFile: Properties.jet
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
-      PsiElement(SAFE_ACCESS)('?.')
+          PsiElement(QUEST)('?')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('opt')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+          PsiElement(QUEST)('?')
+      PsiWhiteSpace(' ')
+      PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('opt')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')

@@ -1,12 +1,12 @@
 namespace foo.bar.goo
 
 abstract
-virtual
+open
 enum
 open
-attribute
+annotation
 override
-virtual
+open
 abstract
 private
 protected
@@ -19,15 +19,15 @@ in
 out
 ref
  class Bar<abstract
-virtual
+open
 [sdfsdf(1+1) a]
 [sdfsdf(1+1)]
 [a() sdfsdf(1+1)]
 enum
 open
-attribute
+annotation
 override
-virtual
+open
 abstract
 [sdfsd sdfsd a.b.f.c]
 private

@@ -1,0 +1,18 @@
+  class Foo(var bar : Int, barr : Int, val barrr : Int) {
+    {
+      bar = 1
+      barr = 1
+      barrr = 1
+      1 : Int
+      this : Foo
+    }
+
+    this(val bar : Int) : this(1, 1, 1) {
+      bar = 1
+      this.bar
+      1 : Int
+      val a : Int =1
+      this : Foo
+    }
+  }
+

@@ -288,46 +288,44 @@ JetFile: BitArith.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n    ')
-                BLOCK
-                  BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('result')
-                    PsiWhiteSpace(' ')
-                    OPERATION_REFERENCE
-                      PsiElement(PLUSEQ)('+=')
-                    PsiWhiteSpace(' ')
-                    BINARY_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(IDENTIFIER)('and')
-                      PsiWhiteSpace(' ')
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                  PsiWhiteSpace('\n    ')
-                  BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
-                    PsiWhiteSpace(' ')
-                    OPERATION_REFERENCE
-                      PsiElement(EQ)('=')
-                    PsiWhiteSpace(' ')
-                    BINARY_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(IDENTIFIER)('ushr')
-                      PsiWhiteSpace(' ')
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                PsiWhiteSpace('\n  ')
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('result')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(PLUSEQ)('+=')
+                PsiWhiteSpace(' ')
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(IDENTIFIER)('and')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+              PsiWhiteSpace('\n    ')
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(IDENTIFIER)('ushr')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('result')
@@ -517,7 +515,7 @@ JetFile: BitArith.jet
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')

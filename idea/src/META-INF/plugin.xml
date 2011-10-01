@@ -19,6 +19,11 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
+     <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.CopyAsDiagnosticTestAction"
+             text="Copy Current File As Diagnostic Test">
+         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
+         <add-to-group group-id="CodeMenu" anchor="last"/>
+     </action>
      <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
              text="Toggle Error Reporting">
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
@@ -28,6 +33,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
+      <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.JetSyntaxHighlighterFactory"/>
       <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
       <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
       <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
@@ -35,9 +41,11 @@
       <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
       <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
       <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
+      <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.SoftKeywordsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.DebugInfoAnnotator"/>
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>

@@ -1,0 +1,11 @@
+open class bar()
+
+trait Foo<error>()</error> : bar<error>()</error>, <error>bar</error>, <error>bar</error> {
+    <error>this</error>(x : Int) {}
+}
+
+trait Foo2 : bar, Foo {
+}
+
+open class Foo1() : bar(), <error>bar</error>, Foo, <error>Foo</error><error>()</error> {}
+open class Foo12 : bar<error>()</error>, <error>bar</error> {}

@@ -672,31 +672,29 @@ JetFile: ArrayList.jet
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n      ')
-                    BLOCK
-                      BINARY_EXPRESSION
-                        ARRAY_ACCESS_EXPRESSION
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  BINARY_EXPRESSION
+                    ARRAY_ACCESS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('data')
+                      INDICES
+                        PsiElement(LBRACKET)('[')
+                        POSTFIX_EXPRESSION
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('data')
-                          INDICES
-                            PsiElement(LBRACKET)('[')
-                            POSTFIX_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('used')
-                              OPERATION_REFERENCE
-                                PsiElement(PLUSPLUS)('++')
-                            PsiElement(RBRACKET)(']')
-                        PsiWhiteSpace(' ')
-                        OPERATION_REFERENCE
-                          PsiElement(EQ)('=')
-                        PsiWhiteSpace(' ')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('value')
-                    PsiWhiteSpace('\n    ')
-                    PsiElement(RBRACE)('}')
+                            PsiElement(IDENTIFIER)('used')
+                          OPERATION_REFERENCE
+                            PsiElement(PLUSPLUS)('++')
+                        PsiElement(RBRACKET)(']')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(EQ)('=')
+                    PsiWhiteSpace(' ')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('value')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
               PsiWhiteSpace(' ')
               PsiElement(else)('else')
               PsiWhiteSpace(' ')
@@ -718,90 +716,88 @@ JetFile: ArrayList.jet
                   PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
                   THEN
-                    FUNCTION_LITERAL_EXPRESSION
-                      FUNCTION_LITERAL
-                        PsiElement(LBRACE)('{')
-                        PsiWhiteSpace('\n      ')
-                        BLOCK
-                          FOR
-                            PsiElement(for)('for')
-                            PsiWhiteSpace(' ')
-                            PsiElement(LPAR)('(')
-                            LOOP_PARAMETER
-                              PsiElement(IDENTIFIER)('i')
-                            PsiWhiteSpace(' ')
-                            PsiElement(in)('in')
-                            PsiWhiteSpace(' ')
-                            LOOP_RANGE
-                              BINARY_EXPRESSION
-                                BINARY_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('used')
-                                  OPERATION_REFERENCE
-                                    PsiElement(MINUS)('-')
-                                  INTEGER_CONSTANT
-                                    PsiElement(INTEGER_LITERAL)('1')
-                                OPERATION_REFERENCE
-                                  PsiElement(RANGE)('..')
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('index')
-                            PsiElement(RPAR)(')')
-                            PsiWhiteSpace(' ')
-                            PsiComment(EOL_COMMENT)('// backwards, special operator...  Need to optimize this to be a real indexed loop')
-                            PsiWhiteSpace('\n        ')
-                            BODY
-                              BINARY_EXPRESSION
-                                ARRAY_ACCESS_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('data')
-                                  INDICES
-                                    PsiElement(LBRACKET)('[')
-                                    BINARY_EXPRESSION
-                                      REFERENCE_EXPRESSION
-                                        PsiElement(IDENTIFIER)('i')
-                                      PsiWhiteSpace(' ')
-                                      OPERATION_REFERENCE
-                                        PsiElement(PLUS)('+')
-                                      PsiWhiteSpace(' ')
-                                      INTEGER_CONSTANT
-                                        PsiElement(INTEGER_LITERAL)('1')
-                                    PsiElement(RBRACKET)(']')
-                                PsiWhiteSpace(' ')
-                                OPERATION_REFERENCE
-                                  PsiElement(EQ)('=')
-                                PsiWhiteSpace(' ')
-                                ARRAY_ACCESS_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('data')
-                                  INDICES
-                                    PsiElement(LBRACKET)('[')
-                                    REFERENCE_EXPRESSION
-                                      PsiElement(IDENTIFIER)('i')
-                                    PsiElement(RBRACKET)(']')
-                          PsiWhiteSpace('\n      ')
+                    BLOCK
+                      PsiElement(LBRACE)('{')
+                      PsiWhiteSpace('\n      ')
+                      FOR
+                        PsiElement(for)('for')
+                        PsiWhiteSpace(' ')
+                        PsiElement(LPAR)('(')
+                        LOOP_PARAMETER
+                          PsiElement(IDENTIFIER)('i')
+                        PsiWhiteSpace(' ')
+                        PsiElement(in)('in')
+                        PsiWhiteSpace(' ')
+                        LOOP_RANGE
+                          BINARY_EXPRESSION
+                            BINARY_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('used')
+                              OPERATION_REFERENCE
+                                PsiElement(MINUS)('-')
+                              INTEGER_CONSTANT
+                                PsiElement(INTEGER_LITERAL)('1')
+                            OPERATION_REFERENCE
+                              PsiElement(RANGE)('..')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('index')
+                        PsiElement(RPAR)(')')
+                        PsiWhiteSpace(' ')
+                        PsiComment(EOL_COMMENT)('// backwards, special operator...  Need to optimize this to be a real indexed loop')
+                        PsiWhiteSpace('\n        ')
+                        BODY
                           BINARY_EXPRESSION
                             ARRAY_ACCESS_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('data')
                               INDICES
                                 PsiElement(LBRACKET)('[')
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('index')
+                                BINARY_EXPRESSION
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('i')
+                                  PsiWhiteSpace(' ')
+                                  OPERATION_REFERENCE
+                                    PsiElement(PLUS)('+')
+                                  PsiWhiteSpace(' ')
+                                  INTEGER_CONSTANT
+                                    PsiElement(INTEGER_LITERAL)('1')
                                 PsiElement(RBRACKET)(']')
                             PsiWhiteSpace(' ')
                             OPERATION_REFERENCE
                               PsiElement(EQ)('=')
                             PsiWhiteSpace(' ')
+                            ARRAY_ACCESS_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('data')
+                              INDICES
+                                PsiElement(LBRACKET)('[')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('i')
+                                PsiElement(RBRACKET)(']')
+                      PsiWhiteSpace('\n      ')
+                      BINARY_EXPRESSION
+                        ARRAY_ACCESS_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('data')
+                          INDICES
+                            PsiElement(LBRACKET)('[')
                             REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('value')
-                          PsiWhiteSpace('\n      ')
-                          POSTFIX_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('used')
-                            OPERATION_REFERENCE
-                              PsiElement(PLUSPLUS)('++')
-                        PsiWhiteSpace('\n    ')
-                        PsiElement(RBRACE)('}')
+                              PsiElement(IDENTIFIER)('index')
+                            PsiElement(RBRACKET)(']')
+                        PsiWhiteSpace(' ')
+                        OPERATION_REFERENCE
+                          PsiElement(EQ)('=')
+                        PsiWhiteSpace(' ')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('value')
+                      PsiWhiteSpace('\n      ')
+                      POSTFIX_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('used')
+                        OPERATION_REFERENCE
+                          PsiElement(PLUSPLUS)('++')
+                      PsiWhiteSpace('\n    ')
+                      PsiElement(RBRACE)('}')
                   PsiWhiteSpace(' ')
                   PsiElement(else)('else')
                   PsiWhiteSpace(' ')

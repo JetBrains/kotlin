@@ -1,16 +1,16 @@
-class Base() {
+open class Base() {
     public val plain = 239
     public val read : Int
       get() = 239
 
-    public var readwrite : Int
+    public var readwrite : Int = 0
       get() = $readwrite + 1
       set(n : Int) {
         $readwrite = n
       }
 }
 
-class Abstract {}
+trait Abstract {}
 
 class Derived1() : Base(), Abstract {}
 class Derived2() : Abstract, Base() {}

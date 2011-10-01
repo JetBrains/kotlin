@@ -7,6 +7,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
@@ -94,6 +95,42 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         clone.setFontType(Font.PLAIN);
 // TODO: proper attributes
         JET_AUTO_CAST_EXPRESSION = TextAttributesKey.createTextAttributesKey("JET.AUTO.CAST.EXPRESSION", clone);
+    }
+
+    public static final TextAttributesKey JET_AUTOCREATED_IT;
+
+    static {
+        TextAttributes attributes = new TextAttributes();
+        attributes.setFontType(Font.BOLD);
+// TODO: proper attributes
+        JET_AUTOCREATED_IT = TextAttributesKey.createTextAttributesKey("JET.AUTO.CREATED.IT", attributes);
+    }
+
+    public static final TextAttributesKey JET_FUNCTION_LITERAL_DELIMITER;
+
+    static {
+        TextAttributes attributes = new TextAttributes();
+        attributes.setFontType(Font.BOLD);
+// TODO: proper attributes
+        JET_FUNCTION_LITERAL_DELIMITER = TextAttributesKey.createTextAttributesKey("JET.AUTO.CREATED.IT", attributes);
+    }
+
+    public static final TextAttributesKey JET_DEBUG_INFO;
+
+    static {
+        TextAttributes textAttributes = new TextAttributes();
+        textAttributes.setEffectType(EffectType.ROUNDED_BOX);
+        textAttributes.setEffectColor(Color.BLACK);
+        JET_DEBUG_INFO = TextAttributesKey.createTextAttributesKey("JET.DEBUG.INFO", textAttributes);
+    }
+
+    public static final TextAttributesKey JET_RESOLVED_TO_ERROR;
+
+    static {
+        TextAttributes textAttributes = new TextAttributes();
+        textAttributes.setEffectType(EffectType.ROUNDED_BOX);
+        textAttributes.setEffectColor(Color.RED);
+        JET_RESOLVED_TO_ERROR = TextAttributesKey.createTextAttributesKey("JET.RESOLVED.TO.ERROR", textAttributes);
     }
 
     @NotNull

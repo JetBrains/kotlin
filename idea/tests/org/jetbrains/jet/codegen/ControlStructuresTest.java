@@ -1,5 +1,7 @@
 package org.jetbrains.jet.codegen;
 
+import jet.typeinfo.TypeInfo;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -149,5 +151,58 @@ public class ControlStructuresTest extends CodegenTestCase {
         }
         assertTrue(caught);
         assertEquals("foobar", sb.toString());
+    }
+
+    public void testForUserType() throws Exception {
+        blackBoxFile("controlStructures/forUserType.jet");
+    }
+
+    public void testForIntArray() throws Exception {
+        blackBoxFile("controlStructures/forIntArray.jet");
+    }
+
+    public void testForPrimitiveIntArray() throws Exception {
+        blackBoxFile("controlStructures/forPrimitiveIntArray.jet");
+    }
+
+    public void testForNullableIntArray() throws Exception {
+        blackBoxFile("controlStructures/forNullableIntArray.jet");
+    }
+
+    public void testKt237() throws Exception {
+        blackBoxFile("regressions/kt237.jet");
+    }
+
+    public void testCompareToNull() throws Exception {
+        loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
+        String text = generateToText();
+        assertTrue(!text.contains("java/lang/Object.equals"));
+        System.out.println(text);
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null, null, "lala"));
+        assertEquals(false, main.invoke(null, null, null));
+    }
+
+    public void testCompareToNonnullableEq() throws Exception {
+        loadText("fun foo(a: String?, b: String): Boolean = a == b || b == a");
+        String text = generateToText();
+        System.out.println(text);
+        final Method main = generateFunction();
+        assertEquals(false, main.invoke(null, null, "lala"));
+        assertEquals(true, main.invoke(null, "papa", "papa"));
+    }
+
+    public void testCompareToNonnullableNotEq() throws Exception {
+        loadText("fun foo(a: String?, b: String): Boolean = a != b");
+        String text = generateToText();
+        System.out.println(text);
+        assertTrue(text.contains("IXOR"));
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null, null, "lala"));
+        assertEquals(false, main.invoke(null, "papa", "papa"));
+    }
+
+    public void testKt299() throws Exception {
+        blackBoxFile("regressions/kt299.jet");
     }
 }

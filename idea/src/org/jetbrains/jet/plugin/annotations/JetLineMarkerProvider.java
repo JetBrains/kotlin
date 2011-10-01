@@ -16,12 +16,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.*;
+import com.intellij.util.Function;
+import com.intellij.util.PlatformIcons;
+import com.intellij.util.PsiIconUtil;
+import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -42,7 +45,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
 
         if (file == null) return null;
-        final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+        final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
 
         if (element instanceof JetClass) {
             JetClass jetClass = (JetClass) element;
@@ -64,7 +67,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, jetFunction);
             if (functionDescriptor == null) return null;
-            final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
+            final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
             Icon icon = isMember(functionDescriptor) ? (overriddenFunctions.isEmpty() ? PlatformIcons.METHOD_ICON : OVERRIDING_FUNCTION) : PlatformIcons.FUNCTION_ICON;
             return new LineMarkerInfo<JetNamedFunction>(
                     jetFunction, jetFunction.getTextOffset(), icon, Pass.UPDATE_ALL,
@@ -130,8 +133,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
 
         if (element instanceof JetNamespace) {
-            return createLineMarkerInfo((JetNamespace) element,
-                    DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, element)));
+            JetNamespace namespace = (JetNamespace) element;
+            if (namespace.getNameIdentifier() != null) {
+                return createLineMarkerInfo(namespace,
+                        DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, element)));
+            }
         }
 
         if (element instanceof JetObjectDeclaration && !(element.getParent() instanceof JetExpression)) {

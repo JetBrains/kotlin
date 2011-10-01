@@ -1,5 +1,5 @@
-fun Int?.optint() : Unit
-val Int?.optval : Unit
+fun Int?.optint() : Unit {}
+val Int?.optval : Unit = ()
 
 fun <T, E> T.foo(x : E, y : A) : T   {
   y.plus(1)
@@ -16,7 +16,7 @@ class A
 fun A.plus(a : Any) {
 
   1.foo()
-  true.foo<error>()</error>
+  true.<error>foo()</error>
 
   1
 }
@@ -33,7 +33,7 @@ fun test() {
 val Int.abs : Int
   get() = if (this > 0) this else -this;
 
-val <T> T.foo : T
+val <T> T.<error>foo</error> : T
 
 fun Int.foo() = this
 
@@ -42,11 +42,12 @@ namespace null_safety {
         fun parse(cmd: String): Command? { return null  }
         class Command() {
         //  fun equals(other : Any?) : Boolean
-          val foo : Int
+          val foo : Int = 0
         }
 
-        fun Any.equals(other : Any?) : Boolean
-        fun Any?.equals1(other : Any?) : Boolean
+        fun Any.equals(other : Any?) : Boolean = true
+        fun Any?.equals1(other : Any?) : Boolean = true
+        fun Any.equals2(other : Any?) : Boolean = true
 
         fun main(args: Array<String>) {
 
@@ -56,13 +57,13 @@ namespace null_safety {
 
             command<error>.</error>foo
 
-            command<error>.</error>equals(null)
-            command?.equals(null)
+            command.equals(null)
+            command<warning>?.</warning>equals(null)
             command.equals1(null)
             command<warning>?.</warning>equals1(null)
 
             val c = Command()
-            c<warning>?.</warning>equals(null)
+            c<warning>?.</warning>equals2(null)
 
             if (command == null) 1
         }

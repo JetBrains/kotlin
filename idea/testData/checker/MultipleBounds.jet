@@ -1,17 +1,17 @@
 namespace Jet87
 
 open class A() {
-  fun foo() : Int
+  fun foo() : Int = 1
 }
 
-open class B() {
-  fun bar() : Double;
+trait B {
+  fun bar() : Double = 1.0;
 }
 
-class C() : A(), B()
+class C() : A(), B
 
 class D() {
-  class object : A(), B () {}
+  class object : A(), B {}
 }
 
 class Test1<T : A>()
@@ -60,13 +60,13 @@ fun <T : A> test2(t : T)
   t.bar()
 }
 
-val test1 = test2<<error>A</error>>(A())
-val test2 = test2<<error>B</error>>(B())
-val test3 = test2<C>(C())
+val t1 = test2<<error>A</error>>(A())
+val t2 = test2<<error>B</error>>(C())
+val t3 = test2<C>(C())
 
 class Test<<error>T</error>>
   where
     class object T : <error>Foo</error>,
     class object T : A {}
 
-val <T, B : T> x : Int
+val <T, B : T> x : Int = 0

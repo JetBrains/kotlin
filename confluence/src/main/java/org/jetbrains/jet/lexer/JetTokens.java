@@ -127,7 +127,7 @@ public interface JetTokens {
     JetKeywordToken GET_KEYWORD       = JetKeywordToken.softKeyword("get");
     JetKeywordToken SET_KEYWORD       = JetKeywordToken.softKeyword("set");
     JetKeywordToken ABSTRACT_KEYWORD  = JetKeywordToken.softKeyword("abstract");
-    JetKeywordToken VIRTUAL_KEYWORD   = JetKeywordToken.softKeyword("virtual");
+    JetKeywordToken VIRTUAL_KEYWORD   = JetKeywordToken.softKeyword("open");
     JetKeywordToken ENUM_KEYWORD      = JetKeywordToken.softKeyword("enum");
     JetKeywordToken OPEN_KEYWORD      = JetKeywordToken.softKeyword("open");
     JetKeywordToken ATTRIBUTE_KEYWORD = JetKeywordToken.softKeyword("attribute");

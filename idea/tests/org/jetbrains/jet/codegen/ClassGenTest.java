@@ -14,7 +14,9 @@ public class ClassGenTest extends CodegenTestCase {
 
         final Class aClass = loadClass("SimpleClass", generateClassesInFile());
         final Method[] methods = aClass.getDeclaredMethods();
-        assertEquals(1, methods.length);
+        // public int SimpleClass.foo()
+        // public jet.typeinfo.TypeInfo SimpleClass.getTypeInfo()
+        assertEquals(2, methods.length);
     }
 
     public void testArrayListInheritance() throws Exception {
@@ -72,14 +74,12 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testAbstractMethod() throws Exception {
-        loadText("class Foo { abstract fun x(): String; fun y(): Int = 0 }");
+        loadText("abstract class Foo { abstract fun x(): String; fun y(): Int = 0 }");
 
         final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
         assertNotNull(aClass.getMethod("x"));
-        final Class implClass = loadClass("Foo$$Impl", codegens);
-        assertNull(findMethodByName(implClass, "x"));
-        assertNotNull(findMethodByName(implClass, "y"));
+        assertNotNull(findMethodByName(aClass, "y"));
     }
 
     public void testInheritedMethod() throws Exception {
@@ -113,7 +113,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testAbstractClass() throws Exception {
         loadText("abstract class SimpleClass() { }");
 
-        final Class aClass = loadAllClasses(generateClassesInFile()).get("SimpleClass$$Impl");
+        final Class aClass = loadAllClasses(generateClassesInFile()).get("SimpleClass");
         assertTrue((aClass.getModifiers() & Modifier.ABSTRACT) != 0);
     }
 
@@ -155,6 +155,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
         final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
+        System.out.println(generateToText());
         final Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
         assertInstanceOf(north.get(null), direction);
@@ -167,5 +168,14 @@ public class ClassGenTest extends CodegenTestCase {
         final Object redValue = redField.get(null);
         final Method rgbMethod = colorClass.getMethod("getRgb");
         assertEquals(0xFF0000, rgbMethod.invoke(redValue));
+    }
+
+    public void testKt249() throws Exception {
+        blackBoxFile("regressions/kt249.jet");
+    }
+
+    public void testKt48 () throws Exception {
+        blackBoxFile("regressions/kt48.jet");
+        System.out.println(generateToText());
     }
 }

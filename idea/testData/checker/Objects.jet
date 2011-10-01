@@ -1,6 +1,6 @@
 namespace toplevelObjectDeclarations {
-  class Foo(y : Int) {
-    virtual fun foo() : Int = 1
+  open class Foo(y : Int) {
+    open fun foo() : Int = 1
   }
 
   class T : <error>Foo</error> {}
@@ -60,11 +60,11 @@ namespace nestedObejcts {
 
 namespace localObjects {
   object A {
-    val x : Int
+    val x : Int = 0
   }
 
-  class Foo {
-    fun foo() : Int
+  open class Foo {
+    fun foo() : Int = 1
   }
 
   fun test() {

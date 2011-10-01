@@ -2,7 +2,7 @@ JetFile: PolymorphicClassObjects.jet
   NAMESPACE
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -67,7 +67,7 @@ JetFile: PolymorphicClassObjects.jet
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -371,29 +371,27 @@ JetFile: PolymorphicClassObjects.jet
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n    ')
-                    BLOCK
-                      BINARY_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('builder')
-                        PsiWhiteSpace(' ')
-                        OPERATION_REFERENCE
-                          PsiElement(PLUSEQ)('+=')
-                        PsiWhiteSpace(' ')
-                        CALL_EXPRESSION
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n    ')
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('builder')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUSEQ)('+=')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('f')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('f')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('e')
-                            PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n  ')
-                    PsiElement(RBRACE)('}')
+                            PsiElement(IDENTIFIER)('e')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION

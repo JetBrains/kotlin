@@ -1,0 +1,29 @@
+class A() {
+    var xi = 0
+    var xin : Int? = 0
+    var xinn : Int? = null
+
+    var xl = 0.lng
+    var xln : Long? = 0.lng
+    var xlnn : Long? = null
+
+    var xb = 0.byt
+    var xbn : Byte? = 0.byt
+    var xbnn : Byte? = null
+
+    var xf = 0.flt
+    var xfn : Float? = 0.flt
+    var xfnn : Float? = null
+
+    var xd = 0.dbl
+    var xdn : Double? = 0.dbl
+    var xdnn : Double? = null
+
+    var xs = 0.sht
+    var xsn : Short? = 0.sht
+    var xsnn : Short? = null
+}
+
+fun box() : String {
+    return "OK"
+}

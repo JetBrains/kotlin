@@ -21,7 +21,7 @@ fun countOnes(x : INumber) = if (x == 0) 0 else mostSignificantBit(x) + countOne
 
 fun Int.matchMask(mask : Int) = this and mask == mask
 
-virtual class INumber<T : this> : IComparable<T> {
+open class INumber<T : this> : IComparable<T> {
   val bits : Int
   [operator] fun plus(other : T) : T
   [operator] fun shl(bits : Int) : T

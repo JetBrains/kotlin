@@ -16,7 +16,7 @@ class A() {
   val z = foo()
 }
 
-fun foo() : Unit {
+fun foo1() : Unit {
   <error>this</error>
   this<error>@a</error>
 }

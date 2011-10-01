@@ -5,11 +5,11 @@ import com.intellij.openapi.application.PathManager;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetChangeUtil;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -70,7 +70,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
                 "fun ab() : Int",
                 "fun a() : Int");
 
-        assertNotOverridable(
+        assertOverridable(
                 "fun a() : Int",
                 "fun a() : Any");
 
@@ -98,7 +98,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
                 "fun a<T1, X : T1>(a : T1) : T1",
                 "fun a<T, Y : T>(a : Y) : T");
 
-        assertNotOverridable(
+        assertOverridable(
                 "fun a<T1, X : T1>(a : T1) : X",
                 "fun a<T, Y : T>(a : T) : T");
 
@@ -139,12 +139,12 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
     private void assertOverridabilityRelation(String superFun, String subFun, boolean expectedIsError) {
         FunctionDescriptor a = makeFunction(superFun);
         FunctionDescriptor b = makeFunction(subFun);
-        FunctionDescriptorUtil.OverrideCompatibilityInfo overridableWith = FunctionDescriptorUtil.isOverridableBy(semanticServices.getTypeChecker(), a, b);
+        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(a, b);
         assertEquals(overridableWith.getMessage(), expectedIsError, !overridableWith.isSuccess());
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
-        JetNamedFunction function = JetChangeUtil.createFunction(getProject(), funDecl);
+        JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
         return classDescriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function);
     }
 }

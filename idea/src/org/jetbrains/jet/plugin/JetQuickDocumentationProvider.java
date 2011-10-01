@@ -6,7 +6,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -26,7 +25,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
         }
         if (ref != null) {
-            BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache((JetFile) element.getContainingFile());
+            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) element.getContainingFile());
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ref);
             if (declarationDescriptor != null) {
                 return render(declarationDescriptor);

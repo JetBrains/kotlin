@@ -1,4 +1,4 @@
-fun none()
+fun none() {}
 
 fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
@@ -128,6 +128,8 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
     }
   }
 }
+fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <error>{}</error> else <error>{}</error>
+fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <error>{}</error> else 2
 
 val a = <error>return 1</error>
 

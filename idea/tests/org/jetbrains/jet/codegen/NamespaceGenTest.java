@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
 import jet.Tuple2;
+import jet.typeinfo.TypeInfo;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.awt.*;
@@ -209,6 +210,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testJavaEqualsNull() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 == s2");
         final Method main = generateFunction();
+        System.out.println(generateToText());
         assertEquals(Boolean.TRUE, main.invoke(null, null, null));
         assertEquals(Boolean.FALSE, main.invoke(null, "jet", null));
         assertEquals(Boolean.FALSE, main.invoke(null, null, "jet"));
@@ -217,6 +219,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testEqualsNullLiteral() throws Exception {
         loadText("fun foo(s: String?) = s == null");
         final Method main = generateFunction();
+        System.out.println(generateToText());
         assertEquals(Boolean.TRUE, main.invoke(null, new Object[] { null }));
         assertEquals(Boolean.FALSE, main.invoke(null, "jet"));
     }
@@ -256,7 +259,7 @@ public class NamespaceGenTest extends CodegenTestCase {
         loadText("fun foo(s1: String, s2: String, s3: String) = s1 + s2 + s3");
         final String text = generateToText();
         final int firstStringBuilderCreation = text.indexOf("NEW java/lang/StringBuilder");
-        assertEquals(-1, text.indexOf("NEW java/lang/StringBuilder", firstStringBuilderCreation+1));
+        assertEquals(-1, text.indexOf("NEW java/lang/StringBuilder", firstStringBuilderCreation + 1));
         final Method main = generateFunction();
         assertEquals("jet Lang", main.invoke(null, "jet", " ", "Lang"));
     }
@@ -341,7 +344,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testArrayRead() throws Exception {
         loadText("fun foo(c: Array<String>) = c[0]");
         final Method main = generateFunction();
-        assertEquals("main", main.invoke(null, new Object[] { new String[] { "main" } }));
+        assertEquals("main", main.invoke(null, new Object[]{new String[]{"main"}}));
     }
 
     public void testArrayWrite() throws Exception {
@@ -356,26 +359,73 @@ public class NamespaceGenTest extends CodegenTestCase {
         loadText("fun foo(c: Array<Int>) { c[0] *= 2 }");
         System.out.println(generateToText());
         final Method main = generateFunction();
-        int[] data = new int[] { 5 };
+        Integer[] data = new Integer[] { 5 };
         main.invoke(null, new Object[] { data });
-        assertEquals(10, data[0]);
+        assertEquals(10, data[0].intValue());
+    }
+
+    public void testArrayAugAssignLong() throws Exception {
+        loadText("fun foo(c: LongArray) { c[0] *= 2 }");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        long[] data = new long[] { 5 };
+        main.invoke(null, new Object[] { data });
+        assertEquals(10L, data[0]);
     }
 
     public void testArrayNew() throws Exception {
-        loadText("fun foo() = Array<Int>(4)");
+        loadText("fun foo() = Array<Int>(4, { it })");
+        System.out.println(generateToText());
         final Method main = generateFunction();
-        int[] result = (int[]) main.invoke(null);
+        Integer[] result = (Integer[]) main.invoke(null);
         assertEquals(4, result.length);
+        assertEquals(0, result[0].intValue());
+        assertEquals(1, result[1].intValue());
+        assertEquals(2, result[2].intValue());
+        assertEquals(3, result[3].intValue());
+    }
+
+    public void testArrayNewNullable() throws Exception {
+        loadText("fun foo() = Array<Int?>(4)");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        Integer[] result = (Integer[]) main.invoke(null);
+        assertEquals(4, result.length);
+    }
+    public void testFloatArrayNew() throws Exception {
+        loadText("fun foo() = FloatArray(4)");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        float[] result = (float[]) main.invoke(null);
+        assertEquals(4, result.length);
+    }
+
+    public void testFloatArrayArrayNew() throws Exception {
+        loadText("fun foo() = Array<FloatArray>(4, { FloatArray(5-it) })");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        float[][] result = (float[][]) main.invoke(null);
+        assertEquals(4, result.length);
+        assertEquals(2, result[3].length);
     }
 
     public void testArraySize() throws Exception {
         loadText("fun foo(a: Array<Int>) = a.size");
         System.out.println(generateToText());
         final Method main = generateFunction();
+        Object[] args = new Object[] { new Integer[4] };
+        int result = (Integer) main.invoke(null, args);
+        System.out.println(result);
+        assertEquals(4, result);
+    }
+
+    public void testIntArraySize() throws Exception {
+        loadText("fun foo(a: IntArray) = a.size");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
         Object[] args = new Object[] { new int[4] };
         int result = (Integer) main.invoke(null, args);
         assertEquals(4, result);
-
     }
 
     public void testIntRange() throws Exception {
@@ -448,8 +498,14 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testPredicateOperator() throws Exception {
         loadText("fun foo(s: String) = s?startsWith(\"J\")");
         final Method main = generateFunction();
+        try {
         assertEquals("JetBrains", main.invoke(null, "JetBrains"));
         assertNull(main.invoke(null, "IntelliJ"));
+        }
+        catch (Throwable t) {
+            System.out.println(generateToText());
+            t.printStackTrace();
+        }
     }
 
     public void testEscapeSequence() throws Exception {

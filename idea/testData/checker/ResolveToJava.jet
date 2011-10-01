@@ -19,10 +19,10 @@ fun test(l : java.util.List<Int>) {
   Collections.<error>emptyList</error>
   Collections.emptyList<Int>
   Collections.emptyList<Int>()
-  Collections.emptyList<error>()</error>
+  Collections.emptyList()
 
   Collections.singleton<Int>(1) : Set<Int>?
-  Collections.singleton<Int><error>(1.0)</error>
+  Collections.singleton<Int>(<error>1.0</error>)
 
   <error>List</error><Int>
 
@@ -43,7 +43,7 @@ fun test(l : java.util.List<Int>) {
   c : java.lang.Comparable<Int>?
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
-  xxx.Class<error>()</error>
+  xxx.<error>Class</error>()
 }
 
 

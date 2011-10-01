@@ -115,17 +115,15 @@ ref
 try
 
 Soft:
-wraps -- in a class header
 where -- in class, function and type headers
 by -- in a class header (Delegation specifier)
-lazy -- in a property/parameter declaration
 get, set -- in a property definition
 import
+final
 abstract
-virtual
 enum
 open
-attribute
+annotation
 override
 private
 public

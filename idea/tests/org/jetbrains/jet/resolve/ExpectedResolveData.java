@@ -4,18 +4,20 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static junit.framework.Assert.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
  * @author abreslav
@@ -92,13 +96,13 @@ public class ExpectedResolveData {
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject());
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
-        AnalyzingUtils.applyHandler(new ErrorHandler() {
-                    @Override
-                    public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
-                        unresolvedReferences.add(referenceExpression);
-                    }
-                }, bindingContext);
+        BindingContext bindingContext = AnalyzerFacade.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
+                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
+                unresolvedReferences.add(unresolvedReferenceDiagnostic.getPsiElement());
+            }
+        }
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 
@@ -123,16 +127,33 @@ public class ExpectedResolveData {
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
+                continue;
+            }
+            if ("!!".equals(name)) {
+                assertTrue(
+                        "Must have been resolved to multiple descriptors: " +
+                        renderReferenceInContext(referenceExpression) +
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, referenceExpression) != null);
                 continue;
             }
             else if ("!null".equals(name)) {
                 assertTrue(
                        "Must have been resolved to null: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
-                        bindingContext.get(BindingContext.EXPRESSION_TYPE, referenceExpression) == null
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        bindingContext.get(REFERENCE_TARGET, referenceExpression) == null
+                );
+                continue;
+            }
+            else if ("!error".equals(name)) {
+                assertTrue(
+                       "Must have been resolved to error: " +
+                        renderReferenceInContext(referenceExpression) +
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                       ErrorUtils.isError(bindingContext.get(REFERENCE_TARGET, referenceExpression))
                 );
                 continue;
             }
@@ -150,7 +171,7 @@ public class ExpectedResolveData {
                 DeclarationDescriptor expectedDescriptor = nameToDescriptor.get(name);
                 JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
                 if (expectedDescriptor != null) {
-                    DeclarationDescriptor actual = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
+                    DeclarationDescriptor actual = bindingContext.get(REFERENCE_TARGET, reference);
                     assertSame("Expected: " + name,  expectedDescriptor.getOriginal(), actual == null ? null : actual.getOriginal());
                     continue;
                 }
@@ -188,7 +209,7 @@ public class ExpectedResolveData {
                 }
 
 
-                DeclarationDescriptor actualDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
+                DeclarationDescriptor actualDescriptor = bindingContext.get(REFERENCE_TARGET, reference);
                 if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
                     VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
                     actualDescriptor = descriptor.getVariableDescriptor();
@@ -254,7 +275,10 @@ public class ExpectedResolveData {
             statement = (JetExpression) parent;
         }
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(referenceExpression, JetDeclaration.class);
-        return referenceExpression.getText() +
+
+
+
+        return referenceExpression.getText() + " at " + DiagnosticUtils.atLocation(referenceExpression) +
                                     " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
     }
 

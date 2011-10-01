@@ -89,9 +89,9 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         final JetNamespace namespace = jetFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
         Class<?> namespaceClass = loader.loadClass(fqName);
-        Method method = namespaceClass.getMethod("box");
-        return (String) method.invoke(null);
-    }
+            Method method = namespaceClass.getMethod("box");
+            return (String) method.invoke(null);
+        }
 
     protected String generateToText() {
         GenerationState state = new GenerationState(getProject(), true);
@@ -197,8 +197,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected Class loadImplementationClass(ClassFileFactory codegens, final String name) {
-        loadClass(name, codegens);
-        return loadClass(name + "$$Impl", codegens);
+        return loadClass(name, codegens);
     }
 
     private static class MyClassLoader extends ClassLoader {

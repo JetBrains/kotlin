@@ -1,0 +1,113 @@
+namespace override
+
+namespace normal {
+    trait MyTrait {
+        fun foo()
+        val pr : Unit
+    }
+
+    abstract class MyAbstractClass {
+        abstract fun bar()
+        abstract val prr : Unit
+
+    }
+
+    open class MyClass() : MyTrait, MyAbstractClass {
+        override fun foo() {}
+        override fun bar() {}
+
+        override val pr : Unit = ()
+        override val prr : Unit = ()
+    }
+
+    class MyChildClass() : MyClass() {}
+
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass<!> : MyTrait, MyAbstractClass {}
+
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass2<!>() : MyTrait, MyAbstractClass {
+        override fun foo() {}
+        override val pr : Unit = ()
+        override val prr : Unit = ()
+    }
+
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass3<!>() : MyTrait, MyAbstractClass {
+        override fun bar() {}
+        override val pr : Unit = ()
+        override val prr : Unit = ()
+    }
+
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass4<!>() : MyTrait, MyAbstractClass {
+        fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
+        val <!VIRTUAL_MEMBER_HIDDEN, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>pr<!> : Unit
+        <!NOTHING_TO_OVERRIDE!>override<!> fun other() {}
+        <!NOTHING_TO_OVERRIDE!>override<!> val otherPr : Int = 1
+    }
+
+    class MyChildClass1() : MyClass() {
+        fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
+        val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : Unit = ()
+        override fun bar() {}
+        override val prr : Unit = ()
+    }
+}
+
+namespace generics {
+    trait MyTrait<T> {
+        fun foo(t: T) : T
+    }
+
+    abstract class MyAbstractClass<T> {
+        abstract fun bar(t: T) : T
+        abstract val pr : T
+    }
+
+    trait MyProps<T> {
+        val p : T
+    }
+
+    open class MyGenericClass<T>(t : T) : MyTrait<T>, MyAbstractClass<T>, MyProps<T> {
+        override fun foo(t: T) = t
+        override fun bar(t: T) = t
+        override val p : T = t
+        override val pr : T = t
+    }
+
+    class MyChildClass() : MyGenericClass<Int>(1) {}
+    class MyChildClass1<T>(t : T) : MyGenericClass<T>(t) {}
+    class MyChildClass2<T>(t : T) : MyGenericClass<T>(t) {
+        fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(t: T) = t
+        val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : T = t
+        override fun bar(t: T) = t
+        override val p : T = t
+    }
+
+    open class MyClass() : MyTrait<Int>, MyAbstractClass<String> {
+        override fun foo(i: Int) = i
+        override fun bar(s: String) = s
+        override val pr : String = "1"
+    }
+
+    abstract class MyAbstractClass1 : MyTrait<Int>, MyAbstractClass<String> {
+        override fun foo(i: Int) = i
+        override fun bar(s: String) = s
+    }
+
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalGenericClass1<!><T> : MyTrait<T>, MyAbstractClass<T> {}
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalGenericClass2<!><T, R>(r : R) : MyTrait<T>, MyAbstractClass<R> {
+        <!NOTHING_TO_OVERRIDE!>override<!> fun foo(r: R) = r
+        <!NOTHING_TO_OVERRIDE!>override<!> val <T> pr : R = r
+    }
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass1<!> : MyTrait<Int>, MyAbstractClass<String> {}
+    abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String> {}
+
+    class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalClass2<!><T>(t : T) : MyTrait<Int>, MyAbstractClass<Int> {
+        fun foo(t: T) = t
+        fun bar(t: T) = t
+        val <R> pr : T = t
+    }
+    abstract class MyLegalAbstractClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<Int> {
+        fun foo(t: T) = t
+        fun bar(t: T) = t
+        val <R> pr : T = t
+    }
+}

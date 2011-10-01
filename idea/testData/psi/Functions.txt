@@ -587,7 +587,33 @@ JetFile: Functions.jet
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('A')
-      PsiElement(SAFE_ACCESS)('?.')
+          PsiElement(QUEST)('?')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('foo')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+          PsiElement(QUEST)('?')
+    PsiWhiteSpace('\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+          PsiElement(QUEST)('?')
+      PsiWhiteSpace(' ')
+      PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')

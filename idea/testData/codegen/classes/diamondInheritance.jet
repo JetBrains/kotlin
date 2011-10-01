@@ -1,11 +1,13 @@
-class Base() {
-    public var v : Int
+// Changed when traits were introduced. May not make sense any more
+
+open class Base() {
+    public var v : Int = 0
 }
 
-class Left() : Base() {}
-class Right() : Base() {}
+open class Left() : Base() {}
+trait Right : Base {}
 
-class D() : Left(), Right()
+class D() : Left(), Right
 
 fun vl(l : Left) : Int = l.v
 fun vr(r : Right) : Int = r.v

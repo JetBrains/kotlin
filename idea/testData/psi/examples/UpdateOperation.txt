@@ -166,7 +166,9 @@ JetFile: UpdateOperation.jet
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('x')
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
@@ -196,7 +198,9 @@ JetFile: UpdateOperation.jet
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('y')
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('y')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')

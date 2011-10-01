@@ -2,7 +2,7 @@ JetFile: IIterator.jet
   NAMESPACE
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -251,23 +251,21 @@ JetFile: IIterator.jet
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n      ')
-                    BLOCK
-                      THROW
-                        PsiElement(throw)('throw')
-                        PsiWhiteSpace(' ')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            PsiElement(RPAR)(')')
-                      PsiElement(SEMICOLON)(';')
-                    PsiWhiteSpace('\n    ')
-                    PsiElement(RBRACE)('}')
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  THROW
+                    PsiElement(throw)('throw')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                  PsiElement(SEMICOLON)(';')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n    ')
             IF
               PsiElement(if)('if')
@@ -339,57 +337,55 @@ JetFile: IIterator.jet
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n      ')
-                    BLOCK
-                      IF
-                        PsiElement(if)('if')
-                        PsiWhiteSpace(' ')
-                        PsiElement(LPAR)('(')
-                        CONDITION
-                          PREFIX_EXPRESSION
-                            OPERATION_REFERENCE
-                              PsiElement(EXCL)('!')
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('hasNext')
-                        PsiElement(RPAR)(')')
-                        PsiWhiteSpace('\n        ')
-                        THEN
-                          RETURN
-                            PsiElement(return)('return')
-                            PsiWhiteSpace(' ')
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('count')
-                      PsiWhiteSpace('\n      ')
-                      BINARY_EXPRESSION
-                        ARRAY_ACCESS_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('buffer')
-                          INDICES
-                            PsiElement(LBRACKET)('[')
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('i')
-                            PsiElement(RBRACKET)(']')
-                        PsiWhiteSpace(' ')
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  IF
+                    PsiElement(if)('if')
+                    PsiWhiteSpace(' ')
+                    PsiElement(LPAR)('(')
+                    CONDITION
+                      PREFIX_EXPRESSION
                         OPERATION_REFERENCE
-                          PsiElement(EQ)('=')
+                          PsiElement(EXCL)('!')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('hasNext')
+                    PsiElement(RPAR)(')')
+                    PsiWhiteSpace('\n        ')
+                    THEN
+                      RETURN
+                        PsiElement(return)('return')
                         PsiWhiteSpace(' ')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('next')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            PsiElement(RPAR)(')')
-                      PsiWhiteSpace('\n      ')
-                      POSTFIX_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('count')
-                        OPERATION_REFERENCE
-                          PsiElement(PLUSPLUS)('++')
-                    PsiWhiteSpace('\n    ')
-                    PsiElement(RBRACE)('}')
+                  PsiWhiteSpace('\n      ')
+                  BINARY_EXPRESSION
+                    ARRAY_ACCESS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('buffer')
+                      INDICES
+                        PsiElement(LBRACKET)('[')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('i')
+                        PsiElement(RBRACKET)(']')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(EQ)('=')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('next')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n      ')
+                  POSTFIX_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('count')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUSPLUS)('++')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')
             RETURN
               PsiElement(return)('return')

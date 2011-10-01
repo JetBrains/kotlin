@@ -1,4 +1,4 @@
-virtual class IIterator<out T> {
+open class IIterator<out T> {
   fun next() : T
   val hasNext : Boolean
 

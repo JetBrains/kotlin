@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PLUGIN_MODULE" version="4">
   <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/src/META-INF/plugin.xml" />
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MODULE_DIR$/../lib/asm-util-3.3.1.jar!/" />
+    <src_description expected_position="1">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="1" />
+      <src_folder value="file://$MODULE_DIR$/tests" expected_position="2" />
+    </src_description>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -9,7 +16,9 @@
     </content>
     <orderEntry type="jdk" jdkName="IDEA 10.x" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="asm" level="project" />
+    <orderEntry type="module" module-name="backend" />
+    <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="stdlib" />
   </component>
 </module>

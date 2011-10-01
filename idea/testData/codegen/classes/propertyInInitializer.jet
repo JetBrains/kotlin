@@ -1,7 +1,7 @@
 class Outer() {
   public val s = "xyzzy"
 
-  class InnerBase(public val name: String) {
+  open class InnerBase(public val name: String) {
   }
 
   class InnerDerived(): InnerBase(s) {

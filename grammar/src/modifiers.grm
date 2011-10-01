@@ -17,7 +17,7 @@ modifier
 
 classModifier
   : "abstract"
-  : "virtual"
+  : "final"
   : "enum"
   : "open"
   : "attribute"
@@ -25,7 +25,8 @@ classModifier
 
 memberModifier
   : "override"
-  : "virtual"
+  : "open"
+  : "final"
   : "abstract"
   ;
 

@@ -1,13 +1,13 @@
 class A() {
-  fun equals(a : Any?) : Boolean
+  fun equals(a : Any?) : Boolean = false
 }
 
 class B() {
-  fun equals(a : Any?) : Boolean?
+  fun equals(a : Any?) : Boolean? = false
 }
 
 class C() {
-  fun equals(a : Any?) : Int
+  fun equals(a : Any?) : Int = 0
 }
 
 fun f(): Unit {
@@ -32,7 +32,7 @@ fun f(): Unit {
   x !== 1
 
   x<error>..</error>2
-  x <error>in</error> 1..2
+  <error>x</error> in 1..2
 
   val y : Boolean? = true
   false || <error>y</error>

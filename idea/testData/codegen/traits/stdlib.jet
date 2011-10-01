@@ -1,0 +1,60 @@
+trait ISized {
+    val size : Int
+}
+
+trait javaUtilIterator<T> : java.util.Iterator<T> {
+    override fun remove() : Unit {
+        throw UnsupportedOperationException()
+    }
+}
+
+class MyIterator<T>(val array : ReadOnlyArray<T>) : javaUtilIterator<T> {
+    private var index = 0
+
+    override fun hasNext() : Boolean = index < array.size
+
+    override fun next() : T = array.get(index++)
+}
+
+trait ReadOnlyArray<out T> : ISized, java.lang.Iterable<T> {
+  fun get(index : Int) : T
+
+  class Default {
+    fun check(v: Any) =  v is T
+  }
+
+  override fun iterator() : java.util.Iterator<T> = MyIterator<T>(this)
+}
+
+trait WriteOnlyArray<in T> : ISized {
+  fun set(index : Int, value : T) : Unit
+
+  fun set(from: Int, count: Int, value: T) {
+    for(i in from..from+count-1) {
+        set(i, value)
+    }
+  }
+}
+
+class MutableArray<T>(length: Int) : ReadOnlyArray<T>, WriteOnlyArray<T> {
+    private val array = Array<T>(length)
+
+    override fun get(index : Int) : T = array[index]
+    override fun set(index : Int, value : T) : Unit { array[index] = value }
+
+    override val size : Int
+        get() = array.size
+}
+
+fun box() : String {
+    var a = MutableArray<Int> (4)
+    a [0] = 10
+    a.set(1, 2, 13)
+    a [3] = 40
+    System.out?.println(a.iterator())
+    System.out?.println(a.iterator().hasNext())
+    for(el in a) {
+        System.out?.println(el)
+    }
+    return "OK"
+}

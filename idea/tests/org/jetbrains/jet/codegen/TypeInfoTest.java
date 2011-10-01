@@ -113,6 +113,7 @@ public class TypeInfoTest extends CodegenTestCase {
 
     public void testClassObjectInTypeInfo() throws Exception {
         loadFile();
+        System.out.println(generateToText());
         Method foo = generateFunction();
         JetObject jetObject = (JetObject) foo.invoke(null);
         TypeInfo<?> typeInfo = jetObject.getTypeInfo();
@@ -127,6 +128,16 @@ public class TypeInfoTest extends CodegenTestCase {
             public void run() {
             }
         };
+    }
+
+    public void testKt259() throws Exception {
+        blackBoxFile("regressions/kt259.jet");
+        System.out.println(generateToText());
+    }
+
+    public void testInner() throws Exception {
+        blackBoxFile("typeInfo/inner.jet");
+        System.out.println(generateToText());
     }
 }
 

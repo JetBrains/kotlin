@@ -18,7 +18,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,7 +68,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
         };
 
-        AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), new JetControlFlowDataTraceFactory() {
+        AnalyzerFacade.analyzeNamespace(file.getRootNamespace(), new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
             public JetPseudocodeTrace createTrace(JetElement element) {
