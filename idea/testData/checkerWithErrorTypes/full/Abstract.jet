@@ -29,19 +29,19 @@ class MyClass() {
     <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
-    var i: Int                       <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var j: Int                       get() = i;    <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
+    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>k<!>: Int        <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var k1: Int = 0;                 <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>k<!>: Int        <!ILLEGAL_MODIFIER!>abstract<!> set
+    var k1: Int = 0;                 <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var l: Int                       <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var n: Int                       <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_FUNCTION_WITH_BODY, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set(v: Int) {}
+    var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
 }
 
 abstract class MyAbstractClass() {
@@ -73,19 +73,19 @@ abstract class MyAbstractClass() {
     <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
-    var i: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var j: Int                       get() = i;    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var j1: Int                      get() = i;    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
+    var j1: Int                      get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>k<!>: Int        <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var k1: Int = 0;                 <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>k<!>: Int        <!ILLEGAL_MODIFIER!>abstract<!> set
+    var k1: Int = 0;                 <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var l: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var n: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get <!ABSTRACT_FUNCTION_WITH_BODY, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set(v: Int) {}
+    var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
 }
 
 trait MyTrait {
@@ -117,19 +117,19 @@ trait MyTrait {
     <!REDUNDANT_MODIFIER_IN_TRAIT, ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
-    var i: Int                       abstract get  abstract set
-    var i1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var i1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var j: Int                       get() = i;    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var j1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  get() = i;    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
+    var j1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var k: Int                       abstract set
-    var k1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var k: Int                       <!ILLEGAL_MODIFIER!>abstract<!> set
+    var k1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var l: Int                       abstract get  abstract set
-    var l1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var l1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var n: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get <!ABSTRACT_FUNCTION_WITH_BODY, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set(v: Int) {}
+    var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
 }
 
 enum class MyEnum() {
@@ -161,19 +161,19 @@ enum class MyEnum() {
     <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
-    var i: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var j: Int                       get() = i;    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
+    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>k<!>: Int        <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var k1: Int = 0;                 <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>k<!>: Int        <!ILLEGAL_MODIFIER!>abstract<!> set
+    var k1: Int = 0;                 <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var l: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;   <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;   <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var n: Int                       <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get <!ABSTRACT_FUNCTION_WITH_BODY, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set(v: Int) {}
+    var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
 }
 
 abstract enum class MyAbstractEnum() {}
@@ -207,19 +207,19 @@ namespace MyNamespace {
     <!NON_MEMBER_ABSTRACT_FUNCTION!>abstract<!> fun j() {}
 
     //property accessors
-    var i: Int                       <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var j: Int                       get() = i;    <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
+    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var <!MUST_BE_INITIALIZED!>k<!>: Int        <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var k1: Int = 0;                 <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var <!MUST_BE_INITIALIZED!>k<!>: Int        <!ILLEGAL_MODIFIER!>abstract<!> set
+    var k1: Int = 0;                 <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var l: Int                       <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
-    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get  <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+    var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var n: Int                       <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get <!NON_MEMBER_ABSTRACT_ACCESSOR, ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set(v: Int) {}
+    var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
 }
 
 //creating an instance

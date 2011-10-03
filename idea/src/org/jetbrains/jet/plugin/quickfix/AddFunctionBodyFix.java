@@ -12,8 +12,8 @@ import org.jetbrains.jet.lang.psi.*;
 /**
  * @author svtk
  */
-public class AddFunctionBodyFix extends JetIntentionAction<JetFunctionOrPropertyAccessor> {
-    public AddFunctionBodyFix(@NotNull JetFunctionOrPropertyAccessor element) {
+public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
+    public AddFunctionBodyFix(@NotNull JetFunction element) {
         super(element);
     }
 
@@ -37,7 +37,7 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunctionOrProperty
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetFunctionOrPropertyAccessor newElement = (JetFunctionOrPropertyAccessor) element.copy();
+        JetFunction newElement = (JetFunction) element.copy();
         JetExpression bodyExpression = newElement.getBodyExpression();
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(JetPsiFactory.createWhiteSpace(project));
@@ -48,12 +48,12 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunctionOrProperty
         element.replace(newElement);
     }
     
-    public static JetIntentionActionFactory<JetFunctionOrPropertyAccessor> createFactory() {
-        return new JetIntentionActionFactory<JetFunctionOrPropertyAccessor>() {
+    public static JetIntentionActionFactory<JetFunction> createFactory() {
+        return new JetIntentionActionFactory<JetFunction>() {
             @Override
-            public JetIntentionAction<JetFunctionOrPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetFunctionOrPropertyAccessor;
-                return new AddFunctionBodyFix((JetFunctionOrPropertyAccessor) diagnostic.getPsiElement());
+            public JetIntentionAction<JetFunction> createAction(DiagnosticWithPsiElement diagnostic) {
+                assert diagnostic.getPsiElement() instanceof JetFunction;
+                return new AddFunctionBodyFix((JetFunction) diagnostic.getPsiElement());
             }
         };
     }
