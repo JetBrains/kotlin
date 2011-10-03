@@ -100,7 +100,6 @@ public interface Errors {
     DiagnosticWithParameterFactory<JetProperty, JetType> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticWithParameterFactory.create(ERROR, "Property initializers are not allowed in traits", DiagnosticParameters.TYPE);
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
     DiagnosticWithParameterFactory<JetProperty, JetClass> PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR = DiagnosticWithParameterFactory.create(ERROR, "Property initializers are not allowed when no primary constructor is present", DiagnosticParameters.CLASS);
-    SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> REDUNDANT_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "Abstract modifier is redundant in traits");
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass>(ERROR, "Abstract property {0} in non-abstract class {1}") {
         @NotNull
         protected DiagnosticWithPsiElement<JetModifierListOwner> on(@NotNull JetModifierListOwner elementToBlame, @NotNull TextRange textRangeToMark, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass aClass) {
@@ -122,7 +121,7 @@ public interface Errors {
     
     DiagnosticWithParameterFactory<JetNamedDeclaration, JetClass> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticWithParameterFactory.create(ERROR, "Non final member in a final class", DiagnosticParameters.CLASS);
     DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Non final accessor of a final property", DiagnosticParameters.PROPERTY);
-    DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Abstract accessor of a non abstract property", DiagnosticParameters.PROPERTY);
+    DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Abstract accessor of a final property", DiagnosticParameters.PROPERTY);
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");

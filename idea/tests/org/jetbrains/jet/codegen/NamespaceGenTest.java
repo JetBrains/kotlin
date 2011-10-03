@@ -374,13 +374,24 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testArrayNew() throws Exception {
-        loadText("fun foo() = Array<Int>(4)");
+        loadText("fun foo() = Array<Int>(4, { it })");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        Integer[] result = (Integer[]) main.invoke(null);
+        assertEquals(4, result.length);
+        assertEquals(0, result[0].intValue());
+        assertEquals(1, result[1].intValue());
+        assertEquals(2, result[2].intValue());
+        assertEquals(3, result[3].intValue());
+    }
+
+    public void testArrayNewNullable() throws Exception {
+        loadText("fun foo() = Array<Int?>(4)");
         System.out.println(generateToText());
         final Method main = generateFunction();
         Integer[] result = (Integer[]) main.invoke(null);
         assertEquals(4, result.length);
     }
-
     public void testFloatArrayNew() throws Exception {
         loadText("fun foo() = FloatArray(4)");
         System.out.println(generateToText());
@@ -390,11 +401,12 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testFloatArrayArrayNew() throws Exception {
-        loadText("fun foo() = Array<FloatArray>(4)");
+        loadText("fun foo() = Array<FloatArray>(4, { FloatArray(5-it) })");
         System.out.println(generateToText());
         final Method main = generateFunction();
         float[][] result = (float[][]) main.invoke(null);
         assertEquals(4, result.length);
+        assertEquals(2, result[3].length);
     }
 
     public void testArraySize() throws Exception {

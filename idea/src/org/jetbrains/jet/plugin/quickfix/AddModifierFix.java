@@ -41,11 +41,6 @@ public class AddModifierFix extends ModifierFix {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid();
-    }
-
-    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         element.replace(addModifier(element, modifier, modifiersThanCanBeReplaced, project));
     }

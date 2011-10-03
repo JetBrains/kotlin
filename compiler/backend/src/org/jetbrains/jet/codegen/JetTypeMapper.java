@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.Function1;
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
@@ -56,6 +57,7 @@ public class JetTypeMapper {
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
     private final HashMap<JetType,String> knowTypes = new HashMap<JetType, String>();
+    public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;

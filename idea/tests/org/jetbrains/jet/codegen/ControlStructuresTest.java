@@ -151,6 +151,10 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("controlStructures/forIntArray.jet");
     }
 
+    public void testForPrimitiveIntArray() throws Exception {
+        blackBoxFile("controlStructures/forPrimitiveIntArray.jet");
+    }
+
     public void testForNullableIntArray() throws Exception {
         blackBoxFile("controlStructures/forNullableIntArray.jet");
     }

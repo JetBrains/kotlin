@@ -200,7 +200,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final JetExpression loopRange = expression.getLoopRange();
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, loopRange);
         Type loopRangeType = typeMapper.mapType(expressionType);
-        if (state.getStandardLibrary().getArray().equals(expressionType.getConstructor().getDeclarationDescriptor())) {
+        if (loopRangeType.getSort() == Type.ARRAY) {
             new ForInArrayLoopGenerator(expression, loopRangeType).invoke();
             return StackValue.none();
         }
@@ -1688,12 +1688,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private void generateNewArray(JetCallExpression expression, JetType arrayType) {
         List<? extends ValueArgument> args = expression.getValueArguments();
-        if (args.size() != 1) {
-            throw new CompilationException("array constructor requires one value argument");
+
+        boolean isArray = state.getStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor());
+        if(isArray) {
+            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
+                throw new CompilationException("array constructor of non-nullable type requires two arguments");
+            }
+        }
+        else {
+            if (args.size() != 1) {
+                throw new CompilationException("primitive array constructor requires one argument");
+            }
         }
         gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
 
-        if(state.getStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor())) {
+        if(isArray) {
             JetType elementType = typeMapper.getGenericsElementType(arrayType);
             if(elementType != null) {
                 generateTypeInfo(elementType);
@@ -1706,6 +1715,42 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             Type type = typeMapper.mapType(arrayType, OwnerKind.IMPLEMENTATION);
             v.newarray(type.getElementType());
+        }
+
+        if(args.size() == 2) {
+            int sizeIndex  = myMap.enterTemp(2);
+            int indexIndex = sizeIndex+1;
+
+            v.dup();
+            v.arraylength();
+            v.store(sizeIndex, Type.INT_TYPE);
+
+            v.iconst(0);
+            v.store(indexIndex, Type.INT_TYPE);
+
+            gen(args.get(1).getArgumentExpression(), JetTypeMapper.TYPE_FUNCTION1);
+
+            Label begin = new Label();
+            Label end = new Label();
+            v.visitLabel(begin);
+            v.load(indexIndex, Type.INT_TYPE);
+            v.load(sizeIndex,  Type.INT_TYPE);
+            v.ificmpge(end);
+
+            v.dup2();
+            v.load(indexIndex, Type.INT_TYPE);
+            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+            v.invokevirtual("jet/Function1", "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            v.load(indexIndex, Type.INT_TYPE);
+            v.iinc(indexIndex, 1);
+            v.swap();
+            v.astore(JetTypeMapper.TYPE_OBJECT);
+
+            v.goTo(begin);
+            v.visitLabel(end);
+            v.pop();
+
+            myMap.leaveTemp(2);
         }
     }
 

@@ -77,11 +77,6 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid();
-    }
-
-    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetProperty newElement = (JetProperty) element.copy();
         JetPropertyAccessor getter = newElement.getGetter();
