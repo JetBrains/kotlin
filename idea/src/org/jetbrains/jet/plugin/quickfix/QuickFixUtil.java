@@ -1,9 +1,11 @@
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticParameter;
@@ -68,5 +70,13 @@ public class QuickFixUtil {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public static boolean removePossiblyWhiteSpace(ASTDelegatePsiElement element, PsiElement possiblyWhiteSpace) {
+        if (possiblyWhiteSpace instanceof PsiWhiteSpace) {
+            element.deleteChildInternal(possiblyWhiteSpace.getNode());
+            return true;
+        }
+        return false;
     }
 }

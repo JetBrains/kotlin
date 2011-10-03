@@ -35,8 +35,6 @@
     var <error>v5</error> : Int <info>get</info>() = 1; <info>set</info>(x){$v5 = x}
     var <error>v6</error> : Int <info>get</info>() = $v6 + 1; <info>set</info>(x){}
 
-  <info>abstract</info> val v7 : Int <info>abstract</info> <info>get</info>
-  <info>abstract</info> var v8 : Int <info>abstract</info> <info>get</info> <info>abstract</info> <info>set</info>
   var <error>v9</error> : Int <info>set</info>
   var <error>v10</error> : Int <info>get</info>
 

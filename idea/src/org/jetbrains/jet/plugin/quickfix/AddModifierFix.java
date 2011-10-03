@@ -4,11 +4,13 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
@@ -17,19 +19,39 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author svtk
  */
-public class AddModifierFix extends ModifierFix {
+public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
+    private final JetKeywordToken modifier;
     private final JetToken[] modifiersThanCanBeReplaced;
 
     private AddModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced) {
-        super(element, modifier);
+        super(element);
+        this.modifier = modifier;
         this.modifiersThanCanBeReplaced = modifiersThanCanBeReplaced;
+    }
+
+    @NotNull
+    /*package*/ static String getElementName(JetModifierListOwner modifierListOwner) {
+        String name = null;
+        if (modifierListOwner instanceof PsiNameIdentifierOwner) {
+            PsiElement nameIdentifier = ((PsiNameIdentifierOwner) modifierListOwner).getNameIdentifier();
+            if (nameIdentifier != null) {
+                name = nameIdentifier.getText();
+            }
+        }
+        else if (modifierListOwner instanceof JetPropertyAccessor) {
+            name = ((JetPropertyAccessor) modifierListOwner).getNamePlaceholder().getText();
+        }
+        if (name == null) {
+            name = modifierListOwner.getText();
+        }
+        return "'" + name + "'";
     }
 
     @NotNull
     @Override
     public String getText() {
         if (modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
-            return "Make " + getElementName() + " " + modifier.getValue();
+            return "Make " + getElementName(element) + " " + modifier.getValue();
         }
         return "Add '" + modifier.getValue() + "' modifier";
     }

@@ -4,18 +4,22 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author svtk
  */
-public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunctionOrPropertyAccessor> {
+public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
-    public RemoveFunctionBodyFix(@NotNull JetFunctionOrPropertyAccessor element) {
+    public RemoveFunctionBodyFix(@NotNull JetFunction element) {
         super(element);
     }
 
@@ -39,24 +43,40 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunctionOrPrope
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetFunctionOrPropertyAccessor newElement = (JetFunctionOrPropertyAccessor) element.copy();
-        JetExpression bodyExpression = newElement.getBodyExpression();
-        if (bodyExpression != null) {
-            PsiElement prevSibling = bodyExpression.getPrevSibling();
-            if (prevSibling instanceof PsiWhiteSpace) {
-                ((JetElement)newElement).deleteChildInternal(prevSibling.getNode());
-            }
-            ((JetElement)newElement).deleteChildInternal(bodyExpression.getNode());
+        JetFunction function = (JetFunction) element.copy();
+        JetExpression bodyExpression = function.getBodyExpression();
+        assert bodyExpression != null;
+        if (function.hasBlockBody()) {
+            PsiElement prevElement = bodyExpression.getPrevSibling();
+            QuickFixUtil.removePossiblyWhiteSpace(function, prevElement);
+            function.deleteChildInternal(bodyExpression.getNode());
         }
-        element.replace(newElement);
+        else {
+            PsiElement prevElement = bodyExpression.getPrevSibling();
+            PsiElement prevPrevElement = prevElement.getPrevSibling();
+            QuickFixUtil.removePossiblyWhiteSpace(function, prevElement);
+            removePossiblyEquationSign(function, prevElement);
+            removePossiblyEquationSign(function, prevPrevElement);
+            function.deleteChildInternal(bodyExpression.getNode());
+        }
+        element.replace(function);
     }
 
-    public static JetIntentionActionFactory<JetFunctionOrPropertyAccessor> createFactory() {
-        return new JetIntentionActionFactory<JetFunctionOrPropertyAccessor>() {
+    private static boolean removePossiblyEquationSign(@NotNull JetElement element, @Nullable PsiElement possiblyEq) {
+        if (possiblyEq instanceof LeafPsiElement && ((LeafPsiElement)possiblyEq).getElementType() == JetTokens.EQ) {
+            QuickFixUtil.removePossiblyWhiteSpace(element, possiblyEq.getNextSibling());
+            element.deleteChildInternal(possiblyEq.getNode());
+            return true;
+        }
+        return false;
+    }
+
+    public static JetIntentionActionFactory<JetFunction> createFactory() {
+        return new JetIntentionActionFactory<JetFunction>() {
             @Override
-            public JetIntentionAction<JetFunctionOrPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetFunctionOrPropertyAccessor;
-                return new RemoveFunctionBodyFix((JetFunctionOrPropertyAccessor) diagnostic.getPsiElement());
+            public JetIntentionAction<JetFunction> createAction(DiagnosticWithPsiElement diagnostic) {
+                assert diagnostic.getPsiElement() instanceof JetFunction;
+                return new RemoveFunctionBodyFix((JetFunction) diagnostic.getPsiElement());
             }
         };
     }
