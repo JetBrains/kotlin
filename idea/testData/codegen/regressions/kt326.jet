@@ -28,7 +28,7 @@ fun box() : String {
   println(b.a[0])
 
   val c = List<Array<Int>>(1)
-  c.a[0] = Array<Int>(4)
+  c.a[0] = Array<Int>(4,{-1})
   println(c.a[0].size)
 
   val e = List<Int>(5)

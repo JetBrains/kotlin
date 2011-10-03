@@ -49,7 +49,7 @@ trait Iterable<out T> {
   fun iterator() : Iterator<T>
 }
 
-class Array<T>(val size : Int) {
+class Array<T>(val size : Int, init : fun(Int) : T = null ) {
   fun get(index : Int) : T
   fun set(index : Int, value : T) : Unit
 
