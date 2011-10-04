@@ -25,4 +25,5 @@ class Test() {
     <!UNRESOLVED_REFERENCE!>$b<!> = <!UNRESOLVED_REFERENCE!>$a<!>
     a = <!UNRESOLVED_REFERENCE!>$b<!>
    }
+   public val <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>i<!> = 1
 }

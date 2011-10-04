@@ -1,5 +1,5 @@
 class Outer() {
-  public val s = "xyzzy"
+  val s = "xyzzy"
 
   open class InnerBase(public val name: String) {
   }
@@ -7,7 +7,7 @@ class Outer() {
   class InnerDerived(): InnerBase(s) {
   }
 
-  public val x = InnerDerived()
+  val x = InnerDerived()
 }
 
 fun box() : String {

@@ -164,3 +164,8 @@ fun f(): Int {
 }
 
 fun f(): Int = if (1 < 2) 1 else returnNothing()
+
+public fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f<!>() = 1
+class B() {
+   protected fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f<!>() = "ss"
+}

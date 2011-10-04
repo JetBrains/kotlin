@@ -481,17 +481,7 @@ public class ClassDescriptorResolver {
 
         JetType type = getVariableType(scopeWithTypeParameters, property, true);
 
-        boolean hasBody = property.getInitializer() != null;
-        if (!hasBody) {
-            JetPropertyAccessor getter = property.getGetter();
-            if (getter != null && getter.getBodyExpression() != null) {
-                hasBody = true;
-            }
-            JetPropertyAccessor setter = property.getSetter();
-            if (!hasBody && setter != null && setter.getBodyExpression() != null) {
-                hasBody = true;
-            }
-        }
+        boolean hasBody = hasBody(property);
         Modality defaultModality = getDefaultModality(containingDeclaration, hasBody);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
@@ -511,6 +501,21 @@ public class ClassDescriptorResolver {
 
         trace.record(BindingContext.VARIABLE, property, propertyDescriptor);
         return propertyDescriptor;
+    }
+
+    /*package*/ static boolean hasBody(JetProperty property) {
+        boolean hasBody = property.getInitializer() != null;
+        if (!hasBody) {
+            JetPropertyAccessor getter = property.getGetter();
+            if (getter != null && getter.getBodyExpression() != null) {
+                hasBody = true;
+            }
+            JetPropertyAccessor setter = property.getSetter();
+            if (!hasBody && setter != null && setter.getBodyExpression() != null) {
+                hasBody = true;
+            }
+        }
+        return hasBody;
     }
 
     @NotNull

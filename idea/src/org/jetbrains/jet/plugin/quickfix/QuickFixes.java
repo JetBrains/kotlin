@@ -103,5 +103,7 @@ public class QuickFixes {
         add(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
         add(Errors.REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         add(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
+        
+        add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
     }
 }

@@ -2,7 +2,6 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -97,7 +96,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
             newElement.deleteChildRange(nextSibling, initializer);
 
             if (newElement.getPropertyTypeRef() == null && type != null) {
-                newElement = addPropertyType(project, newElement, type);
+                newElement = AddReturnTypeFix.addPropertyType(project, newElement, type);
                 needImport = true;
             }
         }
@@ -106,17 +105,6 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
         } else {
             element.replace(newElement);
         }
-    }
-
-    public static JetProperty addPropertyType(Project project, JetProperty property, JetType type) {
-        JetProperty newProperty = (JetProperty) property.copy();
-        JetTypeReference typeReference = JetPsiFactory.createType(project, type.toString());
-        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
-        PsiElement nameIdentifier = newProperty.getNameIdentifier();
-        assert nameIdentifier != null;
-        newProperty.addAfter(typeReference, nameIdentifier);
-        newProperty.addRangeAfter(colon.getFirst(), colon.getSecond(), nameIdentifier);
-        return newProperty;
     }
 
     public static JetIntentionActionFactory<JetProperty> createFactory() {

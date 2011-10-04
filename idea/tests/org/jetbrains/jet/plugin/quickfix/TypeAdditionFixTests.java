@@ -1,6 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.jet.JetTestCaseBase;
 
 /**
@@ -20,6 +21,11 @@ public class TypeAdditionFixTests extends LightQuickFixTestCase {
     @Override
     protected String getTestDataPath() {
         return JetTestCaseBase.getTestDataPathBase();
+    }
+
+    @Override
+    protected Sdk getProjectJDK() {
+        return JetTestCaseBase.jdkFromIdeaHome();
     }
 }
 
