@@ -3,7 +3,7 @@ class Outer() {
     val outer: Outer get() = this@Outer
   }
 
-  public val x = Inner()
+  public val x : Inner = Inner()
 }
 
 fun box() : String {

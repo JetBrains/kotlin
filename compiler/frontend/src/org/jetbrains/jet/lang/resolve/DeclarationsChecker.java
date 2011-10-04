@@ -137,6 +137,29 @@ public class DeclarationsChecker {
         checkPropertyAbstractness(property, propertyDescriptor, classDescriptor);
         checkPropertyInitializer(property, propertyDescriptor, classDescriptor);
         checkAccessors(property, propertyDescriptor);
+        checkDeclaredTypeInPublicMember(property, propertyDescriptor);
+    }
+
+    private void checkDeclaredTypeInPublicMember(JetNamedDeclaration member, CallableMemberDescriptor memberDescriptor) {
+        PsiElement nameIdentifier = member.getNameIdentifier();
+        boolean hasDeferredType;
+        if (member instanceof JetProperty) {
+            hasDeferredType = ((JetProperty) member).getPropertyTypeRef() == null && ClassDescriptorResolver.hasBody((JetProperty) member);
+        }
+        else {
+            assert member instanceof JetFunction;
+            JetFunction function = (JetFunction) member;
+            hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
+        }
+        if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) &&
+            hasDeferredType && nameIdentifier != null) {
+
+            JetType returnType = memberDescriptor.getReturnType();
+            if (returnType instanceof DeferredType) {
+                returnType = ((DeferredType) returnType).getActualType();
+            }
+            context.getTrace().report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member, nameIdentifier, returnType));
+        }
     }
 
     private void checkPropertyAbstractness(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {
@@ -232,6 +255,7 @@ public class DeclarationsChecker {
         JetModifierList modifierList = function.getModifierList();
         ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
         boolean hasAbstractModifier = abstractNode != null;
+        checkDeclaredTypeInPublicMember(function, functionDescriptor);
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;

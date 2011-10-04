@@ -1,0 +1,92 @@
+package org.jetbrains.jet.plugin.quickfix;
+
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.JetType;
+
+/**
+* @author svtk
+*/
+public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
+    private JetType type;
+
+    public AddReturnTypeFix(@NotNull JetNamedDeclaration element, JetType type) {
+        super(element);
+        this.type = type;
+    }
+
+    @NotNull
+    @Override
+    public String getText() {
+        return "Add return type declaration";
+    }
+
+    @NotNull
+    @Override
+    public String getFamilyName() {
+        return "Add return type declaration";
+    }
+
+    @Override
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        PsiElement newElement;
+        if (element instanceof JetProperty) {
+            newElement = addPropertyType(project, (JetProperty) element, type);
+        }
+        else {
+            assert element instanceof JetFunction;
+            newElement = addFunctionType(project, (JetFunction) element, type);
+        }
+        ImportClassHelper.perform(type, element, newElement);
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+        return true;
+    }
+
+    public static JetProperty addPropertyType(Project project, JetProperty property, JetType type) {
+        JetProperty newProperty = (JetProperty) property.copy();
+        JetTypeReference typeReference = JetPsiFactory.createType(project, type.toString());
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
+        PsiElement nameIdentifier = newProperty.getNameIdentifier();
+        addTypeReference(newProperty, typeReference, colon, nameIdentifier);
+        return newProperty;
+    }
+
+    public static JetFunction addFunctionType(Project project, JetFunction function, JetType type) {
+        JetFunction newFunction = (JetFunction) function.copy();
+        JetTypeReference typeReference = JetPsiFactory.createType(project, type.toString());
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
+        JetParameterList valueParameterList = newFunction.getValueParameterList();
+        addTypeReference(newFunction, typeReference, colon, valueParameterList);
+        return newFunction;
+    }
+
+    private static void addTypeReference(JetNamedDeclaration element, JetTypeReference typeReference, Pair<PsiElement, PsiElement> colon, PsiElement anchor) {
+        assert anchor != null;
+        element.addAfter(typeReference, anchor);
+        element.addRangeAfter(colon.getFirst(), colon.getSecond(), anchor);
+    }
+
+    public static JetIntentionActionFactory<JetNamedDeclaration> createFactory() {
+        return new JetIntentionActionFactory<JetNamedDeclaration>() {
+            @Override
+            public JetIntentionAction<JetNamedDeclaration> createAction(DiagnosticWithPsiElement diagnostic) {
+                assert diagnostic.getPsiElement() instanceof JetNamedDeclaration;
+                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.TYPE);
+                JetType type = diagnosticWithParameters.getParameter(DiagnosticParameters.TYPE);
+                return new AddReturnTypeFix((JetNamedDeclaration) diagnostic.getPsiElement(), type);
+            }
+        };
+    }
+}
