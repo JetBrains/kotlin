@@ -1,6 +1,6 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -8,13 +8,12 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -28,22 +27,24 @@ public class OverloadingConflictResolver {
     }
 
     @Nullable
-    public <Descriptor extends CallableDescriptor> Descriptor findMaximallySpecific(Map<Descriptor, Descriptor> candidates, Map<Descriptor, TemporaryBindingTrace> traces, boolean discriminateGenericDescriptors) {
-        Map<Descriptor, TemporaryBindingTrace> maximallySpecific = Maps.newHashMap();
+    public <D extends CallableDescriptor> ResolvedCall<D> findMaximallySpecific(Set<ResolvedCall<D>> candidates, boolean discriminateGenericDescriptors) {
+        Set<ResolvedCall<D>> maximallySpecific = Sets.newHashSet();
         meLoop:
-        for (Map.Entry<Descriptor, Descriptor> myEntry : candidates.entrySet()) {
-            Descriptor me = myEntry.getValue();
-            TemporaryBindingTrace myTrace = traces.get(myEntry.getKey());
-            for (Descriptor other : candidates.values()) {
+        for (ResolvedCall<D> candidateCall : candidates) {
+            D me = candidateCall.getResultingDescriptor();
+            for (ResolvedCall<D> otherCall : candidates) {
+                D other = otherCall.getResultingDescriptor();
                 if (other == me) continue;
-                if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) continue meLoop;
+                if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
+                    continue meLoop;
+                }
             }
-            maximallySpecific.put(me, myTrace);
+            maximallySpecific.add(candidateCall);
         }
         if (maximallySpecific.size() == 1) {
-            Map.Entry<Descriptor, TemporaryBindingTrace> result = maximallySpecific.entrySet().iterator().next();
-            result.getValue().commit();
-            return result.getKey();
+            ResolvedCall<D> result = maximallySpecific.iterator().next();
+            result.getTrace().commit();
+            return result;
         }
         return null;
     }

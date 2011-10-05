@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -9,7 +8,6 @@ import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +15,8 @@ import java.util.List;
 /**
  * @author abreslav
  */
-/*package*/ class ResolutionTask<Descriptor extends CallableDescriptor> {
-    private final Collection<Descriptor> candidates;
+/*package*/ class ResolutionTask<D extends CallableDescriptor> {
+    private final Collection<ResolvedCall<D>> candidates;
     private final ReceiverDescriptor receiver;
     private final List<JetTypeProjection> typeArguments;
     private final List<? extends ValueArgument> valueArguments;
@@ -26,7 +24,7 @@ import java.util.List;
     private DescriptorCheckStrategy checkingStrategy;
 
     public ResolutionTask(
-            @NotNull Collection<Descriptor> candidates,
+            @NotNull Collection<ResolvedCall<D>> candidates,
             @NotNull ReceiverDescriptor receiver,
             @NotNull List<JetTypeProjection> typeArguments,
             @NotNull List<? extends ValueArgument> valueArguments,
@@ -39,7 +37,7 @@ import java.util.List;
     }
 
     public ResolutionTask(
-            @NotNull Collection<Descriptor> candidates,
+            @NotNull Collection<ResolvedCall<D>> candidates,
             @NotNull ReceiverDescriptor receiver,
             @NotNull Call call
     ) {
@@ -47,7 +45,7 @@ import java.util.List;
     }
 
     @NotNull
-    public Collection<Descriptor> getCandidates() {
+    public Collection<ResolvedCall<D>> getCandidates() {
         return candidates;
     }
 
@@ -75,7 +73,7 @@ import java.util.List;
         checkingStrategy = strategy;
     }
 
-    public boolean performAdvancedChecks(Descriptor descriptor, BindingTrace trace, TracingStrategy tracing) {
+    public boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
         if (checkingStrategy != null && !checkingStrategy.performAdvancedChecks(descriptor, trace, tracing)) {
             return false;
         }

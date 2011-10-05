@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
@@ -21,9 +22,9 @@ import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RECEIVER;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.calls.ResolvedCall.MAP_TO_CANDIDATE;
+import static org.jetbrains.jet.lang.resolve.calls.ResolvedCall.MAP_TO_RESULT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
@@ -35,11 +36,13 @@ public class CallResolver {
     private final JetTypeInferrer typeInferrer;
     private final JetSemanticServices semanticServices;
     private final OverloadingConflictResolver overloadingConflictResolver;
+    private final DataFlowInfo dataFlowInfo;
 
-    public CallResolver(JetSemanticServices semanticServices, JetTypeInferrer typeInferrer) {
+    public CallResolver(JetSemanticServices semanticServices, JetTypeInferrer typeInferrer, DataFlowInfo dataFlowInfo) {
         this.typeInferrer = typeInferrer;
         this.semanticServices = semanticServices;
         this.overloadingConflictResolver = new OverloadingConflictResolver(semanticServices);
+        this.dataFlowInfo = dataFlowInfo;
     }
 
     @Nullable
@@ -54,7 +57,7 @@ public class CallResolver {
             return null;
         }
         Call call = CallMaker.makePropertyCall(nameExpression);
-        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = PROPERTY_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, referencedName);
+        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = TaskPrioritizers.PROPERTY_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, referencedName, trace.getBindingContext(), dataFlowInfo);
         return resolveCallToDescriptor(trace, scope, call, nameExpression.getNode(), expectedType, prioritizedTasks, nameExpression);
     }
 
@@ -80,9 +83,7 @@ public class CallResolver {
             @NotNull String name,
             @NotNull ReceiverDescriptor receiver,
             @NotNull JetType expectedType) {
-        // TODO : autocasts
-        // TODO : nullability
-        List<ResolutionTask<FunctionDescriptor>> tasks = FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, name);
+        List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, name, trace.getBindingContext(), dataFlowInfo);
         return resolveCallToDescriptor(trace, scope, call, functionReference.getNode(), expectedType, tasks, functionReference);
     }
 
@@ -105,7 +106,7 @@ public class CallResolver {
             String name = expression.getReferencedName();
             if (name == null) return checkArgumentTypesAndFail(trace, scope, call);
 
-            prioritizedTasks = FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, name);
+            prioritizedTasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, name, trace.getBindingContext(), dataFlowInfo);
             ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {
                 @Override
                 public <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
@@ -128,7 +129,7 @@ public class CallResolver {
             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
             ASTNode reportAbsenceOn = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
             if (calleeExpression instanceof JetConstructorCalleeExpression) {
-                assert receiver == NO_RECEIVER;
+                assert !receiver.exists();
 
                 prioritizedTasks = Lists.newArrayList();
 
@@ -149,7 +150,7 @@ public class CallResolver {
                         trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(trace, scope, call);
                     }
-                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(constructors, NO_RECEIVER, call));
+                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(ResolvedCall.convertCollection(constructors), NO_RECEIVER, call));
                 }
                 else {
 //                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
@@ -163,14 +164,13 @@ public class CallResolver {
                 assert containingDeclaration instanceof ClassDescriptor;
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-
                 Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
                 if (constructors.isEmpty()) {
 //                    trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
                     trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
-                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(constructors, NO_RECEIVER, call));
+                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCall.convertCollection(constructors), NO_RECEIVER, call));
             }
             else {
                 throw new UnsupportedOperationException("Type argument inference not implemented for " + call.getText());
@@ -185,6 +185,7 @@ public class CallResolver {
         return null;
     }
 
+    @Nullable
     private <D extends CallableDescriptor> D resolveCallToDescriptor(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
@@ -193,17 +194,38 @@ public class CallResolver {
             @NotNull JetType expectedType,
             @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
             @NotNull final JetReferenceExpression reference) {
+        ResolvedCall<D> resolvedCall = doResolveCall(trace, scope, call, callNode, expectedType, prioritizedTasks, reference);
+        return resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
+    }
+
+    @Nullable
+    private <D extends CallableDescriptor> ResolvedCall<D> doResolveCall(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull final Call call,
+            @NotNull final ASTNode callNode,
+            @NotNull JetType expectedType,
+            @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
+            @NotNull final JetReferenceExpression reference) {
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
-        OverloadResolutionResult<D> resultForFirstNonemptyCandidateSet = null;
+        OverloadResolutionResults<D> resultsForFirstNonemptyCandidateSet = null;
         TracingStrategy tracing = new TracingStrategy() {
             @Override
             public void bindReference(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiver, @NotNull CallableDescriptor descriptor) {
                 trace.record(REFERENCE_TARGET, reference, descriptor);
                 trace.record(RECEIVER, reference, receiver);
+                if (receiver instanceof AutocastReceiver) {
+                    AutocastReceiver autoCastReceiver = (AutocastReceiver) receiver;
+                    ReceiverDescriptor original = autoCastReceiver.getOriginal();
+                    if (original instanceof ExpressionReceiver) {
+                        ExpressionReceiver expressionReceiver = (ExpressionReceiver) original;
+                        trace.record(AUTOCAST, expressionReceiver.getExpression(), autoCastReceiver.getType());
+                    }
+                }
             }
 
             @Override
-            public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates) {
+            public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCall<D>> candidates) {
                 trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, candidates);
             }
 
@@ -254,12 +276,12 @@ public class CallResolver {
             }
 
             @Override
-            public void ambiguity(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors) {
+            public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {
                 trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(callNode, descriptors));
             }
 
             @Override
-            public void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors) {
+            public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {
                 trace.report(NONE_APPLICABLE.on(callNode, descriptors));
             }
 
@@ -276,20 +298,20 @@ public class CallResolver {
         };
         for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
-            OverloadResolutionResult<D> result = performResolution(temporaryTrace, scope, expectedType, task, tracing);
-            if (result.isSuccess()) {
+            OverloadResolutionResults<D> results = performResolution(temporaryTrace, scope, expectedType, task, tracing);
+            if (results.isSuccess()) {
                 temporaryTrace.commit();
-                return result.getDescriptor();
+                return results.getResult();
             }
             if (traceForFirstNonemptyCandidateSet == null && !task.getCandidates().isEmpty()) {
                 traceForFirstNonemptyCandidateSet = temporaryTrace;
-                resultForFirstNonemptyCandidateSet = result;
+                resultsForFirstNonemptyCandidateSet = results;
             }
         }
         if (traceForFirstNonemptyCandidateSet != null) {
             traceForFirstNonemptyCandidateSet.commit();
-            if (resultForFirstNonemptyCandidateSet.singleDescriptor()) {
-                return resultForFirstNonemptyCandidateSet.getDescriptor();
+            if (resultsForFirstNonemptyCandidateSet.singleDescriptor()) {
+                return resultsForFirstNonemptyCandidateSet.getResult();
             }
         }
         else {
@@ -302,45 +324,43 @@ public class CallResolver {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResult<D> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing) {
-        Map<D, D> successfulCandidates = Maps.newLinkedHashMap();
-        Set<D> failedCandidates = Sets.newLinkedHashSet();
-        Set<D> dirtyCandidates = Sets.newLinkedHashSet();
-//        Map<D, ConstraintSystem.Solution> solutions = Maps.newHashMap();
-        Map<D, TemporaryBindingTrace> traces = Maps.newHashMap();
+    private <D extends CallableDescriptor> OverloadResolutionResults<D> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing) {
+        Set<ResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCall<D>> dirtyCandidates = Sets.newLinkedHashSet();
 
-        for (D candidate : task.getCandidates()) {
+        for (ResolvedCall<D> candidateCall : task.getCandidates()) {
+            D candidate = candidateCall.getCandidateDescriptor();
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
-            traces.put(candidate, temporaryTrace);
-            JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(temporaryTrace);
+            candidateCall.setTrace(temporaryTrace);
 
             tracing.bindReference(temporaryTrace, task.getReceiver(), candidate);
             
             if (ErrorUtils.isError(candidate)) {
-                successfulCandidates.put(candidate, candidate);
+                successfulCandidates.add(candidateCall.setResultingDescriptor(candidate));
                 checkTypesWithNoCallee(temporaryTrace, scope, task.getTypeArguments(), task.getValueArguments(), task.getFunctionLiteralArguments());
                 continue;
             }
 
-            Ref<Boolean> dirty = new Ref<Boolean>(false);
 
             Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters = Maps.newHashMap();
             boolean error = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(task, tracing, candidate, temporaryTrace, argumentsToParameters);
 
             if (error) {
-                failedCandidates.add(candidate);
+                failedCandidates.add(candidateCall);
                 checkTypesWithNoCallee(temporaryTrace, scope, task.getTypeArguments(), task.getValueArguments(), task.getFunctionLiteralArguments());
                 continue;
             }
 
+            Ref<Boolean> dirty = new Ref<Boolean>(false);
             if (task.getTypeArguments().isEmpty()) {
                 if (candidate.getTypeParameters().isEmpty()) {
-                    if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, dirty, Functions.<ValueParameterDescriptor>identity())
+                    if (checkValueArgumentTypes(scope, temporaryTrace, argumentsToParameters, dirty, Functions.<ValueParameterDescriptor>identity())
                             && checkReceiver(task, tracing, candidate, temporaryTrace)) {
-                        successfulCandidates.put(candidate, candidate);
+                        successfulCandidates.add(candidateCall.setResultingDescriptor(candidate));
                     }
                     else {
-                        failedCandidates.add(candidate);
+                        failedCandidates.add(candidateCall);
                     }
                 }
                 else {
@@ -357,6 +377,7 @@ public class CallResolver {
 
                         JetExpression expression = valueArgument.getArgumentExpression();
                         // TODO : more attempts, with different expected types
+                        JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(temporaryTrace);
                         JetType type = temporaryServices.getType(scope, expression, NO_EXPECTED_TYPE);
                         if (type != null) {
                             constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
@@ -370,7 +391,7 @@ public class CallResolver {
                     // Error is already reported if something is missing
                     ReceiverDescriptor receiver = task.getReceiver();
                     ReceiverDescriptor candidateReceiver = candidate.getReceiver();
-                    if (receiver != NO_RECEIVER && candidateReceiver != NO_RECEIVER) {
+                    if (receiver.exists() && candidateReceiver.exists()) {
                         constraintSystem.addSubtypingConstraint(receiver.getType(), candidateReceiver.getType());
                     }
 
@@ -383,11 +404,11 @@ public class CallResolver {
                     if (solution.isSuccessful()) {
                         D substitute = (D) candidate.substitute(solution.getSubstitutor());
                         assert substitute != null;
-                        successfulCandidates.put(candidate, substitute);
+                        successfulCandidates.add(candidateCall.setResultingDescriptor(substitute));
                     }
                     else {
                         tracing.typeInferenceFailed(temporaryTrace);
-                        failedCandidates.add(candidate);
+                        failedCandidates.add(candidateCall);
                     }
                 }
             }
@@ -420,32 +441,32 @@ public class CallResolver {
                     D substitutedFunctionDescriptor = (D) candidate.substitute(TypeSubstitutor.create(substitutionContext));
 
                     Function<ValueParameterDescriptor, ValueParameterDescriptor> mapFunction = createMapFunction(substitutedFunctionDescriptor);
-                    if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, dirty, mapFunction)
+                    if (checkValueArgumentTypes(scope, temporaryTrace, argumentsToParameters, dirty, mapFunction)
                             && checkReceiver(task, tracing, substitutedFunctionDescriptor, temporaryTrace)) {
-                        successfulCandidates.put(candidate, substitutedFunctionDescriptor);
+                        successfulCandidates.add(candidateCall.setResultingDescriptor(substitutedFunctionDescriptor));
                     }
                     else {
-                        failedCandidates.add(candidate);
+                        failedCandidates.add(candidateCall);
                     }
                 }
                 else {
-                    failedCandidates.add(candidate);
+                    failedCandidates.add(candidateCall);
 //                    tracing.reportWrongTypeArguments(temporaryTrace, "Number of type arguments does not match " + DescriptorRenderer.TEXT.render(candidate));
                     tracing.wrongNumberOfTypeArguments(temporaryTrace, expectedTypeArgumentCount);
                 }
             }
             
             if (dirty.get()) {
-                dirtyCandidates.add(candidate);
+                dirtyCandidates.add(candidateCall);
             }
             task.performAdvancedChecks(candidate, temporaryTrace, tracing);
         }
 
-        OverloadResolutionResult<D> result = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);
-        if (!result.singleDescriptor()) {
+        OverloadResolutionResults<D> results = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates);
+        if (!results.singleDescriptor()) {
             checkTypesWithNoCallee(trace, scope, task.getTypeArguments(), task.getValueArguments(), task.getFunctionLiteralArguments());
         }
-        return result;
+        return results;
     }
 
     private void checkTypesWithNoCallee(BindingTrace trace, JetScope scope, List<JetTypeProjection> typeArguments, List<? extends ValueArgument> valueArguments, List<JetExpression> functionLiteralArguments) {
@@ -484,8 +505,8 @@ public class CallResolver {
         if (!checkReceiverAbsence(task, tracing, candidate, temporaryTrace)) return false;
         ReceiverDescriptor receiver = task.getReceiver();
         ReceiverDescriptor candidateReceiver = candidate.getReceiver();
-        if (receiver != NO_RECEIVER
-                && candidateReceiver != NO_RECEIVER
+        if (receiver.exists()
+                && candidateReceiver.exists()
                 && !semanticServices.getTypeChecker().isSubtypeOf(receiver.getType(), candidateReceiver.getType())) {
             tracing.missingReceiver(temporaryTrace, candidateReceiver);
             return false;
@@ -496,13 +517,13 @@ public class CallResolver {
     private <D extends CallableDescriptor> boolean checkReceiverAbsence(ResolutionTask<D> task, TracingStrategy tracing, D candidate, TemporaryBindingTrace temporaryTrace) {
         ReceiverDescriptor receiver = task.getReceiver();
         ReceiverDescriptor candidateReceiver = candidate.getReceiver();
-        if (receiver != NO_RECEIVER) {
-            if (candidateReceiver == NO_RECEIVER) {
+        if (receiver.exists()) {
+            if (!candidateReceiver.exists()) {
                 tracing.noReceiverAllowed(temporaryTrace);
                 return false;
             }
         }
-        else if (candidateReceiver != NO_RECEIVER) {
+        else if (candidateReceiver.exists()) {
             tracing.missingReceiver(temporaryTrace, candidateReceiver);
             return false;
         }
@@ -510,26 +531,31 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResult<D> computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<D, D> successfulCandidates, Set<D> failedCandidates, Set<D> dirtyCandidates, Map<D, TemporaryBindingTrace> traces) {
+    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeResultAndReportErrors(
+            BindingTrace trace,
+            TracingStrategy tracing,
+            Set<ResolvedCall<D>> successfulCandidates, // original -> substituted
+            Set<ResolvedCall<D>> failedCandidates,
+            Set<ResolvedCall<D>> dirtyCandidates) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
         if (successfulCandidates.size() > 0) {
             if (successfulCandidates.size() != 1) {
-                Map<D, D> cleanCandidates = Maps.newLinkedHashMap(successfulCandidates);
-                cleanCandidates.keySet().removeAll(dirtyCandidates);
+                Set<ResolvedCall<D>> cleanCandidates = Sets.newLinkedHashSet(successfulCandidates);
+                cleanCandidates.removeAll(dirtyCandidates);
                 if (cleanCandidates.isEmpty()) {
                     cleanCandidates = successfulCandidates;
                 }
-                D maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, false);
+                ResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, false);
                 if (maximallySpecific != null) {
-                    return OverloadResolutionResult.success(maximallySpecific);
+                    return OverloadResolutionResults.success(maximallySpecific);
                 }
 
-                D maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, true);
+                ResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
                 if (maximallySpecificGenericsDiscriminated != null) {
-                    return OverloadResolutionResult.success(maximallySpecificGenericsDiscriminated);
+                    return OverloadResolutionResults.success(maximallySpecificGenericsDiscriminated);
                 }
 
-                Set<D> noOverrides = OverridingUtil.filterOverrides(successfulCandidates.keySet());
+                Set<ResolvedCall<D>> noOverrides = OverridingUtil.filterOverrides(successfulCandidates, MAP_TO_RESULT);
                 if (dirtyCandidates.isEmpty()) {
 //                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
 //                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
@@ -538,42 +564,44 @@ public class CallResolver {
 
                 tracing.recordAmbiguity(trace, noOverrides);
 
-                return OverloadResolutionResult.ambiguity(noOverrides);
+                return OverloadResolutionResults.ambiguity(noOverrides);
             }
             else {
-                Map.Entry<D, D> entry = successfulCandidates.entrySet().iterator().next();
-                D functionDescriptor = entry.getKey();
-                D result = entry.getValue();
+                ResolvedCall<D> result = successfulCandidates.iterator().next();
 
-                TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
+                TemporaryBindingTrace temporaryTrace = result.getTrace();
                 temporaryTrace.commit();
-                return OverloadResolutionResult.success(result);
+                return OverloadResolutionResults.success(result);
             }
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {
-                Set<D> noOverrides = OverridingUtil.filterOverrides(failedCandidates);
+                Set<ResolvedCall<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
                 if (noOverrides.size() != 1) {
 //                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
 //                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
                     tracing.noneApplicable(trace, noOverrides);
                     tracing.recordAmbiguity(trace, noOverrides);
-                    return OverloadResolutionResult.manyFailedCandidates(noOverrides);
+                    return OverloadResolutionResults.manyFailedCandidates(noOverrides);
                 }
                 failedCandidates = noOverrides;
             }
-            D functionDescriptor = failedCandidates.iterator().next();
-            TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
-            temporaryTrace.commit();
-            return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
+            ResolvedCall<D> failed = failedCandidates.iterator().next();
+            failed.getTrace().commit();
+            return OverloadResolutionResults.singleFailedCandidate(failed);
         }
         else {
             tracing.unresolvedReference(trace);
-            return OverloadResolutionResult.nameNotFound();
+            return OverloadResolutionResults.nameNotFound();
         }
     }
 
-    private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Ref<Boolean> dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
+    private boolean checkValueArgumentTypes(
+            JetScope scope,
+            BindingTrace temporaryTrace,
+            Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters,
+            Ref<Boolean> dirty,
+            Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
         boolean result = true;
         for (Map.Entry<ValueArgument, ValueParameterDescriptor> entry : argumentsToParameters.entrySet()) {
             ValueArgument valueArgument = entry.getKey();
@@ -586,12 +614,34 @@ public class CallResolver {
             JetType parameterType = substitutedParameter.getOutType();
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
+                JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(temporaryTrace);
                 JetType type = temporaryServices.getType(scope, argumentExpression, parameterType);
                 if (type == null) {
                     dirty.set(true);
                 }
                 else if (!semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
-                    result = false;
+//                    VariableDescriptor variableDescriptor = AutoCastUtils.getVariableDescriptorFromSimpleName(temporaryTrace.getBindingContext(), argumentExpression);
+//                    if (variableDescriptor != null) {
+//                        JetType autoCastType = null;
+//                        for (JetType possibleType : dataFlowInfo.getPossibleTypesForVariable(variableDescriptor)) {
+//                            if (semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
+//                                autoCastType = possibleType;
+//                                break;
+//                            }
+//                        }
+//                        if (autoCastType != null) {
+//                            if (AutoCastUtils.isAutocastable(variableDescriptor)) {
+//                                temporaryTrace.record(AUTOCAST, argumentExpression, autoCastType);
+//                            }
+//                            else {
+//                                temporaryTrace.report(AUTOCAST_IMPOSSIBLE.on(argumentExpression, autoCastType, variableDescriptor));
+//                                result = false;
+//                            }
+//                        }
+//                    }
+//                    else {
+                        result = false;
+//                    }
                 }
             }
         }
@@ -618,23 +668,23 @@ public class CallResolver {
     }
 
     @NotNull
-    public OverloadResolutionResult<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
         List<FunctionDescriptor> result = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
 
         BindingTraceContext trace = new BindingTraceContext();
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(trace);
-        Map<FunctionDescriptor, TemporaryBindingTrace> traces = Maps.newHashMap();
-        Map<FunctionDescriptor, FunctionDescriptor> candidates = Maps.newLinkedHashMap();
+        Set<ResolvedCall<FunctionDescriptor>> candidates = Sets.newLinkedHashSet();
         for (FunctionDescriptor functionDescriptor : result) {
-            candidates.put(functionDescriptor, functionDescriptor);
-            traces.put(functionDescriptor, temporaryBindingTrace);
+            ResolvedCall<FunctionDescriptor> resolvedCall = ResolvedCall.create(functionDescriptor);
+            candidates.add(resolvedCall.setResultingDescriptor(functionDescriptor));
+            resolvedCall.setTrace(temporaryBindingTrace);
         }
-        return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, candidates, Collections.<FunctionDescriptor>emptySet(), Collections.<FunctionDescriptor>emptySet(), traces);
+        return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, candidates, Collections.<ResolvedCall<FunctionDescriptor>>emptySet(), Collections.<ResolvedCall<FunctionDescriptor>>emptySet());
     }
 
     private List<FunctionDescriptor> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver, String name, List<JetType> parameterTypes) {
         List<FunctionDescriptor> result = Lists.newArrayList();
-        if (receiver != NO_RECEIVER) {
+        if (receiver.exists()) {
             Set<FunctionDescriptor> extensionFunctionDescriptors = scope.getFunctions(name);
             List<FunctionDescriptor> nonlocal = Lists.newArrayList();
             List<FunctionDescriptor> local = Lists.newArrayList();
@@ -662,7 +712,7 @@ public class CallResolver {
     private boolean lookupExactSignature(Set<FunctionDescriptor> candidates, List<JetType> parameterTypes, List<FunctionDescriptor> result) {
         boolean found = false;
         for (FunctionDescriptor functionDescriptor : candidates) {
-            if (functionDescriptor.getReceiver() != NO_RECEIVER) continue;
+            if (functionDescriptor.getReceiver().exists()) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes)) continue;
             result.add(functionDescriptor);
@@ -675,7 +725,7 @@ public class CallResolver {
         boolean found = false;
         for (FunctionDescriptor functionDescriptor : candidates) {
             ReceiverDescriptor functionReceiver = functionDescriptor.getReceiver();
-            if (functionReceiver == NO_RECEIVER) continue;
+            if (!functionReceiver.exists()) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!semanticServices.getTypeChecker().isSubtypeOf(receiver.getType(), functionReceiver.getType())) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes))continue;
@@ -695,113 +745,4 @@ public class CallResolver {
         }
         return true;
     }
-
-    private static TaskPrioritizer<FunctionDescriptor> FUNCTION_TASK_PRIORITIZER = new TaskPrioritizer<FunctionDescriptor>() {
-
-        @NotNull
-        @Override
-        protected Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, String name) {
-            Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctions(name));
-            for (Iterator<FunctionDescriptor> iterator = functions.iterator(); iterator.hasNext(); ) {
-                FunctionDescriptor functionDescriptor = iterator.next();
-                if (functionDescriptor.getReceiver() != NO_RECEIVER) {
-                    iterator.remove();
-                }
-            }
-            addConstructors(scope, name, functions);
-
-            addVariableAsFunction(scope, name, functions, false);
-            return functions;
-        }
-
-        @NotNull
-        @Override
-        protected Collection<FunctionDescriptor> getMembersByName(@NotNull ReceiverDescriptor receiver, String name) {
-            JetScope receiverScope = receiver.getType().getMemberScope();
-            Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctions(name));
-            addConstructors(receiverScope, name, members);
-            addVariableAsFunction(receiverScope, name, members, false);
-            return members;
-        }
-
-        @NotNull
-        @Override
-        protected Collection<FunctionDescriptor> getExtensionsByName(JetScope scope, String name) {
-            Set<FunctionDescriptor> extensionFunctions = Sets.newHashSet(scope.getFunctions(name));
-            for (Iterator<FunctionDescriptor> iterator = extensionFunctions.iterator(); iterator.hasNext(); ) {
-                FunctionDescriptor descriptor = iterator.next();
-                if (descriptor.getReceiver() == NO_RECEIVER) {
-                    iterator.remove();
-                }
-            }
-            addVariableAsFunction(scope, name, extensionFunctions, true);
-            return extensionFunctions;
-        }
-
-        @NotNull
-        @Override
-        protected ResolutionTask<FunctionDescriptor> createTask(@NotNull ReceiverDescriptor receiver, Call call, Collection<FunctionDescriptor> candidates) {
-            return new ResolutionTask<FunctionDescriptor>(candidates, receiver, call);
-        }
-
-        private void addConstructors(JetScope scope, String name, Collection<FunctionDescriptor> functions) {
-            ClassifierDescriptor classifier = scope.getClassifier(name);
-            if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier.getTypeConstructor())) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-                functions.addAll(classDescriptor.getConstructors());
-            }
-        }
-
-        private void addVariableAsFunction(JetScope scope, String name, Set<FunctionDescriptor> functions, boolean receiverNeeded) {
-            VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && variable.getReceiver() == NO_RECEIVER) {
-                JetType outType = variable.getOutType();
-                if (outType != null && JetStandardClasses.isFunctionType(outType)) {
-                    VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
-                    if ((functionDescriptor.getReceiver() != NO_RECEIVER) == receiverNeeded) {
-                        functions.add(functionDescriptor);
-                    }
-                }
-            }
-        }
-    };
-
-    private static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
-
-        @NotNull
-        @Override
-        protected Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
-            VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && variable.getReceiver() == NO_RECEIVER) {
-                return Collections.singleton(variable);
-            }
-            return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        protected Collection<VariableDescriptor> getMembersByName(@NotNull ReceiverDescriptor receiver, String name) {
-            VariableDescriptor variable = receiver.getType().getMemberScope().getVariable(name);
-            if (variable != null) {
-                return Collections.singleton(variable);
-            }
-            return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        protected Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
-            VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && variable.getReceiver() != NO_RECEIVER) {
-                return Collections.singleton(variable);
-            }
-            return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        protected ResolutionTask<VariableDescriptor> createTask(@NotNull ReceiverDescriptor receiver, Call call, Collection<VariableDescriptor> candidates) {
-            return new ResolutionTask<VariableDescriptor>(candidates, receiver, call);
-        }
-    };
 }

@@ -132,7 +132,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
         JetType substitutedReceiverType = null;
-        if (receiver != NO_RECEIVER) {
+        if (receiver.exists()) {
             substitutedReceiverType = substitutor.substitute(getReceiver().getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) {
                 return null;

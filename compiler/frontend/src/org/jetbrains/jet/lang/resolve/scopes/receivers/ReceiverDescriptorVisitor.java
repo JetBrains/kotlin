@@ -20,7 +20,7 @@ public class ReceiverDescriptorVisitor<R, D> {
         return null;
     }
 
-    public R visitClassReceiver(ClassReceiver classReceiver, D data) {
+    public R visitClassReceiver(ClassReceiver receiver, D data) {
         return null;
     }
 }

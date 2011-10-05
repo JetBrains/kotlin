@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.AnalyzerFacade;
@@ -91,7 +92,7 @@ public class DebugInfoAnnotator implements Annotator {
                                 target = labelTarget.getText();
                             }
                             else {
-                                Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, expression);
+                                Collection<? extends ResolvedCall<? extends DeclarationDescriptor>> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, expression);
                                 if (declarationDescriptors != null) {
                                     target = "[" + declarationDescriptors.size() + " descriptors]";
                                 }

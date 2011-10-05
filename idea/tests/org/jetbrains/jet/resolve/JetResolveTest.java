@@ -15,7 +15,8 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -107,14 +108,14 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
         JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext(), JetFlowInformationProvider.NONE);
 
-        OverloadResolutionResult<FunctionDescriptor> functions = typeInferrerServices.getCallResolver().resolveExactSignature(
+        OverloadResolutionResults<FunctionDescriptor> functions = typeInferrerServices.getCallResolver().resolveExactSignature(
                 classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);
-        for (FunctionDescriptor function : functions.getDescriptors()) {
-            List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getValueParameters();
+        for (ResolvedCall<FunctionDescriptor> resolvedCall : functions.getResults()) {
+            List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
                 ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
                 if (unsubstitutedValueParameter.getOutType().equals(parameterType[i])) {
-                    return function;
+                    return resolvedCall.getResultingDescriptor();
                 }
             }
         }

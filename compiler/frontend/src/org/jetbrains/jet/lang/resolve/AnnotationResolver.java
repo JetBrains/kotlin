@@ -9,9 +9,11 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.DataFlowInfo;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
@@ -27,11 +29,15 @@ import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 public class AnnotationResolver {
 
     private final BindingTrace trace;
-    private final JetTypeInferrer typeInferrer;
+//    private final JetTypeInferrer typeInferrer;
+    private final CallResolver callResolver;
+//    private final JetTypeInferrer.Services services;
 
     public AnnotationResolver(JetSemanticServices semanticServices, BindingTrace trace) {
-        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
         this.trace = trace;
+//        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
+//        this.services = typeInferrer.getServices(this.trace);
+        this.callResolver = new CallResolver(semanticServices, new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices), DataFlowInfo.getEmpty());
     }
 
     @NotNull
@@ -47,7 +53,7 @@ public class AnnotationResolver {
     }
 
     public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement, @NotNull AnnotationDescriptor descriptor) {
-        JetType jetType = typeInferrer.getCallResolver().resolveCall(trace, scope, ReceiverDescriptor.NO_RECEIVER, entryElement, NO_EXPECTED_TYPE);
+        JetType jetType = callResolver.resolveCall(trace, scope, ReceiverDescriptor.NO_RECEIVER, entryElement, NO_EXPECTED_TYPE);
         descriptor.setAnnotationType(jetType == null ? ErrorUtils.createErrorType("Unresolved annotation type") : jetType);
     }
 

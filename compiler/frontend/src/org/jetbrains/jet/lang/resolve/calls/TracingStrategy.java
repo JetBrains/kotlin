@@ -21,7 +21,7 @@ import java.util.Set;
         public void unresolvedReference(@NotNull BindingTrace trace) {}
 
         @Override
-        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates) {}
+        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCall<D>> candidates) {}
 
         @Override
         public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver) {}
@@ -36,10 +36,10 @@ import java.util.Set;
         public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {}
 
         @Override
-        public void ambiguity(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors) {}
+        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {}
 
         @Override
-        public void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors) {}
+        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {}
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
@@ -52,7 +52,7 @@ import java.util.Set;
 
     void unresolvedReference(@NotNull BindingTrace trace);
 
-    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates);
+    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCall<D>> candidates);
 
     void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver);
 
@@ -62,9 +62,9 @@ import java.util.Set;
 
     void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount);
 
-    void ambiguity(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors);
+    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors);
 
-    void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors);
+    <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors);
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 

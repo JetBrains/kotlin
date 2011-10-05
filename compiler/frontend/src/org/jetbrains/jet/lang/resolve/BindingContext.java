@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -28,7 +29,7 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>("EXPRESSION_TYPE", RewritePolicy.DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>("REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
-    WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>("AMBIGUOUS_REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
+    WritableSlice<JetReferenceExpression, Collection<? extends ResolvedCall<? extends DeclarationDescriptor>>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends ResolvedCall<? extends DeclarationDescriptor>>>("AMBIGUOUS_REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
 
     WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = Slices.createSimpleSlice("LOOP_RANGE_ITERATOR");
     WritableSlice<JetExpression, CallableDescriptor> LOOP_RANGE_HAS_NEXT = Slices.createSimpleSlice("LOOP_RANGE_HAS_NEXT");

@@ -334,7 +334,7 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope, null, call, NO_EXPECTED_TYPE);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope, ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
                         }
                     }
 

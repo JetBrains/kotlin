@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -161,7 +161,6 @@ public class JetTypeInferrer {
 
     private final JetSemanticServices semanticServices;
     private final JetFlowInformationProvider flowInformationProvider;
-    private final CallResolver callResolver;
     private final Map<JetPattern, DataFlowInfo> patternsToDataFlowInfo = Maps.newHashMap();
 
     private final Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists = Maps.newHashMap();
@@ -169,15 +168,10 @@ public class JetTypeInferrer {
     public JetTypeInferrer(@NotNull JetFlowInformationProvider flowInformationProvider, @NotNull JetSemanticServices semanticServices) {
         this.semanticServices = semanticServices;
         this.flowInformationProvider = flowInformationProvider;
-        this.callResolver = new CallResolver(semanticServices, this);
     }
 
     public Services getServices(@NotNull BindingTrace trace) {
         return new Services(trace);
-    }
-
-    public CallResolver getCallResolver() {
-        return callResolver;
     }
 
     public class Services {
@@ -186,12 +180,14 @@ public class JetTypeInferrer {
 
         private final TypeInferrerVisitor typeInferrerVisitor;
         private final TypeInferrerVisitorWithNamespaces typeInferrerVisitorWithNamespaces;
+        private final CallResolver callResolver;
 
         private Services(BindingTrace trace) {
             this.trace = trace;
             this.compileTimeConstantResolver = new CompileTimeConstantResolver(semanticServices, trace);
             this.typeInferrerVisitor = new TypeInferrerVisitor();
             this.typeInferrerVisitorWithNamespaces = new TypeInferrerVisitorWithNamespaces();
+            this.callResolver = new CallResolver(semanticServices, JetTypeInferrer.this, DataFlowInfo.getEmpty());
         }
 
         public TypeInferrerVisitorWithWritableScope newTypeInferrerVisitorWithWritableScope(WritableScope scope) {
@@ -516,7 +512,7 @@ public class JetTypeInferrer {
             VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression, context);
             boolean appropriateTypeFound = false;
             if (variableDescriptor != null) {
-                List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
+                List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypesForVariable(variableDescriptor));
                 Collections.reverse(possibleTypes);
                 for (JetType possibleType : possibleTypes) {
                     if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
@@ -612,6 +608,9 @@ public class JetTypeInferrer {
         public final JetType expectedType;
         public final JetType expectedReturnType;
 
+        @Deprecated // Use a getter
+        private CallResolver callResolver;
+
         @Deprecated // Only factory methods
         private TypeInferenceContext(
                 @NotNull BindingTrace trace,
@@ -666,6 +665,34 @@ public class JetTypeInferrer {
             if (expectedType == newExpectedType && expectedReturnType == newExpectedReturnType) return this;
             return newContext(trace, scope, dataFlowInfo, newExpectedType, newExpectedReturnType);
         }
+
+        public CallResolver getCallResolver() {
+            if (callResolver == null) {
+                callResolver = new CallResolver(semanticServices, JetTypeInferrer.this, this.dataFlowInfo);
+            }
+            return callResolver;
+        }
+
+        @Nullable
+        public FunctionDescriptor resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name, @NotNull ReceiverDescriptor receiver) {
+            return getCallResolver().resolveCallWithGivenName(trace, scope, call, functionReference, name, receiver, expectedType);
+        }
+
+        @Nullable
+        public JetType resolveCall(@NotNull ReceiverDescriptor receiver, @NotNull JetCallElement call) {
+            return getCallResolver().resolveCall(trace, scope, receiver, call, expectedType);
+        }
+
+        @Nullable
+        public VariableDescriptor resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @NotNull JetSimpleNameExpression nameExpression) {
+            return getCallResolver().resolveSimpleProperty(trace, scope, receiver, nameExpression, expectedType);
+        }
+
+        @NotNull
+        public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
+            return getCallResolver().resolveExactSignature(scope, receiver, name, parameterTypes);
+        }
+        
     }
 
     private class TypeInferrerVisitor extends JetVisitor<JetType, TypeInferenceContext> {
@@ -1899,9 +1926,9 @@ public class JetTypeInferrer {
         @Nullable
         private JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, TypeInferenceContext context) {
             JetExpression loopRangeExpression = loopRange.getExpression();
-            OverloadResolutionResult<FunctionDescriptor> iteratorResolutionResult = callResolver.resolveExactSignature(context.scope, loopRange, "iterator", Collections.<JetType>emptyList());
-            if (iteratorResolutionResult.isSuccess()) {
-                FunctionDescriptor iteratorFunction = iteratorResolutionResult.getDescriptor();
+            OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = context.resolveExactSignature(loopRange, "iterator", Collections.<JetType>emptyList());
+            if (iteratorResolutionResults.isSuccess()) {
+                FunctionDescriptor iteratorFunction = iteratorResolutionResults.getResult().getResultingDescriptor();
                 
                 context.trace.record(LOOP_RANGE_ITERATOR, loopRangeExpression, iteratorFunction);
                 
@@ -1923,27 +1950,27 @@ public class JetTypeInferrer {
                     context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
                 }
 
-                OverloadResolutionResult<FunctionDescriptor> nextResolutionResult = callResolver.resolveExactSignature(context.scope, new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
-                if (nextResolutionResult.isAmbiguity()) {
+                OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
+                if (nextResolutionResults.isAmbiguity()) {
 //                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
                     context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
-                } else if (nextResolutionResult.isNothing()) {
+                } else if (nextResolutionResults.isNothing()) {
 //                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
                     context.trace.report(NEXT_MISSING.on(loopRangeExpression));
                 } else {
-                    FunctionDescriptor nextFunction = nextResolutionResult.getDescriptor();
+                    FunctionDescriptor nextFunction = nextResolutionResults.getResult().getResultingDescriptor();
                     context.trace.record(LOOP_RANGE_NEXT, loopRange.getExpression(), nextFunction);
                     return nextFunction.getReturnType();
                 }
             }
             else {
-                if (iteratorResolutionResult.isAmbiguity()) {
+                if (iteratorResolutionResults.isAmbiguity()) {
 //                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
-//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResult.getDescriptors()) {
+//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResults()) {
 //                        stringBuffer.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
 //                    }
 //                    errorMessage = stringBuffer.toString();
-                    context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResult.getDescriptors()));
+                    context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResults()));
                 }
                 else {
 //                    context.trace.getErrorHandler().genericError(reportErrorsOn, errorMessage);
@@ -1955,21 +1982,21 @@ public class JetTypeInferrer {
 
         @Nullable
         private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, TypeInferenceContext context) {
-            OverloadResolutionResult<FunctionDescriptor> hasNextResolutionResult = callResolver.resolveExactSignature(context.scope, new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
-            if (hasNextResolutionResult.isAmbiguity()) {
+            OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
+            if (hasNextResolutionResults.isAmbiguity()) {
 //                context.trace.getErrorHandler().genericError(loopRange.getNode(), "Method 'iterator().hasNext()' is ambiguous for this expression");
                 context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
-            } else if (hasNextResolutionResult.isNothing()) {
+            } else if (hasNextResolutionResults.isNothing()) {
                 return null;
             } else {
-                assert hasNextResolutionResult.isSuccess();
-                JetType hasNextReturnType = hasNextResolutionResult.getDescriptor().getReturnType();
+                assert hasNextResolutionResults.isSuccess();
+                JetType hasNextReturnType = hasNextResolutionResults.getResult().getResultingDescriptor().getReturnType();
                 if (!isBoolean(hasNextReturnType)) {
 //                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
                     context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
                 }
             }
-            return hasNextResolutionResult.getDescriptor();
+            return hasNextResolutionResults.getResult().getResultingDescriptor();
         }
 
         @Nullable
@@ -2032,7 +2059,7 @@ public class JetTypeInferrer {
                 VariableDescriptor variableDescriptor = cleanResolutionContext.services.getVariableDescriptorFromSimpleName(receiverExpression, context);
                 boolean somethingFound = false;
                 if (variableDescriptor != null) {
-                    List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
+                    List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypesForVariable(variableDescriptor));
                     Collections.reverse(possibleTypes);
 
                     TemporaryBindingTrace autocastResolutionTrace = TemporaryBindingTrace.create(context.trace);
@@ -2163,13 +2190,13 @@ public class JetTypeInferrer {
         @Nullable
         private JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @NotNull JetExpression selectorExpression, @NotNull TypeInferenceContext context) {
             if (selectorExpression instanceof JetCallExpression) {
-                return callResolver.resolveCall(context.trace, context.scope, receiver, (JetCallExpression) selectorExpression, context.expectedType);
+                return context.resolveCall(receiver, (JetCallExpression) selectorExpression);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) selectorExpression;
 
                 TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-                VariableDescriptor variableDescriptor = callResolver.resolveSimpleProperty(temporaryTrace, context.scope, receiver, nameExpression, context.expectedType);
+                VariableDescriptor variableDescriptor = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, nameExpression);
                 if (variableDescriptor != null) {
                     temporaryTrace.commit();
                     return context.services.checkEnrichedType(variableDescriptor.getOutType(), nameExpression, context);
@@ -2202,7 +2229,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitCallExpression(JetCallExpression expression, TypeInferenceContext context) {
-            JetType expressionType = callResolver.resolveCall(context.trace, context.scope, ReceiverDescriptor.NO_RECEIVER, expression, context.expectedType);
+            JetType expressionType = context.resolveCall(ReceiverDescriptor.NO_RECEIVER, expression);
             return context.services.checkType(expressionType, expression, context);
         }
 
@@ -2239,14 +2266,11 @@ public class JetTypeInferrer {
             ExpressionReceiver receiver = getExpressionReceiver(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(context.scope));
             if (receiver == null) return null;
 
-            FunctionDescriptor functionDescriptor = callResolver.resolveCallWithGivenName(
-                    context.trace,
-                    context.scope,
+            FunctionDescriptor functionDescriptor = context.resolveCallWithGivenName(
                     CallMaker.makeCall(expression),
                     expression.getOperationSign(),
                     name,
-                    receiver,
-                    context.expectedType);
+                    receiver);
 
             if (functionDescriptor == null) return null;
             JetType returnType = functionDescriptor.getReturnType();
@@ -2317,24 +2341,24 @@ public class JetTypeInferrer {
                 String name = "equals";
                 if (right != null) {
                     ExpressionReceiver receiver = safeGetExpressionReceiver(left, context.replaceScope(context.scope));
-                    OverloadResolutionResult<FunctionDescriptor> resolutionResult = callResolver.resolveExactSignature(
-                            context.scope, receiver, "equals",
+                    OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
+                            receiver, "equals",
                             Collections.singletonList(JetStandardClasses.getNullableAnyType()));
-                    if (resolutionResult.isSuccess()) {
-                        FunctionDescriptor equals = resolutionResult.getDescriptor();
+                    if (resolutionResults.isSuccess()) {
+                        FunctionDescriptor equals = resolutionResults.getResult().getResultingDescriptor();
                         context.trace.record(REFERENCE_TARGET, operationSign, equals);
                         if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
                             ensureNonemptyIntersectionOfOperandTypes(expression, context);
                         }
                     }
                     else {
-                        if (resolutionResult.isAmbiguity()) {
+                        if (resolutionResults.isAmbiguity()) {
 //                            StringBuilder stringBuilder = new StringBuilder();
-//                            for (FunctionDescriptor functionDescriptor : resolutionResult.getDescriptors()) {
+//                            for (FunctionDescriptor functionDescriptor : resolutionResults.getResults()) {
 //                                stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
 //                            }
 //                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);
-                            context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResult.getDescriptors()));
+                            context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResults.getResults()));
                         }
                         else {
 //                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
@@ -2398,12 +2422,10 @@ public class JetTypeInferrer {
         private void checkInExpression(JetSimpleNameExpression operationSign, JetExpression left, JetExpression right, TypeInferenceContext context) {
             String name = "contains";
             ExpressionReceiver receiver = safeGetExpressionReceiver(right, context.replaceExpectedType(NO_EXPECTED_TYPE));
-            FunctionDescriptor functionDescriptor = callResolver.resolveCallWithGivenName(
-                    context.trace,
-                    context.scope,
+            FunctionDescriptor functionDescriptor = context.resolveCallWithGivenName(
                     CallMaker.makeCall(operationSign, Collections.singletonList(left)),
                     operationSign,
-                    name, receiver, context.expectedType);
+                    name, receiver);
             JetType containsType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
             ensureBooleanResult(operationSign, name, containsType, context);
         }
@@ -2469,14 +2491,11 @@ public class JetTypeInferrer {
             ExpressionReceiver receiver = getExpressionReceiver(arrayExpression, context.replaceScope(context.scope));
 
             if (receiver != null) {
-                FunctionDescriptor functionDescriptor = callResolver.resolveCallWithGivenName(
-                        context.trace,
-                        context.scope,
+                FunctionDescriptor functionDescriptor = context.resolveCallWithGivenName(
                         CallMaker.makeCall(expression, expression.getIndexExpressions()),
-                        expression, 
+                        expression,
                         "get",
-                        receiver,
-                        context.expectedType);
+                        receiver);
                 if (functionDescriptor != null) {
                     return context.services.checkType(functionDescriptor.getReturnType(), expression, contextWithExpectedType);
                 }
@@ -2487,14 +2506,11 @@ public class JetTypeInferrer {
         @Nullable
         protected JetType getTypeForBinaryCall(JetScope scope, String name, TypeInferenceContext context, JetBinaryExpression binaryExpression) {
             ExpressionReceiver receiver = safeGetExpressionReceiver(binaryExpression.getLeft(), context.replaceScope(scope));
-            FunctionDescriptor functionDescriptor = callResolver.resolveCallWithGivenName(
-                    context.trace,
-                    scope,
+            FunctionDescriptor functionDescriptor = context.replaceScope(scope).resolveCallWithGivenName(
                     CallMaker.makeCall(binaryExpression),
                     binaryExpression.getOperationReference(),
                     name,
-                    receiver,
-                    context.expectedType);
+                    receiver);
             if (functionDescriptor != null) {
                 if (receiver.getType().isNullable()) {
                     // TODO : better error message for '1 + nullableVar' case
@@ -2746,12 +2762,10 @@ public class JetTypeInferrer {
 //                    call,
 //                    arrayAccessExpression,
 //                    "set", arrayAccessExpression.getArrayExpression(), NO_EXPECTED_TYPE);
-            FunctionDescriptor functionDescriptor = callResolver.resolveCallWithGivenName(
-                    context.trace,
-                    scope,
+            FunctionDescriptor functionDescriptor = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE).resolveCallWithGivenName(
                     call,
                     arrayAccessExpression,
-                    "set", receiver, NO_EXPECTED_TYPE);
+                    "set", receiver);
             if (functionDescriptor == null) return null;
             context.trace.record(REFERENCE_TARGET, operationSign, functionDescriptor);
             return context.services.checkType(functionDescriptor.getReturnType(), arrayAccessExpression, context);
