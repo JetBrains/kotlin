@@ -214,8 +214,8 @@ public class CallResolver {
             public void bindReference(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiver, @NotNull CallableDescriptor descriptor) {
                 trace.record(REFERENCE_TARGET, reference, descriptor);
                 trace.record(RECEIVER, reference, receiver);
-                if (receiver instanceof AutocastReceiver) {
-                    AutocastReceiver autoCastReceiver = (AutocastReceiver) receiver;
+                if (receiver instanceof AutoCastReceiver) {
+                    AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
                     ReceiverDescriptor original = autoCastReceiver.getOriginal();
                     if (original instanceof ExpressionReceiver) {
                         ExpressionReceiver expressionReceiver = (ExpressionReceiver) original;

@@ -55,7 +55,7 @@ public class AutoCastUtils {
                 if (variableDescriptor != null && isAutocastable(variableDescriptor)) {
                     List<ReceiverDescriptor> result = Lists.newArrayList();
                     for (JetType possibleType : dataFlowInfo.getPossibleTypesForVariable(variableDescriptor)) {
-                        result.add(new AutocastReceiver(receiver, possibleType));
+                        result.add(new AutoCastReceiver(receiver, possibleType));
                     }
                     return result;
                 }
@@ -71,7 +71,7 @@ public class AutoCastUtils {
         assert receiver.exists();
         List<ReceiverDescriptor> result = Lists.newArrayList();
         for (JetType possibleType : dataFlowInfo.getPossibleTypesForReceiver(receiver)) {
-            result.add(new AutocastReceiver(receiver, possibleType));
+            result.add(new AutoCastReceiver(receiver, possibleType));
         }
         return result;
     }
