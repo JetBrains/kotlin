@@ -26,7 +26,7 @@ public class AutoCastUtils {
 
     private AutoCastUtils() {}
 
-    public static List<? extends ReceiverDescriptor> getAutocastVariants(@NotNull final BindingContext bindingContext, @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast) {
+    public static List<? extends ReceiverDescriptor> getAutoCastVariants(@NotNull final BindingContext bindingContext, @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast) {
         return receiverToCast.accept(new ReceiverDescriptorVisitor<List<? extends ReceiverDescriptor>, Object>() {
             @Override
             public List<? extends ReceiverDescriptor> visitNoReceiver(ReceiverDescriptor noReceiver, Object data) {

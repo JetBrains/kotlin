@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.CommonSuppliers;
@@ -21,14 +20,15 @@ import java.util.Collection;
  * @author abreslav
  */
 public interface BindingContext {
-    WritableSlice<JetElement, ReceiverDescriptor> RECEIVER = Slices.createSimpleSlice("RECEIVER");
-
     WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice("ANNOTATION");
+
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice("COMPILE_TIME_VALUE");
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice("TYPE");
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>("EXPRESSION_TYPE", RewritePolicy.DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>("REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
+    WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>("RESOLVED_CALL", RewritePolicy.DO_NOTHING);
+
     WritableSlice<JetReferenceExpression, Collection<? extends ResolvedCall<? extends DeclarationDescriptor>>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends ResolvedCall<? extends DeclarationDescriptor>>>("AMBIGUOUS_REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
 
     WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = Slices.createSimpleSlice("LOOP_RANGE_ITERATOR");

@@ -3,9 +3,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -41,8 +39,8 @@ public class TaskPrioritizers {
 
         @NotNull
         @Override
-        protected Collection<FunctionDescriptor> getMembersByName(@NotNull ReceiverDescriptor receiver, String name) {
-            JetScope receiverScope = receiver.getType().getMemberScope();
+        protected Collection<FunctionDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
+            JetScope receiverScope = receiverType.getMemberScope();
             Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctions(name));
             addConstructors(receiverScope, name, members);
             addVariableAsFunction(receiverScope, name, members, false);
@@ -61,12 +59,6 @@ public class TaskPrioritizers {
             }
             addVariableAsFunction(scope, name, extensionFunctions, true);
             return extensionFunctions;
-        }
-
-        @NotNull
-        @Override
-        protected ResolutionTask<FunctionDescriptor> createTask(@NotNull ReceiverDescriptor receiver, Call call, Collection<ResolvedCall<FunctionDescriptor>> candidates) {
-            return new ResolutionTask<FunctionDescriptor>(candidates, receiver, call);
         }
 
         private void addConstructors(JetScope scope, String name, Collection<FunctionDescriptor> functions) {
@@ -105,8 +97,8 @@ public class TaskPrioritizers {
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getMembersByName(@NotNull ReceiverDescriptor receiver, String name) {
-            VariableDescriptor variable = receiver.getType().getMemberScope().getVariable(name);
+        protected Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
+            VariableDescriptor variable = receiverType.getMemberScope().getVariable(name);
             if (variable != null) {
                 return Collections.singleton(variable);
             }
@@ -121,12 +113,6 @@ public class TaskPrioritizers {
                 return Collections.singleton(variable);
             }
             return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        protected ResolutionTask<VariableDescriptor> createTask(@NotNull ReceiverDescriptor receiver, Call call, Collection<ResolvedCall<VariableDescriptor>> candidates) {
-            return new ResolutionTask<VariableDescriptor>(candidates, receiver, call);
         }
     };
 }

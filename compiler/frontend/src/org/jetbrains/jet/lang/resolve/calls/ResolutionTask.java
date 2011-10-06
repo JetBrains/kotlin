@@ -7,7 +7,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.DataFlowInfo;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,41 +17,41 @@ import java.util.List;
  */
 /*package*/ class ResolutionTask<D extends CallableDescriptor> {
     private final Collection<ResolvedCall<D>> candidates;
-    private final ReceiverDescriptor receiver;
     private final List<JetTypeProjection> typeArguments;
     private final List<? extends ValueArgument> valueArguments;
     private final List<JetExpression> functionLiteralArguments;
+    private final DataFlowInfo dataFlowInfo;
     private DescriptorCheckStrategy checkingStrategy;
 
     public ResolutionTask(
             @NotNull Collection<ResolvedCall<D>> candidates,
-            @NotNull ReceiverDescriptor receiver,
             @NotNull List<JetTypeProjection> typeArguments,
             @NotNull List<? extends ValueArgument> valueArguments,
-            @NotNull List<JetExpression> functionLiteralArguments) {
+            @NotNull List<JetExpression> functionLiteralArguments,
+            @NotNull DataFlowInfo dataFlowInfo) {
         this.candidates = candidates;
-        this.receiver = receiver;
         this.typeArguments = typeArguments;
         this.valueArguments = valueArguments;
         this.functionLiteralArguments = functionLiteralArguments;
+        this.dataFlowInfo = dataFlowInfo;
     }
 
     public ResolutionTask(
             @NotNull Collection<ResolvedCall<D>> candidates,
-            @NotNull ReceiverDescriptor receiver,
-            @NotNull Call call
+            @NotNull Call call,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
-        this(candidates, receiver, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments());
+        this(candidates, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments(), dataFlowInfo);
+    }
+
+    @NotNull
+    public DataFlowInfo getDataFlowInfo() {
+        return dataFlowInfo;
     }
 
     @NotNull
     public Collection<ResolvedCall<D>> getCandidates() {
         return candidates;
-    }
-
-    @NotNull
-    public ReceiverDescriptor getReceiver() {
-        return receiver;
     }
 
     @NotNull

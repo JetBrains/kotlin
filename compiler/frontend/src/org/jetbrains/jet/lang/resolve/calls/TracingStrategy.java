@@ -15,7 +15,7 @@ import java.util.Set;
 /*package*/ interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
         @Override
-        public void bindReference(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiver, @NotNull CallableDescriptor descriptor) {}
+        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {}
 
         @Override
         public void unresolvedReference(@NotNull BindingTrace trace) {}
@@ -48,7 +48,7 @@ import java.util.Set;
         public void typeInferenceFailed(@NotNull BindingTrace trace) {}
     };
 
-    void bindReference(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiver, @NotNull CallableDescriptor descriptor);
+    <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall);
 
     void unresolvedReference(@NotNull BindingTrace trace);
 
