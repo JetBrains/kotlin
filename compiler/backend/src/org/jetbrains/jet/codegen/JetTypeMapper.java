@@ -317,6 +317,9 @@ public class JetTypeMapper {
         if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             return Type.VOID_TYPE;
         }
+        if (jetType.equals(JetStandardClasses.getNullableNothingType())) {
+            return TYPE_OBJECT;
+        }
         return mapType(jetType, kind);
     }
 

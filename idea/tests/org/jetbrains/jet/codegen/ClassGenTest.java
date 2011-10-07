@@ -178,4 +178,11 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt48.jet");
         System.out.println(generateToText());
     }
+
+    public void testKt309 () throws Exception {
+        loadText("fun box() = null");
+        final Method method = generateFunction("box");
+        assertEquals(method.getReturnType().getName(), "java.lang.Object");
+        System.out.println(generateToText());
+    }
 }
