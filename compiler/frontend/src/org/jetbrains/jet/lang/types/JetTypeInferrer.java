@@ -2772,6 +2772,11 @@ public class JetTypeInferrer {
         }
 
         @Override
+        public JetType visitAnnotatedExpression(JetAnnotatedExpression expression, TypeInferenceContext data) {
+            return getType(expression.getBaseExpression(), data);
+        }
+
+        @Override
         public JetType visitJetElement(JetElement element, TypeInferenceContext context) {
             context.trace.report(UNSUPPORTED.on(element, "in a block"));
 //            context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported element in a block: " + element + " " + element.getClass().getCanonicalName());

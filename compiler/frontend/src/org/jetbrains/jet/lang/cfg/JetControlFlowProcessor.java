@@ -91,11 +91,9 @@ public class JetControlFlowProcessor {
     }
 
     private class CFPVisitor extends JetVisitorVoid {
-//        private final boolean preferBlock;
         private final boolean inCondition;
 
         private CFPVisitor(boolean inCondition) {
-//            this.preferBlock = preferBlock;
             this.inCondition = inCondition;
         }
 
