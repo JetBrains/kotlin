@@ -42,7 +42,7 @@ fun Any?.toString() : String// = this === other
 
 trait Iterator<out T> {
   fun next() : T
-  abstract fun hasNext() : Boolean
+  fun hasNext() : Boolean
 }
 
 trait Iterable<out T> {

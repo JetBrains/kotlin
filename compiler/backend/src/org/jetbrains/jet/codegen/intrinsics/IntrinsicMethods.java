@@ -34,6 +34,7 @@ public class IntrinsicMethods {
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
+    private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
 
     public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
         myProject = project;
@@ -87,6 +88,16 @@ public class IntrinsicMethods {
         declareIntrinsicProperty("DoubleArray", "size", ARRAY_SIZE);
         declareIntrinsicProperty("CharArray", "size", ARRAY_SIZE);
         declareIntrinsicProperty("BooleanArray", "size", ARRAY_SIZE);
+
+        declareOverload(myStdLib.getArray().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getByteArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getShortArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getIntArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getLongArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getFloatArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getDoubleArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getCharArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(myStdLib.getBooleanArrayClass().getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
     }
 
     private void declareIntrinsicStringMethods() {
