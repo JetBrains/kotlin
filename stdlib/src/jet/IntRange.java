@@ -5,34 +5,42 @@ import jet.typeinfo.TypeInfo;
 public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObject {
     private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
 
-    private final int startValue;
-    private final int excludedEndValue;
+    private final int start;
+    private final int count;
 
-    public IntRange(int startValue, int endValue) {
-        this.startValue = startValue;
-        this.excludedEndValue = endValue;
+    public IntRange(int startValue, int count) {
+        this.start = startValue;
+        this.count = count;
+    }
+
+    public IntRange(int startValue, int count, boolean reversed) {
+        this(startValue, reversed ? -count : count);
     }
 
     @Override
     public boolean contains(Integer item) {
         if (item == null) return false;
-        if (startValue < excludedEndValue) {
-            return item >= startValue && item < excludedEndValue;
+        if (count >= 0) {
+            return item >= start && item < start + count;
         }
-        return item <= startValue && item > excludedEndValue;
+        return item <= start && item > start + count;
     }
 
     public int getStart() {
-        return startValue;
+        return start;
     }
 
     public int getEnd() {
-        return excludedEndValue;
+        return start+count-1;
+    }
+
+    public int getSize() {
+        return count < 0 ? -count : count;
     }
 
     @Override
     public Iterator<Integer> iterator() {
-        return new MyIterator(startValue, excludedEndValue);
+        return new MyIterator(start, count);
     }
 
     @Override
@@ -44,27 +52,43 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         return new IntRange(0, length);
     }
 
+    public static IntRange rangeTo(int from, int to) {
+        if(from > to) {
+            return new IntRange(to, from-to+1, true);
+        }
+        else {
+            return new IntRange(from, to-from+1);
+        }
+    }
+
     private static class MyIterator implements Iterator<Integer> {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-        private final int lastValue;
 
         private int cur;
-        private boolean reversed;
+        private int count;
 
-        public MyIterator(int startValue, int endValue) {
-            reversed = endValue <= startValue;
-            this.lastValue = reversed ? startValue : endValue-1;
-            cur = reversed ? endValue-1 : startValue;
+        private final boolean reversed;
+
+        public MyIterator(int startValue, int count) {
+            cur = startValue;
+            reversed = count < 0;
+            this.count = reversed ? -count : count;
         }
 
         @Override
         public boolean hasNext() {
-            return reversed ? cur >= lastValue : cur <= lastValue;
+            return count > 0;
         }
 
         @Override
         public Integer next() {
-            return reversed ? cur-- : cur++;
+            count--;
+            if(reversed) {
+                return cur--;
+            }
+            else {
+                return cur++;
+            }
         }
 
         @Override

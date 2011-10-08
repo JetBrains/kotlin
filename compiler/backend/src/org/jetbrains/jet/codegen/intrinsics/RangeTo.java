@@ -16,21 +16,15 @@ import java.util.List;
  * @author yole
  */
 public class RangeTo implements IntrinsicMethod {
-    private static final String INT_RANGE_CONSTRUCTOR_DESCRIPTOR = "(II)V";
-    private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
-    private static final String CLASS_INT_RANGE = "jet/IntRange";
-
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         JetBinaryExpression expression = (JetBinaryExpression) element;
         final Type leftType = codegen.expressionType(expression.getLeft());
         if (JetTypeMapper.isIntPrimitive(leftType)) {
-            v.anew(INT_RANGE_TYPE);
-            v.dup();
             codegen.gen(expression.getLeft(), Type.INT_TYPE);
             codegen.gen(expression.getRight(), Type.INT_TYPE);
-            v.invokespecial(CLASS_INT_RANGE, "<init>", INT_RANGE_CONSTRUCTOR_DESCRIPTOR);
-            return StackValue.onStack(INT_RANGE_TYPE);
+            v.invokestatic("jet/IntRange", "rangeTo", "(II)Ljet/IntRange;");
+            return StackValue.onStack(JetTypeMapper.TYPE_INT_RANGE);
         }
         else {
             throw new UnsupportedOperationException("ranges are only supported for int objects");

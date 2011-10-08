@@ -217,7 +217,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             assert expressionType != null;
             final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
-            if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+            if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses (now IntRange is final)
                 new ForInRangeLoopGenerator(expression, loopRangeType).invoke();
                 return StackValue.none();
             }
@@ -2297,7 +2297,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, rangeExpression);
                 assert jetType != null;
                 final DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-                if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+                if (isClass(descriptor, "IntRange")) {
                     return true;
                 }
             }

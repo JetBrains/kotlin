@@ -170,16 +170,28 @@ trait Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
-class IntRange(val start : Int, val excludedEnd : Int) : Range<Int>, Iterable<Int> {
+class IntRange(val start : Int, size : Int, reversed : Boolean = false) : Range<Int>, Iterable<Int> {
     fun iterator () : Iterator<Int>
 
     fun contains (elem: Int) : Boolean
+
+    val size : Int
+
+    val end : Int
+
+    val reversed : Boolean
 }
 
-class LongRange(val start : Long, val end : Long) : Range<Long>, Iterable<Long> {
+class LongRange(val start : Long, size : Long, reversed : Boolean = false) : Range<Long>, Iterable<Long> {
     fun iterator () : Iterator<Long>
 
     fun contains (elem: Long) : Boolean
+
+    val size : Long
+
+    val end : Long
+
+    val reversed : Boolean
 }
 
 abstract class Number : Hashable {

@@ -433,8 +433,8 @@ public class NamespaceGenTest extends CodegenTestCase {
         final Method main = generateFunction();
         IntRange result = (IntRange) main.invoke(null);
         assertTrue(result.contains(1));
-        assertTrue(result.contains(9));
-        assertFalse(result.contains(10));
+        assertTrue(result.contains(10));
+        assertFalse(result.contains(11));
     }
 
     public void testSubstituteJavaMethodTypeParameters() throws Exception {
