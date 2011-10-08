@@ -58,6 +58,7 @@ public class JetTypeMapper {
     private final HashMap<JetType,String> knowTypes = new HashMap<JetType, String>();
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
     public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
+    public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;

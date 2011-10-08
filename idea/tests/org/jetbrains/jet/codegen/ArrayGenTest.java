@@ -86,4 +86,18 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         foo.invoke(null);
     }
+
+    public void testArrayIndices () throws Exception {
+        loadText("fun box() { val x = Array<Int>(5, {it}).indices.iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testCharIndices () throws Exception {
+        loadText("fun box() { val x = CharArray(5).indices.iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
 }

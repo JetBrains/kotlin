@@ -2,19 +2,19 @@ package jet;
 
 import jet.typeinfo.TypeInfo;
 
-public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObject {
+public final class LongRange implements Range<Long>, Iterable<Long>, JetObject {
     private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
 
-    private final int startValue;
-    private final int excludedEndValue;
+    private final long startValue;
+    private final long excludedEndValue;
 
-    public IntRange(int startValue, int endValue) {
+    public LongRange(long startValue, long endValue) {
         this.startValue = startValue;
         this.excludedEndValue = endValue;
     }
 
     @Override
-    public boolean contains(Integer item) {
+    public boolean contains(Long item) {
         if (item == null) return false;
         if (startValue < excludedEndValue) {
             return item >= startValue && item < excludedEndValue;
@@ -22,16 +22,16 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         return item <= startValue && item > excludedEndValue;
     }
 
-    public int getStart() {
+    public long getStart() {
         return startValue;
     }
 
-    public int getEnd() {
+    public long getEnd() {
         return excludedEndValue;
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<Long> iterator() {
         return new MyIterator(startValue, excludedEndValue);
     }
 
@@ -39,19 +39,19 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
     public TypeInfo<?> getTypeInfo() {
         return typeInfo;
     }
-    
+
     public static IntRange count(int length) {
         return new IntRange(0, length);
     }
 
-    private static class MyIterator implements Iterator<Integer> {
+    private static class MyIterator implements Iterator<Long> {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-        private final int lastValue;
+        private final long lastValue;
 
-        private int cur;
+        private long cur;
         private boolean reversed;
 
-        public MyIterator(int startValue, int endValue) {
+        public MyIterator(long startValue, long endValue) {
             reversed = endValue <= startValue;
             this.lastValue = reversed ? startValue : endValue-1;
             cur = reversed ? endValue-1 : startValue;
@@ -63,7 +63,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         }
 
         @Override
-        public Integer next() {
+        public Long next() {
             return reversed ? cur-- : cur++;
         }
 
