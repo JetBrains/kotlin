@@ -1837,11 +1837,24 @@ public class JetTypeInferrer {
                 DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
                 getTypeWithNewScopeAndDataFlowInfo(scopeToExtend, body, conditionInfo, context);
             }
-            if (!flowInformationProvider.isBreakable(expression)) {
+            if (!isBreakable(expression)) {
 //                resultScope = newWritableScopeImpl();
                 resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, null, context);
             }
             return context.services.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+        }
+        
+        private boolean isBreakable(JetLoopExpression expression) {
+            final boolean[] result = new boolean[1];
+            result[0] = false;
+            expression.accept(new JetTreeVisitorVoid() {
+                @Override
+                public void visitBreakExpression(JetBreakExpression expression) {
+                    result[0] = true;
+                }
+            });
+
+            return result[0];
         }
 
         @Override
@@ -1867,7 +1880,7 @@ public class JetTypeInferrer {
             }
             JetExpression condition = expression.getCondition();
             checkCondition(conditionScope, condition, context);
-            if (!flowInformationProvider.isBreakable(expression)) {
+            if (!isBreakable(expression)) {
 //                resultScope = newWritableScopeImpl();
                 resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, null, context);
             }

@@ -7,7 +7,7 @@ import org.jetbrains.jet.JetNodeType;
 /**
  * @author max
  */
-public class JetExpression extends JetElement {
+public abstract class JetExpression extends JetElement {
     public JetExpression(@NotNull ASTNode node) {
         super(node);
     }
