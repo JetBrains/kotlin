@@ -1,0 +1,16 @@
+import java.util.ArrayList
+
+fun box(): String {
+    val list = ArrayList<Int>()
+    val foo : fun() : Unit = {
+        list.add(2)  //first exception
+    }
+    foo()
+
+//    val bar = {
+//        val x = 1   //second exception
+//    }
+//    bar()
+
+    return if (list.get(0) == 2) "OK" else "fail"
+}
