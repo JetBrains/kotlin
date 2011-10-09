@@ -185,4 +185,9 @@ public class ClassGenTest extends CodegenTestCase {
         assertEquals(method.getReturnType().getName(), "java.lang.Object");
         System.out.println(generateToText());
     }
+
+    public void testKt343 () throws Exception {
+        blackBoxFile("regressions/kt343.jet");
+        System.out.println(generateToText());
+    }
 }

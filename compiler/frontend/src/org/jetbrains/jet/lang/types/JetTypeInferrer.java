@@ -456,6 +456,9 @@ public class JetTypeInferrer {
                 }
                 else {
                     result = blockLevelVisitor.getType(statementExpression, newContext);
+                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && result == null) {
+                        result = JetStandardClasses.getUnitType();
+                    }
                 }
 
                 DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();
@@ -1020,6 +1023,7 @@ public class JetTypeInferrer {
 
             if (functionTypeExpected) {
                 JetType expectedReturnType = JetStandardClasses.getReturnType(expectedType);
+                functionDescriptor.setReturnType(expectedReturnType);
                 if (JetStandardClasses.isUnit(expectedReturnType)) {
                     return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, expectedReturnType), expression, context);
                 }
