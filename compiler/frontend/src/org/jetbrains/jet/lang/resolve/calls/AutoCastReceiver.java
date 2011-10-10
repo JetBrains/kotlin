@@ -11,10 +11,16 @@ import org.jetbrains.jet.lang.types.JetType;
  */
 public class AutoCastReceiver extends AbstractReceiverDescriptor {
     private final ReceiverDescriptor original;
+    private final boolean canCast;
 
-    public AutoCastReceiver(@NotNull ReceiverDescriptor original, @NotNull JetType castTo) {
+    public AutoCastReceiver(@NotNull ReceiverDescriptor original, @NotNull JetType castTo, boolean canCast) {
         super(castTo);
         this.original = original;
+        this.canCast = canCast;
+    }
+
+    public boolean canCast() {
+        return canCast;
     }
 
     @NotNull

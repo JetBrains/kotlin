@@ -1,7 +1,9 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.List;
 
@@ -9,6 +11,14 @@ import java.util.List;
  * @author abreslav
  */
 public interface Call {
+
+    // SAFE_ACCESS or DOT or so
+    @Nullable
+    ASTNode getCallOperationNode();
+
+    @NotNull
+    ReceiverDescriptor getExplicitReceiver();
+
     @Nullable
     JetExpression getCalleeExpression();
 
@@ -26,4 +36,7 @@ public interface Call {
 
     @Nullable
     JetTypeArgumentList getTypeArgumentList();
+
+    @NotNull
+    ASTNode getCallNode();
 }

@@ -13,7 +13,8 @@ public class VarargValueArgument implements ResolvedValueArgument {
     private final List<JetExpression> values = Lists.newArrayList();
 
     @NotNull
-    public List<JetExpression> getValues() {
+    @Override
+    public List<JetExpression> getArgumentExpressions() {
         return values;
     }
 }

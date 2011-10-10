@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.types.DataFlowInfo;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
@@ -70,43 +71,89 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 //        return result;
 //    }
 
-    public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull ReceiverDescriptor explicitReceiver, @NotNull Call call, @NotNull String name, @NotNull BindingContext bindingContext, @NotNull DataFlowInfo dataFlowInfo) {
+    public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull Call call, @NotNull String name, @NotNull BindingContext bindingContext, @NotNull DataFlowInfo dataFlowInfo) {
         List<ResolutionTask<D>> result = Lists.newArrayList();
 
-        doComputeTasks(scope, explicitReceiver, call, name, result, DataFlowInfo.getEmpty());
+        ReceiverDescriptor explicitReceiver = call.getExplicitReceiver();
+        doComputeTasks(scope, explicitReceiver, call, name, result, NO_AUTO_CASTS);
 
         ReceiverDescriptor receiverToCast = explicitReceiver.exists() ? explicitReceiver : scope.getImplicitReceiver();
         if (receiverToCast.exists()) {
-            doComputeTasks(scope, receiverToCast, call, name, result, dataFlowInfo);
+            doComputeTasks(scope, receiverToCast, call, name, result, new AutoCastServiceImpl(dataFlowInfo, bindingContext));
         }
         return result;
     }
 
-    private void doComputeTasks(JetScope scope, ReceiverDescriptor explicitReceiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull DataFlowInfo dataFlowInfo) {
+    private interface AutoCastService {
+        List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor);
+        DataFlowInfo getDataFlowInfo();
+    }
+
+    private static class AutoCastServiceImpl implements AutoCastService {
+        private final DataFlowInfo dataFlowInfo;
+        private final BindingContext bindingContext;
+
+        private AutoCastServiceImpl(DataFlowInfo dataFlowInfo, BindingContext bindingContext) {
+            this.dataFlowInfo = dataFlowInfo;
+            this.bindingContext = bindingContext;
+        }
+
+        @Override
+        public List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor) {
+            return AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverDescriptor);
+        }
+
+        @Override
+        public DataFlowInfo getDataFlowInfo() {
+            return dataFlowInfo;
+        }
+    }
+
+    private static AutoCastService NO_AUTO_CASTS = new AutoCastService() {
+        @Override
+        public DataFlowInfo getDataFlowInfo() {
+            return DataFlowInfo.getEmpty();
+        }
+
+        @Override
+        public List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor) {
+            return Collections.singletonList(receiverDescriptor);
+        }
+    };
+    
+    private void doComputeTasks(JetScope scope, ReceiverDescriptor explicitReceiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull AutoCastService autoCastService) {
+        DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);
+        // AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverToCast)
         if (explicitReceiver.exists()) {
-            Collection<ResolvedCall<D>> extensionFunctions = convertWithImpliedThis(explicitReceiver, getExtensionsByName(scope, name));
+            List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(explicitReceiver);
+
+            Collection<ResolvedCall<D>> extensionFunctions = convertWithImpliedThis(variantsForExplicitReceiver, getExtensionsByName(scope, name));
             List<ResolvedCall<D>> nonlocals = Lists.newArrayList();
             List<ResolvedCall<D>> locals = Lists.newArrayList();
             //noinspection unchecked,RedundantTypeArguments
             TaskPrioritizer.<D>splitLexicallyLocalDescriptors(extensionFunctions, scope.getContainingDeclaration(), locals, nonlocals);
 
-            // AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverToCast)
-            Collection<D> members = getMembersByName(explicitReceiver.getType(), name);
+            Collection<ResolvedCall<D>> members = Lists.newArrayList();
+            for (ReceiverDescriptor variant : variantsForExplicitReceiver) {
+                Collection<D> membersForThisVariant = getMembersByName(variant.getType(), name);
+                convertWithReceivers(membersForThisVariant, Collections.singletonList(variant), Collections.singletonList(NO_RECEIVER), members);
+            }
 
             addTask(result, call, locals, dataFlowInfo);
-            addTask(result, call, convertWithReceivers(members, explicitReceiver, NO_RECEIVER), dataFlowInfo);
+            addTask(result, call, members, dataFlowInfo);
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
                 Collection<D> memberExtensions = getExtensionsByName(implicitReceiver.getType().getMemberScope(), name);
-                addTask(result, call, convertWithReceivers(memberExtensions, implicitReceiver, explicitReceiver), dataFlowInfo);
+                List<ReceiverDescriptor> variantsForImplicitReceiver = autoCastService.getVariantsForReceiver(implicitReceiver);
+                addTask(result, call, convertWithReceivers(memberExtensions, variantsForImplicitReceiver, variantsForExplicitReceiver), dataFlowInfo);
             }
 
             addTask(result, call, nonlocals, dataFlowInfo);
         }
         else {
-            Collection<ResolvedCall<D>> functions = convertWithImpliedThis(explicitReceiver, getNonExtensionsByName(scope, name));
+            Collection<ResolvedCall<D>> functions = convertWithImpliedThis(Collections.singletonList(explicitReceiver), getNonExtensionsByName(scope, name));
 
             List<ResolvedCall<D>> nonlocals = Lists.newArrayList();
             List<ResolvedCall<D>> locals = Lists.newArrayList();
@@ -116,31 +163,43 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             addTask(result, call, locals, dataFlowInfo);
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
-                doComputeTasks(scope, implicitReceiver, call, name, result, dataFlowInfo);
+                doComputeTasks(scope, implicitReceiver, call, name, result, autoCastService);
             }
 
             addTask(result, call, nonlocals, dataFlowInfo);
         }
     }
 
-    private Collection<ResolvedCall<D>> convertWithReceivers(Collection<D> descriptors, ReceiverDescriptor thisObject, ReceiverDescriptor receiverParameter) {
+    private Collection<ResolvedCall<D>> convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters) {
         Collection<ResolvedCall<D>> result = Lists.newArrayList();
-        for (D extension : descriptors) {
-            ResolvedCall<D> resolvedCall = ResolvedCall.create(extension);
-            resolvedCall.setThisObject(thisObject);
-            resolvedCall.setReceiverParameter(receiverParameter);
-            result.add(resolvedCall);
-        }
+        convertWithReceivers(descriptors, thisObjects, receiverParameters, result);
         return result;
     }
 
-    private Collection<ResolvedCall<D>> convertWithImpliedThis(ReceiverDescriptor receiverParameter, Collection<D> descriptors) {
+    private void convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters, Collection<ResolvedCall<D>> result) {
+//        Collection<ResolvedCall<D>> result = Lists.newArrayList();
+        for (ReceiverDescriptor thisObject : thisObjects) {
+            for (ReceiverDescriptor receiverParameter : receiverParameters) {
+                for (D extension : descriptors) {
+                    ResolvedCall<D> resolvedCall = ResolvedCall.create(extension);
+                    resolvedCall.setThisObject(thisObject);
+                    resolvedCall.setReceiverParameter(receiverParameter);
+                    result.add(resolvedCall);
+                }
+            }
+        }
+//        return result;
+    }
+
+    private Collection<ResolvedCall<D>> convertWithImpliedThis(Iterable<ReceiverDescriptor> receiverParameters, Collection<D> descriptors) {
         Collection<ResolvedCall<D>> result = Lists.newArrayList();
-        for (D extension : descriptors) {
-            ResolvedCall<D> resolvedCall = ResolvedCall.create(extension);
-            resolvedCall.setReceiverParameter(receiverParameter);
-            setImpliedThis(resolvedCall);
-            result.add(resolvedCall);
+        for (ReceiverDescriptor receiverParameter : receiverParameters) {
+            for (D extension : descriptors) {
+                ResolvedCall<D> resolvedCall = ResolvedCall.create(extension);
+                resolvedCall.setReceiverParameter(receiverParameter);
+                setImpliedThis(resolvedCall);
+                result.add(resolvedCall);
+            }
         }
         return result;
     }

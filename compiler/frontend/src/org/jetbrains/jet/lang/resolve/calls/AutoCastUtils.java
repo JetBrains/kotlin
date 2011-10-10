@@ -4,19 +4,22 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetThisExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.DataFlowInfo;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.lang.types.JetTypeChecker;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.AUTOCAST_IMPOSSIBLE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
@@ -26,36 +29,36 @@ public class AutoCastUtils {
 
     private AutoCastUtils() {}
 
-    public static List<? extends ReceiverDescriptor> getAutoCastVariants(@NotNull final BindingContext bindingContext, @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast) {
-        return receiverToCast.accept(new ReceiverDescriptorVisitor<List<? extends ReceiverDescriptor>, Object>() {
+    public static List<ReceiverDescriptor> getAutoCastVariants(@NotNull final BindingContext bindingContext, @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast) {
+        return receiverToCast.accept(new ReceiverDescriptorVisitor<List<ReceiverDescriptor>, Object>() {
             @Override
-            public List<? extends ReceiverDescriptor> visitNoReceiver(ReceiverDescriptor noReceiver, Object data) {
+            public List<ReceiverDescriptor> visitNoReceiver(ReceiverDescriptor noReceiver, Object data) {
                 return Collections.emptyList();
             }
 
             @Override
-            public List<? extends ReceiverDescriptor> visitTransientReceiver(TransientReceiver receiver, Object data) {
+            public List<ReceiverDescriptor> visitTransientReceiver(TransientReceiver receiver, Object data) {
                 return Collections.emptyList();
             }
 
             @Override
-            public List<? extends ReceiverDescriptor> visitExtensionReceiver(ExtensionReceiver receiver, Object data) {
+            public List<ReceiverDescriptor> visitExtensionReceiver(ExtensionReceiver receiver, Object data) {
                 return castThis(dataFlowInfo, receiver);
             }
 
             @Override
-            public List<? extends ReceiverDescriptor> visitClassReceiver(ClassReceiver receiver, Object data) {
+            public List<ReceiverDescriptor> visitClassReceiver(ClassReceiver receiver, Object data) {
                 return castThis(dataFlowInfo, receiver);
             }
 
             @Override
-            public List<? extends ReceiverDescriptor> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
+            public List<ReceiverDescriptor> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
                 JetExpression expression = receiver.getExpression();
                 VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(bindingContext, expression);
-                if (variableDescriptor != null && isAutocastable(variableDescriptor)) {
+                if (variableDescriptor != null) {
                     List<ReceiverDescriptor> result = Lists.newArrayList();
                     for (JetType possibleType : dataFlowInfo.getPossibleTypesForVariable(variableDescriptor)) {
-                        result.add(new AutoCastReceiver(receiver, possibleType));
+                        result.add(new AutoCastReceiver(receiver, possibleType, isAutoCastable(variableDescriptor)));
                     }
                     return result;
                 }
@@ -67,26 +70,56 @@ public class AutoCastUtils {
         }, null);
     }
 
-    private static List<? extends ReceiverDescriptor> castThis(@NotNull DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiver) {
+    private static List<ReceiverDescriptor> castThis(@NotNull DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiver) {
         assert receiver.exists();
         List<ReceiverDescriptor> result = Lists.newArrayList();
         for (JetType possibleType : dataFlowInfo.getPossibleTypesForReceiver(receiver)) {
-            result.add(new AutoCastReceiver(receiver, possibleType));
+            result.add(new AutoCastReceiver(receiver, possibleType, true));
         }
         return result;
     }
 
     @Nullable
-    public static VariableDescriptor getVariableDescriptorFromSimpleName(@NotNull BindingContext bindingContext, @NotNull JetExpression receiverExpression) {
-        if (receiverExpression instanceof JetBinaryExpressionWithTypeRHS) {
-            JetBinaryExpressionWithTypeRHS expression = (JetBinaryExpressionWithTypeRHS) receiverExpression;
-            if (expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
-                return getVariableDescriptorFromSimpleName(bindingContext, expression.getLeft());
+    public static JetType castExpression(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+        JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+        VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(trace.getBindingContext(), expression);
+//        boolean appropriateTypeFound = false;
+        if (variableDescriptor != null) {
+            List<JetType> possibleTypes = Lists.newArrayList(dataFlowInfo.getPossibleTypesForVariable(variableDescriptor));
+            Collections.reverse(possibleTypes);
+            for (JetType possibleType : possibleTypes) {
+                if (typeChecker.isSubtypeOf(possibleType, expectedType)) {
+                    if (isAutoCastable(variableDescriptor)) {
+                        trace.record(AUTOCAST, expression, possibleType);
+                    }
+                    else {
+                        trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
+                    }
+                    return possibleType;
+                }
             }
+//            if (!appropriateTypeFound) {
+//                JetType notnullType = dataFlowInfo.getOutType(variableDescriptor);
+//                if (notnullType != null && typeChecker.isSubtypeOf(notnullType, expectedType)) {
+//                    appropriateTypeFound = true;
+//                }
+//            }
         }
+        return null;
+    }
+
+    @Nullable
+    public static VariableDescriptor getVariableDescriptorFromSimpleName(@NotNull BindingContext bindingContext, @NotNull JetExpression expression) {
+//        if (expression instanceof JetBinaryExpressionWithTypeRHS) {
+//            JetBinaryExpressionWithTypeRHS expression = (JetBinaryExpressionWithTypeRHS) expression;
+//            if (expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
+//                return getVariableDescriptorFromSimpleName(bindingContext, expression.getLeft());
+//            }
+//        }
+        JetExpression receiver = JetPsiUtil.deparenthesize(expression);
         VariableDescriptor variableDescriptor = null;
-        if (receiverExpression instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) receiverExpression;
+        if (receiver instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) receiver;
             DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, nameExpression);
             if (declarationDescriptor instanceof VariableDescriptor) {
                 variableDescriptor = (VariableDescriptor) declarationDescriptor;
@@ -95,7 +128,7 @@ public class AutoCastUtils {
         return variableDescriptor;
     }
 
-    public static boolean isAutocastable(@NotNull VariableDescriptor variableDescriptor) {
+    public static boolean isAutoCastable(@NotNull VariableDescriptor variableDescriptor) {
         if (variableDescriptor.isVar()) return false;
         if (variableDescriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;

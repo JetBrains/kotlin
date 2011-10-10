@@ -172,7 +172,9 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
+                        JetType supertype = typeInferrer.getCallResolver().resolveCall(
+                                context.getTrace(), scopeForConstructor,
+                                CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                         if (supertype != null) {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
@@ -334,7 +336,8 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope, ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope,
+                                                                                      CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                         }
                     }
 
@@ -346,7 +349,7 @@ public class BodyResolver {
 
                         typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(),
                                 functionInnerScope,
-                                ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
+                                CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),

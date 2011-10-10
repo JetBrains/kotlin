@@ -239,7 +239,7 @@ public interface Errors {
             return constraintOwner.getName();
         }
     };
-    ParameterizedDiagnosticFactory2<JetType, VariableDescriptor> AUTOCAST_IMPOSSIBLE = ParameterizedDiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because variable {1} is mutable", NAME);
+    ParameterizedDiagnosticFactory2<JetType, String> AUTOCAST_IMPOSSIBLE = ParameterizedDiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because {1} could have changed since the is-check");
 
     ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = ParameterizedDiagnosticFactory2.create(ERROR, "The loop iterates over values of type {0} but the parameter is declared to be {1}");
     ParameterizedDiagnosticFactory1<JetType> TYPE_MISMATCH_IN_CONDITION = ParameterizedDiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}");

@@ -54,9 +54,10 @@ public class ResolvedCall<D extends CallableDescriptor> {
     private D resultingDescriptor; // Probably substituted
     private ReceiverDescriptor thisObject = NO_RECEIVER; // receiver object of a method
     private ReceiverDescriptor receiverParameter = NO_RECEIVER; // receiver of an extension function
-    private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newHashMap();
+    private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newHashMap();
+    private boolean someArgumentHasNoType = false;
     private TemporaryBindingTrace trace;
 
     private ResolvedCall(@NotNull D candidateDescriptor) {
@@ -120,4 +121,16 @@ public class ResolvedCall<D extends CallableDescriptor> {
         this.thisObject = thisObject;
     }
 
+    @NotNull
+    public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
+        return valueArguments;
+    }
+
+    public void argumentHasNoType() {
+        this.someArgumentHasNoType = true;
+    }
+
+    public boolean isDirty() {
+        return someArgumentHasNoType;
+    }
 }
