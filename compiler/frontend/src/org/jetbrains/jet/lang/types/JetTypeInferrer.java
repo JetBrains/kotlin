@@ -423,42 +423,61 @@ public class JetTypeInferrer {
                 trace.record(STATEMENT, statement);
                 final JetExpression statementExpression = (JetExpression) statement;
                 //TODO constructor assert context.expectedType != FORBIDDEN : ""
-                if (!iterator.hasNext() && context.expectedType != NO_EXPECTED_TYPE) {
-                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && JetStandardClasses.isUnit(context.expectedType)) {
-                        // This implements coercion to Unit
-                        TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace);
-                        final boolean[] mismatch = new boolean[1];
-                        ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
-                        newContext = newContext(errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
-                        result = blockLevelVisitor.getType(statementExpression, newContext);
-                        if (mismatch[0]) {
-                            TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
-                            mismatch[0] = false;
-                            ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
-                            newContext = newContext(interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE, context.expectedReturnType);
+                if (!iterator.hasNext()) {
+                    if (context.expectedType != NO_EXPECTED_TYPE) {
+                        if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && JetStandardClasses.isUnit(context.expectedType)) {
+                            // This implements coercion to Unit
+                            TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace);
+                            final boolean[] mismatch = new boolean[1];
+                            ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
+                            newContext = newContext(errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
                             result = blockLevelVisitor.getType(statementExpression, newContext);
                             if (mismatch[0]) {
-                                temporaryTraceExpectingUnit.commit();
+                                TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
+                                mismatch[0] = false;
+                                ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
+                                newContext = newContext(interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE, context.expectedReturnType);
+                                result = blockLevelVisitor.getType(statementExpression, newContext);
+                                if (mismatch[0]) {
+                                    temporaryTraceExpectingUnit.commit();
+                                }
+                                else {
+                                    temporaryTraceNoExpectedType.commit();
+                                }
                             }
                             else {
-                                temporaryTraceNoExpectedType.commit();
+                                temporaryTraceExpectingUnit.commit();
                             }
                         }
                         else {
-                            temporaryTraceExpectingUnit.commit();
+                            newContext = newContext(trace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
+                            result = blockLevelVisitor.getType(statementExpression, newContext);
                         }
-
                     }
                     else {
-                        newContext = newContext(trace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
                         result = blockLevelVisitor.getType(statementExpression, newContext);
+                        if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT) {
+                            boolean mightBeUnit = false;
+                            if (statementExpression instanceof JetDeclaration) {
+                                mightBeUnit = true;
+                            } 
+                            if (statementExpression instanceof JetBinaryExpression) {
+                                JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
+                                IElementType operationType = binaryExpression.getOperationToken();
+                                if (operationType == JetTokens.EQ || assignmentOperationNames.containsKey(operationType)) {
+                                    mightBeUnit = true;
+                                }
+                            }
+                            if (mightBeUnit) {
+                                // TypeInferrerVisitorWithWritableScope should return only null or Unit for declarations and assignments
+                                assert result == null || JetStandardClasses.isUnit(result);
+                                result = JetStandardClasses.getUnitType();
+                            }
+                        }
                     }
                 }
                 else {
                     result = blockLevelVisitor.getType(statementExpression, newContext);
-                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && result == null) {
-                        result = JetStandardClasses.getUnitType();
-                    }
                 }
 
                 DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();
@@ -1023,8 +1042,8 @@ public class JetTypeInferrer {
 
             if (functionTypeExpected) {
                 JetType expectedReturnType = JetStandardClasses.getReturnType(expectedType);
-                functionDescriptor.setReturnType(expectedReturnType);
                 if (JetStandardClasses.isUnit(expectedReturnType)) {
+                    functionDescriptor.setReturnType(expectedReturnType);
                     return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, expectedReturnType), expression, context);
                 }
 
@@ -2335,10 +2354,10 @@ public class JetTypeInferrer {
                 result = getTypeForBinaryCall(context.scope, binaryOperationNames.get(operationType), context, expression);
             }
             else if (operationType == JetTokens.EQ) {
-                result = visitAssignment(expression, context);
+                result = visitAssignment(expression, contextWithExpectedType);
             }
             else if (assignmentOperationNames.containsKey(operationType)) {
-                result = visitAssignmentOperation(expression, context);
+                result = visitAssignmentOperation(expression, contextWithExpectedType);
             }
             else if (comparisonOperations.contains(operationType)) {
                 JetType compareToReturnType = getTypeForBinaryCall(context.scope, "compareTo", context, expression);
@@ -2652,7 +2671,7 @@ public class JetTypeInferrer {
                 PropertyDescriptor propertyDescriptor = context.classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
                 scope.addVariableDescriptor(propertyDescriptor);
             }
-            return null;
+            return checkExpectedType(declaration, context);
         }
 
         @Override
@@ -2688,7 +2707,7 @@ public class JetTypeInferrer {
             }
 
             scope.addVariableDescriptor(propertyDescriptor);
-            return null;
+            return checkExpectedType(property, context);
         }
 
         @Override
@@ -2696,7 +2715,7 @@ public class JetTypeInferrer {
             FunctionDescriptorImpl functionDescriptor = context.classDescriptorResolver.resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
             scope.addFunctionDescriptor(functionDescriptor);
             context.services.checkFunctionReturnType(context.scope, function, functionDescriptor, context.dataFlowInfo);
-            return null; 
+            return checkExpectedType(function, context);
         }
 
         @Override
@@ -2711,7 +2730,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitDeclaration(JetDeclaration dcl, TypeInferenceContext context) {
-            return visitJetElement(dcl, context);
+            return checkExpectedType(dcl, context);
         }
 
         @Override
@@ -2732,6 +2751,17 @@ public class JetTypeInferrer {
             }
             else {
                 temporaryBindingTrace.commit();
+            }
+            return checkExpectedType(expression, context);
+        }
+
+        @Nullable
+        private JetType checkExpectedType(JetExpression expression, TypeInferenceContext context) {
+            if (context.expectedType != NO_EXPECTED_TYPE) {
+                if (JetStandardClasses.isUnit(context.expectedType)) {
+                    return JetStandardClasses.getUnitType();
+                }
+                context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             }
             return null;
         }
@@ -2765,7 +2795,7 @@ public class JetTypeInferrer {
                     }
                 }
             }
-            return null;
+            return checkExpectedType(expression, context);
         }
 
         private JetType resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign, TypeInferenceContext context) {
