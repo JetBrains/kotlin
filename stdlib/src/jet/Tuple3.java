@@ -1,11 +1,14 @@
 package jet;
 
-public class Tuple3<T1, T2, T3> {
+import jet.typeinfo.TypeInfo;
+
+public class Tuple3<T1, T2, T3> extends DefaultJetObject {
     public final T1 _1;
     public final T2 _2;
     public final T3 _3;
 
-    public Tuple3(T1 t1, T2 t2, T3 t3) {
+    public Tuple3(TypeInfo typeInfo, T1 t1, T2 t2, T3 t3) {
+        super(typeInfo);
         _1 = t1;
         _2 = t2;
         _3 = t3;

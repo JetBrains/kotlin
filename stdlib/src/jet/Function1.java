@@ -3,7 +3,13 @@
  */
 package jet;
 
-public abstract  class Function1<D, R> {
+import jet.typeinfo.TypeInfo;
+
+public abstract  class Function1<D, R>  extends DefaultJetObject {
+    protected Function1(TypeInfo<?> typeInfo) {
+        super(typeInfo);
+    }
+
     public abstract R invoke(D d);
 
     @Override

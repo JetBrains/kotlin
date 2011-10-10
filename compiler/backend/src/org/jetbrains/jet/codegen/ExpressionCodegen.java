@@ -2318,7 +2318,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         final String className = "jet/Tuple" + entries.size();
         Type tupleType = Type.getObjectType(className);
-        StringBuilder signature = new StringBuilder("(");
+        StringBuilder signature = new StringBuilder("(Ljet/typeinfo/TypeInfo;");
         for (int i = 0; i != entries.size(); ++i) {
             signature.append("Ljava/lang/Object;");
         }
@@ -2326,6 +2326,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.anew(tupleType);
         v.dup();
+        generateTypeInfo(new ProjectionErasingJetType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)));
         for (JetExpression entry : entries) {
             gen(entry, OBJECT_TYPE);
         }

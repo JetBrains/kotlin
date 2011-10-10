@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.ProjectionErasingJetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -117,7 +118,7 @@ public class ClosureCodegen {
         final Type enclosingType = context.enclosingClassType(state.getTypeMapper());
         if (enclosingType == null) captureThis = false;
 
-        final Method constructor = generateConstructor(funClass, captureThis);
+        final Method constructor = generateConstructor(funClass, captureThis, funDescriptor.getReturnType());
 
         if (captureThis) {
             cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingType.getDescriptor(), null, null);
@@ -175,7 +176,7 @@ public class ClosureCodegen {
         mv.visitEnd();
     }
 
-    private Method generateConstructor(String funClass, boolean captureThis) {
+    private Method generateConstructor(String funClass, boolean captureThis, JetType returnType) {
         int argCount = closure.size();
 
         if (captureThis) {
@@ -199,9 +200,11 @@ public class ClosureCodegen {
         final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
+        ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
 
         iv.load(0, Type.getObjectType(funClass));
-        iv.invokespecial(funClass, "<init>", "()V");
+        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));
+        iv.invokespecial(funClass, "<init>", "(Ljet/typeinfo/TypeInfo;)V");
 
         i = 1;
         for (Type type : argTypes) {
