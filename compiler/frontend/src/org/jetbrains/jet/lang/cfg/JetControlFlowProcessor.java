@@ -76,17 +76,17 @@ public class JetControlFlowProcessor {
         Stack<JetElement> stack = labeledElements.get(labelName);
         if (stack == null || stack.isEmpty()) {
             if (reportUnresolved) {
-                trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
+//                trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
             }
             return null;
         }
         else if (stack.size() > 1) {
 //            trace.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
-            trace.report(LABEL_NAME_CLASH.on(labelExpression));
+//            trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
         JetElement result = stack.peek();
-        trace.record(BindingContext.LABEL_TARGET, labelExpression, result);
+//        trace.record(BindingContext.LABEL_TARGET, labelExpression, result);
         return result;
     }
 

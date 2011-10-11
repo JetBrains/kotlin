@@ -37,7 +37,7 @@ public class AnnotationResolver {
         this.trace = trace;
 //        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
 //        this.services = typeInferrer.getServices(this.trace);
-        this.callResolver = new CallResolver(semanticServices, new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices), DataFlowInfo.getEmpty());
+        this.callResolver = new CallResolver(semanticServices, new JetTypeInferrer(semanticServices), DataFlowInfo.getEmpty());
     }
 
     @NotNull

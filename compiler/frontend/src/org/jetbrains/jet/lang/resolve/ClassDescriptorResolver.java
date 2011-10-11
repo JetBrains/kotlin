@@ -178,8 +178,8 @@ public class ClassDescriptorResolver {
                 returnType = DeferredType.create(trace, new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
-                        JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).inferFunctionReturnType(scope, function, functionDescriptor);
+                        //JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
+                        return semanticServices.getTypeInferrerServices(trace).inferFunctionReturnType(scope, function, functionDescriptor);
                     }
                 });
             }
@@ -537,8 +537,8 @@ public class ClassDescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
-                        JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
-                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).safeGetType(scope, initializer, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        //JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
+                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, JetTypeInferrer.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {

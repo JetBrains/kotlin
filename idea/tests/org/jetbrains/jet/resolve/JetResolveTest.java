@@ -106,7 +106,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, JetType... parameterType) {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
-        JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext(), JetFlowInformationProvider.NONE);
+        JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
 
         OverloadResolutionResults<FunctionDescriptor> functions = typeInferrerServices.getCallResolver().resolveExactSignature(
                 classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);

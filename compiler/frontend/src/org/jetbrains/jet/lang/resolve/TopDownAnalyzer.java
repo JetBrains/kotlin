@@ -69,6 +69,7 @@ public class TopDownAnalyzer {
         new OverrideResolver(context).process();
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
         new DeclarationsChecker(context).process();
+        new ControlFlowAnalyzer(context).process();
     }
 
     public static void processStandardLibraryNamespace(

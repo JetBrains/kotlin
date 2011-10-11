@@ -44,8 +44,8 @@ public class JetSemanticServices {
     }
 
     @NotNull
-    public JetTypeInferrer.Services getTypeInferrerServices(@NotNull BindingTrace trace, @NotNull JetFlowInformationProvider flowInformationProvider) {
-        return new JetTypeInferrer(flowInformationProvider, this).getServices(trace);
+    public JetTypeInferrer.Services getTypeInferrerServices(@NotNull BindingTrace trace) {
+        return new JetTypeInferrer(this).getServices(trace);
     }
 
     @NotNull

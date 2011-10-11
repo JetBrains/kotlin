@@ -218,7 +218,7 @@ public class TypeHierarchyResolver {
             if (importDirective.isAllUnder()) {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference != null) {
-                    JetTypeInferrer.Services typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace(), JetFlowInformationProvider.THROW_EXCEPTION);
+                    JetTypeInferrer.Services typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
                     JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference);
                     if (type != null) {
                         namespaceScope.importScope(type.getMemberScope());
@@ -232,7 +232,7 @@ public class TypeHierarchyResolver {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference instanceof JetDotQualifiedExpression) {
                     JetDotQualifiedExpression reference = (JetDotQualifiedExpression) importedReference;
-                    JetType type = context.getSemanticServices().getTypeInferrerServices(context.getTrace(), JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression());
+                    JetType type = context.getSemanticServices().getTypeInferrerServices(context.getTrace()).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression());
                     JetExpression selectorExpression = reference.getSelectorExpression();
                     if (selectorExpression != null) {
                         referenceExpression = (JetSimpleNameExpression) selectorExpression;

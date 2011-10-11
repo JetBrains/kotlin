@@ -1,0 +1,133 @@
+package org.jetbrains.jet.lang.resolve;
+
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInferrer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
+
+/**
+ * @author svtk
+ */
+public class ControlFlowAnalyzer {
+    private TopDownAnalysisContext context;
+    private JetTypeInferrer.Services typeInferrer;
+
+    public ControlFlowAnalyzer(TopDownAnalysisContext context) {
+        this.context = context;
+        typeInferrer = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
+    }
+
+    public void process() {
+        for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : context.getFunctions().entrySet()) {
+            JetNamedFunction function = entry.getKey();
+            FunctionDescriptorImpl functionDescriptor = entry.getValue();
+
+            final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType() ? NO_EXPECTED_TYPE : functionDescriptor.getReturnType();
+            checkFunction(function, functionDescriptor, expectedReturnType);
+        }
+
+        for (Map.Entry<JetDeclaration, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
+            JetDeclaration declaration = entry.getKey();
+            assert declaration instanceof JetConstructor;
+            JetConstructor constructor = (JetConstructor) declaration;
+            ConstructorDescriptor descriptor = entry.getValue();
+
+            checkFunction(constructor, descriptor, JetStandardClasses.getUnitType());
+        }
+
+        for (JetProperty property : context.getProperties().keySet()) {
+            checkProperty(property);
+        }
+    }
+
+    private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
+        JetExpression bodyExpression = function.getBodyExpression();
+        if (bodyExpression == null) return;
+
+        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData((JetElement)function, bodyExpression);
+
+        final boolean blockBody = function.hasBlockBody();
+        List<JetElement> unreachableElements = Lists.newArrayList();
+        flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
+
+        // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
+        final Set<JetElement> rootUnreachableElements = JetPsiUtil.findRootExpressions(unreachableElements);
+
+        for (JetElement element : rootUnreachableElements) {
+            context.getTrace().report(UNREACHABLE_CODE.on(element));
+        }
+
+        List<JetExpression> returnedExpressions = Lists.newArrayList();
+        flowInformationProvider.collectReturnExpressions(function.asElement(), returnedExpressions);
+
+        boolean nothingReturned = returnedExpressions.isEmpty();
+
+        returnedExpressions.remove(function); // This will be the only "expression" if the body is empty
+
+        final JetScope scope = this.context.getDeclaringScopes().get(function);
+
+        if (expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && returnedExpressions.isEmpty() && !nothingReturned) {
+            context.getTrace().report(RETURN_TYPE_MISMATCH.on(bodyExpression, expectedReturnType));
+        }
+
+        for (JetExpression returnedExpression : returnedExpressions) {
+            returnedExpression.accept(new JetVisitorVoid() {
+                @Override
+                public void visitReturnExpression(JetReturnExpression expression) {
+                    if (!blockBody) {
+                        context.getTrace().report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression));
+                    }
+                }
+
+                @Override
+                public void visitExpression(JetExpression expression) {
+                    if (blockBody && expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
+                        JetType type = typeInferrer.getType(scope, expression, expectedReturnType);
+                        if (type == null || !JetStandardClasses.isNothing(type)) {
+                            context.getTrace().report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(expression));
+                        }
+                    }
+                }
+            });
+        }
+        markDominatedExpressionsAsUnreachable(bodyExpression, scope, expectedReturnType, flowInformationProvider);
+    }
+
+    private void markDominatedExpressionsAsUnreachable(JetExpression expression, JetScope scope, JetType expectedReturnType, JetFlowInformationProvider flowInformationProvider) {
+        JetType type = typeInferrer.getType(scope, expression, expectedReturnType);
+        if (type == null || !JetStandardClasses.isNothing(type) || type.isNullable()) {
+            return;
+        }
+        
+        List<JetElement> dominated = new ArrayList<JetElement>();
+        flowInformationProvider.collectDominatedExpressions(expression, dominated);
+        Set<JetElement> rootExpressions = JetPsiUtil.findRootExpressions(dominated);
+        for (JetElement rootExpression : rootExpressions) {
+            context.getTrace().report(UNREACHABLE_BECAUSE_OF_NOTHING.on(rootExpression, expression.getText()));
+        }
+    }
+
+
+    private void checkProperty(JetProperty property) {
+        JetExpression initializer = property.getInitializer();
+        if (initializer == null) return;
+        JetScope scope = this.context.getDeclaringScopes().get(property);
+        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer);
+        markDominatedExpressionsAsUnreachable(initializer, scope, NO_EXPECTED_TYPE, flowInformationProvider);
+    }
+}
