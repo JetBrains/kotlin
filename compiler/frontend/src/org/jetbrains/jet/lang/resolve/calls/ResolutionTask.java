@@ -3,45 +3,29 @@ package org.jetbrains.jet.lang.resolve.calls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetTypeProjection;
-import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.DataFlowInfo;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author abreslav
  */
 /*package*/ class ResolutionTask<D extends CallableDescriptor> {
+    private final Call call;
     private final Collection<ResolvedCall<D>> candidates;
-    private final List<JetTypeProjection> typeArguments;
-    private final List<? extends ValueArgument> valueArguments;
-    private final List<JetExpression> functionLiteralArguments;
     private final DataFlowInfo dataFlowInfo;
     private DescriptorCheckStrategy checkingStrategy;
 
-    public ResolutionTask(
-            @NotNull Collection<ResolvedCall<D>> candidates,
-            @NotNull List<JetTypeProjection> typeArguments,
-            @NotNull List<? extends ValueArgument> valueArguments,
-            @NotNull List<JetExpression> functionLiteralArguments,
-            @NotNull DataFlowInfo dataFlowInfo) {
-        this.candidates = candidates;
-        this.typeArguments = typeArguments;
-        this.valueArguments = valueArguments;
-        this.functionLiteralArguments = functionLiteralArguments;
-        this.dataFlowInfo = dataFlowInfo;
-    }
 
     public ResolutionTask(
             @NotNull Collection<ResolvedCall<D>> candidates,
             @NotNull Call call,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        this(candidates, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments(), dataFlowInfo);
+        this.candidates = candidates;
+        this.call = call;
+        this.dataFlowInfo = dataFlowInfo;
     }
 
     @NotNull
@@ -55,20 +39,10 @@ import java.util.List;
     }
 
     @NotNull
-    public List<JetTypeProjection> getTypeArguments() {
-        return typeArguments;
+    public Call getCall() {
+        return call;
     }
 
-    @NotNull
-    public List<? extends ValueArgument> getValueArguments() {
-        return valueArguments;
-    }
-
-    @NotNull
-    public List<JetExpression> getFunctionLiteralArguments() {
-        return functionLiteralArguments;
-    }
-    
     public void setCheckingStrategy(DescriptorCheckStrategy strategy) {
         checkingStrategy = strategy;
     }

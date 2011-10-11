@@ -4,9 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -53,7 +52,7 @@ public class ResolvedCall<D extends CallableDescriptor> {
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private ReceiverDescriptor thisObject = NO_RECEIVER; // receiver object of a method
-    private ReceiverDescriptor receiverParameter = NO_RECEIVER; // receiver of an extension function
+    private ReceiverDescriptor receiverArgument = NO_RECEIVER; // receiver of an extension function
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newHashMap();
@@ -104,12 +103,12 @@ public class ResolvedCall<D extends CallableDescriptor> {
     }
 
     @NotNull
-    public ReceiverDescriptor getReceiverParameter() {
-        return receiverParameter;
+    public ReceiverDescriptor getReceiverArgument() {
+        return receiverArgument;
     }
 
-    public void setReceiverParameter(@NotNull ReceiverDescriptor receiverParameter) {
-        this.receiverParameter = receiverParameter;
+    public void setReceiverArgument(@NotNull ReceiverDescriptor receiverParameter) {
+        this.receiverArgument = receiverParameter;
     }
 
     @NotNull
@@ -132,5 +131,10 @@ public class ResolvedCall<D extends CallableDescriptor> {
 
     public boolean isDirty() {
         return someArgumentHasNoType;
+    }
+
+    @NotNull
+    public ReceiverDescriptor getExpectedThisObject() {
+        return DescriptorUtils.getExpectedThisObject(getResultingDescriptor());
     }
 }

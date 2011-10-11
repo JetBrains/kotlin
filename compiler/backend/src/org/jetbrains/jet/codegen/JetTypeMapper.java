@@ -2,7 +2,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import jet.Function1;
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
@@ -546,7 +545,7 @@ public class JetTypeMapper {
     }
 
     public Method mapSignature(String name, FunctionDescriptor f) {
-        final ReceiverDescriptor receiver = f.getReceiver();
+        final ReceiverDescriptor receiver = f.getReceiverParameter();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         if (receiver.exists()) {

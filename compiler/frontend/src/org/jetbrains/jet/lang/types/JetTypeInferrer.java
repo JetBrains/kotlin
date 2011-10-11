@@ -222,7 +222,7 @@ public class JetTypeInferrer {
 //            if (receiverType != null && callee != null) {
 //                boolean namespaceType = receiverType instanceof NamespaceType;
 //                boolean nullableReceiver = !namespaceType && receiverType.isNullable();
-//                ReceiverDescriptor calleeReceiver = callee.getReceiver();
+//                ReceiverDescriptor calleeReceiver = callee.getReceiverParameter();
 //                boolean calleeForbidsNullableReceiver = !calleeReceiver.exists() || !calleeReceiver.getType().isNullable();
 //
 //                IElementType operationSign = operationTokenNode.getElementType();
@@ -1275,7 +1275,7 @@ public class JetTypeInferrer {
                     }
                     else if (declarationDescriptor instanceof FunctionDescriptor) {
                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
-                        thisReceiver = functionDescriptor.getReceiver();
+                        thisReceiver = functionDescriptor.getReceiverParameter();
                     }
                     else {
                         throw new UnsupportedOperationException(); // TODO
@@ -1289,7 +1289,7 @@ public class JetTypeInferrer {
                     if (psiElement instanceof JetFunctionLiteralExpression) {
                         DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
                         if (declarationDescriptor instanceof FunctionDescriptor) {
-                            thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiver();
+                            thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
                             if (thisReceiver.exists()) {
                                 context.trace.record(REFERENCE_TARGET, targetLabel, declarationDescriptor);
                                 context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);

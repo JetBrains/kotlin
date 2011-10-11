@@ -42,7 +42,7 @@ public class ClosureCodegen {
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
-        boolean isExtensionFunction = fd.getReceiver().exists();
+        boolean isExtensionFunction = fd.getReceiverParameter().exists();
         int paramCount = fd.getValueParameters().size();
         if (isExtensionFunction) {
             paramCount++;
@@ -151,7 +151,7 @@ public class ClosureCodegen {
 
         iv.load(0, Type.getObjectType(className));
 
-        final ReceiverDescriptor receiver = funDescriptor.getReceiver();
+        final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
         int count = 1;
         if (receiver.exists()) {
             StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
@@ -229,7 +229,7 @@ public class ClosureCodegen {
 
     public static String getInternalClassName(FunctionDescriptor descriptor) {
         final int paramCount = descriptor.getValueParameters().size();
-        if (descriptor.getReceiver().exists()) {
+        if (descriptor.getReceiverParameter().exists()) {
             return "jet/ExtensionFunction" + paramCount;
         }
         else {
@@ -250,7 +250,7 @@ public class ClosureCodegen {
         Method descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
         final CallableMethod result = new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
-        if (fd.getReceiver().exists()) {
+        if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(null);
         }
         result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));

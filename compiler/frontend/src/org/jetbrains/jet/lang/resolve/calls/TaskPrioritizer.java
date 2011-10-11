@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DataFlowInfo;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeChecker;
+import org.jetbrains.jet.lang.types.NamespaceType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -65,16 +68,14 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return false;
     }
 
-//    public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull Call call, @NotNull String name) {
-//        List<ResolutionTask<D>> result = Lists.newArrayList();
-//        doComputeTasks(scope, receiver, call, name, result);
-//        return result;
-//    }
-
     public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull Call call, @NotNull String name, @NotNull BindingContext bindingContext, @NotNull DataFlowInfo dataFlowInfo) {
         List<ResolutionTask<D>> result = Lists.newArrayList();
 
         ReceiverDescriptor explicitReceiver = call.getExplicitReceiver();
+        if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
+            scope = explicitReceiver.getType().getMemberScope();
+            explicitReceiver = NO_RECEIVER;
+        }
         doComputeTasks(scope, explicitReceiver, call, name, result, NO_AUTO_CASTS);
 
         ReceiverDescriptor receiverToCast = explicitReceiver.exists() ? explicitReceiver : scope.getImplicitReceiver();
@@ -121,15 +122,15 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         }
     };
     
-    private void doComputeTasks(JetScope scope, ReceiverDescriptor explicitReceiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull AutoCastService autoCastService) {
+    private void doComputeTasks(JetScope scope, ReceiverDescriptor receiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull AutoCastService autoCastService) {
         DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);
         // AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverToCast)
-        if (explicitReceiver.exists()) {
-            List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(explicitReceiver);
+        if (receiver.exists()) {
+            List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
 
-            Collection<ResolvedCall<D>> extensionFunctions = convertWithImpliedThis(variantsForExplicitReceiver, getExtensionsByName(scope, name));
+            Collection<ResolvedCall<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, getExtensionsByName(scope, name));
             List<ResolvedCall<D>> nonlocals = Lists.newArrayList();
             List<ResolvedCall<D>> locals = Lists.newArrayList();
             //noinspection unchecked,RedundantTypeArguments
@@ -153,7 +154,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             addTask(result, call, nonlocals, dataFlowInfo);
         }
         else {
-            Collection<ResolvedCall<D>> functions = convertWithImpliedThis(Collections.singletonList(explicitReceiver), getNonExtensionsByName(scope, name));
+            Collection<ResolvedCall<D>> functions = convertWithImpliedThis(scope, Collections.singletonList(receiver), getNonExtensionsByName(scope, name));
 
             List<ResolvedCall<D>> nonlocals = Lists.newArrayList();
             List<ResolvedCall<D>> locals = Lists.newArrayList();
@@ -183,7 +184,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 for (D extension : descriptors) {
                     ResolvedCall<D> resolvedCall = ResolvedCall.create(extension);
                     resolvedCall.setThisObject(thisObject);
-                    resolvedCall.setReceiverParameter(receiverParameter);
+                    resolvedCall.setReceiverArgument(receiverParameter);
                     result.add(resolvedCall);
                 }
             }
@@ -191,33 +192,36 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 //        return result;
     }
 
-    private Collection<ResolvedCall<D>> convertWithImpliedThis(Iterable<ReceiverDescriptor> receiverParameters, Collection<D> descriptors) {
+    public static <D extends CallableDescriptor> Collection<ResolvedCall<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<D> descriptors) {
         Collection<ResolvedCall<D>> result = Lists.newArrayList();
         for (ReceiverDescriptor receiverParameter : receiverParameters) {
             for (D extension : descriptors) {
                 ResolvedCall<D> resolvedCall = ResolvedCall.create(extension);
-                resolvedCall.setReceiverParameter(receiverParameter);
-                setImpliedThis(resolvedCall);
-                result.add(resolvedCall);
+                resolvedCall.setReceiverArgument(receiverParameter);
+                if (setImpliedThis(scope, resolvedCall)) {
+                    result.add(resolvedCall);
+                }
             }
         }
         return result;
     }
 
-    private void setImpliedThis(ResolvedCall<D> resolvedCall) {
-        ReceiverDescriptor thisObject;
-        DeclarationDescriptor containingDeclaration = resolvedCall.getCandidateDescriptor().getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            thisObject = classDescriptor.getImplicitReceiver();
+    private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolvedCall<D> resolvedCall) {
+        ReceiverDescriptor expectedThisObject = DescriptorUtils.getExpectedThisObject(resolvedCall.getCandidateDescriptor());
+        if (!expectedThisObject.exists()) return true;
+        List<ReceiverDescriptor> receivers = Lists.newArrayList();
+        scope.getImplicitReceiversHierarchy(receivers);
+        for (ReceiverDescriptor receiver : receivers) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {
+                // TODO : Autocasts & nullability
+                resolvedCall.setThisObject(expectedThisObject);
+                return true;
+            }
         }
-        else {
-            thisObject = NO_RECEIVER;
-        }
-        resolvedCall.setThisObject(thisObject);
+        return false;
     }
 
-    private void addTask(@NotNull List<ResolutionTask<D>> result, @NotNull Call call, @NotNull Collection<ResolvedCall<D>> candidates, @NotNull DataFlowInfo dataFlowInfo) {
+   private void addTask(@NotNull List<ResolutionTask<D>> result, @NotNull Call call, @NotNull Collection<ResolvedCall<D>> candidates, @NotNull DataFlowInfo dataFlowInfo) {
         if (candidates.isEmpty()) return;
         result.add(new ResolutionTask<D>(candidates, call, dataFlowInfo));
     }

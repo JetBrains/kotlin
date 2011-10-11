@@ -186,7 +186,7 @@ public class DescriptorRenderer implements Renderer {
             renderModality(descriptor.getModality(), builder);
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder, descriptor.getTypeParameters(),
-                    descriptor.getReceiver(),
+                    descriptor.getReceiverParameter(),
                     descriptor.getOutType(),
                     descriptor.getInType());
             renderName(descriptor, builder);
@@ -215,7 +215,7 @@ public class DescriptorRenderer implements Renderer {
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(descriptor.getTypeParameters(), builder);
 
-            ReceiverDescriptor receiver = descriptor.getReceiver();
+            ReceiverDescriptor receiver = descriptor.getReceiverParameter();
             if (receiver.exists()) {
                 builder.append(escape(renderType(receiver.getType()))).append(".");
             }

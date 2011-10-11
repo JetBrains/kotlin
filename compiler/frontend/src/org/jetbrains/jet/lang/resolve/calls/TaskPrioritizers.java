@@ -27,7 +27,7 @@ public class TaskPrioritizers {
             Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = functions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor functionDescriptor = iterator.next();
-                if (functionDescriptor.getReceiver().exists()) {
+                if (functionDescriptor.getReceiverParameter().exists()) {
                     iterator.remove();
                 }
             }
@@ -53,7 +53,7 @@ public class TaskPrioritizers {
             Set<FunctionDescriptor> extensionFunctions = Sets.newHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = extensionFunctions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor descriptor = iterator.next();
-                if (!descriptor.getReceiver().exists()) {
+                if (!descriptor.getReceiverParameter().exists()) {
                     iterator.remove();
                 }
             }
@@ -71,11 +71,11 @@ public class TaskPrioritizers {
 
         private void addVariableAsFunction(JetScope scope, String name, Set<FunctionDescriptor> functions, boolean receiverNeeded) {
             VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && !variable.getReceiver().exists()) {
+            if (variable != null && !variable.getReceiverParameter().exists()) {
                 JetType outType = variable.getOutType();
                 if (outType != null && JetStandardClasses.isFunctionType(outType)) {
                     VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
-                    if ((functionDescriptor.getReceiver().exists()) == receiverNeeded) {
+                    if ((functionDescriptor.getReceiverParameter().exists()) == receiverNeeded) {
                         functions.add(functionDescriptor);
                     }
                 }
@@ -89,7 +89,7 @@ public class TaskPrioritizers {
         @Override
         protected Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
             VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && !variable.getReceiver().exists()) {
+            if (variable != null && !variable.getReceiverParameter().exists()) {
                 return Collections.singleton(variable);
             }
             return Collections.emptyList();
@@ -109,7 +109,7 @@ public class TaskPrioritizers {
         @Override
         protected Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
             VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && variable.getReceiver().exists()) {
+            if (variable != null && variable.getReceiverParameter().exists()) {
                 return Collections.singleton(variable);
             }
             return Collections.emptyList();

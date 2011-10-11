@@ -71,7 +71,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiver() {
+    public ReceiverDescriptor getReceiverParameter() {
         return receiver;
     }
 
@@ -133,7 +133,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
         JetType substitutedReceiverType = null;
         if (receiver.exists()) {
-            substitutedReceiverType = substitutor.substitute(getReceiver().getType(), Variance.IN_VARIANCE);
+            substitutedReceiverType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) {
                 return null;
             }
@@ -181,7 +181,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
         FunctionDescriptorImpl copy = new FunctionDescriptorImpl(newOwner, Lists.newArrayList(getAnnotations()), getName());
         copy.initialize(
-                getReceiver().exists() ? getReceiver().getType() : null,
+                getReceiverParameter().exists() ? getReceiverParameter().getType() : null,
                 DescriptorUtils.copyTypeParameters(copy, typeParameters),
                 DescriptorUtils.copyValueParameters(copy, unsubstitutedValueParameters),
                 unsubstitutedReturnType,

@@ -74,7 +74,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiver() {
+    public ReceiverDescriptor getReceiverParameter() {
         return ReceiverDescriptor.NO_RECEIVER;
     }
 

@@ -44,8 +44,8 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiver() {
-        return getCorrespondingProperty().getReceiver();
+    public ReceiverDescriptor getReceiverParameter() {
+        return getCorrespondingProperty().getReceiverParameter();
     }
 
     @NotNull

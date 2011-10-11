@@ -127,6 +127,10 @@ public class CallMaker {
             return null;
         }
 
+        @Override
+        public String toString() {
+            return getCallNode().getText();
+        }
     }
 
     public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<JetExpression> argumentExpressions) {

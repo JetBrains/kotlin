@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.CallMaker;
 
 import java.util.List;
@@ -38,7 +39,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             parameterByName.put(valueParameter.getName(), valueParameter);
         }
 
-        List<? extends ValueArgument> valueArguments = task.getValueArguments();
+        List<? extends ValueArgument> valueArguments = task.getCall().getValueArguments();
 
         boolean error = false;
         boolean someNamed = false;
@@ -103,7 +104,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             }
         }
 
-        List<JetExpression> functionLiteralArguments = task.getFunctionLiteralArguments();
+        List<JetExpression> functionLiteralArguments = task.getCall().getFunctionLiteralArguments();
         if (!functionLiteralArguments.isEmpty()) {
             JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
 
@@ -164,6 +165,20 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 }
             }
         }
+
+        ReceiverDescriptor receiverParameter = candidate.getReceiverParameter();
+        ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
+        if (receiverParameter.exists() &&!receiverArgument.exists()) {
+            tracing.missingReceiver(temporaryTrace, receiverParameter);
+            error = true;
+        }
+        if (!receiverParameter.exists() && receiverArgument.exists()) {
+            tracing.noReceiverAllowed(temporaryTrace);
+            error = true;
+        }
+
+        assert candidateCall.getThisObject().exists() == candidateCall.getExpectedThisObject().exists() : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+
         return error;
     }
 

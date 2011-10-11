@@ -459,7 +459,7 @@ public class BodyResolver {
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        ReceiverDescriptor receiver = propertyDescriptor.getReceiver();
+        ReceiverDescriptor receiver = propertyDescriptor.getReceiverParameter();
         if (receiver.exists()) {
             result.setImplicitReceiver(receiver);
         }

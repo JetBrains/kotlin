@@ -72,9 +72,9 @@ public class OverloadingConflictResolver {
         if (OverridingUtil.overrides(f, g)) return true;
         if (OverridingUtil.overrides(g, f)) return false;
 
-        ReceiverDescriptor receiverOfF = f.getReceiver();
-        ReceiverDescriptor receiverOfG = g.getReceiver();
-        if (f.getReceiver().exists() && g.getReceiver().exists()) {
+        ReceiverDescriptor receiverOfF = f.getReceiverParameter();
+        ReceiverDescriptor receiverOfG = g.getReceiverParameter();
+        if (f.getReceiverParameter().exists() && g.getReceiverParameter().exists()) {
             if (!typeMoreSpecific(receiverOfF.getType(), receiverOfG.getType())) return false;
         }
 

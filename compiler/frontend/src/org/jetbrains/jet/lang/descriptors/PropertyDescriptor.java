@@ -95,7 +95,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     }
 
     @NotNull
-    public ReceiverDescriptor getReceiver() {
+    public ReceiverDescriptor getReceiverParameter() {
         return receiver;
     }
 
