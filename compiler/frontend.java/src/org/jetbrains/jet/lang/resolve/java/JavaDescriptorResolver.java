@@ -53,7 +53,7 @@ public class JavaDescriptorResolver {
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
-    protected final Map<PsiPackage, NamespaceDescriptor> namespaceDescriptorCache = Maps.newHashMap();
+    protected final Map<PsiElement, NamespaceDescriptor> namespaceDescriptorCache = Maps.newHashMap();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
     protected final JavaSemanticServices semanticServices;
@@ -116,7 +116,7 @@ public class JavaDescriptorResolver {
         classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), psiClass));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
-        classDescriptor.setClassObjectMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, true));
+//        classDescriptor.setClassObjectMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, true));
         // UGLY HACK
         supertypes.addAll(getSupertypes(psiClass));
         if (psiClass.isInterface()) {
@@ -237,7 +237,9 @@ public class JavaDescriptorResolver {
     public NamespaceDescriptor resolveNamespace(String qualifiedName) {
         PsiPackage psiPackage = javaFacade.findPackage(qualifiedName);
         if (psiPackage == null) {
-            return null;
+            PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
+            if (psiClass == null) return null;
+            return resolveNamespace(psiClass);
         }
         return resolveNamespace(psiPackage);
     }
@@ -245,16 +247,17 @@ public class JavaDescriptorResolver {
     private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {
         NamespaceDescriptor namespaceDescriptor = namespaceDescriptorCache.get(psiPackage);
         if (namespaceDescriptor == null) {
-            // TODO : packages
-
-//            PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
-//            if (psiClass != null) {
-//                namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
-//            }
-//            else {
-                namespaceDescriptor = createJavaNamespaceDescriptor(psiPackage);
-//            }
+            namespaceDescriptor = createJavaNamespaceDescriptor(psiPackage);
             namespaceDescriptorCache.put(psiPackage, namespaceDescriptor);
+        }
+        return namespaceDescriptor;
+    }
+
+    private NamespaceDescriptor resolveNamespace(@NotNull PsiClass psiClass) {
+        NamespaceDescriptor namespaceDescriptor = namespaceDescriptorCache.get(psiClass);
+        if (namespaceDescriptor == null) {
+            namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
+            namespaceDescriptorCache.put(psiClass, namespaceDescriptor);
         }
         return namespaceDescriptor;
     }

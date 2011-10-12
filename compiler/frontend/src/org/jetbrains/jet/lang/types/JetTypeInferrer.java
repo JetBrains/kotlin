@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -869,25 +868,24 @@ public class JetTypeInferrer {
             if (classifier != null) {
                 JetType classObjectType = classifier.getClassObjectType();
                 JetType result = null;
-                if (classObjectType != null && (isNamespacePosition() || classifier.isClassObjectAValue())) {
-                    result = classObjectType;
+                if (classObjectType != null) {
+                    if (isNamespacePosition() || classifier.isClassObjectAValue()) {
+                        result = classObjectType;
+                    }
+                    else {
+    //                    context.trace.getErrorHandler().genericError(expression.getNode(), "Classifier " + classifier.getName() +  " does not have a class object");
+                        context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
+                    }
+                    context.trace.record(REFERENCE_TARGET, expression, classifier);
+                    if (result == null) {
+                        return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
+                    }
+                    return context.services.checkType(result, expression, context);
                 }
-                else {
-//                    context.trace.getErrorHandler().genericError(expression.getNode(), "Classifier " + classifier.getName() +  " does not have a class object");
-                    context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
-                }
-                context.trace.record(REFERENCE_TARGET, expression, classifier);
-                if (result == null) {
-                    return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
-                }
-                return context.services.checkType(result, expression, context);
             }
-            else {
-                JetType[] result = new JetType[1];
-                if (furtherNameLookup(expression, referencedName, result, context)) {
-                    return context.services.checkType(result[0], expression, context);
-                }
-
+            JetType[] result = new JetType[1];
+            if (furtherNameLookup(expression, referencedName, result, context)) {
+                return context.services.checkType(result[0], expression, context);
             }
             return null;
         }

@@ -3,14 +3,12 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +20,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     private TypeConstructor typeConstructor;
     private JavaClassMembersScope unsubstitutedMemberScope;
-    private JetType classObjectType;
+//    private JetType classObjectType;
     private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
     private Modality modality;
     private Visibility visibility;
@@ -52,19 +50,19 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
         this.unsubstitutedMemberScope = memberScope;
     }
 
-    public void setClassObjectMemberScope(JavaClassMembersScope memberScope) {
-        classObjectType = new JetTypeImpl(
-                new TypeConstructorImpl(
-                        JavaDescriptorResolver.JAVA_CLASS_OBJECT,
-                        Collections.<AnnotationDescriptor>emptyList(),
-                        true,
-                        "Class object emulation for " + getName(),
-                        Collections.<TypeParameterDescriptor>emptyList(),
-                        Collections.<JetType>emptyList()
-                ),
-                memberScope
-        );
-    }
+//    public void setClassObjectMemberScope(JavaClassMembersScope memberScope) {
+//        classObjectType = new JetTypeImpl(
+//                new TypeConstructorImpl(
+//                        JavaDescriptorResolver.JAVA_CLASS_OBJECT,
+//                        Collections.<AnnotationDescriptor>emptyList(),
+//                        true,
+//                        "Class object emulation for " + getName(),
+//                        Collections.<TypeParameterDescriptor>emptyList(),
+//                        Collections.<JetType>emptyList()
+//                ),
+//                memberScope
+//        );
+//    }
 
     public void addConstructor(ConstructorDescriptor constructorDescriptor) {
         this.constructors.add(constructorDescriptor);
@@ -133,7 +131,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     @Override
     public JetType getClassObjectType() {
-        return classObjectType;
+        return null;
     }
 
     @Override

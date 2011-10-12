@@ -161,11 +161,11 @@ public class JavaClassMembersScope implements JetScope {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        throw new UnsupportedOperationException(); // Should never occur, we don't sit in a Java class...
+        return ReceiverDescriptor.NO_RECEIVER; // Should never occur, we don't sit in a Java class...
     }
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        throw new UnsupportedOperationException(); // Should never occur, we don't sit in a Java class...
+        // we cannot really be scoped inside here
     }
 }
