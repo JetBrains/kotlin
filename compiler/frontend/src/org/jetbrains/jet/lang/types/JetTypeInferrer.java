@@ -1343,11 +1343,11 @@ public class JetTypeInferrer {
                 }
                 else if (size == 0) {
                     //todo (first we put to the context, then get from it)
-                    labelsResolver.resolveLabel(labelName, targetLabel, false, context);
+                    JetElement element = labelsResolver.resolveLabel(labelName, targetLabel, false, context);
                     // This uses the info written by the control flow processor
-                    PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(context.trace.getBindingContext(), targetLabel);
-                    if (psiElement instanceof JetFunctionLiteralExpression) {
-                        DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
+                    //PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(context.trace.getBindingContext(), targetLabel);
+                    if (element instanceof JetFunctionLiteralExpression) {
+                        DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                         if (declarationDescriptor instanceof FunctionDescriptor) {
                             thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiver();
                             if (thisReceiver.exists()) {
@@ -2911,7 +2911,7 @@ public class JetTypeInferrer {
             }
         }
 
-        private void resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, TypeInferenceContext context) {
+        private JetElement resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, TypeInferenceContext context) {
             Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
             int size = declarationsByLabel.size();
             
@@ -2930,7 +2930,7 @@ public class JetTypeInferrer {
                     throw new UnsupportedOperationException(); // TODO
                 }
                 context.trace.record(LABEL_TARGET, labelExpression, element);
-                return;
+                return element;
             }
             
             Stack<JetElement> stack = labeledElements.get(labelName);
@@ -2938,7 +2938,7 @@ public class JetTypeInferrer {
                 if (reportUnresolved) {
                     context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
                 }
-                return;
+                return null;
             }
             else if (stack.size() > 1) {
                 context.trace.report(LABEL_NAME_CLASH.on(labelExpression));
@@ -2946,6 +2946,7 @@ public class JetTypeInferrer {
 
             JetElement result = stack.peek();
             context.trace.record(BindingContext.LABEL_TARGET, labelExpression, result);
+            return result;
         }
 
         private void resolveCorrespondingLoopLabel(JetLabelQualifiedExpression expression, TypeInferenceContext context) {
