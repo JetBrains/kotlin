@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -137,6 +139,12 @@ public class JetControlFlowProcessor {
         @Override
         public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
             builder.read(expression);
+            if (trace.get(BindingContext.PROCESSED, expression)) {
+                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    builder.jumpToError(expression);
+                }
+            }
         }
 
         @Override
@@ -522,6 +530,12 @@ public class JetControlFlowProcessor {
                 value(selectorExpression, false);
             }
             builder.read(expression);
+            if (trace.get(BindingContext.PROCESSED, expression)) {
+                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    builder.jumpToError(expression);
+                }
+            }
         }
 
         private void visitCall(JetCallElement call) {
@@ -547,6 +561,12 @@ public class JetControlFlowProcessor {
 
             value(expression.getCalleeExpression(), false);
             builder.read(expression);
+            if (trace.get(BindingContext.PROCESSED, expression)) {
+                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    builder.jumpToError(expression);
+                }
+            }
         }
 
 //        @Override

@@ -136,16 +136,16 @@ fun tf() : Int {
 }
 
 fun failtest(a : Int) : Int {
-  <!UNREACHABLE_BECAUSE_OF_NOTHING!>if (fail() || true) {
+  if (fail() || <!UNREACHABLE_CODE!>true<!>) {
 
-  }<!>
-  <!UNREACHABLE_BECAUSE_OF_NOTHING!>return 1<!>
+  }
+  <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun foo(a : Nothing) : Unit {
   1
   a
-  <!UNREACHABLE_BECAUSE_OF_NOTHING!>2<!>
+  <!UNREACHABLE_CODE!>2<!>
 }
 
 fun fail() : Nothing {

@@ -393,7 +393,7 @@ public class JetTypeInferrer {
         private Map<JetExpression, JetType> collectReturnedExpressionsWithTypes(
                 @NotNull BindingTrace trace,
                 JetScope outerScope,
-                JetDeclarationWithBody function,
+                final JetDeclarationWithBody function,
                 FunctionDescriptor functionDescriptor) {
             JetExpression bodyExpression = function.getBodyExpression();
             assert bodyExpression != null;
@@ -402,12 +402,26 @@ public class JetTypeInferrer {
             //todo function literals
             final Collection<JetExpression> returnedExpressions = new ArrayList<JetExpression>();
             if (function.hasBlockBody()) {
-                bodyExpression.accept(new JetTreeVisitorVoid() {
+                //now this code is never invoked!, it should be invoked for inference of return type of function literal with local returns
+                bodyExpression.visit(new JetTreeVisitor<JetDeclarationWithBody>() {
                     @Override
-                    public void visitReturnExpression(JetReturnExpression expression) {
-                        returnedExpressions.add(expression);
+                    public Void visitReturnExpression(JetReturnExpression expression, JetDeclarationWithBody outerFunction) {
+                        if (expression.getLabeledExpression() == function || outerFunction == function) {
+                            returnedExpressions.add(expression);
+                        }
+                        return null;
                     }
-                });
+
+                    @Override
+                    public Void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, JetDeclarationWithBody outerFunction) {
+                        return super.visitFunctionLiteralExpression(expression, expression.getFunctionLiteral());
+                    }
+
+                    @Override
+                    public Void visitNamedFunction(JetNamedFunction function, JetDeclarationWithBody outerFunction) {
+                        return super.visitNamedFunction(function, function);
+                    }
+                }, function);
             }
             else {
                 returnedExpressions.add(bodyExpression);
@@ -1894,14 +1908,15 @@ public class JetTypeInferrer {
         private boolean containsBreak(JetLoopExpression expression) {
             final boolean[] result = new boolean[1];
             result[0] = false;
-            expression.accept(new JetTreeVisitorVoid() {
+            expression.visit(new JetTreeVisitor<Void>() {
                 @Override
-                public void visitBreakExpression(JetBreakExpression expression) {
-                    //todo get exact loop for this break, compare to expression
+                public Void visitBreakExpression(JetBreakExpression expression, Void v) {
+                    //todo get exact loop for this break, compare to an expression
                     //expression.getLabeledExpression()
                     result[0] = true;
+                    return null;
                 }
-            });
+            }, null);
 
             return result[0];
         }

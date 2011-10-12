@@ -144,7 +144,6 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     SimpleDiagnosticFactory UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR, "Unreachable code");
-    ParameterizedDiagnosticFactory1<String> UNREACHABLE_BECAUSE_OF_NOTHING = ParameterizedDiagnosticFactory1.create(ERROR, "This code is unreachable, because ''{0}'' never terminates normally");
 
     SimpleDiagnosticFactory MANY_CLASS_OBJECTS = SimpleDiagnosticFactory.create(ERROR, "Only one class object is allowed per class");
     SimpleDiagnosticFactory CLASS_OBJECT_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "A class object is not allowed here");

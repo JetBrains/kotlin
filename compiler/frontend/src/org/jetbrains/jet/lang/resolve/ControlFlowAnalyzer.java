@@ -58,8 +58,7 @@ public class ControlFlowAnalyzer {
     private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-
-        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData((JetElement)function, bodyExpression);
+        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData((JetElement) function, bodyExpression);
 
         final boolean blockBody = function.hasBlockBody();
         List<JetElement> unreachableElements = Lists.newArrayList();
@@ -105,29 +104,11 @@ public class ControlFlowAnalyzer {
                 }
             });
         }
-        markDominatedExpressionsAsUnreachable(bodyExpression, scope, expectedReturnType, flowInformationProvider);
     }
-
-    private void markDominatedExpressionsAsUnreachable(JetExpression expression, JetScope scope, JetType expectedReturnType, JetFlowInformationProvider flowInformationProvider) {
-        JetType type = typeInferrer.getType(scope, expression, expectedReturnType);
-        if (type == null || !JetStandardClasses.isNothing(type) || type.isNullable()) {
-            return;
-        }
-        
-        List<JetElement> dominated = new ArrayList<JetElement>();
-        flowInformationProvider.collectDominatedExpressions(expression, dominated);
-        Set<JetElement> rootExpressions = JetPsiUtil.findRootExpressions(dominated);
-        for (JetElement rootExpression : rootExpressions) {
-            context.getTrace().report(UNREACHABLE_BECAUSE_OF_NOTHING.on(rootExpression, expression.getText()));
-        }
-    }
-
 
     private void checkProperty(JetProperty property) {
         JetExpression initializer = property.getInitializer();
         if (initializer == null) return;
-        JetScope scope = this.context.getDeclaringScopes().get(property);
-        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer);
-        markDominatedExpressionsAsUnreachable(initializer, scope, NO_EXPECTED_TYPE, flowInformationProvider);
+        context.getClassDescriptorResolver().computeFlowData(property, initializer);
     }
 }
