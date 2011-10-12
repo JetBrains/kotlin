@@ -27,8 +27,8 @@ public class JavaClassMembersScope implements JetScope {
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    public JavaClassMembersScope(@NotNull DeclarationDescriptor classDescriptor, PsiClass psiClass, JavaSemanticServices semanticServices, boolean staticMembers) {
-        this.containingDeclaration = classDescriptor;
+    public JavaClassMembersScope(@NotNull DeclarationDescriptor classOrNamespaceDescriptor, PsiClass psiClass, JavaSemanticServices semanticServices, boolean staticMembers) {
+        this.containingDeclaration = classOrNamespaceDescriptor;
         this.psiClass = psiClass;
         this.semanticServices = semanticServices;
         this.staticMembers = staticMembers;

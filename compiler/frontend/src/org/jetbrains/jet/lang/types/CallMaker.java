@@ -66,16 +66,23 @@ public class CallMaker {
     private static class CallImpl implements Call {
 
         private final ASTNode callNode;
+        private final PsiElement callElement;
         private final ReceiverDescriptor explicitReceiver;
         private ASTNode callOperationNode;
         private final JetExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
-        protected CallImpl(@NotNull ASTNode callNode, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+
+        protected CallImpl(@NotNull ASTNode callNode, @Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
             this.callNode = callNode;
+            this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
             this.callOperationNode = callOperationNode;
             this.calleeExpression = calleeExpression;
             this.valueArguments = valueArguments;
+        }
+
+        protected CallImpl(@NotNull PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+            this(callElement.getNode(), callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments);
         }
 
         @Override
@@ -104,6 +111,11 @@ public class CallMaker {
         @Override
         public ASTNode getCallNode() {
             return callNode;
+        }
+
+        @Override
+        public PsiElement getCallElement() {
+            return callElement;
         }
 
         @Override
@@ -142,7 +154,7 @@ public class CallMaker {
     }
 
     public static Call makeCall(JetElement callElement, ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, JetExpression calleeExpression, List<? extends ValueArgument> arguments) {
-        return new CallImpl(callElement.getNode(), explicitReceiver, callOperationNode, calleeExpression, arguments);
+        return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments);
     }
 
     public static Call makeCall(@NotNull ReceiverDescriptor leftAsReceiver, JetBinaryExpression expression) {
@@ -218,6 +230,11 @@ public class CallMaker {
             @Override
             public ASTNode getCallNode() {
                 return callElement.getNode();
+            }
+
+            @Override
+            public PsiElement getCallElement() {
+                return callElement;
             }
         };
     }

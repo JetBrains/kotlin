@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -159,6 +160,20 @@ public class JetTypeInferrer {
             .put(JetTokens.PLUSEQ, JetTokens.PLUS)
             .put(JetTokens.MINUSEQ, JetTokens.MINUS)
             .build();
+    
+    @Nullable
+    public static String getNameForOperationSymbol(@NotNull IElementType token) {
+        String name = unaryOperationNames.get(token);
+        if (name != null) return name;
+        name = binaryOperationNames.get(token);
+        if (name != null) return name;
+        name = assignmentOperationNames.get(token);
+        if (name != null) return name;
+        if (comparisonOperations.contains(token)) return "compareTo";
+        if (equalsOperations.contains(token)) return "equals";
+        if (inOperations.contains(token)) return "contains";
+        return null;
+    } 
 
     private final JetSemanticServices semanticServices;
     private final JetFlowInformationProvider flowInformationProvider;
@@ -680,13 +695,14 @@ public class JetTypeInferrer {
         }
 
         @Nullable
-        public JetType resolveCall(@NotNull ReceiverDescriptor receiver, @NotNull JetCallExpression callExpression) {
-            return getCallResolver().resolveCall(trace, scope, CallMaker.makeCall(receiver, (ASTNode) null, callExpression), expectedType);
+        public JetType resolveCall(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetCallExpression callExpression) {
+            return getCallResolver().resolveCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType);
         }
 
         @Nullable
-        public VariableDescriptor resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @NotNull JetSimpleNameExpression nameExpression) {
-            return getCallResolver().resolveSimpleProperty(trace, scope, receiver, nameExpression, expectedType);
+        public VariableDescriptor resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
+            Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
+            return getCallResolver().resolveSimpleProperty(trace, scope, call, expectedType);
         }
 
         @NotNull
@@ -807,7 +823,7 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                return getSelectorReturnType(NO_RECEIVER, expression, context); // TODO : Extensions to this
+                return getSelectorReturnType(NO_RECEIVER, null, expression, context); // TODO : Extensions to this
 //                assert JetTokens.IDENTIFIER == expression.getReferencedNameElementType();
 //                if (referencedName != null) {
 //                    VariableDescriptor variable = context.scope.getVariable(referencedName);
@@ -1439,7 +1455,7 @@ public class JetTypeInferrer {
                     if (callSuffixExpression != null) {
 //                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
                         assert subjectExpression != null;
-                        JetType selectorReturnType = getSelectorReturnType(new ExpressionReceiver(subjectExpression, subjectType), callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
+                        JetType selectorReturnType = getSelectorReturnType(new ExpressionReceiver(subjectExpression, subjectType), condition.getOperationTokenNode(), callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
                         ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression", context);
 //                        context.services.checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context), condition);
                     }
@@ -1518,7 +1534,7 @@ public class JetTypeInferrer {
                     JetExpression decomposerExpression = pattern.getDecomposerExpression();
                     if (decomposerExpression != null) {
                         ReceiverDescriptor receiver = new TransientReceiver(subjectType);
-                        JetType selectorReturnType = getSelectorReturnType(receiver, decomposerExpression, context);
+                        JetType selectorReturnType = getSelectorReturnType(receiver, null, decomposerExpression, context);
 
                         result[0] = checkPatternType(pattern.getArgumentList(), selectorReturnType == null ? ErrorUtils.createErrorType("No type") : selectorReturnType, scopeToExtend, context);
                     }
@@ -2045,7 +2061,7 @@ public class JetTypeInferrer {
             // Clean resolution: no autocasts
 //            TemporaryBindingTrace cleanResolutionTrace = TemporaryBindingTrace.create(context.trace);
 //            TypeInferenceContext cleanResolutionContext = context.replaceBindingTrace(cleanResolutionTrace);
-            JetType selectorReturnType = getSelectorReturnType(new ExpressionReceiver(receiverExpression, receiverType), selectorExpression, context);
+            JetType selectorReturnType = getSelectorReturnType(new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
 
             //TODO move further
             if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
@@ -2187,16 +2203,16 @@ public class JetTypeInferrer {
 //        }
 
         @Nullable
-        private JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @NotNull JetExpression selectorExpression, @NotNull TypeInferenceContext context) {
+        private JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull TypeInferenceContext context) {
             if (selectorExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-                return context.resolveCall(receiver, callExpression);
+                return context.resolveCall(receiver, callOperationNode, callExpression);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) selectorExpression;
 
                 TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-                VariableDescriptor variableDescriptor = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, nameExpression);
+                VariableDescriptor variableDescriptor = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
                 if (variableDescriptor != null) {
                     temporaryTrace.commit();
                     return context.services.checkType(variableDescriptor.getOutType(), nameExpression, context);
@@ -2213,10 +2229,10 @@ public class JetTypeInferrer {
             else if (selectorExpression instanceof JetQualifiedExpression) {
                 JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
                 JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
-                JetType newReceiverType = getSelectorReturnType(receiver, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+                JetType newReceiverType = getSelectorReturnType(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
                 JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
                 if (newReceiverType != null && newSelectorExpression != null) {
-                    return getSelectorReturnType(new ExpressionReceiver(newReceiverExpression, newReceiverType), newSelectorExpression, context);
+                    return getSelectorReturnType(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context);
                 }
             }
             else {
@@ -2229,7 +2245,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitCallExpression(JetCallExpression expression, TypeInferenceContext context) {
-            JetType expressionType = context.resolveCall(NO_RECEIVER, expression);
+            JetType expressionType = context.resolveCall(NO_RECEIVER, null, expression);
             return context.services.checkType(expressionType, expression, context);
         }
 
@@ -2512,18 +2528,18 @@ public class JetTypeInferrer {
                     name,
                     receiver);
             if (functionDescriptor != null) {
-                if (receiver.getType().isNullable()) {
-                    // TODO : better error message for '1 + nullableVar' case
-                    JetExpression right = binaryExpression.getRight();
-                    String rightText = right == null ? "" : right.getText();
-                    String leftText = binaryExpression.getLeft().getText();
-//                    context.trace.getErrorHandler().genericError(binaryExpression.getOperationReference().getNode(),
-//                                                                 "Infix call corresponds to a dot-qualified call '" +
-//                                                                 leftText + "." + name + "(" + rightText + ")'" +
-//                                                                 " which is not allowed on a nullable receiver '" + leftText + "'." +
-//                                                                 " Use '?.'-qualified call instead");
-                    context.trace.report(UNSAFE_INFIX_CALL.on(binaryExpression.getOperationReference(), leftText, name, rightText));
-                }
+//                if (receiver.getType().isNullable()) {
+//                    // TODO : better error message for '1 + nullableVar' case
+//                    JetExpression right = binaryExpression.getRight();
+//                    String rightText = right == null ? "" : right.getText();
+//                    String leftText = binaryExpression.getLeft().getText();
+////                    context.trace.getErrorHandler().genericError(binaryExpression.getOperationReference().getNode(),
+////                                                                 "Infix call corresponds to a dot-qualified call '" +
+////                                                                 leftText + "." + name + "(" + rightText + ")'" +
+////                                                                 " which is not allowed on a nullable receiver '" + leftText + "'." +
+////                                                                 " Use '?.'-qualified call instead");
+//                    context.trace.report(UNSAFE_INFIX_CALL.on(binaryExpression.getOperationReference(), leftText, name, rightText));
+//                }
                 
 
                 return functionDescriptor.getReturnType();

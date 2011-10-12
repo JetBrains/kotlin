@@ -76,7 +76,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             scope = explicitReceiver.getType().getMemberScope();
             explicitReceiver = NO_RECEIVER;
         }
-        doComputeTasks(scope, explicitReceiver, call, name, result, NO_AUTO_CASTS);
+        doComputeTasks(scope, explicitReceiver, call, name, result, AutoCastService.NO_AUTO_CASTS);
 
         ReceiverDescriptor receiverToCast = explicitReceiver.exists() ? explicitReceiver : scope.getImplicitReceiver();
         if (receiverToCast.exists()) {
@@ -85,43 +85,6 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return result;
     }
 
-    private interface AutoCastService {
-        List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor);
-        DataFlowInfo getDataFlowInfo();
-    }
-
-    private static class AutoCastServiceImpl implements AutoCastService {
-        private final DataFlowInfo dataFlowInfo;
-        private final BindingContext bindingContext;
-
-        private AutoCastServiceImpl(DataFlowInfo dataFlowInfo, BindingContext bindingContext) {
-            this.dataFlowInfo = dataFlowInfo;
-            this.bindingContext = bindingContext;
-        }
-
-        @Override
-        public List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor) {
-            return AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverDescriptor);
-        }
-
-        @Override
-        public DataFlowInfo getDataFlowInfo() {
-            return dataFlowInfo;
-        }
-    }
-
-    private static AutoCastService NO_AUTO_CASTS = new AutoCastService() {
-        @Override
-        public DataFlowInfo getDataFlowInfo() {
-            return DataFlowInfo.getEmpty();
-        }
-
-        @Override
-        public List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor) {
-            return Collections.singletonList(receiverDescriptor);
-        }
-    };
-    
     private void doComputeTasks(JetScope scope, ReceiverDescriptor receiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull AutoCastService autoCastService) {
         DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();

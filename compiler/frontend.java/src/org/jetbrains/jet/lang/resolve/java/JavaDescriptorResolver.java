@@ -108,7 +108,6 @@ public class JavaDescriptorResolver {
                 name,
                 typeParameters,
                 supertypes
-
         ));
         classDescriptor.setModality(Modality.convertFromFlags(
                 psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),

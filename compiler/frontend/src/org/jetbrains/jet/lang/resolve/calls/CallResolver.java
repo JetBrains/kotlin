@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -47,16 +48,20 @@ public class CallResolver {
     public VariableDescriptor resolveSimpleProperty(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
-            @NotNull ReceiverDescriptor receiver,
-            @NotNull final JetSimpleNameExpression nameExpression,
+//            @NotNull ReceiverDescriptor receiver,
+//            @NotNull final JetSimpleNameExpression nameExpression,
+            @NotNull Call call,            
             @NotNull JetType expectedType) {
+//        Call call = CallMaker.makePropertyCall(receiver, null, nameExpression);
+        JetExpression calleeExpression = call.getCalleeExpression();
+        assert calleeExpression instanceof JetSimpleNameExpression;
+        JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
         String referencedName = nameExpression.getReferencedName();
         if (referencedName == null) {
             return null;
         }
-        Call call = CallMaker.makePropertyCall(receiver, null, nameExpression);
         List<ResolutionTask<VariableDescriptor>> prioritizedTasks = TaskPrioritizers.PROPERTY_TASK_PRIORITIZER.computePrioritizedTasks(scope, call, referencedName, trace.getBindingContext(), dataFlowInfo);
-        return resolveCallToDescriptor(trace, scope, call, nameExpression.getNode(), expectedType, prioritizedTasks, nameExpression);
+        return resolveCallToDescriptor(trace, scope, call, expectedType, prioritizedTasks, nameExpression);
     }
 
     @Nullable
@@ -79,7 +84,7 @@ public class CallResolver {
             @NotNull String name,
             @NotNull JetType expectedType) {
         List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, call, name, trace.getBindingContext(), dataFlowInfo);
-        return resolveCallToDescriptor(trace, scope, call, functionReference.getNode(), expectedType, tasks, functionReference);
+        return resolveCallToDescriptor(trace, scope, call, expectedType, tasks, functionReference);
     }
 
     @Nullable
@@ -171,7 +176,7 @@ public class CallResolver {
             }
         }
 
-        return resolveCallToDescriptor(trace, scope, call, call.getCallNode(), expectedType, prioritizedTasks, functionReference);
+        return resolveCallToDescriptor(trace, scope, call, expectedType, prioritizedTasks, functionReference);
     }
 
     private FunctionDescriptor checkArgumentTypesAndFail(BindingTrace trace, JetScope scope, Call call) {
@@ -184,11 +189,10 @@ public class CallResolver {
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull final Call call,
-            @NotNull final ASTNode callNode,
             @NotNull JetType expectedType,
             @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
             @NotNull final JetReferenceExpression reference) {
-        ResolvedCall<D> resolvedCall = doResolveCall(trace, scope, call, callNode, expectedType, prioritizedTasks, reference);
+        ResolvedCall<D> resolvedCall = doResolveCall(trace, scope, call, expectedType, prioritizedTasks, reference);
         return resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
     }
 
@@ -197,7 +201,6 @@ public class CallResolver {
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull final Call call,
-            @NotNull final ASTNode callNode,
             @NotNull JetType expectedType,
             @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
             @NotNull final JetReferenceExpression reference) {
@@ -268,22 +271,22 @@ public class CallResolver {
 
             @Override
             public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {
-                trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(callNode, descriptors));
+                trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallNode(), descriptors));
             }
 
             @Override
             public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {
-                trace.report(NONE_APPLICABLE.on(callNode, descriptors));
+                trace.report(NONE_APPLICABLE.on(call.getCallNode(), descriptors));
             }
 
             @Override
             public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
-                trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(callNode));
+                trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallNode()));
             }
 
             @Override
             public void typeInferenceFailed(@NotNull BindingTrace trace) {
-                trace.report(TYPE_INFERENCE_FAILED.on(callNode));
+                trace.report(TYPE_INFERENCE_FAILED.on(call.getCallNode()));
             }
 
             @Override
@@ -293,7 +296,16 @@ public class CallResolver {
                     trace.report(UNSAFE_CALL.on(callOperationNode, type));
                 }
                 else {
-                    trace.report(UNSAFE_CALL.on(reference, type));
+                    PsiElement callElement = call.getCallElement();
+                    if (callElement instanceof JetBinaryExpression) {
+                        JetBinaryExpression binaryExpression = (JetBinaryExpression) callElement;
+                        JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
+                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : JetTypeInferrer.getNameForOperationSymbol(operationReference.getReferencedNameElementType());
+                        trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, binaryExpression.getRight().getText()));
+                    }
+                    else {
+                        trace.report(UNSAFE_CALL.on(reference, type));
+                    }
                 }
             }
 
@@ -411,7 +423,7 @@ public class CallResolver {
                     }
                 }
                 else {
-                    if (checkAllValueArguments(scope, tracing, task, candidateCall, candidate)) {
+                    if (checkAllValueArguments(scope, tracing, task, candidateCall)) {
                         successfulCandidates.add(candidateCall.setResultingDescriptor(candidate));
                     }
                     else {
@@ -447,7 +459,7 @@ public class CallResolver {
 
                     candidateCall.setResultingDescriptor(substitutedDescriptor);
                     replaceValueParametersWithSubstitutedOnes(candidateCall, substitutedDescriptor);
-                    if (checkAllValueArguments(scope, tracing, task, candidateCall, substitutedDescriptor)) {
+                    if (checkAllValueArguments(scope, tracing, task, candidateCall)) {
                         successfulCandidates.add(candidateCall);
                     }
                     else {
@@ -541,29 +553,39 @@ public class CallResolver {
         }
     }
 
-    private <D extends CallableDescriptor> boolean checkAllValueArguments(JetScope scope, TracingStrategy tracing, ResolutionTask<D> task, ResolvedCall<D> candidateCall, D substitutedDescriptor) {
+    private <D extends CallableDescriptor> boolean checkAllValueArguments(JetScope scope, TracingStrategy tracing, ResolutionTask<D> task, ResolvedCall<D> candidateCall) {
         boolean result = checkValueArgumentTypes(scope, candidateCall);
-//        result &= checkReceiver(task, candidateCall, tracing, substitutedDescriptor);
-        ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
-        ReceiverDescriptor receiverParameter = candidateCall.getResultingDescriptor().getReceiverParameter();
-        boolean safeAccess = task.getCall().getCallOperationNode() == JetTokens.SAFE_ACCESS;
+
+        result &= checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(), task);
+        result &= checkReceiver(tracing, candidateCall, DescriptorUtils.getExpectedThisObject(candidateCall.getResultingDescriptor()), candidateCall.getThisObject(), task);
+        return result;
+    }
+
+    private <D extends CallableDescriptor> boolean checkReceiver(TracingStrategy tracing, ResolvedCall<D> candidateCall, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument, ResolutionTask<D> task) {
+        boolean result = true;
         if (receiverParameter.exists() && receiverArgument.exists()) {
+            ASTNode callOperationNode = task.getCall().getCallOperationNode();
+            boolean safeAccess = callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
             JetType receiverArgumentType = receiverArgument.getType();
-            if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgumentType.isNullable()) {
+            AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(task.getDataFlowInfo(), candidateCall.getTrace().getBindingContext());
+            if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
                 tracing.unsafeCall(candidateCall.getTrace(), receiverArgumentType);
-                result = false;
+//                result = false;
             }
-            else if (!semanticServices.getTypeChecker().isSubtypeOf(receiverArgument.getType(), receiverParameter.getType())) {
-                tracing.wrongReceiverType(candidateCall.getTrace(), receiverParameter, receiverArgument);
-                return false;
+            else {
+                JetType effectiveReceiverArgumentType = safeAccess
+                                                        ? TypeUtils.makeNotNullable(receiverArgumentType)
+                                                        : receiverArgumentType;
+                if (!semanticServices.getTypeChecker().isSubtypeOf(effectiveReceiverArgumentType, receiverParameter.getType())) {
+                    tracing.wrongReceiverType(candidateCall.getTrace(), receiverParameter, receiverArgument);
+                    result = false;
+                }
             }
 
             if (safeAccess && (receiverParameter.getType().isNullable() || !receiverArgumentType.isNullable())) {
                 tracing.unnecessarySafeCall(candidateCall.getTrace(), receiverArgumentType);
             }
         }
-
-
         return result;
     }
 
