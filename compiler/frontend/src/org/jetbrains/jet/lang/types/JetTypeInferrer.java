@@ -887,6 +887,12 @@ public class JetTypeInferrer {
             if (furtherNameLookup(expression, referencedName, result, context)) {
                 return context.services.checkType(result[0], expression, context);
             }
+            // To report NO_CLASS_OBJECT when no namespace found
+            if (classifier != null) {
+                context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
+                context.trace.record(REFERENCE_TARGET, expression, classifier);
+                return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
+            }
             return null;
         }
 
