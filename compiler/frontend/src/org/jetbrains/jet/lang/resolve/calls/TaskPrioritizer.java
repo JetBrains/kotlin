@@ -2,10 +2,12 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DataFlowInfo;
@@ -89,7 +91,6 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);
-        // AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverToCast)
         if (receiver.exists()) {
             List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
 
@@ -170,7 +171,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     }
 
     private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolvedCall<D> resolvedCall) {
-        ReceiverDescriptor expectedThisObject = DescriptorUtils.getExpectedThisObject(resolvedCall.getCandidateDescriptor());
+        ReceiverDescriptor expectedThisObject = resolvedCall.getCandidateDescriptor().getExpectedThisObject();
         if (!expectedThisObject.exists()) return true;
         List<ReceiverDescriptor> receivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(receivers);

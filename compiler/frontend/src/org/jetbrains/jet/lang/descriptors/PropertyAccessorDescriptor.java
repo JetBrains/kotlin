@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
@@ -75,6 +76,18 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     @NotNull
     public PropertyDescriptor getCorrespondingProperty() {
         return correspondingProperty;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getReceiverParameter() {
+        return getCorrespondingProperty().getReceiverParameter();
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getExpectedThisObject() {
+        return getCorrespondingProperty().getExpectedThisObject();
     }
 
     @NotNull

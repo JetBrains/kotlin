@@ -26,7 +26,6 @@ public interface VariableDescriptor extends CallableDescriptor {
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
 
-    @NotNull
     @Override
     VariableDescriptor substitute(TypeSubstitutor substitutor);
 

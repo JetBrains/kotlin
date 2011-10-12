@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -327,6 +328,7 @@ public class JavaDescriptorResolver {
                 resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), field),
                 !isFinal,
                 null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 field.getName(),
                 isFinal ? null : type,
                 type);
@@ -401,6 +403,7 @@ public class JavaDescriptorResolver {
         methodDescriptorCache.put(method, functionDescriptorImpl);
         functionDescriptorImpl.initialize(
                 null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                 resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),

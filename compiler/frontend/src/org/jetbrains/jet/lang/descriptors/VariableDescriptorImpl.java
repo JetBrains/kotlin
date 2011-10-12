@@ -80,6 +80,12 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
 
     @NotNull
     @Override
+    public ReceiverDescriptor getExpectedThisObject() {
+        return ReceiverDescriptor.NO_RECEIVER;
+    }
+
+    @NotNull
+    @Override
     public JetType getReturnType() {
         return getOutType();
     }

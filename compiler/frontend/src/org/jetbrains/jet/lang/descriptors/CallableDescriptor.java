@@ -16,6 +16,9 @@ public interface CallableDescriptor extends DeclarationDescriptor {
     ReceiverDescriptor getReceiverParameter();
 
     @NotNull
+    ReceiverDescriptor getExpectedThisObject();
+
+    @NotNull
     List<TypeParameterDescriptor> getTypeParameters();
 
     @NotNull

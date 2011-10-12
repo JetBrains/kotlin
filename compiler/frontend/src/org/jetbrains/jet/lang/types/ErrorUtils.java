@@ -105,6 +105,7 @@ public class ErrorUtils {
             Visibility.INTERNAL,
             true,
             null,
+            ReceiverDescriptor.NO_RECEIVER,
             "<ERROR PROPERTY>",
             ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
 
@@ -112,6 +113,7 @@ public class ErrorUtils {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");
         return functionDescriptor.initialize(
                 null,
+                ReceiverDescriptor.NO_RECEIVER,
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
                 createErrorType("<ERROR FUNCTION RETURN>"),
@@ -123,6 +125,7 @@ public class ErrorUtils {
     public static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
         return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>").initialize(
                 null,
+                ReceiverDescriptor.NO_RECEIVER,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),

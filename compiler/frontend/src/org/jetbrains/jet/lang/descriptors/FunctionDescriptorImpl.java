@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -27,6 +28,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
     private JetType unsubstitutedReturnType;
     private ReceiverDescriptor receiver;
+    private ReceiverDescriptor expectedThisObject;
 
     private Modality modality;
     private Visibility visibility;
@@ -51,6 +53,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     public FunctionDescriptorImpl initialize(
             @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
@@ -62,6 +65,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.modality = modality;
         this.visibility = visibility;
         this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
+        this.expectedThisObject = expectedThisObject;
         return this;
     }
 
@@ -73,6 +77,12 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     @Override
     public ReceiverDescriptor getReceiverParameter() {
         return receiver;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getExpectedThisObject() {
+        return expectedThisObject;
     }
 
     @NotNull
@@ -138,6 +148,15 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
                 return null;
             }
         }
+        
+        ReceiverDescriptor substitutedExpectedThis = NO_RECEIVER;
+        if (expectedThisObject.exists()) {
+            JetType substitutedType = substitutor.substitute(expectedThisObject.getType(), Variance.IN_VARIANCE);
+            if (substitutedType == null) {
+                return null;
+            }
+            substitutedExpectedThis = new TransientReceiver(substitutedType);
+        }
 
         List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);
         if (substitutedValueParameters == null) {
@@ -151,6 +170,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
         substitutedDescriptor.initialize(
                 substitutedReceiverType,
+                substitutedExpectedThis,
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
@@ -182,6 +202,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         FunctionDescriptorImpl copy = new FunctionDescriptorImpl(newOwner, Lists.newArrayList(getAnnotations()), getName());
         copy.initialize(
                 getReceiverParameter().exists() ? getReceiverParameter().getType() : null,
+                expectedThisObject,
                 DescriptorUtils.copyTypeParameters(copy, typeParameters),
                 DescriptorUtils.copyValueParameters(copy, unsubstitutedValueParameters),
                 unsubstitutedReturnType,

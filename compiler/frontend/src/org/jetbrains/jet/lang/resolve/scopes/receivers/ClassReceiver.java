@@ -2,14 +2,28 @@ package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 
 /**
  * @author abreslav
  */
-public class ClassReceiver extends ImplicitReceiverDescriptor {
+public class ClassReceiver implements ReceiverDescriptor {
 
-    public ClassReceiver(ClassDescriptor classDescriptor) {
-        super(classDescriptor, classDescriptor.getDefaultType());
+    private final ClassDescriptor classDescriptor;
+
+    public ClassReceiver(@NotNull ClassDescriptor classDescriptor) {
+        this.classDescriptor = classDescriptor;
+    }
+
+    @Override
+    public boolean exists() {
+        return true;
+    }
+
+    @NotNull
+    @Override
+    public JetType getType() {
+        return classDescriptor.getDefaultType();
     }
 
     @Override

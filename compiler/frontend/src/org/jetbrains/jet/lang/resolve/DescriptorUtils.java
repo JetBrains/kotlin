@@ -116,13 +116,7 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static ReceiverDescriptor getExpectedThisObject(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ConstructorDescriptor) {
-            ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) descriptor;
-            ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
-            return getExpectedThisObject(classDescriptor);
-        }
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+    public static ReceiverDescriptor getExpectedThisObjectIfNeeded(@NotNull DeclarationDescriptor containingDeclaration) {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             return classDescriptor.getImplicitReceiver();

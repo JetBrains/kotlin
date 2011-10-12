@@ -177,7 +177,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             error = true;
         }
 
-        assert candidateCall.getThisObject().exists() == candidateCall.getExpectedThisObject().exists() : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+        assert candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists() : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
 
         return error;
     }

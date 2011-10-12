@@ -557,7 +557,7 @@ public class CallResolver {
         boolean result = checkValueArgumentTypes(scope, candidateCall);
 
         result &= checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(), task);
-        result &= checkReceiver(tracing, candidateCall, DescriptorUtils.getExpectedThisObject(candidateCall.getResultingDescriptor()), candidateCall.getThisObject(), task);
+        result &= checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(), task);
         return result;
     }
 

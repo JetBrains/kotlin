@@ -195,6 +195,7 @@ public class ClassDescriptorResolver {
         Visibility visibility = resolveVisibilityFromModifiers(function.getModifierList());
         functionDescriptor.initialize(
                 receiverType,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDescriptor),
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
@@ -438,6 +439,7 @@ public class ClassDescriptorResolver {
                 resolveVisibilityFromModifiers(objectDeclaration.getModifierList()),
                 false,
                 null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 null,
                 classDescriptor.getDefaultType());
@@ -490,6 +492,7 @@ public class ClassDescriptorResolver {
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
                 receiverType,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 JetPsiUtil.safeName(property.getName()),
                 isVar ? type : null,
                 type);
@@ -761,6 +764,7 @@ public class ClassDescriptorResolver {
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 name == null ? "<no name>" : name,
                 isMutable ? type : null,
                 type);

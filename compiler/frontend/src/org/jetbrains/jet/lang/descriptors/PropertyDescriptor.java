@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
@@ -24,6 +25,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private final Visibility visibility;
     private final boolean isVar;
     private final ReceiverDescriptor receiver;
+    private final ReceiverDescriptor expectedThisObject;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
     private final PropertyDescriptor original;
@@ -38,6 +40,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType) {
@@ -48,6 +51,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.modality = modality;
         this.visibility = visibility;
         this.receiver = receiverType == null ? ReceiverDescriptor.NO_RECEIVER : new ExtensionReceiver(this, receiverType);
+        this.expectedThisObject = expectedThisObject;
         this.original = original == null ? this : original.getOriginal();
     }
 
@@ -58,15 +62,17 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType) {
-        this(null, containingDeclaration, annotations, modality, visibility, isVar, receiverType, name, inType, outType);
+        this(null, containingDeclaration, annotations, modality, visibility, isVar, receiverType, expectedThisObject, name, inType, outType);
     }
 
     private PropertyDescriptor(
             @NotNull PropertyDescriptor original,
             @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor expectedThisObject,
             @Nullable JetType inType,
             @NotNull JetType outType) {
         this(
@@ -77,6 +83,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
                 original.getVisibility(),
                 original.isVar,
                 receiverType,
+                expectedThisObject,
                 original.getName(),
                 inType,
                 outType);
@@ -97,6 +104,12 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @NotNull
     public ReceiverDescriptor getReceiverParameter() {
         return receiver;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getExpectedThisObject() {
+        return expectedThisObject;
     }
 
     @NotNull
@@ -132,7 +145,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return setter;
     }
 
-    @NotNull
     @Override
     public PropertyDescriptor substitute(TypeSubstitutor substitutor) {
         JetType originalInType = getInType();
@@ -142,9 +154,18 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         if (inType == null && outType == null) {
             return null; // TODO : tell the user that the property was projected out
         }
+        JetType substitutedReceiverType;
+        if (receiver.exists()) {
+            substitutedReceiverType = substitutor.substitute(receiver.getType(), Variance.IN_VARIANCE);
+            if (substitutedReceiverType == null) return null;
+        }
+        else {
+            substitutedReceiverType = null;
+        }
         return new PropertyDescriptor(
                 this,
-                receiver.exists() ? substitutor.substitute(receiver.getType(), Variance.IN_VARIANCE) : null,
+                substitutedReceiverType,
+                expectedThisObject.exists() ? new TransientReceiver(substitutor.substitute(expectedThisObject.getType(), Variance.IN_VARIANCE)) : expectedThisObject,
                 inType,
                 outType
         );
@@ -171,6 +192,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return overriddenProperties;
 
     }
+
     @NotNull
     @Override
     public PropertyDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
@@ -178,7 +200,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
                 newOwner,
                 Lists.newArrayList(getAnnotations()),
                 DescriptorUtils.convertModality(modality, makeNonAbstract), visibility, isVar,
-                receiver.exists() ? receiver.getType() : null, getName(), getInType(), getOutType());
+                receiver.exists() ? receiver.getType() : null,
+                expectedThisObject,
+                getName(), getInType(), getOutType());
         PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
                 propertyDescriptor, Lists.newArrayList(getter.getAnnotations()),
                 DescriptorUtils.convertModality(getter.getModality(), makeNonAbstract), getter.getVisibility(),

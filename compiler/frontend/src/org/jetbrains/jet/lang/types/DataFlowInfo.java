@@ -185,6 +185,10 @@ public class DataFlowInfo {
 
         return new DataFlowInfo(ImmutableMap.copyOf(builder), newTypeInfo);
     }
+    
+    public DataFlowInfo nullabilityOnly() {
+        return new DataFlowInfo(nullabilityInfo, EMPTY.copyTypeInfo());
+    }
 
     private static class NullabilityFlags {
         private final boolean canBeNull;
