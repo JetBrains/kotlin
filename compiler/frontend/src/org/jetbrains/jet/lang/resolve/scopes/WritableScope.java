@@ -21,6 +21,8 @@ public interface WritableScope extends JetScope {
 
     void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor);
 
+    void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor);
+
     void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
 
     @Nullable

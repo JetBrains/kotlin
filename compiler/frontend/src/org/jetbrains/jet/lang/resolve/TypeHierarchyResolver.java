@@ -227,6 +227,7 @@ public class TypeHierarchyResolver {
             }
             else {
                 ClassifierDescriptor classifierDescriptor = null;
+                NamespaceDescriptor namespaceDescriptor = null;
                 JetSimpleNameExpression referenceExpression = null;
 
                 JetExpression importedReference = importDirective.getImportedReference();
@@ -239,6 +240,7 @@ public class TypeHierarchyResolver {
                         String referencedName = referenceExpression.getReferencedName();
                         if (type != null && referencedName != null) {
                             classifierDescriptor = type.getMemberScope().getClassifier(referencedName);
+                            namespaceDescriptor = type.getMemberScope().getNamespace(referencedName);
                         }
                     }
                 }
@@ -249,15 +251,25 @@ public class TypeHierarchyResolver {
                     String referencedName = referenceExpression.getReferencedName();
                     if (referencedName != null) {
                         classifierDescriptor = outerScope.getClassifier(referencedName);
+                        namespaceDescriptor = outerScope.getNamespace(referencedName);
                     }
                 }
 
+                String aliasName = importDirective.getAliasName();
                 if (classifierDescriptor != null) {
                     context.getTrace().record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
 
-                    String aliasName = importDirective.getAliasName();
-                    String importedClassifierName = aliasName != null ? aliasName : classifierDescriptor.getName();
-                    namespaceScope.importClassifierAlias(importedClassifierName, classifierDescriptor);
+                    if (aliasName != null) {
+                        namespaceScope.importClassifierAlias(aliasName, classifierDescriptor);
+                    }
+                }
+                if (namespaceDescriptor != null) {
+                    if (classifierDescriptor == null) {
+                        context.getTrace().record(BindingContext.REFERENCE_TARGET, referenceExpression, namespaceDescriptor);
+                    }
+                    if (aliasName != null) {
+                        namespaceScope.importNamespaceAlias(aliasName, namespaceDescriptor);
+                    }
                 }
             }
         }

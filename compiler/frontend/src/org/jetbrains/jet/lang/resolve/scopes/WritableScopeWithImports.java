@@ -97,15 +97,24 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         return null;
     }
 
-    public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
+    private WritableScope getCurrentIndividualImportScope() {
         if (currentIndividualImportScope == null) {
             WritableScopeImpl writableScope = new WritableScopeImpl(EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING).setDebugName("Individual import scope");
             importScope(writableScope);
             currentIndividualImportScope = writableScope;
         }
-        currentIndividualImportScope.addClassifierAlias(importedClassifierName, classifierDescriptor);
+        return currentIndividualImportScope;
     }
 
+    public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
+        getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor);
+    }
+    
+    
+    public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
+        getCurrentIndividualImportScope().addNamespaceAlias(aliasName, namespaceDescriptor);
+    }
+    
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration();
