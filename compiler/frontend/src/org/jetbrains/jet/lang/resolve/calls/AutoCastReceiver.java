@@ -30,6 +30,6 @@ public class AutoCastReceiver extends AbstractReceiverDescriptor {
 
     @Override
     public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
-        throw new UnsupportedOperationException();
+        return original.accept(visitor, data);
     }
 }
