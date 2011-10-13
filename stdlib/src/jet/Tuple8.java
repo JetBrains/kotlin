@@ -1,6 +1,8 @@
 package jet;
 
-public class Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> {
+import jet.typeinfo.TypeInfo;
+
+public class Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> extends DefaultJetObject{
     public final T1 _1;
     public final T2 _2;
     public final T3 _3;
@@ -10,7 +12,8 @@ public class Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> {
     public final T7 _7;
     public final T8 _8;
 
-    public Tuple8(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8) {
+    public Tuple8(TypeInfo typeInfo, T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8) {
+        super(typeInfo);
         _1 = t1;
         _2 = t2;
         _3 = t3;

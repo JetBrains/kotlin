@@ -2,23 +2,23 @@ package jet;
 
 import jet.typeinfo.TypeInfo;
 
-public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObject {
+public final class LongRange implements Range<Long>, Iterable<Long>, JetObject {
     private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
 
-    private final int start;
-    private final int count;
+    private final long start;
+    private final long count;
 
-    public IntRange(int startValue, int count) {
+    public LongRange(long startValue, long count) {
         this.start = startValue;
         this.count = count;
     }
 
-    public IntRange(int startValue, int count, boolean reversed) {
+    public LongRange(long startValue, long count, boolean reversed) {
         this(startValue, reversed ? -count : count);
     }
 
     @Override
-    public boolean contains(Integer item) {
+    public boolean contains(Long item) {
         if (item == null) return false;
         if (count >= 0) {
             return item >= start && item < start + count;
@@ -26,20 +26,20 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         return item <= start && item > start + count;
     }
 
-    public int getStart() {
+    public long getStart() {
         return start;
     }
 
-    public int getEnd() {
+    public long getEnd() {
         return start+count-1;
     }
 
-    public int getSize() {
+    public long getSize() {
         return count < 0 ? -count : count;
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<Long> iterator() {
         return new MyIterator(start, count);
     }
 
@@ -47,7 +47,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
     public TypeInfo<?> getTypeInfo() {
         return typeInfo;
     }
-    
+
     public static IntRange count(int length) {
         return new IntRange(0, length);
     }
@@ -61,15 +61,15 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         }
     }
 
-    private static class MyIterator implements Iterator<Integer> {
+    private static class MyIterator implements Iterator<Long> {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
-        private int cur;
-        private int count;
+        private long cur;
+        private long count;
 
         private final boolean reversed;
 
-        public MyIterator(int startValue, int count) {
+        public MyIterator(long startValue, long count) {
             cur = startValue;
             reversed = count < 0;
             this.count = reversed ? -count : count;
@@ -81,7 +81,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         }
 
         @Override
-        public Integer next() {
+        public Long next() {
             count--;
             if(reversed) {
                 return cur--;

@@ -22,7 +22,7 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<Integer> INT_TYPE_INFO = getTypeInfo(Integer.class, false);
     public static final TypeInfo<Long> LONG_TYPE_INFO = getTypeInfo(Long.class, false);
     public static final TypeInfo<Character> CHAR_TYPE_INFO = getTypeInfo(Character.class, false);
-    public static final TypeInfo<Boolean> BOOL_TYPE_INFO = getTypeInfo(Boolean.class, false);
+    public static final TypeInfo<Boolean> BOOLEAN_TYPE_INFO = getTypeInfo(Boolean.class, false);
     public static final TypeInfo<Float> FLOAT_TYPE_INFO = getTypeInfo(Float.class, false);
     public static final TypeInfo<Double> DOUBLE_TYPE_INFO = getTypeInfo(Double.class, false);
 
