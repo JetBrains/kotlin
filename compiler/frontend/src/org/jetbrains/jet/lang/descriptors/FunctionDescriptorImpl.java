@@ -151,7 +151,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         
         ReceiverDescriptor substitutedExpectedThis = NO_RECEIVER;
         if (expectedThisObject.exists()) {
-            JetType substitutedType = substitutor.substitute(expectedThisObject.getType(), Variance.IN_VARIANCE);
+            JetType substitutedType = substitutor.substitute(expectedThisObject.getType(), Variance.INVARIANT);
             if (substitutedType == null) {
                 return null;
             }
