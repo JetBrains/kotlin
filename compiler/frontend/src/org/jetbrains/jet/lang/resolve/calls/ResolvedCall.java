@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.UNKNOWN_STATUS;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
@@ -59,9 +60,19 @@ public class ResolvedCall<D extends CallableDescriptor> {
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newHashMap();
     private boolean someArgumentHasNoType = false;
     private TemporaryBindingTrace trace;
+    private ResolutionStatus status = UNKNOWN_STATUS;
 
     private ResolvedCall(@NotNull D candidateDescriptor) {
         this.candidateDescriptor = candidateDescriptor;
+    }
+
+    @NotNull
+    public ResolutionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(@NotNull ResolutionStatus status) {
+        this.status = status;
     }
 
     @NotNull

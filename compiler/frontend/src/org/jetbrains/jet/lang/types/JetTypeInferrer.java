@@ -309,7 +309,7 @@ public class JetTypeInferrer {
 
         private void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType, @NotNull DataFlowInfo dataFlowInfo) {
             JetExpression bodyExpression = function.getBodyExpression();
-            assert bodyExpression != null;
+            if (bodyExpression == null) return;
             
             final boolean blockBody = function.hasBlockBody();
             final TypeInferenceContext context =

@@ -22,6 +22,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCall.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCall.MAP_TO_RESULT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
@@ -345,9 +346,6 @@ public class CallResolver {
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResults<D> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing) {
-        Set<ResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
-        Set<ResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
-
         for (ResolvedCall<D> candidateCall : task.getCandidates()) {
             D candidate = candidateCall.getCandidateDescriptor();
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
@@ -356,14 +354,14 @@ public class CallResolver {
             tracing.bindReference(temporaryTrace, candidateCall);
             
             if (ErrorUtils.isError(candidate)) {
-                successfulCandidates.add(candidateCall.setResultingDescriptor(candidate));
+                candidateCall.setStatus(SUCCESS);
                 checkTypesWithNoCallee(temporaryTrace, scope, task.getCall());
                 continue;
             }
 
             boolean errorInArgumentMapping = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(task, tracing, candidateCall);
             if (errorInArgumentMapping) {
-                failedCandidates.add(candidateCall);
+                candidateCall.setStatus(OTHER_ERROR);
                 checkTypesWithNoCallee(temporaryTrace, scope, task.getCall());
                 continue;
             }
@@ -415,20 +413,16 @@ public class CallResolver {
                         D substitute = (D) candidate.substitute(solution.getSubstitutor());
                         assert substitute != null;
                         replaceValueParametersWithSubstitutedOnes(candidateCall, substitute);
-                        successfulCandidates.add(candidateCall.setResultingDescriptor(substitute));
+                        candidateCall.setResultingDescriptor(substitute);
+                        candidateCall.setStatus(SUCCESS);
                     }
                     else {
                         tracing.typeInferenceFailed(temporaryTrace);
-                        failedCandidates.add(candidateCall);
+                        candidateCall.setStatus(OTHER_ERROR);
                     }
                 }
                 else {
-                    if (checkAllValueArguments(scope, tracing, task, candidateCall)) {
-                        successfulCandidates.add(candidateCall.setResultingDescriptor(candidate));
-                    }
-                    else {
-                        failedCandidates.add(candidateCall);
-                    }
+                    candidateCall.setStatus(checkAllValueArguments(scope, tracing, task, candidateCall));
                 }
             }
             else {
@@ -459,15 +453,10 @@ public class CallResolver {
 
                     candidateCall.setResultingDescriptor(substitutedDescriptor);
                     replaceValueParametersWithSubstitutedOnes(candidateCall, substitutedDescriptor);
-                    if (checkAllValueArguments(scope, tracing, task, candidateCall)) {
-                        successfulCandidates.add(candidateCall);
-                    }
-                    else {
-                        failedCandidates.add(candidateCall);
-                    }
+                    candidateCall.setStatus(checkAllValueArguments(scope, tracing, task, candidateCall));
                 }
                 else {
-                    failedCandidates.add(candidateCall);
+                    candidateCall.setStatus(OTHER_ERROR);
 //                    tracing.reportWrongTypeArguments(temporaryTrace, "Number of type arguments does not match " + DescriptorRenderer.TEXT.render(candidate));
                     tracing.wrongNumberOfTypeArguments(temporaryTrace, expectedTypeArgumentCount);
                 }
@@ -479,6 +468,19 @@ public class CallResolver {
             recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
         }
 
+        Set<ResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
+        for (ResolvedCall<D> candidateCall : task.getCandidates()) {
+            ResolutionStatus status = candidateCall.getStatus();
+            if (status.isSuccess()) {
+                successfulCandidates.add(candidateCall);
+            }
+            else {
+                assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
+                failedCandidates.add(candidateCall);
+            }
+        }
+        
         OverloadResolutionResults<D> results = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates);
         if (!results.singleDescriptor()) {
             checkTypesWithNoCallee(trace, scope, task.getCall());
@@ -553,16 +555,15 @@ public class CallResolver {
         }
     }
 
-    private <D extends CallableDescriptor> boolean checkAllValueArguments(JetScope scope, TracingStrategy tracing, ResolutionTask<D> task, ResolvedCall<D> candidateCall) {
-        boolean result = checkValueArgumentTypes(scope, candidateCall);
-
-        result &= checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(), task);
-        result &= checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(), task);
+    private <D extends CallableDescriptor> ResolutionStatus checkAllValueArguments(JetScope scope, TracingStrategy tracing, ResolutionTask<D> task, ResolvedCall<D> candidateCall) {
+        ResolutionStatus result = checkValueArgumentTypes(scope, candidateCall);
+        result = result.combine(checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(), task));
+        result = result.combine(checkReceiver(tracing, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(), task));
         return result;
     }
 
-    private <D extends CallableDescriptor> boolean checkReceiver(TracingStrategy tracing, ResolvedCall<D> candidateCall, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument, ResolutionTask<D> task) {
-        boolean result = true;
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(TracingStrategy tracing, ResolvedCall<D> candidateCall, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument, ResolutionTask<D> task) {
+        ResolutionStatus result = SUCCESS;
         if (receiverParameter.exists() && receiverArgument.exists()) {
             ASTNode callOperationNode = task.getCall().getCallOperationNode();
             boolean safeAccess = callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
@@ -570,7 +571,7 @@ public class CallResolver {
             AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(task.getDataFlowInfo(), candidateCall.getTrace().getBindingContext());
             if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
                 tracing.unsafeCall(candidateCall.getTrace(), receiverArgumentType);
-//                result = false;
+                result = UNSAFE_CALL_ERROR;
             }
             else {
                 JetType effectiveReceiverArgumentType = safeAccess
@@ -578,7 +579,7 @@ public class CallResolver {
                                                         : receiverArgumentType;
                 if (!semanticServices.getTypeChecker().isSubtypeOf(effectiveReceiverArgumentType, receiverParameter.getType())) {
                     tracing.wrongReceiverType(candidateCall.getTrace(), receiverParameter, receiverArgument);
-                    result = false;
+                    result = OTHER_ERROR;
                 }
             }
 
@@ -589,8 +590,8 @@ public class CallResolver {
         return result;
     }
 
-    private <D extends CallableDescriptor> boolean checkValueArgumentTypes(JetScope scope, ResolvedCall<D> candidateCall) {
-        boolean result = true;
+    private <D extends CallableDescriptor> ResolutionStatus checkValueArgumentTypes(JetScope scope, ResolvedCall<D> candidateCall) {
+        ResolutionStatus result = SUCCESS;
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
@@ -625,97 +626,35 @@ public class CallResolver {
 //                        }
 //                    }
 //                    else {
-                    result = false;
+                    result = OTHER_ERROR;
                 }
             }
         }
         return result;
     }
 
-//    private <D extends CallableDescriptor> boolean checkReceiver(ResolutionTask<D> task, ResolvedCall<D> resolvedCall, TracingStrategy tracing, D candidate) {
-//        if (!checkReceiverAbsence(resolvedCall, tracing, candidate)) return false;
-//        ReceiverDescriptor actualReceiver = resolvedCall.getReceiverArgument();
-//        ReceiverDescriptor expectedReceiver = candidate.getReceiverParameter();
-//
-//        if (actualReceiver.exists()
-//            && expectedReceiver.exists()) {
-//            if (!semanticServices.getTypeChecker().isSubtypeOf(actualReceiver.getType(), expectedReceiver.getType())) {
-//                tracing.missingReceiver(resolvedCall.getTrace(), expectedReceiver);
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
-//    private <D extends CallableDescriptor> boolean checkReceiverAbsence(ResolvedCall<D> resolvedCall, TracingStrategy tracing, D candidate) {
-//        ReceiverDescriptor receiver = resolvedCall.getReceiverArgument();
-//        ReceiverDescriptor candidateReceiver = candidate.getReceiverParameter();
-//        if (receiver.exists()) {
-//            if (!candidateReceiver.exists()) {
-//                tracing.noReceiverAllowed(resolvedCall.getTrace());
-//                return false;
-//            }
-//        }
-//        else if (candidateReceiver.exists()) {
-//            tracing.missingReceiver(resolvedCall.getTrace(), candidateReceiver);
-//            return false;
-//        }
-//        return true;
-//    }
-//
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResults<D> computeResultAndReportErrors(
             BindingTrace trace,
             TracingStrategy tracing,
-            Set<ResolvedCall<D>> successfulCandidates, // original -> substituted
+            Set<ResolvedCall<D>> successfulCandidates,
             Set<ResolvedCall<D>> failedCandidates) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
         if (successfulCandidates.size() > 0) {
-            if (successfulCandidates.size() != 1) {
-                Set<ResolvedCall<D>> cleanCandidates = Sets.newLinkedHashSet(successfulCandidates);
-                boolean allClean = true;
-                for (Iterator<ResolvedCall<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
-                    ResolvedCall<D> candidate = iterator.next();
-                    if (candidate.isDirty()) {
-                        iterator.remove();
-                        allClean = false;
-                    }
-                }
-                
-                if (cleanCandidates.isEmpty()) {
-                    cleanCandidates = successfulCandidates;
-                }
-                ResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, false);
-                if (maximallySpecific != null) {
-                    return OverloadResolutionResults.success(maximallySpecific);
-                }
-
-                ResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
-                if (maximallySpecificGenericsDiscriminated != null) {
-                    return OverloadResolutionResults.success(maximallySpecificGenericsDiscriminated);
-                }
-
-                Set<ResolvedCall<D>> noOverrides = OverridingUtil.filterOverrides(successfulCandidates, MAP_TO_RESULT);
-                if (allClean) {
-//                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
-//                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
-                    tracing.ambiguity(trace, noOverrides);
-                }
-
-                tracing.recordAmbiguity(trace, noOverrides);
-
-                return OverloadResolutionResults.ambiguity(noOverrides);
-            }
-            else {
-                ResolvedCall<D> result = successfulCandidates.iterator().next();
-
-                TemporaryBindingTrace temporaryTrace = result.getTrace();
-                temporaryTrace.commit();
-                return OverloadResolutionResults.success(result);
-            }
+            return chooseAndReportMaximallySpecific(trace, tracing, successfulCandidates);
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {
+                Set<ResolvedCall<D>> weakErrors = Sets.newLinkedHashSet();
+                for (ResolvedCall<D> candidate : failedCandidates) {
+                    if (candidate.getStatus().isWeakError()) {
+                        weakErrors.add(candidate);
+                    }
+                }
+                if (!weakErrors.isEmpty()) {
+                    return chooseAndReportMaximallySpecific(trace, tracing, weakErrors);
+                }
+
                 Set<ResolvedCall<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
                 if (noOverrides.size() != 1) {
 //                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
@@ -733,6 +672,51 @@ public class CallResolver {
         else {
             tracing.unresolvedReference(trace);
             return OverloadResolutionResults.nameNotFound();
+        }
+    }
+
+    private <D extends CallableDescriptor> OverloadResolutionResults<D> chooseAndReportMaximallySpecific(BindingTrace trace, TracingStrategy tracing, Set<ResolvedCall<D>> candidates) {
+        if (candidates.size() != 1) {
+            Set<ResolvedCall<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
+            boolean allClean = true;
+            for (Iterator<ResolvedCall<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
+                ResolvedCall<D> candidate = iterator.next();
+                if (candidate.isDirty()) {
+                    iterator.remove();
+                    allClean = false;
+                }
+            }
+
+            if (cleanCandidates.isEmpty()) {
+                cleanCandidates = candidates;
+            }
+            ResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, false);
+            if (maximallySpecific != null) {
+                return OverloadResolutionResults.success(maximallySpecific);
+            }
+
+            ResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
+            if (maximallySpecificGenericsDiscriminated != null) {
+                return OverloadResolutionResults.success(maximallySpecificGenericsDiscriminated);
+            }
+
+            Set<ResolvedCall<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
+            if (allClean) {
+//                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
+//                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
+                tracing.ambiguity(trace, noOverrides);
+            }
+
+            tracing.recordAmbiguity(trace, noOverrides);
+
+            return OverloadResolutionResults.ambiguity(noOverrides);
+        }
+        else {
+            ResolvedCall<D> result = candidates.iterator().next();
+
+            TemporaryBindingTrace temporaryTrace = result.getTrace();
+            temporaryTrace.commit();
+            return OverloadResolutionResults.success(result);
         }
     }
 
