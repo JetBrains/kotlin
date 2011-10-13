@@ -256,6 +256,9 @@ public class TypeHierarchyResolver {
                 }
 
                 String aliasName = importDirective.getAliasName();
+                if (aliasName == null) {
+                    aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
+                }
                 if (classifierDescriptor != null) {
                     context.getTrace().record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
 

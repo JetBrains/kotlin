@@ -55,10 +55,10 @@ namespace null_safety {
 
             val command = parse("")
 
-            command<error>.</error>foo
+            command.foo
 
             command.equals(null)
-            command<warning>?.</warning>equals(null)
+            command?.equals(null)
             command.equals1(null)
             command<warning>?.</warning>equals1(null)
 

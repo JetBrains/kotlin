@@ -27,8 +27,12 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Nullable
     private SetMultimap<String, FunctionDescriptor> functionGroups;
+
     @Nullable
     private Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors;
+
+    @Nullable
+    private Map<String, NamespaceDescriptor> namespaceAliases;
 
     @Nullable
     private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
@@ -129,6 +133,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return variableClassOrNamespaceDescriptors;
     }
 
+    @NotNull
+    private Map<String, NamespaceDescriptor> getNamespaceAliases() {
+        if (namespaceAliases == null) {
+            namespaceAliases = Maps.newHashMap();
+        }
+        return namespaceAliases;
+    }
+
     @Override
     public void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor) {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
@@ -203,7 +215,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor) {
         checkForRedeclaration(name, namespaceDescriptor);
-        getVariableClassOrNamespaceDescriptors().put(name, namespaceDescriptor);
+        getNamespaceAliases().put(name, namespaceDescriptor);
         allDescriptors.add(namespaceDescriptor);
     }
 
@@ -257,6 +269,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         NamespaceDescriptor declaredNamespace = getDeclaredNamespace(name);
         if (declaredNamespace != null) return declaredNamespace;
+
+        NamespaceDescriptor aliased = getNamespaceAliases().get(name);
+        if (aliased != null) return aliased;
 
         NamespaceDescriptor namespace = getWorkerScope().getNamespace(name);
         if (namespace != null) return namespace;
