@@ -236,6 +236,11 @@ public class CallMaker {
             public PsiElement getCallElement() {
                 return callElement;
             }
+
+            @Override
+            public String toString() {
+                return callElement.toString();
+            }
         };
     }
 }

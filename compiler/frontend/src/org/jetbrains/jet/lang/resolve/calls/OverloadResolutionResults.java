@@ -5,7 +5,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 /**
 * @author abreslav
@@ -41,7 +40,7 @@ public class OverloadResolutionResults<D extends CallableDescriptor> {
     public static <D extends CallableDescriptor> OverloadResolutionResults<D> singleFailedCandidate(ResolvedCall<D> candidate) {
         return new OverloadResolutionResults<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
     }
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> manyFailedCandidates(Set<ResolvedCall<D>> failedCandidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResults<D> manyFailedCandidates(Collection<ResolvedCall<D>> failedCandidates) {
         return new OverloadResolutionResults<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
     }
 

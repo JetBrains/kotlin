@@ -62,13 +62,16 @@ public class DataFlowInfo {
     }
 
     @NotNull
-    private List<JetType> getPossibleTypes(Object key) {
+    private List<JetType> getPossibleTypes(Object key, @NotNull JetType originalType) {
         List<JetType> types = typeInfo.get(key);
         NullabilityFlags nullabilityFlags = nullabilityInfo.get(key);
         if (nullabilityFlags == null || nullabilityFlags.canBeNull()) {
             return types;
         }
         List<JetType> enrichedTypes = Lists.newArrayListWithCapacity(types.size());
+        if (originalType.isNullable()) {
+            enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
+        }
         for (JetType type: types) {
             if (type.isNullable()) {
                 enrichedTypes.add(TypeUtils.makeNotNullable(type));
@@ -81,12 +84,12 @@ public class DataFlowInfo {
     }
 
     @NotNull
-    public List<JetType> getPossibleTypesForVariable(VariableDescriptor variableDescriptor) {
-        return getPossibleTypes(variableDescriptor);
+    public List<JetType> getPossibleTypesForVariable(@NotNull VariableDescriptor variableDescriptor) {
+        return getPossibleTypes(variableDescriptor, variableDescriptor.getOutType());
     }
 
     public List<JetType> getPossibleTypesForReceiver(@NotNull ReceiverDescriptor receiver) {
-        return getPossibleTypes(receiver);
+        return getPossibleTypes(receiver, receiver.getType());
     }
 
     public DataFlowInfo equalsToNull(@NotNull VariableDescriptor variableDescriptor, boolean notNull) {

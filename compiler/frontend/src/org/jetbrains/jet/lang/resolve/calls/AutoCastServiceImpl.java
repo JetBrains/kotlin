@@ -14,7 +14,7 @@ public class AutoCastServiceImpl implements AutoCastService {
     private final DataFlowInfo dataFlowInfo;
     private final BindingContext bindingContext;
 
-    AutoCastServiceImpl(DataFlowInfo dataFlowInfo, BindingContext bindingContext) {
+    public AutoCastServiceImpl(DataFlowInfo dataFlowInfo, BindingContext bindingContext) {
         this.dataFlowInfo = dataFlowInfo;
         this.bindingContext = bindingContext;
     }

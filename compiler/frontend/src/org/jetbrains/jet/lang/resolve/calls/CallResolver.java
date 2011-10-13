@@ -652,7 +652,12 @@ public class CallResolver {
                     }
                 }
                 if (!weakErrors.isEmpty()) {
-                    return chooseAndReportMaximallySpecific(trace, tracing, weakErrors);
+                    OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(trace, tracing, weakErrors);
+                    if (results.isSuccess()) {
+                        return OverloadResolutionResults.singleFailedCandidate(results.getResult());
+                    }
+
+                    return OverloadResolutionResults.manyFailedCandidates(results.getResults());
                 }
 
                 Set<ResolvedCall<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
