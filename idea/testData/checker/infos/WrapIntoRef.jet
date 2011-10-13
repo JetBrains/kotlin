@@ -1,0 +1,18 @@
+fun notContainsBreak() {
+    var <info>a</info> = 1
+    val v = {
+      <info>a</info> = 2
+    }
+
+    var <info>x</info> = 1
+    val b = object {
+        fun foo() {
+            <info>x</info> = 2
+        }
+    }
+
+    var <info>y</info> = 1
+    fun foo() {
+        <info>y</info> = 1
+    }
+}

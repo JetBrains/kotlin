@@ -2815,13 +2815,20 @@ public class JetTypeInferrer {
 //                }
             }
             if (left instanceof JetSimpleNameExpression) {
-                JetSimpleNameExpression variable = (JetSimpleNameExpression) left;
-                String referencedName = variable.getReferencedName();
-                if (variable.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
+                JetSimpleNameExpression simpleName = (JetSimpleNameExpression) left;
+                String referencedName = simpleName.getReferencedName();
+                if (simpleName.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
                     && referencedName != null) {
                     PropertyDescriptor property = context.scope.getPropertyByFieldReference(referencedName);
                     if (property != null) {
-                        context.trace.record(BindingContext.VARIABLE_ASSIGNMENT, variable, property);
+                        context.trace.record(BindingContext.VARIABLE_ASSIGNMENT, simpleName, property);
+                    }
+                }
+                VariableDescriptor variable = AutoCastUtils.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), simpleName);
+                if (variable != null) {
+                    DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
+                    if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
+                        context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
                     }
                 }
             }
