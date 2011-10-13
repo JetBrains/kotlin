@@ -391,7 +391,7 @@ public class JetTypeInferrer {
         }
 
         private Map<JetExpression, JetType> collectReturnedExpressionsWithTypes(
-                @NotNull BindingTrace trace,
+                final @NotNull BindingTrace trace,
                 JetScope outerScope,
                 final JetDeclarationWithBody function,
                 FunctionDescriptor functionDescriptor) {
@@ -406,7 +406,9 @@ public class JetTypeInferrer {
                 bodyExpression.visit(new JetTreeVisitor<JetDeclarationWithBody>() {
                     @Override
                     public Void visitReturnExpression(JetReturnExpression expression, JetDeclarationWithBody outerFunction) {
-                        if (expression.getLabeledExpression() == function || outerFunction == function) {
+                        JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+                        PsiElement element = targetLabel != null ? trace.get(LABEL_TARGET, targetLabel) : null;
+                        if (element == function || (targetLabel == null && outerFunction == function)) {
                             returnedExpressions.add(expression);
                         }
                         return null;
@@ -1848,25 +1850,33 @@ public class JetTypeInferrer {
                 DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
                 getTypeWithNewScopeAndDataFlowInfo(scopeToExtend, body, conditionInfo, context);
             }
-            if (!containsBreak(expression)) {
+            if (!containsBreak(expression, context)) {
 //                resultScope = newWritableScopeImpl();
                 resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, null, context);
             }
             return context.services.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
         }
         
-        private boolean containsBreak(JetLoopExpression expression) {
+        private boolean containsBreak(final JetLoopExpression loopExpression, final TypeInferenceContext context) {
             final boolean[] result = new boolean[1];
             result[0] = false;
-            expression.visit(new JetTreeVisitor<Void>() {
+            //todo breaks in inline function literals
+            loopExpression.visit(new JetTreeVisitor<JetLoopExpression>() {
                 @Override
-                public Void visitBreakExpression(JetBreakExpression expression, Void v) {
-                    //todo get exact loop for this break, compare to an expression
-                    //expression.getLabeledExpression()
-                    result[0] = true;
+                public Void visitBreakExpression(JetBreakExpression breakExpression, JetLoopExpression outerLoop) {
+                    JetSimpleNameExpression targetLabel = breakExpression.getTargetLabel();
+                    PsiElement element = targetLabel != null ? context.trace.get(LABEL_TARGET, targetLabel) : null;
+                    if (element == loopExpression || (targetLabel == null && outerLoop == loopExpression)) {
+                        result[0] = true;
+                    }
                     return null;
                 }
-            }, null);
+
+                @Override
+                public Void visitLoopExpression(JetLoopExpression loopExpression, JetLoopExpression outerLoop) {
+                    return super.visitLoopExpression(loopExpression, loopExpression);
+                }
+            }, loopExpression);
 
             return result[0];
         }
@@ -1894,7 +1904,7 @@ public class JetTypeInferrer {
             }
             JetExpression condition = expression.getCondition();
             checkCondition(conditionScope, condition, context);
-            if (!containsBreak(expression)) {
+            if (!containsBreak(expression, context)) {
 //                resultScope = newWritableScopeImpl();
                 resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, null, context);
             }
