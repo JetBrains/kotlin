@@ -1,0 +1,41 @@
+class A() {
+  fun plus(i : Int) {}
+  fun minus() {}
+   fun contains(a : Any?) : Boolean = true
+}
+
+fun A.div(i : Int) {}
+fun A?.times(i : Int) {}
+
+fun test(x : Int?, a : A?) {
+    x<!UNSAFE_CALL!>.<!>plus(1)
+    x?.plus(1)
+    x <!UNSAFE_INFIX_CALL!>plus<!> 1
+    x <!UNSAFE_INFIX_CALL!>+<!> 1
+    <!UNSAFE_CALL!>-<!>x
+    x<!UNSAFE_CALL!>.<!>minus()
+    x?.minus()
+
+    a<!UNSAFE_CALL!>.<!>plus(1)
+    a?.plus(1)
+    a <!UNSAFE_INFIX_CALL!>plus<!> 1
+    a <!UNSAFE_INFIX_CALL!>+<!> 1
+    <!UNSAFE_CALL!>-<!>a
+    a<!UNSAFE_CALL!>.<!>minus()
+    a?.minus()
+
+    a<!UNSAFE_CALL!>.<!>div(1)
+    a <!UNSAFE_INFIX_CALL!>/<!> 1
+    a <!UNSAFE_INFIX_CALL!>div<!> 1
+    a?.div(1)
+
+    a.times(1)
+    a * 1
+    a times 1
+    a<!UNNECESSARY_SAFE_CALL!>?.<!>times(1)
+
+    1 <!UNSAFE_INFIX_CALL!>in<!> a
+    a <!UNSAFE_INFIX_CALL!>contains<!> 1
+    a<!UNSAFE_CALL!>.<!>contains(1)
+    a?.contains(1)
+}
