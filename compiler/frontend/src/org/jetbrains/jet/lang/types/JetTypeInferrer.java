@@ -2956,7 +2956,7 @@ public class JetTypeInferrer {
                 }
                 else if (declarationDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
-                    thisReceiver = functionDescriptor.getReceiver();
+                    thisReceiver = functionDescriptor.getReceiverParameter();
                 }
                 else {
                     throw new UnsupportedOperationException(); // TODO
@@ -2971,7 +2971,7 @@ public class JetTypeInferrer {
                 if (element instanceof JetFunctionLiteralExpression) {
                     DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                     if (declarationDescriptor instanceof FunctionDescriptor) {
-                        thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiver();
+                        thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
                         if (thisReceiver.exists()) {
                             context.trace.record(LABEL_TARGET, targetLabel, element);
                             context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);

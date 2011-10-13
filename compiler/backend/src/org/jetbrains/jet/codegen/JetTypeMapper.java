@@ -466,8 +466,8 @@ public class JetTypeMapper {
 
 
     private Method mapSignature(FunctionDescriptor f, List<Type> valueParameterTypes, OwnerKind kind) {
-        final ReceiverDescriptor receiverTypeRef = f.getReceiver();
-        final JetType receiverType = receiverTypeRef == ReceiverDescriptor.NO_RECEIVER ? null : receiverTypeRef.getType();
+        final ReceiverDescriptor receiverTypeRef = f.getReceiverParameter();
+        final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         if (receiverType != null) {
@@ -520,7 +520,7 @@ public class JetTypeMapper {
         if (functionParent instanceof NamespaceDescriptor) {
             owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
             invokeOpcode = Opcodes.INVOKESTATIC;
-            needsReceiver = functionDescriptor.getReceiver() != ReceiverDescriptor.NO_RECEIVER;
+            needsReceiver = functionDescriptor.getReceiverParameter().exists();
         }
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
