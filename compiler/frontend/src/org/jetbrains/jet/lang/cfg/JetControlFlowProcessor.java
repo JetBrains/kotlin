@@ -488,20 +488,30 @@ public class JetControlFlowProcessor {
                 String labelName = expression.getLabelName();
                 assert labelName != null;
                 PsiElement labeledElement = BindingContextUtils.resolveToDeclarationPsiElement(trace.getBindingContext(), labelElement);
-                assert labeledElement instanceof JetElement;
-                subroutine = (JetElement) labeledElement;
+                if (labeledElement != null) {
+                    assert labeledElement instanceof JetElement;
+                    subroutine = (JetElement) labeledElement;
+                }
+                else {
+                    subroutine = null;
+                }
                 //subroutine = resolveLabel(labelName, labelElement, true);
             }
             else {
                 subroutine = builder.getCurrentSubroutine();
                 // TODO : a context check
             }
-            if (subroutine != null) {
+            if (subroutine instanceof JetFunction || subroutine instanceof JetFunctionLiteralExpression) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }
                 else {
                     builder.returnValue(expression, subroutine);
+                }
+            }
+            else {
+                if (labelElement != null) {
+                    trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
                 }
             }
         }
