@@ -277,7 +277,7 @@ public class CallResolver {
 
             @Override
             public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {
-                trace.report(NONE_APPLICABLE.on(call.getCallNode(), descriptors));
+                trace.report(NONE_APPLICABLE.on(reference, descriptors));
             }
 
             @Override
