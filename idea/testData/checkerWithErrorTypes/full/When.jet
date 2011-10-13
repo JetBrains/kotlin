@@ -1,3 +1,5 @@
+fun Int.foo() : Boolean = true
+
 fun foo() : Int {
     val s = ""
     val x = 1
@@ -17,7 +19,8 @@ fun foo() : Int {
       else => 1
     }
     return when (<!USELESS_ELVIS!>x<!>?:null) {
-      <!UNSAFE_CALL!>.<!>equals(1) => 1
+      <!UNSAFE_CALL!>.<!>foo() => 1
+      .equals(1) => 1
       ?.equals(1).equals(2) => 1
     }
 }
