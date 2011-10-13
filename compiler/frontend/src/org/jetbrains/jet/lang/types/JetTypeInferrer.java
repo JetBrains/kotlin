@@ -884,7 +884,9 @@ public class JetTypeInferrer {
                 }
             }
             JetType[] result = new JetType[1];
-            if (furtherNameLookup(expression, referencedName, result, context)) {
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+            if (furtherNameLookup(expression, referencedName, result, context.replaceBindingTrace(temporaryTrace))) {
+                temporaryTrace.commit();
                 return context.services.checkType(result[0], expression, context);
             }
             // To report NO_CLASS_OBJECT when no namespace found
@@ -893,7 +895,8 @@ public class JetTypeInferrer {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
             }
-            return null;
+            temporaryTrace.commit();
+            return result[0];
         }
 
         public boolean isNamespacePosition() {
@@ -905,7 +908,7 @@ public class JetTypeInferrer {
             if (namespaceType != null) {
 //                context.trace.getErrorHandler().genericError(expression.getNode(), "Expression expected, but a namespace name found");
                 context.trace.report(EXPRESSION_EXPECTED_NAMESPACE_FOUND.on(expression));
-                return true;
+                result[0] = ErrorUtils.createErrorType("Type for " + referencedName);
             }
             return false;
         }
