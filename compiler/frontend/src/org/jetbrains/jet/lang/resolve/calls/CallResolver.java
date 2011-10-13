@@ -314,7 +314,9 @@ public class CallResolver {
             public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
                 ASTNode callOperationNode = call.getCallOperationNode();
                 assert callOperationNode != null;
-                trace.report(UNNECESSARY_SAFE_CALL.on(reference, callOperationNode, type));
+                PsiElement callElement = call.getCallElement();
+                assert callElement != null;
+                trace.report(UNNECESSARY_SAFE_CALL.on((JetElement) callOperationNode.getTreeParent().getPsi(), callOperationNode, type));
             }
         };
         for (ResolutionTask<D> task : prioritizedTasks) {
