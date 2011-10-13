@@ -16,7 +16,7 @@ class A
 fun A.plus(a : Any) {
 
   1.foo()
-  true.<!NONE_APPLICABLE!>foo()<!>
+  true.<!NONE_APPLICABLE!>foo<!>()
 
   1
 }
@@ -55,12 +55,12 @@ namespace null_safety {
 
             val command = parse("")
 
-            command<!UNSAFE_CALL!>.<!>foo
+            command.foo
 
             command.equals(null)
             command?.equals(null)
             command.equals1(null)
-            command?.equals1(null)
+            command<!UNNECESSARY_SAFE_CALL!>?.<!>equals1(null)
 
             val c = Command()
             c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)

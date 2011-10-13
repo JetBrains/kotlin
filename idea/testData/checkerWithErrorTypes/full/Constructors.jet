@@ -22,7 +22,7 @@ class WithPC1(a : Int) {
 
   this(s : String) : this(1) {}
 
-  this(b : Char) : <!NONE_APPLICABLE!>this("", 2)<!> {}
+  this(b : Char) : <!NONE_APPLICABLE!>this<!>("", 2) {}
 
   this(b : Byte) : this(""), <!MANY_CALLS_TO_THIS!>this(1)<!> {}
 }
