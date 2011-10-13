@@ -29,7 +29,7 @@ class C {
         while (a == null) {
             break;
         }
-        a?.compareTo("2")
+        a<!UNSAFE_CALL!>.<!>compareTo("2")
     }
 
     fun notContainsBreak(a: String?, b: String?) {
@@ -38,7 +38,7 @@ class C {
                 break;
             }
         }
-        a<!UNNECESSARY_SAFE_CALL!>?.<!>compareTo("2")
+        a.compareTo("2")
     }
 
     fun containsBreakWithLabel(a: String?) {
@@ -52,7 +52,7 @@ class C {
         @loop while(a == null) {
             <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@label<!><!>
         }
-        a<!UNNECESSARY_SAFE_CALL!>?.<!>compareTo("2")
+        a.compareTo("2")
     }
 
     fun containsBreakToOuterLoop(a: String?, b: String?) {
@@ -60,7 +60,7 @@ class C {
             while(a == null) {
                 break@loop
             }
-            a<!UNNECESSARY_SAFE_CALL!>?.<!>compareTo("2")
+            a.compareTo("2")
         }
     }
 
@@ -70,7 +70,7 @@ class C {
                 break@
             }
         }
-        a?.compareTo("2")
+        a<!UNSAFE_CALL!>.<!>compareTo("2")
     }
 
     fun unresolvedBreak(a: String?, array: Array<Int>) {
@@ -80,6 +80,6 @@ class C {
             }
             if (true) break else <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@<!><!>
         }
-        a?.compareTo("2")
+        a<!UNSAFE_CALL!>.<!>compareTo("2")
     }
 }
