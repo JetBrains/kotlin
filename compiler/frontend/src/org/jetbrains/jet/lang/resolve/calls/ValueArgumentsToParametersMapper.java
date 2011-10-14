@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.CallMaker;
 
 import java.util.List;
@@ -20,15 +21,17 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
  * @author abreslav
  */
 /*package*/ class ValueArgumentsToParametersMapper {
-    public static <Descriptor extends CallableDescriptor> boolean mapValueArgumentsToParameters(
-            @NotNull ResolutionTask<Descriptor> task,
+    public static <D extends CallableDescriptor> boolean mapValueArgumentsToParameters(
+            @NotNull ResolutionTask<D> task,
             @NotNull TracingStrategy tracing,
-            @NotNull Descriptor candidate,
-            @NotNull BindingTrace temporaryTrace,
-            @NotNull Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters
+            @NotNull ResolvedCall<D> candidateCall
     ) {
+
+        TemporaryBindingTrace temporaryTrace = candidateCall.getTrace();
+        Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
         Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
 
+        D candidate = candidateCall.getCandidateDescriptor();
         List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
         Map<String, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
@@ -36,7 +39,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             parameterByName.put(valueParameter.getName(), valueParameter);
         }
 
-        List<? extends ValueArgument> valueArguments = task.getValueArguments();
+        List<? extends ValueArgument> valueArguments = task.getCall().getValueArguments();
 
         boolean error = false;
         boolean someNamed = false;
@@ -58,7 +61,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                         temporaryTrace.report(ARGUMENT_PASSED_TWICE.on(nameReference));
                     }
                     temporaryTrace.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
-                    argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                    put(candidateCall, valueParameterDescriptor, valueArgument, varargs);
                 }
                 if (somePositioned) {
 //                    temporaryTrace.getErrorHandler().genericError(nameNode, "Mixing named and positioned arguments in not allowed");
@@ -78,12 +81,12 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                     if (i < parameterCount) {
                         ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(i);
                         usedParameters.add(valueParameterDescriptor);
-                        argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                        put(candidateCall, valueParameterDescriptor, valueArgument, varargs);
                     }
                     else if (!valueParameters.isEmpty()) {
                         ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
                         if (valueParameterDescriptor.isVararg()) {
-                            argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                            put(candidateCall, valueParameterDescriptor, valueArgument, varargs);
                             usedParameters.add(valueParameterDescriptor);
                         }
                         else {
@@ -101,7 +104,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             }
         }
 
-        List<JetExpression> functionLiteralArguments = task.getFunctionLiteralArguments();
+        List<JetExpression> functionLiteralArguments = task.getCall().getFunctionLiteralArguments();
         if (!functionLiteralArguments.isEmpty()) {
             JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
 
@@ -109,7 +112,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 //                temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), getTooManyArgumentsMessage(candidate));
                 temporaryTrace.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
                 error = true;
-            } else {
+            }
+            else {
                 JetFunctionLiteralExpression functionLiteral;
                 if (possiblyLabeledFunctionLiteral instanceof JetLabelQualifiedExpression) {
                     JetLabelQualifiedExpression labeledFunctionLiteral = (JetLabelQualifiedExpression) possiblyLabeledFunctionLiteral;
@@ -119,20 +123,20 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                     functionLiteral = (JetFunctionLiteralExpression) possiblyLabeledFunctionLiteral;
                 }
 
-                ValueParameterDescriptor parameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                if (parameterDescriptor.isVararg()) {
+                ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
+                if (valueParameterDescriptor.isVararg()) {
 //                    temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), "Passing value as a vararg is only allowed inside a parenthesized argument list");
                     temporaryTrace.report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
                     error = true;
                 }
                 else {
-                    if (!usedParameters.add(parameterDescriptor)) {
+                    if (!usedParameters.add(valueParameterDescriptor)) {
 //                        temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), getTooManyArgumentsMessage(candidate));
                         temporaryTrace.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
                         error = true;
                     }
                     else {
-                        argumentsToParameters.put(CallMaker.makeValueArgument(functionLiteral), parameterDescriptor);
+                        put(candidateCall, valueParameterDescriptor, CallMaker.makeValueArgument(functionLiteral), varargs);
                     }
                 }
             }
@@ -148,14 +152,50 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             if (!usedParameters.contains(valueParameter)) {
-                if (!valueParameter.hasDefaultValue() && !valueParameter.isVararg()) {
-//                    tracing.reportWrongValueArguments(temporaryTrace, "No value passed for parameter " + valueParameter.getName());
+                if (valueParameter.hasDefaultValue()) {
+                    candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
+                }
+                else if (valueParameter.isVararg()) {
+                    candidateCall.recordValueArgument(valueParameter, new VarargValueArgument());
+                }
+                else {
+                    //                    tracing.reportWrongValueArguments(temporaryTrace, "No value passed for parameter " + valueParameter.getName());
                     tracing.noValueForParameter(temporaryTrace, valueParameter);
                     error = true;
                 }
             }
         }
+
+        ReceiverDescriptor receiverParameter = candidate.getReceiverParameter();
+        ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
+        if (receiverParameter.exists() &&!receiverArgument.exists()) {
+            tracing.missingReceiver(temporaryTrace, receiverParameter);
+            error = true;
+        }
+        if (!receiverParameter.exists() && receiverArgument.exists()) {
+            tracing.noReceiverAllowed(temporaryTrace);
+            error = true;
+        }
+
+        assert candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists() : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+
         return error;
+    }
+
+    private static <D extends CallableDescriptor> void put(ResolvedCall<D> candidateCall, ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument, Map<ValueParameterDescriptor, VarargValueArgument> varargs) {
+        if (valueParameterDescriptor.isVararg()) {
+            VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
+            if (vararg == null) {
+                vararg = new VarargValueArgument();
+                varargs.put(valueParameterDescriptor, vararg);
+                candidateCall.recordValueArgument(valueParameterDescriptor, vararg);
+            }
+            vararg.getArgumentExpressions().add(valueArgument.getArgumentExpression());
+        }
+        else {
+            ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument.getArgumentExpression());
+            candidateCall.recordValueArgument(valueParameterDescriptor, argument);
+        }
     }
 
 //    private static <Descriptor extends CallableDescriptor> String getTooManyArgumentsMessage(Descriptor candidate) {

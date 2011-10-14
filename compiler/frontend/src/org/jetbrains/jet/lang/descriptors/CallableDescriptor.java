@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ImplicitReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -14,7 +13,10 @@ import java.util.Set;
 */
 public interface CallableDescriptor extends DeclarationDescriptor {
     @NotNull
-    ReceiverDescriptor getReceiver();
+    ReceiverDescriptor getReceiverParameter();
+
+    @NotNull
+    ReceiverDescriptor getExpectedThisObject();
 
     @NotNull
     List<TypeParameterDescriptor> getTypeParameters();

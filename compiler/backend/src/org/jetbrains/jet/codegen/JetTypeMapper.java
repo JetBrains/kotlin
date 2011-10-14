@@ -2,7 +2,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import jet.Function1;
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
@@ -58,6 +57,8 @@ public class JetTypeMapper {
 
     private final HashMap<JetType,String> knowTypes = new HashMap<JetType, String>();
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
+    public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
+    public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
@@ -317,6 +318,9 @@ public class JetTypeMapper {
         if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             return Type.VOID_TYPE;
         }
+        if (jetType.equals(JetStandardClasses.getNullableNothingType())) {
+            return TYPE_OBJECT;
+        }
         return mapType(jetType, kind);
     }
 
@@ -461,17 +465,16 @@ public class JetTypeMapper {
     }
 
 
-    private Method mapSignature(JetNamedFunction f, List<Type> valueParameterTypes, OwnerKind kind) {
-        final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
-        final JetType receiverType = receiverTypeRef == null ? null : bindingContext.get(BindingContext.TYPE, receiverTypeRef);
-        final List<JetParameter> parameters = f.getValueParameters();
+    private Method mapSignature(FunctionDescriptor f, List<Type> valueParameterTypes, OwnerKind kind) {
+        final ReceiverDescriptor receiverTypeRef = f.getReceiverParameter();
+        final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
+        final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         if (receiverType != null) {
             parameterTypes.add(mapType(receiverType));
         }
-        FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
         if(kind == OwnerKind.TRAIT_IMPL) {
-            ClassDescriptor containingDeclaration = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
+            ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
             JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
             Type type = mapType(jetType);
             if(type.getInternalName().equals("java/lang/Object")) {
@@ -481,24 +484,15 @@ public class JetTypeMapper {
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
-        for (JetParameter parameter : parameters) {
-            final Type type = mapType(bindingContext.get(BindingContext.TYPE, parameter.getTypeReference()));
+        for (ValueParameterDescriptor parameter : parameters) {
+            final Type type = mapType(parameter.getOutType());
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
         for (int n = f.getTypeParameters().size(); n > 0; n--) {
             parameterTypes.add(TYPE_TYPEINFO);
         }
-        final JetTypeReference returnTypeRef = f.getReturnTypeRef();
-        Type returnType;
-        if (returnTypeRef == null) {
-            assert functionDescriptor != null;
-            final JetType type = functionDescriptor.getReturnType();
-            returnType = mapReturnType(type);
-        }
-        else {
-            returnType = mapReturnType(bindingContext.get(BindingContext.TYPE, returnTypeRef));
-        }
+        Type returnType = mapReturnType(f.getReturnType());
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
@@ -512,9 +506,13 @@ public class JetTypeMapper {
         JetNamedFunction f = (JetNamedFunction) declaration;
         final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
+        return mapToCallableMethod(functionDescriptor, kind);
+    }
+
+    public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
         final List<Type> valueParameterTypes = new ArrayList<Type>();
-        Method descriptor = mapSignature(f, valueParameterTypes, kind);
+        Method descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, kind);
         String owner;
         int invokeOpcode;
         boolean needsReceiver;
@@ -522,7 +520,7 @@ public class JetTypeMapper {
         if (functionParent instanceof NamespaceDescriptor) {
             owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
             invokeOpcode = Opcodes.INVOKESTATIC;
-            needsReceiver = f.getReceiverTypeRef() != null;
+            needsReceiver = functionDescriptor.getReceiverParameter().exists();
         }
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
@@ -546,7 +544,7 @@ public class JetTypeMapper {
     }
 
     public Method mapSignature(String name, FunctionDescriptor f) {
-        final ReceiverDescriptor receiver = f.getReceiver();
+        final ReceiverDescriptor receiver = f.getReceiverParameter();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         if (receiver.exists()) {

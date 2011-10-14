@@ -127,6 +127,11 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
+    public void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor) {
+        writableWorker.addNamespaceAlias(name, namespaceDescriptor);
+    }
+
+    @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         writableWorker.addNamespace(namespaceDescriptor);
     }

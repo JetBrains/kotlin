@@ -34,7 +34,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPublicVar() throws Exception {
-        loadText("class PublicVar() { public var foo = 0; }");
+        loadText("class PublicVar() { public var foo : Int = 0; }");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PublicVar");
         final Object instance = aClass.newInstance();
         Method setter = findMethodByName(aClass, "setFoo");
@@ -44,7 +44,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsInInterface() {
-        loadText("class AccessorsInInterface() { public var foo = 0; }");
+        loadText("class AccessorsInInterface() { public var foo : Int = 0; }");
         final Class aClass = loadClass("AccessorsInInterface", generateClassesInFile());
         assertNotNull(findMethodByName(aClass, "getFoo"));
         assertNotNull(findMethodByName(aClass, "setFoo"));
@@ -108,7 +108,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testInitializersForNamespaceProperties() throws Exception {
-        loadText("public val x = System.currentTimeMillis()");
+        loadText("val x = System.currentTimeMillis()");
         final Method method = generateFunction("getX");
         assertIsCurrentTime((Long) method.invoke(null));
     }
@@ -136,7 +136,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt160() throws Exception {
-        loadText("public val s = java.lang.Double.toString(1.0)");
+        loadText("internal val s = java.lang.Double.toString(1.0)");
         final Method method = generateFunction("getS");
         assertEquals(method.invoke(null), "1.0");
     }

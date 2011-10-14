@@ -35,12 +35,6 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiver() {
-        return getCorrespondingProperty().getReceiver();
-    }
-
-    @NotNull
-    @Override
     public List<ValueParameterDescriptor> getValueParameters() {
         return Collections.emptyList();
     }

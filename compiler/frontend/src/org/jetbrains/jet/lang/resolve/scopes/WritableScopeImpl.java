@@ -27,8 +27,12 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Nullable
     private SetMultimap<String, FunctionDescriptor> functionGroups;
+
     @Nullable
     private Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors;
+
+    @Nullable
+    private Map<String, NamespaceDescriptor> namespaceAliases;
 
     @Nullable
     private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
@@ -64,6 +68,12 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         allDescriptors.add(classifierDescriptor);
         super.importClassifierAlias(importedClassifierName, classifierDescriptor);
+    }
+
+    @Override
+    public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
+        allDescriptors.add(namespaceDescriptor);
+        super.importNamespaceAlias(aliasName, namespaceDescriptor);
     }
 
     @NotNull
@@ -121,6 +131,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             variableClassOrNamespaceDescriptors = Maps.newHashMap();
         }
         return variableClassOrNamespaceDescriptors;
+    }
+
+    @NotNull
+    private Map<String, NamespaceDescriptor> getNamespaceAliases() {
+        if (namespaceAliases == null) {
+            namespaceAliases = Maps.newHashMap();
+        }
+        return namespaceAliases;
     }
 
     @Override
@@ -189,13 +207,23 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor) {
-        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
-        DeclarationDescriptor originalDescriptor = variableClassOrNamespaceDescriptors.get(name);
+        checkForRedeclaration(name, classifierDescriptor);
+        getVariableClassOrNamespaceDescriptors().put(name, classifierDescriptor);
+        allDescriptors.add(classifierDescriptor);
+    }
+
+    @Override
+    public void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor) {
+        checkForRedeclaration(name, namespaceDescriptor);
+        getNamespaceAliases().put(name, namespaceDescriptor);
+        allDescriptors.add(namespaceDescriptor);
+    }
+
+    private void checkForRedeclaration(String name, DeclarationDescriptor classifierDescriptor) {
+        DeclarationDescriptor originalDescriptor = getVariableClassOrNamespaceDescriptors().get(name);
         if (originalDescriptor != null) {
             redeclarationHandler.handleRedeclaration(originalDescriptor, classifierDescriptor);
         }
-        variableClassOrNamespaceDescriptors.put(name, classifierDescriptor);
-        allDescriptors.add(classifierDescriptor);
     }
 
     @Override
@@ -241,6 +269,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         NamespaceDescriptor declaredNamespace = getDeclaredNamespace(name);
         if (declaredNamespace != null) return declaredNamespace;
+
+        NamespaceDescriptor aliased = getNamespaceAliases().get(name);
+        if (aliased != null) return aliased;
 
         NamespaceDescriptor namespace = getWorkerScope().getNamespace(name);
         if (namespace != null) return namespace;

@@ -253,7 +253,7 @@ public class OverrideResolver {
         }
         if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
 //            context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declared.getName() + " overrides nothing");
-            context.getTrace().report(NOTHING_TO_OVERRIDE.on(member, overrideNode, declared));
+            context.getTrace().report(NOTHING_TO_OVERRIDE.on(modifierList, overrideNode, declared));
         }
         PsiElement nameIdentifier = member.getNameIdentifier();
         if (!hasOverrideModifier && declared.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {

@@ -29,11 +29,13 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod DEC = new Increment(-1);
 
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
-    public static final ArraySize ARRAY_SIZE = new ArraySize();
+    public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
+    public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
 
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
+    private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
 
     public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
         myProject = project;
@@ -87,6 +89,30 @@ public class IntrinsicMethods {
         declareIntrinsicProperty("DoubleArray", "size", ARRAY_SIZE);
         declareIntrinsicProperty("CharArray", "size", ARRAY_SIZE);
         declareIntrinsicProperty("BooleanArray", "size", ARRAY_SIZE);
+
+        declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("ByteArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("ShortArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("IntArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("LongArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("FloatArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("DoubleArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("CharArray", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("BooleanArray", "indices", ARRAY_INDICES);
+
+        declareIterator(myStdLib.getArray());
+        declareIterator(myStdLib.getByteArrayClass());
+        declareIterator(myStdLib.getShortArrayClass());
+        declareIterator(myStdLib.getIntArrayClass());
+        declareIterator(myStdLib.getLongArrayClass());
+        declareIterator(myStdLib.getFloatArrayClass());
+        declareIterator(myStdLib.getDoubleArrayClass());
+        declareIterator(myStdLib.getCharArrayClass());
+        declareIterator(myStdLib.getBooleanArrayClass());
+    }
+
+    private void declareIterator(ClassDescriptor classDescriptor) {
+        declareOverload(classDescriptor.getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
     }
 
     private void declareIntrinsicStringMethods() {

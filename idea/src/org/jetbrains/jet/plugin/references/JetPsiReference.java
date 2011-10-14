@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.util.Collection;
@@ -80,7 +81,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (psiElement != null) {
             return psiElement;
         }
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
+        Collection<? extends ResolvedCall<? extends DeclarationDescriptor>> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
         return file;
     }
@@ -88,12 +89,12 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
         BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
-        if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
-        ResolveResult[] results = new ResolveResult[declarationDescriptors.size()];
+        Collection<? extends ResolvedCall<? extends DeclarationDescriptor>> resolvedCalls = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
+        if (resolvedCalls == null) return ResolveResult.EMPTY_ARRAY;
+        ResolveResult[] results = new ResolveResult[resolvedCalls.size()];
         int i = 0;
-        for (DeclarationDescriptor descriptor : declarationDescriptors) {
-            PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, descriptor);
+        for (ResolvedCall<? extends DeclarationDescriptor> resolvedCall : resolvedCalls) {
+            PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, resolvedCall.getResultingDescriptor());
             if (element != null) {
                 results[i] = new PsiElementResolveResult(element, true);
                 i++;

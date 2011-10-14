@@ -3,6 +3,7 @@ package org.jetbrains.jet.plugin.annotations;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -117,7 +118,26 @@ public class JetPsiChecker implements Annotator {
                                 holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(JetHighlighter.JET_AUTOCREATED_IT);
                             }
                         }
+
+                        markVariableAsWrappedIfNeeded(expression.getNode(), target);
                         super.visitSimpleNameExpression(expression);
+                    }
+
+                    private void markVariableAsWrappedIfNeeded(ASTNode node, DeclarationDescriptor target) {
+                        if (target instanceof VariableDescriptor) {
+                            VariableDescriptor variableDescriptor = (VariableDescriptor) target;
+                            if (bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor)) {
+                                holder.createInfoAnnotation(node, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(JetHighlighter.JET_WRAPPED_INTO_REF);
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void visitProperty(JetProperty property) {
+                        DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
+                        markVariableAsWrappedIfNeeded(property.getNameIdentifier().getNode(), declarationDescriptor);
+                        super.visitProperty(property);
                     }
 
                     @Override

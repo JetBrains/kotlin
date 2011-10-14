@@ -63,6 +63,11 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
+    public void jumpToError(JetExpression nothingExpression) {
+        builder.jumpToError(nothingExpression);
+    }
+
+    @Override
     public Label getEntryPoint(@NotNull JetElement labelElement) {
         return builder.getEntryPoint(labelElement);
     }

@@ -197,6 +197,9 @@ public abstract class StackValue {
                 if (type.getSort() == Type.BOOLEAN) {
                     v.checkcast(JetTypeMapper.JL_BOOLEAN_TYPE);
                 }
+                else if (type.getSort() == Type.CHAR) {
+                    v.checkcast(JetTypeMapper.JL_CHAR_TYPE);
+                }
                 else {
                     v.checkcast(JetTypeMapper.JL_NUMBER_TYPE);
                 }

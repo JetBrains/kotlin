@@ -11,7 +11,6 @@ import java.util.Set;
  * @author abreslav
  */
 public class JavaPackageScope extends JetScopeImpl {
-
     private final JavaSemanticServices semanticServices;
     private final DeclarationDescriptor containingDescriptor;
     private final String packagePrefix;

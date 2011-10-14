@@ -38,7 +38,9 @@ class JetSimpleNameReference extends JetPsiReference {
 
     @Override
     public TextRange getRangeInElement() {
-        return new TextRange(0, getElement().getTextLength());
+        PsiElement element = getElement();
+        if (element == null) return null;
+        return new TextRange(0, element.getTextLength());
     }
 
     @NotNull

@@ -42,7 +42,7 @@ public class ClosureCodegen {
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
-        boolean isExtensionFunction = fd.getReceiver().exists();
+        boolean isExtensionFunction = fd.getReceiverParameter().exists();
         int paramCount = fd.getValueParameters().size();
         if (isExtensionFunction) {
             paramCount++;
@@ -117,7 +117,7 @@ public class ClosureCodegen {
         final Type enclosingType = context.enclosingClassType(state.getTypeMapper());
         if (enclosingType == null) captureThis = false;
 
-        final Method constructor = generateConstructor(funClass, captureThis);
+        final Method constructor = generateConstructor(funClass, captureThis, funDescriptor.getReturnType());
 
         if (captureThis) {
             cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingType.getDescriptor(), null, null);
@@ -151,7 +151,7 @@ public class ClosureCodegen {
 
         iv.load(0, Type.getObjectType(className));
 
-        final ReceiverDescriptor receiver = funDescriptor.getReceiver();
+        final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
         int count = 1;
         if (receiver.exists()) {
             StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
@@ -175,7 +175,7 @@ public class ClosureCodegen {
         mv.visitEnd();
     }
 
-    private Method generateConstructor(String funClass, boolean captureThis) {
+    private Method generateConstructor(String funClass, boolean captureThis, JetType returnType) {
         int argCount = closure.size();
 
         if (captureThis) {
@@ -199,9 +199,11 @@ public class ClosureCodegen {
         final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
+        ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
 
         iv.load(0, Type.getObjectType(funClass));
-        iv.invokespecial(funClass, "<init>", "()V");
+        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));
+        iv.invokespecial(funClass, "<init>", "(Ljet/typeinfo/TypeInfo;)V");
 
         i = 1;
         for (Type type : argTypes) {
@@ -229,7 +231,7 @@ public class ClosureCodegen {
 
     public static String getInternalClassName(FunctionDescriptor descriptor) {
         final int paramCount = descriptor.getValueParameters().size();
-        if (descriptor.getReceiver().exists()) {
+        if (descriptor.getReceiverParameter().exists()) {
             return "jet/ExtensionFunction" + paramCount;
         }
         else {
@@ -250,7 +252,7 @@ public class ClosureCodegen {
         Method descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
         final CallableMethod result = new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
-        if (fd.getReceiver().exists()) {
+        if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(null);
         }
         result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));

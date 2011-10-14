@@ -52,8 +52,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
+
     private final GenerationState state;
     private final Type returnType;
+
     private final BindingContext bindingContext;
     private final Map<TypeParameterDescriptor, StackValue> typeParameterExpressions = new HashMap<TypeParameterDescriptor, StackValue>();
     private final ClassContext context;
@@ -72,6 +74,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.intrinsics = state.getIntrinsics();
+    }
+
+    public GenerationState getState() {
+        return state;
+    }
+
+    public BindingContext getBindingContext() {
+        return bindingContext;
     }
 
     public JetTypeMapper getTypeMapper() {
@@ -207,7 +217,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             assert expressionType != null;
             final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
-            if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+            if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses (now IntRange is final)
                 new ForInRangeLoopGenerator(expression, loopRangeType).invoke();
                 return StackValue.none();
             }
@@ -921,7 +931,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         }
         else if (fd instanceof FunctionDescriptor) {
-            callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
+            callableMethod = typeMapper.mapToCallableMethod((FunctionDescriptor) fd, null);
         }
         else {
             throw new UnsupportedOperationException("can't resolve declaration to callable: " + fd);
@@ -2076,7 +2086,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    void generateTypeInfo(JetType jetType) {
+    public void generateTypeInfo(JetType jetType) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
             v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
@@ -2287,7 +2297,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, rangeExpression);
                 assert jetType != null;
                 final DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-                if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+                if (isClass(descriptor, "IntRange")) {
                     return true;
                 }
             }
@@ -2308,7 +2318,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         final String className = "jet/Tuple" + entries.size();
         Type tupleType = Type.getObjectType(className);
-        StringBuilder signature = new StringBuilder("(");
+        StringBuilder signature = new StringBuilder("(Ljet/typeinfo/TypeInfo;");
         for (int i = 0; i != entries.size(); ++i) {
             signature.append("Ljava/lang/Object;");
         }
@@ -2316,6 +2326,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.anew(tupleType);
         v.dup();
+        generateTypeInfo(new ProjectionErasingJetType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)));
         for (JetExpression entry : entries) {
             gen(entry, OBJECT_TYPE);
         }

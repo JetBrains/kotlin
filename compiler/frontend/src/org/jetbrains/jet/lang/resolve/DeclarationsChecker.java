@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -20,7 +20,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
@@ -114,7 +113,7 @@ public class DeclarationsChecker {
 
     
     private void checkObject(JetObjectDeclaration objectDeclaration, MutableClassDescriptor classDescriptor) {
-        checkIllegalInThisContextModifiers(objectDeclaration.getModifierList(), JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD);        
+        checkIllegalInThisContextModifiers(objectDeclaration.getModifierList(), Sets.newHashSet(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD));
     }
 
     private void checkOpenMembers(JetClass aClass, MutableClassDescriptor classDescriptor) {
@@ -122,7 +121,9 @@ public class DeclarationsChecker {
     
                 JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, memberDescriptor);
                 if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
-                    ASTNode openModifierNode = member.getModifierList().getModifierNode(JetTokens.OPEN_KEYWORD);
+                    JetModifierList modifierList = member.getModifierList();
+                    assert  modifierList != null;
+                    ASTNode openModifierNode = modifierList.getModifierNode(JetTokens.OPEN_KEYWORD);
                     context.getTrace().report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member, openModifierNode, aClass));
                 }
             }
@@ -136,6 +137,29 @@ public class DeclarationsChecker {
         checkPropertyAbstractness(property, propertyDescriptor, classDescriptor);
         checkPropertyInitializer(property, propertyDescriptor, classDescriptor);
         checkAccessors(property, propertyDescriptor);
+        checkDeclaredTypeInPublicMember(property, propertyDescriptor);
+    }
+
+    private void checkDeclaredTypeInPublicMember(JetNamedDeclaration member, CallableMemberDescriptor memberDescriptor) {
+        PsiElement nameIdentifier = member.getNameIdentifier();
+        boolean hasDeferredType;
+        if (member instanceof JetProperty) {
+            hasDeferredType = ((JetProperty) member).getPropertyTypeRef() == null && ClassDescriptorResolver.hasBody((JetProperty) member);
+        }
+        else {
+            assert member instanceof JetFunction;
+            JetFunction function = (JetFunction) member;
+            hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
+        }
+        if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) &&
+            hasDeferredType && nameIdentifier != null) {
+
+            JetType returnType = memberDescriptor.getReturnType();
+            if (returnType instanceof DeferredType) {
+                returnType = ((DeferredType) returnType).getActualType();
+            }
+            context.getTrace().report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member, nameIdentifier, returnType));
+        }
     }
 
     private void checkPropertyAbstractness(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {
@@ -225,24 +249,13 @@ public class DeclarationsChecker {
         }
     }
 
-    protected void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
+    protected void checkFunction(JetNamedFunction function, FunctionDescriptor functionDescriptor) {
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
-        PsiElement nameIdentifier;
-        boolean isPropertyAccessor = false;
-        if (function instanceof JetNamedFunction) {
-            nameIdentifier = ((JetNamedFunction) function).getNameIdentifier();
-        }
-        else if (function instanceof JetPropertyAccessor) {
-            isPropertyAccessor = true;
-            nameIdentifier = ((JetPropertyAccessor) function).getNamePlaceholder();
-        }
-        else {
-            throw new UnsupportedOperationException();
-        }
-        JetFunctionOrPropertyAccessor functionOrPropertyAccessor = (JetFunctionOrPropertyAccessor) function;
-        JetModifierList modifierList = functionOrPropertyAccessor.getModifierList();
+        PsiElement nameIdentifier = function.getNameIdentifier();
+        JetModifierList modifierList = function.getModifierList();
         ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
         boolean hasAbstractModifier = abstractNode != null;
+        checkDeclaredTypeInPublicMember(function, functionDescriptor);
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
@@ -251,46 +264,45 @@ public class DeclarationsChecker {
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
                 PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
                 assert classElement instanceof JetClass;
-                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(functionOrPropertyAccessor, abstractNode, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
+                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, abstractNode, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
             }
-            if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
+            if (hasAbstractModifier && inTrait) {
                 context.getTrace().report(REDUNDANT_MODIFIER_IN_TRAIT.on(modifierList, abstractNode, JetTokens.ABSTRACT_KEYWORD));
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
-                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(functionOrPropertyAccessor, abstractNode, functionDescriptor));
+                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(function, abstractNode, functionDescriptor));
             }
-            if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null && !isPropertyAccessor) {
-                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(functionOrPropertyAccessor, nameIdentifier, functionDescriptor));
+            if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null) {
+                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, nameIdentifier, functionDescriptor));
             }
             return;
         }
         if (hasAbstractModifier) {
-            if (!isPropertyAccessor) {
-                context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(functionOrPropertyAccessor, abstractNode, functionDescriptor));
-            }
-            else {
-                context.getTrace().report(NON_MEMBER_ABSTRACT_ACCESSOR.on(functionOrPropertyAccessor, abstractNode));
-            }
+                context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(function, abstractNode, functionDescriptor));
         }
-        if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null && !isPropertyAccessor) {
-            context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(functionOrPropertyAccessor, nameIdentifier, functionDescriptor));
+        if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null) {
+            context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(function, nameIdentifier, functionDescriptor));
         }
     }
 
     private void checkAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
         for (JetPropertyAccessor accessor : property.getAccessors()) {
-            PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
-                                                            ? propertyDescriptor.getGetter()
-                                                            : propertyDescriptor.getSetter();
-            checkFunction(accessor, accessorDescriptor);
-            checkModifiers(accessor.getModifierList());
-            if (propertyDescriptor.getModality() == Modality.FINAL && accessor.hasModifier(JetTokens.OPEN_KEYWORD)) {
-                ASTNode openModifierNode = accessor.getModifierList().getModifierNode(JetTokens.OPEN_KEYWORD);
-                context.getTrace().report(NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY.on(accessor, openModifierNode, property));
+            checkIllegalInThisContextModifiers(accessor.getModifierList(), Sets.newHashSet(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD, JetTokens.OVERRIDE_KEYWORD));
+        }
+        JetPropertyAccessor getter = property.getGetter();
+        PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
+        JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
+        if (getterModifierList != null && getterDescriptor != null) {
+            Map<JetKeywordToken, ASTNode> nodes = getNodesCorrespondingToModifiers(getterModifierList, Sets.newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.INTERNAL_KEYWORD));
+            if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
+                for (Map.Entry<JetKeywordToken, ASTNode> entry : nodes.entrySet()) {
+                    context.getTrace().report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(getterModifierList, entry.getValue(), entry.getKey()));
+                }
             }
-            if (propertyDescriptor.getModality() != Modality.ABSTRACT && accessor.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-                ASTNode abstractModifierNode = accessor.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD);
-                context.getTrace().report(ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY.on(accessor, abstractModifierNode, property));
+            else {
+                for (Map.Entry<JetKeywordToken, ASTNode> entry : nodes.entrySet()) {
+                    context.getTrace().report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(getterModifierList, entry.getValue(), entry.getKey()));
+                }
             }
         }
     }
@@ -346,12 +358,23 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkIllegalInThisContextModifiers(@Nullable JetModifierList modifierList, JetKeywordToken... illegalModifiers) {
+    private void checkIllegalInThisContextModifiers(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> illegalModifiers) {
         if (modifierList == null) return;
         for (JetKeywordToken modifier : illegalModifiers) {
             if (modifierList.hasModifier(modifier)) {
-                context.getTrace().report(Errors.ILLEGAL_MODIFIER.on(modifierList.getModifierNode(modifier), modifier));
+                context.getTrace().report(Errors.ILLEGAL_MODIFIER.on(modifierList, modifierList.getModifierNode(modifier), modifier));
             }
         }
+    }
+    
+    @NotNull
+    public static Map<JetKeywordToken, ASTNode> getNodesCorrespondingToModifiers(@NotNull JetModifierList modifierList, Collection<JetKeywordToken> possibleModifiers) {
+        Map<JetKeywordToken, ASTNode> nodes = Maps.newHashMap();
+        for (JetKeywordToken modifier : possibleModifiers) {
+            if (modifierList.hasModifier(modifier)) {
+                nodes.put(modifier, modifierList.getModifierNode(modifier));
+            }
+        }
+        return nodes;
     }
 }

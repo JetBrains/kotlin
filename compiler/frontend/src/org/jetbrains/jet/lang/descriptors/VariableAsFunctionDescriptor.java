@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -16,7 +17,7 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
         assert outType != null;
         assert JetStandardClasses.isFunctionType(outType);
         VariableAsFunctionDescriptor result = new VariableAsFunctionDescriptor(variableDescriptor);
-        result.initialize(JetStandardClasses.getReceiverType(outType), Collections.<TypeParameterDescriptor>emptyList(), JetStandardClasses.getValueParameters(result, outType), JetStandardClasses.getReturnType(outType), Modality.FINAL, Visibility.LOCAL);
+        result.initialize(JetStandardClasses.getReceiverType(outType), ReceiverDescriptor.NO_RECEIVER, Collections.<TypeParameterDescriptor>emptyList(), JetStandardClasses.getValueParameters(result, outType), JetStandardClasses.getReturnType(outType), Modality.FINAL, Visibility.LOCAL);
         return result;
     }
 

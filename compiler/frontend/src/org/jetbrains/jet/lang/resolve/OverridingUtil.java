@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.*;
@@ -37,24 +38,31 @@ public class OverridingUtil {
     }
 
     public static <D extends CallableDescriptor> Set<D> filterOverrides(Set<D> candidateSet) {
+        return filterOverrides(candidateSet, Function.ID);
+    }
+
+    public static <D> Set<D> filterOverrides(Set<D> candidateSet, Function<? super D, ? extends CallableDescriptor> transform) {
         Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:
-        for (D me : candidateSet) {
-            for (D other : candidateSet) {
+        for (D meD : candidateSet) {
+            CallableDescriptor me = transform.fun(meD);
+            for (D otherD : candidateSet) {
+                CallableDescriptor other = transform.fun(otherD);
                 if (me == other) continue;
                 if (overrides(other, me)) {
                     continue outerLoop;
                 }
             }
-            for (D other : candidates) {
+            for (D otherD : candidates) {
+                CallableDescriptor other = transform.fun(otherD);
                 if (me.getOriginal() == other.getOriginal()
-                        && isOverridableBy(other, me).isSuccess()
-                        && isOverridableBy(me, other).isSuccess()) {
+                    && isOverridableBy(other, me).isSuccess()
+                    && isOverridableBy(me, other).isSuccess()) {
                     continue outerLoop;
                 }
             }
 //            System.out.println(me);
-            candidates.add(me);
+            candidates.add(meD);
         }
 //        Set<D> candidates = Sets.newLinkedHashSet(candidateSet);
 //        for (D descriptor : candidateSet) {

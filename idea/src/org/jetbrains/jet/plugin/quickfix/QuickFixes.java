@@ -29,7 +29,7 @@ public class QuickFixes {
     }
 
     static {
-        JetIntentionActionFactory<JetModifierListOwner> removeAbstractModifierFactory = RemoveModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD);
+        JetIntentionActionFactory<JetModifierListOwner> removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.ABSTRACT_KEYWORD);
         JetIntentionActionFactory<JetModifierListOwner> addAbstractModifierFactory = AddModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD, new JetToken[]{JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD});
 
         add(Errors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
@@ -53,22 +53,21 @@ public class QuickFixes {
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
-        JetIntentionActionFactory<JetFunctionOrPropertyAccessor> removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
+        JetIntentionActionFactory<JetFunction> removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
         add(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
         add(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeFunctionBodyFactory);
 
-        JetIntentionActionFactory<JetFunctionOrPropertyAccessor> addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
+        JetIntentionActionFactory<JetFunction> addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
         add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
         add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
 
         add(Errors.NON_MEMBER_ABSTRACT_FUNCTION, removeAbstractModifierFactory);
-        add(Errors.NON_MEMBER_ABSTRACT_ACCESSOR, removeAbstractModifierFactory);
         add(Errors.NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
 
-        add(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD));
+        add(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createRemoveModifierFromListFactory(JetTokens.OVERRIDE_KEYWORD));
         add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD, new JetToken[] {JetTokens.OPEN_KEYWORD}));
 
         add(Errors.VAL_WITH_SETTER, ChangeVariableMutabilityFix.createFactory());
@@ -84,10 +83,10 @@ public class QuickFixes {
 
         add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallToDotCall.createFactory());
 
-        JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveRedundantModifierFix.createFactory();
+        JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory(true);
         add(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);
         add(Errors.REDUNDANT_MODIFIER_IN_TRAIT, removeRedundantModifierFactory);
-        add(Errors.TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createFactory(JetTokens.FINAL_KEYWORD));
+        add(Errors.TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.FINAL_KEYWORD));
 
         add(Errors.PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR, RemovePartsFromPropertyFix.createRemoveInitializerFactory());
 
@@ -96,14 +95,15 @@ public class QuickFixes {
         add(Errors.PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY, addPrimaryConstructorFactory);
 
         JetIntentionActionFactory<JetModifierListOwner> addOpenModifierFactory = AddModifierFix.createFactory(JetTokens.OPEN_KEYWORD, new JetToken[]{JetTokens.FINAL_KEYWORD});
-        JetIntentionActionFactory<JetModifierListOwner> removeOpenModifierFactory = RemoveModifierFix.createFactory(JetTokens.OPEN_KEYWORD);
+        JetIntentionActionFactory<JetModifierListOwner> removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.OPEN_KEYWORD);
         add(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addOpenModifierFactory, DiagnosticParameters.CLASS));
         add(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, removeOpenModifierFactory);
-        add(Errors.NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addOpenModifierFactory, DiagnosticParameters.PROPERTY));
-        add(Errors.NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY, removeOpenModifierFactory);
 
-        add(Errors.ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.PROPERTY));
-        add(Errors.ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY, removeAbstractModifierFactory);
+        JetIntentionActionFactory<JetModifierList> removeModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory();
+        add(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
+        add(Errors.REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
+        add(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
+        
+        add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
     }
 }
-

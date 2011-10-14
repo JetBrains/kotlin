@@ -178,8 +178,8 @@ public class ClassDescriptorResolver {
                 returnType = DeferredType.create(trace, new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
-                        JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).inferFunctionReturnType(scope, function, functionDescriptor);
+                        //JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
+                        return semanticServices.getTypeInferrerServices(trace).inferFunctionReturnType(scope, function, functionDescriptor);
                     }
                 });
             }
@@ -195,6 +195,7 @@ public class ClassDescriptorResolver {
         Visibility visibility = resolveVisibilityFromModifiers(function.getModifierList());
         functionDescriptor.initialize(
                 receiverType,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDescriptor),
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
@@ -438,6 +439,7 @@ public class ClassDescriptorResolver {
                 resolveVisibilityFromModifiers(objectDeclaration.getModifierList()),
                 false,
                 null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 null,
                 classDescriptor.getDefaultType());
@@ -481,17 +483,7 @@ public class ClassDescriptorResolver {
 
         JetType type = getVariableType(scopeWithTypeParameters, property, true);
 
-        boolean hasBody = property.getInitializer() != null;
-        if (!hasBody) {
-            JetPropertyAccessor getter = property.getGetter();
-            if (getter != null && getter.getBodyExpression() != null) {
-                hasBody = true;
-            }
-            JetPropertyAccessor setter = property.getSetter();
-            if (!hasBody && setter != null && setter.getBodyExpression() != null) {
-                hasBody = true;
-            }
-        }
+        boolean hasBody = hasBody(property);
         Modality defaultModality = getDefaultModality(containingDeclaration, hasBody);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
@@ -500,6 +492,7 @@ public class ClassDescriptorResolver {
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
                 receiverType,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 JetPsiUtil.safeName(property.getName()),
                 isVar ? type : null,
                 type);
@@ -511,6 +504,21 @@ public class ClassDescriptorResolver {
 
         trace.record(BindingContext.VARIABLE, property, propertyDescriptor);
         return propertyDescriptor;
+    }
+
+    /*package*/ static boolean hasBody(JetProperty property) {
+        boolean hasBody = property.getInitializer() != null;
+        if (!hasBody) {
+            JetPropertyAccessor getter = property.getGetter();
+            if (getter != null && getter.getBodyExpression() != null) {
+                hasBody = true;
+            }
+            JetPropertyAccessor setter = property.getSetter();
+            if (!hasBody && setter != null && setter.getBodyExpression() != null) {
+                hasBody = true;
+            }
+        }
+        return hasBody;
     }
 
     @NotNull
@@ -532,8 +540,8 @@ public class ClassDescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
-                        JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
-                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).safeGetType(scope, initializer, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        //JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
+                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, JetTypeInferrer.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {
@@ -756,6 +764,7 @@ public class ClassDescriptorResolver {
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 name == null ? "<no name>" : name,
                 isMutable ? type : null,
                 type);

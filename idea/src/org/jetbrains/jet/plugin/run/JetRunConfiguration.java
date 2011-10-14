@@ -2,7 +2,7 @@ package org.jetbrains.jet.plugin.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.RunConfigurationExtension;
+import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -49,14 +49,15 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     public void readExternal(final Element element) throws InvalidDataException {
       PathMacroManager.getInstance(getProject()).expandPaths(element);
       super.readExternal(element);
-      RunConfigurationExtension.readSettings(this, element);
+
+      JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element);
       DefaultJDOMExternalizer.readExternal(this, element);
       readModule(element);
     }
 
     public void writeExternal(final Element element) throws WriteExternalException {
       super.writeExternal(element);
-      RunConfigurationExtension.writeSettings(this, element);
+      JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element);
       DefaultJDOMExternalizer.writeExternal(this, element);
       writeModule(element);
       PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);

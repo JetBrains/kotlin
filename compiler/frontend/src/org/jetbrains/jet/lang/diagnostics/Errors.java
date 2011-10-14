@@ -59,7 +59,7 @@ public interface Errors {
             return sb.toString();
         }
     };
-    ParameterizedDiagnosticFactory1<JetKeywordToken> ILLEGAL_MODIFIER = ParameterizedDiagnosticFactory1.create(ERROR, "Illegal modifier ''{0}''");
+    DiagnosticWithParameterFactory<JetModifierList, JetKeywordToken> ILLEGAL_MODIFIER = DiagnosticWithParameterFactory.create(ERROR, "Illegal modifier ''{0}''", DiagnosticParameters.MODIFIER);
 
     PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken> REDUNDANT_MODIFIER = new PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken>(Severity.WARNING, "Modifier {0} is redundant because {1} is present") {
         @NotNull
@@ -69,6 +69,7 @@ public interface Errors {
         }
     };
     DiagnosticWithParameterFactory<JetModifierList, JetKeywordToken> REDUNDANT_MODIFIER_IN_TRAIT = DiagnosticWithParameterFactory.create(WARNING, "Modifier ''{0}'' is redundant in trait", DiagnosticParameters.MODIFIER);
+    DiagnosticWithParameterFactory<JetModifierList, JetKeywordToken> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticWithParameterFactory.create(WARNING, "Visibility modifiers are redundant in getter", DiagnosticParameters.MODIFIER);
     SimplePsiElementOnlyDiagnosticFactory<JetClass> TRAIT_CAN_NOT_BE_FINAL = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Trait can not be final");
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message
@@ -94,6 +95,8 @@ public interface Errors {
     DiagnosticWithParameterFactory<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_INITIALIZER = DiagnosticWithParameterFactory.create(ERROR, "Property with initializer cannot be abstract", DiagnosticParameters.TYPE);
     DiagnosticWithParameterFactory<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_GETTER = DiagnosticWithParameterFactory.create(ERROR, "Property with getter implementation cannot be abstract", DiagnosticParameters.TYPE);
     DiagnosticWithParameterFactory<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_SETTER = DiagnosticWithParameterFactory.create(ERROR, "Property with setter implementation cannot be abstract", DiagnosticParameters.TYPE);
+
+    DiagnosticWithParameterFactory<JetModifierList, JetKeywordToken> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticWithParameterFactory.create(ERROR, "Getter visibility must be the same as property visibility", DiagnosticParameters.MODIFIER);
     SimpleDiagnosticFactory BACKING_FIELD_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Property in a trait cannot have a backing field");
     SimpleDiagnosticFactory MUST_BE_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "Property must be initialized");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Property must be initialized or be abstract");
@@ -106,22 +109,21 @@ public interface Errors {
             return super.on(elementToBlame, textRangeToMark, s, classDescriptor, aClass).add(DiagnosticParameters.CLASS, aClass);
         }
     };
-    PsiElementOnlyDiagnosticFactory3<JetFunctionOrPropertyAccessor, String, ClassDescriptor, JetClass> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetFunctionOrPropertyAccessor, String, ClassDescriptor, JetClass>(ERROR, "Abstract function {0} in non-abstract class {1}") {
+    PsiElementOnlyDiagnosticFactory3<JetFunction, String, ClassDescriptor, JetClass> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetFunction, String, ClassDescriptor, JetClass>(ERROR, "Abstract function {0} in non-abstract class {1}") {
         @NotNull
-        public DiagnosticWithPsiElement<JetFunctionOrPropertyAccessor> on(@NotNull JetFunctionOrPropertyAccessor elementToBlame, @NotNull ASTNode nodeToMark, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass modifierListOwner) {
+        public DiagnosticWithPsiElement<JetFunction> on(@NotNull JetFunction elementToBlame, @NotNull ASTNode nodeToMark, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass modifierListOwner) {
             return super.on(elementToBlame, nodeToMark, s, classDescriptor, modifierListOwner).add(DiagnosticParameters.CLASS, modifierListOwner);
         }
     };
-    PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
-    PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
+    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
+    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
     PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, FunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract");
-    SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> NON_MEMBER_ABSTRACT_ACCESSOR = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "This property is not a class or trait member and thus cannot have abstract accessors"); // TODO : Better message
 
-    PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
+    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
     
     DiagnosticWithParameterFactory<JetNamedDeclaration, JetClass> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticWithParameterFactory.create(ERROR, "Non final member in a final class", DiagnosticParameters.CLASS);
-    DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Non final accessor of a final property", DiagnosticParameters.PROPERTY);
-    DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Abstract accessor of a final property", DiagnosticParameters.PROPERTY);
+
+    DiagnosticWithParameterFactory<JetNamedDeclaration, JetType> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticWithParameterFactory.create(ERROR, "Public member should specify a type", DiagnosticParameters.TYPE);
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");
@@ -130,7 +132,7 @@ public interface Errors {
     SimpleDiagnosticFactory BY_IN_SECONDARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "'by'-clause is only supported for primary constructors");
     SimpleDiagnosticFactory INITIALIZER_WITH_NO_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Constructor arguments required");
     SimpleDiagnosticFactory MANY_CALLS_TO_THIS = SimpleDiagnosticFactory.create(ERROR, "Only one call to 'this(...)' is allowed");
-    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing", DescriptorRenderer.TEXT);
+    PsiElementOnlyDiagnosticFactory1<JetModifierList, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing", DescriptorRenderer.TEXT);
     PsiElementOnlyDiagnosticFactory1<JetClass, PropertyDescriptor> PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "This class must have a primary constructor, because property {0} has a backing field");
     ParameterizedDiagnosticFactory1<JetClassOrObject> PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL = new ParameterizedDiagnosticFactory1<JetClassOrObject>(ERROR, "Class {0} must have a constructor in order to be able to initialize supertypes") {
         @Override
@@ -141,7 +143,6 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     SimpleDiagnosticFactory UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR, "Unreachable code");
-    ParameterizedDiagnosticFactory1<String> UNREACHABLE_BECAUSE_OF_NOTHING = ParameterizedDiagnosticFactory1.create(ERROR, "This code is unreachable, because ''{0}'' never terminates normally");
 
     SimpleDiagnosticFactory MANY_CLASS_OBJECTS = SimpleDiagnosticFactory.create(ERROR, "Only one class object is allowed per class");
     SimpleDiagnosticFactory CLASS_OBJECT_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "A class object is not allowed here");
@@ -189,6 +190,7 @@ public interface Errors {
     SimpleDiagnosticFactory RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = SimpleDiagnosticFactory.create(ERROR, "Returns are not allowed for functions with expression body. Use block body in '{...}'");
     SimpleDiagnosticFactory NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = SimpleDiagnosticFactory.create(ERROR, "A 'return' expression required in a function with a block body ('{...}')");
     ParameterizedDiagnosticFactory1<JetType> RETURN_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "This function must return a value of type {0}");
+    ParameterizedDiagnosticFactory1<JetType> EXPECTED_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "Expected a value of type {0}");
 
     ParameterizedDiagnosticFactory1<JetType> UPPER_BOUND_VIOLATED = ParameterizedDiagnosticFactory1.create(ERROR, "An upper bound {0} is violated"); // TODO : Message
     ParameterizedDiagnosticFactory1<JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = ParameterizedDiagnosticFactory1.create(ERROR, "{0} is a final type, and thus a class object cannot extend it");
@@ -219,6 +221,7 @@ public interface Errors {
     SimpleDiagnosticFactory VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = SimpleDiagnosticFactory.create(ERROR, "A type annotation is required on a value parameter");
     SimpleDiagnosticFactory BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = SimpleDiagnosticFactory.create(ERROR, "'break' and 'continue' are only allowed inside a loop");
     ParameterizedDiagnosticFactory1<String> NOT_A_LOOP_LABEL = ParameterizedDiagnosticFactory1.create(ERROR, "The label ''{0}'' does not denote a loop");
+    ParameterizedDiagnosticFactory1<String> NOT_A_RETURN_LABEL = ParameterizedDiagnosticFactory1.create(ERROR, "The label ''{0}'' does not reference to a context from which we can return");
 
     SimpleDiagnosticFactory ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "Anonymous initializers are only allowed in the presence of a primary constructor");
     SimpleDiagnosticFactory NULLABLE_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "A supertype cannot be nullable");
@@ -237,7 +240,7 @@ public interface Errors {
             return constraintOwner.getName();
         }
     };
-    ParameterizedDiagnosticFactory2<JetType, VariableDescriptor> AUTOCAST_IMPOSSIBLE = ParameterizedDiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because variable {1} is mutable", NAME);
+    ParameterizedDiagnosticFactory2<JetType, String> AUTOCAST_IMPOSSIBLE = ParameterizedDiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because {1} could have changed since the is-check");
 
     ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = ParameterizedDiagnosticFactory2.create(ERROR, "The loop iterates over values of type {0} but the parameter is declared to be {1}");
     ParameterizedDiagnosticFactory1<JetType> TYPE_MISMATCH_IN_CONDITION = ParameterizedDiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}");
@@ -348,10 +351,10 @@ public interface Errors {
     };
 
     ParameterizedDiagnosticFactory3<String, JetType, JetType> RESULT_TYPE_MISMATCH = ParameterizedDiagnosticFactory3.create(ERROR, "{0} must return {1} but returns {2}");
-    ParameterizedDiagnosticFactory3<String, String, String> UNSAFE_INFIX_CALL = ParameterizedDiagnosticFactory3.create(ERROR, "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})' which is not allowed on a nullable receiver ''{0}''. Use '?.'-qualified call instead");
+    ParameterizedDiagnosticFactory3<String, String, String> UNSAFE_INFIX_CALL = ParameterizedDiagnosticFactory3.create(ERROR, "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. Use '?.'-qualified call instead");
 
-    ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory("Overload resolution ambiguity: {0}");
-    ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory("None of the following functions can be called with the arguments supplied: {0}");
+    AmbiguousDescriptorDiagnosticFactory OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory("Overload resolution ambiguity: {0}");
+    AmbiguousDescriptorDiagnosticFactory NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory("None of the following functions can be called with the arguments supplied: {0}");
     ParameterizedDiagnosticFactory1<ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = ParameterizedDiagnosticFactory1.create(ERROR, "No value passed for parameter {0}", DescriptorRenderer.TEXT);
     ParameterizedDiagnosticFactory1<JetType> MISSING_RECEIVER = ParameterizedDiagnosticFactory1.create(ERROR, "A receiver of type {0} is required");
     SimpleDiagnosticFactory NO_RECEIVER_ADMITTED = SimpleDiagnosticFactory.create(ERROR, "No receiver can be passed to this function or property");

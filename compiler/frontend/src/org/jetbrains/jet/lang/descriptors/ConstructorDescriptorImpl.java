@@ -3,6 +3,8 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -28,14 +30,25 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @Override
     @Deprecated
-    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality, @NotNull Visibility visibility) {
+    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull ReceiverDescriptor expectedThisObject, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality, @NotNull Visibility visibility) {
         assert receiverType == null;
-        return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
+        return super.initialize(null, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
     }
 
     public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Modality modality, Visibility visibility) {
-        super.initialize(null, typeParameters, unsubstitutedValueParameters, null, modality, visibility);
+        super.initialize(null, getExpectedThisObject(getContainingDeclaration()), typeParameters, unsubstitutedValueParameters, null, modality, visibility);
         return this;
+    }
+
+    @NotNull
+    private static ReceiverDescriptor getExpectedThisObject(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ConstructorDescriptor) {
+            ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) descriptor;
+            ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
+            return getExpectedThisObject(classDescriptor);
+        }
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        return DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration);
     }
 
     @NotNull

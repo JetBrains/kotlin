@@ -73,7 +73,7 @@ public class ClassContext {
             thisIdx++;
         }
 
-        final boolean hasReceiver = descriptor.getReceiver().exists();
+        final boolean hasReceiver = descriptor.getReceiverParameter().exists();
         if (hasReceiver) {
             thisIdx++;
         }
@@ -104,7 +104,7 @@ public class ClassContext {
     }
 
     private ReceiverDescriptor receiver() {
-        return contextType instanceof FunctionDescriptor ? ((FunctionDescriptor) contextType).getReceiver() : ReceiverDescriptor.NO_RECEIVER;
+        return contextType instanceof FunctionDescriptor ? ((FunctionDescriptor) contextType).getReceiverParameter() : ReceiverDescriptor.NO_RECEIVER;
     }
 
     private boolean hasReceiver() {

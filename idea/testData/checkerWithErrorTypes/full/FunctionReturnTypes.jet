@@ -164,3 +164,46 @@ fun f(): Int {
 }
 
 fun f(): Int = if (1 < 2) 1 else returnNothing()
+
+public fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f<!>() = 1
+class B() {
+   protected fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f<!>() = "ss"
+}
+
+fun testFunctionLiterals() {
+    val endsWithVarDeclaration : fun() : Boolean = {
+        <!EXPECTED_TYPE_MISMATCH!>val x = 2<!>
+    }
+
+    val endsWithAssignment = { () : Int =>
+        val x = 1
+        <!EXPECTED_TYPE_MISMATCH!>x = 333<!>
+    }
+
+    val endsWithReAssignment = { () : Int =>
+        val x = 1
+        <!EXPECTED_TYPE_MISMATCH!>x += 333<!>
+    }
+
+    val endsWithFunDeclaration : fun() : String = {
+        val x = 1
+        x = 333
+        <!EXPECTED_TYPE_MISMATCH!>fun meow() : Unit {}<!>
+    }
+
+    val endsWithObjectDeclaration : fun() : Int = {
+        val x = 1
+        x = 333
+        <!EXPECTED_TYPE_MISMATCH!>object A {}<!>
+    }
+
+    val expectedUnitReturnType1 = { () : Unit =>
+        val x = 1
+    }
+
+    val expectedUnitReturnType2 = { () : Unit =>
+        fun meow() : Unit {}
+        object A {}
+    }
+
+}

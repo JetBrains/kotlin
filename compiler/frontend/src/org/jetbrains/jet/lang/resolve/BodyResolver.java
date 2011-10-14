@@ -125,7 +125,7 @@ public class BodyResolver {
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
                 : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
-        final JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+        final JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
         JetVisitorVoid visitor = new JetVisitorVoid() {
@@ -172,7 +172,9 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
+                        JetType supertype = typeInferrer.getCallResolver().resolveCall(
+                                context.getTrace(), scopeForConstructor,
+                                CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                         if (supertype != null) {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
@@ -290,7 +292,7 @@ public class BodyResolver {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(createFieldAssignTrackingTrace(), JetFlowInformationProvider.NONE); // TODO : flow
+            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(createFieldAssignTrackingTrace()); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
@@ -316,7 +318,7 @@ public class BodyResolver {
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
         final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 
-        final JetTypeInferrer.Services typeInferrerForInitializers = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE);
+        final JetTypeInferrer.Services typeInferrerForInitializers = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
 
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";
@@ -334,7 +336,8 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope, null, call, NO_EXPECTED_TYPE);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope,
+                                                                                      CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                         }
                     }
 
@@ -346,7 +349,7 @@ public class BodyResolver {
 
                         typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(),
                                 functionInnerScope,
-                                ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
+                                CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),
@@ -377,11 +380,11 @@ public class BodyResolver {
         }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
-            context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
-            JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
-            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, flowInformationProvider);
+            //context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
+            //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
+            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
 
-            typeInferrer.checkFunctionReturnType(functionInnerScope, declaration, JetStandardClasses.getUnitType());
+            typeInferrer.checkFunctionReturnType(functionInnerScope, declaration, descriptor, JetStandardClasses.getUnitType());
         }
     }
 
@@ -456,7 +459,7 @@ public class BodyResolver {
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        ReceiverDescriptor receiver = propertyDescriptor.getReceiver();
+        ReceiverDescriptor receiver = propertyDescriptor.getReceiverParameter();
         if (receiver.exists()) {
             result.setImplicitReceiver(receiver);
         }
@@ -516,8 +519,8 @@ public class BodyResolver {
     }
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
-        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
-        JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, flowInformationProvider);
+        //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
+        JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
         JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, NO_EXPECTED_TYPE);
 
         JetType expectedType = propertyDescriptor.getInType();
@@ -552,13 +555,13 @@ public class BodyResolver {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
-            JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
-            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace, flowInformationProvider);
+            //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
+            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
         }
 
-        JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION);
+        JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
         List<JetParameter> valueParameters = function.getValueParameters();
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameterDescriptor = functionDescriptor.getValueParameters().get(i);

@@ -7,7 +7,7 @@ abstract class A() {
 
     open var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>r<!>: String
     get
-    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> protected set
+    <!ILLEGAL_MODIFIER!>abstract<!> protected set
 }
 
 <!TRAIT_CAN_NOT_BE_FINAL!>final<!> trait T {}
@@ -15,7 +15,7 @@ abstract class A() {
 class FinalClass() {
     <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun foo() {}
     val i: Int = 1
-        <!NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY!>open<!> get(): Int = $i
+        <!ILLEGAL_MODIFIER!>open<!> get(): Int = $i
     var j: Int = 1
-        <!NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY!>open<!> set(v: Int) {}
+        <!ILLEGAL_MODIFIER!>open<!> set(v: Int) {}
 }

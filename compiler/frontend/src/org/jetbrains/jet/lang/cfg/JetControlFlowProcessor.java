@@ -1,11 +1,15 @@
 package org.jetbrains.jet.lang.cfg;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -18,7 +22,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 */
 public class JetControlFlowProcessor {
 
-    private final Map<String, Stack<JetElement>> labeledElements = new HashMap<String, Stack<JetElement>>();
+//    private final Map<String, Stack<JetElement>> labeledElements = new HashMap<String, Stack<JetElement>>();
 
     private final JetControlFlowBuilder builder;
     private final BindingTrace trace;
@@ -33,10 +37,10 @@ public class JetControlFlowProcessor {
     }
 
     public void generateSubroutineControlFlow(@NotNull JetElement subroutineElement, @NotNull List<? extends JetElement> body) {
-        if (subroutineElement instanceof JetNamedDeclaration) {
-            JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) subroutineElement;
-            enterLabeledElement(JetPsiUtil.safeName(namedDeclaration.getName()), namedDeclaration);
-        }
+//        if (subroutineElement instanceof JetNamedDeclaration) {
+//            JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) subroutineElement;
+//            enterLabeledElement(JetPsiUtil.safeName(namedDeclaration.getName()), namedDeclaration);
+//        }
         boolean functionLiteral = subroutineElement instanceof JetFunctionLiteralExpression;
         builder.enterSubroutine(subroutineElement, functionLiteral);
         for (JetElement statement : body) {
@@ -45,57 +49,55 @@ public class JetControlFlowProcessor {
         builder.exitSubroutine(subroutineElement, functionLiteral);
     }
 
-    private void enterLabeledElement(@NotNull String labelName, @NotNull JetElement labeledElement) {
-        Stack<JetElement> stack = labeledElements.get(labelName);
-        if (stack == null) {
-            stack = new Stack<JetElement>();
-            labeledElements.put(labelName, stack);
-        }
-        stack.push(labeledElement);
-    }
+//    private void enterLabeledElement(@NotNull String labelName, @NotNull JetElement labeledElement) {
+//        Stack<JetElement> stack = labeledElements.get(labelName);
+//        if (stack == null) {
+//            stack = new Stack<JetElement>();
+//            labeledElements.put(labelName, stack);
+//        }
+//        stack.push(labeledElement);
+//    }
+//
+//    private void exitElement(JetElement element) {
+//        // TODO : really suboptimal
+//        for (Iterator<Map.Entry<String, Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
+//            Map.Entry<String, Stack<JetElement>> entry = mapIter.next();
+//            Stack<JetElement> stack = entry.getValue();
+//            for (Iterator<JetElement> stackIter = stack.iterator(); stackIter.hasNext(); ) {
+//                JetElement recorded = stackIter.next();
+//                if (recorded == element) {
+//                    stackIter.remove();
+//                }
+//            }
+//            if (stack.isEmpty()) {
+//                mapIter.remove();
+//            }
+//        }
+//    }
 
-    private void exitElement(JetElement element) {
-        // TODO : really suboptimal
-        for (Iterator<Map.Entry<String, Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
-            Map.Entry<String, Stack<JetElement>> entry = mapIter.next();
-            Stack<JetElement> stack = entry.getValue();
-            for (Iterator<JetElement> stackIter = stack.iterator(); stackIter.hasNext(); ) {
-                JetElement recorded = stackIter.next();
-                if (recorded == element) {
-                    stackIter.remove();
-                }
-            }
-            if (stack.isEmpty()) {
-                mapIter.remove();
-            }
-        }
-    }
-
-    @Nullable
-    private JetElement resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved) {
-        Stack<JetElement> stack = labeledElements.get(labelName);
-        if (stack == null || stack.isEmpty()) {
-            if (reportUnresolved) {
-                trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
-            }
-            return null;
-        }
-        else if (stack.size() > 1) {
-//            trace.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
-            trace.report(LABEL_NAME_CLASH.on(labelExpression));
-        }
-
-        JetElement result = stack.peek();
-        trace.record(BindingContext.LABEL_TARGET, labelExpression, result);
-        return result;
-    }
+//    @Nullable
+//    private JetElement resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved) {
+//        Stack<JetElement> stack = labeledElements.get(labelName);
+//        if (stack == null || stack.isEmpty()) {
+//            if (reportUnresolved) {
+////                trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
+//            }
+//            return null;
+//        }
+//        else if (stack.size() > 1) {
+////            trace.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
+////            trace.report(LABEL_NAME_CLASH.on(labelExpression));
+//        }
+//
+//        JetElement result = stack.peek();
+////        trace.record(BindingContext.LABEL_TARGET, labelExpression, result);
+//        return result;
+//    }
 
     private class CFPVisitor extends JetVisitorVoid {
-//        private final boolean preferBlock;
         private final boolean inCondition;
 
         private CFPVisitor(boolean inCondition) {
-//            this.preferBlock = preferBlock;
             this.inCondition = inCondition;
         }
 
@@ -109,7 +111,7 @@ public class JetControlFlowProcessor {
                 visitor = new CFPVisitor(inCondition);
             }
             element.accept(visitor);
-            exitElement(element);
+//            exitElement(element);
         }
 
         @Override
@@ -122,12 +124,12 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitThisExpression(JetThisExpression expression) {
-            JetSimpleNameExpression targetLabel = expression.getTargetLabel();
-            if (targetLabel != null) {
-                String labelName = expression.getLabelName();
-                assert labelName != null;
-                resolveLabel(labelName, targetLabel, false);
-            }
+//            JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+//            if (targetLabel != null) {
+//                String labelName = expression.getLabelName();
+//                assert labelName != null;
+//                resolveLabel(labelName, targetLabel, false);
+//            }
             builder.read(expression);
         }
 
@@ -139,6 +141,12 @@ public class JetControlFlowProcessor {
         @Override
         public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
             builder.read(expression);
+            if (trace.get(BindingContext.PROCESSED, expression)) {
+                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    builder.jumpToError(expression);
+                }
+            }
         }
 
         @Override
@@ -153,7 +161,7 @@ public class JetControlFlowProcessor {
         private void visitLabeledExpression(@NotNull String labelName, @NotNull JetExpression labeledExpression) {
             JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
             if (deparenthesized != null) {
-                enterLabeledElement(labelName, deparenthesized);
+//                enterLabeledElement(labelName, deparenthesized);
                 value(labeledExpression, inCondition);
             }
         }
@@ -437,12 +445,20 @@ public class JetControlFlowProcessor {
             if (labelName != null) {
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 assert targetLabel != null;
-                loop = resolveLabel(labelName, targetLabel, true);
-                if (!isLoop(loop)) {
-//                    trace.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
+                PsiElement labeledElement = BindingContextUtils.resolveToDeclarationPsiElement(trace.getBindingContext(), targetLabel);
+                if (labeledElement instanceof JetLoopExpression) {
+                    loop = (JetLoopExpression) labeledElement;
+                }
+                else {
                     trace.report(NOT_A_LOOP_LABEL.on(expression, targetLabel.getText()));
                     loop = null;
                 }
+//                loop = resolveLabel(labelName, targetLabel, true);
+//                if (!isLoop(loop)) {
+////                    trace.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
+//                    trace.report(NOT_A_LOOP_LABEL.on(expression, targetLabel.getText()));
+//                    loop = null;
+//                }
             }
             else {
                 loop = builder.getCurrentLoop();
@@ -454,11 +470,11 @@ public class JetControlFlowProcessor {
             return loop;
         }
 
-        private boolean isLoop(JetElement loop) {
-            return loop instanceof JetWhileExpression ||
-                   loop instanceof JetDoWhileExpression ||
-                   loop instanceof JetForExpression;
-        }
+//        private boolean isLoop(JetElement loop) {
+//            return loop instanceof JetWhileExpression ||
+//                   loop instanceof JetDoWhileExpression ||
+//                   loop instanceof JetForExpression;
+//        }
 
         @Override
         public void visitReturnExpression(JetReturnExpression expression) {
@@ -471,18 +487,31 @@ public class JetControlFlowProcessor {
             if (labelElement != null) {
                 String labelName = expression.getLabelName();
                 assert labelName != null;
-                subroutine = resolveLabel(labelName, labelElement, true);
+                PsiElement labeledElement = BindingContextUtils.resolveToDeclarationPsiElement(trace.getBindingContext(), labelElement);
+                if (labeledElement != null) {
+                    assert labeledElement instanceof JetElement;
+                    subroutine = (JetElement) labeledElement;
+                }
+                else {
+                    subroutine = null;
+                }
+                //subroutine = resolveLabel(labelName, labelElement, true);
             }
             else {
                 subroutine = builder.getCurrentSubroutine();
                 // TODO : a context check
             }
-            if (subroutine != null) {
+            if (subroutine instanceof JetFunction || subroutine instanceof JetFunctionLiteralExpression) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }
                 else {
                     builder.returnValue(expression, subroutine);
+                }
+            }
+            else {
+                if (labelElement != null) {
+                    trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
                 }
             }
         }
@@ -524,6 +553,12 @@ public class JetControlFlowProcessor {
                 value(selectorExpression, false);
             }
             builder.read(expression);
+            if (trace.get(BindingContext.PROCESSED, expression)) {
+                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    builder.jumpToError(expression);
+                }
+            }
         }
 
         private void visitCall(JetCallElement call) {
@@ -549,6 +584,12 @@ public class JetControlFlowProcessor {
 
             value(expression.getCalleeExpression(), false);
             builder.read(expression);
+            if (trace.get(BindingContext.PROCESSED, expression)) {
+                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    builder.jumpToError(expression);
+                }
+            }
         }
 
 //        @Override

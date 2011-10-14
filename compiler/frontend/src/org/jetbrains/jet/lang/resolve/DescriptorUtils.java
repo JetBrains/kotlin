@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
  * @author abreslav
@@ -22,7 +25,7 @@ public class DescriptorUtils {
 
             @Override
             public Boolean visitFunctionDescriptor(FunctionDescriptor descriptor, Void data) {
-                return descriptor.getReceiver().exists();
+                return descriptor.getReceiverParameter().exists();
             }
 
             @Override
@@ -32,7 +35,7 @@ public class DescriptorUtils {
 
             @Override
             public Boolean visitPropertyDescriptor(PropertyDescriptor descriptor, Void data) {
-                return descriptor.getReceiver().exists();
+                return descriptor.getReceiverParameter().exists();
             }
         }, null);
     }
@@ -110,5 +113,14 @@ public class DescriptorUtils {
     public static Modality convertModality(Modality modality, boolean makeNonAbstract) {
         if (makeNonAbstract && modality == Modality.ABSTRACT) return Modality.OPEN;
         return modality;
+    }
+
+    @NotNull
+    public static ReceiverDescriptor getExpectedThisObjectIfNeeded(@NotNull DeclarationDescriptor containingDeclaration) {
+        if (containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+            return classDescriptor.getImplicitReceiver();
+        }
+        return NO_RECEIVER;
     }
 }

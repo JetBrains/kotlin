@@ -47,11 +47,9 @@ class C() : A() {
 }
 
 fun f10(a : A?) {
-  if (a is B) {
     if (a is C) {
       a.bar();
     }
-  }
 }
 
 fun f11(a : A?) {

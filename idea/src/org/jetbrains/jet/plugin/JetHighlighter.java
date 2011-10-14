@@ -97,6 +97,15 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         JET_AUTO_CAST_EXPRESSION = TextAttributesKey.createTextAttributesKey("JET.AUTO.CAST.EXPRESSION", clone);
     }
 
+    public static final TextAttributesKey JET_WRAPPED_INTO_REF;
+
+    static {
+        TextAttributes attributes = new TextAttributes();
+        attributes.setEffectType(EffectType.LINE_UNDERSCORE);
+        attributes.setEffectColor(Color.BLACK);
+        JET_WRAPPED_INTO_REF = TextAttributesKey.createTextAttributesKey("JET.WRAPPED.INTO.REF", attributes);
+    }
+
     public static final TextAttributesKey JET_AUTOCREATED_IT;
 
     static {

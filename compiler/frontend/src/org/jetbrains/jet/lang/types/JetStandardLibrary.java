@@ -312,8 +312,7 @@ public class JetStandardLibrary {
 
     @NotNull
     public JetType getArrayType(@NotNull JetType argument) {
-        Variance variance = Variance.INVARIANT;
-        return getArrayType(variance, argument);
+        return getArrayType(Variance.INVARIANT, argument);
     }
 
     @NotNull
