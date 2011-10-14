@@ -18,7 +18,6 @@ import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.JetTypeInferrerServices;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
@@ -106,7 +105,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, JetType... parameterType) {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
-        JetTypeInferrerServices typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
+        JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
 
         OverloadResolutionResults<FunctionDescriptor> functions = typeInferrerServices.getCallResolver().resolveExactSignature(
                 classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);
