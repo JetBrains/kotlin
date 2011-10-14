@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.lazy.LazyValue;
+import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
 
 import java.util.*;
 
@@ -541,7 +543,7 @@ public class ClassDescriptorResolver {
                     @Override
                     protected JetType compute() {
                         //JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
-                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {

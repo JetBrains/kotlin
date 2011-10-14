@@ -15,6 +15,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTyperServices;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -26,20 +28,17 @@ import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCall.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCall.MAP_TO_RESULT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
-import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
  * @author abreslav
  */
 public class CallResolver {
-
-    private final JetTypeInferrer typeInferrer;
     private final JetSemanticServices semanticServices;
     private final OverloadingConflictResolver overloadingConflictResolver;
     private final DataFlowInfo dataFlowInfo;
 
-    public CallResolver(JetSemanticServices semanticServices, JetTypeInferrer typeInferrer, DataFlowInfo dataFlowInfo) {
-        this.typeInferrer = typeInferrer;
+    public CallResolver(JetSemanticServices semanticServices, DataFlowInfo dataFlowInfo) {
         this.semanticServices = semanticServices;
         this.overloadingConflictResolver = new OverloadingConflictResolver(semanticServices);
         this.dataFlowInfo = dataFlowInfo;
@@ -301,7 +300,7 @@ public class CallResolver {
                     if (callElement instanceof JetBinaryExpression) {
                         JetBinaryExpression binaryExpression = (JetBinaryExpression) callElement;
                         JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
-                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : JetTypeInferrer.getNameForOperationSymbol(operationReference.getReferencedNameElementType());
+                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : OperatorConventions.getNameForOperationSymbol(operationReference.getReferencedNameElementType());
                         trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, binaryExpression.getRight().getText()));
                     }
                     else {
@@ -385,7 +384,7 @@ public class CallResolver {
                         for (JetExpression expression : valueArgument.getArgumentExpressions()) {
 //                            JetExpression expression = valueArgument.getArgumentExpression();
                             // TODO : more attempts, with different expected types
-                            JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(temporaryTrace);
+                            ExpressionTyperServices temporaryServices = new ExpressionTyperServices(semanticServices, temporaryTrace);
                             JetType type = temporaryServices.getType(scope, expression, NO_EXPECTED_TYPE);
                             if (type != null) {
                                 constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
@@ -510,15 +509,16 @@ public class CallResolver {
     }
 
     private void checkTypesWithNoCallee(BindingTrace trace, JetScope scope, Call call) {
+        ExpressionTyperServices typeInferrerServices = new ExpressionTyperServices(semanticServices, trace);
         for (ValueArgument valueArgument : call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
-                typeInferrer.getServices(trace).getType(scope, argumentExpression, NO_EXPECTED_TYPE);
+                typeInferrerServices.getType(scope, argumentExpression, NO_EXPECTED_TYPE);
             }
         }
 
         for (JetExpression expression : call.getFunctionLiteralArguments()) {
-            typeInferrer.getServices(trace).getType(scope, expression, NO_EXPECTED_TYPE);
+            typeInferrerServices.getType(scope, expression, NO_EXPECTED_TYPE);
         }
 
         for (JetTypeProjection typeProjection : call.getTypeArguments()) {
@@ -602,7 +602,7 @@ public class CallResolver {
 
             List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
             for (JetExpression argumentExpression : argumentExpressions) {
-                JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(candidateCall.getTrace());
+                ExpressionTyperServices temporaryServices = new ExpressionTyperServices(semanticServices, candidateCall.getTrace());
                 JetType type = temporaryServices.getType(scope, argumentExpression, parameterType);
                 if (type == null) {
                     candidateCall.argumentHasNoType();

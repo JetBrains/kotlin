@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.types;
+package org.jetbrains.jet.util.lazy;
 
 /**
  * @author abreslav

@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.psi.JetThisExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
-import org.jetbrains.jet.lang.types.DataFlowInfo;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
 

@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.DataFlowInfo;
 
 import java.util.List;
 

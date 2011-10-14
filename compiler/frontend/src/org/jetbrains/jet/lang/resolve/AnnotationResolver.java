@@ -4,21 +4,23 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
  * @author abreslav
@@ -34,7 +36,7 @@ public class AnnotationResolver {
         this.trace = trace;
 //        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
 //        this.services = typeInferrer.getServices(this.trace);
-        this.callResolver = new CallResolver(semanticServices, new JetTypeInferrer(semanticServices), DataFlowInfo.getEmpty());
+        this.callResolver = new CallResolver(semanticServices, DataFlowInfo.getEmpty());
     }
 
     @NotNull

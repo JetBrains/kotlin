@@ -1,0 +1,205 @@
+package org.jetbrains.jet.lang.types.expressions;
+
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.calls.AutoCastUtils;
+import org.jetbrains.jet.lang.resolve.calls.CallMaker;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lexer.JetTokens;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+
+/**
+* @author abreslav
+*/
+public class ExpressionTyperVisitorWithWritableScope extends ExpressionTyperVisitor {
+    private final WritableScope scope;
+
+    public ExpressionTyperVisitorWithWritableScope(@NotNull WritableScope scope) {
+        this.scope = scope;
+    }
+
+    @Override
+    public JetType visitObjectDeclaration(JetObjectDeclaration declaration, ExpressionTypingContext context) {
+        TopDownAnalyzer.processObject(context.semanticServices, context.trace, scope, scope.getContainingDeclaration(), declaration);
+        ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
+        if (classDescriptor != null) {
+            PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
+            scope.addVariableDescriptor(propertyDescriptor);
+        }
+        return checkExpectedType(declaration, context);
+    }
+
+    @Override
+    public JetType visitProperty(JetProperty property, ExpressionTypingContext context) {
+        JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+        if (receiverTypeRef != null) {
+//                context.trace.getErrorHandler().genericError(receiverTypeRef.getNode(), "Local receiver-properties are not allowed");
+            context.trace.report(LOCAL_EXTENSION_PROPERTY.on(receiverTypeRef));
+        }
+
+        JetPropertyAccessor getter = property.getGetter();
+        if (getter != null) {
+//                context.trace.getErrorHandler().genericError(getter.getNode(), "Local variables are not allowed to have getters");
+            context.trace.report(LOCAL_VARIABLE_WITH_GETTER.on(getter));
+        }
+
+        JetPropertyAccessor setter = property.getSetter();
+        if (setter != null) {
+//                context.trace.getErrorHandler().genericError(setter.getNode(), "Local variables are not allowed to have setters");
+            context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter));
+        }
+
+        VariableDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property);
+        JetExpression initializer = property.getInitializer();
+        if (property.getPropertyTypeRef() != null && initializer != null) {
+            JetType outType = propertyDescriptor.getOutType();
+            JetType initializerType = getType(initializer, context.replaceExpectedType(outType).replaceScope(scope));
+//                if (outType != null &&
+//                    initializerType != null &&
+//                    !semanticServices.getTypeChecker().isConvertibleTo(initializerType, outType)) {
+//                    context.trace.report(TYPE_MISMATCH.on(initializer, outType, initializerType));
+//                }
+        }
+
+        scope.addVariableDescriptor(propertyDescriptor);
+        return checkExpectedType(property, context);
+    }
+
+    @Override
+    public JetType visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
+        FunctionDescriptorImpl functionDescriptor = context.getClassDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
+        scope.addFunctionDescriptor(functionDescriptor);
+        context.getServices().checkFunctionReturnType(context.scope, function, functionDescriptor, context.dataFlowInfo);
+        return checkExpectedType(function, context);
+    }
+
+    @Override
+    public JetType visitClass(JetClass klass, ExpressionTypingContext context) {
+        return super.visitClass(klass, context); // TODO
+    }
+
+    @Override
+    public JetType visitTypedef(JetTypedef typedef, ExpressionTypingContext context) {
+        return super.visitTypedef(typedef, context); // TODO
+    }
+
+    @Override
+    public JetType visitDeclaration(JetDeclaration dcl, ExpressionTypingContext context) {
+        return checkExpectedType(dcl, context);
+    }
+
+    @Override
+    protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext context) {
+        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+        String name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
+
+        TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(context.trace);
+        JetType assignmentOperationType = getTypeForBinaryCall(scope, name, context.replaceBindingTrace(temporaryBindingTrace), expression);
+
+        if (assignmentOperationType == null) {
+            String counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
+
+            JetType typeForBinaryCall = getTypeForBinaryCall(scope, counterpartName, context, expression);
+            if (typeForBinaryCall != null) {
+                context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
+            }
+        }
+        else {
+            temporaryBindingTrace.commit();
+        }
+        return checkExpectedType(expression, context);
+    }
+
+    @Nullable
+    private JetType checkExpectedType(JetExpression expression, ExpressionTypingContext context) {
+        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE) {
+            if (JetStandardClasses.isUnit(context.expectedType)) {
+                return JetStandardClasses.getUnitType();
+            }
+            context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
+        }
+        return null;
+    }
+
+    @Override
+    protected JetType visitAssignment(JetBinaryExpression expression, ExpressionTypingContext context) {
+        JetExpression left = expression.getLeft();
+        JetExpression deparenthesized = JetPsiUtil.deparenthesize(left);
+        JetExpression right = expression.getRight();
+        if (deparenthesized instanceof JetArrayAccessExpression) {
+            JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
+            return resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
+        }
+        JetType leftType = getType(left, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
+        if (right != null) {
+            JetType rightType = getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
+//                if (rightType != null &&
+//                    leftType != null &&
+//                    !semanticServices.getTypeChecker().isConvertibleTo(rightType, leftType)) {
+//                    context.trace.report(TYPE_MISMATCH.on(right, leftType, rightType));
+//                }
+        }
+        if (left instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression simpleName = (JetSimpleNameExpression) left;
+            String referencedName = simpleName.getReferencedName();
+            if (simpleName.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
+                && referencedName != null) {
+                PropertyDescriptor property = context.scope.getPropertyByFieldReference(referencedName);
+                if (property != null) {
+                    context.trace.record(BindingContext.VARIABLE_ASSIGNMENT, simpleName, property);
+                }
+            }
+            VariableDescriptor variable = AutoCastUtils.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), simpleName);
+            if (variable != null) {
+                DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
+                if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
+                    context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
+                }
+            }
+        }
+        return checkExpectedType(expression, context);
+    }
+
+    private JetType resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign, ExpressionTypingContext context) {
+        ExpressionReceiver receiver = getExpressionReceiver(arrayAccessExpression.getArrayExpression(), context.replaceScope(scope));
+        if (receiver == null) return null;
+//
+        Call call = CallMaker.makeCall(receiver, arrayAccessExpression, rightHandSide);
+//            // TODO : nasty hack: effort is duplicated
+//            callResolver.resolveCallWithGivenName(
+//                    scope,
+//                    call,
+//                    arrayAccessExpression,
+//                    "set", arrayAccessExpression.getArrayExpression(), NO_EXPECTED_TYPE);
+        FunctionDescriptor functionDescriptor = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
+                call,
+                arrayAccessExpression,
+                "set", receiver);
+        if (functionDescriptor == null) return null;
+        context.trace.record(REFERENCE_TARGET, operationSign, functionDescriptor);
+        return context.getServices().checkType(functionDescriptor.getReturnType(), arrayAccessExpression, context);
+    }
+
+    @Override
+    public JetType visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext data) {
+        return getType(expression.getBaseExpression(), data);
+    }
+
+    @Override
+    public JetType visitJetElement(JetElement element, ExpressionTypingContext context) {
+        context.trace.report(UNSUPPORTED.on(element, "in a block"));
+//            context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported element in a block: " + element + " " + element.getClass().getCanonicalName());
+        return null;
+    }
+}

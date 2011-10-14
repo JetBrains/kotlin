@@ -598,4 +598,20 @@ public class JetTypeChecker {
             return result;
         }
     }
+
+    private static class DfsNodeHandler<R> {
+
+        public void beforeChildren(JetType current) {
+
+        }
+
+        public void afterChildren(JetType current) {
+
+        }
+
+        public R result() {
+            return null;
+        }
+    }
+
 }

@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.util.lazy.LazyValue;
 
 import java.util.ArrayList;
 import java.util.Collections;

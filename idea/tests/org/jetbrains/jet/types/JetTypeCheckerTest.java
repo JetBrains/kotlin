@@ -20,7 +20,6 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -493,14 +492,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).getType(scopeWithImports, jetExpression, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).safeGetType(scopeWithImports, jetExpression, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
@@ -523,7 +522,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).getType(addImports(scope), jetExpression, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).getType(addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
