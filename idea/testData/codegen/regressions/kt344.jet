@@ -1,0 +1,179 @@
+fun s0() : Boolean {
+    val y = "222"
+    val foo = {
+        val bar = { y }
+        bar ()
+    }
+    return foo() == "222"
+}
+
+fun s1() : Boolean {
+    var x = "222"
+    val foo = {
+        val bar = {
+            x = "aaa"
+        }
+        bar ()
+    }
+    foo()
+    return x == "aaa"
+}
+
+fun t1() : Boolean {
+    var x = "111"
+
+    val y = x + "22"
+    val foo = {
+        x = x + "45" + y
+        x = x.substring(3)
+        x += "aaa"
+        ()
+    }
+    foo()
+
+    x += "bbb"
+    System.out?.println(x)
+    return x == "4511122aaabbb"
+}
+
+fun t2() : Boolean {
+    var x = 111
+    val y = x + 22
+    val foo = {
+        x = x + 5 + y
+        x += 5
+        x++
+        ()
+    }
+    foo()
+    x -= 55
+    System.out?.println(x)
+    return x == 200
+}
+
+fun t3() : Boolean {
+    var x = true
+    val foo = {
+        x = false
+        ()
+    }
+    foo()
+    return !x
+}
+
+fun t4() : Boolean {
+    var x = 100.flt
+    val y = x + 22
+    val foo = {
+        x = x + 200.flt + y
+        x += 18
+        ()
+    }
+    foo()
+    System.out?.println(x)
+    return x == 440.flt
+}
+
+fun t5() : Boolean {
+    var x = 100.dbl
+    val y = x + 22
+    val foo = {
+        x = x + 200.dbl + y
+        x -= 22
+        ()
+    }
+    foo()
+    System.out?.println(x)
+    return x == 400.dbl
+}
+
+fun t6() : Boolean {
+    var x = 20.byt
+    val y = x + 22
+    val foo = {
+        x = (x + 20.byt + y).byt
+        x += 2
+        x--
+        ()
+    }
+    foo()
+    System.out?.println(x)
+    return x == 83.byt
+}
+
+fun t7() : Boolean {
+    var x : Char = 'a'
+    val foo = {
+        x = 'b'
+        ()
+    }
+    foo()
+    System.out?.println(x)
+    return x == 'b'
+}
+
+fun t8() : Boolean {
+    var x = 20.sht
+    val foo = {
+        val bar = {
+            x = 30.sht
+            ()
+        }
+        bar()
+        ()
+    }
+    foo()
+    return x == 30.sht
+}
+
+fun t9(x: Int) : Boolean {
+    while(x < 100) {
+       x++
+    }
+    return x == 100
+}
+
+fun t10() : Boolean {
+    var y = 1
+    val foo = {
+        val bar = {
+            y = y + 1
+        }
+        bar()
+    }
+    foo()
+    return y == 2
+}
+
+fun t11(x: Int) : Int {
+    val foo = {
+        x = x + 1
+        val bar = {
+            x = x + 1
+            x += 3
+        }
+        bar()
+    }
+    while(x < 100) {
+       foo()
+    }
+    return x
+}
+
+fun box(): String {
+    if (!s0()) return "fail"
+    if (!s1()) return "fail"
+    if (!t1()) return "fail"
+    if (!t2()) return "fail"
+    if (!t3()) return "fail"
+    if (!t4()) return "fail"
+    if (!t5()) return "fail"
+    if (!t6()) return "fail"
+    if (!t7()) return "fail"
+    if (!t8()) return "fail"
+    if (!t9(0)) return "fail"
+    if (!t10()) return "fail"
+    if (t11(1) != 104) return "fail"
+
+    return "OK"
+}

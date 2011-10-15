@@ -551,7 +551,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             final Method cons = closure.getConstructor();
 
             if (closure.isCaptureThis()) {
-                thisToStack();
+                v.load(0, JetTypeMapper.TYPE_OBJECT);
             }
 
             for (int i = 0; i < closure.getArgs().size(); i++) {
@@ -576,6 +576,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(type);
     }
 
+    Type getSharedVarType(DeclarationDescriptor variableDescriptor) {
+        if(!(variableDescriptor instanceof VariableDescriptor))
+            return null;
+
+        Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) variableDescriptor);
+        if (aBoolean != null && aBoolean) {
+            JetType outType = ((VariableDescriptor) variableDescriptor).getOutType();
+            return StackValue.sharedTypeForType(typeMapper.mapType(outType));
+        }
+        else {
+            return null;
+        }
+    }
+    
     private StackValue generateBlock(List<JetElement> statements) {
         Label blockStart = new Label();
         v.mark(blockStart);
@@ -584,7 +598,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (statement instanceof JetProperty) {
                 final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, statement);
                 assert variableDescriptor != null;
-                final Type type = typeMapper.mapType(variableDescriptor.getOutType());
+
+                final Type sharedVarType = getSharedVarType(variableDescriptor);
+                final Type type = sharedVarType != null ? sharedVarType : typeMapper.mapType(variableDescriptor.getOutType());
                 myMap.enter(variableDescriptor, type.getSize());
             }
         }
@@ -608,10 +624,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 JetProperty var = (JetProperty) statement;
                 VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
                 assert variableDescriptor != null;
-                Type outType = typeMapper.mapType(variableDescriptor.getOutType());
 
                 int index = myMap.leave(variableDescriptor);
-                v.visitLocalVariable(var.getName(), outType.getDescriptor(), null, blockStart, blockEnd, index);
+
+                final Type sharedVarType = getSharedVarType(variableDescriptor);
+                final Type type = sharedVarType != null ? sharedVarType : typeMapper.mapType(variableDescriptor.getOutType());
+                if(sharedVarType != null) {
+                    v.aconst(null);
+                    v.store(index, JetTypeMapper.TYPE_OBJECT);
+                }
+
+                v.visitLocalVariable(var.getName(), type.getDescriptor(), null, blockStart, blockEnd, index);
             }
         }
 
@@ -699,8 +722,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             int index = lookupLocal(descriptor);
             if (index >= 0) {
+                Type sharedVarType = getSharedVarType(descriptor);
                 final JetType outType = ((VariableDescriptor) descriptor).getOutType();
-                return StackValue.local(index, typeMapper.mapType(outType));
+                if(sharedVarType != null) {
+                    return StackValue.shared(index, typeMapper.mapType(outType));
+                }
+                else {
+                    return StackValue.local(index, typeMapper.mapType(outType));
+                }
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -784,6 +813,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 final StackValue value = context.lookupInContext(descriptor, v);
                 if (value == null) {
                     throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+                }
+
+                if(value instanceof StackValue.FieldForSharedVar) {
+                    StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
+                    Type sharedType = StackValue.sharedTypeForType(value.type);
+                    v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner, fieldForSharedVar.name, sharedType.getDescriptor());
                 }
                 return value;
             }
@@ -1617,12 +1652,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         assert index >= 0;
 
+        final Type sharedVarType = getSharedVarType(variableDescriptor);
+        assert variableDescriptor != null;
+        Type varType = typeMapper.mapType(variableDescriptor.getOutType());
+        if(sharedVarType != null) {
+            v.anew(sharedVarType);
+            v.dup();
+            v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V");
+            v.store(index, JetTypeMapper.TYPE_OBJECT);
+        }
+
         JetExpression initializer = property.getInitializer();
         if (initializer != null) {
-            assert variableDescriptor != null;
-            Type type = typeMapper.mapType(variableDescriptor.getOutType());
-            gen(initializer, type);
-            v.store(index, type);
+            if(sharedVarType == null) {
+                gen(initializer, varType);
+                v.store(index, varType);
+            }
+            else {
+                v.load(index, JetTypeMapper.TYPE_OBJECT);
+                gen(initializer, varType);
+                v.putfield(sharedVarType.getInternalName(), "ref", sharedVarType == JetTypeMapper.TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
+            }
         }
         return StackValue.none();
     }

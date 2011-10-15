@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -146,7 +146,15 @@ public class ClassContext {
             if (answer != null) return answer;
 
             final StackValue thisContext = getThisExpression();
-            thisContext.put(thisContext.type, v);
+            if(thisContext instanceof StackValue.Local) {
+            }
+            else if(thisContext instanceof StackValue.InstanceField) {
+                StackValue.InstanceField instanceField = (StackValue.InstanceField) thisContext;
+                v.getfield(instanceField.owner, instanceField.name, instanceField.type.getDescriptor());
+            }
+            else {
+                throw new UnsupportedOperationException();
+            }
         }
 
         return parentContext != null ? parentContext.lookupInContext(d, v) : null;

@@ -67,11 +67,13 @@ public class ClosureCodegen {
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
-            final Type type = state.getTypeMapper().mapType(vd.getOutType());
+            final Type sharedVarType = exprContext.getSharedVarType(vd);
+            Type localType = state.getTypeMapper().mapType(vd.getOutType());
+            final Type type = sharedVarType != null ? sharedVarType : localType;
 
             StackValue outerValue = StackValue.local(idx, type);
-            final String fieldName = "$" + (closure.size() + 1);
-            StackValue innerValue = StackValue.field(type, name, fieldName, false);
+            final String fieldName = "$" + (closure.size() + 1); // + "$" + vd.getName();
+            StackValue innerValue = sharedVarType != null ? StackValue.fieldForSharedVar(localType, name, fieldName) : StackValue.field(type, name, fieldName, false);
             cv.visitField(Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
             answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
             closure.put(d, answer);
@@ -120,7 +122,7 @@ public class ClosureCodegen {
         final Method constructor = generateConstructor(funClass, captureThis, funDescriptor.getReturnType());
 
         if (captureThis) {
-            cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingType.getDescriptor(), null, null);
+            cv.visitField(0, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
         cv.visitEnd();
@@ -192,7 +194,9 @@ public class ClosureCodegen {
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            argTypes[i++] = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+            final Type sharedVarType = exprContext.getSharedVarType(descriptor);
+            final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+            argTypes[i++] = type;
         }
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
