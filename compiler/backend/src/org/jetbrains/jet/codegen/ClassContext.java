@@ -1,6 +1,3 @@
-/*
- * @author max
- */
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -14,18 +11,22 @@ import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.HashMap;
 
+/*
+ * @author max
+ * @author alex.tkachman
+ */
 public class ClassContext {
     public static final ClassContext STATIC = new ClassContext(null, OwnerKind.NAMESPACE, null, null, null);
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
     private final StackValue thisExpression;
     private final ClassContext parentContext;
-    private final ClosureCodegen closure;
+    public  final FunctionOrClosureCodegen closure;
     private boolean thisWasUsed = false;
     
     HashMap<JetType,Integer> typeInfoConstants;
 
-    public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext, ClosureCodegen closureCodegen) {
+    public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext, FunctionOrClosureCodegen closureCodegen) {
         this.contextType = contextType;
         this.contextKind = contextKind;
         this.thisExpression = thisExpression;
@@ -60,11 +61,11 @@ public class ClassContext {
         return new ClassContext(descriptor, OwnerKind.NAMESPACE, null, this, null);
     }
 
-    public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind) {
+    public ClassContext intoClass(FunctionOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind) {
         final StackValue thisValue;
         thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
 
-        return new ClassContext(descriptor, kind, thisValue, this, null);
+        return new ClassContext(descriptor, kind, thisValue, this, closure);
     }
 
     public ClassContext intoFunction(FunctionDescriptor descriptor) {
@@ -140,7 +141,7 @@ public class ClassContext {
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v) {
-        final ClosureCodegen top = closure;
+        final FunctionOrClosureCodegen top = closure;
         if (top != null) {
             final StackValue answer = top.lookupInContext(d);
             if (answer != null) return answer;

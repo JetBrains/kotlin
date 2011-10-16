@@ -225,6 +225,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             callableMethod = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, kind);
             method = callableMethod.getSignature();
         }
+
+        int firstClosureIndex = -1;
+        if(context.closure != null) {
+            final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(method.getArgumentTypes()));
+
+            firstClosureIndex = consArgTypes.size()+1;
+
+            Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = context.closure.closure;
+            for (DeclarationDescriptor descriptor : closure.keySet()) {
+                final Type sharedVarType = context.closure.exprContext.getSharedVarType(descriptor);
+                consArgTypes.add(sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType()));
+            }
+
+            method = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
+        }
+
         int flags = Opcodes.ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.visitMethod(flags, "<init>", method.getDescriptor(), null, null);
         mv.visitCode();
@@ -300,7 +316,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.putfield(classname, delegateField, fieldDesc);
 
                 JetClass superClass = (JetClass) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
-                final ClassContext delegateContext = context.intoClass(superClassDescriptor,
+                final ClassContext delegateContext = context.intoClass(null, superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
                         JetTypeMapper.jvmNameForInterface(superClassDescriptor)));
                 generateDelegates(superClass, delegateContext, overridden);
@@ -320,6 +336,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (CodegenUtil.hasTypeInfoField(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
             generateTypeInfoInitializer(frameMap.getFirstTypeParameter(), frameMap.getTypeParameterCount(), iv);
+        }
+
+        if(context.closure != null) {
+            Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = context.closure.closure;
+            int k = 0;
+            for (DeclarationDescriptor varDescr : closure.keySet()) {
+                final Type sharedVarType = context.closure.exprContext.getSharedVarType(varDescr);
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                iv.load(firstClosureIndex + k, StackValue.refType(sharedVarType));
+                iv.putfield(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$" + (k+1), sharedVarType.getDescriptor());
+            }
         }
 
         generateInitializers(codegen, iv);

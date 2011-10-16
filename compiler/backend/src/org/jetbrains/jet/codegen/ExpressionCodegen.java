@@ -566,14 +566,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitObjectLiteralExpression(JetObjectLiteralExpression expression, StackValue receiver) {
-        GeneratedAnonymousClassDescriptor descriptor = state.generateObjectLiteral(expression, this, context);
-        Type type = Type.getObjectType(descriptor.getClassname());
+        FunctionOrClosureCodegen closureCodegen = new FunctionOrClosureCodegen(this, context, state);
+        GeneratedAnonymousClassDescriptor closure = state.generateObjectLiteral(expression, closureCodegen);
+        Type type = Type.getObjectType(closure.getClassname());
         v.anew(type);
         v.dup();
-        v.load(0, JetTypeMapper.TYPE_OBJECT);
-        String jvmDescriptor = descriptor.getConstructor().getDescriptor().replace("(","(" + typeMapper.jetImplementationType((ClassDescriptor) contextType()));
-        v.invokespecial(descriptor.getClassname(), "<init>", jvmDescriptor);
-        return StackValue.onStack(type);
+        final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(closure.getConstructor().getArgumentTypes()));
+
+        if (consArgTypes.size() > 0) {
+            v.load(0, JetTypeMapper.TYPE_OBJECT);
+        }
+
+        for (DeclarationDescriptor descriptor : closureCodegen.closure.keySet()) {
+            final Type sharedVarType = getSharedVarType(descriptor);
+            consArgTypes.add(sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType()));
+            final EnclosedValueDescriptor valueDescriptor = closureCodegen.closure.get(descriptor);
+            valueDescriptor.getOuterValue().put(sharedVarType, v);
+        }
+
+        Method cons = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
+        v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
+        return StackValue.onStack(Type.getObjectType(closure.getClassname()));
     }
 
     Type getSharedVarType(DeclarationDescriptor variableDescriptor) {
