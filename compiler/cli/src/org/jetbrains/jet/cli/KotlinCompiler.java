@@ -92,6 +92,7 @@ public class KotlinCompiler {
                 File target = new File(vFile.getParent().getPath(), file);
                 try {
                     FileUtil.writeToFile(target, factory.asBytes(file));
+                    System.out.println("Generated classfile: " + target);
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
