@@ -19,7 +19,7 @@ public class PropertyGenTest extends CodegenTestCase {
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
         assertEquals(2, fields.length);  // $typeInfo, prop
-        final Field field = fields[1];
+        final Field field = fields[0];
         assertEquals("prop", field.getName());
     }
 

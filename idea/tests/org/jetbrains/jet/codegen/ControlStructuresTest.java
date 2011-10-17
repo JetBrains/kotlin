@@ -86,6 +86,16 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertEquals("IntelliJ IDEA", main.invoke(null, args));
     }
 
+    public void testIfBlock() throws Exception {
+        loadFile();
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
+        assertEquals("TTT", main.invoke(null, args));
+        args = Arrays.asList("JetBrains");
+        assertEquals("F", main.invoke(null, args));
+    }
+
     public void testForInArray() throws Exception {
         loadFile();
         System.out.println(generateToText());

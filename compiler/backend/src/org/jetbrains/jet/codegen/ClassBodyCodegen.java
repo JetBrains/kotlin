@@ -40,9 +40,9 @@ public abstract class ClassBodyCodegen {
     public void generate() {
         generateDeclaration();
 
-        generateSyntheticParts();
-
         generateClassBody();
+
+        generateSyntheticParts();
 
         generateStaticInitializer();
 

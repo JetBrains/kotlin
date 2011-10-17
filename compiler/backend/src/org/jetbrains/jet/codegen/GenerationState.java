@@ -9,6 +9,7 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -120,13 +121,19 @@ public class GenerationState {
         }
     }
 
-    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen context, ClassContext classContext) {
-        Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(literal.getObjectDeclaration());
+    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, FunctionOrClosureCodegen closure) {
+        JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
+        Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
 
-        final ClassContext objectContext = classContext.intoClass(getBindingContext().get(BindingContext.CLASS, literal.getObjectDeclaration()), OwnerKind.IMPLEMENTATION);
+        closure.cv = nameAndVisitor.getSecond();
+        closure.name = nameAndVisitor.getFirst();
+        final ClassContext objectContext = closure.context.intoClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION);
 
-        new ImplementationBodyCodegen(literal.getObjectDeclaration(), objectContext, nameAndVisitor.getSecond(), this).generate();
-        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"), false);
+        new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
+
+        ConstructorDescriptor constructorDescriptor = closure.state.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
+        CallableMethod callableMethod = closure.state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
+        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature(), false);
     }
 
     public static void prepareAnonymousClasses(JetElement aClass, final JetTypeMapper typeMapper) {

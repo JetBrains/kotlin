@@ -26,19 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ClosureCodegen {
-    public final GenerationState state;
-    private final ExpressionCodegen exprContext;
-    private final ClassContext context;
-    private ClassVisitor cv = null;
-    public String name = null;
-
-    private Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+public class ClosureCodegen extends FunctionOrClosureCodegen {
 
     public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, ClassContext context) {
-        this.state = state;
-        this.exprContext = exprContext;
-        this.context = context;
+        super(exprContext, context, state);
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
@@ -55,31 +46,6 @@ public class ClosureCodegen {
 
     public Method invokeSignature(FunctionDescriptor fd) {
         return state.getTypeMapper().mapSignature("invoke", fd);
-    }
-
-    public StackValue lookupInContext(DeclarationDescriptor d) {
-        if (d instanceof VariableDescriptor) {
-            VariableDescriptor vd = (VariableDescriptor) d;
-
-            EnclosedValueDescriptor answer = closure.get(vd);
-            if (answer != null) return answer.getInnerValue();
-
-            final int idx = exprContext.lookupLocal(vd);
-            if (idx < 0) return null;
-
-            final Type type = state.getTypeMapper().mapType(vd.getOutType());
-
-            StackValue outerValue = StackValue.local(idx, type);
-            final String fieldName = "$" + (closure.size() + 1);
-            StackValue innerValue = StackValue.field(type, name, fieldName, false);
-            cv.visitField(Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
-            answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
-            closure.put(d, answer);
-
-            return innerValue;
-        }
-
-        return null;
     }
 
     public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
@@ -120,7 +86,7 @@ public class ClosureCodegen {
         final Method constructor = generateConstructor(funClass, captureThis, funDescriptor.getReturnType());
 
         if (captureThis) {
-            cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingType.getDescriptor(), null, null);
+            cv.visitField(0, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
         cv.visitEnd();
@@ -192,7 +158,9 @@ public class ClosureCodegen {
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            argTypes[i++] = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+            final Type sharedVarType = exprContext.getSharedVarType(descriptor);
+            final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+            argTypes[i++] = type;
         }
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
