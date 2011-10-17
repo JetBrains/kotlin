@@ -25,6 +25,8 @@ public class LabelResolver {
 
     private final Map<String, Stack<JetElement>> labeledElements = new HashMap<String, Stack<JetElement>>();
 
+    public LabelResolver() {}
+
     public void enterLabeledElement(@NotNull String labelName, @NotNull JetExpression labeledExpression) {
         JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
         if (deparenthesized != null) {
