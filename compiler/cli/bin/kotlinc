@@ -89,6 +89,8 @@ if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
     JAVACMD="$JAVA_HOME/bin/java"
 fi
 
+CPSELECT="-cp "
+
 "${JAVACMD:=java}" \
   $JAVA_OPTS \
   "${java_args[@]}" \
