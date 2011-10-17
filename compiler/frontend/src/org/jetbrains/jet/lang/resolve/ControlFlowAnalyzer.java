@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
@@ -12,7 +13,6 @@ import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,11 +25,13 @@ import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
  */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
-    private JetTypeInferrer.Services typeInferrer;
+    private JetTypeInferrer.Services typeInferrerServices;
+    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context) {
+    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.context = context;
-        typeInferrer = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
+        this.flowDataTraceFactory = flowDataTraceFactory;
+        this.typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
     }
 
     public void process() {
@@ -37,7 +39,9 @@ public class ControlFlowAnalyzer {
             JetNamedFunction function = entry.getKey();
             FunctionDescriptorImpl functionDescriptor = entry.getValue();
 
-            final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType() ? NO_EXPECTED_TYPE : functionDescriptor.getReturnType();
+            final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
+                                               ? NO_EXPECTED_TYPE
+                                               : functionDescriptor.getReturnType();
             checkFunction(function, functionDescriptor, expectedReturnType);
         }
 
@@ -58,7 +62,7 @@ public class ControlFlowAnalyzer {
     private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData((JetElement) function, bodyExpression);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) function, bodyExpression, flowDataTraceFactory, context.getTrace());
 
         final boolean blockBody = function.hasBlockBody();
         List<JetElement> unreachableElements = Lists.newArrayList();
@@ -96,7 +100,7 @@ public class ControlFlowAnalyzer {
                 @Override
                 public void visitExpression(JetExpression expression) {
                     if (blockBody && expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
-                        JetType type = typeInferrer.getType(scope, expression, expectedReturnType);
+                        JetType type = typeInferrerServices.getType(scope, expression, expectedReturnType);
                         if (type == null || !JetStandardClasses.isNothing(type)) {
                             context.getTrace().report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(expression));
                         }
@@ -109,6 +113,6 @@ public class ControlFlowAnalyzer {
     private void checkProperty(JetProperty property) {
         JetExpression initializer = property.getInitializer();
         if (initializer == null) return;
-        context.getClassDescriptorResolver().computeFlowData(property, initializer);
+        new JetFlowInformationProvider(property, initializer, flowDataTraceFactory, context.getTrace());
     }
 }

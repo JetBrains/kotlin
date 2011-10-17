@@ -74,7 +74,7 @@ public class AnalyzingUtils {
 
     public BindingContext analyzeNamespaces(@NotNull Project project, @NotNull List<? extends JetDeclaration> declarations, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, flowDataTraceFactory);
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
@@ -111,7 +111,7 @@ public class AnalyzingUtils {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
-        }, declarations);
+        }, declarations, flowDataTraceFactory);
         return bindingTraceContext.getBindingContext();
     }
 
