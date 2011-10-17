@@ -40,7 +40,7 @@
         </javac>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="compile">
         <jar destfile="${output}/kotlin-compiler.jar">
             <fileset dir="${output}/classes/compiler"/>
         </jar>
