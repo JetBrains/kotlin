@@ -64,6 +64,10 @@ public class KotlinCompiler {
         if (psiFile instanceof JetFile) {
             namespaces.add(((JetFile) psiFile).getRootNamespace());
         }
+        else {
+            System.out.print("Not a Kotlin file: " + vFile.getPath());
+            return;
+        }
 
         BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
 
