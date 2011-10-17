@@ -27,7 +27,7 @@ if "%_TOOL_CLASSPATH%"=="" (
   for /d %%f in ("%_KOTLIN_HOME%\lib\*") do call :add_cpath "%%f"
 )
 
-"%_JAVACMD%" %_JAVA_OPTS% cp "%_TOOL_CLASSPATH%" org.jetbrains.jet.cli.KotlinCompiler  %*
+"%_JAVACMD%" %_JAVA_OPTS% -cp "%_TOOL_CLASSPATH%" org.jetbrains.jet.cli.KotlinCompiler  %*
 goto end
 
 rem ##########################################################################
