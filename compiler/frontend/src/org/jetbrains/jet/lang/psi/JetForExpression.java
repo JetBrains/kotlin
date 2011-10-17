@@ -19,7 +19,7 @@ public class JetForExpression extends JetLoopExpression {
     }
 
     @Override
-    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitForExpression(this, data);
     }
 

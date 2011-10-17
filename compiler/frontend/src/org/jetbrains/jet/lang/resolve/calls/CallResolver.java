@@ -15,7 +15,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTyperServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -384,7 +384,7 @@ public class CallResolver {
                         for (JetExpression expression : valueArgument.getArgumentExpressions()) {
 //                            JetExpression expression = valueArgument.getArgumentExpression();
                             // TODO : more attempts, with different expected types
-                            ExpressionTyperServices temporaryServices = new ExpressionTyperServices(semanticServices, temporaryTrace);
+                            ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, temporaryTrace);
                             JetType type = temporaryServices.getType(scope, expression, NO_EXPECTED_TYPE);
                             if (type != null) {
                                 constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
@@ -509,7 +509,7 @@ public class CallResolver {
     }
 
     private void checkTypesWithNoCallee(BindingTrace trace, JetScope scope, Call call) {
-        ExpressionTyperServices typeInferrerServices = new ExpressionTyperServices(semanticServices, trace);
+        ExpressionTypingServices typeInferrerServices = new ExpressionTypingServices(semanticServices, trace);
         for (ValueArgument valueArgument : call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
@@ -602,7 +602,7 @@ public class CallResolver {
 
             List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
             for (JetExpression argumentExpression : argumentExpressions) {
-                ExpressionTyperServices temporaryServices = new ExpressionTyperServices(semanticServices, candidateCall.getTrace());
+                ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, candidateCall.getTrace());
                 JetType type = temporaryServices.getType(scope, argumentExpression, parameterType);
                 if (type == null) {
                     candidateCall.argumentHasNoType();

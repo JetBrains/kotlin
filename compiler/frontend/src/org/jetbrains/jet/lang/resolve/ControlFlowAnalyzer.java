@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTyperServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
-    private ExpressionTyperServices typeInferrer;
+    private ExpressionTypingServices typeInferrer;
 
     public ControlFlowAnalyzer(TopDownAnalysisContext context) {
         this.context = context;

@@ -82,7 +82,6 @@ public class AutoCastUtils {
     public static JetType castExpression(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
         VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(trace.getBindingContext(), expression);
-//        boolean appropriateTypeFound = false;
         if (variableDescriptor != null) {
             List<JetType> possibleTypes = Lists.newArrayList(dataFlowInfo.getPossibleTypesForVariable(variableDescriptor));
             Collections.reverse(possibleTypes);
@@ -97,24 +96,12 @@ public class AutoCastUtils {
                     return possibleType;
                 }
             }
-//            if (!appropriateTypeFound) {
-//                JetType notnullType = dataFlowInfo.getOutType(variableDescriptor);
-//                if (notnullType != null && typeChecker.isSubtypeOf(notnullType, expectedType)) {
-//                    appropriateTypeFound = true;
-//                }
-//            }
         }
         return null;
     }
 
     @Nullable
     public static VariableDescriptor getVariableDescriptorFromSimpleName(@NotNull BindingContext bindingContext, @NotNull JetExpression expression) {
-//        if (expression instanceof JetBinaryExpressionWithTypeRHS) {
-//            JetBinaryExpressionWithTypeRHS expression = (JetBinaryExpressionWithTypeRHS) expression;
-//            if (expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
-//                return getVariableDescriptorFromSimpleName(bindingContext, expression.getLeft());
-//            }
-//        }
         JetExpression receiver = JetPsiUtil.deparenthesize(expression);
         VariableDescriptor variableDescriptor = null;
         if (receiver instanceof JetSimpleNameExpression) {

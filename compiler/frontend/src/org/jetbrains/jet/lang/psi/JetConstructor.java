@@ -23,7 +23,7 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
     }
 
     @Override
-    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitConstructor(this, data);
     }
 

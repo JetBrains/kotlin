@@ -94,7 +94,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public StackValue genQualified(StackValue receiver, JetElement selector) {
         markLineNumber(selector);
-        return selector.visit(this, receiver);
+        return selector.accept(this, receiver);
     }
 
     public StackValue gen(JetElement expr) {

@@ -12,13 +12,18 @@ import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTyperServices;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
@@ -106,9 +111,10 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, JetType... parameterType) {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
-        ExpressionTyperServices typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
+//        ExpressionTypingServices typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
 
-        OverloadResolutionResults<FunctionDescriptor> functions = typeInferrerServices.getCallResolver().resolveExactSignature(
+        CallResolver callResolver = new CallResolver(JetSemanticServices.createSemanticServices(getProject()), DataFlowInfo.getEmpty());
+        OverloadResolutionResults<FunctionDescriptor> functions = callResolver.resolveExactSignature(
                 classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);
         for (ResolvedCall<FunctionDescriptor> resolvedCall : functions.getResults()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();

@@ -7,7 +7,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTyperServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 /**
  * @author abreslav
@@ -46,8 +46,8 @@ public class JetSemanticServices {
     }
 
     @NotNull
-    public ExpressionTyperServices getTypeInferrerServices(@NotNull BindingTrace trace) {
-        return new ExpressionTyperServices(this, trace);
+    public ExpressionTypingServices getTypeInferrerServices(@NotNull BindingTrace trace) {
+        return new ExpressionTypingServices(this, trace);
     }
 
     @NotNull
