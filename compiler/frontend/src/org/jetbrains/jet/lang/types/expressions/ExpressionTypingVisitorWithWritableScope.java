@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.calls.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -16,7 +15,6 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.getExpressionReceiver;
 
@@ -107,6 +105,7 @@ public class ExpressionTypingVisitorWithWritableScope extends BasicExpressionTyp
             JetType typeForBinaryCall = getTypeForBinaryCall(scope, counterpartName, context, expression);
             if (typeForBinaryCall != null) {
                 context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
+                ExpressionTypingUtils.checkWrappingInRef(expression.getLeft(), context);
             }
         }
         else {
@@ -149,13 +148,7 @@ public class ExpressionTypingVisitorWithWritableScope extends BasicExpressionTyp
                     context.trace.record(BindingContext.VARIABLE_ASSIGNMENT, simpleName, property);
                 }
             }
-            VariableDescriptor variable = AutoCastUtils.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), simpleName);
-            if (variable != null) {
-                DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
-                if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
-                    context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
-                }
-            }
+            ExpressionTypingUtils.checkWrappingInRef(simpleName, context);
         }
         return checkExpectedType(expression, context);
     }

@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.RESULT_TYPE_MISMATCH;
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
 
 /**
  * @author abreslav
@@ -248,5 +251,17 @@ public class ExpressionTypingUtils {
             return expressionType;
         }
         return context.expectedType;
+    }
+
+    public static void checkWrappingInRef(JetExpression expression, ExpressionTypingContext context) {
+        if (!(expression instanceof JetSimpleNameExpression)) return;
+        JetSimpleNameExpression simpleName = (JetSimpleNameExpression) expression;
+        VariableDescriptor variable = AutoCastUtils.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), simpleName);
+        if (variable != null) {
+            DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
+            if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
+                context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
+            }
+        }
     }
 }

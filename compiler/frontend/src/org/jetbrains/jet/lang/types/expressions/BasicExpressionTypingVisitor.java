@@ -506,6 +506,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
                 else {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
+                    ExpressionTypingUtils.checkWrappingInRef(baseExpression, context);
                 }
                 // TODO : Maybe returnType?
                 result = receiverType;
