@@ -56,6 +56,10 @@ public class KotlinCompiler {
         environment.registerFileType(JetFileType.INSTANCE, "kt");
         environment.registerParserDefinition(new JetParserDefinition());
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(args [0]);
+        if (vFile == null) {
+            System.out.print("File not found: " + args[0]);
+            return;
+        }
 
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, false);
@@ -63,6 +67,10 @@ public class KotlinCompiler {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
         if (psiFile instanceof JetFile) {
             namespaces.add(((JetFile) psiFile).getRootNamespace());
+        }
+        else {
+            System.out.print("Not a Kotlin file: " + vFile.getPath());
+            return;
         }
 
         BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
@@ -92,6 +100,7 @@ public class KotlinCompiler {
                 File target = new File(vFile.getParent().getPath(), file);
                 try {
                     FileUtil.writeToFile(target, factory.asBytes(file));
+                    System.out.println("Generated classfile: " + target);
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
