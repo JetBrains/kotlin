@@ -56,6 +56,10 @@ public class KotlinCompiler {
         environment.registerFileType(JetFileType.INSTANCE, "kt");
         environment.registerParserDefinition(new JetParserDefinition());
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(args [0]);
+        if (vFile == null) {
+            System.out.print("File not found: " + args[0]);
+            return;
+        }
 
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, false);
