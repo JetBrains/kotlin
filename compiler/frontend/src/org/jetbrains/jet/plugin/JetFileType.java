@@ -5,13 +5,20 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class JetFileType extends LanguageFileType {
     public static final JetFileType INSTANCE = new JetFileType();
-    private final Icon myIcon = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
+    private final NotNullLazyValue<Icon> myIcon = new NotNullLazyValue<Icon>() {
+        @NotNull
+        @Override
+        protected Icon compute() {
+            return IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
+        }
+    };
 
     private JetFileType() {
         super(JetLanguage.INSTANCE);
@@ -33,7 +40,7 @@ public class JetFileType extends LanguageFileType {
     }
 
     public Icon getIcon() {
-        return myIcon;
+        return myIcon.getValue();
     }
 
     @Override

@@ -260,7 +260,7 @@ public class CompileTimeConstantResolver {
     }
 
     private boolean noExpectedType(JetType expectedType) {
-        return expectedType == JetTypeInferrer.NO_EXPECTED_TYPE || JetStandardClasses.isUnit(expectedType);
+        return expectedType == TypeUtils.NO_EXPECTED_TYPE || JetStandardClasses.isUnit(expectedType);
     }
 
 }

@@ -98,6 +98,23 @@ public class FunctionCodegen {
                 iv.areturn(jvmSignature.getReturnType());
             }
             else {
+                for (int i = 0; i < paramDescrs.size(); i++) {
+                    ValueParameterDescriptor parameter = paramDescrs.get(i);
+
+                    Type sharedVarType = codegen.getSharedVarType(parameter);
+                    Type localVarType  = state.getTypeMapper().mapType(parameter.getOutType());
+                    if(sharedVarType != null) {
+                        int index = frameMap.getIndex(parameter);
+                        mv.visitTypeInsn(Opcodes.NEW, sharedVarType.getInternalName());
+                        mv.visitInsn(Opcodes.DUP);
+                        mv.visitInsn(Opcodes.DUP);
+                        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, sharedVarType.getInternalName(), "<init>", "()V");
+                        mv.visitVarInsn(localVarType.getOpcode(Opcodes.ILOAD), index);
+                        mv.visitFieldInsn(Opcodes.PUTFIELD, sharedVarType.getInternalName(), "ref", StackValue.refType(localVarType).getDescriptor());
+                        mv.visitVarInsn(sharedVarType.getOpcode(Opcodes.ISTORE), index);
+                    }
+                }
+
                 codegen.returnExpression(bodyExpressions);
             }
             mv.visitMaxs(0, 0);

@@ -55,7 +55,8 @@ WHITE_SPACE_CHAR=[\ \n\t\f]
 
 // TODO: prohibit '$' in identifiers?
 LETTER = [:letter:]|_
-PLAIN_IDENTIFIER={LETTER} ([:digit:]|{LETTER})*
+IDENTIFIER_PART=[:digit:]|{LETTER}
+PLAIN_IDENTIFIER={LETTER} {IDENTIFIER_PART}*
 // TODO: this one MUST allow everything accepted by the runtime
 // TODO: Replace backticks by one backslash in the begining
 ESCAPED_IDENTIFIER = `{PLAIN_IDENTIFIER}`
@@ -189,6 +190,8 @@ LONG_TEMPLATE_ENTRY_END=\}
 {FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
 {IDENTIFIER} { return JetTokens.IDENTIFIER; }
 {LABEL_IDENTIFIER}   { return JetTokens.LABEL_IDENTIFIER; }
+\!in{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
+\!is{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
 
 "==="        { return JetTokens.EQEQEQ    ; }
 "!=="        { return JetTokens.EXCLEQEQEQ; }

@@ -83,6 +83,12 @@ public class ErrorUtils {
         public Set<FunctionDescriptor> getConstructors() {
             return ERROR_FUNCTION_GROUP;
         }
+
+        @NotNull
+        @Override
+        public Modality getModality() {
+            return Modality.OPEN;
+        }
     };
 
     private static final Set<FunctionDescriptor> ERROR_FUNCTION_GROUP = Collections.singleton(createErrorFunction(0, Collections.<JetType>emptyList()));
@@ -173,7 +179,7 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(@NotNull JetType type) {
-        return type != JetTypeInferrer.NO_EXPECTED_TYPE &&(
+        return type != TypeUtils.NO_EXPECTED_TYPE &&(
                (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
                type instanceof ErrorTypeImpl ||
                isError(type.getConstructor()));

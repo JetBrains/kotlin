@@ -3,8 +3,11 @@ package org.jetbrains.jet.lang;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetTypeChecker;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 /**
  * @author abreslav
@@ -37,13 +40,12 @@ public class JetSemanticServices {
     }
 
     @NotNull
-    public JetTypeInferrer.Services getTypeInferrerServices(@NotNull BindingTrace trace) {
-        return new JetTypeInferrer(this).getServices(trace);
+    public ExpressionTypingServices getTypeInferrerServices(@NotNull BindingTrace trace) {
+        return new ExpressionTypingServices(this, trace);
     }
 
     @NotNull
     public JetTypeChecker getTypeChecker() {
         return typeChecker;
     }
-
 }

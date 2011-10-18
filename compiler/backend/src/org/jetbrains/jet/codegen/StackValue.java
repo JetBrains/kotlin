@@ -11,6 +11,7 @@ import org.objectweb.asm.commons.Method;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public abstract class StackValue {
     public final Type type;
@@ -57,6 +58,10 @@ public abstract class StackValue {
 
     public static StackValue local(int index, Type type) {
         return new Local(index, type);
+    }
+
+    public static StackValue shared(int index, Type type) {
+        return new Shared(index, type);
     }
 
     public static StackValue onStack(Type type) {
@@ -225,7 +230,11 @@ public abstract class StackValue {
     public static StackValue none() {
         return None.INSTANCE;
     }
-    
+
+    public static StackValue fieldForSharedVar(Type type, String name, String fieldName) {
+        return new FieldForSharedVar(type, name, fieldName);
+    }
+
     private static class None extends StackValue {
         public static None INSTANCE = new None();
         private None() {
@@ -496,9 +505,9 @@ public abstract class StackValue {
     }
 
 
-    private static class Field extends StackValue {
-        private final String owner;
-        private final String name;
+    static class Field extends StackValue {
+        final String owner;
+        final String name;
         private final boolean isStatic;
 
         public Field(Type type, String owner, String name, boolean isStatic) {
@@ -531,9 +540,9 @@ public abstract class StackValue {
         }
     }
 
-    private static class InstanceField extends StackValue {
-        private final String owner;
-        private final String name;
+    static class InstanceField extends StackValue {
+        final String owner;
+        final String name;
 
         public InstanceField(Type type, String owner, String name) {
             super(type);
@@ -623,6 +632,108 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             generator.gen(expression, type);
+        }
+    }
+
+    public static class Shared extends StackValue {
+        private final int index;
+
+        public Shared(int index, Type type) {
+            super(type);
+            this.index = index;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            v.load(index, JetTypeMapper.TYPE_OBJECT);
+            Type refType = refType(this.type);
+            Type sharedType = sharedTypeForType(this.type);
+            v.visitFieldInsn(Opcodes.GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            StackValue.onStack(refType).coerce(this.type, v);
+            StackValue.onStack(this.type).coerce(type, v);
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            v.load(index, JetTypeMapper.TYPE_OBJECT);
+            v.swap();
+            Type refType = refType(this.type);
+            Type sharedType = sharedTypeForType(this.type);
+            v.visitFieldInsn(Opcodes.PUTFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+        }
+    }
+
+    public static Type sharedTypeForType(Type type) {
+        switch(type.getSort()) {
+            case Type.OBJECT:
+            case Type.ARRAY:
+                return JetTypeMapper.TYPE_SHARED_VAR;
+
+            case Type.BYTE:
+                return JetTypeMapper.TYPE_SHARED_BYTE;
+
+            case Type.SHORT:
+                return JetTypeMapper.TYPE_SHARED_SHORT;
+
+            case Type.CHAR:
+                return JetTypeMapper.TYPE_SHARED_CHAR;
+
+            case Type.INT:
+                return JetTypeMapper.TYPE_SHARED_INT;
+
+            case Type.BOOLEAN:
+                return JetTypeMapper.TYPE_SHARED_BOOLEAN;
+
+            case Type.FLOAT:
+                return JetTypeMapper.TYPE_SHARED_FLOAT;
+
+            case Type.DOUBLE:
+                return JetTypeMapper.TYPE_SHARED_DOUBLE;
+
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    public static Type refType(Type type) {
+        if(type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY)
+            return JetTypeMapper.TYPE_OBJECT;
+
+        return type;
+    }
+
+    static class FieldForSharedVar extends StackValue {
+        final String owner;
+        final String name;
+
+        public FieldForSharedVar(Type type, String owner, String name) {
+            super(type);
+            this.owner = owner;
+            this.name = name;
+        }
+
+        @Override
+        public void dupReceiver(InstructionAdapter v, int below) {
+            if (below == 1) {
+                v.dupX1();
+            }
+            else {
+                v.dup();
+            }
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            Type sharedType = sharedTypeForType(this.type);
+            Type refType = refType(this.type);
+            v.visitFieldInsn(Opcodes.GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            StackValue.onStack(refType).coerce(this.type, v);
+            StackValue.onStack(this.type).coerce(type, v);
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            v.visitFieldInsn(Opcodes.PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
         }
     }
 }

@@ -136,7 +136,10 @@ public class JetPsiChecker implements Annotator {
                     @Override
                     public void visitProperty(JetProperty property) {
                         DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
-                        markVariableAsWrappedIfNeeded(property.getNameIdentifier().getNode(), declarationDescriptor);
+                        PsiElement nameIdentifier = property.getNameIdentifier();
+                        if (nameIdentifier != null) {
+                            markVariableAsWrappedIfNeeded(nameIdentifier.getNode(), declarationDescriptor);
+                        }
                         super.visitProperty(property);
                     }
 

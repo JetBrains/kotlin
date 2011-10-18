@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.types;
+package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;

@@ -17,6 +17,75 @@ import java.util.*;
  * @author abreslav
  */
 public class TypeUtils {
+    public static final JetType FORBIDDEN = new JetType() {
+        @NotNull
+        @Override
+        public TypeConstructor getConstructor() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public List<TypeProjection> getArguments() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public boolean isNullable() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public JetScope getMemberScope() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public List<AnnotationDescriptor> getAnnotations() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public String toString() {
+            return "FORBIDDEN";
+        }
+    };
+    public static final JetType NO_EXPECTED_TYPE = new JetType() {
+        @NotNull
+        @Override
+        public TypeConstructor getConstructor() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public List<TypeProjection> getArguments() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public boolean isNullable() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public JetScope getMemberScope() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public List<AnnotationDescriptor> getAnnotations() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public String toString() {
+            return "NO_EXPECTED_TYPE";
+        }
+    };
+
     public static JetType makeNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, true);
     }

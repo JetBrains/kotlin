@@ -1,10 +1,12 @@
-package org.jetbrains.jet.lang.types;
+package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;

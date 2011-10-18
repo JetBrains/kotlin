@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInferrer;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -157,7 +157,7 @@ public class JetControlFlowProcessor {
                     builder.unsupported(expression); // TODO
                 }
             }
-            else if (JetTypeInferrer.assignmentOperationNames.containsKey(operationType)) {
+            else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
                 JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
                 if (left != null) {
                     value(left, false);

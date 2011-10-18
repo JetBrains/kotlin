@@ -52,7 +52,7 @@ public class JetEnumEntry extends JetClass {
     }
 
     @Override
-    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitEnumEntry(this, data);
     }
 }

@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -215,7 +216,7 @@ public class TypeHierarchyResolver {
             if (importDirective.isAllUnder()) {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference != null) {
-                    JetTypeInferrer.Services typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
+                    ExpressionTypingServices typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
                     JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference);
                     if (type != null) {
                         namespaceScope.importScope(type.getMemberScope());

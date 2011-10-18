@@ -10,7 +10,6 @@ import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.DataFlowInfo;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
 import org.jetbrains.jet.lang.types.NamespaceType;

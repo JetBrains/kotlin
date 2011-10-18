@@ -11,22 +11,22 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInferrer;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
  * @author svtk
  */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
-    private JetTypeInferrer.Services typeInferrerServices;
-    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
+    private ExpressionTypingServices typeInferrerServices;
+    private final JetControlFlowDataTraceFactory flowDataTraceFactory;    
 
     public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.context = context;

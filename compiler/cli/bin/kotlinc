@@ -1,0 +1,98 @@
+#!/bin/bash --posix
+#
+##############################################################################
+# Copyright 2002-2011, LAMP/EPFL
+# Copyright 2011, JetBrains
+#
+# This is free software; see the distribution for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+##############################################################################
+
+cygwin=false;
+case "`uname`" in
+    CYGWIN*) cygwin=true ;;
+esac
+
+# Finding the root folder for this Kotlin distribution
+SOURCE=$0;
+SCRIPT=`basename "$SOURCE"`;
+while [ -h "$SOURCE" ]; do
+    SCRIPT=`basename "$SOURCE"`;
+    LOOKUP=`ls -ld "$SOURCE"`;
+    TARGET=`expr "$LOOKUP" : '.*-> \(.*\)$'`;
+    if expr "${TARGET:-.}/" : '/.*/$' > /dev/null; then
+        SOURCE=${TARGET:-.};
+    else
+        SOURCE=`dirname "$SOURCE"`/${TARGET:-.};
+    fi;
+done;
+
+# see #2092
+KOTLIN_HOME=`dirname "$SOURCE"`
+KOTLIN_HOME=`cd "$KOTLIN_HOME"; pwd -P`
+KOTLIN_HOME=`cd "$KOTLIN_HOME"/..; pwd`
+
+# Remove spaces from KOTLIN_HOME on windows
+if $cygwin; then
+    KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
+    KOTLIN_HOME=`cygpath --unix "$KOTLIN_HOME"`
+fi
+
+# Constructing the extension classpath
+TOOL_CLASSPATH=""
+if [ -z "$TOOL_CLASSPATH" ] ; then
+    for ext in "$KOTLIN_HOME"/lib/* ; do
+        if [ -z "$TOOL_CLASSPATH" ] ; then
+            TOOL_CLASSPATH="$ext"
+        else
+            TOOL_CLASSPATH="$TOOL_CLASSPATH:$ext"
+        fi
+    done
+fi
+
+[ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
+
+# break out -D and -J options and add them to JAVA_OPTS as well
+# so they reach the underlying JVM in time to do some good.  The
+# -D options will be available as system properties.
+declare -a java_args
+declare -a kotlin_args
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -D*)
+      # pass to kotlin as well: otherwise we lose it sometimes when we
+      # need it, e.g. communicating with a server compiler.
+      java_args=("${java_args[@]}" "$1")
+      kotlin_args=("${kotlin_args[@]}" "$1")
+      shift
+      ;;
+    -J*)
+      # as with -D, pass to scala even though it will almost
+      # never be used.
+      java_args=("${java_args[@]}" "${1:2}")
+      kotlin_args=("${kotlin_args[@]}" "$1")
+      shift
+      ;;
+    *)
+      kotlin_args=("${kotlin_args[@]}" "$1")
+      shift
+      ;;
+  esac
+done
+
+# reset "$@" to the remaining args
+set -- "${kotlin_args[@]}"
+
+if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+fi
+
+CPSELECT="-cp "
+
+"${JAVACMD:=java}" \
+  $JAVA_OPTS \
+  "${java_args[@]}" \
+  ${CPSELECT}${TOOL_CLASSPATH} \
+   org.jetbrains.jet.cli.KotlinCompiler  "$@"
