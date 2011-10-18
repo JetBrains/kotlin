@@ -28,6 +28,7 @@ public abstract class InstructionImpl implements Instruction {
         this.owner = owner;
     }
 
+    @NotNull
     @Override
     public Collection<Instruction> getPreviousInstructions() {
         return previousInstructions;

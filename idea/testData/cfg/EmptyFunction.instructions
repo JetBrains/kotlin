@@ -2,10 +2,10 @@
 fun empty() {}
 ---------------------
 l0:
-    <START>
-    read (Unit)
+    <START>        NEXT:[read (Unit)]    PREV:[]
+    read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>
+    <END>          NEXT:[]               PREV:[read (Unit)]
 error:
-    <ERROR>
+    <ERROR>        NEXT:[]               PREV:[]
 =====================

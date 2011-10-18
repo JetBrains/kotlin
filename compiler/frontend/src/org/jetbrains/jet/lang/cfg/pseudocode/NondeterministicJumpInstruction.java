@@ -27,7 +27,7 @@ public class NondeterministicJumpInstruction extends AbstractJumpInstruction {
     }
 
     public void setNext(Instruction next) {
-        this.next = next;
+        this.next = outgoingEdgeTo(next);
     }
 
     @NotNull

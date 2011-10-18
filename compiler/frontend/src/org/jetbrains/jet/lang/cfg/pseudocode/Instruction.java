@@ -13,6 +13,7 @@ public interface Instruction {
 
     void setOwner(@NotNull Pseudocode owner);
 
+    @NotNull
     Collection<Instruction> getPreviousInstructions();
 
     @NotNull

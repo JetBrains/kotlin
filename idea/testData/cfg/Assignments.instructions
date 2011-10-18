@@ -14,44 +14,44 @@ fun assignments() : Unit {
 }
 ---------------------
 l0:
-    <START>
-    r(1)
-    w(x)
-    r(2)
-    w(x)
-    r(x)
-    r(2)
-    r(+=)
-    w(x)
-    r(true)
-    jf(l2)
-    r(1)
-    jmp(l3)
+    <START>             NEXT:[r(1)]                          PREV:[]
+    r(1)                NEXT:[w(x)]                          PREV:[<START>]
+    w(x)                NEXT:[r(2)]                          PREV:[r(1)]
+    r(2)                NEXT:[w(x)]                          PREV:[w(x)]
+    w(x)                NEXT:[r(x)]                          PREV:[r(2)]
+    r(x)                NEXT:[r(2)]                          PREV:[w(x)]
+    r(2)                NEXT:[r(+=)]                         PREV:[r(x)]
+    r(+=)               NEXT:[w(x)]                          PREV:[r(2)]
+    w(x)                NEXT:[r(true)]                       PREV:[r(+=)]
+    r(true)             NEXT:[jf(l2)]                        PREV:[w(x)]
+    jf(l2)              NEXT:[r(2), r(1)]                    PREV:[r(true)]
+    r(1)                NEXT:[jmp(l3)]                       PREV:[jf(l2)]
+    jmp(l3)             NEXT:[w(x)]                          PREV:[r(1)]
 l2:
-    r(2)
+    r(2)                NEXT:[w(x)]                          PREV:[jf(l2)]
 l3:
-    w(x)
-    r(true)
-    jf(l4)
-    r(false)
+    w(x)                NEXT:[r(true)]                       PREV:[jmp(l3), r(2)]
+    r(true)             NEXT:[jf(l4)]                        PREV:[w(x)]
+    jf(l4)              NEXT:[r(true && false), r(false)]    PREV:[r(true)]
+    r(false)            NEXT:[r(true && false)]              PREV:[jf(l4)]
 l4:
-    r(true && false)
-    w(y)
-    r(false)
-    jf(l5)
-    r(true)
+    r(true && false)    NEXT:[w(y)]                          PREV:[jf(l4), r(false)]
+    w(y)                NEXT:[r(false)]                      PREV:[r(true && false)]
+    r(false)            NEXT:[jf(l5)]                        PREV:[w(y)]
+    jf(l5)              NEXT:[r(false && true), r(true)]     PREV:[r(false)]
+    r(true)             NEXT:[r(false && true)]              PREV:[jf(l5)]
 l5:
-    r(false && true)
-    w(z)
-    r(Test)
-    r(Test())
-    w(t)
-    r(1)
-    r(t)
-    r(=)
-    w(t.x)
+    r(false && true)    NEXT:[w(z)]                          PREV:[jf(l5), r(true)]
+    w(z)                NEXT:[r(Test)]                       PREV:[r(false && true)]
+    r(Test)             NEXT:[r(Test())]                     PREV:[w(z)]
+    r(Test())           NEXT:[w(t)]                          PREV:[r(Test)]
+    w(t)                NEXT:[r(1)]                          PREV:[r(Test())]
+    r(1)                NEXT:[r(t)]                          PREV:[w(t)]
+    r(t)                NEXT:[r(=)]                          PREV:[r(1)]
+    r(=)                NEXT:[w(t.x)]                        PREV:[r(t)]
+    w(t.x)              NEXT:[<END>]                         PREV:[r(=)]
 l1:
-    <END>
+    <END>               NEXT:[]                              PREV:[w(t.x)]
 error:
-    <ERROR>
+    <ERROR>             NEXT:[]                              PREV:[]
 =====================
