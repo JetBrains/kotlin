@@ -14,7 +14,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -56,7 +56,7 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                trace, scope, DataFlowInfo.getEmpty(), expectedType, FORBIDDEN, false
+                trace, scope, DataFlowInfo.EMPTY, expectedType, FORBIDDEN, false
         );
         return expressionTypingFacade.getType(expression, context);
     }
@@ -65,14 +65,14 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                trace, scope, DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, FORBIDDEN,
+                trace, scope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN,
                 true);
         return expressionTypingFacade.getType(expression, context);
 //        return ((ExpressionTypingContext) ExpressionTyperVisitorWithNamespaces).INSTANCE.getType(expression, ExpressionTypingContext.newRootContext(semanticServices, trace, scope, DataFlowInfo.getEmpty(), TypeUtils.NO_EXPECTED_TYPE, TypeUtils.NO_EXPECTED_TYPE));
     }
 
     public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
-        checkFunctionReturnType(outerScope, function, functionDescriptor, DataFlowInfo.getEmpty());
+        checkFunctionReturnType(outerScope, function, functionDescriptor, DataFlowInfo.EMPTY);
     }
 
     @NotNull
@@ -87,7 +87,7 @@ public class ExpressionTypingServices {
     public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType) {
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                trace, functionInnerScope, DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, expectedReturnType, false
+                trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, expectedReturnType, false
         ));
     }
 
@@ -145,7 +145,7 @@ public class ExpressionTypingServices {
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
         expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                                                                                          trace, functionInnerScope, DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, FORBIDDEN, false));
+                                                                                          trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN, false));
         //todo function literals
         final Collection<JetExpression> returnedExpressions = Lists.newArrayList();
         if (function.hasBlockBody()) {

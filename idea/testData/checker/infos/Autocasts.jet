@@ -189,11 +189,11 @@ fun tuples(a: Any?) {
         val s: (Any, String) = (<info descr="Automatically cast to Any">a</info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
     }
     if (a is String) {
-        val s: (Any, String) = (<info descr="Automatically cast to String">a</info>, <info descr="Automatically cast to String">a</info>)
+        val s: (Any, String) = (<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
     }
     fun illegalTupleReturnType(): (Any, String) = (<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Any was expected">a</error>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
     if (a is String) {
-        fun legalTupleReturnType(): (Any, String) = (<info descr="Automatically cast to String">a</info>, <info descr="Automatically cast to String">a</info>)
+        fun legalTupleReturnType(): (Any, String) = (<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
     }
     val illegalFunctionLiteral: Function0<Int> = <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Function0<Any?> but Function0<Int> was expected">{ <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }</error>
     val illegalReturnValueInFunctionLiteral: Function0<Int> = { (): Int => <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }

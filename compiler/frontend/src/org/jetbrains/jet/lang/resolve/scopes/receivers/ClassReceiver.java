@@ -2,12 +2,13 @@ package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
  * @author abreslav
  */
-public class ClassReceiver implements ReceiverDescriptor {
+public class ClassReceiver implements ThisReceiverDescriptor {
 
     private final ClassDescriptor classDescriptor;
 
@@ -24,6 +25,12 @@ public class ClassReceiver implements ReceiverDescriptor {
     @Override
     public JetType getType() {
         return classDescriptor.getDefaultType();
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptor() {
+        return classDescriptor;
     }
 
     @Override

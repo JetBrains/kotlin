@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;

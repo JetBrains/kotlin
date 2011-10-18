@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -36,7 +36,7 @@ public class AnnotationResolver {
         this.trace = trace;
 //        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
 //        this.services = typeInferrer.getServices(this.trace);
-        this.callResolver = new CallResolver(semanticServices, DataFlowInfo.getEmpty());
+        this.callResolver = new CallResolver(semanticServices, DataFlowInfo.EMPTY);
     }
 
     @NotNull

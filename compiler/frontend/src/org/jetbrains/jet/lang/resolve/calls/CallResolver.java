@@ -11,6 +11,8 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -149,7 +151,7 @@ public class CallResolver {
                         trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(trace, scope, call);
                     }
-                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(TaskPrioritizer.convertWithImpliedThis(scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors), call, DataFlowInfo.getEmpty()));
+                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(TaskPrioritizer.convertWithImpliedThis(scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors), call, DataFlowInfo.EMPTY));
                 }
                 else {
 //                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
@@ -169,7 +171,7 @@ public class CallResolver {
                     trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
-                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCall.convertCollection(constructors), call, DataFlowInfo.getEmpty()));
+                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCall.convertCollection(constructors), call, DataFlowInfo.EMPTY));
             }
             else {
                 throw new UnsupportedOperationException("Type argument inference not implemented for " + call);
@@ -301,7 +303,10 @@ public class CallResolver {
                         JetBinaryExpression binaryExpression = (JetBinaryExpression) callElement;
                         JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
                         String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : OperatorConventions.getNameForOperationSymbol(operationReference.getReferencedNameElementType());
-                        trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, binaryExpression.getRight().getText()));
+                        JetExpression right = binaryExpression.getRight();
+                        if (right != null) {
+                            trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, right.getText()));
+                        }
                     }
                     else {
                         trace.report(UNSAFE_CALL.on(reference, type));
@@ -618,7 +623,7 @@ public class CallResolver {
 //                            }
 //                        }
 //                        if (autoCastType != null) {
-//                            if (AutoCastUtils.isAutoCastable(variableDescriptor)) {
+//                            if (AutoCastUtils.isStableVariable(variableDescriptor)) {
 //                                temporaryTrace.record(AUTOCAST, argumentExpression, autoCastType);
 //                            }
 //                            else {

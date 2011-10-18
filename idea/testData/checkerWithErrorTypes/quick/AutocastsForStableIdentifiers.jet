@@ -1,0 +1,91 @@
+namespace example;
+
+namespace ns {
+    val y : Any? = 2
+}
+
+object Obj {
+    val y : Any? = 2
+}
+
+class AClass() {
+    class object {
+        val y : Any? = 2
+    }
+}
+
+val x : Any? = 1
+
+fun Any?.vars(a: Any?) : Int {
+    var b: Int = 0
+    if (ns.y is Int) {
+        b = ns.y
+    }
+    if (ns.y is Int) {
+        b = example.ns.y
+    }
+    if (example.ns.y is Int) {
+        b = ns.y
+    }
+    if (example.ns.y is Int) {
+        b = example.ns.y
+    }
+//    if (namespace.bottles.ns.y is Int) {
+//        b = ns.y
+//    }
+    if (Obj.y is Int) {
+        b = Obj.y
+    }
+    if (example.Obj.y is Int) {
+        b = Obj.y
+    }
+    if (AClass.y is Int) {
+        b = AClass.y
+    }
+    if (example.AClass.y is Int) {
+        b = AClass.y
+    }
+    if (x is Int) {
+        b = x
+    }
+    if (example.x is Int) {
+        b = x
+    }
+    if (example.x is Int) {
+        b = example.x
+    }
+    return 1
+}
+
+fun Any?.foo() : Int {
+    if (this is Int)
+      return this
+    if (this@foo is Int)
+      return this
+    if (this@foo is Int)
+      return this@foo
+    if (this is Int)
+      return this@foo
+    return 1
+}
+
+
+trait T {}
+
+open class C {
+    fun foo() {
+       var t : T? = null
+       if (this is T) {
+          t = this
+       }
+       if (this is T) {
+          t = this@C
+       }
+       if (this@C is T) {
+          t = this
+       }
+       if (this@C is T) {
+          t = this@C
+       }
+    }
+}

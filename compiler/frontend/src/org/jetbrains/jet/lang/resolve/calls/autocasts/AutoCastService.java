@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -13,7 +13,7 @@ public interface AutoCastService {
     AutoCastService NO_AUTO_CASTS = new AutoCastService() {
         @Override
         public DataFlowInfo getDataFlowInfo() {
-            return DataFlowInfo.getEmpty();
+            return DataFlowInfo.EMPTY;
         }
 
         @Override
