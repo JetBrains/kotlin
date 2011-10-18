@@ -108,6 +108,8 @@ public class ControlFlowAnalyzer {
                 }
             });
         }
+
+        //flowInformationProvider.markUninitializedVariables(function.asElement());
     }
 
     private void checkProperty(JetProperty property) {

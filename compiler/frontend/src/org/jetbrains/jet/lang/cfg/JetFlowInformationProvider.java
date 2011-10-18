@@ -1,23 +1,29 @@
 package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.LocalVariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
 import java.util.*;
 
 /**
-* @author svtk
-*/
+ * @author svtk
+ */
 public class JetFlowInformationProvider {
 
     private final Map<JetElement, Pseudocode> pseudocodeMap;
+    private BindingTrace trace;
 
     public JetFlowInformationProvider(@NotNull JetElement declaration, @NotNull final JetExpression bodyExpression, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory, @NotNull BindingTrace trace) {
+        this.trace = trace;
         final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
         pseudocodeMap = new HashMap<JetElement, Pseudocode>();
         final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
@@ -84,6 +90,13 @@ public class JetFlowInformationProvider {
                 @Override
                 public void visitJump(AbstractJumpInstruction instruction) {
                     // Nothing
+                }
+
+                @Override
+                public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
+                    for (Instruction previousInstruction : instruction.getPreviousInstructions()) {
+                        previousInstruction.accept(this);
+                    }
                 }
 
                 @Override
@@ -233,4 +246,100 @@ public class JetFlowInformationProvider {
 //                previousInstruction.accept(visitor);
 //            }
 //        }
+
+    private <D> Map<Instruction, D> traverseInstructionGraphUntilFactsStabilization(Collection<Instruction> instructions, InstructionsMergeHandler<D> instructionsMergeHandler, D initialDataValue, boolean straightDirection) {
+
+        Map<Instruction, D> dataMap = Maps.newHashMap();
+        for (Instruction instruction : instructions) {
+            dataMap.put(instruction, initialDataValue);
+        }
+
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (Instruction instruction : instructions) {
+                D previousDataValue = dataMap.get(instruction);
+
+                Collection<Instruction> previousInstructions = straightDirection
+                                                               ? instruction.getPreviousInstructions()
+                                                               : instruction.getNextInstructions();
+                Collection<D> incomingEdgesData = Sets.newHashSet();
+                for (Instruction previousInstruction : previousInstructions) {
+                    incomingEdgesData.add(dataMap.get(previousInstruction));
+                }
+                D mergedData = instructionsMergeHandler.merge(instruction, previousDataValue, incomingEdgesData);
+                if (!mergedData.equals(previousDataValue)) {
+                    changed = true;
+                    dataMap.put(instruction, mergedData);
+                }
+            }
+        }
+        return dataMap;
+    }
+
+    public void markUninitializedVariables(@NotNull JetElement subroutine) {
+        Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+        assert pseudocode != null;
+
+        Collection<Instruction> instructions = pseudocode.getInstructions();
+        InstructionsMergeHandler<Set<LocalVariableDescriptor>> instructionsMergeHandler = new InstructionsMergeHandler<Set<LocalVariableDescriptor>>() {
+            @Override
+            public Set<LocalVariableDescriptor> merge(Instruction instruction, Set<LocalVariableDescriptor> previousDataValue, Collection<Set<LocalVariableDescriptor>> incomingEdgesData) {
+                Set<LocalVariableDescriptor> initializedVariables = Sets.newHashSet();
+                initializedVariables.addAll(previousDataValue);
+                for (Set<LocalVariableDescriptor> edgeDataValue : incomingEdgesData) {
+                    initializedVariables.addAll(edgeDataValue);
+                }
+
+                if (instruction instanceof WriteValueInstruction) {
+                    JetElement element = ((WriteValueInstruction) instruction).getElement();
+                    DeclarationDescriptor descriptor = null;
+                    if (element instanceof JetBinaryExpression) {
+                        JetExpression left = ((JetBinaryExpression) element).getLeft();
+                        if (left instanceof JetSimpleNameExpression) {
+                            descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) left);
+                        }
+                    }
+                    else if (element instanceof JetProperty) {
+                        descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+                    }
+                    if (descriptor instanceof LocalVariableDescriptor) {
+                        initializedVariables.add((LocalVariableDescriptor) descriptor);
+                    }
+                }
+                return initializedVariables;
+            }
+        };
+        Map<Instruction, Set<LocalVariableDescriptor>> dataMap = traverseInstructionGraphUntilFactsStabilization(instructions, instructionsMergeHandler, Collections.<LocalVariableDescriptor>emptySet(), true);
+
+        for (Instruction instruction : instructions) {
+            Set<LocalVariableDescriptor> initializedVariables = dataMap.get(instruction);
+            if (instruction instanceof ReadValueInstruction) {
+                JetElement element = ((ReadValueInstruction) instruction).getElement();
+                if (element instanceof JetSimpleNameExpression) {
+                    DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
+                    if (descriptor instanceof LocalVariableDescriptor) {
+                        if (!initializedVariables.contains(descriptor)) {
+                            trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, descriptor));
+                        }
+                    }
+                }
+            }
+            else if (instruction instanceof WriteValueInstruction) {
+                JetElement element = ((WriteValueInstruction) instruction).getElement();
+                if (element instanceof JetSimpleNameExpression) {
+                    DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
+                    if (descriptor instanceof LocalVariableDescriptor) {
+                        if (initializedVariables.contains(descriptor) && ((LocalVariableDescriptor) descriptor).isVar()) {
+                            trace.report(Errors.VAL_REASSIGNMENT.on((JetSimpleNameExpression) element, descriptor));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    interface InstructionsMergeHandler<D> {
+        D merge(Instruction instruction, D previousDataValue, Collection<D> incomingEdgesData);
+    }
 }
