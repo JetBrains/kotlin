@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -27,7 +28,7 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>("EXPRESSION_TYPE", RewritePolicy.DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>("REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
-    WritableSlice<JetElement, ResolvedCallImpl<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCallImpl<? extends CallableDescriptor>>("RESOLVED_CALL", RewritePolicy.DO_NOTHING);
+    WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>("RESOLVED_CALL", RewritePolicy.DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>>>("AMBIGUOUS_REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
 

@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-public interface ResolvedCallInterface<D extends CallableDescriptor> {
+public interface ResolvedCall<D extends CallableDescriptor> {
     @NotNull
     ResolutionStatus getStatus();
 

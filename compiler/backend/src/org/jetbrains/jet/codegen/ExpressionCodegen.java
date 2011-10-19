@@ -1129,7 +1129,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
-        ResolvedCallImpl<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         List<? extends ValueArgument> args = expression.getValueArguments();
         if(resolvedCall != null) {
             Map<ValueParameterDescriptor,ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();

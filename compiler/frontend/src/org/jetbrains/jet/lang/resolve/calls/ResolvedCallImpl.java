@@ -21,7 +21,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallInterface<D> {
+public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCall<D> {
 
     public static final Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor>() {
         @Override
