@@ -65,6 +65,7 @@ import java.util.Map;
     public final Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists;
     public final LabelResolver labelResolver;
 
+    // true for positions on the lhs of a '.', i.e. allows namespace results and 'super'
     public final boolean namespacesAllowed;
 
     private CallResolver callResolver;

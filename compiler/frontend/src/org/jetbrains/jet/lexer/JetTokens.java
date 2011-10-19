@@ -36,6 +36,7 @@ public interface JetTokens {
     JetKeywordToken TYPE_KEYWORD             = JetKeywordToken.keyword("type");
     JetKeywordToken CLASS_KEYWORD            = JetKeywordToken.keyword("class");
     JetKeywordToken THIS_KEYWORD             = JetKeywordToken.keyword("this");
+    JetKeywordToken SUPER_KEYWORD             = JetKeywordToken.keyword("super");
     JetKeywordToken VAL_KEYWORD              = JetKeywordToken.keyword("val");
     JetKeywordToken VAR_KEYWORD              = JetKeywordToken.keyword("var");
     JetKeywordToken FUN_KEYWORD              = JetKeywordToken.keyword("fun");
@@ -145,7 +146,7 @@ public interface JetTokens {
     JetKeywordToken REF_KEYWORD       = JetKeywordToken.softKeyword("ref");
 
     TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
-            THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
+            THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,

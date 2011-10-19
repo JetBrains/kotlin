@@ -310,7 +310,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public void testThis() throws Exception {
         assertType("Derived_T<Int>", "this", "Derived_T<Int>");
-        assertType("Derived_T<Int>", "this<Base_T>", "Base_T<Int>");
+        assertType("Derived_T<Int>", "super<Base_T>", "Base_T<Int>");
     }
 
     public void testLoops() throws Exception {

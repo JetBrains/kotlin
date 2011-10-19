@@ -86,7 +86,7 @@ public class DataFlowValueFactory {
         }
         else if (expression instanceof JetThisExpression) {
             JetThisExpression thisExpression = (JetThisExpression) expression;
-            DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getThisReference());
+            DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getInstanceReference());
             if (declarationDescriptor instanceof CallableDescriptor) {
                 return Pair.create((Object) ((CallableDescriptor) declarationDescriptor).getReceiverParameter(), true);
             }

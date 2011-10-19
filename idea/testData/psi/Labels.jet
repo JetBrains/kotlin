@@ -53,8 +53,8 @@ fun foo() {
   this@a
   this@@
 
-  this<A>
-  this@<A>
-  this@a<A>
-  this@@<A>
+  super<A>
+  super<A>@
+  super<A>@a
+  super<A>@@
 }

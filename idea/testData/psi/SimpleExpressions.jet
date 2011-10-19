@@ -15,7 +15,7 @@ fun a(
     a : foo = false,
     a : foo = null,
     a : foo = this,
-    a : foo = this<sdf>,
+    a : foo = super<sdf>,
     a : foo = (10),
     a : foo = (10, "A", 0xf),
     a : foo = Foo(bar),

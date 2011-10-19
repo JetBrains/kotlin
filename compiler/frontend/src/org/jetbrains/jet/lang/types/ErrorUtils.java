@@ -64,11 +64,6 @@ public class ErrorUtils {
             return null; // TODO : review
         }
 
-        @Override
-        public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
-            return ERROR_CLASS; // TODO : review
-        }
-
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getAllDescriptors() {

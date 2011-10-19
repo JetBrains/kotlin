@@ -49,6 +49,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             LPAR, // tuple
 
             THIS_KEYWORD, // this
+            SUPER_KEYWORD, // super
 
             IF_KEYWORD, // if
             WHEN_KEYWORD, // when
@@ -464,7 +465,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * atomicExpression
      *   : tupleLiteral // or parenthesized element
-     *   : "this" getEntryPoint? ("<" type ">")?
+     *   : "this" label?
+     *   : "super" ("<" type ">")? label?
      *   : objectLiteral
      *   : jump
      *   : if
@@ -489,6 +491,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();
+        }
+        else if (at(SUPER_KEYWORD)) {
+            parseSuperExpression();
         }
         else if (at(OBJECT_KEYWORD)) {
             parseObjectLiteral();
@@ -1593,7 +1598,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "this" getEntryPoint? ("<" type ">")?
+     * "this" label?
      */
     private void parseThisExpression() {
         assert _at(THIS_KEYWORD);
@@ -1605,8 +1610,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         parseLabel();
 
+        mark.done(THIS_EXPRESSION);
+    }
+
+    /*
+     * "this" ("<" type ">")? label?
+     */
+    private void parseSuperExpression() {
+        assert _at(SUPER_KEYWORD);
+        PsiBuilder.Marker mark = mark();
+
+        PsiBuilder.Marker superReference = mark();
+        advance(); // SUPER_KEYWORD
+        superReference.done(REFERENCE_EXPRESSION);
+
         if (at(LT)) {
-            // This may be "this < foo" or "this<foo>", thus the backtracking
+            // This may be "super < foo" or "super<foo>", thus the backtracking
             PsiBuilder.Marker supertype = mark();
 
             myBuilder.disableNewlines();
@@ -1623,7 +1642,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             myBuilder.restoreNewlinesState();
         }
-        mark.done(THIS_EXPRESSION);
+        parseLabel();
+
+        mark.done(SUPER_EXPRESSION);
     }
 
     /*

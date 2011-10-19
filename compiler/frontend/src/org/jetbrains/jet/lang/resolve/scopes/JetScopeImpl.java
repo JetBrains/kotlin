@@ -51,11 +51,6 @@ public abstract class JetScopeImpl implements JetScope {
         return null;
     }
 
-    @Override
-    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
-        return null;
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

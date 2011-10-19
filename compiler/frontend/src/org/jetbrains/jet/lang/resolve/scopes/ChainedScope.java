@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -104,21 +103,6 @@ public class ChainedScope implements JetScope {
             PropertyDescriptor propertyByFieldReference = jetScope.getPropertyByFieldReference(fieldName);
             if (propertyByFieldReference != null) {
                 return propertyByFieldReference;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
-        if (DescriptorUtils.definesItsOwnThis(getContainingDeclaration())) {
-            return getContainingDeclaration();
-        }
-
-        for (JetScope jetScope : scopeChain) {
-            DeclarationDescriptor containingDeclaration = jetScope.getContainingDeclaration();
-            if (DescriptorUtils.definesItsOwnThis(containingDeclaration)) {
-                return containingDeclaration;
             }
         }
         return null;

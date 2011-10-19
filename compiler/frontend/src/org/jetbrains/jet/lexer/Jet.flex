@@ -168,6 +168,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 "trait"      { return JetTokens.TRAIT_KEYWORD ;}
 "throw"      { return JetTokens.THROW_KEYWORD ;}
 "false"      { return JetTokens.FALSE_KEYWORD ;}
+"super"      { return JetTokens.SUPER_KEYWORD ;}
 "when"       { return JetTokens.WHEN_KEYWORD ;}
 "true"       { return JetTokens.TRUE_KEYWORD ;}
 "type"       { return JetTokens.TYPE_KEYWORD ;}

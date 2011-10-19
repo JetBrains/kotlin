@@ -412,9 +412,9 @@ JetFile: Labels.jet
             LABEL_REFERENCE
               PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
-        THIS_EXPRESSION
+        SUPER_EXPRESSION
           REFERENCE_EXPRESSION
-            PsiElement(this)('this')
+            PsiElement(super)('super')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
@@ -422,43 +422,43 @@ JetFile: Labels.jet
                 PsiElement(IDENTIFIER)('A')
           PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
-        THIS_EXPRESSION
+        SUPER_EXPRESSION
           REFERENCE_EXPRESSION
-            PsiElement(this)('this')
+            PsiElement(super)('super')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+          PsiElement(GT)('>')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(AT)('@')
+        PsiWhiteSpace('\n  ')
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('A')
           PsiElement(GT)('>')
-        PsiWhiteSpace('\n  ')
-        THIS_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace('\n  ')
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('A')
           PsiElement(GT)('>')
-        PsiWhiteSpace('\n  ')
-        THIS_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(ATAT)('@@')
-          PsiElement(LT)('<')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('A')
-          PsiElement(GT)('>')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

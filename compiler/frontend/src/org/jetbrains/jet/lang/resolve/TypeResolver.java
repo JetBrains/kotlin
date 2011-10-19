@@ -234,7 +234,7 @@ public class TypeResolver {
     }
 
     @Nullable
-    public ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType) {
+    private ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType) {
         ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
 
         if (classifierDescriptor == null) {

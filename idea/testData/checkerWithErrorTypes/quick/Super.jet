@@ -1,0 +1,49 @@
+namespace example;
+
+trait T {
+    fun foo() {}
+}
+open class C() {
+    fun bar() {}
+}
+
+class A<E>() : C(), T {
+
+    fun test() {
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
+        <!AMBIGUOUS_SUPER!>super<!>.foo()
+        super<T>.foo()
+        super<C>.bar()
+        super<T>@A.foo()
+        super<C>@A.bar()
+        super<<!NOT_A_SUPERTYPE!>E<!>>.bar()
+        super<<!NOT_A_SUPERTYPE!>E<!>>@A.bar()
+        super<<!NOT_A_SUPERTYPE!>Int<!>>.foo()
+        super<>.foo()
+        super<<!NOT_A_SUPERTYPE!>fun() : Unit<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>()<!>>.foo()
+        super<T><!UNRESOLVED_REFERENCE!>@B<!>.foo()
+        super<C><!UNRESOLVED_REFERENCE!>@B<!>.bar()
+    }
+
+    class B : T {
+        fun test() {
+            super<T>.foo();
+            super<<!NOT_A_SUPERTYPE!>C<!>>.bar()
+            super<C>@A.bar()
+            super<T>@A.foo()
+            super<T>@B.foo()
+            super<<!NOT_A_SUPERTYPE!>C<!>>@B.foo()
+            super.foo()
+            <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
+            <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
+        }
+    }
+}
+
+fun foo() {
+    <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
+    super.foo()
+    super<Nothing>.foo()
+}

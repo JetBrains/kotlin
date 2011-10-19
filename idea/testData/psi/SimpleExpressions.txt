@@ -280,9 +280,9 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          THIS_EXPRESSION
+          SUPER_EXPRESSION
             REFERENCE_EXPRESSION
-              PsiElement(this)('this')
+              PsiElement(super)('super')
             PsiElement(LT)('<')
             TYPE_REFERENCE
               USER_TYPE
