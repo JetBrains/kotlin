@@ -1,7 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import jet.typeinfo.TypeInfo;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -167,6 +165,10 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForNullableIntArray() throws Exception {
         blackBoxFile("controlStructures/forNullableIntArray.jet");
+    }
+
+    public void testForIntRange() {
+        blackBoxFile("controlStructures/forIntRange.jet");
     }
 
     public void testKt237() throws Exception {

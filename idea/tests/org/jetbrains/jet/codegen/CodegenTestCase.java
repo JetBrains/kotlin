@@ -63,7 +63,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         throw new UnsupportedOperationException();
     }
 
-    protected void blackBoxFile(String filename) throws Exception {
+    protected void blackBoxFile(String filename) {
         loadFile(filename);
         String actual;
         try {
