@@ -420,6 +420,9 @@ public class CallResolver {
                         assert substitute != null;
                         replaceValueParametersWithSubstitutedOnes(candidateCall, substitute);
                         candidateCall.setResultingDescriptor(substitute);
+                        for (TypeParameterDescriptor typeParameterDescriptor : candidateCall.getCandidateDescriptor().getTypeParameters()) {
+                            candidateCall.recordTypeArgument(typeParameterDescriptor, solution.getValue(typeParameterDescriptor));
+                        }
                         candidateCall.setStatus(SUCCESS);
                     }
                     else {
@@ -459,6 +462,12 @@ public class CallResolver {
 
                     candidateCall.setResultingDescriptor(substitutedDescriptor);
                     replaceValueParametersWithSubstitutedOnes(candidateCall, substitutedDescriptor);
+
+                    List<TypeParameterDescriptor> typeParameters = candidateCall.getCandidateDescriptor().getTypeParameters();
+                    for (int i = 0; i < typeParameters.size(); i++) {
+                        TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+                        candidateCall.recordTypeArgument(typeParameterDescriptor, typeArguments.get(i));
+                    }
                     candidateCall.setStatus(checkAllValueArguments(scope, tracing, task, candidateCall));
                 }
                 else {
