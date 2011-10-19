@@ -21,30 +21,30 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-public class ResolvedCall<D extends CallableDescriptor> {
+public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallInterface<D> {
 
-    public static final Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor>() {
+    public static final Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+        public CallableDescriptor fun(ResolvedCallImpl<? extends CallableDescriptor> resolvedCall) {
             return resolvedCall.getCandidateDescriptor();
         }
     };
 
-    public static final Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor>() {
+    public static final Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+        public CallableDescriptor fun(ResolvedCallImpl<? extends CallableDescriptor> resolvedCall) {
             return resolvedCall.getResultingDescriptor();
         }
     };
 
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCall<D> create(@NotNull D descriptor) {
-        return new ResolvedCall<D>(descriptor);
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull D descriptor) {
+        return new ResolvedCallImpl<D>(descriptor);
     }
 
     @NotNull
-    public static <D extends CallableDescriptor> List<ResolvedCall<D>> convertCollection(@NotNull Collection<D> descriptors) {
-        List<ResolvedCall<D>> result = Lists.newArrayList();
+    public static <D extends CallableDescriptor> List<ResolvedCallImpl<D>> convertCollection(@NotNull Collection<D> descriptors) {
+        List<ResolvedCallImpl<D>> result = Lists.newArrayList();
         for (D descriptor : descriptors) {
             result.add(create(descriptor));
         }
@@ -63,10 +63,11 @@ public class ResolvedCall<D extends CallableDescriptor> {
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
 
-    private ResolvedCall(@NotNull D candidateDescriptor) {
+    private ResolvedCallImpl(@NotNull D candidateDescriptor) {
         this.candidateDescriptor = candidateDescriptor;
     }
 
+    @Override
     @NotNull
     public ResolutionStatus getStatus() {
         return status;
@@ -85,17 +86,19 @@ public class ResolvedCall<D extends CallableDescriptor> {
         this.trace = trace;
     }
 
+    @Override
     @NotNull
     public D getCandidateDescriptor() {
         return candidateDescriptor;
     }
 
+    @Override
     @NotNull
     public D getResultingDescriptor() {
         return resultingDescriptor == null ? candidateDescriptor : resultingDescriptor;
     }
 
-    public ResolvedCall<D> setResultingDescriptor(@NotNull D resultingDescriptor) {
+    public ResolvedCallImpl<D> setResultingDescriptor(@NotNull D resultingDescriptor) {
         this.resultingDescriptor = resultingDescriptor;
         return this;
     }
@@ -115,6 +118,7 @@ public class ResolvedCall<D extends CallableDescriptor> {
         autoCasts.put(parameter, target);
     }
 
+    @Override
     @NotNull
     public ReceiverDescriptor getReceiverArgument() {
         return receiverArgument;
@@ -124,6 +128,7 @@ public class ResolvedCall<D extends CallableDescriptor> {
         this.receiverArgument = receiverParameter;
     }
 
+    @Override
     @NotNull
     public ReceiverDescriptor getThisObject() {
         return thisObject;
@@ -133,6 +138,7 @@ public class ResolvedCall<D extends CallableDescriptor> {
         this.thisObject = thisObject;
     }
 
+    @Override
     @NotNull
     public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
         return valueArguments;
@@ -146,6 +152,7 @@ public class ResolvedCall<D extends CallableDescriptor> {
         return someArgumentHasNoType;
     }
 
+    @Override
     public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
         return typeArguments;
     }

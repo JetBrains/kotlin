@@ -23,7 +23,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
     public static <D extends CallableDescriptor> boolean mapValueArgumentsToParameters(
             @NotNull ResolutionTask<D> task,
             @NotNull TracingStrategy tracing,
-            @NotNull ResolvedCall<D> candidateCall
+            @NotNull ResolvedCallImpl<D> candidateCall
     ) {
 
         TemporaryBindingTrace temporaryTrace = candidateCall.getTrace();
@@ -181,7 +181,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
         return error;
     }
 
-    private static <D extends CallableDescriptor> void put(ResolvedCall<D> candidateCall, ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument, Map<ValueParameterDescriptor, VarargValueArgument> varargs) {
+    private static <D extends CallableDescriptor> void put(ResolvedCallImpl<D> candidateCall, ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument, Map<ValueParameterDescriptor, VarargValueArgument> varargs) {
         if (valueParameterDescriptor.isVararg()) {
             VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
             if (vararg == null) {

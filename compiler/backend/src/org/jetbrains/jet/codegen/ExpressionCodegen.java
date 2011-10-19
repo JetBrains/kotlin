@@ -1129,7 +1129,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        ResolvedCallImpl<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         List<? extends ValueArgument> args = expression.getValueArguments();
         if(resolvedCall != null) {
             Map<ValueParameterDescriptor,ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
@@ -1791,7 +1791,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private void pushTypeArguments(JetCallElement expression) {
 // todo when frontend calculates
-//        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+//        ResolvedCallImpl<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
 //        if(resolvedCall != null) {
 //            Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
 //            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();

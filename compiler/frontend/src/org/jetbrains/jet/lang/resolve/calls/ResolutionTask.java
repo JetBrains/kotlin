@@ -13,13 +13,13 @@ import java.util.Collection;
  */
 /*package*/ class ResolutionTask<D extends CallableDescriptor> {
     private final Call call;
-    private final Collection<ResolvedCall<D>> candidates;
+    private final Collection<ResolvedCallImpl<D>> candidates;
     private final DataFlowInfo dataFlowInfo;
     private DescriptorCheckStrategy checkingStrategy;
 
 
     public ResolutionTask(
-            @NotNull Collection<ResolvedCall<D>> candidates,
+            @NotNull Collection<ResolvedCallImpl<D>> candidates,
             @NotNull Call call,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
@@ -34,7 +34,7 @@ import java.util.Collection;
     }
 
     @NotNull
-    public Collection<ResolvedCall<D>> getCandidates() {
+    public Collection<ResolvedCallImpl<D>> getCandidates() {
         return candidates;
     }
 
