@@ -9,7 +9,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeChecker;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
@@ -27,6 +29,7 @@ public class DataFlowValueFactory {
             JetConstantExpression constantExpression = (JetConstantExpression) expression;
             if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
         }
+        if (JetTypeChecker.INSTANCE.equalTypes(type, JetStandardClasses.getNullableNothingType())) return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
         Pair<Object, Boolean> result = getIdForStableIdentifier(expression, bindingContext, false);
         return new DataFlowValue(result.first == null ? expression : result.first, type, result.second, getImmanentNullability(type));
     }

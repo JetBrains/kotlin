@@ -128,7 +128,7 @@ public class ExpressionTypingServices {
     /*package*/ JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context) {
         List<JetElement> block = expression.getStatements();
         if (block.isEmpty()) {
-            return ExpressionTypingUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
+            return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
         }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();

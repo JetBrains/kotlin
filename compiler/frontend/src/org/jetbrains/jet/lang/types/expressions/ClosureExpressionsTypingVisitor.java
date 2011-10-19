@@ -55,7 +55,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(context.trace);
         traceAdapter.addHandler(CLASS, handler);
         TopDownAnalyzer.processObject(context.semanticServices, traceAdapter, context.scope, context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
-        return ExpressionTypingUtils.checkType(result[0], expression, context);
+        return DataFlowUtils.checkType(result[0], expression, context);
     }
 
     @Override
@@ -152,11 +152,11 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             JetType expectedReturnType = JetStandardClasses.getReturnType(expectedType);
             if (JetStandardClasses.isUnit(expectedReturnType)) {
                 functionDescriptor.setReturnType(expectedReturnType);
-                return ExpressionTypingUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, expectedReturnType), expression, context);
+                return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, expectedReturnType), expression, context);
             }
 
         }
-        return ExpressionTypingUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType), expression, context);
+        return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType), expression, context);
     }
 
 }

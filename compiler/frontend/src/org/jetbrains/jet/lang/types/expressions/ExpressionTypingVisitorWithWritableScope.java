@@ -164,7 +164,7 @@ public class ExpressionTypingVisitorWithWritableScope extends BasicExpressionTyp
                 "set", receiver);
         if (functionDescriptor == null) return null;
         context.trace.record(REFERENCE_TARGET, operationSign, functionDescriptor);
-        return ExpressionTypingUtils.checkType(functionDescriptor.getReturnType(), arrayAccessExpression, context);
+        return DataFlowUtils.checkType(functionDescriptor.getReturnType(), arrayAccessExpression, context);
     }
 
     @Override

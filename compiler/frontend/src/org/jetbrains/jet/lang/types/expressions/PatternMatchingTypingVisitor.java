@@ -44,7 +44,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             context.patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
             context.patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
         }
-        return ExpressionTypingUtils.checkType(context.semanticServices.getStandardLibrary().getBooleanType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(context.semanticServices.getStandardLibrary().getBooleanType(), expression, contextWithExpectedType);
     }
 
     @Override

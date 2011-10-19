@@ -65,8 +65,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression thenBranch = expression.getThen();
 
         WritableScopeImpl thenScope = newWritableScopeImpl(context).setDebugName("Then scope");
-        DataFlowInfo thenInfo = extractDataFlowInfoFromCondition(condition, true, thenScope, context);
-        DataFlowInfo elseInfo = extractDataFlowInfoFromCondition(condition, false, null, context);
+        DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, thenScope, context);
+        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
 
         if (elseBranch == null) {
             if (thenBranch != null) {
@@ -75,7 +75,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     facade.setResultingDataFlowInfo(elseInfo);
 //                        resultScope = elseScope;
                 }
-                return checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+                return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
             }
             return null;
         }
@@ -85,7 +85,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 facade.setResultingDataFlowInfo(thenInfo);
 //                    resultScope = thenScope;
             }
-            return checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+            return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
         }
         JetType thenType = getTypeWithNewScopeAndDataFlowInfo(thenScope, thenBranch, thenInfo, contextWithExpectedType);
         JetType elseType = getTypeWithNewScopeAndDataFlowInfo(context.scope, elseBranch, elseInfo, contextWithExpectedType);
@@ -121,13 +121,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression body = expression.getBody();
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in while's condition");
-            DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
+            DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
             getTypeWithNewScopeAndDataFlowInfo(scopeToExtend, body, conditionInfo, context);
         }
         if (!containsBreak(expression, context)) {
-            facade.setResultingDataFlowInfo(extractDataFlowInfoFromCondition(condition, false, null, context));
+            facade.setResultingDataFlowInfo(DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context));
         }
-        return checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
     }
 
     private boolean containsBreak(final JetLoopExpression loopExpression, final ExpressionTypingContext context) {
@@ -178,9 +178,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression condition = expression.getCondition();
         checkCondition(conditionScope, condition, context);
         if (!containsBreak(expression, context)) {
-            facade.setResultingDataFlowInfo(extractDataFlowInfoFromCondition(condition, false, null, context));
+            facade.setResultingDataFlowInfo(DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context));
         }
-        return checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             facade.getType(body, context.replaceScope(loopScope));
         }
 
-        return checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
     }
 
     @Nullable
@@ -372,7 +372,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType type = facade.getType(thrownExpression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(context.scope));
             // TODO : check that it inherits Throwable
         }
-        return checkType(JetStandardClasses.getNothingType(), expression, context);
+        return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
 
     @Override
@@ -395,19 +395,19 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, context.expectedReturnType));
             }
         }
-        return checkType(JetStandardClasses.getNothingType(), expression, context);
+        return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
 
     @Override
     public JetType visitBreakExpression(JetBreakExpression expression, ExpressionTypingContext context) {
         context.labelResolver.recordLabel(expression, context);
-        return checkType(JetStandardClasses.getNothingType(), expression, context);
+        return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
 
     @Override
     public JetType visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext context) {
         context.labelResolver.recordLabel(expression, context);
-        return checkType(JetStandardClasses.getNothingType(), expression, context);
+        return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
 
 

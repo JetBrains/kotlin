@@ -81,7 +81,7 @@ public class JetTypeChecker {
             JetType type = iterator.next();
             assert type != null;
             // TODO : This admits 'Nothing?'. Review
-            if (JetStandardClasses.isNothing(type)) {
+            if (JetStandardClasses.isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
             nullable |= type.isNullable();
@@ -564,7 +564,7 @@ public class JetTypeChecker {
             if (!supertype.isNullable() && subtype.isNullable()) {
                 return fail();
             }
-            if (JetStandardClasses.isNothing(subtype)) {
+            if (JetStandardClasses.isNothingOrNullableNothing(subtype)) {
                 return StatusAction.DONE_WITH_CURRENT_TYPE;
             }
             return StatusAction.PROCEED;
