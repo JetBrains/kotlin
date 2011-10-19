@@ -46,29 +46,6 @@ public class DataFlowValueFactory {
         return new DataFlowValue(variableDescriptor, type, isStableVariable(variableDescriptor), getImmanentNullability(type));
     }
 
-//    private Object getId(@NotNull JetExpression expression, @NotNull BindingContext bindingContext) {
-//        if (expression instanceof JetThisExpression) {
-//            JetThisExpression thisExpression = (JetThisExpression) expression;
-//            DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getThisReference());
-//            if (declarationDescriptor instanceof CallableDescriptor) {
-//                return ((CallableDescriptor) declarationDescriptor).getReceiverParameter();
-//            }
-//            if (declarationDescriptor instanceof ClassDescriptor) {
-//                return ((ClassDescriptor) declarationDescriptor).getImplicitReceiver();
-//            }
-////            throw new AssertionError("No resolution data for expression " + expression.getText());
-//        }
-//        else if (expression instanceof JetReferenceExpression) {
-//            JetReferenceExpression referenceExpression = (JetReferenceExpression) expression;
-//            DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, referenceExpression);
-//            if (declarationDescriptor != null) {
-//                return declarationDescriptor;
-//            }
-////            throw new AssertionError("No resolution data for expression " + expression.getText() + DiagnosticUtils.atLocation(expression));
-//        }
-//        return expression;
-//    }
-
     private Nullability getImmanentNullability(JetType type) {
         return type.isNullable() ? Nullability.UNKNOWN : Nullability.NOT_NULL;
     }
@@ -142,18 +119,38 @@ public class DataFlowValueFactory {
         if (variableDescriptor.isVar()) return false;
         if (variableDescriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-            if (containingDeclaration instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-                if (classDescriptor.getModality().isOverridable() && propertyDescriptor.getModality().isOverridable()) return false;
-            }
-            else {
-                assert !propertyDescriptor.getModality().isOverridable() : "Property outside a class must not be overridable";
-            }
-            // TODO: check that it's internal
-            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-            if (getter != null && !getter.isDefault()) return false;
+            if (!isInternal(propertyDescriptor)) return false;
+            if (!isFinal(propertyDescriptor)) return false;
+            if (!hasDefaultGetter(propertyDescriptor)) return false;
         }
         return true;
+    }
+
+    private static boolean isFinal(PropertyDescriptor propertyDescriptor) {
+        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+            if (classDescriptor.getModality().isOverridable() && propertyDescriptor.getModality().isOverridable()) return false;
+        }
+        else {
+            assert !propertyDescriptor.getModality().isOverridable() : "Property outside a class must not be overridable";
+        }
+        return true;
+    }
+
+    private static boolean isInternal(@NotNull DeclarationDescriptorWithVisibility descriptor) {
+        if (Visibility.INTERNAL_VISIBILITIES.contains(descriptor.getVisibility())) return true;
+
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof DeclarationDescriptorWithVisibility)) {
+            return false;
+        }
+
+        return isInternal((DeclarationDescriptorWithVisibility) containingDeclaration);
+    }
+
+    private static boolean hasDefaultGetter(PropertyDescriptor propertyDescriptor) {
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        return getter == null || getter.isDefault();
     }
 }

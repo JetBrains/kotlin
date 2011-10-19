@@ -1,0 +1,30 @@
+// KT-362 Don't allow autocasts on vals that are not internal
+namespace example;
+
+namespace test {
+    public class Public() {
+        public val public : Int? = 1;
+        protected val protected : Int? = 1;
+        internal protected val i_protected : Int? = 1;
+        val internal : Int? = 1
+    }
+    internal class Internal() {
+        public val public : Int? = 1;
+        protected val protected : Int? = 1;
+        internal protected val i_protected : Int? = 1;
+        val internal : Int? = 1
+    }
+}
+
+fun test() {
+  val p = test.Public()
+  if (p.public is Int) <!AUTOCAST_IMPOSSIBLE!>p.public<!> + 1
+  if (p.protected is Int) <!AUTOCAST_IMPOSSIBLE!>p.protected<!> + 1
+  if (p.i_protected is Int) p.i_protected + 1
+  if (p.internal is Int) p.internal + 1
+  val i = test.Public()
+  if (i.public is Int) <!AUTOCAST_IMPOSSIBLE!>i.public<!> + 1
+  if (i.protected is Int) <!AUTOCAST_IMPOSSIBLE!>i.protected<!> + 1
+  if (i.i_protected is Int) i.i_protected + 1
+  if (i.internal is Int) i.internal + 1
+}

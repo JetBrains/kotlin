@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import java.util.EnumSet;
+
 /**
  * @author svtk
  */
@@ -11,6 +13,8 @@ public enum Visibility {
     INTERNAL_PROTECTED(false),
     LOCAL(false);
 
+    public static final EnumSet<Visibility> INTERNAL_VISIBILITIES = EnumSet.of(PRIVATE, INTERNAL, INTERNAL_PROTECTED, LOCAL);
+    
     private final boolean isAPI;
 
     private Visibility(boolean visibleOutside) {
