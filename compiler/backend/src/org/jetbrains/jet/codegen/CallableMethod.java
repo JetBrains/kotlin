@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
@@ -88,5 +89,13 @@ public class CallableMethod implements Callable {
 
     public Type getGenerateCalleeType() {
         return generateCalleeType;
+    }
+
+    public void invokeWithDefault(InstructionAdapter v, int mask) {
+        v.iconst(mask);
+        String desc = getSignature().getDescriptor().replace(")", "I)");
+        if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
+            desc = desc.replace("(", "(L" + getOwner() + ";");
+        v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + "$$TImpl" : getOwner(), getSignature().getName() + "$default", desc);
     }
 }

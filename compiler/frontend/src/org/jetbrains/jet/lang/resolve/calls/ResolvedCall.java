@@ -55,6 +55,7 @@ public class ResolvedCall<D extends CallableDescriptor> {
     private D resultingDescriptor; // Probably substituted
     private ReceiverDescriptor thisObject = NO_RECEIVER; // receiver object of a method
     private ReceiverDescriptor receiverArgument = NO_RECEIVER; // receiver of an extension function
+
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newHashMap();
@@ -143,5 +144,9 @@ public class ResolvedCall<D extends CallableDescriptor> {
 
     public boolean isDirty() {
         return someArgumentHasNoType;
+    }
+
+    public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
+        return typeArguments;
     }
 }
