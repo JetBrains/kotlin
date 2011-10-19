@@ -1,7 +1,7 @@
-namespace HelloNames
+namespace HelloNamesFaster
 
 fun main(args : Array<String>) {
-    var names = ""
+    var names = StringBuilder()
 
     for (i in args.indices) {
         names += args[i]
@@ -15,4 +15,8 @@ fun main(args : Array<String>) {
 fun println(message : String) {
     // System.out is a nullable field
     System.out?.println(message)
+}
+
+fun StringBuilder.plusAssign(s : String) {
+    this.append(s)
 }
