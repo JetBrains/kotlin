@@ -67,7 +67,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.candidateDescriptor = candidateDescriptor;
     }
 
-    @Override
     @NotNull
     public ResolutionStatus getStatus() {
         return status;
@@ -152,6 +151,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return someArgumentHasNoType;
     }
 
+    @NotNull
     @Override
     public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
         return typeArguments;
