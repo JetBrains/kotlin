@@ -4,10 +4,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -259,16 +256,5 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         final Type rawRetType = typeMapper.boxType(typeMapper.mapType(type));
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();
-    }
-
-    public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
-        Method descriptor = erasedInvokeSignature(fd);
-        String owner = getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
-        if (fd.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(null);
-        }
-        result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));
-        return result;
     }
 }

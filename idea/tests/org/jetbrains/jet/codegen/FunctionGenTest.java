@@ -6,10 +6,7 @@ package org.jetbrains.jet.codegen;
 public class FunctionGenTest extends CodegenTestCase {
     public void testDefaultArgs() throws Exception {
         blackBoxFile("functions/defaultargs.jet");
-    }
-
-    public void testNamedArgs() throws Exception {
-        blackBoxFile("functions/defaultargs.jet");
+        System.out.println(generateToText());
     }
 
     public void testNoThisNoClosure() throws Exception {

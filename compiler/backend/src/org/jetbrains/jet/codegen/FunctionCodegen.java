@@ -63,6 +63,14 @@ public class FunctionCodegen {
             if (isAbstract) flags |= ACC_ABSTRACT;
 
             final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
+            if(kind != OwnerKind.TRAIT_IMPL) {
+                int start = functionDescriptor.getReceiverParameter().exists() ? 1 : 0;
+                for(int i = 0; i != paramDescrs.size(); ++i) {
+                    AnnotationVisitor annotationVisitor = mv.visitParameterAnnotation(i + start, "jet/typeinfo/JetParameterName", true);
+                    annotationVisitor.visit("value", paramDescrs.get(i).getName());
+                    annotationVisitor.visitEnd();
+                }
+            }
             if (!isAbstract) {
                 mv.visitCode();
                 FrameMap frameMap = context.prepareFrame();
