@@ -6,11 +6,11 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return getHomeDirectory() + "/idea/testData";
+        return getHomeDirectory() + "/compiler/testData";
     }
 
     private static String getHomeDirectory() {

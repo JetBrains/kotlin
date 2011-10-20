@@ -35,7 +35,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     }
 
     public static Sdk jdkFromIdeaHome() {
-        return new JavaSdkImpl().createJdk("JDK", "idea/testData/mockJDK-1.7/jre", true);
+        return new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
     }
 
     @Override
@@ -44,7 +44,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     }
 
     public static String getTestDataPathBase() {
-        return getHomeDirectory() + "/idea/testData";
+        return getHomeDirectory() + "/compiler/testData";
     }
 
     public static String getHomeDirectory() {

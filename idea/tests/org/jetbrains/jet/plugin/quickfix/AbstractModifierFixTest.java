@@ -1,7 +1,6 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
-import org.jetbrains.jet.JetTestCaseBase;
 
 /**
  * @author svtk
@@ -19,6 +18,6 @@ public class AbstractModifierFixTest extends LightQuickFixTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return PluginTestCaseBase.getTestDataPathBase();
     }
 }

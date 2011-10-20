@@ -41,7 +41,7 @@ public class JetParsingTest extends ParsingTestCase {
     }
 
     public static String getTestDataDir() {
-        return getHomeDirectory() + "/idea/testData";
+        return getHomeDirectory() + "/compiler/testData";
     }
 
     private static String getHomeDirectory() {

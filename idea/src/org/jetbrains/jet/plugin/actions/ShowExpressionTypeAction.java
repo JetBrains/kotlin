@@ -12,8 +12,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 /**

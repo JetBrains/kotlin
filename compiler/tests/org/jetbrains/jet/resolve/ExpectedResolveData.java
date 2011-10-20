@@ -13,11 +13,11 @@ import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -172,7 +172,9 @@ public class ExpectedResolveData {
                 JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
                 if (expectedDescriptor != null) {
                     DeclarationDescriptor actual = bindingContext.get(REFERENCE_TARGET, reference);
-                    assertSame("Expected: " + name,  expectedDescriptor.getOriginal(), actual == null ? null : actual.getOriginal());
+                    assertSame("Expected: " + name, expectedDescriptor.getOriginal(), actual == null
+                                                                                      ? null
+                                                                                      : actual.getOriginal());
                     continue;
                 }
 

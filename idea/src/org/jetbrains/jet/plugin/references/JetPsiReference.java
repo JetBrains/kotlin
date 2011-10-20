@@ -12,7 +12,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
-import org.jetbrains.jet.plugin.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.util.Collection;
 

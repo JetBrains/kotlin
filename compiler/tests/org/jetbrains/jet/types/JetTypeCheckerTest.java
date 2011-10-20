@@ -51,7 +51,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return getHomeDirectory() + "/idea/testData";
+        return getHomeDirectory() + "/compiler/testData";
     }
 
     private static String getHomeDirectory() {

@@ -18,7 +18,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.plugin.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.io.File;
 import java.io.FileNotFoundException;

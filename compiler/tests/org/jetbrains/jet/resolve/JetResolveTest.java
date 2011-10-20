@@ -17,11 +17,13 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
@@ -128,7 +130,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return getHomeDirectory() + "/idea/testData";
+        return getHomeDirectory() + "/compiler/testData";
     }
 
     @Override
@@ -151,7 +153,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     public static Test suite() {
-        return JetTestCaseBase.suiteForDirectory(getHomeDirectory() + "/idea/testData/", "/resolve/", true, new JetTestCaseBase.NamedTestFactory() {
+        return JetTestCaseBase.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBase.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

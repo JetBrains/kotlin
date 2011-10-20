@@ -19,7 +19,7 @@ public class OverrideModifierFixTest extends LightQuickFixTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return PluginTestCaseBase.getTestDataPathBase();
     }
 }
 

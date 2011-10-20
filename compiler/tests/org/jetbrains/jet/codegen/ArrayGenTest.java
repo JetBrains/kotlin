@@ -1,10 +1,6 @@
 package org.jetbrains.jet.codegen;
 
-import jet.typeinfo.TypeInfo;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 public class ArrayGenTest extends CodegenTestCase {
     public void testKt238 () throws Exception {
