@@ -168,6 +168,7 @@ public interface Errors {
     SimpleDiagnosticFactory SUPER_NOT_AVAILABLE = SimpleDiagnosticFactory.create(ERROR, "No supertypes are accessible in this context");
     SimpleDiagnosticFactory AMBIGUOUS_SUPER = SimpleDiagnosticFactory.create(ERROR, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'");
     SimpleDiagnosticFactory NOT_A_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "Not a supertype");
+    SimpleDiagnosticFactory TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER = SimpleDiagnosticFactory.create(WARNING, "Type arguments do not need to be specified in a 'super' qualifier");
     SimpleDiagnosticFactory NO_WHEN_ENTRIES = SimpleDiagnosticFactory.create(ERROR, "Entries are required for when-expression"); // TODO : Scope, and maybe this should not be an error
     SimplePsiElementOnlyDiagnosticFactory<JetBinaryExpressionWithTypeRHS> USELESS_CAST_STATIC_ASSERT_IS_FINE = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "No cast needed, use ':' instead");
     SimplePsiElementOnlyDiagnosticFactory<JetBinaryExpressionWithTypeRHS> USELESS_CAST = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "No cast needed");

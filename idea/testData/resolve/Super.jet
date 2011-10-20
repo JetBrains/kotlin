@@ -24,3 +24,13 @@
         }
     }
 }
+
+~G~trait G<T> {
+    fun foo() {}
+}
+
+class CG : G<Int> {
+    fun test() {
+        `G`super<`G`G>.foo() // OK
+    }
+}

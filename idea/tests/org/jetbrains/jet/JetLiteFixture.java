@@ -7,6 +7,7 @@ import com.intellij.mock.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
@@ -81,6 +82,7 @@ public abstract class JetLiteFixture extends PlatformLiteFixture {
             public void verify(PicoContainer container) throws PicoIntrospectionException {
             }
         });
+        Extensions.registerAreaClass("IDEA_PROJECT", null);
         myProject = disposeOnTearDown(new MockProjectEx(getTestRootDisposable()));
         myPsiManager = new MockPsiManager(myProject);
         myFileFactory = new PsiFileFactoryImpl(myPsiManager);

@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -314,9 +315,32 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
             if (superTypeQualifier != null) {
-                JetType supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
-                DeclarationDescriptor classifierCandidate = supertype.getConstructor().getDeclarationDescriptor();
-                if (classifierCandidate instanceof ClassDescriptor) {
+                JetTypeElement typeElement = superTypeQualifier.getTypeElement();
+
+                DeclarationDescriptor classifierCandidate = null;
+                JetType supertype = null;
+                PsiElement redundantTypeArguments = null;
+                if (typeElement instanceof JetUserType) {
+                    JetUserType userType = (JetUserType) typeElement;
+                    // This may be just a superclass name even if the superclass is generic
+                    if (userType.getTypeArguments().isEmpty()) {
+                        classifierCandidate = context.getTypeResolver().resolveClass(context.scope, userType);
+                    }
+                    else {
+                        supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                        redundantTypeArguments = userType.getTypeArgumentList();
+                    }
+                }
+                else {
+                    supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                }
+
+                if (supertype != null) {
+                    if (supertypes.contains(supertype)) {
+                        result = supertype;
+                    }
+                }
+                else if (classifierCandidate instanceof ClassDescriptor) {
                     ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
 
                     for (JetType declaredSupertype : supertypes) {
@@ -326,8 +350,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         }
                     }
                 }
-                if (result == null && !ErrorUtils.isErrorType(supertype)) {
+
+                boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
+                boolean validType = supertype != null && !ErrorUtils.isErrorType(supertype);
+                if (result == null && (validClassifier || validType)) {
                     context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
+                }
+                else if (redundantTypeArguments != null) {
+                    context.trace.report(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.on(redundantTypeArguments));
                 }
             }
             else {
@@ -346,7 +376,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, context);
     }
 
-    @Nullable
+    @Nullable // No class receivers
     private ReceiverDescriptor resolveToReceiver(JetLabelQualifiedInstanceExpression expression, ExpressionTypingContext context, boolean onlyClassReceivers) {
         ReceiverDescriptor thisReceiver = null;
         String labelName = expression.getLabelName();

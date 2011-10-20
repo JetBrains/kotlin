@@ -47,3 +47,16 @@ fun foo() {
     super.foo()
     super<Nothing>.foo()
 }
+
+trait G<T> {
+    fun foo() {}
+}
+
+class CG : G<Int> {
+    fun test() {
+        super<G>.foo() // OK
+        super<G<!TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER!><Int><!>>.foo() // Warning
+        super<<!NOT_A_SUPERTYPE!>G<<!UNRESOLVED_REFERENCE!>E<!>><!>>.foo() // Error
+        super<<!NOT_A_SUPERTYPE!>G<String><!>>.foo() // Error
+    }
+}
