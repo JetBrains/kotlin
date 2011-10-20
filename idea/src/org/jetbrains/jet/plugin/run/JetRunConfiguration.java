@@ -13,6 +13,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -158,6 +159,12 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             final int classPathType = JavaParametersUtil.getClasspathType(getConfigurationModule(), MAIN_CLASS_NAME, false);
             JavaParametersUtil.configureModule(getConfigurationModule(), params, classPathType, null);
             params.setMainClass(MAIN_CLASS_NAME);
+            if (!StringUtil.isEmpty(WORKING_DIRECTORY)) {
+                params.setWorkingDirectory(WORKING_DIRECTORY);
+            }
+            params.setupEnvs(myEnvs, PASS_PARENT_ENVS);
+            params.getVMParametersList().addParametersString(VM_PARAMETERS);
+            params.getProgramParametersList().addParametersString(PROGRAM_PARAMETERS);
             return params;
         }
     }

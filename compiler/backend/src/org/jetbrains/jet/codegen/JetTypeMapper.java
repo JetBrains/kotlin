@@ -162,40 +162,6 @@ public class JetTypeMapper {
         return new Method(method.isConstructor() ? "<init>" : method.getName(), Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    static CallableMethod mapToCallableMethod(PsiMethod method) {
-        final PsiClass containingClass = method.getContainingClass();
-        String owner = jvmName(containingClass);
-        Method signature = getMethodDescriptor(method);
-        List<Type> valueParameterTypes = new ArrayList<Type>();
-        Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
-        int opcode;
-        boolean needsReceiver = false;
-        boolean ownerFromCall = false;
-        if (method.isConstructor()) {
-            opcode = Opcodes.INVOKESPECIAL;
-        }
-        else if (method.hasModifierProperty(PsiModifier.STATIC)) {
-            opcode = Opcodes.INVOKESTATIC;
-        }
-        else {
-            needsReceiver = true;
-            assert containingClass != null;
-            if (containingClass.isInterface()) {
-                opcode = Opcodes.INVOKEINTERFACE;
-            }
-            else {
-                opcode = Opcodes.INVOKEVIRTUAL;
-            }
-            ownerFromCall = true;
-        }
-        final CallableMethod result = new CallableMethod(owner, signature, opcode, valueParameterTypes);
-        if (needsReceiver) {
-            result.setNeedsReceiver(null);
-        }
-        result.setOwnerFromCall(ownerFromCall);
-        return result;
-    }
-
     public static Type getBoxedType(final Type type) {
         switch (type.getSort()) {
             case Type.BYTE:
@@ -518,18 +484,49 @@ public class JetTypeMapper {
         return mapToCallableMethod(functionDescriptor, kind);
     }
 
+    CallableMethod mapToCallableMethod(PsiMethod method) {
+        final PsiClass containingClass = method.getContainingClass();
+        String owner = jvmName(containingClass);
+        Method signature = getMethodDescriptor(method);
+        List<Type> valueParameterTypes = new ArrayList<Type>();
+        Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
+        int opcode;
+        boolean ownerFromCall = false;
+        DeclarationDescriptor thisClass = null;
+        if (method.isConstructor()) {
+            opcode = Opcodes.INVOKESPECIAL;
+        }
+        else if (method.hasModifierProperty(PsiModifier.STATIC)) {
+            opcode = Opcodes.INVOKESTATIC;
+        }
+        else {
+            assert containingClass != null;
+            if (containingClass.isInterface()) {
+                opcode = Opcodes.INVOKEINTERFACE;
+            }
+            else {
+                opcode = Opcodes.INVOKEVIRTUAL;
+            }
+            ownerFromCall = true;
+            thisClass = JetStandardClasses.getAny(); // todo - this is hack, correct descriptor needed
+        }
+        final CallableMethod result = new CallableMethod(owner, signature, opcode, valueParameterTypes);
+        result.setNeedsThis(thisClass);
+        result.setOwnerFromCall(ownerFromCall);
+        return result;
+    }
+
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
         final List<Type> valueParameterTypes = new ArrayList<Type>();
         Method descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, kind);
         String owner;
         int invokeOpcode;
-        boolean needsReceiver;
-        ClassDescriptor receiverClass = null;
+        ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
             invokeOpcode = Opcodes.INVOKESTATIC;
-            needsReceiver = functionDescriptor.getReceiverParameter().exists();
+            thisClass = null;
         }
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
@@ -537,8 +534,7 @@ public class JetTypeMapper {
             invokeOpcode = CodegenUtil.isInterface(containingClass)
                     ? Opcodes.INVOKEINTERFACE
                     : Opcodes.INVOKEVIRTUAL;
-            needsReceiver = true;
-            receiverClass = containingClass;
+            thisClass = containingClass;
         }
         else {
             throw new UnsupportedOperationException("unknown function parent");
@@ -546,9 +542,11 @@ public class JetTypeMapper {
 
         final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
         result.setAcceptsTypeArguments(true);
-        if (needsReceiver) {
-            result.setNeedsReceiver(receiverClass);
+        result.setNeedsThis(thisClass);
+        if(functionDescriptor.getReceiverParameter().exists()) {
+            result.setNeedsReceiver(functionDescriptor.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor());
         }
+
         return result;
     }
 

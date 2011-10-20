@@ -27,6 +27,8 @@ import org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+
 /**
  * @author max
  * @author yole
@@ -75,6 +77,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.intrinsics = state.getIntrinsics();
+    }
+
+    private CallableMethod asCallableMethod(FunctionDescriptor fd) {
+        Method descriptor = ClosureCodegen.erasedInvokeSignature(fd);
+        String owner = ClosureCodegen.getInternalClassName(fd);
+        final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+        if (fd.getReceiverParameter().exists()) {
+            result.setNeedsReceiver(fd.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor());
+        }
+        result.requestGenerateCallee(Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
+        return result;
     }
 
     public GenerationState getState() {
@@ -429,9 +442,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 gen(expression.getLoopRange(), loopRangeType);
                 v.dup();
 
-                v.invokevirtual("jet/IntRange", "getStartValue", "()I");
+                v.invokevirtual("jet/IntRange", "getStart", "()I");
                 v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
-                v.invokevirtual("jet/IntRange", "getEndValue", "()I");
+                v.invokevirtual("jet/IntRange", "getEnd", "()I");
                 v.store(myEndVar, Type.INT_TYPE);
             }
         }
@@ -983,7 +996,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement, null);
         }
         else if (fd instanceof VariableAsFunctionDescriptor) {
-            callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
+            callableMethod = asCallableMethod((FunctionDescriptor) fd);
         }
         else if (fd instanceof FunctionDescriptor) {
             callableMethod = typeMapper.mapToCallableMethod((FunctionDescriptor) fd, null);
@@ -1018,13 +1031,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (callableMethod.isOwnerFromCall()) {
             setOwnerFromCall(callableMethod, expression);
         }
-        if (callableMethod.needsReceiverOnStack()) {
-            if (receiver == StackValue.none()) {
-                ClassDescriptor receiverClass = callableMethod.getReceiverClass();
-                receiver = receiverClass == null ? thisExpression() : generateThisOrOuter(receiverClass);
+        
+        if (callableMethod.isNeedsThis()) {
+            if(callableMethod.isNeedsReceiver()) {
+                generateThisOrOuter((ClassDescriptor) callableMethod.getThisClass()).put(JetTypeMapper.TYPE_OBJECT, v);
+                receiver.put(JetTypeMapper.TYPE_OBJECT, v);
             }
-            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            else {
+                if (receiver == StackValue.none()) {
+                    generateThisOrOuter((ClassDescriptor) callableMethod.getThisClass()).put(JetTypeMapper.TYPE_OBJECT, v);;
+                }
+                else {
+                    receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+                }
+            }
         }
+        else {
+            if (callableMethod.isNeedsReceiver()) {
+                receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            }
+        }
+        
         int mask = pushMethodArguments(expression, callableMethod.getValueParameterTypes());
         if (callableMethod.acceptsTypeArguments()) {
             pushTypeArguments(expression);
@@ -1790,23 +1817,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void pushTypeArguments(JetCallElement expression) {
-// todo when frontend calculates
-//        ResolvedCallImpl<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
-//        if(resolvedCall != null) {
-//            Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
-//            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-//            for (TypeParameterDescriptor typeParameterDescriptor : resultingDescriptor.getTypeParameters()) {
-//                JetType jetType = typeArguments.get(typeParameterDescriptor);
-//                generateTypeInfo(jetType);
-//            }
-//        }
-//        else {
-//            for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
-//                pushTypeArgument(jetTypeArgument);
-//            }
-//        }
-        for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
-            pushTypeArgument(jetTypeArgument);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        if(resolvedCall != null) {
+            Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
+            CallableDescriptor resultingDescriptor = resolvedCall.getCandidateDescriptor();
+            for (TypeParameterDescriptor typeParameterDescriptor : resultingDescriptor.getTypeParameters()) {
+                JetType jetType = typeArguments.get(typeParameterDescriptor);
+                generateTypeInfo(jetType);
+            }
+        }
+        else {
+            for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
+                pushTypeArgument(jetTypeArgument);
+            }
         }
     }
 
@@ -1820,7 +1843,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Type type = JetTypeMapper.psiClassType(javaClass);
         v.anew(type);
         v.dup();
-        final CallableMethod callableMethod = JetTypeMapper.mapToCallableMethod(constructor);
+        final CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructor);
         invokeMethodWithArguments(callableMethod, expression);
         return type;
     }
@@ -1916,7 +1939,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             assert declaration != null : "No declaration found for " + expression.getText();
             final CallableMethod accessor;
             if (declaration instanceof PsiMethod) {
-                accessor = JetTypeMapper.mapToCallableMethod((PsiMethod) declaration);
+                accessor = typeMapper.mapToCallableMethod((PsiMethod) declaration);
             }
             else if (declaration instanceof JetNamedFunction) {
                 accessor = typeMapper.mapToCallableMethod((JetNamedFunction) declaration, null);

@@ -22,6 +22,8 @@ import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 /**
@@ -34,16 +36,6 @@ public class KotlinCompiler {
             System.out.println("Usage: KotlinCompiler <filename>");
             return;
         }
-        String javaHome = System.getenv("JAVA_HOME");
-        if (javaHome == null) {
-            System.out.println("JAVA_HOME environment variable needs to be defined");
-            return;
-        }
-        File rtJar = findRtJar(javaHome);
-        if (rtJar == null || !rtJar.exists()) {
-            System.out.print("No rt.jar found under JAVA_HOME");
-            return;
-        }
 
         Disposable root = new Disposable() {
             @Override
@@ -51,9 +43,45 @@ public class KotlinCompiler {
             }
         };
         JavaCoreEnvironment environment = new JavaCoreEnvironment(root);
+
+        String javaHome = System.getenv("JAVA_HOME");
+        File rtJar = null;
+        if (javaHome == null) {
+            ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+            if(systemClassLoader instanceof URLClassLoader) {
+                URLClassLoader loader = (URLClassLoader) systemClassLoader;
+                for(URL url: loader.getURLs()) {
+                    if("file".equals(url.getProtocol())) {
+                        if(url.getFile().endsWith("/lib/rt.jar")) {
+                            rtJar = new File(url.getFile());
+                            break;
+                        }
+                        if(url.getFile().endsWith("/Classes/classes.jar")) {
+                            rtJar = new File(url.getFile()).getAbsoluteFile();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(rtJar == null) {
+                System.out.println("JAVA_HOME environment variable needs to be defined");
+                return;
+            }
+        }
+        else {
+            rtJar = findRtJar(javaHome);
+        }
+
+        if (rtJar == null || !rtJar.exists()) {
+            System.out.print("No rt.jar found under JAVA_HOME=" + javaHome);
+            return;
+        }
+
         environment.addToClasspath(rtJar);
 
         environment.registerFileType(JetFileType.INSTANCE, "kt");
+        environment.registerFileType(JetFileType.INSTANCE, "jet");
         environment.registerParserDefinition(new JetParserDefinition());
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(args [0]);
         if (vFile == null) {
