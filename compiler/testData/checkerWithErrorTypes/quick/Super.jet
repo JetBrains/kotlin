@@ -60,3 +60,18 @@ class CG : G<Int> {
         super<<!NOT_A_SUPERTYPE!>G<String><!>>.foo() // Error
     }
 }
+
+// The case when no supertype is resolved
+class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
+
+    fun test() {
+        super.<!UNRESOLVED_REFERENCE!>foo<!>()
+    }
+}
+
+// No supertype at all
+class A1 {
+    fun test() {
+        super.equals(null)
+    }
+}

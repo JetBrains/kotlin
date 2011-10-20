@@ -365,7 +365,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(AMBIGUOUS_SUPER.on(expression));
                 }
                 else {
-                    result = substitutor.substitute(supertypes.iterator().next(), Variance.INVARIANT);
+                    // supertypes may be empty when all the supertypes are error types (are not resolved, for example)
+                    JetType type = supertypes.isEmpty() ? JetStandardClasses.getAnyType() : supertypes.iterator().next();
+                    result = substitutor.substitute(type, Variance.INVARIANT);
                 }
             }
             if (result != null) {
