@@ -1,24 +1,22 @@
 package org.jetbrains.jet.cli;
 
 import com.google.common.collect.Lists;
-import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
-import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +40,7 @@ public class KotlinCompiler {
             public void dispose() {
             }
         };
-        JavaCoreEnvironment environment = new JavaCoreEnvironment(root);
+        JetCoreEnvironment environment = new JetCoreEnvironment(root);
 
         String javaHome = System.getenv("JAVA_HOME");
         File rtJar = null;
@@ -80,9 +78,6 @@ public class KotlinCompiler {
 
         environment.addToClasspath(rtJar);
 
-        environment.registerFileType(JetFileType.INSTANCE, "kt");
-        environment.registerFileType(JetFileType.INSTANCE, "jet");
-        environment.registerParserDefinition(new JetParserDefinition());
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(args [0]);
         if (vFile == null) {
             System.out.print("File not found: " + args[0]);
