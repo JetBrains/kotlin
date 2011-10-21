@@ -26,12 +26,14 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
     private ExpressionTypingServices typeInferrerServices;
-    private final JetControlFlowDataTraceFactory flowDataTraceFactory;    
+    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
+    private final boolean declaredLocally;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean declaredLocally) {
         this.context = context;
         this.flowDataTraceFactory = flowDataTraceFactory;
         this.typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
+        this.declaredLocally = declaredLocally;
     }
 
     public void process() {
@@ -60,9 +62,11 @@ public class ControlFlowAnalyzer {
     }
 
     private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
+        assert function instanceof JetDeclaration;
+
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) function, bodyExpression, flowDataTraceFactory, context.getTrace());
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, bodyExpression, flowDataTraceFactory, context.getTrace());
 
         final boolean blockBody = function.hasBlockBody();
         List<JetElement> unreachableElements = Lists.newArrayList();
@@ -108,8 +112,9 @@ public class ControlFlowAnalyzer {
                 }
             });
         }
-
-        //flowInformationProvider.markUninitializedVariables(function.asElement());
+        if (!declaredLocally) {
+            flowInformationProvider.markUninitializedVariables(function.asElement());
+        }
     }
 
     private void checkProperty(JetProperty property) {
