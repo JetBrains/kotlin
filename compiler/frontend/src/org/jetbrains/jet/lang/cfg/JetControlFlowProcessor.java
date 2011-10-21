@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.cfg;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -30,21 +31,94 @@ public class JetControlFlowProcessor {
         this.trace = trace;
     }
 
-    public void generate(@NotNull JetElement subroutineElement, @NotNull JetExpression body) {
+    public void generate(@NotNull JetDeclaration subroutineElement, @NotNull JetExpression body) {
         generateSubroutineControlFlow(subroutineElement, Collections.singletonList(body));
     }
 
-    public void generateSubroutineControlFlow(@NotNull JetElement subroutineElement, @NotNull List<? extends JetElement> body) {
-        boolean functionLiteral = subroutineElement instanceof JetFunctionLiteralExpression;
-        builder.enterSubroutine(subroutineElement, functionLiteral);
+    public void generateSubroutineControlFlow(@NotNull JetDeclaration subroutineElement, @NotNull List<? extends JetElement> body) {
+        builder.enterSubroutine(subroutineElement);
         for (JetElement statement : body) {
             statement.accept(new CFPVisitor(false));
         }
-        builder.exitSubroutine(subroutineElement, functionLiteral);
+        builder.exitSubroutine(subroutineElement);
     }
-
+    
     private class CFPVisitor extends JetVisitorVoid {
         private final boolean inCondition;
+        private final JetVisitorVoid conditionVisitor = new JetVisitorVoid() {
+            @Override
+            public void visitWhenConditionCall(JetWhenConditionCall condition) {
+                value(condition.getCallSuffixExpression(), CFPVisitor.this.inCondition); // TODO : inCondition?
+            }
+
+            @Override
+            public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
+                value(condition.getRangeExpression(), CFPVisitor.this.inCondition); // TODO : inCondition?
+                value(condition.getOperationReference(), CFPVisitor.this.inCondition); // TODO : inCondition?
+                // TODO : read the call to contains()...
+            }
+
+            @Override
+            public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
+                JetPattern pattern = condition.getPattern();
+                if (pattern != null) {
+                    pattern.accept(patternVisitor);
+                }
+            }
+
+            @Override
+            public void visitJetElement(JetElement element) {
+                throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
+            }
+        };
+        private final JetVisitorVoid patternVisitor = new JetVisitorVoid() {
+            @Override
+            public void visitTypePattern(JetTypePattern typePattern) {
+                // TODO
+            }
+
+            @Override
+            public void visitWildcardPattern(JetWildcardPattern pattern) {
+                // TODO
+            }
+
+            @Override
+            public void visitExpressionPattern(JetExpressionPattern pattern) {
+                value(pattern.getExpression(), inCondition);
+            }
+
+            @Override
+            public void visitTuplePattern(JetTuplePattern pattern) {
+                List<JetTuplePatternEntry> entries = pattern.getEntries();
+                for (JetTuplePatternEntry entry : entries) {
+                    JetPattern entryPattern = entry.getPattern();
+                    if (entryPattern != null) {
+                        entryPattern.accept(this);
+                    }
+                }
+            }
+
+            @Override
+            public void visitDecomposerPattern(JetDecomposerPattern pattern) {
+                value(pattern.getDecomposerExpression(), inCondition);
+                pattern.getArgumentList().accept(this);
+            }
+
+            @Override
+            public void visitBindingPattern(JetBindingPattern pattern) {
+                JetProperty variableDeclaration = pattern.getVariableDeclaration();
+                builder.write(pattern, variableDeclaration);
+                JetWhenCondition condition = pattern.getCondition();
+                if (condition != null) {
+                    condition.accept(conditionVisitor);
+                }
+            }
+
+            @Override
+            public void visitJetElement(JetElement element) {
+                throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
+            }
+        };
 
         private CFPVisitor(boolean inCondition) {
             this.inCondition = inCondition;
@@ -278,6 +352,10 @@ public class JetControlFlowProcessor {
                 builder.bindLabel(onException);
                 for (Iterator<JetCatchClause> iterator = catchClauses.iterator(); iterator.hasNext(); ) {
                     JetCatchClause catchClause = iterator.next();
+                    JetParameter catchParameter = catchClause.getCatchParameter();
+                    if (catchParameter != null) {
+                        builder.write(catchParameter, catchParameter);
+                    }
                     JetExpression catchBody = catchClause.getCatchBody();
                     if (catchBody != null) {
                         value(catchBody, false);
@@ -343,6 +421,10 @@ public class JetControlFlowProcessor {
             JetExpression loopRange = expression.getLoopRange();
             if (loopRange != null) {
                 value(loopRange, false);
+            }
+            JetParameter loopParameter = expression.getLoopParameter();
+            if (loopParameter != null) {
+                builder.write(loopParameter, loopParameter);
             }
             // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
@@ -428,7 +510,11 @@ public class JetControlFlowProcessor {
                 subroutine = builder.getCurrentSubroutine();
                 // TODO : a context check
             }
-            if (subroutine instanceof JetFunction || subroutine instanceof JetFunctionLiteralExpression) {
+            //todo cache JetFunctionLiteral instead
+            if (subroutine instanceof JetFunctionLiteralExpression) {
+                subroutine = ((JetFunctionLiteralExpression) subroutine).getFunctionLiteral();
+            }
+            if (subroutine instanceof JetFunction) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }
@@ -465,10 +551,10 @@ public class JetControlFlowProcessor {
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-            JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
+            JetBlockExpression bodyExpression = functionLiteral.getBodyExpression();
             if (bodyExpression != null) {
                 List<JetElement> statements = bodyExpression.getStatements();
-                generateSubroutineControlFlow(expression, statements);
+                generateSubroutineControlFlow(functionLiteral, statements);
             }
         }
 
@@ -576,8 +662,12 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitIsExpression(JetIsExpression expression) {
+        public void visitIsExpression(final JetIsExpression expression) {
             value(expression.getLeftHandSide(), inCondition);
+            JetPattern pattern = expression.getPattern();
+            if (pattern != null) {
+                pattern.accept(patternVisitor);
+            }
             // TODO : builder.read(expression.getPattern());
             builder.read(expression);
         }
@@ -608,73 +698,7 @@ public class JetControlFlowProcessor {
                 JetWhenCondition[] conditions = whenEntry.getConditions();
                 for (int i = 0; i < conditions.length; i++) {
                     JetWhenCondition condition = conditions[i];
-                    condition.accept(new JetVisitorVoid() {
-                        private final JetVisitorVoid conditionVisitor = this;
-
-                        @Override
-                        public void visitWhenConditionCall(JetWhenConditionCall condition) {
-                            value(condition.getCallSuffixExpression(), inCondition); // TODO : inCondition?
-                        }
-
-                        @Override
-                        public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
-                            value(condition.getRangeExpression(), inCondition); // TODO : inCondition?
-                            value(condition.getOperationReference(), inCondition); // TODO : inCondition?
-                            // TODO : read the call to contains()...
-                        }
-
-                        @Override
-                        public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                            JetPattern pattern = condition.getPattern();
-                            if (pattern != null) {
-                                pattern.accept(new JetVisitorVoid() {
-                                    @Override
-                                    public void visitTypePattern(JetTypePattern typePattern) {
-                                        // TODO
-                                    }
-
-                                    @Override
-                                    public void visitWildcardPattern(JetWildcardPattern pattern) {
-                                        // TODO
-                                    }
-
-                                    @Override
-                                    public void visitExpressionPattern(JetExpressionPattern pattern) {
-                                        value(pattern.getExpression(), inCondition);
-                                    }
-
-                                    @Override
-                                    public void visitTuplePattern(JetTuplePattern pattern) {
-                                        // TODO
-                                    }
-
-                                    @Override
-                                    public void visitDecomposerPattern(JetDecomposerPattern pattern) {
-                                        value(pattern.getDecomposerExpression(), inCondition);
-                                        pattern.getArgumentList().accept(this);
-                                    }
-
-                                    @Override
-                                    public void visitBindingPattern(JetBindingPattern pattern) {
-                                        JetWhenCondition condition = pattern.getCondition();
-                                        if (condition != null) {
-                                            condition.accept(conditionVisitor);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void visitJetElement(JetElement element) {
-                                        throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void visitJetElement(JetElement element) {
-                            throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
-                        }
-                    });
+                    condition.accept(conditionVisitor);
                     if (i + 1 < conditions.length) {
                         builder.nondeterministicJump(bodyLabel);
                     }
@@ -701,12 +725,35 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
-                value(delegationSpecifier, inCondition);
+            Queue<Label> declarationLabels = new LinkedList<Label>();
+            List<JetDeclaration> declarations = declaration.getDeclarations();
+            for (JetDeclaration localDeclaration : declarations) {
+                declarationLabels.add(builder.createUnboundLabel());
             }
-            for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
-                FOR_LOCAL_CLASSES.value(jetDeclaration, false);
+            builder.nondeterministicJump(Lists.newArrayList(declarationLabels));
+            for (JetDeclaration localDeclaration : declarations) {
+                if (localDeclaration instanceof JetNamedDeclaration) {
+                    if (localDeclaration instanceof JetFunction) {
+                        //TODO
+                        generate(localDeclaration, ((JetFunction) localDeclaration).getBodyExpression());
+                    }
+                    else {
+                        generate(localDeclaration, localDeclaration);
+                    }
+                } 
+                else {
+                    //todo
+                    generate(declaration, localDeclaration);
+                }
+                builder.bindLabel(declarationLabels.remove());
             }
+//            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
+//                value(delegationSpecifier, inCondition);
+//            }
+//            for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
+//                //FOR_LOCAL_CLASSES.
+//                value(jetDeclaration, false);
+//            }
         }
 
         @Override
