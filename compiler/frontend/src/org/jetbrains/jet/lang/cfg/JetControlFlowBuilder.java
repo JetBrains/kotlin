@@ -2,9 +2,9 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetThrowExpression;
+import org.jetbrains.jet.lang.psi.*;
+
+import java.util.List;
 
 /**
  * @author abreslav
@@ -24,6 +24,7 @@ public interface JetControlFlowBuilder {
     void jumpOnFalse(@NotNull Label label);
     void jumpOnTrue(@NotNull Label label);
     void nondeterministicJump(Label label); // Maybe, jump to label
+    void nondeterministicJump(List<Label> label);
     void jumpToError(JetThrowExpression expression);
     void jumpToError(JetExpression nothingExpression);
 
@@ -43,9 +44,9 @@ public interface JetControlFlowBuilder {
     void exitTryFinally();
 
     // Subroutines
-    void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral);
+    void enterSubroutine(@NotNull JetDeclaration subroutine);
 
-    void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral);
+    void exitSubroutine(@NotNull JetDeclaration subroutine);
 
     @Nullable
     JetElement getCurrentSubroutine();

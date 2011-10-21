@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -78,7 +77,8 @@ public class Pseudocode {
     public List<Instruction> getInstructions() {
         return instructions;
     }
-    
+
+    @Deprecated //for tests only
     public List<PseudocodeLabel> getLabels() {
         return labels;
     }
@@ -128,7 +128,10 @@ public class Pseudocode {
                 @Override
                 public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
                     instruction.setNext(getNextPosition(currentPosition));
-                    visitJump(instruction);
+                    List<Label> targetLabels = instruction.getTargetLabels();
+                    for (Label targetLabel : targetLabels) {
+                        instruction.setResolvedTarget(targetLabel, getJumpTarget(targetLabel));
+                    }
                 }
 
                 @Override
@@ -147,7 +150,7 @@ public class Pseudocode {
                 }
 
                 @Override
-                public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
+                public void visitFunctionLiteralValue(LocalDeclarationInstruction instruction) {
                     instruction.getBody().postProcess();
                     super.visitFunctionLiteralValue(instruction);
                 }

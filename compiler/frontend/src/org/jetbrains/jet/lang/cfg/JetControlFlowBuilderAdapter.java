@@ -2,140 +2,166 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetThrowExpression;
+import org.jetbrains.jet.lang.psi.*;
+
+import java.util.List;
 
 /**
  * @author abreslav
  */
 public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
-    protected JetControlFlowBuilder builder;
-
-    public JetControlFlowBuilderAdapter(JetControlFlowBuilder builder) {
-        this.builder = builder;
-    }
+    protected @Nullable JetControlFlowBuilder builder;
 
     @Override
     public void read(@NotNull JetExpression expression) {
+        assert builder != null;
         builder.read(expression);
     }
 
     @Override
     public void readUnit(@NotNull JetExpression expression) {
+        assert builder != null;
         builder.readUnit(expression);
     }
 
     @Override
     @NotNull
     public Label createUnboundLabel() {
+        assert builder != null;
         return builder.createUnboundLabel();
     }
 
     @Override
     public void bindLabel(@NotNull Label label) {
+        assert builder != null;
         builder.bindLabel(label);
     }
 
     @Override
     public void jump(@NotNull Label label) {
+        assert builder != null;
         builder.jump(label);
     }
 
     @Override
     public void jumpOnFalse(@NotNull Label label) {
+        assert builder != null;
         builder.jumpOnFalse(label);
     }
 
     @Override
     public void jumpOnTrue(@NotNull Label label) {
+        assert builder != null;
         builder.jumpOnTrue(label);
     }
 
     @Override
     public void nondeterministicJump(Label label) {
+        assert builder != null;
         builder.nondeterministicJump(label);
     }
 
     @Override
+    public void nondeterministicJump(List<Label> labels) {
+        assert builder != null;
+        builder.nondeterministicJump(labels);
+    }
+
+    @Override
     public void jumpToError(JetThrowExpression expression) {
+        assert builder != null;
         builder.jumpToError(expression);
     }
 
     @Override
     public void jumpToError(JetExpression nothingExpression) {
+        assert builder != null;
         builder.jumpToError(nothingExpression);
     }
 
     @Override
     public Label getEntryPoint(@NotNull JetElement labelElement) {
+        assert builder != null;
         return builder.getEntryPoint(labelElement);
     }
 
     @Override
     public Label getExitPoint(@NotNull JetElement labelElement) {
+        assert builder != null;
         return builder.getExitPoint(labelElement);
     }
 
     @Override
     public LoopInfo enterLoop(@NotNull JetExpression expression, Label loopExitPoint, Label conditionEntryPoint) {
+        assert builder != null;
         return builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
     }
 
     @Override
     public void exitLoop(@NotNull JetExpression expression) {
+        assert builder != null;
         builder.exitLoop(expression);
     }
 
     @Override
     @Nullable
     public JetElement getCurrentLoop() {
+        assert builder != null;
         return builder.getCurrentLoop();
     }
 
     @Override
     public void enterTryFinally(@NotNull GenerationTrigger trigger) {
+        assert builder != null;
         builder.enterTryFinally(trigger);
     }
 
     @Override
     public void exitTryFinally() {
+        assert builder != null;
         builder.exitTryFinally();
     }
 
     @Override
-    public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
-        builder.enterSubroutine(subroutine, isFunctionLiteral);
+    public void enterSubroutine(@NotNull JetDeclaration subroutine) {
+        assert builder != null;
+        builder.enterSubroutine(subroutine);
     }
 
     @Override
-    public void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral) {
-        builder.exitSubroutine(subroutine, functionLiteral);
+    public void exitSubroutine(@NotNull JetDeclaration subroutine) {
+        assert builder != null;
+        builder.exitSubroutine(subroutine);
     }
 
     @Override
     @Nullable
     public JetElement getCurrentSubroutine() {
+        assert builder != null;
         return builder.getCurrentSubroutine();
     }
 
     @Override
     public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
+        assert builder != null;
         builder.returnValue(returnExpression, subroutine);
     }
 
     @Override
     public void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine) {
+        assert builder != null;
         builder.returnNoValue(returnExpression, subroutine);
     }
 
     @Override
     public void unsupported(JetElement element) {
+        assert builder != null;
         builder.unsupported(element);
     }
 
     @Override
     public void write(@NotNull JetElement assignment, @NotNull JetElement lValue) {
+        assert builder != null;
         builder.write(assignment, lValue);
     }
 }
