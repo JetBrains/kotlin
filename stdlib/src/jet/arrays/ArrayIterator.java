@@ -1,6 +1,7 @@
 package jet.arrays;
 
 import jet.Iterator;
+import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 
@@ -10,7 +11,7 @@ import java.util.Arrays;
 /**
  * @author alex.tkachman
  */
-public abstract class ArrayIterator<T> implements Iterator<T> {
+public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
     private final int size;
     protected int index;
 
