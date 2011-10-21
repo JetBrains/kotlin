@@ -21,18 +21,12 @@ public class JetSemanticServices {
         return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project), JetControlFlowDataTraceFactory.EMPTY);
     }
 
-    public static JetSemanticServices createSemanticServices(Project project, JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project), flowDataTraceFactory);
-    }
-
     private final JetStandardLibrary standardLibrary;
     private final JetTypeChecker typeChecker;
-    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
 
     private JetSemanticServices(JetStandardLibrary standardLibrary, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.standardLibrary = standardLibrary;
         this.typeChecker = new JetTypeChecker(standardLibrary);
-        this.flowDataTraceFactory = flowDataTraceFactory;
     }
 
     @NotNull
@@ -42,7 +36,7 @@ public class JetSemanticServices {
 
     @NotNull
     public ClassDescriptorResolver getClassDescriptorResolver(BindingTrace trace) {
-        return new ClassDescriptorResolver(this, trace, flowDataTraceFactory);
+        return new ClassDescriptorResolver(this, trace);
     }
 
     @NotNull

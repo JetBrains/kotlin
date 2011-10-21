@@ -18,55 +18,55 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
 }
 ---------------------
 l0:
-    <START>
-    r(a)
-    jf(l2)
-    r(1)
-    jmp(l3)
+    <START>        NEXT:[r(a)]                  PREV:[]
+    r(a)           NEXT:[jf(l2)]                PREV:[<START>]
+    jf(l2)         NEXT:[r(2), r(1)]            PREV:[r(a)]
+    r(1)           NEXT:[jmp(l3)]               PREV:[jf(l2)]
+    jmp(l3)        NEXT:[r(3)]                  PREV:[r(1)]
 l2:
-    r(2)
+    r(2)           NEXT:[r(3)]                  PREV:[jf(l2)]
 l3:
-    r(3)
-    r(a)
-    jf(l4)
-    r(b)
+    r(3)           NEXT:[r(a)]                  PREV:[jmp(l3), r(2)]
+    r(a)           NEXT:[jf(l4)]                PREV:[r(3)]
+    jf(l4)         NEXT:[jf(l5), r(b)]          PREV:[r(a)]
+    r(b)           NEXT:[jf(l5)]                PREV:[jf(l4)]
 l4:
-    jf(l5)
-    r(5)
-    jmp(l6)
+    jf(l5)         NEXT:[r(6), r(5)]            PREV:[jf(l4), r(b)]
+    r(5)           NEXT:[jmp(l6)]               PREV:[jf(l5)]
+    jmp(l6)        NEXT:[r(7)]                  PREV:[r(5)]
 l5:
-    r(6)
+    r(6)           NEXT:[r(7)]                  PREV:[jf(l5)]
 l6:
-    r(7)
-    r(a)
-    jt(l7)
-    r(b)
+    r(7)           NEXT:[r(a)]                  PREV:[jmp(l6), r(6)]
+    r(a)           NEXT:[jt(l7)]                PREV:[r(7)]
+    jt(l7)         NEXT:[r(b), jf(l8)]          PREV:[r(a)]
+    r(b)           NEXT:[jf(l8)]                PREV:[jt(l7)]
 l7:
-    jf(l8)
-    r(8)
-    jmp(l9)
+    jf(l8)         NEXT:[r(9), r(8)]            PREV:[jt(l7), r(b)]
+    r(8)           NEXT:[jmp(l9)]               PREV:[jf(l8)]
+    jmp(l9)        NEXT:[r(10)]                 PREV:[r(8)]
 l8:
-    r(9)
+    r(9)           NEXT:[r(10)]                 PREV:[jf(l8)]
 l9:
-    r(10)
-    r(a)
-    jf(l10)
-    r(11)
-    jmp(l11)
+    r(10)          NEXT:[r(a)]                  PREV:[jmp(l9), r(9)]
+    r(a)           NEXT:[jf(l10)]               PREV:[r(10)]
+    jf(l10)        NEXT:[read (Unit), r(11)]    PREV:[r(a)]
+    r(11)          NEXT:[jmp(l11)]              PREV:[jf(l10)]
+    jmp(l11)       NEXT:[r(12)]                 PREV:[r(11)]
 l10:
-    read (Unit)
+    read (Unit)    NEXT:[r(12)]                 PREV:[jf(l10)]
 l11:
-    r(12)
-    r(a)
-    jf(l12)
-    read (Unit)
-    jmp(l13)
+    r(12)          NEXT:[r(a)]                  PREV:[jmp(l11), read (Unit)]
+    r(a)           NEXT:[jf(l12)]               PREV:[r(12)]
+    jf(l12)        NEXT:[r(13), read (Unit)]    PREV:[r(a)]
+    read (Unit)    NEXT:[jmp(l13)]              PREV:[jf(l12)]
+    jmp(l13)       NEXT:[r(14)]                 PREV:[read (Unit)]
 l12:
-    r(13)
+    r(13)          NEXT:[r(14)]                 PREV:[jf(l12)]
 l13:
-    r(14)
+    r(14)          NEXT:[<END>]                 PREV:[jmp(l13), r(13)]
 l1:
-    <END>
+    <END>          NEXT:[]                      PREV:[r(14)]
 error:
-    <ERROR>
+    <ERROR>        NEXT:[]                      PREV:[]
 =====================

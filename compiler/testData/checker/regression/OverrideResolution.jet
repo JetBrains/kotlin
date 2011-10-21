@@ -1,16 +1,16 @@
 fun box() {
-    val a : C
+    val a : C = C()
     a.foo()
 }
 
-open class A {
+open class A() {
     open fun foo() {}
 }
 
-open class B : A {
+open class B() : A() {
     override fun foo() {}
 }
 
-open class C : B {
+open class C() : B() {
     override fun foo() {}
 }

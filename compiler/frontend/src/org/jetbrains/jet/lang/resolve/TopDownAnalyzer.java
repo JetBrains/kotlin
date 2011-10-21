@@ -1,8 +1,8 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -55,13 +55,17 @@ public class TopDownAnalyzer {
                     public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                         return ClassObjectStatus.NOT_ALLOWED;
                     }
-                }, Collections.<JetDeclaration>singletonList(object));
+                }, Collections.<JetDeclaration>singletonList(object), JetControlFlowDataTraceFactory.EMPTY, true);
     }
 
-    public static void process(
+    private static void process(
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
-            @NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<? extends JetDeclaration> declarations) {
+            @NotNull JetScope outerScope,
+            NamespaceLike owner,
+            @NotNull List<? extends JetDeclaration> declarations,
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
+            boolean declaredLocally) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
         new DeclarationResolver(context).process();
@@ -69,7 +73,17 @@ public class TopDownAnalyzer {
         new OverrideResolver(context).process();
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
         new DeclarationsChecker(context).process();
-        new ControlFlowAnalyzer(context).process();
+        new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
+    }
+    
+    public static void process(
+                @NotNull JetSemanticServices semanticServices,
+                @NotNull BindingTrace trace,
+                @NotNull JetScope outerScope,
+                NamespaceLike owner,
+                @NotNull List<? extends JetDeclaration> declarations,
+                @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        process(semanticServices, trace, outerScope, owner, declarations, flowDataTraceFactory, false);
     }
 
     public static void processStandardLibraryNamespace(

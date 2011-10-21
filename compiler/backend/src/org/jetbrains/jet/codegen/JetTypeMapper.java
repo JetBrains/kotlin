@@ -39,6 +39,7 @@ public class JetTypeMapper {
     public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
+    public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
 
     public static final Type ARRAY_INT_TYPE = Type.getType(int[].class);
     public static final Type ARRAY_LONG_TYPE = Type.getType(long[].class);

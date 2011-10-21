@@ -6,8 +6,8 @@ class B() : A() {
   fun bar() {}
 }
 
-fun f9() {
-  val a : A?
+fun f9(init : A?) {
+  val a : A? = init
   a?.foo()
   a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   if (a is B) {
@@ -30,8 +30,8 @@ fun f9() {
   a.foo()
 }
 
-fun f10() {
-  val a : A?
+fun f10(init : A?) {
+  val a : A? = init
   if (!(a is B)) {
     return;
   }

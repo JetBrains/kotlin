@@ -6,23 +6,23 @@ fun main() {
 }
 ---------------------
 l0:
-    <START>
+    <START>        NEXT:[r(1)]                 PREV:[]
 l2:
 l5:
-    r(1)
-    r(0)
-    r(>)
-    r(1 > 0)
-    jf(l3)
+    r(1)           NEXT:[r(0)]                 PREV:[<START>, jmp(l2)]
+    r(0)           NEXT:[r(>)]                 PREV:[r(1)]
+    r(>)           NEXT:[r(1 > 0)]             PREV:[r(0)]
+    r(1 > 0)       NEXT:[jf(l3)]               PREV:[r(>)]
+    jf(l3)         NEXT:[read (Unit), r(2)]    PREV:[r(1 > 0)]
 l4:
-    r(2)
-    jmp(l2)
+    r(2)           NEXT:[jmp(l2)]              PREV:[jf(l3)]
+    jmp(l2)        NEXT:[r(1)]                 PREV:[r(2)]
 l3:
-    read (Unit)
+    read (Unit)    NEXT:[<END>]                PREV:[jf(l3)]
 l1:
-    <END>
+    <END>          NEXT:[]                     PREV:[read (Unit)]
 error:
-    <ERROR>
+    <ERROR>        NEXT:[]                     PREV:[]
 =====================
 == dowhile ==
 fun dowhile() {
@@ -31,20 +31,20 @@ fun dowhile() {
 }
 ---------------------
 l0:
-    <START>
+    <START>        NEXT:[ret l1]                 PREV:[]
 l2:
 l4:
-    ret l1
+    ret l1         NEXT:[<END>]                  PREV:[<START>, jt(l2)]
 l5:
-    r(1)
-    r(0)
-    r(>)
-    r(1 > 0)
-    jt(l2)
+    r(1)           NEXT:[r(0)]                   PREV:[]
+    r(0)           NEXT:[r(>)]                   PREV:[r(1)]
+    r(>)           NEXT:[r(1 > 0)]               PREV:[r(0)]
+    r(1 > 0)       NEXT:[jt(l2)]                 PREV:[r(>)]
+    jt(l2)         NEXT:[read (Unit), ret l1]    PREV:[r(1 > 0)]
 l3:
-    read (Unit)
+    read (Unit)    NEXT:[<END>]                  PREV:[jt(l2)]
 l1:
-    <END>
+    <END>          NEXT:[]                       PREV:[ret l1, read (Unit)]
 error:
-    <ERROR>
+    <ERROR>        NEXT:[]                       PREV:[]
 =====================

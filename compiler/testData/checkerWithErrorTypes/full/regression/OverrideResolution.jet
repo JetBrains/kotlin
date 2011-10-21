@@ -1,5 +1,5 @@
-fun box() {
-    val a : C
+fun box(c : C) {
+    val a : C = c
     a.foo()
 }
 

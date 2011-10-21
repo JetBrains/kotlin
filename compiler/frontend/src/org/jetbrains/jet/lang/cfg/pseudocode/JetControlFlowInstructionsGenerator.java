@@ -2,10 +2,7 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.*;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
-import org.jetbrains.jet.lang.psi.JetThrowExpression;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.*;
 
@@ -25,7 +22,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private final JetPseudocodeTrace trace;
 
     public JetControlFlowInstructionsGenerator(JetPseudocodeTrace trace) {
-        super(null);
         this.trace = trace;
     }
 
@@ -41,28 +37,31 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         if (!builders.isEmpty()) {
             builder = builders.peek();
         }
+        else {
+            builder = null;
+        }
         return worker;
     }
 
     @Override
-    public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
-        if (isFunctionLiteral) {
+    public void enterSubroutine(@NotNull JetDeclaration subroutine) {
+        if (builder != null) {
             pushBuilder(subroutine, builder.getCurrentSubroutine());
         }
         else {
             pushBuilder(subroutine, subroutine);
         }
-        builder.enterSubroutine(subroutine, false);
+        assert builder != null;
+        builder.enterSubroutine(subroutine);
     }
 
     @Override
-    public void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral) {
-        super.exitSubroutine(subroutine, functionLiteral);
+    public void exitSubroutine(@NotNull JetDeclaration subroutine) {
+        super.exitSubroutine(subroutine);
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
-        if (functionLiteral) {
+        if (!builders.empty()) {
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
-            FunctionLiteralValueInstruction instruction = new FunctionLiteralValueInstruction((JetFunctionLiteralExpression) subroutine);
-            instruction.setBody(worker.getPseudocode());
+            LocalDeclarationInstruction instruction = new LocalDeclarationInstruction(subroutine, worker.getPseudocode());
             builder.add(instruction);
         }
     }
@@ -128,7 +127,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
+        public void enterSubroutine(@NotNull JetDeclaration subroutine) {
             Label entryPoint = createUnboundLabel();
             BreakableBlockInfo blockInfo = new BreakableBlockInfo(subroutine, entryPoint, createUnboundLabel());
 //            subroutineInfo.push(blockInfo);
@@ -179,7 +178,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral) {
+        public void exitSubroutine(@NotNull JetDeclaration subroutine) {
             bindLabel(getExitPoint(subroutine));
             pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
             bindLabel(error);
@@ -244,6 +243,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         public void nondeterministicJump(Label label) {
             handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(label));
+        }
+
+        @Override
+        public void nondeterministicJump(List<Label> labels) {
+            //todo
+            //handleJumpInsideTryFinally(label);
+            add(new NondeterministicJumpInstruction(labels));
         }
 
         @Override

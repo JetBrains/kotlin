@@ -4,16 +4,16 @@ fun fail() : Nothing {
 }
 ---------------------
 l0:
-    <START>
-    r(java)
-    r(lang)
-    r(java.lang)
-    r(RuntimeException)
-    r(RuntimeException())
-    r(java.lang.RuntimeException())
-    jmp(error)
+    <START>                            NEXT:[r(java)]                            PREV:[]
+    r(java)                            NEXT:[r(lang)]                            PREV:[<START>]
+    r(lang)                            NEXT:[r(java.lang)]                       PREV:[r(java)]
+    r(java.lang)                       NEXT:[r(RuntimeException)]                PREV:[r(lang)]
+    r(RuntimeException)                NEXT:[r(RuntimeException())]              PREV:[r(java.lang)]
+    r(RuntimeException())              NEXT:[r(java.lang.RuntimeException())]    PREV:[r(RuntimeException)]
+    r(java.lang.RuntimeException())    NEXT:[jmp(error)]                         PREV:[r(RuntimeException())]
+    jmp(error)                         NEXT:[<ERROR>]                            PREV:[r(java.lang.RuntimeException())]
 l1:
-    <END>
+    <END>                              NEXT:[]                                   PREV:[]
 error:
-    <ERROR>
+    <ERROR>                            NEXT:[]                                   PREV:[jmp(error)]
 =====================
