@@ -12,7 +12,7 @@ import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -65,6 +65,7 @@ import java.util.Map;
     public final Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists;
     public final LabelResolver labelResolver;
 
+    // true for positions on the lhs of a '.', i.e. allows namespace results and 'super'
     public final boolean namespacesAllowed;
 
     private CallResolver callResolver;

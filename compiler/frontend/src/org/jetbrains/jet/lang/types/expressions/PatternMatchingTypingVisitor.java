@@ -2,12 +2,14 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.AutoCastUtils;
-import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -19,8 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.Errors.INCOMPATIBLE_TYPES;
-import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.ensureBooleanResultWithCustomSubject;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
@@ -35,15 +35,16 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetType visitIsExpression(JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
-        JetType knownType = facade.safeGetType(expression.getLeftHandSide(), context.replaceScope(context.scope));
+        JetExpression leftHandSide = expression.getLeftHandSide();
+        JetType knownType = facade.safeGetType(leftHandSide, context.replaceScope(context.scope));
         JetPattern pattern = expression.getPattern();
         if (pattern != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in 'is'");
-            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, scopeToExtend, context, AutoCastUtils.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), expression.getLeftHandSide()));
+            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, scopeToExtend, context, DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext()));
             context.patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
             context.patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
         }
-        return ExpressionTypingUtils.checkType(context.semanticServices.getStandardLibrary().getBooleanType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(context.semanticServices.getStandardLibrary().getBooleanType(), expression, contextWithExpectedType);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         final JetExpression subjectExpression = expression.getSubjectExpression();
 
         final JetType subjectType = subjectExpression != null ? context.getServices().safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE) : ErrorUtils.createErrorType("Unknown type");
-        final VariableDescriptor variableDescriptor = subjectExpression != null ? AutoCastUtils.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), subjectExpression) : null;
+        final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : null;
 
         // TODO : exhaustive patterns
 
@@ -108,7 +109,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final VariableDescriptor... subjectVariables) {
+    private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
         final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{context.dataFlowInfo};
         condition.accept(new JetVisitorVoid() {
 
@@ -151,8 +152,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         return newDataFlowInfo[0];
     }
 
-    private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, @NotNull final WritableScope scopeToExtend, final ExpressionTypingContext context, @NotNull final VariableDescriptor... subjectVariables) {
-        final DataFlowInfo[] result = new DataFlowInfo[] {context.dataFlowInfo};
+    private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, @NotNull final WritableScope scopeToExtend, final ExpressionTypingContext context, @NotNull final DataFlowValue... subjectVariables) {
+        final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(context.dataFlowInfo);
         pattern.accept(new JetVisitorVoid() {
             @Override
             public void visitTypePattern(JetTypePattern typePattern) {
@@ -160,7 +161,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (typeReference != null) {
                     JetType type = context.getTypeResolver().resolveType(context.scope, typeReference);
                     checkTypeCompatibility(type, subjectType, typePattern);
-                    result[0] = context.dataFlowInfo.isInstanceOf(subjectVariables, type);
+                    result.set(context.dataFlowInfo.establishSubtyping(subjectVariables, type));
                 }
             }
 
@@ -187,7 +188,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
                         JetPattern entryPattern = entry.getPattern();
                         if (entryPattern != null) {
-                            result[0] = result[0].and(checkPatternType(entryPattern, type, scopeToExtend, context));
+                            result.set(result.get().and(checkPatternType(entryPattern, type, scopeToExtend, context)));
                         }
                     }
                 }
@@ -200,7 +201,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     ReceiverDescriptor receiver = new TransientReceiver(subjectType);
                     JetType selectorReturnType = facade.getSelectorReturnType(receiver, null, decomposerExpression, context);
 
-                    result[0] = checkPatternType(pattern.getArgumentList(), selectorReturnType == null ? ErrorUtils.createErrorType("No type") : selectorReturnType, scopeToExtend, context);
+                    result.set(checkPatternType(pattern.getArgumentList(), selectorReturnType == null
+                                                                           ? ErrorUtils.createErrorType("No type")
+                                                                           : selectorReturnType, scopeToExtend, context));
                 }
             }
 
@@ -235,10 +238,10 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetWhenCondition condition = pattern.getCondition();
                 if (condition != null) {
                     int oldLength = subjectVariables.length;
-                    VariableDescriptor[] newSubjectVariables = new VariableDescriptor[oldLength + 1];
+                    DataFlowValue[] newSubjectVariables = new DataFlowValue[oldLength + 1];
                     System.arraycopy(subjectVariables, 0, newSubjectVariables, 0, oldLength);
-                    newSubjectVariables[oldLength] = variableDescriptor;
-                    result[0] = checkWhenCondition(null, subjectType, condition, scopeToExtend, context, newSubjectVariables);
+                    newSubjectVariables[oldLength] = DataFlowValueFactory.INSTANCE.createDataFlowValue(variableDescriptor);
+                    result.set(checkWhenCondition(null, subjectType, condition, scopeToExtend, context, newSubjectVariables));
                 }
             }
 
@@ -259,7 +262,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             }
         });
-        return result[0];
+        return result.get();
     }
 
 }

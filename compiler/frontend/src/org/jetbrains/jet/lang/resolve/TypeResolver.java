@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
 import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
  * @author abreslav
@@ -239,6 +240,9 @@ public class TypeResolver {
 
         if (classifierDescriptor == null) {
             trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
+        }
+        else {
+            trace.record(REFERENCE_TARGET, userType.getReferenceExpression(), classifierDescriptor);
         }
 
         return classifierDescriptor;

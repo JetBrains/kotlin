@@ -278,6 +278,10 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitLabelQualifiedExpression(expression);
     }
 
+    public void visitSuperExpression(JetSuperExpression expression) {
+        visitLabelQualifiedExpression(expression);
+    }
+
     public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
         visitExpression(expression);
     }

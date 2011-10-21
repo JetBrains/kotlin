@@ -1,147 +1,39 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-
-import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.UNKNOWN_STATUS;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
  * @author abreslav
  */
-public class ResolvedCall<D extends CallableDescriptor> {
-
-    public static final Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor>() {
-        @Override
-        public CallableDescriptor fun(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
-            return resolvedCall.getCandidateDescriptor();
-        }
-    };
-
-    public static final Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCall<? extends CallableDescriptor>, CallableDescriptor>() {
-        @Override
-        public CallableDescriptor fun(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
-            return resolvedCall.getResultingDescriptor();
-        }
-    };
-
+public interface ResolvedCall<D extends CallableDescriptor> {
+    /** A target callable descriptor as it was accessible in the corresponding scope, i.e. with type parameters not substituted */
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCall<D> create(@NotNull D descriptor) {
-        return new ResolvedCall<D>(descriptor);
-    }
+    D getCandidateDescriptor();
 
+    /** Type parameters are substituted */
     @NotNull
-    public static <D extends CallableDescriptor> List<ResolvedCall<D>> convertCollection(@NotNull Collection<D> descriptors) {
-        List<ResolvedCall<D>> result = Lists.newArrayList();
-        for (D descriptor : descriptors) {
-            result.add(create(descriptor));
-        }
-        return result;
-    }
+    D getResultingDescriptor();
 
-    private final D candidateDescriptor;
-    private D resultingDescriptor; // Probably substituted
-    private ReceiverDescriptor thisObject = NO_RECEIVER; // receiver object of a method
-    private ReceiverDescriptor receiverArgument = NO_RECEIVER; // receiver of an extension function
-    private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
-    private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
-    private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newHashMap();
-    private boolean someArgumentHasNoType = false;
-    private TemporaryBindingTrace trace;
-    private ResolutionStatus status = UNKNOWN_STATUS;
-
-    private ResolvedCall(@NotNull D candidateDescriptor) {
-        this.candidateDescriptor = candidateDescriptor;
-    }
-
+    /** If the target was an extension function or property, this is the value for its receiver parameter */
     @NotNull
-    public ResolutionStatus getStatus() {
-        return status;
-    }
+    ReceiverDescriptor getReceiverArgument();
 
-    public void setStatus(@NotNull ResolutionStatus status) {
-        this.status = status;
-    }
-
+    /** If the target was a member of a class, this is the object of that class to call it on */
     @NotNull
-    public TemporaryBindingTrace getTrace() {
-        return trace;
-    }
+    ReceiverDescriptor getThisObject();
 
-    public void setTrace(@NotNull TemporaryBindingTrace trace) {
-        this.trace = trace;
-    }
-
+    /** Values (arguments) for value parameters */
     @NotNull
-    public D getCandidateDescriptor() {
-        return candidateDescriptor;
-    }
+    Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments();
 
+    /** What's substituted for type parameters */
     @NotNull
-    public D getResultingDescriptor() {
-        return resultingDescriptor == null ? candidateDescriptor : resultingDescriptor;
-    }
-
-    public ResolvedCall<D> setResultingDescriptor(@NotNull D resultingDescriptor) {
-        this.resultingDescriptor = resultingDescriptor;
-        return this;
-    }
-
-    public void recordTypeArgument(@NotNull TypeParameterDescriptor typeParameter, @NotNull JetType typeArgument) {
-        assert !typeArguments.containsKey(typeParameter);
-        typeArguments.put(typeParameter, typeArgument);
-    }
-
-    public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
-        assert !valueArguments.containsKey(valueParameter);
-        valueArguments.put(valueParameter, valueArgument);
-    }
-
-    public void autoCastValueArgument(@NotNull ValueParameterDescriptor parameter, @NotNull JetType target) {
-        assert !autoCasts.containsKey(parameter);
-        autoCasts.put(parameter, target);
-    }
-
-    @NotNull
-    public ReceiverDescriptor getReceiverArgument() {
-        return receiverArgument;
-    }
-
-    public void setReceiverArgument(@NotNull ReceiverDescriptor receiverParameter) {
-        this.receiverArgument = receiverParameter;
-    }
-
-    @NotNull
-    public ReceiverDescriptor getThisObject() {
-        return thisObject;
-    }
-
-    public void setThisObject(@NotNull ReceiverDescriptor thisObject) {
-        this.thisObject = thisObject;
-    }
-
-    @NotNull
-    public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
-        return valueArguments;
-    }
-
-    public void argumentHasNoType() {
-        this.someArgumentHasNoType = true;
-    }
-
-    public boolean isDirty() {
-        return someArgumentHasNoType;
-    }
+    Map<TypeParameterDescriptor, JetType> getTypeArguments();
 }

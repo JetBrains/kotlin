@@ -1,0 +1,36 @@
+~T~trait T {
+    fun foo() {}
+}
+~C~open class C() {
+    fun bar() {}
+}
+
+~A~class A<E>() : C(), T {
+
+    fun test() {
+        `T`super<T>.foo()
+        `C`super<C>.bar()
+        `T`super<T>@A.foo()
+        `C`super<C>@A.bar()
+    }
+
+    class B : T {
+        fun test() {
+            `T`super<T>.foo();
+            `C`super<C>@A.bar()
+            `T`super<T>@A.foo()
+            `T`super<T>@B.foo()
+            `T`super.foo()
+        }
+    }
+}
+
+~G~trait G<T> {
+    fun foo() {}
+}
+
+class CG : G<Int> {
+    fun test() {
+        `G`super<`G`G>.foo() // OK
+    }
+}

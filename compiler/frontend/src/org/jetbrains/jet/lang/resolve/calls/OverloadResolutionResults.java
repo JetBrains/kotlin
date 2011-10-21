@@ -29,40 +29,40 @@ public class OverloadResolutionResults<D extends CallableDescriptor> {
 
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> success(@NotNull ResolvedCall<D> descriptor) {
+    public static <D extends CallableDescriptor> OverloadResolutionResults<D> success(@NotNull ResolvedCallImpl<D> descriptor) {
         return new OverloadResolutionResults<D>(Code.SUCCESS, Collections.singleton(descriptor));
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResults<D> nameNotFound() {
-        return new OverloadResolutionResults<D>(Code.NAME_NOT_FOUND, Collections.<ResolvedCall<D>>emptyList());
+        return new OverloadResolutionResults<D>(Code.NAME_NOT_FOUND, Collections.<ResolvedCallImpl<D>>emptyList());
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> singleFailedCandidate(ResolvedCall<D> candidate) {
+    public static <D extends CallableDescriptor> OverloadResolutionResults<D> singleFailedCandidate(ResolvedCallImpl<D> candidate) {
         return new OverloadResolutionResults<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
     }
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> manyFailedCandidates(Collection<ResolvedCall<D>> failedCandidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResults<D> manyFailedCandidates(Collection<ResolvedCallImpl<D>> failedCandidates) {
         return new OverloadResolutionResults<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(Collection<ResolvedCall<D>> descriptors) {
+    public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(Collection<ResolvedCallImpl<D>> descriptors) {
         return new OverloadResolutionResults<D>(Code.AMBIGUITY, descriptors);
     }
 
-    private final Collection<ResolvedCall<D>> results;
+    private final Collection<ResolvedCallImpl<D>> results;
     private final Code resultCode;
 
-    private OverloadResolutionResults(@NotNull Code resultCode, @NotNull Collection<ResolvedCall<D>> results) {
+    private OverloadResolutionResults(@NotNull Code resultCode, @NotNull Collection<ResolvedCallImpl<D>> results) {
         this.results = results;
         this.resultCode = resultCode;
     }
 
     @NotNull
-    public Collection<ResolvedCall<D>> getResults() {
+    public Collection<ResolvedCallImpl<D>> getResults() {
         return results;
     }
 
     @NotNull
-    public ResolvedCall<D> getResult() {
+    public ResolvedCallImpl<D> getResult() {
         assert singleDescriptor();
         return results.iterator().next();
     }

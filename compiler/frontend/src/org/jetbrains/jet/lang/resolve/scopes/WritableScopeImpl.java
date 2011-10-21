@@ -1,10 +1,12 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -49,14 +51,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return ownerDeclarationDescriptor;
-    }
-
-    @Override
-    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
-        if (DescriptorUtils.definesItsOwnThis(ownerDeclarationDescriptor)) {
-            return ownerDeclarationDescriptor;
-        }
-        return super.getDeclarationDescriptorForUnqualifiedThis();
     }
 
     @Override

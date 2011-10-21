@@ -2,6 +2,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
@@ -17,9 +19,9 @@ public class CallableMethod implements Callable {
     private final int invokeOpcode;
     private final List<Type> valueParameterTypes;
     private boolean acceptsTypeArguments = false;
-    private boolean needsReceiverOnStack = false;
     private boolean ownerFromCall = false;
-    private ClassDescriptor receiverClass = null;
+    private DeclarationDescriptor thisClass = null;
+    private DeclarationDescriptor receiverClass = null;
     private Type generateCalleeType = null;
 
     public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
@@ -57,13 +59,12 @@ public class CallableMethod implements Callable {
         this.acceptsTypeArguments = acceptsTypeArguments;
     }
 
-    public void setNeedsReceiver(@Nullable ClassDescriptor receiverClass) {
-        needsReceiverOnStack = true;
+    public void setNeedsReceiver(@Nullable DeclarationDescriptor receiverClass) {
         this.receiverClass = receiverClass;
     }
 
-    public boolean needsReceiverOnStack() {
-        return needsReceiverOnStack;
+    public void setNeedsThis(@Nullable DeclarationDescriptor receiverClass) {
+        this.thisClass = receiverClass;
     }
 
     public boolean isOwnerFromCall() {
@@ -72,10 +73,6 @@ public class CallableMethod implements Callable {
 
     public void setOwnerFromCall(boolean ownerFromCall) {
         this.ownerFromCall = ownerFromCall;
-    }
-
-    public ClassDescriptor getReceiverClass() {
-        return receiverClass;
     }
 
     void invoke(InstructionAdapter v) {
@@ -89,4 +86,25 @@ public class CallableMethod implements Callable {
     public Type getGenerateCalleeType() {
         return generateCalleeType;
     }
+
+    public void invokeWithDefault(InstructionAdapter v, int mask) {
+        v.iconst(mask);
+        String desc = getSignature().getDescriptor().replace(")", "I)");
+        if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
+            desc = desc.replace("(", "(L" + getOwner() + ";");
+        v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + "$$TImpl" : getOwner(), getSignature().getName() + "$default", desc);
+    }
+
+    public boolean isNeedsThis() {
+        return thisClass != null;
+    }
+
+    public boolean isNeedsReceiver() {
+        return receiverClass != null;
+    }
+
+    public DeclarationDescriptor getThisClass() {
+        return thisClass;
+    }
+
 }

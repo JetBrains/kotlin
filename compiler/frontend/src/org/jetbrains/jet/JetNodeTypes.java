@@ -109,6 +109,7 @@ public interface JetNodeTypes {
     JetNodeType LABEL_QUALIFIER           = new JetNodeType("LABEL_QUALIFIER", JetContainerNode.class);
 
     JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
+    JetNodeType SUPER_EXPRESSION          = new JetNodeType("SUPER_EXPRESSION", JetSuperExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);
     JetNodeType BINARY_WITH_PATTERN       = new JetNodeType("BINARY_WITH_PATTERN", JetIsExpression.class); // TODO:

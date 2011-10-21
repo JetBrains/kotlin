@@ -16,7 +16,7 @@ h3. Precedence
 | |Elvis|{{?:}} |
 | |Named checks|{{in}}, {{\!in}}, {{is}}, {{\!is}} |
 | |Comparison|{{<}}, {{>}}, {{<=}}, {{>=}} |
-| |Equality|{{==}}, {{\!==}}, {{===}}, {{\!===}} |
+| |Equality|{{==}}, {{\!==}}|
 | |Conjunction|{{&&}}|
 | |Disjunction|{{\|\|}}|
 | |Arrow|{{\->}}|
@@ -113,7 +113,8 @@ atomicExpression
   : literalConstant
   : functionLiteral
   : tupleLiteral
-  : "this" label? ("<" type ">")?
+  : "this" label?
+  : "super" ("<" type ">")? label?
   : if
   : when
   : try
@@ -184,7 +185,7 @@ comparisonOperation
   ;
 
 equalityOperation
-  : "!=" : "==" : "===" : "!=="
+  : "!=" : "=="
   ;
 
 assignmentOperator

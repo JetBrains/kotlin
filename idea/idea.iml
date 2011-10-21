@@ -20,6 +20,8 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="stdlib" />
+    <orderEntry type="module" module-name="cli" />
+    <orderEntry type="module" module-name="compiler-tests" />
   </component>
 </module>
 

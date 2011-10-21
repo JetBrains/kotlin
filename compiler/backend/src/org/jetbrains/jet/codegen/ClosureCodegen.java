@@ -4,19 +4,13 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
@@ -25,6 +19,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.objectweb.asm.Opcodes.*;
 
 public class ClosureCodegen extends FunctionOrClosureCodegen {
 
@@ -68,8 +64,8 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         appendType(signatureWriter, funDescriptor.getReturnType(), '=');
         signatureWriter.visitEnd();
 
-        cv.visit(Opcodes.V1_6,
-                Opcodes.ACC_PUBLIC,
+        cv.visit(V1_6,
+                ACC_PUBLIC,
                 name,
                 null,
                 funClass,
@@ -79,7 +75,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
 
 
         generateBridge(name, funDescriptor, cv);
-        boolean captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
+        captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
         final Type enclosingType = context.enclosingClassType(state.getTypeMapper());
         if (enclosingType == null) captureThis = false;
 
@@ -87,6 +83,10 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
 
         if (captureThis) {
             cv.visitField(0, "this$0", enclosingType.getDescriptor(), null, null);
+        }
+
+        if(isConst()) {
+            generateConstInstance();
         }
 
         cv.visitEnd();
@@ -97,6 +97,48 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
             answer.addArg(valueDescriptor.getOuterValue());
         }
         return answer;
+    }
+
+    private void generateConstInstance() {
+        cv.visitField(ACC_PRIVATE| ACC_STATIC, "$instance", "Ljava/lang/ref/SoftReference;", null, null);
+
+        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC | ACC_STATIC, "$getInstance", "()L" + name + ";", null, new String[0]);
+        mv.visitCode();
+        mv.visitFieldInsn(GETSTATIC, name, "$instance", "Ljava/lang/ref/SoftReference;");
+        mv.visitInsn(DUP);
+        Label makeNew = new Label();
+        mv.visitJumpInsn(IFNULL, makeNew);
+
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/ref/SoftReference", "get", "()Ljava/lang/Object;");
+        mv.visitInsn(DUP);
+
+        Label ret = new Label();
+        mv.visitJumpInsn(IFNULL, makeNew);
+        mv.visitTypeInsn(CHECKCAST, name);
+        mv.visitJumpInsn(GOTO, ret);
+
+        mv.visitLabel(makeNew);
+        mv.visitInsn(POP);
+
+        mv.visitTypeInsn(NEW, "java/lang/ref/SoftReference");
+        mv.visitInsn(DUP);
+
+        mv.visitTypeInsn(NEW, name);
+        mv.visitInsn(DUP);
+        mv.visitVarInsn(ASTORE, 0);
+
+        mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESPECIAL, name, "<init>", "()V");
+
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/ref/SoftReference", "<init>", "(Ljava/lang/Object;)V");
+        mv.visitFieldInsn(PUTSTATIC, name, "$instance", "Ljava/lang/ref/SoftReference;");
+
+        mv.visitVarInsn(ALOAD, 0);
+
+        mv.visitLabel(ret);
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(0,0);
+        mv.visitEnd();
     }
 
     private boolean generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
@@ -110,7 +152,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         final Method bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = invokeSignature(funDescriptor);
 
-        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
+        final MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
         mv.visitCode();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
@@ -164,7 +206,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         }
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
+        final MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
@@ -190,7 +232,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
             StackValue.field(type, name, fieldName, false).store(iv);
         }
 
-        iv.visitInsn(Opcodes.RETURN);
+        iv.visitInsn(RETURN);
 
         mv.visitMaxs(0, 0);
         mv.visitEnd();
@@ -214,16 +256,5 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         final Type rawRetType = typeMapper.boxType(typeMapper.mapType(type));
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();
-    }
-
-    public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
-        Method descriptor = erasedInvokeSignature(fd);
-        String owner = getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
-        if (fd.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(null);
-        }
-        result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));
-        return result;
     }
 }

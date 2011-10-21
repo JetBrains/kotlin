@@ -109,12 +109,6 @@ public class SubstitutingScope implements JetScope {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    @Override
-    @Nullable
-    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
-        return workerScope.getDeclarationDescriptorForUnqualifiedThis();
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

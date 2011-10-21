@@ -13,6 +13,8 @@ import java.util.Map;
  * @author alex.tkachman
  */
 public class FunctionOrClosureCodegen {
+    protected boolean captureThis;
+
     public final GenerationState state;
     protected final ExpressionCodegen exprContext;
     protected final ClassContext context;
@@ -53,5 +55,13 @@ public class FunctionOrClosureCodegen {
         }
 
         return null;
+    }
+
+    public boolean isCaptureThis() {
+        return captureThis;
+    }
+
+    public boolean isConst () {
+        return !captureThis && closure.isEmpty();
     }
 }

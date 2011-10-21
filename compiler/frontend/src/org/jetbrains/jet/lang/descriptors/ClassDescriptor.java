@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public interface ClassDescriptor extends ClassifierDescriptor {
+public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor {
 
     @NotNull
     JetScope getMemberScope(List<TypeProjection> typeArguments);
@@ -53,9 +53,11 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     @NotNull
     ClassKind getKind();
 
+    @Override
     @NotNull
     Modality getModality();
-    
+
+    @Override
     @NotNull
     Visibility getVisibility();
 

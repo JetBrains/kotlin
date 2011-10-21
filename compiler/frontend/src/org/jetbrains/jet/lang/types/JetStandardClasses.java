@@ -39,12 +39,12 @@ public class JetStandardClasses {
 
                 @Override
                 public Iterator<JetType> iterator() {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException("Don't enumerate supertypes of Nothing");
                 }
 
                 @Override
                 public int size() {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException("Supertypes of Nothing do not constitute a valid collection");
                 }
             },
             JetScope.EMPTY,
@@ -278,8 +278,13 @@ public class JetStandardClasses {
     }
 
     public static boolean isNothing(@NotNull JetType type) {
-        return !(type instanceof NamespaceType) &&
-               type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
+        return isNothingOrNullableNothing(type)
+               && !type.isNullable();
+    }
+
+    public static boolean isNothingOrNullableNothing(@NotNull JetType type) {
+        return !(type instanceof NamespaceType)
+               && type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
     }
 
     public static boolean isUnit(@NotNull JetType type) {

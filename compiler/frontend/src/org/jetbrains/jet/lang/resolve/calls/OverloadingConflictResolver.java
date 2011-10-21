@@ -28,23 +28,23 @@ public class OverloadingConflictResolver {
     }
 
     @Nullable
-    public <D extends CallableDescriptor> ResolvedCall<D> findMaximallySpecific(Set<ResolvedCall<D>> candidates, boolean discriminateGenericDescriptors) {
-        // Different autocasts may lead to the same candidate descriptor wrapped into different ResolvedCall objects
-        Set<ResolvedCall<D>> maximallySpecific = new THashSet<ResolvedCall<D>>(new TObjectHashingStrategy<ResolvedCall<D>>() {
+    public <D extends CallableDescriptor> ResolvedCallImpl<D> findMaximallySpecific(Set<ResolvedCallImpl<D>> candidates, boolean discriminateGenericDescriptors) {
+        // Different autocasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
+        Set<ResolvedCallImpl<D>> maximallySpecific = new THashSet<ResolvedCallImpl<D>>(new TObjectHashingStrategy<ResolvedCallImpl<D>>() {
                     @Override
-                    public boolean equals(ResolvedCall<D> o1, ResolvedCall<D> o2) {
+                    public boolean equals(ResolvedCallImpl<D> o1, ResolvedCallImpl<D> o2) {
                         return o1 == null ? o2 == null : o1.getResultingDescriptor().equals(o2.getResultingDescriptor());
                     }
 
                     @Override
-                    public int computeHashCode(ResolvedCall<D> object) {
+                    public int computeHashCode(ResolvedCallImpl<D> object) {
                         return object == null ? 0 : object.getResultingDescriptor().hashCode();
                     }
                 });
         meLoop:
-        for (ResolvedCall<D> candidateCall : candidates) {
+        for (ResolvedCallImpl<D> candidateCall : candidates) {
             D me = candidateCall.getResultingDescriptor();
-            for (ResolvedCall<D> otherCall : candidates) {
+            for (ResolvedCallImpl<D> otherCall : candidates) {
                 D other = otherCall.getResultingDescriptor();
                 if (other == me) continue;
                 if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
@@ -54,7 +54,7 @@ public class OverloadingConflictResolver {
             maximallySpecific.add(candidateCall);
         }
         if (maximallySpecific.size() == 1) {
-            ResolvedCall<D> result = maximallySpecific.iterator().next();
+            ResolvedCallImpl<D> result = maximallySpecific.iterator().next();
             result.getTrace().commit();
             return result;
         }

@@ -19,6 +19,6 @@ public class AddPrimaryConstructorFixTest extends LightQuickFixTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return PluginTestCaseBase.getTestDataPathBase();
     }
 }

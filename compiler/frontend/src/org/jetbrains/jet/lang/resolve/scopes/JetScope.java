@@ -17,7 +17,7 @@ public interface JetScope {
         @NotNull
         @Override
         public DeclarationDescriptor getContainingDeclaration() {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Don't take containing declaration of the EMPTY scope");
         }
 
         @Override
@@ -50,9 +50,6 @@ public interface JetScope {
      */
     @Nullable
     PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName);
-
-    @Nullable
-    DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis();
 
     @NotNull
     Collection<DeclarationDescriptor> getAllDescriptors();

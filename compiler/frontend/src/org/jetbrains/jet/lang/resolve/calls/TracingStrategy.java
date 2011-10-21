@@ -16,13 +16,13 @@ import java.util.Set;
 /*package*/ interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
         @Override
-        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {}
+        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall) {}
 
         @Override
         public void unresolvedReference(@NotNull BindingTrace trace) {}
 
         @Override
-        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCall<D>> candidates) {}
+        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallImpl<D>> candidates) {}
 
         @Override
         public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver) {}
@@ -40,10 +40,10 @@ import java.util.Set;
         public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {}
 
         @Override
-        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {}
+        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCallImpl<D>> descriptors) {}
 
         @Override
-        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors) {}
+        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCallImpl<D>> descriptors) {}
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
@@ -58,11 +58,11 @@ import java.util.Set;
         public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
     };
 
-    <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall);
+    <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall);
 
     void unresolvedReference(@NotNull BindingTrace trace);
 
-    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCall<D>> candidates);
+    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallImpl<D>> candidates);
 
     void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver);
 
@@ -74,9 +74,9 @@ import java.util.Set;
 
     void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount);
 
-    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors);
+    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCallImpl<D>> descriptors);
 
-    <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCall<D>> descriptors);
+    <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCallImpl<D>> descriptors);
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 

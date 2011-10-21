@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -176,7 +176,7 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = new CallResolver(context.getSemanticServices(), DataFlowInfo.getEmpty()).resolveCall(
+                        JetType supertype = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY).resolveCall(
                                 context.getTrace(), scopeForConstructor,
                                 CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                         if (supertype != null) {
@@ -322,7 +322,7 @@ public class BodyResolver {
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
         final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 
-        final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.getEmpty()); // TODO: dataFlowInfo
+        final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
 
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";

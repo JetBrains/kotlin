@@ -280,6 +280,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitLabelQualifiedExpression(expression, data);
     }
 
+    public R visitSuperExpression(JetSuperExpression expression, D data) {
+        return visitLabelQualifiedExpression(expression, data);
+    }
+
     public R visitParenthesizedExpression(JetParenthesizedExpression expression, D data) {
         return visitExpression(expression, data);
     }
@@ -419,4 +423,5 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry, D data) {
         return visitStringTemplateEntry(entry, data);
     }
+
 }

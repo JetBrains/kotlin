@@ -21,8 +21,8 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.util.*;
 

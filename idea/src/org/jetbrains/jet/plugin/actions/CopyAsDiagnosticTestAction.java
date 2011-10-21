@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.checkers.CheckerTestUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;

@@ -106,10 +106,9 @@ public class LabelResolver {
         return result;
     }
 
-    public ReceiverDescriptor resolveThisLabel(JetThisExpression expression, ExpressionTypingContext context, ReceiverDescriptor thisReceiver, String labelName) {
+    public ReceiverDescriptor resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel, ExpressionTypingContext context, ReceiverDescriptor thisReceiver, String labelName) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
-        final JetSimpleNameExpression targetLabel = expression.getTargetLabel();
         assert targetLabel != null;
         if (size == 1) {
             DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
@@ -127,7 +126,7 @@ public class LabelResolver {
             PsiElement element = context.trace.get(DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
             assert element != null;
             context.trace.record(LABEL_TARGET, targetLabel, element);
-            context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);
+            context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
         }
         else if (size == 0) {
             JetElement element = resolveNamedLabel(labelName, targetLabel, false, context);
@@ -137,7 +136,7 @@ public class LabelResolver {
                     thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
                     if (thisReceiver.exists()) {
                         context.trace.record(LABEL_TARGET, targetLabel, element);
-                        context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);
+                        context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
                     }
                 }
                 else {

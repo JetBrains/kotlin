@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,13 +11,15 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -49,7 +52,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             else {
                 context.trace.record(REFERENCE_TARGET, expression, property);
-                return checkType(property.getOutType(), expression, context);
+                return DataFlowUtils.checkType(property.getOutType(), expression, context);
             }
         }
         else {
@@ -74,14 +77,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (result == null) {
                     return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
                 }
-                return checkType(result, expression, context);
+                return DataFlowUtils.checkType(result, expression, context);
             }
         }
         JetType[] result = new JetType[1];
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
         if (furtherNameLookup(expression, referencedName, result, context.replaceBindingTrace(temporaryTrace))) {
             temporaryTrace.commit();
-            return checkType(result[0], expression, context);
+            return DataFlowUtils.checkType(result[0], expression, context);
         }
         // To report NO_CLASS_OBJECT when no namespace found
         if (classifier != null) {
@@ -122,7 +125,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (innerExpression == null) {
             return null;
         }
-        return checkType(facade.getType(innerExpression, context.replaceScope(context.scope)), expression, context);
+        return DataFlowUtils.checkType(facade.getType(innerExpression, context.replaceScope(context.scope)), expression, context);
     }
 
     @Override
@@ -162,7 +165,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
-            return checkType(value.getType(standardLibrary), expression, context);
+            return DataFlowUtils.checkType(value.getType(standardLibrary), expression, context);
         }
     }
 
@@ -197,7 +200,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             facade.getType(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE));
         }
-        return checkType(result, expression, context);
+        return DataFlowUtils.checkType(result, expression, context);
     }
 
     private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType, @NotNull JetType expectedType, TemporaryBindingTrace temporaryTrace) {
@@ -259,7 +262,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         // TODO : labels
-        return checkType(JetStandardClasses.getTupleType(types), expression, context);
+        return DataFlowUtils.checkType(JetStandardClasses.getTupleType(types), expression, context);
     }
 
     @NotNull
@@ -269,7 +272,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         List<JetType> result = Lists.newArrayListWithCapacity(arguments.size());
         for (int i = 0, argumentTypesSize = argumentTypes.size(); i < argumentTypesSize; i++) {
-            result.add(checkType(argumentTypes.get(i), arguments.get(i), context.replaceExpectedType(expectedArgumentTypes.get(i).getType())));
+            result.add(DataFlowUtils.checkType(argumentTypes.get(i), arguments.get(i), context.replaceExpectedType(expectedArgumentTypes.get(i).getType())));
         }
         return result;
     }
@@ -277,60 +280,130 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetType visitThisExpression(JetThisExpression expression, ExpressionTypingContext context) {
         JetType result = null;
-        ReceiverDescriptor thisReceiver = null;
-        String labelName = expression.getLabelName();
-        if (labelName != null) {
-            thisReceiver = context.labelResolver.resolveThisLabel(expression, context, thisReceiver, labelName);
-        }
-        else {
-            thisReceiver = context.scope.getImplicitReceiver();
-
-            DeclarationDescriptor declarationDescriptorForUnqualifiedThis = context.scope.getDeclarationDescriptorForUnqualifiedThis();
-            if (declarationDescriptorForUnqualifiedThis != null) {
-                context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptorForUnqualifiedThis);
-            }
-        }
+        ReceiverDescriptor thisReceiver = resolveToReceiver(expression, context, false);
 
         if (thisReceiver != null) {
             if (!thisReceiver.exists()) {
                 context.trace.report(NO_THIS.on(expression));
             }
             else {
-                JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
-                if (superTypeQualifier != null) {
-                    JetTypeElement superTypeElement = superTypeQualifier.getTypeElement();
-                    // Errors are reported by the parser
-                    if (superTypeElement instanceof JetUserType) {
-                        JetUserType typeElement = (JetUserType) superTypeElement;
+                result = thisReceiver.getType();
+                context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
+            }
+        }
+        return DataFlowUtils.checkType(result, expression, context);
+    }
 
-                        ClassifierDescriptor classifierCandidate = context.getTypeResolver().resolveClass(context.scope, typeElement);
-                        if (classifierCandidate instanceof ClassDescriptor) {
-                            ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
+    @Override
+    public JetType visitSuperExpression(JetSuperExpression expression, ExpressionTypingContext context) {
+        if (!context.namespacesAllowed) {
+            context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(expression, expression.getText()));
+            return null;
+        }
+        JetType result = null;
 
-                            JetType thisType = thisReceiver.getType();
-                            Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                            TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
-                            for (JetType declaredSupertype : supertypes) {
-                                if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                                    result = substitutor.safeSubstitute(declaredSupertype, Variance.INVARIANT);
-                                    break;
-                                }
-                            }
-                            if (result == null) {
-                                context.trace.report(NOT_A_SUPERTYPE.on(superTypeElement));
-                            }
-                        }
+        ReceiverDescriptor thisReceiver = resolveToReceiver(expression, context, true);
+        if (thisReceiver == null) return null;
+
+        if (!thisReceiver.exists()) {
+            context.trace.report(SUPER_NOT_AVAILABLE.on(expression));
+        }
+        else {
+            JetType thisType = thisReceiver.getType();
+            Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+            TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
+
+            JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
+            if (superTypeQualifier != null) {
+                JetTypeElement typeElement = superTypeQualifier.getTypeElement();
+
+                DeclarationDescriptor classifierCandidate = null;
+                JetType supertype = null;
+                PsiElement redundantTypeArguments = null;
+                if (typeElement instanceof JetUserType) {
+                    JetUserType userType = (JetUserType) typeElement;
+                    // This may be just a superclass name even if the superclass is generic
+                    if (userType.getTypeArguments().isEmpty()) {
+                        classifierCandidate = context.getTypeResolver().resolveClass(context.scope, userType);
+                    }
+                    else {
+                        supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                        redundantTypeArguments = userType.getTypeArgumentList();
                     }
                 }
                 else {
-                    result = thisReceiver.getType();
+                    supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
                 }
-                if (result != null) {
-                    context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getThisReference(), result);
+
+                if (supertype != null) {
+                    if (supertypes.contains(supertype)) {
+                        result = supertype;
+                    }
+                }
+                else if (classifierCandidate instanceof ClassDescriptor) {
+                    ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
+
+                    for (JetType declaredSupertype : supertypes) {
+                        if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
+                            result = substitutor.safeSubstitute(declaredSupertype, Variance.INVARIANT);
+                            break;
+                        }
+                    }
+                }
+
+                boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
+                boolean validType = supertype != null && !ErrorUtils.isErrorType(supertype);
+                if (result == null && (validClassifier || validType)) {
+                    context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
+                }
+                else if (redundantTypeArguments != null) {
+                    context.trace.report(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.on(redundantTypeArguments));
                 }
             }
+            else {
+                if (supertypes.size() > 1) {
+                    context.trace.report(AMBIGUOUS_SUPER.on(expression));
+                }
+                else {
+                    // supertypes may be empty when all the supertypes are error types (are not resolved, for example)
+                    JetType type = supertypes.isEmpty() ? JetStandardClasses.getAnyType() : supertypes.iterator().next();
+                    result = substitutor.substitute(type, Variance.INVARIANT);
+                }
+            }
+            if (result != null) {
+                context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
+                context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
+            }
         }
-        return checkType(result, expression, context);
+        return DataFlowUtils.checkType(result, expression, context);
+    }
+
+    @Nullable // No class receivers
+    private ReceiverDescriptor resolveToReceiver(JetLabelQualifiedInstanceExpression expression, ExpressionTypingContext context, boolean onlyClassReceivers) {
+        ReceiverDescriptor thisReceiver = null;
+        String labelName = expression.getLabelName();
+        if (labelName != null) {
+            thisReceiver = context.labelResolver.resolveThisLabel(expression.getInstanceReference(), expression.getTargetLabel(), context, thisReceiver, labelName);
+        }
+        else {
+            if (onlyClassReceivers) {
+                List<ReceiverDescriptor> receivers = Lists.newArrayList();
+                context.scope.getImplicitReceiversHierarchy(receivers);
+                for (ReceiverDescriptor receiver : receivers) {
+                    if (receiver instanceof ClassReceiver) {
+                        thisReceiver = receiver;
+                        break;
+                    }
+                }
+            }
+            else {
+                thisReceiver = context.scope.getImplicitReceiver();
+            }
+            if (thisReceiver instanceof ThisReceiverDescriptor) {
+                context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), ((ThisReceiverDescriptor) thisReceiver).getDeclarationDescriptor());
+            }
+        }
+        return thisReceiver;
     }
 
     @Override
@@ -386,7 +459,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (result != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, result);
         }
-        return checkType(result, expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
 
     private void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
@@ -432,14 +505,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             VariableDescriptor variableDescriptor = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
             if (variableDescriptor != null) {
                 temporaryTrace.commit();
-                return checkType(variableDescriptor.getOutType(), nameExpression, context);
+                return DataFlowUtils.checkType(variableDescriptor.getOutType(), nameExpression, context);
             }
             ExpressionTypingContext newContext = receiver.exists() ? context.replaceScope(receiver.getType().getMemberScope()) : context;
             JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedName(), newContext);
             if (jetType == null) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(nameExpression));
             }
-            return checkType(jetType, nameExpression, context);
+            return DataFlowUtils.checkType(jetType, nameExpression, context);
         }
         else if (selectorExpression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
@@ -460,7 +533,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetType visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
         JetType expressionType = context.resolveCall(NO_RECEIVER, null, expression);
-        return checkType(expressionType, expression, context);
+        return DataFlowUtils.checkType(expressionType, expression, context);
     }
 
     @Override
@@ -473,7 +546,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             referencedName = referencedName == null ? " <?>" : referencedName;
             context.labelResolver.enterLabeledElement(referencedName.substring(1), baseExpression);
             // TODO : Some processing for the label?
-            JetType type = checkType(facade.getType(baseExpression, context.replaceExpectedReturnType(context.expectedType)), expression, context);
+            JetType type = DataFlowUtils.checkType(facade.getType(baseExpression, context.replaceExpectedReturnType(context.expectedType)), expression, context);
             context.labelResolver.exitLabeledElement(baseExpression);
             return type;
         }
@@ -516,7 +589,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = returnType;
         }
 
-        return checkType(result, expression, context);
+        return DataFlowUtils.checkType(result, expression, context);
     }
 
     @Override
@@ -599,7 +672,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
             JetType leftType = facade.getType(left, context.replaceScope(context.scope));
             WritableScopeImpl leftScope = newWritableScopeImpl(context).setDebugName("Left scope of && or ||");
-            DataFlowInfo flowInfoLeft = extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
+            DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
             WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl(context).setDebugName("Right scope of && or ||");
             JetType rightType = right == null ? null : facade.getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope));
             if (leftType != null && !isBoolean(context.semanticServices, leftType)) {
@@ -618,7 +691,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(USELESS_ELVIS.on(expression, left, leftType));
                 }
                 if (rightType != null) {
-                    checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
+                    DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
                     return TypeUtils.makeNullableAsSpecified(context.semanticServices.getTypeChecker().commonSupertype(leftType, rightType), rightType.isNullable());
                 }
             }
@@ -626,7 +699,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
         }
-        return checkType(result, expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
 
     public void checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @NotNull JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
@@ -685,7 +758,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     "get",
                     receiver);
             if (functionDescriptor != null) {
-                return checkType(functionDescriptor.getReturnType(), expression, contextWithExpectedType);
+                return DataFlowUtils.checkType(functionDescriptor.getReturnType(), expression, contextWithExpectedType);
             }
         }
         return null;
@@ -714,7 +787,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetType visitRootNamespaceExpression(JetRootNamespaceExpression expression, ExpressionTypingContext context) {
         if (context.namespacesAllowed) {
-            return ExpressionTypingUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context);
+            return DataFlowUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context);
         }
         context.trace.report(NAMESPACE_IS_NOT_AN_EXPRESSION.on(expression));
         return null;
@@ -764,7 +837,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (value[0] != CompileTimeConstantResolver.OUT_OF_RANGE) {
             context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new StringValue(builder.toString()));
         }
-        return checkType(context.semanticServices.getStandardLibrary().getStringType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(context.semanticServices.getStandardLibrary().getStringType(), expression, contextWithExpectedType);
     }
 
     @Override

@@ -511,7 +511,15 @@ public class JetTreeVisitor<D> extends JetVisitor<Void, D> {
 
     @Override
     public Void visitThisExpression(JetThisExpression expression, D data) {
-        JetReferenceExpression thisReference = expression.getThisReference();
+        JetReferenceExpression thisReference = expression.getInstanceReference();
+        thisReference.accept(this, data);
+        visitLabelQualifiedExpression(expression, data);
+        return null;
+    }
+
+    @Override
+    public Void visitSuperExpression(JetSuperExpression expression, D data) {
+        JetReferenceExpression thisReference = expression.getInstanceReference();
         thisReference.accept(this, data);
         JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
         if (superTypeQualifier != null) {

@@ -1,0 +1,63 @@
+fun reformat(
+  str : String,
+  normalizeCase : Boolean = true,
+  uppercaseFirstLetter : Boolean = true,
+  divideByCamelHumps : Boolean = true,
+  wordSeparator : String = " "
+) =
+  (normalizeCase, uppercaseFirstLetter, divideByCamelHumps, wordSeparator)
+
+trait A {
+    fun bar2(arg: Int = 239) : Int
+
+    fun bar(arg: Int = 240) : Int = bar2(arg/2)
+}
+
+open abstract class B() : A, java.lang.Object() {
+    fun foo(arg: Int = 239 + 1) : Int = arg
+
+    abstract fun foo2(arg: Int = 239) : Int
+
+    override fun bar2(arg: Int) : Int = arg
+}
+
+class C() : B() {
+    override fun foo2(arg: Int) : Int = arg
+
+    fun Any.toMyPrefixedString(prefix: String = "", suffix: String="") : String = prefix + " " + suffix
+
+    fun testReceiver() : String {
+        val res : String = "mama".toMyPrefixedString("111", "222")
+        System.out?.println(res)
+        return res
+    }
+
+    override fun toString() : String = "CCC"
+}
+
+fun <T> T.toPrefixedString(prefix: String = "", suffix: String="") = prefix + (this as java.lang.Object).toString() + suffix
+
+fun box() : String {
+    val expected = (true, true, true, " ")
+
+    if("mama".toPrefixedString(suffix="321", prefix="papa") != "papamama321") return "fail"
+    if("mama".toPrefixedString(prefix="papa") != "papamama") return "fail"
+    if("mama".toPrefixedString("papa", "239") != "papamama239") return "fail"
+    if("mama".toPrefixedString("papa") != "papamama") return "fail"
+    if("mama".toPrefixedString() != "mama") return "fail"
+    if(C().testReceiver() != "111 222") return "fail"
+    if(C().bar(10) != 5) return "fail"
+    if(C().bar() != 120) return "fail"
+    if(C().foo(10) != 10) return "fail"
+    if(C().foo() != 240) return "fail"
+    if(C().foo2() != 239) return "fail"
+    if(C().foo2(10) != 10) return "fail"
+    if(C().bar2() != 239) return "fail"
+    if(C().bar2(10) != 10) return "fail"
+    if(reformat("", true, true, true, " ") != expected) return "fail"
+    if(reformat("", true, true, true) != expected) return "fail"
+    if(reformat("", true, true) != expected) return "fail"
+    if(reformat("", true) != expected) return "fail"
+    if(reformat("") != expected) return "fail"
+    return "OK"
+}
