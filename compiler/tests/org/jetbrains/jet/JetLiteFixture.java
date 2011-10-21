@@ -32,6 +32,10 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         myFullDataPath = getTestDataPath() + "/" + dataPath;
     }
 
+    public JetLiteFixture() {
+        myFullDataPath = getTestDataPath();
+    }
+
     protected String getTestDataPath() {
         return JetTestCaseBase.getTestDataPathBase();
     }

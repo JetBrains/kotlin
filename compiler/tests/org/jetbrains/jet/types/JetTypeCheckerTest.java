@@ -1,11 +1,11 @@
 package org.jetbrains.jet.types;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -19,9 +19,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.parsing.JetParsingTest;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -53,11 +51,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     @Override
     protected String getTestDataPath() {
-        return getHomeDirectory() + "/compiler/testData";
-    }
-
-    private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
+        return JetTestCaseBase.getTestDataPathBase();
     }
 
     public void testConstants() throws Exception {
