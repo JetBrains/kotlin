@@ -1462,7 +1462,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
-    private StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType, boolean leftNullable, boolean rightNullable) {
+    public StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType, boolean leftNullable, boolean rightNullable) {
         if (isNumberPrimitive(leftType) && leftType == rightType) {
             return compareExpressionsOnStack(opToken, leftType);
         }
