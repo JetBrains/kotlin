@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.cfg;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ public class JetFlowInformationProvider {
     private final Map<JetElement, Pseudocode> pseudocodeMap;
     private BindingTrace trace;
 
-    public JetFlowInformationProvider(@NotNull JetElement declaration, @NotNull final JetExpression bodyExpression, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory, @NotNull BindingTrace trace) {
+    public JetFlowInformationProvider(@NotNull JetDeclaration declaration, @NotNull final JetExpression bodyExpression, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory, @NotNull BindingTrace trace) {
         this.trace = trace;
         final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
         pseudocodeMap = new HashMap<JetElement, Pseudocode>();
@@ -247,34 +248,63 @@ public class JetFlowInformationProvider {
 //            }
 //        }
 
-    private <D> Map<Instruction, D> traverseInstructionGraphUntilFactsStabilization(Collection<Instruction> instructions, InstructionsMergeHandler<D> instructionsMergeHandler, D initialDataValue, boolean straightDirection) {
-
+    private <D> Map<Instruction, D> traverseInstructionGraphUntilFactsStabilization(Pseudocode pseudocode, InstructionsMergeHandler<D> instructionsMergeHandler, D initialDataValue, boolean straightDirection) {
         Map<Instruction, D> dataMap = Maps.newHashMap();
-        for (Instruction instruction : instructions) {
-            dataMap.put(instruction, initialDataValue);
-        }
+        initializeDataMap(dataMap, pseudocode, initialDataValue);
 
-        boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (Instruction instruction : instructions) {
-                D previousDataValue = dataMap.get(instruction);
-
-                Collection<Instruction> previousInstructions = straightDirection
-                                                               ? instruction.getPreviousInstructions()
-                                                               : instruction.getNextInstructions();
-                Collection<D> incomingEdgesData = Sets.newHashSet();
-                for (Instruction previousInstruction : previousInstructions) {
-                    incomingEdgesData.add(dataMap.get(previousInstruction));
-                }
-                D mergedData = instructionsMergeHandler.merge(instruction, previousDataValue, incomingEdgesData);
-                if (!mergedData.equals(previousDataValue)) {
-                    changed = true;
-                    dataMap.put(instruction, mergedData);
-                }
-            }
+        boolean[] changed = new boolean[1];
+        changed[0] = true;
+        while (changed[0]) {
+            changed[0] = false;
+            traverseSubGraph(pseudocode, instructionsMergeHandler, Collections.<Instruction>emptyList(), straightDirection, dataMap, changed);
         }
         return dataMap;
+    }
+    
+    private <D> void initializeDataMap(Map<Instruction, D> dataMap, Pseudocode pseudocode, D initialDataValue) {
+        List<Instruction> instructions = pseudocode.getInstructions();
+        for (Instruction instruction : instructions) {
+            dataMap.put(instruction, initialDataValue);
+            if (instruction instanceof LocalDeclarationInstruction) {
+                initializeDataMap(dataMap, ((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
+            }
+        }
+    }
+
+    private <D> void traverseSubGraph(Pseudocode pseudocode, InstructionsMergeHandler<D> instructionsMergeHandler, Collection<Instruction> previousSubGraphInstructions, boolean straightDirection, Map<Instruction, D> dataMap, boolean[] changed) {
+        List<Instruction> instructions = pseudocode.getInstructions();
+        SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
+        for (Instruction instruction : instructions) {
+            Collection<Instruction> allPreviousInstructions;
+            Collection<Instruction> previousInstructions = straightDirection
+                                                           ? instruction.getPreviousInstructions()
+                                                           : instruction.getNextInstructions();
+
+            if (instruction == enterInstruction && !previousSubGraphInstructions.isEmpty()) {
+                allPreviousInstructions = Lists.newArrayList(previousInstructions);
+                allPreviousInstructions.addAll(previousSubGraphInstructions);
+            }
+            else {
+                allPreviousInstructions = previousInstructions;
+            }
+
+            if (instruction instanceof LocalDeclarationInstruction) {
+                Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
+                traverseSubGraph(subroutinePseudocode, instructionsMergeHandler, previousInstructions, straightDirection, dataMap, changed);
+            }
+            D previousDataValue = dataMap.get(instruction);
+
+            Collection<D> incomingEdgesData = Sets.newHashSet();
+
+            for (Instruction previousInstruction : allPreviousInstructions) {
+                incomingEdgesData.add(dataMap.get(previousInstruction));
+            }
+            D mergedData = instructionsMergeHandler.merge(instruction, previousDataValue, incomingEdgesData);
+            if (!mergedData.equals(previousDataValue)) {
+                changed[0] = true;
+                dataMap.put(instruction, mergedData);
+            }
+        }
     }
 
     public void markUninitializedVariables(@NotNull JetElement subroutine) {
@@ -292,16 +322,16 @@ public class JetFlowInformationProvider {
                 }
 
                 if (instruction instanceof WriteValueInstruction) {
-                    JetElement element = ((WriteValueInstruction) instruction).getElement();
                     DeclarationDescriptor descriptor = null;
-                    if (element instanceof JetBinaryExpression) {
-                        JetExpression left = ((JetBinaryExpression) element).getLeft();
-                        if (left instanceof JetSimpleNameExpression) {
-                            descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) left);
-                        }
+                    JetElement lValue = ((WriteValueInstruction) instruction).getlValue();
+                    if (lValue instanceof JetProperty) {
+                        descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, lValue);
                     }
-                    else if (element instanceof JetProperty) {
-                        descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+                    else if (lValue instanceof JetSimpleNameExpression) {
+                        descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) lValue);
+                    }
+                    else if (lValue instanceof JetParameter) {
+                        descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, lValue);
                     }
                     if (descriptor instanceof LocalVariableDescriptor) {
                         initializedVariables.add((LocalVariableDescriptor) descriptor);
@@ -310,36 +340,52 @@ public class JetFlowInformationProvider {
                 return initializedVariables;
             }
         };
-        Map<Instruction, Set<LocalVariableDescriptor>> dataMap = traverseInstructionGraphUntilFactsStabilization(instructions, instructionsMergeHandler, Collections.<LocalVariableDescriptor>emptySet(), true);
+        Map<Instruction, Set<LocalVariableDescriptor>> dataMap = traverseInstructionGraphUntilFactsStabilization(pseudocode, instructionsMergeHandler, Collections.<LocalVariableDescriptor>emptySet(), true);
+        InstructionDataAnalyzer instructionDataAnalyzer = new InstructionDataAnalyzer<Set<LocalVariableDescriptor>>() {
+            @Override
+            public void analyze(Instruction instruction, Map<Instruction, Set<LocalVariableDescriptor>> dataMap) {
+                Set<LocalVariableDescriptor> initializedVariables = dataMap.get(instruction);                
+                if (instruction instanceof ReadValueInstruction) {
+                    JetElement element = ((ReadValueInstruction) instruction).getElement();
+                    if (element instanceof JetSimpleNameExpression) {
+                        DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
+                        if (descriptor instanceof LocalVariableDescriptor) {
+                            if (!initializedVariables.contains(descriptor)) {
+                                trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, descriptor));
+                            }
+                        }
+                    }
+                }
+                else if (instruction instanceof WriteValueInstruction) {
+                    JetElement element = ((WriteValueInstruction) instruction).getElement();
+                    if (element instanceof JetSimpleNameExpression) {
+                        DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
+                        if (descriptor instanceof LocalVariableDescriptor) {
+                            if (initializedVariables.contains(descriptor) && ((LocalVariableDescriptor) descriptor).isVar()) {
+                                trace.report(Errors.VAL_REASSIGNMENT.on((JetSimpleNameExpression) element, descriptor));
+                            }
+                        }
+                    }
+                }                
+            }
+        };
+        traverseInstructionGraphAndReportErrors(instructions, dataMap, instructionDataAnalyzer);
+    }
 
+    private void traverseInstructionGraphAndReportErrors(Collection<Instruction> instructions, Map<Instruction, Set<LocalVariableDescriptor>> dataMap, InstructionDataAnalyzer<Set<LocalVariableDescriptor>> instructionDataAnalyzer) {
         for (Instruction instruction : instructions) {
-            Set<LocalVariableDescriptor> initializedVariables = dataMap.get(instruction);
-            if (instruction instanceof ReadValueInstruction) {
-                JetElement element = ((ReadValueInstruction) instruction).getElement();
-                if (element instanceof JetSimpleNameExpression) {
-                    DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
-                    if (descriptor instanceof LocalVariableDescriptor) {
-                        if (!initializedVariables.contains(descriptor)) {
-                            trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, descriptor));
-                        }
-                    }
-                }
+            if (instruction instanceof LocalDeclarationInstruction) {
+                traverseInstructionGraphAndReportErrors(((LocalDeclarationInstruction) instruction).getBody().getInstructions(), dataMap, instructionDataAnalyzer);
             }
-            else if (instruction instanceof WriteValueInstruction) {
-                JetElement element = ((WriteValueInstruction) instruction).getElement();
-                if (element instanceof JetSimpleNameExpression) {
-                    DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
-                    if (descriptor instanceof LocalVariableDescriptor) {
-                        if (initializedVariables.contains(descriptor) && ((LocalVariableDescriptor) descriptor).isVar()) {
-                            trace.report(Errors.VAL_REASSIGNMENT.on((JetSimpleNameExpression) element, descriptor));
-                        }
-                    }
-                }
-            }
+            instructionDataAnalyzer.analyze(instruction, dataMap);
         }
     }
 
     interface InstructionsMergeHandler<D> {
         D merge(Instruction instruction, D previousDataValue, Collection<D> incomingEdgesData);
+    }
+    
+    interface InstructionDataAnalyzer<D> {
+        void analyze(Instruction instruction, Map<Instruction, D> dataMap);
     }
 }

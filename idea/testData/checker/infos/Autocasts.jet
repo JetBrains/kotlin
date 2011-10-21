@@ -6,8 +6,7 @@ class B() : A() {
   fun bar() {}
 }
 
-fun f9() {
-  val a : A?
+fun f9(a : A?) {
   a?.foo()
   a?.<error descr="Unresolved reference: bar">bar</error>()
   if (a is B) {
@@ -30,8 +29,7 @@ fun f9() {
   <info descr="Automatically cast to A">a</info>.foo()
 }
 
-fun f10() {
-  val a : A?
+fun f10(a : A?) {
   if (!(a is B)) {
     return;
   }

@@ -16,6 +16,11 @@ public class WriteValueInstruction extends InstructionWithNext {
         this.lValue = lValue;
     }
 
+    @NotNull
+    public JetElement getlValue() {
+        return lValue;
+    }
+
     @Override
     public void accept(InstructionVisitor visitor) {
         visitor.visitWriteValue(this);
