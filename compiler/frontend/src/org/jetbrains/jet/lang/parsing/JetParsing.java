@@ -1429,7 +1429,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionType
-     *   : "fun" (type ".")? functionTypeContents
+     *   : "fun" (type ".")? "(" (parameter | modifiers type){","} ")" (":" type)? // Unit by default
      *   ;
      */
     private void parseFunctionType() {
@@ -1446,22 +1446,15 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // DOT
         }
 
-        parseFunctionTypeContents();
-
-        functionType.done(FUNCTION_TYPE);
-    }
-
-    /*
-     * functionTypeContents
-     *   : "(" (parameter | type){","} ")" ":" type
-     *   ;
-     */
-    private void parseFunctionTypeContents() {
         parseValueParameterList(true, TokenSet.EMPTY);
 
-        expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
+        if (at(COLON)) {
+            advance(); // COLON // expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
 
-        parseTypeRef();
+            parseTypeRef();
+        }
+
+        functionType.done(FUNCTION_TYPE);
     }
 
     /*
