@@ -8,7 +8,7 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
+    public void visitFunctionLiteralValue(LocalDeclarationInstruction instruction) {
         visitReadValue(instruction);
     }
 
@@ -29,7 +29,7 @@ public class InstructionVisitor {
     }
 
     public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
-        visitJump(instruction);
+        visitInstruction(instruction);
     }
 
     public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {

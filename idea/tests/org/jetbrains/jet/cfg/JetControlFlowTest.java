@@ -11,10 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.io.File;
@@ -91,12 +88,13 @@ public class JetControlFlowTest extends JetTestCaseBase {
         for (Pseudocode pseudocode : pseudocodes) {
             JetElement correspondingElement = pseudocode.getCorrespondingElement();
             String label;
-            if (correspondingElement instanceof JetNamedDeclaration) {
-                JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
-                label = namedDeclaration.getName();
+            assert correspondingElement instanceof JetNamedDeclaration;
+            if (correspondingElement instanceof JetFunctionLiteral) {
+                label = "anonymous_" + i++;
             }
             else {
-                label = "anonymous_" + i++;
+                JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
+                label = namedDeclaration.getName();
             }
 
             instructionDump.append("== ").append(label).append(" ==\n");
@@ -222,9 +220,9 @@ public class JetControlFlowTest extends JetTestCaseBase {
         }
         for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
             Instruction instruction = instructions.get(i);
-            if (instruction instanceof FunctionLiteralValueInstruction) {
-                FunctionLiteralValueInstruction functionLiteralValueInstruction = (FunctionLiteralValueInstruction) instruction;
-                locals.add(functionLiteralValueInstruction.getBody());
+            if (instruction instanceof LocalDeclarationInstruction) {
+                LocalDeclarationInstruction localDeclarationInstruction = (LocalDeclarationInstruction) instruction;
+                locals.add(localDeclarationInstruction.getBody());
             }
             for (Pseudocode.PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
@@ -245,7 +243,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
         for (final Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
                 @Override
-                public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
+                public void visitFunctionLiteralValue(LocalDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
                     printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().getInstructions().get(0)), null);
@@ -264,7 +262,8 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
                 @Override
                 public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
-                    visitJump(instruction);
+                    //todo print edges
+                    visitInstruction(instruction);
                     printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
                 }
 
@@ -325,7 +324,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
             else if (node instanceof UnsupportedElementInstruction) {
                 shape = "box, fillcolor=red, style=filled";
             }
-            else if (node instanceof FunctionLiteralValueInstruction) {
+            else if (node instanceof LocalDeclarationInstruction) {
                 shape = "Mcircle";
             }
             else if (node instanceof SubroutineEnterInstruction || node instanceof SubroutineExitInstruction) {
