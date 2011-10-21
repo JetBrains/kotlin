@@ -11,6 +11,7 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
 
     private final BindingTrace trace;
 
+
     private TemporaryBindingTrace(BindingTrace trace) {
         super(trace.getBindingContext());
         this.trace = trace;
@@ -18,5 +19,6 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
 
     public void commit() {
         addAllMyDataTo(trace);
+        clear();
     }
 }

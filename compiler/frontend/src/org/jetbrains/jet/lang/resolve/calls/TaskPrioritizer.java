@@ -2,16 +2,20 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastService;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
@@ -72,6 +76,18 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return false;
     }
 
+    @Nullable
+    /*package*/ static JetSuperExpression getReceiverSuper(@NotNull ReceiverDescriptor receiver) {
+        if (receiver instanceof ExpressionReceiver) {
+            ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiver;
+            JetExpression expression = expressionReceiver.getExpression();
+            if (expression instanceof JetSuperExpression) {
+                return (JetSuperExpression) expression;
+            }
+        }
+        return null;
+    }
+
     public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull Call call, @NotNull String name, @NotNull BindingContext bindingContext, @NotNull DataFlowInfo dataFlowInfo) {
         List<ResolutionTask<D>> result = Lists.newArrayList();
 
@@ -108,8 +124,17 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 convertWithReceivers(membersForThisVariant, Collections.singletonList(variant), Collections.singletonList(NO_RECEIVER), members);
             }
 
-            addTask(result, call, locals, dataFlowInfo);
-            addTask(result, call, members, dataFlowInfo);
+            if (getReceiverSuper(receiver) != null) {
+                // If the call is of the form super.foo(), it can actually be only a member
+                // But  if there's no appropriate member, we would like to report that super cannot be a receiver for an extension
+                // Thus, put members first
+                addTask(result, call, members, dataFlowInfo);
+                addTask(result, call, locals, dataFlowInfo);
+            }
+            else {
+                addTask(result, call, locals, dataFlowInfo);
+                addTask(result, call, members, dataFlowInfo);
+            }
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
                 Collection<D> memberExtensions = getExtensionsByName(implicitReceiver.getType().getMemberScope(), name);
