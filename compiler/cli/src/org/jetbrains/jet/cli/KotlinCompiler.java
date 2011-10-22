@@ -6,9 +6,10 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.sampullara.cli.Args;
+import com.sampullara.cli.Argument;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -32,10 +33,22 @@ import java.util.List;
  * @author alex.tkachman
  */
 public class KotlinCompiler {
+    public static class Arguments {
+        @Argument(value = "output", description = "output directory")
+        public String outputDir;
+        @Argument(value = "src", description = "source file or directory", required = true)
+        public String src;
+    }
+
     public static void main(String[] args) {
         System.setProperty("java.awt.headless", "true");
-        if (args.length < 1) {
-            System.out.println("Usage: KotlinCompiler <filename> or <dirname>");
+        Arguments arguments = new Arguments();
+        try {
+            Args.parse(arguments, args);
+        }
+        catch (Throwable t) {
+            System.out.println("Usage: KotlinCompiler -output <outputDir> -src <filename or dirname>");
+            t.printStackTrace();
             return;
         }
 
@@ -54,9 +67,9 @@ public class KotlinCompiler {
         environment.registerFileType(JetFileType.INSTANCE, "kt");
         environment.registerParserDefinition(new JetParserDefinition());
 
-        VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(args [0]);
+        VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(arguments.src);
         if (vFile == null) {
-            System.out.print("File/directory not found: " + args[0]);
+            System.out.print("File/directory not found: " + arguments.src);
             return;
         }
 
@@ -100,14 +113,19 @@ public class KotlinCompiler {
             generationState.compileCorrectNamespaces(bindingContext, namespaces);
 
             final ClassFileFactory factory = generationState.getFactory();
-            List<String> files = factory.files();
-            for (String file : files) {
-                File target = new File(vFile.getParent().getPath(), file);
-                try {
-                    FileUtil.writeToFile(target, factory.asBytes(file));
-                    System.out.println("Generated classfile: " + target);
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
+            if(arguments.outputDir == null) {
+                System.out.println("Output directory is not specified - no files will be saved to the disk");
+            }
+            else {
+                List<String> files = factory.files();
+                for (String file : files) {
+                    File target = new File(arguments.outputDir, file);
+                    try {
+                        FileUtil.writeToFile(target, factory.asBytes(file));
+                        System.out.println("Generated classfile: " + target);
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
         }
