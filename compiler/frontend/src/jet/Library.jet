@@ -41,8 +41,8 @@ fun Any?.equals(other : Any?) : Boolean// = this === other
 fun Any?.toString() : String// = this === other
 
 trait Iterator<out T> {
-  fun next() : T
-  fun hasNext() : Boolean
+  fun next()  : T
+  val hasNext : Boolean
 }
 
 trait Iterable<out T> {

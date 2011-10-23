@@ -76,7 +76,7 @@ public final class LongRange implements Range<Long>, Iterable<Long>, JetObject {
         }
 
         @Override
-        public boolean hasNext() {
+        public boolean getHasNext() {
             return count > 0;
         }
 

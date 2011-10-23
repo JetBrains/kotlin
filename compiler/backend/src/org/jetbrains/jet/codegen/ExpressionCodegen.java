@@ -277,14 +277,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.mark(begin);
         v.load(iteratorVar, asmIterType);
-        FunctionDescriptor hND;
         if(hasNextDescriptor instanceof FunctionDescriptor) {
-            hND = (FunctionDescriptor) hasNextDescriptor;
+            FunctionDescriptor hND = (FunctionDescriptor) hasNextDescriptor;
+            invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
         }
         else {
-            hND = ((PropertyDescriptor) hasNextDescriptor).getGetter();
+//            hND = ((PropertyDescriptor) hasNextDescriptor).getGetter();
+//            if(hND != null)
+//                invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
+//            else
+                intermediateValueForProperty((PropertyDescriptor) hasNextDescriptor, false, false).put(Type.BOOLEAN_TYPE, v);
         }
-        invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
         v.ifeq(end);
 
         myMap.enter(parameterDescriptor, asmParamType.getSize());

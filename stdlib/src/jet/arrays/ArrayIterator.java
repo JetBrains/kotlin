@@ -20,7 +20,7 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean getHasNext() {
         return index < size;
     }
 
