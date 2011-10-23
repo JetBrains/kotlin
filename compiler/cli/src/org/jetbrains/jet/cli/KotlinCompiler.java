@@ -1,8 +1,9 @@
 package org.jetbrains.jet.cli;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +15,8 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
+import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
@@ -26,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -93,23 +97,10 @@ public class KotlinCompiler {
 
         BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
 
-        boolean errors = false;
-        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            switch (diagnostic.getSeverity()) {
-                case ERROR:
-                    errors = true;
-                    report(diagnostic);
-                    break;
-                case INFO:
-                    report(diagnostic);                            
-                    break;
-                case WARNING:
-                    report(diagnostic);                            
-                    break;
-            }
-        }
+        ErrorCollector errorCollector = new ErrorCollector(bindingContext);
+        errorCollector.report();
 
-        if (!errors) {
+        if (!errorCollector.hasErrors) {
             generationState.compileCorrectNamespaces(bindingContext, namespaces);
 
             final ClassFileFactory factory = generationState.getFactory();
@@ -132,6 +123,55 @@ public class KotlinCompiler {
 
     }
 
+    private static class ErrorCollector {
+        Multimap<PsiFile,DiagnosticWithTextRange> maps = LinkedHashMultimap.<PsiFile, DiagnosticWithTextRange>create();
+
+        boolean hasErrors;
+
+        public ErrorCollector(BindingContext bindingContext) {
+            for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+                report(diagnostic);
+            }
+        }
+
+        private void report(Diagnostic diagnostic) {
+            hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
+            if(diagnostic instanceof DiagnosticWithTextRange) {
+                DiagnosticWithTextRange diagnosticWithTextRange = (DiagnosticWithTextRange) diagnostic;
+                maps.put(diagnosticWithTextRange.getPsiFile(), diagnosticWithTextRange);
+            }
+            else {
+                System.out.println(diagnostic.getSeverity().toString() + ": " + diagnostic.getMessage());
+            }
+        }
+
+        void report() {
+            if(!maps.isEmpty()) {
+                for (PsiFile psiFile : maps.keySet()) {
+                    System.out.println(psiFile.getVirtualFile().getPath());
+                    Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
+                    for (DiagnosticWithTextRange diagnosticWithTextRange : diagnosticWithTextRanges) {
+                        PsiFile file = diagnosticWithTextRange.getPsiFile();
+                        Document document = file.getViewProvider().getDocument();
+                        String result;
+                        int offset = diagnosticWithTextRange.getTextRange().getStartOffset();
+                        if (document != null) {
+                            int lineNumber = document.getLineNumber(offset);
+                            int lineStartOffset = document.getLineStartOffset(lineNumber);
+                            int column = offset - lineStartOffset;
+
+                            result = "(" + (lineNumber + 1) + "," + column + ")";
+                        }
+                        else {
+                            result = "(offset: " + offset + " line unknown)";
+                        }
+                        System.out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + result + " " + diagnosticWithTextRange.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
     private static void addFiles(JavaCoreEnvironment environment, Project project, List<JetNamespace> namespaces, File dir) {
         for(File file : dir.listFiles()) {
             if(!file.isDirectory()) {
@@ -139,7 +179,6 @@ public class KotlinCompiler {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
                 if (psiFile instanceof JetFile) {
                     namespaces.add(((JetFile) psiFile).getRootNamespace());
-                    System.out.println(file.getAbsolutePath());
                 }
             }
             else {
@@ -183,10 +222,6 @@ public class KotlinCompiler {
             return null;
         }
         return rtJar;
-    }
-
-    private static void report(Diagnostic diagnostic) {
-        System.out.println(diagnostic.getMessage());
     }
 
     private static File findRtJar(String javaHome) {
