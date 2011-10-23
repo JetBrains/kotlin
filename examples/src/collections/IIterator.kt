@@ -1,7 +1,21 @@
-open class IIterator<out T> {
+namespace jet.collections.iterator
+
+trait IIterator<out T> {
   fun next() : T
   val hasNext : Boolean
 
+  inline fun foreach(operation: fun(element: T) : Unit) = while(hasNext) operation(next())
+
+  inline fun <R> map(transform: fun(element: T) : R) : IIterator<R> {
+    val that = this
+    return object : IIterator<R> {
+      override fun next() : R = transform(that.next())
+
+      override val hasNext : Boolean
+        get() = that.hasNext
+    }
+  }
+/*
   fun toArray(buffer : MutableArray<in T>) : Int { // T is still an in-parameter
     return fillBuffer(buffer, 0, buffer.size)
   }
@@ -22,4 +36,5 @@ open class IIterator<out T> {
     }
     return count
   }
+*/
 }
