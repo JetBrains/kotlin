@@ -119,6 +119,12 @@ public class LabelResolver {
             else if (declarationDescriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
                 thisReceiver = functionDescriptor.getReceiverParameter();
+                if(!thisReceiver.exists()) {
+                    DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+                    if(containingDeclaration instanceof ClassDescriptor) {
+                        thisReceiver = ((ClassDescriptor)containingDeclaration).getImplicitReceiver();
+                    }
+                }
             }
             else {
                 throw new UnsupportedOperationException(); // TODO

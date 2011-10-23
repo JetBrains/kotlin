@@ -598,8 +598,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         for (DeclarationDescriptor descriptor : closureCodegen.closure.keySet()) {
-            final Type sharedVarType = getSharedVarType(descriptor);
-            consArgTypes.add(sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType()));
+            Type sharedVarType = getSharedVarType(descriptor);
+            if(sharedVarType == null)
+                sharedVarType = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+            consArgTypes.add(sharedVarType);
             final EnclosedValueDescriptor valueDescriptor = closureCodegen.closure.get(descriptor);
             valueDescriptor.getOuterValue().put(sharedVarType, v);
         }
