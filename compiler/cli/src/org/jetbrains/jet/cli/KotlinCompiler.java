@@ -3,7 +3,6 @@ package org.jetbrains.jet.cli;
 import com.google.common.collect.*;
 import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,6 +14,7 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
@@ -151,25 +151,13 @@ public class KotlinCompiler {
                     System.out.println(psiFile.getVirtualFile().getPath());
                     Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
                     for (DiagnosticWithTextRange diagnosticWithTextRange : diagnosticWithTextRanges) {
-                        PsiFile file = diagnosticWithTextRange.getPsiFile();
-                        Document document = file.getViewProvider().getDocument();
-                        String result;
-                        int offset = diagnosticWithTextRange.getTextRange().getStartOffset();
-                        if (document != null) {
-                            int lineNumber = document.getLineNumber(offset);
-                            int lineStartOffset = document.getLineStartOffset(lineNumber);
-                            int column = offset - lineStartOffset;
-
-                            result = "(" + (lineNumber + 1) + "," + column + ")";
-                        }
-                        else {
-                            result = "(offset: " + offset + " line unknown)";
-                        }
-                        System.out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + result + " " + diagnosticWithTextRange.getMessage());
+                        String position = DiagnosticUtils.formatPosition(diagnosticWithTextRange);
+                        System.out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + position + " " + diagnosticWithTextRange.getMessage());
                     }
                 }
             }
         }
+
     }
 
     private static void addFiles(JavaCoreEnvironment environment, Project project, List<JetNamespace> namespaces, File dir) {
