@@ -1,4 +1,4 @@
-package jet.refs;
+package jet.runtime;
 
 public final class SharedVar {
     public static final class Object<T> {

@@ -277,14 +277,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.mark(begin);
         v.load(iteratorVar, asmIterType);
-        FunctionDescriptor hND;
         if(hasNextDescriptor instanceof FunctionDescriptor) {
-            hND = (FunctionDescriptor) hasNextDescriptor;
+            FunctionDescriptor hND = (FunctionDescriptor) hasNextDescriptor;
+            invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
         }
         else {
-            hND = ((PropertyDescriptor) hasNextDescriptor).getGetter();
+//            hND = ((PropertyDescriptor) hasNextDescriptor).getGetter();
+//            if(hND != null)
+//                invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
+//            else
+                intermediateValueForProperty((PropertyDescriptor) hasNextDescriptor, false, false).put(Type.BOOLEAN_TYPE, v);
         }
-        invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
         v.ifeq(end);
 
         myMap.enter(parameterDescriptor, asmParamType.getSize());
@@ -598,8 +601,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         for (DeclarationDescriptor descriptor : closureCodegen.closure.keySet()) {
-            final Type sharedVarType = getSharedVarType(descriptor);
-            consArgTypes.add(sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType()));
+            Type sharedVarType = getSharedVarType(descriptor);
+            if(sharedVarType == null)
+                sharedVarType = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+            consArgTypes.add(sharedVarType);
             final EnclosedValueDescriptor valueDescriptor = closureCodegen.closure.get(descriptor);
             valueDescriptor.getOuterValue().put(sharedVarType, v);
         }
@@ -1462,7 +1467,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
-    private StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType, boolean leftNullable, boolean rightNullable) {
+    public StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType, boolean leftNullable, boolean rightNullable) {
         if (isNumberPrimitive(leftType) && leftType == rightType) {
             return compareExpressionsOnStack(opToken, leftType);
         }

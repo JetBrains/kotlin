@@ -4,7 +4,7 @@ fun box() : String {
     a[1] = "b"
     a[2] = "c"
 
-    val result = 0
+    var result = 0
     for(i in a.indices) {
       result += i
     }

@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
@@ -76,6 +78,17 @@ public class Pseudocode {
     @NotNull
     public List<Instruction> getInstructions() {
         return instructions;
+    }
+    
+    @NotNull
+    public List<Instruction> getDeadInstructions() {
+        List<Instruction> deadInstructions = Lists.newArrayList();
+        for (Instruction instruction : instructions) {
+            if (((InstructionImpl)instruction).isDead()) {
+                deadInstructions.add(instruction);
+            }
+        }
+        return deadInstructions;
     }
 
     @Deprecated //for tests only
@@ -165,6 +178,26 @@ public class Pseudocode {
                     throw new UnsupportedOperationException(instruction.toString());
                 }
             });
+        }
+        removeDeadInstructions();
+    }
+
+    private void removeDeadInstructions() {
+        boolean hasRemovedInstruction = true;
+        Collection<Instruction> processedInstructions = Sets.newHashSet();
+        while (hasRemovedInstruction) {
+            hasRemovedInstruction = false;
+            for (Instruction instruction : instructions) {
+                if (!(instruction instanceof SubroutineEnterInstruction || instruction instanceof SubroutineExitInstruction) &&
+                    instruction.getPreviousInstructions().isEmpty() && !processedInstructions.contains(instruction)) {
+                    hasRemovedInstruction = true;
+                    for (Instruction nextInstruction : instruction.getNextInstructions()) {
+                        nextInstruction.getPreviousInstructions().remove(instruction);
+                    }
+                    ((InstructionImpl)instruction).die();
+                    processedInstructions.add(instruction);
+                }
+            }
         }
     }
 

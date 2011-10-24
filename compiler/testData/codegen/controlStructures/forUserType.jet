@@ -88,7 +88,8 @@ class MyCollection2(): Iterable<Int> {
         var k : Int = 5
 
         override fun next() : Int = k--
-        override fun hasNext() = k > 0
+        override val hasNext : Boolean
+          get() = k > 0
     }
 }
 
@@ -99,7 +100,8 @@ class MyCollection3() {
         var k : Int = 5
 
         fun next() : Int? = k--
-        fun hasNext() = k > 0
+        val hasNext : Boolean
+            get() = k > 0
     }
 }
 

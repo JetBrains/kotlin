@@ -17,7 +17,7 @@ class ArrayWrapper<T>() {
 }
 
 fun box(): String {
-    val v1 = ArrayWrapper<String>()
+    var v1 = ArrayWrapper<String>()
     val v2 = ArrayWrapper<String>()
     v1.add("foo")
     v2.add("bar")

@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 public abstract class InstructionImpl implements Instruction {
     private Pseudocode owner;
     private final Collection<Instruction> previousInstructions = new LinkedHashSet<Instruction>();
+    protected boolean isDead = false;
 
     protected InstructionImpl() {
     }
@@ -42,4 +43,11 @@ public abstract class InstructionImpl implements Instruction {
         return target;
     }
 
+    public void die() {
+        isDead = true;
+    }
+    
+    public boolean isDead() {
+        return isDead;
+    }
 }

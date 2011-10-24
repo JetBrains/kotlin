@@ -206,8 +206,6 @@ public class CallResolver {
             @NotNull JetType expectedType,
             @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
             @NotNull final JetReferenceExpression reference) {
-        TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
-        OverloadResolutionResults<D> resultsForFirstNonemptyCandidateSet = null;
         TracingStrategy tracing = new TracingStrategy() {
             @Override
             public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall) {
@@ -272,12 +270,12 @@ public class CallResolver {
             }
 
             @Override
-            public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Set<ResolvedCallImpl<D>> descriptors) {
+            public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {
                 trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallNode(), descriptors));
             }
 
             @Override
-            public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<ResolvedCallImpl<D>> descriptors) {
+            public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {
                 trace.report(NONE_APPLICABLE.on(reference, descriptors));
             }
 
@@ -323,6 +321,9 @@ public class CallResolver {
                 trace.report(UNNECESSARY_SAFE_CALL.on((JetElement) callOperationNode.getTreeParent().getPsi(), callOperationNode, type));
             }
         };
+
+        TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
+        OverloadResolutionResults<D> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
             OverloadResolutionResults<D> results = performResolution(temporaryTrace, scope, expectedType, task, tracing);
@@ -479,6 +480,14 @@ public class CallResolver {
             
             task.performAdvancedChecks(candidate, temporaryTrace, tracing);
 
+            // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
+            // See TaskPrioritizer for more
+            JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getReceiverArgument());
+            if (superExpression != null) {
+                temporaryTrace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
+                candidateCall.setStatus(OTHER_ERROR);
+            }
+
             recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
             recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
         }
@@ -539,21 +548,6 @@ public class CallResolver {
             new TypeResolver(semanticServices, trace, true).resolveType(scope, typeProjection.getTypeReference());
         }
     }
-
-//    private <D extends CallableDescriptor> Function<ValueParameterDescriptor, ValueParameterDescriptor> createMapFunction(D substitutedFunctionDescriptor) {
-//        assert substitutedFunctionDescriptor != null;
-//        final Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
-//        for (ValueParameterDescriptor valueParameterDescriptor : substitutedFunctionDescriptor.getValueParameters()) {
-//            parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
-//        }
-//
-//        return new Function<ValueParameterDescriptor, ValueParameterDescriptor>() {
-//            @Override
-//            public ValueParameterDescriptor apply(ValueParameterDescriptor input) {
-//                return parameterMap.get(input.getOriginal());
-//            }
-//        };
-//    }
 
     private <D extends CallableDescriptor> void replaceValueParametersWithSubstitutedOnes(ResolvedCallImpl<D> candidateCall, @NotNull D substitutedDescriptor) {
         Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
@@ -656,30 +650,47 @@ public class CallResolver {
             Set<ResolvedCallImpl<D>> successfulCandidates,
             Set<ResolvedCallImpl<D>> failedCandidates) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
+
         if (successfulCandidates.size() > 0) {
-            return chooseAndReportMaximallySpecific(trace, tracing, successfulCandidates);
+            OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(successfulCandidates);
+            if (results.isAmbiguity()) {
+                // This check is needed for the following case:
+                //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
+                if (allClean(results.getResults())) {
+                    tracing.ambiguity(trace, results.getResults());
+                }
+                tracing.recordAmbiguity(trace, results.getResults());
+            }
+            return results;
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {
-                Set<ResolvedCallImpl<D>> weakErrors = Sets.newLinkedHashSet();
-                for (ResolvedCallImpl<D> candidate : failedCandidates) {
-                    if (candidate.getStatus().isWeakError()) {
-                        weakErrors.add(candidate);
+                // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
+                // and some are not OK at all. In this case we'd like to say "unsafe call" rather than "none applicable"
+                // Used to be: weak errors. Generalized for future extensions
+                for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
+                    Set<ResolvedCallImpl<D>> thisLevel = Sets.newLinkedHashSet();
+                    for (ResolvedCallImpl<D> candidate : failedCandidates) {
+                        if (severityLevel.contains(candidate.getStatus())) {
+                            thisLevel.add(candidate);
+                        }
                     }
-                }
-                if (!weakErrors.isEmpty()) {
-                    OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(trace, tracing, weakErrors);
-                    if (results.isSuccess()) {
-                        return OverloadResolutionResults.singleFailedCandidate(results.getResult());
-                    }
+                    if (!thisLevel.isEmpty()) {
+                        OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(thisLevel);
+                        if (results.isSuccess()) {
+                            results.getResult().getTrace().commit();
+                            return OverloadResolutionResults.singleFailedCandidate(results.getResult());
+                        }
 
-                    return OverloadResolutionResults.manyFailedCandidates(results.getResults());
+                        tracing.noneApplicable(trace, results.getResults());
+                        tracing.recordAmbiguity(trace, results.getResults());
+                        return OverloadResolutionResults.manyFailedCandidates(results.getResults());
+                    }
                 }
+                assert false : "Should not be reachable, cause every status must belong to some level";
 
                 Set<ResolvedCallImpl<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
                 if (noOverrides.size() != 1) {
-//                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
-//                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
                     tracing.noneApplicable(trace, noOverrides);
                     tracing.recordAmbiguity(trace, noOverrides);
                     return OverloadResolutionResults.manyFailedCandidates(noOverrides);
@@ -696,15 +707,20 @@ public class CallResolver {
         }
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> chooseAndReportMaximallySpecific(BindingTrace trace, TracingStrategy tracing, Set<ResolvedCallImpl<D>> candidates) {
+    private <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallImpl<D>> results) {
+        for (ResolvedCallImpl<D> result : results) {
+            if (result.isDirty()) return false;
+        }
+        return true;
+    }
+
+    private <D extends CallableDescriptor> OverloadResolutionResults<D> chooseAndReportMaximallySpecific(Set<ResolvedCallImpl<D>> candidates) {
         if (candidates.size() != 1) {
             Set<ResolvedCallImpl<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
-            boolean allClean = true;
             for (Iterator<ResolvedCallImpl<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
                 ResolvedCallImpl<D> candidate = iterator.next();
                 if (candidate.isDirty()) {
                     iterator.remove();
-                    allClean = false;
                 }
             }
 
@@ -722,13 +738,6 @@ public class CallResolver {
             }
 
             Set<ResolvedCallImpl<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
-            if (allClean) {
-//                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
-//                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
-                tracing.ambiguity(trace, noOverrides);
-            }
-
-            tracing.recordAmbiguity(trace, noOverrides);
 
             return OverloadResolutionResults.ambiguity(noOverrides);
         }

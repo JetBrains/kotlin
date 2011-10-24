@@ -47,11 +47,7 @@ optionalProjection
   ;
 
 functionType
-  : "fun" (type ".")? functionTypeContents
-  ;
-
-functionTypeContents
-  : "(" (parameter | modifiers /*lazy out ref*/ type){","} ")" ":" type
+  : "fun" (type ".")? "(" (parameter | modifiers /*lazy out ref*/ type){","} ")" (":" type)? // Unit by default
   ;
 
 tupleType

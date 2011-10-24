@@ -48,6 +48,11 @@ public class SlicedMapImpl implements MutableSlicedMap {
     }
 
     @Override
+    public void clear() {
+        map.clear();
+    }
+
+    @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
         SlicedMapKey<K, V> slicedMapKey = slice.makeKey(key);
         //noinspection unchecked

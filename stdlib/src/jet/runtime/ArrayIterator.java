@@ -1,16 +1,14 @@
-package jet.arrays;
+package jet.runtime;
 
 import jet.Iterator;
+import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
-
-import java.lang.reflect.GenericArrayType;
-import java.util.Arrays;
 
 /**
  * @author alex.tkachman
  */
-public abstract class ArrayIterator<T> implements Iterator<T> {
+public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
     private final int size;
     protected int index;
 
@@ -19,7 +17,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
     }
 
     @Override
-    public boolean hasNext() {
+    public boolean getHasNext() {
         return index < size;
     }
 

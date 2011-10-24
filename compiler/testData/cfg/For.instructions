@@ -1,0 +1,40 @@
+== t1 ==
+fun t1() {
+    for (i in 1..2) {
+        doSmth(i)
+    }
+}
+---------------------
+l0:
+    <START>         NEXT:[r(1)]                 PREV:[]
+    r(1)            NEXT:[r(2)]                 PREV:[<START>]
+    r(2)            NEXT:[r(..)]                PREV:[r(1)]
+    r(..)           NEXT:[r(1..2)]              PREV:[r(2)]
+    r(1..2)         NEXT:[w(i)]                 PREV:[r(..)]
+    w(i)            NEXT:[jmp?(l2)]             PREV:[r(1..2)]
+l3:
+    jmp?(l2)        NEXT:[read (Unit), r(i)]    PREV:[w(i)]
+l4:
+l5:
+    r(i)            NEXT:[r(doSmth)]            PREV:[jmp?(l2), jmp?(l4)]
+    r(doSmth)       NEXT:[r(doSmth(i))]         PREV:[r(i)]
+    r(doSmth(i))    NEXT:[jmp?(l4)]             PREV:[r(doSmth)]
+    jmp?(l4)        NEXT:[r(i), read (Unit)]    PREV:[r(doSmth(i))]
+l2:
+    read (Unit)     NEXT:[<END>]                PREV:[jmp?(l2), jmp?(l4)]
+l1:
+    <END>           NEXT:[]                     PREV:[read (Unit)]
+error:
+    <ERROR>         NEXT:[]                     PREV:[]
+=====================
+== doSmth ==
+fun doSmth(i: Int) {}
+---------------------
+l0:
+    <START>        NEXT:[read (Unit)]    PREV:[]
+    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+l1:
+    <END>          NEXT:[]               PREV:[read (Unit)]
+error:
+    <ERROR>        NEXT:[]               PREV:[]
+=====================
