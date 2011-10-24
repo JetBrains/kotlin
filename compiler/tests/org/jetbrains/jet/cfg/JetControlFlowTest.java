@@ -154,13 +154,14 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
     private static String formatInstruction(Instruction instruction, int maxLength) {
         String[] parts = instruction.toString().split("\n");
+        String prefix = ((InstructionImpl)instruction).isDead() ? "*   " : "    ";
         if (parts.length == 1) {
-            return "    " + String.format("%1$-" + maxLength + "s", instruction);
+            return prefix + String.format("%1$-" + maxLength + "s", instruction);
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0, partsLength = parts.length; i < partsLength; i++) {
             String part = parts[i];
-            sb.append("    ").append(String.format("%1$-" + maxLength + "s", part));
+            sb.append(prefix).append(String.format("%1$-" + maxLength + "s", part));
             if (i < partsLength - 1) sb.append("\n");
         }
         return sb.toString();
@@ -214,7 +215,9 @@ public class JetControlFlowTest extends JetTestCaseBase {
                     }
                 }
                 else {
-                    maxLength = instuctionText.length();
+                    if (instuctionText.length() > maxLength) {
+                        maxLength = instuctionText.length();
+                    }
                 }
             }
             String instructionListText = formatInstructionList(instruction.getNextInstructions());
