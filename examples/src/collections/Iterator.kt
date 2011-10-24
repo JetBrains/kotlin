@@ -2,6 +2,19 @@ namespace jet.collections
 
 import java.util.NoSuchElementException
 
+trait Iterator<out T> {
+  fun next()  : T
+  val hasNext : Boolean
+
+  fun <R> map(transform: fun(element: T) : R) : Iterator<R> =
+        object : Iterator<R> {
+            override fun next() : R = transform(this@map.next())
+
+            override val hasNext : Boolean
+                get() = this@map.hasNext
+        }
+}
+
 trait ISized {
   val size : Int
 }
@@ -14,6 +27,29 @@ val ISized.isNonEmpty : Boolean
 
 trait ISet<T> : Iterable<T>, ISized {
   fun contains(item : T) : Boolean
+}
+
+trait IList<out T> : Iterable<T>, ISized {
+  fun get(index : Int) : T
+
+  fun iterator() : Iterator<T> =
+    object Iterator<T> {
+        var index = 0
+
+        override fun next() : T = get(index++)
+
+        override val hasNext : Boolean
+           get() = index < size
+    }
+
+  fun toArray() : Array<T> = Array<T>(size) { index => get(index) }
+}
+
+fun <T> Array<T>.asList() : IList<T> = object IList<T> {
+    override val size
+        get() = this@Array.size
+
+    override fun get(index: Int) = this@asList[index]
 }
 
 fun <T> Iterator<T>.foreach(operation: fun(element: T) : Unit)  : Unit = while(hasNext) operation(next())
