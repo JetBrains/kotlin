@@ -167,7 +167,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         PsiBuilder.Marker reference = mark();
-        expect(IDENTIFIER, "Expecting qualified name", TokenSet.create(DOT, AS_KEYWORD));
+        expect(IDENTIFIER, "Expecting qualified name");
         reference.done(REFERENCE_EXPRESSION);
         while (at(DOT) && lookahead(1) != MUL) {
             advance(); // DOT
