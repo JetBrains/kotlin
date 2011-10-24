@@ -60,15 +60,15 @@ public class JetTypeMapper {
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
     public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
     public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
-    public static final Type TYPE_SHARED_VAR = Type.getObjectType("jet/refs/SharedVar$Object");
-    public static final Type TYPE_SHARED_INT = Type.getObjectType("jet/refs/SharedVar$Int");
-    public static final Type TYPE_SHARED_DOUBLE = Type.getObjectType("jet/refs/SharedVar$Double");
-    public static final Type TYPE_SHARED_FLOAT = Type.getObjectType("jet/refs/SharedVar$Float");
-    public static final Type TYPE_SHARED_BYTE = Type.getObjectType("jet/refs/SharedVar$Byte");
-    public static final Type TYPE_SHARED_SHORT = Type.getObjectType("jet/refs/SharedVar$Short");
-    public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/refs/SharedVar$Char");
-    public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/refs/SharedVar$Long");
-    public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/refs/SharedVar$Boolean");
+    public static final Type TYPE_SHARED_VAR = Type.getObjectType("jet/runtime/SharedVar$Object");
+    public static final Type TYPE_SHARED_INT = Type.getObjectType("jet/runtime/SharedVar$Int");
+    public static final Type TYPE_SHARED_DOUBLE = Type.getObjectType("jet/runtime/SharedVar$Double");
+    public static final Type TYPE_SHARED_FLOAT = Type.getObjectType("jet/runtime/SharedVar$Float");
+    public static final Type TYPE_SHARED_BYTE = Type.getObjectType("jet/runtime/SharedVar$Byte");
+    public static final Type TYPE_SHARED_SHORT = Type.getObjectType("jet/runtime/SharedVar$Short");
+    public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/runtime/SharedVar$Char");
+    public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/runtime/SharedVar$Long");
+    public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
@@ -461,7 +461,10 @@ public class JetTypeMapper {
             parameterTypes.add(type);
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            final Type type = mapType(parameter.getOutType());
+            Type type = mapType(parameter.getOutType());
+            if(parameter.isVararg()) {
+                type = Type.getType("[" + type.getDescriptor());
+            }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
@@ -559,7 +562,13 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(receiver.getType()));
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            parameterTypes.add(mapType(parameter.getOutType()));
+            if(parameter.isVararg()) {
+                Type type = mapType(parameter.getOutType());
+                type = Type.getType("[" + type.getDescriptor());
+                parameterTypes.add(type);
+            }
+            else
+                parameterTypes.add(mapType(parameter.getOutType()));
         }
         Type returnType = mapReturnType(f.getReturnType());
         return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));

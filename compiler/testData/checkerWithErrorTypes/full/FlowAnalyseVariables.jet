@@ -1,0 +1,99 @@
+namespace uninitialized_vals {
+
+fun t1(b : Boolean) {
+    val v : Int
+    if (<!UNINITIALIZED_VARIABLE!>v<!> == 0) {}
+
+    var u: String
+    if (b) {
+        u = "s"
+    }
+    doSmth(<!UNINITIALIZED_VARIABLE!>u<!>)
+
+    var r: String
+    if (b) {
+        r = "s"
+    }
+    else {
+        r = "tg"
+    }
+    doSmth(r)
+
+    var t: String
+    if (b)
+        doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
+    else
+        t = "ss"
+    doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
+
+    val i = 3
+    doSmth(i)
+    if (b) {
+        return;
+    }
+    doSmth(i)
+    if (i is Int) {
+        return;
+    }
+}
+
+fun t2() {
+    val s = "ss"
+
+    for (i in 0..2) {
+        doSmth(s)
+    }
+}
+
+fun doSmth(s: String) {}
+fun doSmth(i: Int) {}
+
+}
+
+namespace reassigned_vals {
+
+fun t1() {
+    val a : Int = 1
+    <!VAL_REASSIGNMENT!>a<!> = 2
+
+    var b : Int = 1
+    b = 3
+}
+
+abstract enum class ProtocolState {
+  WAITING {
+    override fun signal() = ProtocolState.TALKING
+  }
+
+  TALKING {
+    override fun signal() = ProtocolState.WAITING
+  }
+
+  abstract fun signal() : ProtocolState
+}
+
+fun t2() {
+   val x: ProtocolState = ProtocolState.WAITING
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+}
+
+fun t3() {
+    val x = 1
+    <!VAL_REASSIGNMENT!>x<!> += 2
+    val y = 3
+    <!VAL_REASSIGNMENT!>y<!> *= 4
+    var z = 5
+    z -= y
+}
+
+fun t4() {
+    for (i in 0..2) {
+        <!VAL_REASSIGNMENT!>i<!> += 1
+        fun t5() {
+            <!VAL_REASSIGNMENT!>i<!> += 3
+        }
+    }
+}
+
+}

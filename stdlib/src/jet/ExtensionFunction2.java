@@ -1,11 +1,10 @@
 /*
- * @author max
+ * @author alex.tkachman
  */
 package jet;
 
 import jet.typeinfo.TypeInfo;
-
-public abstract  class ExtensionFunction2<E, D1, D2, R>  extends DefaultJetObject{
+public abstract class ExtensionFunction2<E, D1, D2, R> extends DefaultJetObject {
     protected ExtensionFunction2(TypeInfo<?> typeInfo) {
         super(typeInfo);
     }
@@ -14,6 +13,7 @@ public abstract  class ExtensionFunction2<E, D1, D2, R>  extends DefaultJetObjec
 
     @Override
     public String toString() {
-        return "{E.(d1: D1, d2: D2) : R}";
+      return "{E.(d1: D1, d2: D2) : R)}";
     }
 }
+

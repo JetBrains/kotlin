@@ -176,23 +176,23 @@ fun testFunctionLiterals() {
     }
 
     val endsWithAssignment = { () : Int =>
-        val x = 1
+        var x = 1
         <!EXPECTED_TYPE_MISMATCH!>x = 333<!>
     }
 
     val endsWithReAssignment = { () : Int =>
-        val x = 1
+        var x = 1
         <!EXPECTED_TYPE_MISMATCH!>x += 333<!>
     }
 
     val endsWithFunDeclaration : fun() : String = {
-        val x = 1
+        var x = 1
         x = 333
         <!EXPECTED_TYPE_MISMATCH!>fun meow() : Unit {}<!>
     }
 
     val endsWithObjectDeclaration : fun() : Int = {
-        val x = 1
+        var x = 1
         x = 333
         <!EXPECTED_TYPE_MISMATCH!>object A {}<!>
     }

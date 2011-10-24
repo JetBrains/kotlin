@@ -1,12 +1,9 @@
-package jet.arrays;
+package jet.runtime;
 
 import jet.Iterator;
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
-
-import java.lang.reflect.GenericArrayType;
-import java.util.Arrays;
 
 /**
  * @author alex.tkachman

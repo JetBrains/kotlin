@@ -22,8 +22,9 @@ fun testUnresolved() {
 
     //TODO
     for (j in <error>collection</error>) {
-       val i: Int = j
-       j += 1
+       var i: Int = j
+       i += 1
+       foo1(j)
     }
 }
 

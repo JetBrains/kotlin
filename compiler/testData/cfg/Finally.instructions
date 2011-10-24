@@ -41,12 +41,12 @@ l0:
     jf(l3)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
     r(2)           NEXT:[ret l1]               PREV:[jf(l3)]
     ret l1         NEXT:[<END>]                PREV:[r(2)]
-    jmp(l4)        NEXT:[r(2)]                 PREV:[]
+*   jmp(l4)        NEXT:[r(2)]                 PREV:[]
 l3:
     read (Unit)    NEXT:[r(2)]                 PREV:[jf(l3)]
 l2:
 l4:
-    r(2)           NEXT:[<END>]                PREV:[jmp?(l2), jmp(l4), read (Unit)]
+    r(2)           NEXT:[<END>]                PREV:[jmp?(l2), read (Unit)]
 l1:
     <END>          NEXT:[]                     PREV:[ret l1, r(2)]
 error:
@@ -67,12 +67,12 @@ l3:
     r(2 > 3)       NEXT:[jf(l5)]                 PREV:[r(>)]
     jf(l5)         NEXT:[read (Unit), ret l4]    PREV:[r(2 > 3)]
     ret l4         NEXT:[<END>]                  PREV:[jf(l5)]
-    jmp(l6)        NEXT:[<END>]                  PREV:[]
+*   jmp(l6)        NEXT:[<END>]                  PREV:[]
 l5:
     read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
 l6:
-    <END>          NEXT:[]                       PREV:[ret l4, jmp(l6), read (Unit)]
+    <END>          NEXT:[]                       PREV:[ret l4, read (Unit)]
 error:
     <ERROR>        NEXT:[]                       PREV:[]
 =====================
@@ -113,12 +113,12 @@ l3:
     r(2 > 3)       NEXT:[jf(l5)]                 PREV:[r(>)]
     jf(l5)         NEXT:[read (Unit), ret l4]    PREV:[r(2 > 3)]
     ret l4         NEXT:[<END>]                  PREV:[jf(l5)]
-    jmp(l6)        NEXT:[<END>]                  PREV:[]
+*   jmp(l6)        NEXT:[<END>]                  PREV:[]
 l5:
     read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
 l6:
-    <END>          NEXT:[]                       PREV:[ret l4, jmp(l6), read (Unit)]
+    <END>          NEXT:[]                       PREV:[ret l4, read (Unit)]
 error:
     <ERROR>        NEXT:[]                       PREV:[]
 =====================
@@ -145,12 +145,12 @@ l2:
     jf(l5)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
     r(2)           NEXT:[ret l3]               PREV:[jf(l5)]
     ret l3         NEXT:[<END>]                PREV:[r(2)]
-    jmp(l6)        NEXT:[r(2)]                 PREV:[]
+*   jmp(l6)        NEXT:[r(2)]                 PREV:[]
 l5:
     read (Unit)    NEXT:[r(2)]                 PREV:[jf(l5)]
 l4:
 l6:
-    r(2)           NEXT:[<END>]                PREV:[jmp?(l4), jmp(l6), read (Unit)]
+    r(2)           NEXT:[<END>]                PREV:[jmp?(l4), read (Unit)]
 l3:
     <END>          NEXT:[]                     PREV:[ret l3, r(2)]
 error:
@@ -197,12 +197,12 @@ l2:
     jf(l5)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
     r(2)           NEXT:[ret l3]               PREV:[jf(l5)]
     ret l3         NEXT:[<END>]                PREV:[r(2)]
-    jmp(l6)        NEXT:[r(2)]                 PREV:[]
+*   jmp(l6)        NEXT:[r(2)]                 PREV:[]
 l5:
     read (Unit)    NEXT:[r(2)]                 PREV:[jf(l5)]
 l4:
 l6:
-    r(2)           NEXT:[<END>]                PREV:[jmp?(l4), jmp(l6), read (Unit)]
+    r(2)           NEXT:[<END>]                PREV:[jmp?(l4), read (Unit)]
 l3:
     <END>          NEXT:[]                     PREV:[ret l3, r(2)]
 error:
@@ -238,12 +238,12 @@ l4:
     jf(l7)         NEXT:[read (Unit), r(2)]        PREV:[r(2 > 3)]
     r(2)           NEXT:[jmp(l3)]                  PREV:[jf(l7)]
     jmp(l3)        NEXT:[read (Unit)]              PREV:[r(2)]
-    jmp(l8)        NEXT:[r(2)]                     PREV:[]
+*   jmp(l8)        NEXT:[r(2)]                     PREV:[]
 l7:
     read (Unit)    NEXT:[r(2)]                     PREV:[jf(l7)]
 l6:
 l8:
-    r(2)           NEXT:[jmp(l2)]                  PREV:[jmp?(l6), jmp(l8), read (Unit)]
+    r(2)           NEXT:[jmp(l2)]                  PREV:[jmp?(l6), read (Unit)]
     jmp(l2)        NEXT:[r(true)]                  PREV:[r(2)]
 l3:
     read (Unit)    NEXT:[<END>]                    PREV:[jf(l3), jmp(l3)]
@@ -282,11 +282,11 @@ l5:
     r(2 > 3)       NEXT:[jf(l7)]                  PREV:[r(>)]
     jf(l7)         NEXT:[read (Unit), jmp(l4)]    PREV:[r(2 > 3)]
     jmp(l4)        NEXT:[read (Unit)]             PREV:[jf(l7)]
-    jmp(l8)        NEXT:[jmp(l3)]                 PREV:[]
+*   jmp(l8)        NEXT:[jmp(l3)]                 PREV:[]
 l7:
     read (Unit)    NEXT:[jmp(l3)]                 PREV:[jf(l7)]
 l8:
-    jmp(l3)        NEXT:[r(true)]                 PREV:[jmp(l8), read (Unit)]
+    jmp(l3)        NEXT:[r(true)]                 PREV:[read (Unit)]
 l4:
     read (Unit)    NEXT:[r(5)]                    PREV:[jf(l4), jmp(l4)]
     r(5)           NEXT:[r(2)]                    PREV:[read (Unit)]
@@ -326,11 +326,11 @@ l5:
     r(2 > 3)       NEXT:[jf(l7)]                  PREV:[r(>)]
     jf(l7)         NEXT:[read (Unit), jmp(l4)]    PREV:[r(2 > 3)]
     jmp(l4)        NEXT:[read (Unit)]             PREV:[jf(l7)]
-    jmp(l8)        NEXT:[jmp(l3)]                 PREV:[]
+*   jmp(l8)        NEXT:[jmp(l3)]                 PREV:[]
 l7:
     read (Unit)    NEXT:[jmp(l3)]                 PREV:[jf(l7)]
 l8:
-    jmp(l3)        NEXT:[r(true)]                 PREV:[jmp(l8), read (Unit)]
+    jmp(l3)        NEXT:[r(true)]                 PREV:[read (Unit)]
 l4:
     read (Unit)    NEXT:[r(2)]                    PREV:[jf(l4), jmp(l4)]
 l2:
@@ -374,12 +374,12 @@ l5:
     jf(l7)         NEXT:[read (Unit), r(2)]        PREV:[r(2 > 3)]
     r(2)           NEXT:[jmp(l4)]                  PREV:[jf(l7)]
     jmp(l4)        NEXT:[jmp?(l6)]                 PREV:[r(2)]
-    jmp(l8)        NEXT:[r(2)]                     PREV:[]
+*   jmp(l8)        NEXT:[r(2)]                     PREV:[]
 l7:
     read (Unit)    NEXT:[r(2)]                     PREV:[jf(l7)]
 l6:
 l8:
-    r(2)           NEXT:[jmp?(l4)]                 PREV:[jmp?(l6), jmp(l8), read (Unit)]
+    r(2)           NEXT:[jmp?(l4)]                 PREV:[jmp?(l6), read (Unit)]
     jmp?(l4)       NEXT:[jmp?(l6), read (Unit)]    PREV:[r(2)]
 l2:
     read (Unit)    NEXT:[<END>]                    PREV:[jmp?(l2), jmp?(l4)]
@@ -422,11 +422,11 @@ l6:
     r(2 > 3)       NEXT:[jf(l7)]                  PREV:[r(>)]
     jf(l7)         NEXT:[read (Unit), jmp(l5)]    PREV:[r(2 > 3)]
     jmp(l5)        NEXT:[r(1)]                    PREV:[jf(l7)]
-    jmp(l8)        NEXT:[jmp?(l5)]                PREV:[]
+*   jmp(l8)        NEXT:[jmp?(l5)]                PREV:[]
 l7:
     read (Unit)    NEXT:[jmp?(l5)]                PREV:[jf(l7)]
 l8:
-    jmp?(l5)       NEXT:[r(1), read (Unit)]       PREV:[jmp(l8), read (Unit)]
+    jmp?(l5)       NEXT:[r(1), read (Unit)]       PREV:[read (Unit)]
 l3:
     read (Unit)    NEXT:[r(5)]                    PREV:[jmp?(l3), jmp?(l5)]
     r(5)           NEXT:[r(2)]                    PREV:[read (Unit)]
@@ -470,11 +470,11 @@ l6:
     r(2 > 3)       NEXT:[jf(l7)]                  PREV:[r(>)]
     jf(l7)         NEXT:[read (Unit), jmp(l5)]    PREV:[r(2 > 3)]
     jmp(l5)        NEXT:[r(1)]                    PREV:[jf(l7)]
-    jmp(l8)        NEXT:[jmp?(l5)]                PREV:[]
+*   jmp(l8)        NEXT:[jmp?(l5)]                PREV:[]
 l7:
     read (Unit)    NEXT:[jmp?(l5)]                PREV:[jf(l7)]
 l8:
-    jmp?(l5)       NEXT:[r(1), read (Unit)]       PREV:[jmp(l8), read (Unit)]
+    jmp?(l5)       NEXT:[r(1), read (Unit)]       PREV:[read (Unit)]
 l3:
     read (Unit)    NEXT:[r(2)]                    PREV:[jmp?(l3), jmp?(l5)]
 l2:
@@ -500,12 +500,12 @@ l0:
     r(1)         NEXT:[r(2)]          PREV:[jmp?(l2)]
     r(2)         NEXT:[ret(*) l1]     PREV:[r(1)]
     ret(*) l1    NEXT:[<END>]         PREV:[r(2)]
-    ret(*) l1    NEXT:[<END>]         PREV:[]
+*   ret(*) l1    NEXT:[<END>]         PREV:[]
 l2:
     r(2)         NEXT:[ret(*) l1]     PREV:[jmp?(l2)]
     ret(*) l1    NEXT:[<END>]         PREV:[r(2)]
 l1:
-    <END>        NEXT:[]              PREV:[ret(*) l1, ret(*) l1, ret(*) l1]
+    <END>        NEXT:[]              PREV:[ret(*) l1, ret(*) l1]
 error:
     <ERROR>      NEXT:[]              PREV:[]
 =====================
