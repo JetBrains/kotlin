@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.*;
@@ -37,6 +38,8 @@ public class TypeHierarchyResolver {
 
     public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<? extends JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
+
+        processTypeImports();
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
@@ -82,8 +85,9 @@ public class TypeHierarchyResolver {
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
                     context.getNamespaceScopes().put(namespace, namespaceScope);
+                    context.getDeclaringScopes().put(namespace, outerScope);
 
-                    processImports(namespace, namespaceScope, outerScope);
+//                    processImports(namespace, namespaceScope, outerScope);
 
                     collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations());
                 }
@@ -205,12 +209,17 @@ public class TypeHierarchyResolver {
         return ClassKind.CLASS;
     }
 
-    private void processImports(@NotNull JetNamespace namespace, @NotNull WriteThroughScope namespaceScope, @NotNull JetScope outerScope) {
+    private void processTypeImports() {
+        for (JetNamespace jetNamespace : context.getNamespaceDescriptors().keySet()) {
+            processImports(jetNamespace, context.getNamespaceScopes().get(jetNamespace), context.getDeclaringScopes().get(jetNamespace));
+        }
+    }
+
+    private void processImports(@NotNull JetNamespace namespace, @NotNull WritableScope namespaceScope, @NotNull JetScope outerScope) {
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
         for (JetImportDirective importDirective : importDirectives) {
             if (importDirective.isAbsoluteInRootNamespace()) {
-//                context.getTrace().getErrorHandler().genericError(namespace.getNode(), "Unsupported by TDA"); // TODO
-                context.getTrace().report(UNSUPPORTED.on(namespace, "TypeHierarchyResolver")); // TODO
+                context.getTrace().report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
                 continue;
             }
             if (importDirective.isAllUnder()) {

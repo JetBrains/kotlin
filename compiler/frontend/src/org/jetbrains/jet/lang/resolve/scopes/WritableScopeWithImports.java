@@ -106,11 +106,13 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         return currentIndividualImportScope;
     }
 
+    @Override
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor);
     }
     
     
+    @Override
     public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
         getCurrentIndividualImportScope().addNamespaceAlias(aliasName, namespaceDescriptor);
     }
