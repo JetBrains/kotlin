@@ -70,6 +70,11 @@ public class DelegatingBindingTrace implements BindingTrace {
         }
     }
 
+    public void clear() {
+        map.clear();
+        diagnostics.clear();
+    }
+
     @Override
     public void report(@NotNull Diagnostic diagnostic) {
         diagnostics.add(diagnostic);

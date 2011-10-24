@@ -1,5 +1,17 @@
 namespace example;
 
+fun any(a : Any) {}
+
+fun notAnExpression() {
+    any(<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) // not an expression
+    if (<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) {} else {} // not an expression
+    val x = <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> // not an expression
+    when (1) {
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> => 1 // not an expression
+    }
+
+}
+
 trait T {
     fun foo() {}
 }
@@ -72,6 +84,6 @@ class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
 // No supertype at all
 class A1 {
     fun test() {
-        super.equals(null)
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>.equals(null)
     }
 }

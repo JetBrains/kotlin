@@ -31,31 +31,31 @@ public class ArrayIterator implements IntrinsicMethod {
         JetStandardLibrary standardLibrary = codegen.getState().getStandardLibrary();
         if(containingDeclaration.equals(standardLibrary.getArray())) {
             codegen.generateTypeInfo(funDescriptor.getReturnType().getArguments().get(0).getType());
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([Ljava/lang/Object;Ljet/typeinfo/TypeInfo;)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;Ljet/typeinfo/TypeInfo;)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getByteArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([B)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([B)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getShortArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([S)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([S)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getIntArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([I)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([I)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getLongArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([J)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([J)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getFloatArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([F)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([F)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getDoubleArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([D)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([D)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getCharArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([C)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([C)Ljet/Iterator;");
         }
         else if(containingDeclaration.equals(standardLibrary.getBooleanArrayClass())) {
-            v.invokestatic("jet/arrays/ArrayIterator", "iterator", "([Z)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Z)Ljet/Iterator;");
         }
         else {
             throw new UnsupportedOperationException(containingDeclaration.toString());

@@ -342,7 +342,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = context.closure.closure;
             int k = 0;
             for (DeclarationDescriptor varDescr : closure.keySet()) {
-                final Type sharedVarType = context.closure.exprContext.getSharedVarType(varDescr);
+                Type sharedVarType = context.closure.exprContext.getSharedVarType(varDescr);
+                if(sharedVarType == null) {
+                    sharedVarType = state.getTypeMapper().mapType(((VariableDescriptor) varDescr).getOutType());
+                }
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
                 iv.load(firstClosureIndex + k, StackValue.refType(sharedVarType));
                 iv.putfield(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$" + (k+1), sharedVarType.getDescriptor());

@@ -105,12 +105,9 @@ public class TypeResolver {
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
-//                                String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
                                 if (actualArgumentCount == 0) {
-//                                    trace.getErrorHandler().genericError(type.getNode(), errorMessage);
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
                                 } else {
-//                                    trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
                                 }
                             } else {
@@ -160,10 +157,14 @@ public class TypeResolver {
                     }
 
                     JetTypeReference returnTypeRef = type.getReturnTypeRef();
+                    JetType returnType;
                     if (returnTypeRef != null) {
-                        JetType returnType = resolveType(scope, returnTypeRef);
-                        result[0] = JetStandardClasses.getFunctionType(annotations, receiverType, parameterTypes, returnType);
+                        returnType = resolveType(scope, returnTypeRef);
                     }
+                    else {
+                        returnType = JetStandardClasses.getUnitType();
+                    }
+                    result[0] = JetStandardClasses.getFunctionType(annotations, receiverType, parameterTypes, returnType);
                 }
 
                 @Override

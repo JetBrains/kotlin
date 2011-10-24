@@ -20,4 +20,7 @@ public class JavaDefaultImports {
             rootScope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
         }
     };
+
+    private JavaDefaultImports() {
+    }
 }

@@ -56,42 +56,42 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testIterator () throws Exception {
-        loadText("fun box() { val x = Array<Int>(5, { it } ).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = Array<Int>(5, { it } ).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
 
     public void testPrimitiveIterator () throws Exception {
-        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
 
     public void testLongIterator () throws Exception {
-        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
 
     public void testCharIterator () throws Exception {
-        loadText("fun box() { val x = CharArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = CharArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
 
     public void testArrayIndices () throws Exception {
-        loadText("fun box() { val x = Array<Int>(5, {it}).indices.iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = Array<Int>(5, {it}).indices.iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
 
     public void testCharIndices () throws Exception {
-        loadText("fun box() { val x = CharArray(5).indices.iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = CharArray(5).indices.iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);

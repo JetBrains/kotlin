@@ -63,4 +63,22 @@ public class DiagnosticUtils {
             return "' at offset " + offset + " (line unknown)" + pathSuffix;
         }
     }
+
+    public static String formatPosition(DiagnosticWithTextRange diagnosticWithTextRange) {
+        PsiFile file = diagnosticWithTextRange.getPsiFile();
+        Document document = file.getViewProvider().getDocument();
+        String position;
+        int offset = diagnosticWithTextRange.getTextRange().getStartOffset();
+        if (document != null) {
+            int lineNumber = document.getLineNumber(offset);
+            int lineStartOffset = document.getLineStartOffset(lineNumber);
+            int column = offset - lineStartOffset;
+
+            position = "(" + (lineNumber + 1) + "," + column + ")";
+        }
+        else {
+            position = "(offset: " + offset + " line unknown)";
+        }
+        return position;
+    }
 }

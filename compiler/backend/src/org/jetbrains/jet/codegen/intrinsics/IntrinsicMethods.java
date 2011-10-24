@@ -73,6 +73,11 @@ public class IntrinsicMethods {
 
         declareIntrinsicFunction("String", "plus", 1, new Concat());
 
+        declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, new Equals());
+
+//        declareIntrinsicFunction("Any", "equals", 1, new Equals());
+//
         declareIntrinsicStringMethods();
         declareIntrinsicProperty("String", "length", new StringLength());
 

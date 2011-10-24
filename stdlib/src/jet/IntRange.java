@@ -76,7 +76,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         }
 
         @Override
-        public boolean hasNext() {
+        public boolean getHasNext() {
             return count > 0;
         }
 
