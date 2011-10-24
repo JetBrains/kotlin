@@ -12,7 +12,7 @@ abstract enum class ProtocolState {
 
 
 fun box(): String {
-   val x: ProtocolState = ProtocolState.WAITING
+   var x: ProtocolState = ProtocolState.WAITING
    x = x.signal()
    if (x != ProtocolState.TALKING) return "fail 1"
    x = x.signal()
