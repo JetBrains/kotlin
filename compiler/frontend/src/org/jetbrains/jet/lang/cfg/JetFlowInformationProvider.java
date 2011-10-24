@@ -118,18 +118,26 @@ public class JetFlowInformationProvider {
         Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
-        SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
-        Set<Instruction> visited = new HashSet<Instruction>();
-        collectReachable(enterInstruction, visited, null);
-
-        for (Instruction instruction : pseudocode.getInstructions()) {
-            if (!visited.contains(instruction) &&
-                instruction instanceof JetElementInstruction &&
+        for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
+            if (deadInstruction instanceof JetElementInstruction &&
                 // TODO : do {return} while (1 > a)
-                !(instruction instanceof ReadUnitValueInstruction)) {
-                unreachableElements.add(((JetElementInstruction) instruction).getElement());
+                !(deadInstruction instanceof ReadUnitValueInstruction)) {
+                unreachableElements.add(((JetElementInstruction) deadInstruction).getElement());
             }
         }
+
+//        SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
+//        Set<Instruction> visited = new HashSet<Instruction>();
+//        collectReachable(enterInstruction, visited, null);
+//
+//        for (Instruction instruction : pseudocode.getInstructions()) {
+//            if (!visited.contains(instruction) &&
+//                instruction instanceof JetElementInstruction &&
+//                // TODO : do {return} while (1 > a)
+//                !(instruction instanceof ReadUnitValueInstruction)) {
+//                unreachableElements.add(((JetElementInstruction) instruction).getElement());
+//            }
+//        }
     }
 //        public void collectDominatedExpressions(@NotNull JetExpression dominator, @NotNull Collection<JetElement> dominated) {
 //            Instruction dominatorInstruction = representativeInstructions.get(dominator);
@@ -248,7 +256,11 @@ public class JetFlowInformationProvider {
 //            }
 //        }
 
-    private <D> Map<Instruction, D> traverseInstructionGraphUntilFactsStabilization(Pseudocode pseudocode, InstructionsMergeHandler<D> instructionsMergeHandler, D initialDataValue, boolean straightDirection) {
+    private <D> Map<Instruction, D> traverseInstructionGraphUntilFactsStabilization(
+            Pseudocode pseudocode, 
+            InstructionsMergeHandler<D> instructionsMergeHandler, 
+            D initialDataValue, 
+            boolean straightDirection) {
         Map<Instruction, D> dataMap = Maps.newHashMap();
         initializeDataMap(dataMap, pseudocode, initialDataValue);
 
@@ -261,7 +273,10 @@ public class JetFlowInformationProvider {
         return dataMap;
     }
     
-    private <D> void initializeDataMap(Map<Instruction, D> dataMap, Pseudocode pseudocode, D initialDataValue) {
+    private <D> void initializeDataMap(
+            Map<Instruction, D> dataMap, 
+            Pseudocode pseudocode, 
+            D initialDataValue) {
         List<Instruction> instructions = pseudocode.getInstructions();
         for (Instruction instruction : instructions) {
             dataMap.put(instruction, initialDataValue);
@@ -271,7 +286,13 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private <D> void traverseSubGraph(Pseudocode pseudocode, InstructionsMergeHandler<D> instructionsMergeHandler, Collection<Instruction> previousSubGraphInstructions, boolean straightDirection, Map<Instruction, D> dataMap, boolean[] changed) {
+    private <D> void traverseSubGraph(
+            Pseudocode pseudocode, 
+            InstructionsMergeHandler<D> instructionsMergeHandler, 
+            Collection<Instruction> previousSubGraphInstructions, 
+            boolean straightDirection, 
+            Map<Instruction, D> dataMap, 
+            boolean[] changed) {
         List<Instruction> instructions = pseudocode.getInstructions();
         SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
         for (Instruction instruction : instructions) {
@@ -317,21 +338,27 @@ public class JetFlowInformationProvider {
             public Set<LocalVariableDescriptor> merge(Instruction instruction, Set<LocalVariableDescriptor> previousDataValue, Collection<Set<LocalVariableDescriptor>> incomingEdgesData) {
                 Set<LocalVariableDescriptor> initializedVariables = Sets.newHashSet();
                 initializedVariables.addAll(previousDataValue);
-                for (Set<LocalVariableDescriptor> edgeDataValue : incomingEdgesData) {
-                    initializedVariables.addAll(edgeDataValue);
+                Set<LocalVariableDescriptor> edgesDataIntersection = Sets.newHashSet();
+                boolean isFirst = true;
+                for (Set<LocalVariableDescriptor> edgeData : incomingEdgesData) {
+                    if (isFirst) {
+                        edgesDataIntersection.addAll(edgeData);
+                    }
+                    else {
+                        edgesDataIntersection = Sets.intersection(edgesDataIntersection, edgeData).immutableCopy();
+                    }
+                    isFirst = false;
                 }
+                initializedVariables.addAll(edgesDataIntersection);
 
                 if (instruction instanceof WriteValueInstruction) {
                     DeclarationDescriptor descriptor = null;
                     JetElement lValue = ((WriteValueInstruction) instruction).getlValue();
-                    if (lValue instanceof JetProperty) {
+                    if (lValue instanceof JetProperty || lValue instanceof JetParameter) {
                         descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, lValue);
                     }
                     else if (lValue instanceof JetSimpleNameExpression) {
                         descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) lValue);
-                    }
-                    else if (lValue instanceof JetParameter) {
-                        descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, lValue);
                     }
                     if (descriptor instanceof LocalVariableDescriptor) {
                         initializedVariables.add((LocalVariableDescriptor) descriptor);
@@ -357,16 +384,16 @@ public class JetFlowInformationProvider {
                     }
                 }
                 else if (instruction instanceof WriteValueInstruction) {
-                    JetElement element = ((WriteValueInstruction) instruction).getElement();
+                    JetElement element = ((WriteValueInstruction) instruction).getlValue();
                     if (element instanceof JetSimpleNameExpression) {
                         DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
                         if (descriptor instanceof LocalVariableDescriptor) {
-                            if (initializedVariables.contains(descriptor) && ((LocalVariableDescriptor) descriptor).isVar()) {
+                            if (initializedVariables.contains(descriptor) && !((LocalVariableDescriptor) descriptor).isVar()) {
                                 trace.report(Errors.VAL_REASSIGNMENT.on((JetSimpleNameExpression) element, descriptor));
                             }
                         }
                     }
-                }                
+                }
             }
         };
         traverseInstructionGraphAndReportErrors(instructions, dataMap, instructionDataAnalyzer);
