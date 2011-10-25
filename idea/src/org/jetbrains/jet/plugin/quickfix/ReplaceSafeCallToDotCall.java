@@ -8,6 +8,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -21,13 +22,13 @@ public class ReplaceSafeCallToDotCall extends JetIntentionAction<JetElement> {
     @NotNull
     @Override
     public String getText() {
-        return "Replace to dot call";
+        return JetBundle.message("replace.to.dot.call");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Replace safe call to dot call";
+        return JetBundle.message("replace.to.dot.call");
     }
 
     @Override

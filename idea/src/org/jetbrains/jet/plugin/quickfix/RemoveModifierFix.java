@@ -17,6 +17,7 @@ import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
 * @author svtk
@@ -32,16 +33,16 @@ public class RemoveModifierFix {
 
     private static String makeText(@Nullable JetModifierListOwner element, JetKeywordToken modifier, boolean isRedundant) {
         if (isRedundant) {
-            return "Remove redundant '" + modifier.getValue() + "' modifier";
+            return JetBundle.message("remove.redundant.modifier", modifier.getValue());
         }
         if (element != null && modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
-            return "Make " + AddModifierFix.getElementName(element) + " not " + modifier.getValue();
+            return JetBundle.message("make.element.not.modifier", AddModifierFix.getElementName(element), modifier.getValue());
         }
-        return "Remove '" + modifier.getValue() + "' modifier";
+        return JetBundle.message("remove.modifier", modifier.getValue());
     }
     
     private static String getFamilyName() {
-        return "Remove modifier fix";
+        return JetBundle.message("remove.modifier.family");
     }
 
     @NotNull

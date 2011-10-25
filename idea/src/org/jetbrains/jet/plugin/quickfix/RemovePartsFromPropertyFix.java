@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -66,13 +67,13 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     @NotNull
     @Override
     public String getText() {
-        return "Remove " + partsToRemove(removeGetter, removeSetter, removeInitializer) + " from property";
+        return JetBundle.message("remove.parts.from.property", partsToRemove(removeGetter, removeSetter, removeInitializer));
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Remove parts from property to make it abstract";
+        return JetBundle.message("remove.parts.from.property.family");
     }
 
     @Override

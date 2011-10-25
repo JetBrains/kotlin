@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -21,7 +22,7 @@ public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpressi
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Remove right part of a binary expression";
+        return JetBundle.message("remove.right.part.of.binary.expression");
     }
 
     @Override
@@ -45,7 +46,7 @@ public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpressi
                     @NotNull
                     @Override
                     public String getText() {
-                        return "Remove cast";
+                        return JetBundle.message("remove.cast");
                     }
                 };
             }
@@ -61,7 +62,7 @@ public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpressi
                     @NotNull
                     @Override
                     public String getText() {
-                        return "Remove elvis operator";
+                        return JetBundle.message("remove.elvis.operator");
                     }
                 };
             }
