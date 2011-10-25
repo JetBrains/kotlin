@@ -20,6 +20,7 @@ import java.util.List;
  */
 public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
+    private static FilenameFilter emptyFilter;
     private boolean checkInfos = false;
     private String dataPath;
     protected final String name;
@@ -75,20 +76,49 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
         return dataPath;
     }
 
+    protected void setUp() throws Exception {
+        super.setUp();
+        emptyFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String name) {
+                return true;
+            }
+        };
+    }
+
     public interface NamedTestFactory {
         @NotNull Test createTest(@NotNull String dataPath, @NotNull String name);
     }
 
     @NotNull
     public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
+        return suiteForDirectory(baseDataDir, dataPath, recursive, emptyFilter, factory);
+    }    
+    
+    @NotNull
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
-        final String extension = ".jet";
-        FilenameFilter extensionFilter = new FilenameFilter() {
+        final String extensionJet = ".jet";
+        final String extensionKt = ".kt";
+        final FilenameFilter extensionFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(extension);
+                return name.endsWith(extensionJet) || name.endsWith(extensionKt);
             }
         };
+        FilenameFilter resultFilter;
+        if (filter != emptyFilter) {
+            resultFilter = new FilenameFilter() {
+                @Override
+                public boolean accept(File file, String s) {
+                    if (extensionFilter.accept(file, s) && filter.accept(file, s)) return true;
+                    return false;        
+                }
+            };
+        }
+        else {
+            resultFilter = extensionFilter;
+        }
         File dir = new File(baseDataDir + dataPath);
         FileFilter dirFilter = new FileFilter() {
             @Override
@@ -105,11 +135,12 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
                 suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, factory));
             }
         }
-        List<File> files = Arrays.asList(dir.listFiles(extensionFilter));
+        List<File> files = Arrays.asList(dir.listFiles(resultFilter));
         Collections.sort(files);
         for (File file : files) {
             String fileName = file.getName();
             assert fileName != null;
+            String extension = fileName.endsWith(extensionJet) ? extensionJet : extensionKt;
             suite.addTest(factory.createTest(dataPath, fileName.substring(0, fileName.length() - extension.length())));
         }
         return suite;
