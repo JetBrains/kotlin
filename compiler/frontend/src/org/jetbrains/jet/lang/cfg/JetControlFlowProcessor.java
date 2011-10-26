@@ -556,6 +556,7 @@ public class JetControlFlowProcessor {
                 List<JetElement> statements = bodyExpression.getStatements();
                 generateSubroutineControlFlow(functionLiteral, statements);
             }
+            builder.read(expression);
         }
 
         @Override

@@ -39,6 +39,6 @@ public class LocalDeclarationInstruction extends ReadValueInstruction {
         else if (element instanceof JetObjectDeclaration) {
             kind = "o";
         }
-        return "r" + kind + "(" + element.getText() + ")";
+        return "d" + kind + "(" + element.getText() + ")";
     }
 }

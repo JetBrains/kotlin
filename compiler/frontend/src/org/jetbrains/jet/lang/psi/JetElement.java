@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -45,6 +46,16 @@ public class JetElement extends ASTWrapperPsiElement {
         }
         else {
             visitor.visitElement(this);
+        }
+    }
+
+    public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            if (child instanceof JetElement) {
+                ((JetElement) child).accept(visitor, data);
+            }
+            child = child.getNextSibling();
         }
     }
 
