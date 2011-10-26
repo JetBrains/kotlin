@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -22,13 +23,13 @@ public class AddPrimaryConstructorFix extends JetIntentionAction<JetClass> {
     @NotNull
     @Override
     public String getText() {
-        return "Add primary constructor to " + element.getName();
+        return JetBundle.message("add.primary.constructor", element.getName());
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Add primary constructor";
+        return JetBundle.message("add.primary.constructor.family");
     }
 
     @Override

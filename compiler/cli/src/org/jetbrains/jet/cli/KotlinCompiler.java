@@ -69,6 +69,7 @@ public class KotlinCompiler {
         environment.addToClasspath(rtJar);
 
         environment.registerFileType(JetFileType.INSTANCE, "kt");
+        environment.registerFileType(JetFileType.INSTANCE, "jet");
         environment.registerParserDefinition(new JetParserDefinition());
 
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(arguments.src);

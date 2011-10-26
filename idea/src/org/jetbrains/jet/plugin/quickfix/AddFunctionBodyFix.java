@@ -8,6 +8,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -20,13 +21,13 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @NotNull
     @Override
     public String getText() {
-        return "Add function body";
+        return JetBundle.message("add.function.body");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Add function body";
+        return JetBundle.message("add.function.body");
     }
 
     @Override

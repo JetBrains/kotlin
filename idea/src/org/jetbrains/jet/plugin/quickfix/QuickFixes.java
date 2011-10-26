@@ -81,7 +81,7 @@ public class QuickFixes {
 
         add(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
 
-        add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallToDotCall.createFactory());
+        add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallWithDotCall.createFactory());
 
         JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory(true);
         add(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);

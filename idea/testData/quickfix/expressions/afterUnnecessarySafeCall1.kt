@@ -1,4 +1,4 @@
-// "Replace to dot call" "true"
+// "Replace with dot call" "true"
 fun foo(a: Any) {
     <caret>a.equals(0)
 }

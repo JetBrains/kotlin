@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -24,7 +25,7 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Replace operation in a binary expression";
+        return JetBundle.message("replace.operation.in.binary.expression");
     }
 
     @Override
@@ -48,7 +49,7 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
                     @NotNull
                     @Override
                     public String getText() {
-                        return "Replace a cast with a static assert";
+                        return JetBundle.message("replace.cast.with.static.assert");
                     }
                 };
             }

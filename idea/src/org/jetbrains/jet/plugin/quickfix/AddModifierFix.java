@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -51,9 +52,9 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     @Override
     public String getText() {
         if (modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
-            return "Make " + getElementName(element) + " " + modifier.getValue();
+            return JetBundle.message("make.element.modifier", getElementName(element), modifier.getValue());
         }
-        return "Add '" + modifier.getValue() + "' modifier";
+        return JetBundle.message("add.modifier", modifier.getValue());
     }
 
     @NotNull

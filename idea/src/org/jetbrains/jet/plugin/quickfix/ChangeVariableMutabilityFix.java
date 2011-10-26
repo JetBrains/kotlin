@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -23,13 +24,13 @@ public class ChangeVariableMutabilityFix extends JetIntentionAction<JetProperty>
     @NotNull
     @Override
     public String getText() {
-        return "Make variable " + (element.isVar() ? "immutable" : "mutable");
+        return element.isVar() ? JetBundle.message("make.variable.immutable") : JetBundle.message("make.variable.mutable");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Change variable mutability";
+        return JetBundle.message("change.variable.mutability.family");
     }
 
     @Override

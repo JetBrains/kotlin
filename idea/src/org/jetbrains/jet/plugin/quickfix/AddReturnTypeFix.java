@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
 * @author svtk
@@ -27,13 +28,13 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
     @NotNull
     @Override
     public String getText() {
-        return "Add return type declaration";
+        return JetBundle.message("add.return.type");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Add return type declaration";
+        return JetBundle.message("add.return.type");
     }
 
     @Override
