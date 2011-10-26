@@ -168,7 +168,7 @@ public class JavaDescriptorResolver {
     private DeclarationDescriptor resolveParentDescriptor(PsiClass psiClass) {
         PsiClass containingClass = psiClass.getContainingClass();
         if (containingClass != null) {
-            return resolveClass(psiClass);
+            return resolveClass(containingClass);
         }
         
         PsiJavaFile containingFile = (PsiJavaFile) psiClass.getContainingFile();
