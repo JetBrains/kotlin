@@ -93,14 +93,19 @@ fun t3() {
 l0:
     <START>                 NEXT:[jmp?(l2)]                           PREV:[]
     jmp?(l2)                NEXT:[r(2), r(1)]                         PREV:[<START>]
-    r(1)                    NEXT:[rf({ () => if (2 > 3) { retu..)]    PREV:[jmp?(l2)]
-    rf({ () =>          
+    r(1)                    NEXT:[df({ () => if (2 > 3) { retu..)]    PREV:[jmp?(l2)]
+    df({ () =>          
             if (2 > 3) {
               return@   
             }           
-        })                  NEXT:[r(2)]                               PREV:[r(1)]
+        })                  NEXT:[r({ () => if (2 > 3) { retur..)]    PREV:[r(1)]
+    r({ () =>           
+            if (2 > 3) {
+              return@   
+            }           
+        })                  NEXT:[r(2)]                               PREV:[df({ () => if (2 > 3) { retu..)]
 l2:
-    r(2)                    NEXT:[<END>]                              PREV:[jmp?(l2), rf({ () => if (2 > 3) { retu..)]
+    r(2)                    NEXT:[<END>]                              PREV:[jmp?(l2), r({ () => if (2 > 3) { retur..)]
 l1:
     <END>                   NEXT:[]                                   PREV:[r(2)]
 error:
@@ -171,8 +176,8 @@ fun t3() {
 }
 ---------------------
 l0:
-    <START>               NEXT:[rf({ () => try { 1 if (2 > 3..)]    PREV:[]
-    rf({ () =>        
+    <START>               NEXT:[df({ () => try { 1 if (2 > 3..)]    PREV:[]
+    df({ () =>        
         try {         
           1           
           if (2 > 3) {
@@ -181,9 +186,19 @@ l0:
         } finally {   
           2           
         }             
-      })                  NEXT:[<END>]                              PREV:[<START>]
+      })                  NEXT:[r({ () => try { 1 if (2 > 3)..)]    PREV:[<START>]
+    r({ () =>         
+        try {         
+          1           
+          if (2 > 3) {
+            return@   
+          }           
+        } finally {   
+          2           
+        }             
+      })                  NEXT:[<END>]                              PREV:[df({ () => try { 1 if (2 > 3..)]
 l1:
-    <END>                 NEXT:[]                                   PREV:[rf({ () => try { 1 if (2 > 3..)]
+    <END>                 NEXT:[]                                   PREV:[r({ () => try { 1 if (2 > 3)..)]
 error:
     <ERROR>               NEXT:[]                                   PREV:[]
 l2:
