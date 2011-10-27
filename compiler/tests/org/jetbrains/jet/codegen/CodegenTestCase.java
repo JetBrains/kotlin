@@ -1,17 +1,14 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetLightProjectDescriptor;
+import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
-import org.jetbrains.jet.plugin.JetFileType;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -21,8 +18,9 @@ import java.util.Map;
 /**
  * @author yole
  */
-public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
+public abstract class CodegenTestCase extends JetLiteFixture {
     private MyClassLoader myClassLoader;
+    private JetFile myFile;
 
     protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
         boolean caught = false;
@@ -43,16 +41,24 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        myFile = null;
         myClassLoader = null;
         super.tearDown();
     }
 
     protected void loadText(final String text) {
-        myFixture.configureByText(JetFileType.INSTANCE, text);
+        myFile = (JetFile) createFile("a.jet", text);
     }
 
-    protected void loadFile(final String name) {
-        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
+    @Override
+    protected String loadFile(final String name) {
+        try {
+            final String content = doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
+            myFile = (JetFile) createFile(name, content);
+            return content;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected void loadFile() {
@@ -85,8 +91,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         ClassFileFactory codegens = generateClassesInFile();
         CodegensClassLoader loader = new CodegensClassLoader(codegens);
 
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        final JetNamespace namespace = jetFile.getRootNamespace();
+        final JetNamespace namespace = myFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
         Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box");
@@ -95,9 +100,8 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     protected String generateToText() {
         GenerationState state = new GenerationState(getProject(), true);
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        AnalyzingUtils.checkForSyntacticErrors(jetFile);
-        state.compile(jetFile);
+        AnalyzingUtils.checkForSyntacticErrors(myFile);
+        state.compile(myFile);
 
         StringBuilder answer = new StringBuilder();
 
@@ -117,8 +121,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected Class loadRootNamespaceClass(ClassFileFactory state) {
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        final JetNamespace namespace = jetFile.getRootNamespace();
+        final JetNamespace namespace = myFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
         Map<String, Class> classMap = loadAllClasses(state);
         return classMap.get(fqName);
@@ -151,9 +154,8 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     protected ClassFileFactory generateClassesInFile() {
         try {
             GenerationState state = new GenerationState(getProject(), false);
-            JetFile jetFile = (JetFile) myFixture.getFile();
-            AnalyzingUtils.checkForSyntacticErrors(jetFile);
-            state.compile(jetFile);
+            AnalyzingUtils.checkForSyntacticErrors(myFile);
+            state.compile(myFile);
 
             return state.getFactory();
         } catch (RuntimeException e) {
@@ -232,11 +234,5 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
             }
             return super.findClass(name);
         }
-    }
-
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
     }
 }

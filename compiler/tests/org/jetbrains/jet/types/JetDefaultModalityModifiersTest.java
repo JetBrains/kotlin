@@ -1,6 +1,6 @@
 package org.jetbrains.jet.types;
 
-import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
+import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class JetDefaultModalityModifiersTest extends LightDaemonAnalyzerTestCase {
+public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     private JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();
 
     @Override
@@ -27,7 +27,7 @@ public class JetDefaultModalityModifiersTest extends LightDaemonAnalyzerTestCase
         tc.setUp();
     }
 
-    public static class JetDefaultModalityModifiersTestCase  {
+    public class JetDefaultModalityModifiersTestCase  {
         private ModuleDescriptor root = new ModuleDescriptor("test_root");
         private ClassDescriptorResolver classDescriptorResolver;
         private JetScope scope;

@@ -1,7 +1,7 @@
 package org.jetbrains.jet.types;
 
-import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
-import com.intellij.openapi.application.PathManager;
+import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -11,14 +11,11 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.parsing.JetParsingTest;
-
-import java.io.File;
 
 /**
  * @author abreslav
  */
-public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
+public class JetOverridingTest extends JetLiteFixture {
 
     private ModuleDescriptor root = new ModuleDescriptor("test_root");
     private JetStandardLibrary library;
@@ -35,11 +32,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return getHomeDirectory() + "/compiler/testData";
-    }
-
-    private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
+        return JetTestCaseBase.getTestDataPathBase();
     }
 
     public void testBasic() throws Exception {
