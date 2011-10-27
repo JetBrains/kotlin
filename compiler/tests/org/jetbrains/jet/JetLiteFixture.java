@@ -26,7 +26,7 @@ import java.io.IOException;
 public abstract class JetLiteFixture extends UsefulTestCase {
     @NonNls
     protected final String myFullDataPath;
-    protected PsiFile myFile;
+    protected JetFile myFile;
     private JetCoreEnvironment myEnvironment;
 
     public JetLiteFixture(@NonNls String dataPath) {

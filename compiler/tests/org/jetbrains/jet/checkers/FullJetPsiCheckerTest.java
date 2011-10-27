@@ -2,39 +2,34 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author abreslav
  */
-public class FullJetPsiCheckerTest extends JetTestCaseBase {
+public class FullJetPsiCheckerTest extends JetLiteFixture {
+    private final String myDataPath;
+    private String myName;
 
     public FullJetPsiCheckerTest(@NonNls String dataPath, String name) {
-        super(dataPath, name);
+        myDataPath = dataPath;
+        myName = name;
     }
 
 
     @Override
     public void runTest() throws Exception {
-        String fileName = name + ".jet";
-        String fullPath = getTestDataPath() + getTestFilePath();
+        String fileName = myName + ".jet";
+        String fullPath = myDataPath + "/" + fileName;
 
 
         String expectedText = loadFile(fullPath);
@@ -42,9 +37,8 @@ public class FullJetPsiCheckerTest extends JetTestCaseBase {
         List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
         String clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
 
-        configureFromFileText(fileName, clearText);
-        JetFile jetFile = (JetFile) myFile;
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(jetFile);
+        myFile = createPsiFile(myName, clearText);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(myFile);
 
         CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override
@@ -60,7 +54,7 @@ public class FullJetPsiCheckerTest extends JetTestCaseBase {
             }
         });
 
-        String actualText = CheckerTestUtil.addDiagnosticMarkersToText(jetFile, bindingContext).toString();
+        String actualText = CheckerTestUtil.addDiagnosticMarkersToText(myFile, bindingContext).toString();
 
         assertEquals(expectedText, actualText);
 
@@ -69,12 +63,7 @@ public class FullJetPsiCheckerTest extends JetTestCaseBase {
 //        convert(new File(myFullDataPath + "/../../checker/"), new File(myFullDataPath));
     }
 
-    private String loadFile(String fullPath) throws IOException {
-        final File ioFile = new File(fullPath);
-        String fileText = FileUtil.loadFile(ioFile, CharsetToolkit.UTF8);
-        return StringUtil.convertLineSeparators(fileText);
-    }
-
+/*
     private void convert(File src, File dest) throws IOException {
         File[] files = src.listFiles();
         for (File file : files) {
@@ -105,6 +94,7 @@ public class FullJetPsiCheckerTest extends JetTestCaseBase {
             }
         }
     }
+*/
 
     public static Test suite() {
         return JetTestCaseBase.suiteForDirectory(JetTestCaseBase.getTestDataPathBase(), "/checkerWithErrorTypes/full/", true, new JetTestCaseBase.NamedTestFactory() {

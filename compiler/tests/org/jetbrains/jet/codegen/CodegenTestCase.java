@@ -20,7 +20,6 @@ import java.util.Map;
  */
 public abstract class CodegenTestCase extends JetLiteFixture {
     private MyClassLoader myClassLoader;
-    private JetFile myFile;
 
     protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
         boolean caught = false;
