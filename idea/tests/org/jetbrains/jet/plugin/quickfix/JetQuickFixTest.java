@@ -91,6 +91,6 @@ public class JetQuickFixTest  extends LightQuickFixTestCase {
 
     @Override
     protected Sdk getProjectJDK() {
-        return JetTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 }

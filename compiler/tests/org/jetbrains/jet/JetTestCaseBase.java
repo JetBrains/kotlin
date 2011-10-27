@@ -3,7 +3,6 @@ package org.jetbrains.jet;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -21,22 +20,12 @@ import java.util.List;
 public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
     private static FilenameFilter emptyFilter;
-    private boolean checkInfos = false;
     private String dataPath;
     protected final String name;
 
     public JetTestCaseBase(String dataPath, String name) {
         this.dataPath = dataPath;
         this.name = name;
-    }
-
-    public final JetTestCaseBase setCheckInfos(boolean checkInfos) {
-        this.checkInfos = checkInfos;
-        return this;
-    }
-
-    public static Sdk jdkFromIdeaHome() {
-        return new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
     }
 
     @Override
@@ -52,26 +41,6 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
        return new File(PathManager.getResourceRoot(JetTestCaseBase.class, "/org/jetbrains/jet/JetTestCaseBase.class")).getParentFile().getParentFile().getParent();
     }
 
-    @Override
-    protected Sdk getProjectJDK() {
-        return jdkFromIdeaHome();
-    }
-
-    @Override
-    public String getName() {
-        return "test" + name;
-    }
-
-    @Override
-    protected void runTest() throws Throwable {
-        doTest(getTestFilePath(), true, checkInfos);
-    }
-
-    @NotNull
-    protected String getTestFilePath() {
-        return dataPath + File.separator + name + ".jet";
-    }
-    
     protected String getDataPath() {
         return dataPath;
     }

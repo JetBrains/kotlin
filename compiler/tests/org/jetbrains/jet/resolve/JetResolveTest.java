@@ -2,7 +2,6 @@ package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -133,10 +132,12 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         return getHomeDirectory() + "/compiler/testData";
     }
 
+/*
     @Override
     protected Sdk getProjectJDK() {
-        return JetTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
+*/
 
     private static String getHomeDirectory() {
         return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
