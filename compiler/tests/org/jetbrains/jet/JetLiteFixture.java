@@ -14,6 +14,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
@@ -71,8 +72,16 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         return text;
     }
 
-    protected PsiFile createPsiFile(String name, String text) {
-        return createFile(name + ".jet", text);
+    protected JetFile createPsiFile(String name, String text) {
+        return (JetFile) createFile(name + ".jet", text);
+    }
+
+    protected JetFile loadPsiFile(String name) {
+        try {
+            return createPsiFile(name, loadFile(name));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected PsiFile createFile(@NonNls String name, String text) {
