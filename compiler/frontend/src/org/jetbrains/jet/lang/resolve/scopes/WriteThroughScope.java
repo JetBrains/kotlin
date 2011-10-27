@@ -167,4 +167,9 @@ public class WriteThroughScope extends WritableScopeWithImports {
         }
         return allDescriptors;
     }
+
+    @NotNull
+    public JetScope getOuterScope() {
+        return getWorkerScope();
+    }
 }

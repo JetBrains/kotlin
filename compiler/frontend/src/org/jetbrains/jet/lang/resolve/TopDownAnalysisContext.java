@@ -25,11 +25,12 @@ import java.util.Set;
     protected final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
     protected final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
+    private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
+
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
-    private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
 
     public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace) {
         this.trace = new ObservableBindingTrace(trace);

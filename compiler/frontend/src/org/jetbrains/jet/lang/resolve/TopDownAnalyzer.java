@@ -18,44 +18,14 @@ public class TopDownAnalyzer {
 
     private TopDownAnalyzer() {}
 
-    public static void processObject(
+    public static void process(
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetObjectDeclaration object) {
-        process(semanticServices, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
-
-                    @Override
-                    public NamespaceDescriptorImpl getNamespace(String name) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
-
-                    }
-
-                    @Override
-                    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-
-                    }
-
-                    @Override
-                    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
-                        return ClassObjectStatus.NOT_ALLOWED;
-                    }
-                }, Collections.<JetDeclaration>singletonList(object), JetControlFlowDataTraceFactory.EMPTY, true);
+            NamespaceLike owner,
+            @NotNull List<? extends JetDeclaration> declarations,
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        process(semanticServices, trace, outerScope, owner, declarations, flowDataTraceFactory, false);
     }
 
     private static void process(
@@ -75,16 +45,6 @@ public class TopDownAnalyzer {
         new DeclarationsChecker(context).process();
         new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
     }
-    
-    public static void process(
-                @NotNull JetSemanticServices semanticServices,
-                @NotNull BindingTrace trace,
-                @NotNull JetScope outerScope,
-                NamespaceLike owner,
-                @NotNull List<? extends JetDeclaration> declarations,
-                @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        process(semanticServices, trace, outerScope, owner, declarations, flowDataTraceFactory, false);
-    }
 
     public static void processStandardLibraryNamespace(
             @NotNull JetSemanticServices semanticServices,
@@ -93,6 +53,8 @@ public class TopDownAnalyzer {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);
         context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
         context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
+        context.getDeclaringScopes().put(namespace, outerScope);
+
         new TypeHierarchyResolver(context).process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
         new DeclarationResolver(context).process();
         new DelegationResolver(context).process();
@@ -103,6 +65,46 @@ public class TopDownAnalyzer {
         };
         overrideResolver.process();
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
+    }
+
+    public static void processObject(
+            @NotNull JetSemanticServices semanticServices,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope outerScope,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull JetObjectDeclaration object) {
+        process(semanticServices, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+
+            @Override
+            public NamespaceDescriptorImpl getNamespace(String name) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+
+            }
+
+            @Override
+            public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+
+            }
+
+            @Override
+            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                return ClassObjectStatus.NOT_ALLOWED;
+            }
+        }, Collections.<JetDeclaration>singletonList(object), JetControlFlowDataTraceFactory.EMPTY, true);
     }
 
 }

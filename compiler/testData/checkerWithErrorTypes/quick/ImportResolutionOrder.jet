@@ -1,0 +1,12 @@
+// KT-355 Resolve imports after all symbols are built
+
+namespace a {
+  import b.*
+  val x : X = X()
+}
+
+namespace b {
+  class X() {
+
+  }
+}

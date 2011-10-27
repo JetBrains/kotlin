@@ -8,26 +8,27 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
  */
-public class ReplaceSafeCallToDotCall extends JetIntentionAction<JetElement> {
+public class ReplaceSafeCallWithDotCall extends JetIntentionAction<JetElement> {
 
-    public ReplaceSafeCallToDotCall(@NotNull JetElement element) {
+    public ReplaceSafeCallWithDotCall(@NotNull JetElement element) {
         super(element);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return "Replace to dot call";
+        return JetBundle.message("replace.with.dot.call");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Replace safe call to dot call";
+        return JetBundle.message("replace.with.dot.call");
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ReplaceSafeCallToDotCall extends JetIntentionAction<JetElement> {
             @Override
             public JetIntentionAction<JetElement> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetElement;
-                return new ReplaceSafeCallToDotCall((JetElement) diagnostic.getPsiElement());
+                return new ReplaceSafeCallWithDotCall((JetElement) diagnostic.getPsiElement());
             }
         };
     }

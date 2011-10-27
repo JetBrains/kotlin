@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -26,13 +27,13 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @NotNull
     @Override
     public String getText() {
-        return "Remove function body";
+        return JetBundle.message("remove.function.body");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Remove function body";
+        return JetBundle.message("remove.function.body");
     }
 
     @Override

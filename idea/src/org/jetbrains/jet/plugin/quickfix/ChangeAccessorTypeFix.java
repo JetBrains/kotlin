@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
@@ -30,13 +31,13 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     @NotNull
     @Override
     public String getText() {
-        return (element.isGetter() ? "Change getter " : "Change setter parameter ") + "type to " + type;
+        return element.isGetter() ? JetBundle.message("change.getter.type", type) : JetBundle.message("change.setter.type", type);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Change accessor type";
+        return JetBundle.message("change.accessor.type");
     }
 
     @Override

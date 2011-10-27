@@ -33,4 +33,8 @@ public interface WritableScope extends JetScope {
     void importScope(@NotNull JetScope imported);
 
     void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver);
+
+    void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor);
+
+    void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor);
 }
