@@ -150,7 +150,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        doTest(path, true, false);
+        doTest(path);
     }
 
     public static Test suite() {
