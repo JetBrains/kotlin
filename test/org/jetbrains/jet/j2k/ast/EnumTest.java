@@ -14,15 +14,99 @@ public class EnumTest extends JetTestCaseBase {
     );
   }
 
-//  public void testTypeSafeEnum() throws Exception {
+  public void testTypeSafeEnum() throws Exception {
+    Assert.assertEquals(
+      classToKotlin("enum Coin { PENNY, NICKEL, DIME, QUARTER; }"),
+      "enum Coin {\n" +
+        "PENNY\n" +
+        "NICKEL\n" +
+        "DIME\n" +
+        "QUARTER\n" +
+        "}"
+    );
+  }
+
+  //
+  public void testOverrideToString() throws Exception {
+    Assert.assertEquals(
+      classToKotlin(
+
+        "enum Color {" +
+          " WHITE, BLACK, RED, YELLOW, BLUE;" +
+          "@Override String toString() {" +
+          "  return \"COLOR\";" +
+          "}" +
+          "}"),
+      "enum Color {\n" +
+        "WHITE\n" +
+        "BLACK\n" +
+        "RED\n" +
+        "YELLOW\n" +
+        "BLUE\n" +
+        "fun toString() : String? {\n" +
+        "return \"COLOR\"\n" +
+        "}\n" +
+        "}"
+    );
+  }
+
+  public void testFields() throws Exception {
+    Assert.assertEquals(
+      classToKotlin(
+        "enum Color {\n" +
+          " WHITE(21), BLACK(22), RED(23), YELLOW(24), BLUE(25);\n" +
+          "\n" +
+          " private int code;\n" +
+          "\n" +
+          " private Color(int c) {\n" +
+          "   code = c;\n" +
+          " }\n" +
+          "\n" +
+          " public int getCode() {\n" +
+          "   return code;\n" +
+          " }"),
+      "enum Color(c : Int) {\n" +
+        "WHITE(21)\n" +
+        "BLACK(22)\n" +
+        "RED(23)\n" +
+        "YELLOW(24)\n" +
+        "BLUE(25)\n" +
+        "var code : Int\n" +
+        "fun getCode() : Int {\n" +
+        "return code\n" +
+        "}\n" +
+        "}"
+    );
+  }
+
+//  public void testTwoConstructors() throws Exception {
 //    Assert.assertEquals(
-//      classToKotlin("enum Coin { PENNY, NICKEL, DIME, QUARTER; }"),
-//      "enum Coin {\n" +
-//        "PENNY\n" +
-//        "NICKEL\n" +
-//        "DIME\n" +
-//        "QUARTER\n" +
-//        "}"
+//      classToKotlin(
+//        "enum MultEnum {\n" +
+//          "    GREMLIN(\"UTILITY\"),\n" +
+//          "    MORT(30);\n" +
+//          "  \n" +
+//          "    MultEnum(String s) {\n" +
+//          "    }\n" +
+//          "  \n" +
+//          "    MultEnum(int dmg) {\n" +
+//          "    }"),
+//      "" // TODO: will fail
 //    );
 //  }
-}
+//
+//  public void testInterfaceImplementation() throws Exception {
+//    Assert.assertEquals(
+//      classToKotlin(
+//        "enum Color implements Runnable {\n" +
+//          " WHITE, BLACK, RED, YELLOW, BLUE;\n" +
+//          "\n" +
+//          " public void run() {\n" +
+//          "   System.out.println(\"name()=\" + name() +\n" +
+//          "       \", toString()=\" + toString());\n" +
+//          " }\n" +
+//          "}"),
+//      ""
+//    );
+//  }
+  }

@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class Field extends Node {
-  private Identifier myIdentifier;
-  private Type myType;
-  private Expression myInitializer;
+  protected Identifier myIdentifier;
+  protected Type myType;
+  protected Element myInitializer;
 
-  public Field(Identifier identifier, Type type, Expression initializer) {
+  public Field(Identifier identifier, Type type, Element initializer) {
     myIdentifier = identifier;
     myType = type;
     myInitializer = initializer;

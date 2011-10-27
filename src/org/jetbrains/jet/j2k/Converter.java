@@ -59,6 +59,12 @@ public class Converter {
   }
 
   private static Field fieldToField(PsiField field) {
+    if (field instanceof PsiEnumConstant) // TODO: remove instanceof
+      return new EnumConstant(
+        new IdentifierImpl(field.getName()), // TODO
+        typeToType(field.getType()),
+        elementToElement(((PsiEnumConstant) field).getArgumentList())
+      );
     return new Field(
       new IdentifierImpl(field.getName()), // TODO
       typeToType(field.getType()),
@@ -76,8 +82,25 @@ public class Converter {
   }
 
   @NotNull
-  private static Function methodToFunction(PsiMethod t, boolean notEmpty) {
-    return new Function(new IdentifierImpl(t.getName()), typeToType(t.getReturnType()), bodyToBlock(t.getBody(), notEmpty));
+  private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
+    final IdentifierImpl identifier = new IdentifierImpl(method.getName());
+    final Type type = typeToType(method.getReturnType());
+    final Block body = bodyToBlock(method.getBody(), notEmpty);
+    final Element params = elementToElement(method.getParameterList());
+
+    if (method.isConstructor())
+      return new Constructor(
+        identifier,
+        type,
+        params,
+        body
+      );
+    return new Function(
+      identifier,
+      type,
+      params,
+      body
+    );
   }
 
   @NotNull
@@ -172,5 +195,21 @@ public class Converter {
     if (t.getImportReference() != null)
       return new Import(t.getImportReference().getQualifiedName()); // TODO: use identifier
     return new Import("");
+  }
+
+  @NotNull
+  public static List<Parameter> parametersToParameterList(PsiParameter[] parameters) {
+    List<Parameter> result = new LinkedList<Parameter>();
+    for (PsiParameter t : parameters) {
+      result.add(parameterToParameter(t));
+    }
+    return result;
+  }
+
+  private static Parameter parameterToParameter(PsiParameter parameter) {
+    return new Parameter(
+      new IdentifierImpl(parameter.getName()), // TODO: remove
+      typeToType(parameter.getType())
+    );
   }
 }
