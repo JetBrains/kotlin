@@ -9,7 +9,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -154,7 +154,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     public static Test suite() {
-        return JetTestCaseBase.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBase.NamedTestFactory() {
+        return JetTestCaseBuilder.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

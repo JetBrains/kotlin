@@ -5,7 +5,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.quickfix.PluginTestCaseBase;
 
 import java.io.File;
@@ -55,21 +55,21 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(JetTestCaseBase.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, new JetTestCaseBase.NamedTestFactory() {
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
         }));
-        suite.addTest(JetTestCaseBase.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/regression/", false, new JetTestCaseBase.NamedTestFactory() {
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/regression/", false, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
         }));
-        suite.addTest(JetTestCaseBase.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/infos/", false, new JetTestCaseBase.NamedTestFactory() {
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/infos/", false, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

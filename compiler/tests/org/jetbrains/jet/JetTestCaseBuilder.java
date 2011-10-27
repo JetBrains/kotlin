@@ -1,8 +1,6 @@
 package org.jetbrains.jet;
 
-import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.projectRoots.Sdk;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -17,42 +15,20 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
-
-    private static FilenameFilter emptyFilter;
-    private String dataPath;
-    protected final String name;
-
-    public JetTestCaseBase(String dataPath, String name) {
-        this.dataPath = dataPath;
-        this.name = name;
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return getTestDataPathBase();
-    }
+public abstract class JetTestCaseBuilder {
+    private static FilenameFilter emptyFilter = new FilenameFilter() {
+        @Override
+        public boolean accept(File file, String name) {
+            return true;
+        }
+    };
 
     public static String getTestDataPathBase() {
         return getHomeDirectory() + "/compiler/testData";
     }
 
     public static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetTestCaseBase.class, "/org/jetbrains/jet/JetTestCaseBase.class")).getParentFile().getParentFile().getParent();
-    }
-
-    protected String getDataPath() {
-        return dataPath;
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        emptyFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String name) {
-                return true;
-            }
-        };
+       return new File(PathManager.getResourceRoot(JetTestCaseBuilder.class, "/org/jetbrains/jet/JetTestCaseBuilder.class")).getParentFile().getParentFile().getParent();
     }
 
     public interface NamedTestFactory {

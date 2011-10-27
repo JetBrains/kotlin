@@ -2,14 +2,14 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 
 /**
  * @author yole
  */
 public class PluginTestCaseBase {
     public static String getTestDataPathBase() {
-        return JetTestCaseBase.getHomeDirectory() + "/idea/testData";
+        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData";
     }
 
     public static Sdk jdkFromIdeaHome() {

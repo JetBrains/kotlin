@@ -9,7 +9,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -394,7 +394,7 @@ public class JetControlFlowTest extends JetLiteFixture {
 
     public static TestSuite suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(JetTestCaseBase.suiteForDirectory(JetTestCaseBase.getTestDataPathBase(), "/cfg/", true, new JetTestCaseBase.NamedTestFactory() {
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/cfg/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

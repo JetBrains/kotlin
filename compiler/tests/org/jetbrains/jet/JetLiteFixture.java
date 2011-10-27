@@ -38,7 +38,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     public Project getProject() {
@@ -49,9 +49,9 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
-        final File rtJar = new File(JetTestCaseBase.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
+        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         myEnvironment.addToClasspath(rtJar);
-        myEnvironment.addToClasspath(new File(JetTestCaseBase.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
+        myEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
     }
 
     @Override

@@ -13,7 +13,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
@@ -101,7 +101,7 @@ public class JetParsingTest extends ParsingTestCase {
 
     public static TestSuite suite() {
         TestSuite suite = new TestSuite();
-        JetTestCaseBase.NamedTestFactory factory = new JetTestCaseBase.NamedTestFactory() {
+        JetTestCaseBuilder.NamedTestFactory factory = new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
@@ -109,8 +109,8 @@ public class JetParsingTest extends ParsingTestCase {
             }
         };
         String prefix = JetParsingTest.getTestDataDir() + "/psi/";
-        suite.addTest(JetTestCaseBase.suiteForDirectory(prefix, "/", false, factory));
-        suite.addTest(JetTestCaseBase.suiteForDirectory(prefix, "examples", true, factory));
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "/", false, factory));
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "examples", true, factory));
         return suite;
     }
 

@@ -6,7 +6,7 @@ import junit.framework.Test;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
@@ -97,7 +97,7 @@ public class FullJetPsiCheckerTest extends JetLiteFixture {
 */
 
     public static Test suite() {
-        return JetTestCaseBase.suiteForDirectory(JetTestCaseBase.getTestDataPathBase(), "/checkerWithErrorTypes/full/", true, new JetTestCaseBase.NamedTestFactory() {
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/checkerWithErrorTypes/full/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
