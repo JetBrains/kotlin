@@ -270,7 +270,6 @@ public class JetControlFlowTest extends JetTestCaseBase {
                 @Override
                 public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
                     //todo print edges
-                    visitInstruction(instruction);
                     printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
                 }
 
