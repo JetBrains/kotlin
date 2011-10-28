@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -131,18 +132,23 @@ public class AnalyzingUtils {
                         final Project project = file.getProject();
                         final List<JetDeclaration> namespaces = Lists.newArrayList();
                         ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-                        VirtualFile[] contentRoots = rootManager.getContentRoots();
+                        if (rootManager != null && !ApplicationManager.getApplication().isUnitTestMode()) {
+                            VirtualFile[] contentRoots = rootManager.getContentRoots();
 
-                        CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
-                            @Override
-                            protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
-                                if (!(file.getName().endsWith(".kt") || file.getName().endsWith(".kts"))) return;
-                                PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                                if (psiFile instanceof JetFile) {
-                                    namespaces.add(((JetFile) psiFile).getRootNamespace());
+                            CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
+                                @Override
+                                protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
+                                    if (!(file.getName().endsWith(".kt") || file.getName().endsWith(".kts"))) return;
+                                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                                    if (psiFile instanceof JetFile) {
+                                        namespaces.add(((JetFile) psiFile).getRootNamespace());
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                        else {
+                            namespaces.add(file.getRootNamespace());
+                        }
                         try {
 //                            JetNamespace rootNamespace = file.getRootNamespace();
                             BindingContext bindingContext = analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
