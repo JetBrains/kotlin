@@ -40,6 +40,8 @@ fun Any?.equals(other : Any?) : Boolean// = this === other
 // Returns "null" for null
 fun Any?.toString() : String// = this === other
 
+fun String?.plus(other: Any?) : String
+
 trait Iterator<out T> {
   fun next()  : T
   val hasNext : Boolean
