@@ -5,10 +5,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
@@ -590,6 +592,17 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitCallExpression(JetCallExpression expression) {
+            //inline functions after M1
+//            ResolvedCall<? extends CallableDescriptor> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+//            assert resolvedCall != null;
+//            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
+//            PsiElement element = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, resultingDescriptor);
+//            if (element instanceof JetNamedFunction) {
+//                JetNamedFunction namedFunction = (JetNamedFunction) element;
+//                if (namedFunction.hasModifier(JetTokens.INLINE_KEYWORD)) {
+//                }
+//            }
+
             for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
                 value(typeArgument, false);
             }
@@ -726,6 +739,9 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+//            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
+//                value(delegationSpecifier, inCondition);
+//            }
             Queue<Label> declarationLabels = new LinkedList<Label>();
             List<JetDeclaration> declarations = declaration.getDeclarations();
             for (JetDeclaration localDeclaration : declarations) {
@@ -734,27 +750,19 @@ public class JetControlFlowProcessor {
             builder.nondeterministicJump(Lists.newArrayList(declarationLabels));
             for (JetDeclaration localDeclaration : declarations) {
                 if (localDeclaration instanceof JetNamedDeclaration) {
-                    if (localDeclaration instanceof JetFunction) {
-                        //TODO
-                        generate(localDeclaration, ((JetFunction) localDeclaration).getBodyExpression());
+                    if (localDeclaration instanceof JetDeclarationWithBody) {
+                        JetExpression bodyExpression = ((JetDeclarationWithBody) localDeclaration).getBodyExpression();
+                        generate(localDeclaration, bodyExpression != null ? bodyExpression : localDeclaration);
                     }
                     else {
                         generate(localDeclaration, localDeclaration);
                     }
-                } 
+                }
                 else {
-                    //todo
                     generate(declaration, localDeclaration);
                 }
                 builder.bindLabel(declarationLabels.remove());
             }
-//            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
-//                value(delegationSpecifier, inCondition);
-//            }
-//            for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
-//                //FOR_LOCAL_CLASSES.
-//                value(jetDeclaration, false);
-//            }
         }
 
         @Override

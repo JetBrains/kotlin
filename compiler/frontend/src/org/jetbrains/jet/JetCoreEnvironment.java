@@ -12,6 +12,8 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     public JetCoreEnvironment(Disposable parentDisposable) {
         super(parentDisposable);
         registerFileType(JetFileType.INSTANCE, "kt");
+        registerFileType(JetFileType.INSTANCE, "kts");
+        registerFileType(JetFileType.INSTANCE, "ktm");
         registerFileType(JetFileType.INSTANCE, "jet");
         registerParserDefinition(new JetParserDefinition());
     }

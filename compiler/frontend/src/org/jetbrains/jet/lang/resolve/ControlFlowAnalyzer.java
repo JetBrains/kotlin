@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 import java.util.Map;
@@ -113,7 +114,12 @@ public class ControlFlowAnalyzer {
             });
         }
         if (!declaredLocally) {
-            flowInformationProvider.markUninitializedVariables(function.asElement());
+            flowInformationProvider.markUninitializedVariables(function.asElement(), functionDescriptor.getValueParameters());
+
+            if (((JetDeclaration) function).hasModifier(JetTokens.INLINE_KEYWORD)) {
+                //inline functions after M1
+//                flowInformationProvider.markNotOnlyInvokedFunctionVariables(function.asElement(), functionDescriptor.getValueParameters());
+            }
         }
     }
 

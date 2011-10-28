@@ -1,5 +1,6 @@
 /*
  * @author max
+ * @author alex.tkachman
  */
 package org.jetbrains.jet.codegen;
 
@@ -16,9 +17,7 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -152,6 +151,9 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         final Method bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = invokeSignature(funDescriptor);
 
+        if(bridge.getDescriptor().equals(delegate.getDescriptor()))
+            return;
+
         final MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
         mv.visitCode();
 
@@ -212,7 +214,8 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
 
         iv.load(0, Type.getObjectType(funClass));
-        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));
+//        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));
+        iv.aconst(null); // @todo
         iv.invokespecial(funClass, "<init>", "(Ljet/typeinfo/TypeInfo;)V");
 
         i = 1;

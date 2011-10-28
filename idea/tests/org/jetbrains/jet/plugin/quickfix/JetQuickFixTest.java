@@ -6,7 +6,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -49,7 +49,7 @@ public class JetQuickFixTest  extends LightQuickFixTestCase {
                 return false;
             }
         };
-        JetTestCaseBase.NamedTestFactory namedTestFactory = new JetTestCaseBase.NamedTestFactory() {
+        JetTestCaseBuilder.NamedTestFactory namedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
@@ -60,14 +60,14 @@ public class JetQuickFixTest  extends LightQuickFixTestCase {
         List<String> subDirs = Arrays.asList(quickFixTestsFilter != null ? dir.list(quickFixTestsFilter) : dir.list());
         Collections.sort(subDirs);
         for (String subDirName : subDirs) {
-            suite.addTest(JetTestCaseBase.suiteForDirectory(getTestDataPathBase(), subDirName, false, fileNameFilter, namedTestFactory));
+            suite.addTest(JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, false, fileNameFilter, namedTestFactory));
 
         }
         return suite;
     }
 
     public static String getTestDataPathBase() {
-        return JetTestCaseBase.getHomeDirectory() + "/idea/testData/quickfix/";
+        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData/quickfix/";
     }
 
     public String getName() {
@@ -91,6 +91,6 @@ public class JetQuickFixTest  extends LightQuickFixTestCase {
 
     @Override
     protected Sdk getProjectJDK() {
-        return JetTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 }

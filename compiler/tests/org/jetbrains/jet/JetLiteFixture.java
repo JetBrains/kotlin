@@ -14,6 +14,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
@@ -25,7 +26,7 @@ import java.io.IOException;
 public abstract class JetLiteFixture extends UsefulTestCase {
     @NonNls
     protected final String myFullDataPath;
-    protected PsiFile myFile;
+    protected JetFile myFile;
     private JetCoreEnvironment myEnvironment;
 
     public JetLiteFixture(@NonNls String dataPath) {
@@ -37,7 +38,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     public Project getProject() {
@@ -48,9 +49,9 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
-        final File rtJar = new File(JetTestCaseBase.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
+        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         myEnvironment.addToClasspath(rtJar);
-        myEnvironment.addToClasspath(new File(JetTestCaseBase.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
+        myEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
     }
 
     @Override
@@ -71,8 +72,16 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         return text;
     }
 
-    protected PsiFile createPsiFile(String name, String text) {
-        return createFile(name + ".jet", text);
+    protected JetFile createPsiFile(String name, String text) {
+        return (JetFile) createFile(name + ".jet", text);
+    }
+
+    protected JetFile loadPsiFile(String name) {
+        try {
+            return createPsiFile(name, loadFile(name));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected PsiFile createFile(@NonNls String name, String text) {

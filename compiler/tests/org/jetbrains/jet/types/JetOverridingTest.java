@@ -1,7 +1,7 @@
 package org.jetbrains.jet.types;
 
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -32,7 +32,7 @@ public class JetOverridingTest extends JetLiteFixture {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     public void testBasic() throws Exception {

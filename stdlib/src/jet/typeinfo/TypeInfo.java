@@ -49,9 +49,7 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<String> NULLABLE_STRING_TYPE_INFO = getTypeInfo(String.class, true);
     public static final TypeInfo<Tuple0> NULLABLE_TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, true);
     
-    public static Object [] newArray(int length, TypeInfo typeInfo) {
-        return (Object[]) Array.newInstance(((TypeInfoImpl)typeInfo).signature.klazz, length);
-    }
+    public abstract Object [] newArray(int length);
 
     public static <T> TypeInfoProjection invariantProjection(final TypeInfo<T> typeInfo) {
         return (TypeInfoProjection) typeInfo;
@@ -124,6 +122,11 @@ public abstract class TypeInfo<T> implements JetObject {
             this.signature = signature;
             this.nullable = nullable;
             this.varIndex = varIndex;
+        }
+
+        @Override
+        public Object[] newArray(int length) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -207,6 +210,11 @@ public abstract class TypeInfo<T> implements JetObject {
 
         public final TypeInfoProjection getProjection(int index) {
             return projections[index];
+        }
+
+        @Override
+        public Object[] newArray(int length) {
+            return (Object[]) Array.newInstance(signature.klazz, length);
         }
 
         public final Object getClassObject() {

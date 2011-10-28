@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -51,7 +51,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBase.getTestDataPathBase();
+        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     public void testConstants() throws Exception {

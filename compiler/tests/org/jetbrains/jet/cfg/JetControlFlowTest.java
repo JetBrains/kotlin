@@ -8,7 +8,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -20,19 +21,25 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
-public class JetControlFlowTest extends JetTestCaseBase {
+public class JetControlFlowTest extends JetLiteFixture {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
+    
+    private String myName;
 
     public JetControlFlowTest(String dataPath, String name) {
-        super(dataPath, name);
+        super(dataPath);
+        myName = name;
     }
-
+    
+    protected String getTestFilePath() {
+        return myFullDataPath + "/" + myName;
+    }
+    
     @Override
     protected void runTest() throws Throwable {
-        configureByFile(getTestFilePath());
-        JetFile file = (JetFile) getFile();
+        JetFile file = loadPsiFile(myName + ".jet");
 
         final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
         final JetPseudocodeTrace pseudocodeTrace = new JetPseudocodeTrace() {
@@ -68,14 +75,14 @@ public class JetControlFlowTest extends JetTestCaseBase {
         });
 
         try {
-            processCFData(name, data);
+            processCFData(myName, data);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
         finally {
             if ("true".equals(System.getProperty("jet.control.flow.test.dump.graphs"))) {
-                dumpDot(name, data.values());
+                dumpDot(myName, data.values());
             }
         }
     }
@@ -120,7 +127,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
             }
         }
 
-        String expectedInstructionsFileName = getTestDataPath() + "/" + getTestFilePath().replace(".jet", ".instructions");
+        String expectedInstructionsFileName = getTestFilePath() + ".instructions";
         File expectedInstructionsFile = new File(expectedInstructionsFileName);
         if (!expectedInstructionsFile.exists()) {
             FileUtil.writeToFile(expectedInstructionsFile, instructionDump.toString());
@@ -270,7 +277,6 @@ public class JetControlFlowTest extends JetTestCaseBase {
                 @Override
                 public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
                     //todo print edges
-                    visitInstruction(instruction);
                     printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
                 }
 
@@ -352,7 +358,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
     }
 
     private void dumpDot(String name, Collection<Pseudocode> pseudocodes) throws FileNotFoundException {
-        String graphFileName = getTestDataPath() + "/" + getTestFilePath().replace(".jet", ".dot");
+        String graphFileName = getTestDataPath() + "/" + getTestFilePath() + ".dot";
         File target = new File(graphFileName);
 
         PrintStream out = new PrintStream(target);
@@ -387,7 +393,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
     public static TestSuite suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(JetTestCaseBase.suiteForDirectory(getTestDataPathBase(), "/cfg/", true, new JetTestCaseBase.NamedTestFactory() {
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/cfg/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

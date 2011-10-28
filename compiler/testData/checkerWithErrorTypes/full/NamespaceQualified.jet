@@ -52,7 +52,7 @@ abstract class Sum() : Iteratee<Int, Int> {
 }
 
 abstract class Collection<E> : Iterable<E> {
-  fun iterate<O>(iteratee : Iteratee<E, O>) : O {
+  fun iterate<O>(var iteratee : Iteratee<E, O>) : O {
       for (x in this) {
         val it = iteratee.process(x)
         if (it.isDone) return it.result

@@ -1,6 +1,8 @@
 package org.jetbrains.jet.cli;
 
-import com.google.common.collect.*;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -10,6 +12,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
+import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -17,13 +20,11 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
-import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,16 +62,12 @@ public class KotlinCompiler {
             public void dispose() {
             }
         };
-        JavaCoreEnvironment environment = new JavaCoreEnvironment(root);
+        JetCoreEnvironment environment = new JetCoreEnvironment(root);
 
         File rtJar = initJdk();
         if (rtJar == null) return;
 
         environment.addToClasspath(rtJar);
-
-        environment.registerFileType(JetFileType.INSTANCE, "kt");
-        environment.registerFileType(JetFileType.INSTANCE, "jet");
-        environment.registerParserDefinition(new JetParserDefinition());
 
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(arguments.src);
         if (vFile == null) {
