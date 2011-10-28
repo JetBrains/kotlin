@@ -1,31 +1,16 @@
 package org.jetbrains.jet.cli;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.Processor;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
-import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.File;
@@ -34,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
 import java.util.List;
 import java.util.jar.*;
 
@@ -49,8 +33,10 @@ public class KotlinCompiler {
         public String outputDir;
         @Argument(value = "jar", description = "jar file name")
         public String jar;
-        @Argument(value = "src", description = "source file or directory", required = true)
+        @Argument(value = "src", description = "source file or directory")
         public String src;
+        @Argument(value = "module", description = "module to compile")
+        public String module;
     }
 
     public static void main(String[] args) {
@@ -76,56 +62,70 @@ public class KotlinCompiler {
         if (rtJar == null) return;
 
         environment.addToClasspath(rtJar);
+        final File unpackedRuntimePath = getUnpackedRuntimePath();
+        if (unpackedRuntimePath != null) {
+            environment.addToClasspath(unpackedRuntimePath);
+        }
 
-        VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(arguments.src);
-        if (vFile == null) {
-            System.out.print("File/directory not found: " + arguments.src);
+        if (arguments.module != null) {
+            compileModule(environment, arguments.module);
             return;
         }
 
-        Project project = environment.getProject();
-        GenerationState generationState = new GenerationState(project, false);
-        List<JetNamespace> namespaces = Lists.newArrayList();
+        CompileSession session = new CompileSession(environment);
+        session.addSources(arguments.src);
+
         String mainClass = null;
-        if(vFile.isDirectory())  {
-            File dir = new File(vFile.getPath());
-            addFiles(environment, project, namespaces, dir);
+        for (JetNamespace namespace : session.getSourceFileNamespaces()) {
+            if (JetMainDetector.hasMain(namespace.getDeclarations())) {
+                mainClass = namespace.getFQName() + ".namespace";
+                break;
+            }
+        }
+        if (!session.analyze()) {
+            return;
+        }
+
+        ClassFileFactory factory = session.generate();
+        if (arguments.jar != null) {
+            writeToJar(factory, arguments.jar, mainClass, true);
+        }
+        else if (arguments.outputDir != null) {
+            writeToOutputDirectory(factory, arguments.outputDir);
         }
         else {
-            PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
-            if (psiFile instanceof JetFile) {
-                final JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
-                if (JetMainDetector.hasMain(namespace.getDeclarations())) {
-                    mainClass = namespace.getFQName() + ".namespace";
-                }
-                namespaces.add(namespace);
-            }
-            else {
-                System.out.print("Not a Kotlin file: " + vFile.getPath());
-                return;
-            }
+            System.out.println("Output directory or jar file is not specified - no files will be saved to the disk");
+        }
+    }
+
+    private static void compileModule(JetCoreEnvironment environment, String moduleFile) {
+        final FileIndexFacade instance = FileIndexFacade.getInstance(environment.getProject());
+        VirtualFile jetObject = environment.getLocalFileSystem().findFileByPath(KotlinCompiler.class.getClassLoader().getResource("jet/JetObject.class").getPath());
+        instance.isInLibraryClasses(jetObject);
+
+        CompileSession moduleCompileSession = new CompileSession(environment);
+        moduleCompileSession.addSources(moduleFile);
+
+        URL url = KotlinCompiler.class.getClassLoader().getResource("ModuleBuilder.kt");
+        if (url != null) {
+            // TODO
+        }
+        else {
+            // building from source
+            final String homeDirectory = getHomeDirectory();
+            final File file = new File(homeDirectory, "stdlib/ktSrc/ModuleBuilder.kt");
+            moduleCompileSession.addSources(environment.getLocalFileSystem().findFileByPath(file.getPath()));
+
         }
 
-        BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
-
-        ErrorCollector errorCollector = new ErrorCollector(bindingContext);
-        errorCollector.report();
-
-        if (!errorCollector.hasErrors) {
-            generationState.compileCorrectNamespaces(bindingContext, namespaces);
-
-            final ClassFileFactory factory = generationState.getFactory();
-            if (arguments.jar != null) {
-                writeToJar(factory, arguments.jar, mainClass, true);
-            }
-            else if (arguments.outputDir != null) {
-                writeToOutputDirectory(factory, arguments.outputDir);
-            }
-            else {
-                System.out.println("Output directory or jar file is not specified - no files will be saved to the disk");
-            }
+        if (!moduleCompileSession.analyze()) {
+            return;
         }
+        final ClassFileFactory factory = moduleCompileSession.generate();
+    }
 
+    private static String getHomeDirectory() {
+       return new File(PathManager.getResourceRoot(KotlinCompiler.class, "/org/jetbrains/jet/cli/KotlinCompiler.class")).getParentFile().getParentFile().getParent();
     }
 
     private static void writeToJar(ClassFileFactory factory, String jar, String mainClass, boolean includeRuntime) {
@@ -157,22 +157,32 @@ public class KotlinCompiler {
             System.out.println("Failed to generate jar file: " + e.getMessage());
         }
     }
+    
+    private static File getUnpackedRuntimePath() {
+        URL url = KotlinCompiler.class.getClassLoader().getResource("jet/JetObject.class");
+        if (url != null && url.getProtocol().equals("file")) {
+            return new File(url.getPath()).getParentFile().getParentFile();
+        }
+        return null;
+    }
+
+    private static File getRuntimeJarPath() {
+        URL url = KotlinCompiler.class.getClassLoader().getResource("jet/JetObject.class");
+        if (url != null && url.getProtocol().equals("jar")) {
+            String path = url.getPath();
+            return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
+        }
+        return null;
+    }
 
     private static void writeRuntimeToJar(final JarOutputStream stream) throws IOException {
-        URL url = KotlinCompiler.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url == null) {
-            System.out.println("Couldn't find runtime library");
-            return;
-        }
-        final String protocol = url.getProtocol();
-        final String path = url.getPath();
-        if (protocol.equals("file")) {   // unpacked runtime
-            final File stdlibDir = new File(path).getParentFile().getParentFile();
-            FileUtil.processFilesRecursively(stdlibDir, new Processor<File>() {
+        final File unpackedRuntimePath = getUnpackedRuntimePath();
+        if (unpackedRuntimePath != null) {
+            FileUtil.processFilesRecursively(unpackedRuntimePath, new Processor<File>() {
                 @Override
                 public boolean process(File file) {
                     if (file.isDirectory()) return true;
-                    final String relativePath = FileUtil.getRelativePath(stdlibDir, file);
+                    final String relativePath = FileUtil.getRelativePath(unpackedRuntimePath, file);
                     try {
                         stream.putNextEntry(new JarEntry(FileUtil.toSystemIndependentName(relativePath)));
                         FileInputStream fis = new FileInputStream(file);
@@ -188,24 +198,28 @@ public class KotlinCompiler {
                 }
             });
         }
-        else if (protocol.equals("jar")) {
-            File jar = new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
-            JarInputStream jis = new JarInputStream(new FileInputStream(jar));
-            try {
-                while (true) {
-                    JarEntry e = jis.getNextJarEntry();
-                    if (e == null) {
-                        break;
-                    }
-                    stream.putNextEntry(e);
-                    FileUtil.copy(jis, stream);
-                }
-            } finally {
-                jis.close();
-            }
-        }
         else {
-            System.out.println("Couldn't copy runtime library from " + url + ", protocol " + protocol);
+            File runtimeJarPath = getRuntimeJarPath();
+            if (runtimeJarPath != null) {
+                JarInputStream jis = new JarInputStream(new FileInputStream(runtimeJarPath));
+                try {
+                    while (true) {
+                        JarEntry e = jis.getNextJarEntry();
+                        if (e == null) {
+                            break;
+                        }
+                        if (FileUtil.getExtension(e.getName()).equals("class")) {
+                            stream.putNextEntry(e);
+                            FileUtil.copy(jis, stream);
+                        }
+                    }
+                } finally {
+                    jis.close();
+                }
+            }
+            else {
+                System.out.println("Couldn't find runtime library");
+            }
         }
     }
 
@@ -218,58 +232,6 @@ public class KotlinCompiler {
                 System.out.println("Generated classfile: " + target);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    private static class ErrorCollector {
-        Multimap<PsiFile,DiagnosticWithTextRange> maps = LinkedHashMultimap.<PsiFile, DiagnosticWithTextRange>create();
-
-        boolean hasErrors;
-
-        public ErrorCollector(BindingContext bindingContext) {
-            for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-                report(diagnostic);
-            }
-        }
-
-        private void report(Diagnostic diagnostic) {
-            hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
-            if(diagnostic instanceof DiagnosticWithTextRange) {
-                DiagnosticWithTextRange diagnosticWithTextRange = (DiagnosticWithTextRange) diagnostic;
-                maps.put(diagnosticWithTextRange.getPsiFile(), diagnosticWithTextRange);
-            }
-            else {
-                System.out.println(diagnostic.getSeverity().toString() + ": " + diagnostic.getMessage());
-            }
-        }
-
-        void report() {
-            if(!maps.isEmpty()) {
-                for (PsiFile psiFile : maps.keySet()) {
-                    System.out.println(psiFile.getVirtualFile().getPath());
-                    Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
-                    for (DiagnosticWithTextRange diagnosticWithTextRange : diagnosticWithTextRanges) {
-                        String position = DiagnosticUtils.formatPosition(diagnosticWithTextRange);
-                        System.out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + position + " " + diagnosticWithTextRange.getMessage());
-                    }
-                }
-            }
-        }
-
-    }
-
-    private static void addFiles(JavaCoreEnvironment environment, Project project, List<JetNamespace> namespaces, File dir) {
-        for(File file : dir.listFiles()) {
-            if(!file.isDirectory()) {
-                VirtualFile virtualFile = environment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
-                PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-                if (psiFile instanceof JetFile) {
-                    namespaces.add(((JetFile) psiFile).getRootNamespace());
-                }
-            }
-            else {
-                addFiles(environment, project, namespaces, file);
             }
         }
     }
