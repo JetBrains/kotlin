@@ -25,6 +25,10 @@ public class FullJetPsiCheckerTest extends JetLiteFixture {
         myName = name;
     }
 
+    @Override
+    public String getName() {
+        return "test" + myName;
+    }
 
     @Override
     public void runTest() throws Exception {
