@@ -60,6 +60,7 @@ public class JetPsiChecker implements Annotator {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
+                        if (diagnostic.getFactory().getPsiFile(diagnostic) != file) continue;
                         Annotation annotation = null;
                         if (diagnostic.getSeverity() == Severity.ERROR) {
                             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
