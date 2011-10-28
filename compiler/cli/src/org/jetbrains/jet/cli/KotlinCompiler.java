@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.Processor;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
 import org.jetbrains.jet.JetCoreEnvironment;
@@ -25,22 +26,29 @@ import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
+import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
+import java.util.jar.*;
 
 /**
  * @author yole
  * @author alex.tkachman
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class KotlinCompiler {
     public static class Arguments {
         @Argument(value = "output", description = "output directory")
         public String outputDir;
+        @Argument(value = "jar", description = "jar file name")
+        public String jar;
         @Argument(value = "src", description = "source file or directory", required = true)
         public String src;
     }
@@ -52,7 +60,7 @@ public class KotlinCompiler {
             Args.parse(arguments, args);
         }
         catch (Throwable t) {
-            System.out.println("Usage: KotlinCompiler -output <outputDir> -src <filename or dirname>");
+            System.out.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] -src <filename or dirname>");
             t.printStackTrace();
             return;
         }
@@ -78,6 +86,7 @@ public class KotlinCompiler {
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, false);
         List<JetNamespace> namespaces = Lists.newArrayList();
+        String mainClass = null;
         if(vFile.isDirectory())  {
             File dir = new File(vFile.getPath());
             addFiles(environment, project, namespaces, dir);
@@ -85,7 +94,11 @@ public class KotlinCompiler {
         else {
             PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
             if (psiFile instanceof JetFile) {
-                namespaces.add(((JetFile) psiFile).getRootNamespace());
+                final JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
+                if (JetMainDetector.hasMain(namespace.getDeclarations())) {
+                    mainClass = namespace.getFQName() + ".namespace";
+                }
+                namespaces.add(namespace);
             }
             else {
                 System.out.print("Not a Kotlin file: " + vFile.getPath());
@@ -102,23 +115,111 @@ public class KotlinCompiler {
             generationState.compileCorrectNamespaces(bindingContext, namespaces);
 
             final ClassFileFactory factory = generationState.getFactory();
-            if(arguments.outputDir == null) {
-                System.out.println("Output directory is not specified - no files will be saved to the disk");
+            if (arguments.jar != null) {
+                writeToJar(factory, arguments.jar, mainClass, true);
+            }
+            else if (arguments.outputDir != null) {
+                writeToOutputDirectory(factory, arguments.outputDir);
             }
             else {
-                List<String> files = factory.files();
-                for (String file : files) {
-                    File target = new File(arguments.outputDir, file);
-                    try {
-                        FileUtil.writeToFile(target, factory.asBytes(file));
-                        System.out.println("Generated classfile: " + target);
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
+                System.out.println("Output directory or jar file is not specified - no files will be saved to the disk");
             }
         }
 
+    }
+
+    private static void writeToJar(ClassFileFactory factory, String jar, String mainClass, boolean includeRuntime) {
+        try {
+            Manifest manifest = new Manifest();
+            final Attributes mainAttributes = manifest.getMainAttributes();
+            mainAttributes.putValue("Manifest-Version", "1.0");
+            mainAttributes.putValue("Created-By", "JetBrains Kotlin");
+            if (mainClass != null) {
+                mainAttributes.putValue("Main-Class", mainClass);
+            }
+            FileOutputStream fos = new FileOutputStream(jar);
+            JarOutputStream stream = new JarOutputStream(fos, manifest);
+            try {
+                for (String file : factory.files()) {
+                    stream.putNextEntry(new JarEntry(file));
+                    stream.write(factory.asBytes(file));
+                }
+                if (includeRuntime) {
+                    writeRuntimeToJar(stream);
+                }
+            }
+            finally {
+                stream.close();
+                fos.close();
+            }
+
+        } catch (IOException e) {
+            System.out.println("Failed to generate jar file: " + e.getMessage());
+        }
+    }
+
+    private static void writeRuntimeToJar(final JarOutputStream stream) throws IOException {
+        URL url = KotlinCompiler.class.getClassLoader().getResource("jet/JetObject.class");
+        if (url == null) {
+            System.out.println("Couldn't find runtime library");
+            return;
+        }
+        final String protocol = url.getProtocol();
+        final String path = url.getPath();
+        if (protocol.equals("file")) {   // unpacked runtime
+            final File stdlibDir = new File(path).getParentFile().getParentFile();
+            FileUtil.processFilesRecursively(stdlibDir, new Processor<File>() {
+                @Override
+                public boolean process(File file) {
+                    if (file.isDirectory()) return true;
+                    final String relativePath = FileUtil.getRelativePath(stdlibDir, file);
+                    try {
+                        stream.putNextEntry(new JarEntry(FileUtil.toSystemIndependentName(relativePath)));
+                        FileInputStream fis = new FileInputStream(file);
+                        try {
+                            FileUtil.copy(fis, stream);
+                        } finally {
+                            fis.close();
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                }
+            });
+        }
+        else if (protocol.equals("jar")) {
+            File jar = new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
+            JarInputStream jis = new JarInputStream(new FileInputStream(jar));
+            try {
+                while (true) {
+                    JarEntry e = jis.getNextJarEntry();
+                    if (e == null) {
+                        break;
+                    }
+                    stream.putNextEntry(e);
+                    FileUtil.copy(jis, stream);
+                }
+            } finally {
+                jis.close();
+            }
+        }
+        else {
+            System.out.println("Couldn't copy runtime library from " + url + ", protocol " + protocol);
+        }
+    }
+
+    private static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
+        List<String> files = factory.files();
+        for (String file : files) {
+            File target = new File(outputDir, file);
+            try {
+                FileUtil.writeToFile(target, factory.asBytes(file));
+                System.out.println("Generated classfile: " + target);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     private static class ErrorCollector {
