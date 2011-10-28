@@ -66,9 +66,11 @@ public class JetCompiler implements TranslatingCompiler {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
+                VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
+
                 GenerationState generationState = new GenerationState(compileContext.getProject(), false);
                 List<JetNamespace> namespaces = Lists.newArrayList();
-                for (VirtualFile virtualFile : virtualFiles) {
+                for (VirtualFile virtualFile : allFiles) {
                     PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);
                     if (psiFile instanceof JetFile) {
                         namespaces.add(((JetFile) psiFile).getRootNamespace());

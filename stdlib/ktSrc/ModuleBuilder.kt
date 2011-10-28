@@ -1,4 +1,6 @@
-namespace kotlin.modules
+namespace kotlin
+
+namespace modules {
 
 import java.util.*
 import jet.modules.*
@@ -44,4 +46,6 @@ class ModuleBuilder(val name: String): IModuleBuilder {
 
     override fun getSourceFiles(): List<String?>? = sourceFiles
     override fun getClasspathRoots(): List<String?>? = classpathRoots
+}
+
 }
