@@ -76,4 +76,8 @@ public class FunctionGenTest extends CodegenTestCase {
         assertTrue((Boolean) foo.invoke(null, "lala"));
         assertFalse((Boolean) foo.invoke(null, "mama"));
     }
+
+    public void testKt395 () {
+        blackBoxFile("regressions/kt395.jet");
+    }
 }

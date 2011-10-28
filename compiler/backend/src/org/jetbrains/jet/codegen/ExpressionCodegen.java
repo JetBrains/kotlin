@@ -313,10 +313,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         myContinueTargets.pop();
     }
 
-    private DeclarationDescriptor contextType() {
-        return context.getContextClass();
-    }
-
     private OwnerKind contextKind() {
         return context.getContextKind();
     }
@@ -874,7 +870,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         String owner;
 
         boolean isInterface;
-        boolean isInsideClass = containingDeclaration == contextType();
+        boolean isInsideClass = containingDeclaration == context.getContextClass();
         if (isInsideClass || isStatic) {
             owner = typeMapper.getOwner(functionDescriptor, contextKind());
             isInterface = false;
@@ -904,7 +900,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         propertyDescriptor = propertyDescriptor.getOriginal();
-        boolean isInsideClass = !forceInterface && containingDeclaration == contextType();
+        boolean isInsideClass = !forceInterface && containingDeclaration == context.getContextClass();
         Method getter;
         Method setter;
         if (forceField) {
@@ -1024,10 +1020,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return funDescriptor;
     }
 
-    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression) {
-        invokeMethodWithArguments(callableMethod, expression, StackValue.none());
-    }
-
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
         final Type calleeType = callableMethod.getGenerateCalleeType();
         if (calleeType != null && expression instanceof JetCallExpression) {
@@ -1053,7 +1045,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             if (callableMethod.isNeedsReceiver()) {
-                receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+                if (receiver == StackValue.none()) {
+                    v.load(0, JetTypeMapper.TYPE_OBJECT);
+                }
+                else
+                    receiver.put(JetTypeMapper.TYPE_OBJECT, v);
             }
         }
         
@@ -1812,7 +1808,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
 
                 CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
-                invokeMethodWithArguments(method, expression);
+                invokeMethodWithArguments(method, expression, StackValue.none());
             }
         }
         else {
@@ -1849,7 +1845,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.anew(type);
         v.dup();
         final CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructor);
-        invokeMethodWithArguments(callableMethod, expression);
+        invokeMethodWithArguments(callableMethod, expression, StackValue.none());
         return type;
     }
 
@@ -2313,12 +2309,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return;
         }
         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
-        if (contextType() instanceof ClassDescriptor) {
-            ClassDescriptor descriptor = (ClassDescriptor) contextType();
+        if (context.getContextClass() instanceof ClassDescriptor) {
+            ClassDescriptor descriptor = (ClassDescriptor) context.getContextClass();
             JetType defaultType = ((ClassDescriptor)containingDeclaration).getDefaultType();
             Type ownerType = typeMapper.mapType(defaultType);
             ownerType = JetTypeMapper.boxType(ownerType);
-            if (containingDeclaration == contextType()) {
+            if (containingDeclaration == context.getContextClass()) {
                 if(!CodegenUtil.isInterface(descriptor)) {
                     if (CodegenUtil.hasTypeInfoField(defaultType)) {
                         v.load(0, JetTypeMapper.TYPE_OBJECT);
