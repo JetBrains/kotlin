@@ -461,7 +461,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, kind);
-        codegen.invokeMethodWithArguments(method, constructorCall);
+        codegen.invokeMethodWithArguments(method, constructorCall, StackValue.none());
     }
 
     @Override
@@ -513,7 +513,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) state.getBindingContext().get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
                     CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
-                    codegen.invokeMethodWithArguments(method, superCall);
+                    codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
                 }
                 else {
                     throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);

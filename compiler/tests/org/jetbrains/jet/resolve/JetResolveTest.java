@@ -2,7 +2,6 @@ package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -10,7 +9,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -133,10 +132,12 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         return getHomeDirectory() + "/compiler/testData";
     }
 
+/*
     @Override
     protected Sdk getProjectJDK() {
-        return JetTestCaseBase.jdkFromIdeaHome();
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
+*/
 
     private static String getHomeDirectory() {
         return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
@@ -149,11 +150,11 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        doTest(path, true, false);
+        doTest(path);
     }
 
     public static Test suite() {
-        return JetTestCaseBase.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBase.NamedTestFactory() {
+        return JetTestCaseBuilder.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

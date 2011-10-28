@@ -1,7 +1,5 @@
 package org.jetbrains.jet.resolve;
 
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -48,17 +46,7 @@ public class ExpectedResolveData {
 //        this.nameToType = nameToType;
     }
 
-    public void extractData(final Document document) {
-        new WriteCommandAction.Simple(null) {
-          public void run() {
-              doExtractData(document);
-          }
-        }.execute().throwException();
-    }
-
-    private void doExtractData(Document document) {
-        String text = document.getText();
-
+    public String extractData(String text) {
         Pattern pattern = Pattern.compile("(~[^~]+~)|(`[^`]+`)");
         while (true) {
             Matcher matcher = pattern.matcher(text);
@@ -84,11 +72,11 @@ public class ExpectedResolveData {
                 throw new IllegalStateException();
             }
 
-            document.replaceString(start, matcher.end(), "");
-            text = document.getText();
+            text = text.substring(0, start) + text.substring(matcher.end());
         }
 
         System.out.println(text);
+        return text;
     }
 
     public void checkResult(JetFile file) {

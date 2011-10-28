@@ -75,6 +75,7 @@ public class IntrinsicMethods {
 
         declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, new Equals());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, new StringPlus());
 
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //

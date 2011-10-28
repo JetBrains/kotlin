@@ -2,10 +2,8 @@ package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
 import jet.Tuple2;
-import jet.Tuple3;
 import jet.Tuple4;
 import jet.typeinfo.TypeInfo;
-import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +46,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testLocalProperty() throws Exception {
-        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/localProperty.jet");
+        loadFile("localProperty.jet");
         final String text = generateToText();
         System.out.println(text);
 
