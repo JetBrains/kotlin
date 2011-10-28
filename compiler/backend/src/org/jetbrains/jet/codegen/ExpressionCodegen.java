@@ -1867,20 +1867,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 throw new CompilationException("primitive array constructor requires one argument");
             }
         }
-        gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
 
         if(isArray) {
             JetType elementType = typeMapper.getGenericsElementType(arrayType);
             if(elementType != null) {
                 generateTypeInfo(elementType);
-                v.invokestatic("jet/typeinfo/TypeInfo", "newArray", "(ILjet/typeinfo/TypeInfo;)[Ljava/lang/Object;");
+                gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
+                v.invokevirtual("jet/typeinfo/TypeInfo", "newArray", "(I)[Ljava/lang/Object;");
             }
             else {
+                gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
                 v.newarray(JetTypeMapper.boxType(typeMapper.mapType(arrayType.getArguments().get(0).getType())));
             }
         }
         else {
             Type type = typeMapper.mapType(arrayType, OwnerKind.IMPLEMENTATION);
+            gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
             v.newarray(type.getElementType());
         }
 
