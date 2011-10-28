@@ -1,11 +1,13 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
+import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiErrorElement;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -14,7 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
@@ -123,9 +128,24 @@ public class AnalyzingUtils {
                 @Override
                 public Result<BindingContext> compute() {
                     synchronized (lock) {
+                        final Project project = file.getProject();
+                        final List<JetDeclaration> namespaces = Lists.newArrayList();
+                        ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
+                        VirtualFile[] contentRoots = rootManager.getContentRoots();
+
+                        CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
+                            @Override
+                            protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
+                                if (!(file.getName().endsWith(".kt") || file.getName().endsWith(".kts"))) return;
+                                PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                                if (psiFile instanceof JetFile) {
+                                    namespaces.add(((JetFile) psiFile).getRootNamespace());
+                                }
+                            }
+                        });
                         try {
-                            JetNamespace rootNamespace = file.getRootNamespace();
-                            BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
+//                            JetNamespace rootNamespace = file.getRootNamespace();
+                            BindingContext bindingContext = analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
                             return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                         catch (ProcessCanceledException e) {
