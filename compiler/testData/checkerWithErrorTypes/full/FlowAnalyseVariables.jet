@@ -48,6 +48,13 @@ fun t2() {
 fun doSmth(s: String) {}
 fun doSmth(i: Int) {}
 
+class A() {}
+
+fun t4(a: A, val b: A, var c: A) {
+    <!VAL_REASSIGNMENT!>a<!> = A()
+    <!VAL_REASSIGNMENT!>b<!> = A()
+    c = A()
+}
 }
 
 namespace reassigned_vals {

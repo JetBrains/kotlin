@@ -1,5 +1,5 @@
 class C(x: Int, val y : Int) {
-  fun initChild(x: Int) : java.lang.Object {
+  fun initChild(var x: Int) : java.lang.Object {
     return object : java.lang.Object() {
       override fun toString(): String? {
           x = x + y
