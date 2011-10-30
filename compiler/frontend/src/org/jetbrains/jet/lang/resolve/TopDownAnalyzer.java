@@ -4,12 +4,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author abreslav
@@ -23,7 +26,7 @@ public class TopDownAnalyzer {
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             NamespaceLike owner,
-            @NotNull List<? extends JetDeclaration> declarations,
+            @NotNull Collection<? extends JetDeclaration> declarations,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         process(semanticServices, trace, outerScope, owner, declarations, flowDataTraceFactory, false);
     }
@@ -33,7 +36,7 @@ public class TopDownAnalyzer {
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             NamespaceLike owner,
-            @NotNull List<? extends JetDeclaration> declarations,
+            @NotNull Collection<? extends JetDeclaration> declarations,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             boolean declaredLocally) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);

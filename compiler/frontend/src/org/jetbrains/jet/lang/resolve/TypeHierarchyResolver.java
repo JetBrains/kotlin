@@ -36,7 +36,7 @@ public class TypeHierarchyResolver {
         this.context = context;
     }
 
-    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<? extends JetDeclaration> declarations) {
+    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull Collection<? extends JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
 
         processTypeImports();
