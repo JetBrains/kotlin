@@ -44,7 +44,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<JetDeclaration> declarations = file.getRootNamespace().getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
-            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
+            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
             DeclarationDescriptor classDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
             assert classDescriptor instanceof ClassifierDescriptor;

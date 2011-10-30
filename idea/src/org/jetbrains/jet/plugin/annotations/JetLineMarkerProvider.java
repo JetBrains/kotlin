@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -45,7 +45,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
 
         if (file == null) return null;
-        final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 
         if (element instanceof JetClass) {
             JetClass jetClass = (JetClass) element;

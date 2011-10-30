@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetHighlighter;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import java.util.Collection;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class DebugInfoAnnotator implements Annotator {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             try {
-                final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
+                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 
                 final Set<JetReferenceExpression> unresolvedReferences = Sets.newHashSet();
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

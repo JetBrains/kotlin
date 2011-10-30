@@ -40,7 +40,7 @@ public class QuickJetPsiCheckerTest extends JetLiteFixture {
 
         createAndCheckPsiFile(name, clearText);
         JetFile jetFile = (JetFile) myFile;
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), jetFile);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), jetFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
 
         CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override

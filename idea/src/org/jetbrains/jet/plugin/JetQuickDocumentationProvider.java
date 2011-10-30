@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 /**
@@ -26,7 +27,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
         }
         if (ref != null) {
-            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) element.getContainingFile());
+            BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) element.getContainingFile());
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ref);
             if (declarationDescriptor != null) {
                 return render(declarationDescriptor);

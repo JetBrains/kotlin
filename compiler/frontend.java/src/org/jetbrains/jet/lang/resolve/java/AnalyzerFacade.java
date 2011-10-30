@@ -1,19 +1,12 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Sets;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -24,13 +17,21 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author abreslav
  */
 public class AnalyzerFacade {
 
+    public static final Function<JetFile, Collection<JetDeclaration>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetDeclaration>>() {
+        @Override
+        public Collection<JetDeclaration> fun(JetFile file) {
+            return Collections.<JetDeclaration>singleton(file.getRootNamespace());
+        }
+    };
+    
     private static final AnalyzingUtils ANALYZING_UTILS = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
@@ -39,11 +40,13 @@ public class AnalyzerFacade {
         return ANALYZING_UTILS.analyzeNamespace(namespace, flowDataTraceFactory);
     }
 
-    public static BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
-        return analyzeFileWithCache(ANALYZING_UTILS, file);
+    public static BindingContext analyzeFileWithCache(@NotNull final JetFile file, @NotNull final Function<JetFile, Collection<JetDeclaration>> declarationProvider) {
+        return analyzeFileWithCache(ANALYZING_UTILS, file, declarationProvider);
     }
 
-    public static BindingContext analyzeFileWithCache(@NotNull final AnalyzingUtils analyzingUtils, @NotNull final JetFile file) {
+    public static BindingContext analyzeFileWithCache(@NotNull final AnalyzingUtils analyzingUtils, 
+                                                      @NotNull final JetFile file, 
+                                                      @NotNull final Function<JetFile, Collection<JetDeclaration>> declarationProvider) {
         // TODO : Synchronization?
         CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
         if (bindingContextCachedValue == null) {
@@ -51,28 +54,11 @@ public class AnalyzerFacade {
                 @Override
                 public Result<BindingContext> compute() {
                     synchronized (lock) {
-                        final Project project = file.getProject();
-                        final Set<JetDeclaration> namespaces = Sets.newLinkedHashSet();
-                        ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-                        if (rootManager != null && !ApplicationManager.getApplication().isUnitTestMode()) {
-                            VirtualFile[] contentRoots = rootManager.getContentRoots();
-
-                            CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
-                                @Override
-                                protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
-                                    if (!(file.getName().endsWith(".kt") || file.getName().endsWith(".kts"))) return;
-                                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                                    if (psiFile instanceof JetFile) {
-                                        namespaces.add(((JetFile) psiFile).getRootNamespace());
-                                    }
-                                }
-                            });
-                        }
-                        else {
-                            namespaces.add(file.getRootNamespace());
-                        }
                         try {
-                            BindingContext bindingContext = analyzingUtils.analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
+                            BindingContext bindingContext = analyzingUtils.analyzeNamespaces(
+                                    file.getProject(),
+                                    declarationProvider.fun(file),
+                                    JetControlFlowDataTraceFactory.EMPTY);
                             return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                         catch (ProcessCanceledException e) {
@@ -86,6 +72,7 @@ public class AnalyzerFacade {
                         }
                     }
                 }
+
             }, false);
             file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
         }

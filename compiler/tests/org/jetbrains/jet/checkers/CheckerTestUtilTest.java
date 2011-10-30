@@ -81,7 +81,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         }
 
         public void test(PsiFile psiFile) {
-            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), (JetFile) psiFile);
+            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), (JetFile) psiFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, bindingContext).toString();
 
             List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
