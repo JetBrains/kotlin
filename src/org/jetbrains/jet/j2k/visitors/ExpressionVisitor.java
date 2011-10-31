@@ -169,8 +169,15 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   public void visitNewExpression(PsiNewExpression expression) {
     super.visitNewExpression(expression);
 
-    if (expression.getArrayInitializer() !=  null) // new Foo[] {}
+    if (expression.getArrayInitializer() != null) // new Foo[] {}
       myResult = expressionToExpression(expression.getArrayInitializer());
+    else {
+      myResult = new NewClassExpression(
+        elementToElement(expression.getClassOrAnonymousClassReference()),
+        elementToElement(expression.getArgumentList())
+      );
+    }
+
   }
 
   @Override
