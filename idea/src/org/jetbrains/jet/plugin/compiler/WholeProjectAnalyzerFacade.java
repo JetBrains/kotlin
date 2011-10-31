@@ -27,8 +27,8 @@ import java.util.Set;
 public class WholeProjectAnalyzerFacade {
     public static final Function<JetFile, Collection<JetDeclaration>> WHOLE_PROJECT_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetDeclaration>>() {
         @Override
-        public Collection<JetDeclaration> fun(JetFile file) {
-            final Project project = file.getProject();
+        public Collection<JetDeclaration> fun(final JetFile rootFile) {
+            final Project project = rootFile.getProject();
             final Set<JetDeclaration> namespaces = Sets.newLinkedHashSet();
             ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
             if (rootManager != null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -41,16 +41,18 @@ public class WholeProjectAnalyzerFacade {
                         if (fileType != JetFileType.INSTANCE) return;
                         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                         if (psiFile instanceof JetFile) {
-                            namespaces.add(((JetFile) psiFile).getRootNamespace());
+                            if (rootFile.getOriginalFile() != psiFile) {
+                                namespaces.add(((JetFile) psiFile).getRootNamespace());
+                            }
                         }
                     }
                 });
+                
             }
-            else {
-                namespaces.add(file.getRootNamespace());
-            }
+
+            namespaces.add(rootFile.getRootNamespace());
             return namespaces;
-            }
+        }
     };
 
     @NotNull
