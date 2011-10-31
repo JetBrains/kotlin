@@ -130,15 +130,9 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   }
 
   @Override
-  public void visitExpressionStatement(PsiExpressionStatement statement) {
-    super.visitExpressionStatement(statement);
-  }
-
-  @Override
   public void visitExpressionList(PsiExpressionList list) {
     super.visitExpressionList(list);
-    myResult =
-      new ExpressionList(expressionsToExpressionList(list.getExpressions()));
+    myResult = new ExpressionList(expressionsToExpressionList(list.getExpressions()));
   }
 
   @Override
@@ -159,8 +153,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitMethodCallExpression(PsiMethodCallExpression expression) {
     super.visitMethodCallExpression(expression);
-    // TODO: not resolved
-    myResult =
+    myResult = // TODO: not resolved
       new MethodCallExpression(
         expressionToExpression(expression.getMethodExpression()),
         elementToElement(expression.getArgumentList())
@@ -175,6 +168,9 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitNewExpression(PsiNewExpression expression) {
     super.visitNewExpression(expression);
+
+    if (expression.getArrayInitializer() !=  null) // new Foo[] {}
+      myResult = expressionToExpression(expression.getArrayInitializer());
   }
 
   @Override
