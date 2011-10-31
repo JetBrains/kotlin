@@ -141,6 +141,10 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitLabeledStatement(PsiLabeledStatement statement) {
     super.visitLabeledStatement(statement);
+    myResult = new LabelStatement(
+      identifierToIdentifier(statement.getLabelIdentifier()),
+      statementToStatement(statement.getStatement())
+    );
   }
 
   @Override
