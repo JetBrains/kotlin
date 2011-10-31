@@ -1,6 +1,7 @@
-package org.jetbrains.jet.j2k.ast;
+package org.jetbrains.jet.j2k.visitors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.ast.Element;
 
 /**
  * @author ignatov

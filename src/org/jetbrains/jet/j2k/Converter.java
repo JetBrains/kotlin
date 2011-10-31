@@ -208,7 +208,7 @@ public class Converter {
     return result;
   }
 
-  private static Parameter parameterToParameter(PsiParameter parameter) {
+  public static Parameter parameterToParameter(PsiParameter parameter) {
     return new Parameter(
       new IdentifierImpl(parameter.getName()), // TODO: remove
       typeToType(parameter.getType())

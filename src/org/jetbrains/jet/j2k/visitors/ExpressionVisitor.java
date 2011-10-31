@@ -123,7 +123,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   public void visitExpressionList(PsiExpressionList list) {
     super.visitExpressionList(list);
     myResult =
-          new ExpressionList(expressionsToExpressionList(list.getExpressions()));
+      new ExpressionList(expressionsToExpressionList(list.getExpressions()));
   }
 
   @Override

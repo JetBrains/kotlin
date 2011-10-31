@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jetbrains.jet.j2k.Converter.expressionToExpression;
-import static org.jetbrains.jet.j2k.Converter.expressionsToExpressionList;
-import static org.jetbrains.jet.j2k.Converter.statementToStatement;
+import static org.jetbrains.jet.j2k.Converter.*;
 
 /**
  * @author ignatov
@@ -101,6 +99,11 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitForeachStatement(PsiForeachStatement statement) {
     super.visitForeachStatement(statement);
+    myResult = new ForeachStatement(
+      parameterToParameter(statement.getIterationParameter()),
+      expressionToExpression(statement.getIteratedValue()),
+      statementToStatement(statement.getBody())
+    );
   }
 
   @Override
