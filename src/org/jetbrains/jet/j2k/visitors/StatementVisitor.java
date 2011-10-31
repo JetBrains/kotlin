@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
+import static org.jetbrains.jet.j2k.Converter.expressionToExpression;
+import static org.jetbrains.jet.j2k.Converter.statementToStatement;
+
 /**
  * @author ignatov
  */
@@ -61,7 +64,7 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitExpressionStatement(PsiExpressionStatement statement) {
     super.visitExpressionStatement(statement);
-    myResult = Converter.expressionToExpression(statement.getExpression());
+    myResult = expressionToExpression(statement.getExpression());
   }
 
   @Override
@@ -88,9 +91,9 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   public void visitIfStatement(PsiIfStatement statement) {
     super.visitIfStatement(statement);
     myResult = new IfStatement(
-      Converter.expressionToExpression(statement.getCondition()),
-      Converter.statementToStatement(statement.getThenBranch()),
-      Converter.statementToStatement(statement.getElseBranch())
+      expressionToExpression(statement.getCondition()),
+      statementToStatement(statement.getThenBranch()),
+      statementToStatement(statement.getElseBranch())
     );
   }
 
@@ -137,6 +140,10 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitWhileStatement(PsiWhileStatement statement) {
     super.visitWhileStatement(statement);
+    myResult = new WhileStatement(
+      expressionToExpression(statement.getCondition()),
+      statementToStatement(statement.getBody())
+    );
   }
 
   @Override
@@ -144,7 +151,7 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
     super.visitReturnStatement(statement);
 
     myResult = new ReturnStatement(
-      Converter.expressionToExpression(statement.getReturnValue())
+      expressionToExpression(statement.getReturnValue())
     );
   }
 }
