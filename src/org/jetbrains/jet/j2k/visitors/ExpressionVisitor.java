@@ -174,6 +174,15 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitPostfixExpression(PsiPostfixExpression expression) {
     super.visitPostfixExpression(expression);
+
+    String op = "";
+    if (expression.getOperationSign().getTokenType() == JavaTokenType.PLUSPLUS) op = "++";
+    if (expression.getOperationSign().getTokenType() == JavaTokenType.MINUSMINUS) op = "--";
+
+    myResult = new PostfixOperator(
+      op,
+      expressionToExpression(expression.getOperand())
+    );
   }
 
   @Override
