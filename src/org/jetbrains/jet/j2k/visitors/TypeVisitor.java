@@ -2,6 +2,7 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
@@ -36,6 +37,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitArrayType(PsiArrayType arrayType) {
+    myResult = new ArrayType(Converter.typeToType(arrayType.getComponentType()));
     return super.visitArrayType(arrayType);
   }
 
