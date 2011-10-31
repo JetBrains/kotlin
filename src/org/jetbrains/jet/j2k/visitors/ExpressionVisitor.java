@@ -165,6 +165,9 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitParenthesizedExpression(PsiParenthesizedExpression expression) {
     super.visitParenthesizedExpression(expression);
+    myResult = new ParenthesizedExpression(
+      expressionToExpression(expression.getExpression())
+    );
   }
 
   @Override
