@@ -85,7 +85,7 @@ public class Converter {
   private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
     final Type type = typeToType(method.getReturnType());
-    final Block body = bodyToBlock(method.getBody(), notEmpty);
+    final Block body = blockToBlock(method.getBody(), notEmpty);
     final Element params = elementToElement(method.getParameterList());
 
     if (method.isConstructor())
@@ -104,10 +104,10 @@ public class Converter {
   }
 
   @NotNull
-  private static Block bodyToBlock(PsiCodeBlock body, boolean notEmpty) {
-    if (body == null)
-      return new Block(new LinkedList<Statement>(), false);
-    return new Block(statementsToStatementList(body.getStatements()), notEmpty);
+  public static Block blockToBlock(PsiCodeBlock block, boolean notEmpty) {
+    if (block == null)
+      return Block.EMPTY_BLOCK;
+    return new Block(statementsToStatementList(block.getStatements()), notEmpty);
   }
 
   @NotNull
@@ -208,6 +208,7 @@ public class Converter {
     return result;
   }
 
+  @NotNull
   public static Parameter parameterToParameter(PsiParameter parameter) {
     return new Parameter(
       new IdentifierImpl(parameter.getName()), // TODO: remove

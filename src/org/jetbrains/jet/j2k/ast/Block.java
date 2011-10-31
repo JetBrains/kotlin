@@ -3,14 +3,19 @@ package org.jetbrains.jet.j2k.ast;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @author ignatov
  */
 public class Block extends Statement {
-  private List<Statement> myStatements;
+  public final static Block EMPTY_BLOCK = new Block();
+  private List<Statement> myStatements = new LinkedList<Statement>();
   private boolean myNotEmpty = false;
+
+  private Block() {
+  }
 
   public Block(List<Statement> statements) {
     myStatements = statements;
@@ -21,7 +26,7 @@ public class Block extends Statement {
     myNotEmpty = notEmpty;
   }
 
-  private boolean isEmpty() {
+  public boolean isEmpty() {
     return !myNotEmpty && myStatements.size() == 0;
   }
 

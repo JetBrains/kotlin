@@ -159,6 +159,20 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitTryStatement(PsiTryStatement statement) {
     super.visitTryStatement(statement);
+
+    List<CatchStatement> catches = new LinkedList<CatchStatement>();
+    for (int i = 0; i < statement.getCatchBlocks().length; i++) {
+      catches.add(new CatchStatement(
+        parameterToParameter(statement.getCatchBlockParameters()[i]),
+        blockToBlock(statement.getCatchBlocks()[i], true)
+      ));
+    }
+
+    myResult = new TryStatement(
+      blockToBlock(statement.getTryBlock(), true),
+      catches,
+      blockToBlock(statement.getFinallyBlock(), true)
+    );
   }
 
   @Override
