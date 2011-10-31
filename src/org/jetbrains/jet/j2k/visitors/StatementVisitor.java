@@ -54,6 +54,10 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitDoWhileStatement(PsiDoWhileStatement statement) {
     super.visitDoWhileStatement(statement);
+    myResult = new DoWhileStatement(
+      expressionToExpression(statement.getCondition()),
+      statementToStatement(statement.getBody())
+    );
   }
 
   @Override
