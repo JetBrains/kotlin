@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class Import extends Node {
-  private String myName;
+  private final String myName;
 
   public Import(String name) {
     myName = name;

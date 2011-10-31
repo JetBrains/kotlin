@@ -36,7 +36,7 @@ public class Converter {
     return result;
   }
 
-  public static Class classToClass(PsiClass psiClass) {
+  private static Class classToClass(PsiClass psiClass) {
     final List<Function> methods = methodsToFunctionList(psiClass.getMethods(), true);
 
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());

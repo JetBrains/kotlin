@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class Parameter extends Expression {
-  private IdentifierImpl myIdentifier;
-  private Type myType;
+  private final IdentifierImpl myIdentifier;
+  private final Type myType;
 
   public Parameter(IdentifierImpl identifier, Type type) {
     myIdentifier = identifier;

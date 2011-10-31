@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public abstract class Statement extends Element {
-  public static Statement EMPTY_STATEMENT = new EmptyStatement();
+  public static final Statement EMPTY_STATEMENT = new EmptyStatement();
 
   /**
    * @author ignatov

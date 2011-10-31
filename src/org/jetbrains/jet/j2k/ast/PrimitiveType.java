@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class PrimitiveType extends Type {
-  private Identifier myType;
+  private final Identifier myType;
 
   public PrimitiveType(Identifier type) {
     myType = type;

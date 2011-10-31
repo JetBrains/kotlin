@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class Function extends Node {
-  private Identifier myName;
-  private Type myType;
-  protected Element myParams;
-  private Block myBlock;
+  private final Identifier myName;
+  private final Type myType;
+  final Element myParams;
+  private final Block myBlock;
 
   public Function(Identifier name, Type type, Element params, Block block) {
     myName = name;

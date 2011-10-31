@@ -10,7 +10,7 @@ import java.util.List;
  * @author ignatov
  */
 public class DeclarationStatement extends Statement {
-  private List<Element> myElements;
+  private final List<Element> myElements;
 
   public DeclarationStatement(List<Element> elements) {
     myElements = elements;

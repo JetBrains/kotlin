@@ -22,14 +22,14 @@ import java.util.List;
  */
 public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   private boolean checkInfos = false;
-  private String dataPath;
-  protected final String name;
+  private final String dataPath;
+  private final String name;
 
   protected JetTestCaseBase() {
     this("", "");
   }
 
-  public JetTestCaseBase(String dataPath, String name) {
+  private JetTestCaseBase(String dataPath, String name) {
     this.dataPath = dataPath;
     this.name = name;
   }
@@ -39,7 +39,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     return this;
   }
 
-  public static Sdk jdkFromIdeaHome() {
+  private static Sdk jdkFromIdeaHome() {
     return new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
   }
 
@@ -48,11 +48,11 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     return getTestDataPathBase();
   }
 
-  public static String getTestDataPathBase() {
+  private static String getTestDataPathBase() {
     return getHomeDirectory() + "/compiler/testData";
   }
 
-  public static String getHomeDirectory() {
+  private static String getHomeDirectory() {
     return new File(PathManager.getResourceRoot(JetTestCaseBase.class, "/org/jetbrains/jet/JetTestCaseBase.class")).getParentFile().getParentFile().getParent();
   }
 
@@ -80,7 +80,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     return dataPath;
   }
 
-  protected void configureFromText(String text) throws IOException {
+  void configureFromText(String text) throws IOException {
     configureFromFileText("test.java", text);
   }
 
@@ -101,12 +101,12 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     return toSingleLine(classToKotlin(text));
   }
 
-  protected String fileToKotlin(String text) throws IOException {
+  String fileToKotlin(String text) throws IOException {
     configureFromText(text);
     return prettify(Converter.fileToFile((PsiJavaFile) myFile).toKotlin());
   }
 
-  protected String methodToKotlin(String text) throws IOException {
+  String methodToKotlin(String text) throws IOException {
     String result = classToKotlin("class C {" + text + "}")
       .replaceAll("class C \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));
@@ -144,7 +144,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
+  private static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
     TestSuite suite = new TestSuite(dataPath);
     final String extension = ".jet";
     FilenameFilter extensionFilter = new FilenameFilter() {
@@ -180,7 +180,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  protected static String prettify(String code) {
+  private static String prettify(String code) {
     if (code == null)
       return "";
     return code
@@ -194,7 +194,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  protected static String toSingleLine(String string) {
+  static String toSingleLine(String string) {
     return prettify(string.replaceAll("\n", " "));
   }
 }

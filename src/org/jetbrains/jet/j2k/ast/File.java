@@ -9,9 +9,9 @@ import java.util.List;
  * @author ignatov
  */
 public class File extends Node {
-  private String myPackageName;
-  private List<Import> myImports;
-  private List<Class> myClasses;
+  private final String myPackageName;
+  private final List<Import> myImports;
+  private final List<Class> myClasses;
 
   public File(String packageName, List<Import> imports, List<Class> classes) {
     myPackageName = packageName;

@@ -9,7 +9,7 @@ import java.util.List;
  * @author ignatov
  */
 public class ParameterList extends Expression {
-  private List<Parameter> myParameters;
+  private final List<Parameter> myParameters;
 
   public ParameterList(List<Parameter> parameters) {
     myParameters = parameters;

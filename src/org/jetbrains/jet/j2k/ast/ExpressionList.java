@@ -9,7 +9,7 @@ import java.util.List;
  * @author ignatov
  */
 public class ExpressionList extends Expression {
-  private List<Expression> myExpressions;
+  private final List<Expression> myExpressions;
   private List<Type> myTypes; // TODO: add types to toKotlin
 
   public ExpressionList(List<Expression> expressions, List<Type> types) {

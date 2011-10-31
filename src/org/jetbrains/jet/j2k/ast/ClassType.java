@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ClassType extends Type {
-  private Identifier myType;
+  private final Identifier myType;
 
   public ClassType(Identifier type) {
     myType = type;

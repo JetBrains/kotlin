@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class LocalVariable extends Expression {
-  private Identifier myIdentifier;
-  private Type myType;
-  private Expression myInitializer;
+  private final Identifier myIdentifier;
+  private final Type myType;
+  private final Expression myInitializer;
 
   public LocalVariable(Identifier identifier, Type type, Expression initializer) {
     myIdentifier = identifier;

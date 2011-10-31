@@ -10,11 +10,11 @@ import java.util.List;
  * @author ignatov
  */
 public class Class extends Node {
-  protected String TYPE = "class";
-  protected Identifier myName;
-  protected List<Class> myInnerClasses;
-  protected List<Function> myMethods;
-  protected List<Field> myFields;
+  String TYPE = "class";
+  final Identifier myName;
+  final List<Class> myInnerClasses;
+  final List<Function> myMethods;
+  final List<Field> myFields;
 
   public Class(Identifier name, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
     myName = name;
@@ -24,7 +24,7 @@ public class Class extends Node {
   }
 
   @NotNull
-  protected List<Function> methodsExceptConstructors() {
+  List<Function> methodsExceptConstructors() {
     final LinkedList<Function> result = new LinkedList<Function>();
     for (Function m : myMethods)
       if (m.getKind() != Kind.CONSTRUCTOR)

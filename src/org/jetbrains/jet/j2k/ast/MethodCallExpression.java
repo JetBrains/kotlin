@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class MethodCallExpression extends Expression {
-  private Expression myMethodCall;
-  private Element myParamList;
+  private final Expression myMethodCall;
+  private final Element myParamList;
 
   public MethodCallExpression(Expression methodCall, Element paramList) {
     myMethodCall = methodCall;

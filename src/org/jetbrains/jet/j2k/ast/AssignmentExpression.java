@@ -6,15 +6,9 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class AssignmentExpression extends Expression {
-  private Expression myLeft;
-  private Expression myRight;
-  private String myOp;
-
-  public AssignmentExpression(Expression left, Expression right) {
-    myLeft = left;
-    myRight = right;
-    myOp = EQUAL;
-  }
+  private final Expression myLeft;
+  private final Expression myRight;
+  private final String myOp;
 
   public AssignmentExpression(Expression left, Expression right, String op) {
     myLeft = left;

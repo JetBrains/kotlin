@@ -9,7 +9,7 @@ import java.util.List;
  * @author ignatov
  */
 public class ExpressionListStatement extends Expression {
-  private List<Expression> myExpressions;
+  private final List<Expression> myExpressions;
 
   public ExpressionListStatement(List<Expression> expressions) {
     myExpressions = expressions;
