@@ -147,7 +147,7 @@ public class Converter {
   @NotNull
   public static Expression expressionToExpression(@Nullable PsiExpression e) {
     if (e == null)
-      return new EmptyExpression();
+      return Expression.EMPTY_EXPRESSION;
     final ExpressionVisitor expressionVisitor = new ExpressionVisitor();
     e.accept(expressionVisitor);
     System.out.println(e.getClass());

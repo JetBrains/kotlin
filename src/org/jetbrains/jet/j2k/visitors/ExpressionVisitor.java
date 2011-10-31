@@ -12,7 +12,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
  * @author ignatov
  */
 public class ExpressionVisitor extends StatementVisitor implements Visitor {
-  private Expression myResult = new EmptyExpression();
+  private Expression myResult = Expression.EMPTY_EXPRESSION;
 
   @NotNull
   public Expression getResult() {

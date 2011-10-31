@@ -25,6 +25,11 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitAssertStatement(PsiAssertStatement statement) {
     super.visitAssertStatement(statement);
+
+    myResult = new AssertStatement(
+      expressionToExpression(statement.getAssertCondition()),
+      expressionToExpression(statement.getAssertDescription())
+    );
   }
 
   @Override
