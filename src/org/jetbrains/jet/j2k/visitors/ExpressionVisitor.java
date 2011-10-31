@@ -32,6 +32,9 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitArrayInitializerExpression(PsiArrayInitializerExpression expression) {
     super.visitArrayInitializerExpression(expression);
+    myResult = new ArrayInitializerExpression(
+      expressionsToExpressionList(expression.getInitializers())
+    );
   }
 
   @Override
