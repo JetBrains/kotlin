@@ -18,7 +18,8 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   private Statement myResult = Statement.EMPTY_STATEMENT;
 
   @NotNull
-  public Statement getStatement() {
+  @Override
+  public Statement getResult() {
     return myResult;
   }
 
@@ -82,6 +83,7 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitEmptyStatement(PsiEmptyStatement statement) {
     super.visitEmptyStatement(statement);
+    myResult = Statement.EMPTY_STATEMENT;
   }
 
   @Override
@@ -213,7 +215,6 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitReturnStatement(PsiReturnStatement statement) {
     super.visitReturnStatement(statement);
-
     myResult = new ReturnStatement(
       expressionToExpression(statement.getReturnValue())
     );

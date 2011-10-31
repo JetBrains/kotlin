@@ -15,6 +15,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   private Expression myResult = Expression.EMPTY_EXPRESSION;
 
   @NotNull
+  @Override
   public Expression getResult() {
     return myResult;
   }
