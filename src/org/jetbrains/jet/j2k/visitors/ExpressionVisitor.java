@@ -23,6 +23,10 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitArrayAccessExpression(PsiArrayAccessExpression expression) {
     super.visitArrayAccessExpression(expression);
+    myResult = new ArrayAccessExpression(
+      expressionToExpression(expression.getArrayExpression()),
+      expressionToExpression(expression.getIndexExpression())
+    );
   }
 
   @Override
