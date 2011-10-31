@@ -16,6 +16,12 @@ import static org.jetbrains.jet.j2k.Converter.*;
 public class ElementVisitor extends JavaElementVisitor implements Visitor {
   private Element myResult = new EmptyElement();
 
+  @NotNull
+  @Override
+  public Element getResult() {
+    return myResult;
+  }
+
   @Override
   public void visitLocalVariable(PsiLocalVariable variable) {
     super.visitLocalVariable(variable);
@@ -41,10 +47,5 @@ public class ElementVisitor extends JavaElementVisitor implements Visitor {
     myResult = new ParameterList(
       Converter.parametersToParameterList(list.getParameters())
     );
-  }
-
-  @NotNull
-  public Element getResult() {
-    return myResult;
   }
 }

@@ -132,7 +132,7 @@ public class Converter {
     final StatementVisitor statementVisitor = new StatementVisitor();
     s.accept(statementVisitor);
     System.out.println(s.getClass());
-    return statementVisitor.getStatement();
+    return statementVisitor.getResult();
   }
 
   @NotNull
@@ -172,7 +172,7 @@ public class Converter {
   }
 
   @NotNull
-  public static Type typeToType(PsiType type) {
+  public static Type typeToType(@Nullable PsiType type) {
     if (type == null)
       return new EmptyType(); // TODO
     TypeVisitor typeVisitor = new TypeVisitor();

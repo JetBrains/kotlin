@@ -216,6 +216,14 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitTypeCastExpression(PsiTypeCastExpression expression) {
     super.visitTypeCastExpression(expression);
+
+    final PsiTypeElement castType = expression.getCastType();
+    if (castType != null) {
+      myResult = new TypeCastExpression(
+        typeToType(castType.getType()),
+        expressionToExpression(expression.getOperand())
+      );
+    }
   }
 
   @Override
