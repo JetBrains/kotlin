@@ -1,0 +1,64 @@
+Code Generation 2012 - Session Proposal Form
+
+Submission Deadline: Friday December 9th 2011
+
+Session title:
+Creating DSLs in Kotlin
+
+Session type and duration:
+Tutorial, 60 min
+
+Session abstract:
+This should be a brief description of the session focusing on its content and objectives.  You will need to cut and paste this text into a web form as part of the submission process. The session abstract will be used on the event web site to promote your session.
+
+Kotlin is a statically typed programming language for the JVM proposed recently by JetBrains. The language is intended for industrial use as a safer and more convenient alternative to Java. One can even mix Kotlin and Java sources in the same project. Language documentation is available at http://jetbrains.com/kotlin.
+
+In this session we will demonstrate Kotlin's abilities to define APIs as domain-specific languages (DSLs). This includes covering many interesting language features such as
+* type inference,
+* function literals (closures),
+* operator overloading/overriding,
+* extension functions
+* and more…
+
+As a flagship example we will present type-safe builders, a technique that improves upon Groovy builders (http://groovy.codehaus.org/Builders) by making them statically checked for correctness. Along with this example we'll demonstrate LINQ-like collection processing and a DSL for program module definitions.
+
+Benefits of participating:
+What will participants get out of taking part in the session? It is very important to think about this and describe it in your proposal.
+
+Process & timetable:
+How will the session work? You might want to describe any exercises or group working.  Consider providing a detailed timetable.  Indicate the way in which the audience is involved.
+
+Session outputs:
+Indicate the form of any outputs (e.g. web page, poster at conference, blog posting etc) and their likely content (summary, actions points etc.)
+
+Intended Audience:
+Note any required skills/knowledge/ experience.  What job roles would this session be particularly applicable to.
+
+Availability:
+Indicate if there are any constraints in your participation or whether it makes sense to run your session before or after another session you've proposed
+
+Detailed Description / Supporting Information
+A fuller description of the session describing the content, rationale and describing any previous occasions on which the session has been run.
+
+Main presenter name, contact details and biography
+
+Name:
+Affiliation:
+Telephone / Skype:
+Email:
+Biography (up to 100 words):
+
+Additional Presenter(s) (if any)
+Name:
+Affiliation:
+Telephone / Skype:
+Email:
+Biography (up to 100 words):
+
+Name:
+Affiliation:
+Telephone / Skype:
+Email:
+Biography (up to 100 words):
+
+
