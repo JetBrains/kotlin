@@ -2,14 +2,16 @@ package org.jetbrains.jet.cli;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Processor;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
+import jet.modules.IModuleBuilder;
+import jet.modules.IModuleSetBuilder;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
@@ -17,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -66,9 +69,19 @@ public class KotlinCompiler {
         if (unpackedRuntimePath != null) {
             environment.addToClasspath(unpackedRuntimePath);
         }
+        else {
+            final File runtimeJarPath = getRuntimeJarPath();
+            if (runtimeJarPath != null && runtimeJarPath.exists()) {
+                environment.addToClasspath(runtimeJarPath);
+            }
+            else {
+                System.out.println("No runtime library found");
+                return;
+            }
+        }
 
         if (arguments.module != null) {
-            compileModule(environment, arguments.module);
+            compileModuleScript(environment, arguments.module);
             return;
         }
 
@@ -98,30 +111,82 @@ public class KotlinCompiler {
         }
     }
 
-    private static void compileModule(JetCoreEnvironment environment, String moduleFile) {
-        final FileIndexFacade instance = FileIndexFacade.getInstance(environment.getProject());
-        VirtualFile jetObject = environment.getLocalFileSystem().findFileByPath(KotlinCompiler.class.getClassLoader().getResource("jet/JetObject.class").getPath());
-        instance.isInLibraryClasses(jetObject);
-
-        CompileSession moduleCompileSession = new CompileSession(environment);
-        moduleCompileSession.addSources(moduleFile);
+    private static void compileModuleScript(JetCoreEnvironment environment, String moduleFile) {
+        CompileSession scriptCompileSession = new CompileSession(environment);
+        scriptCompileSession.addSources(moduleFile);
 
         URL url = KotlinCompiler.class.getClassLoader().getResource("ModuleBuilder.kt");
         if (url != null) {
-            // TODO
+            String path = url.getPath();
+            if (path.startsWith("file:")) {
+                path = path.substring(5);
+            }
+            final VirtualFile vFile = environment.getJarFileSystem().findFileByPath(path);
+            if (vFile == null) {
+                System.out.println("Couldn't load ModuleBuilder.kt from runtime jar: "+ url);
+                return;
+            }
+            scriptCompileSession.addSources(vFile);
         }
         else {
             // building from source
             final String homeDirectory = getHomeDirectory();
             final File file = new File(homeDirectory, "stdlib/ktSrc/ModuleBuilder.kt");
-            moduleCompileSession.addSources(environment.getLocalFileSystem().findFileByPath(file.getPath()));
-
+            scriptCompileSession.addSources(environment.getLocalFileSystem().findFileByPath(file.getPath()));
         }
 
+        if (!scriptCompileSession.analyze()) {
+            return;
+        }
+        final ClassFileFactory factory = scriptCompileSession.generate();
+
+        final IModuleSetBuilder moduleSetBuilder = runDefineModules(moduleFile, factory);
+
+        for (IModuleBuilder moduleBuilder : moduleSetBuilder.getModules()) {
+            compileModule(environment, moduleBuilder, new File(moduleFile).getParent());
+        }
+    }
+
+    private static IModuleSetBuilder runDefineModules(String moduleFile, ClassFileFactory factory) {
+        GeneratedClassLoader loader = new GeneratedClassLoader(factory);
+        try {
+            Class moduleSetBuilderClass = loader.loadClass("kotlin.modules.ModuleSetBuilder");
+            final IModuleSetBuilder moduleSetBuilder = (IModuleSetBuilder) moduleSetBuilderClass.newInstance();
+
+            Class namespaceClass = loader.loadClass("namespace");
+            final Method[] methods = namespaceClass.getMethods();
+            boolean modulesDefined = false;
+            for (Method method : methods) {
+                if (method.getName().equals("defineModules")) {
+                    method.invoke(null, moduleSetBuilder);
+                    modulesDefined = true;
+                    break;
+                }
+            }
+            if (!modulesDefined) {
+                System.out.println("Module script " + moduleFile + " must define a defineModules() method");
+                return null;
+            }
+            return moduleSetBuilder;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static void compileModule(JetCoreEnvironment environment, IModuleBuilder moduleBuilder, String directory) {
+        CompileSession moduleCompileSession = new CompileSession(environment);
+        for (String sourceFile : moduleBuilder.getSourceFiles()) {
+            moduleCompileSession.addSources(new File(directory, sourceFile).getPath());
+        }
+        for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
+            environment.addToClasspath(new File(classpathRoot));
+        }
         if (!moduleCompileSession.analyze()) {
             return;
         }
-        final ClassFileFactory factory = moduleCompileSession.generate();
+        ClassFileFactory factory = moduleCompileSession.generate();
+        writeToJar(factory, new File(directory, moduleBuilder.getModuleName() + ".jar").getPath(), null, true);
     }
 
     private static String getHomeDirectory() {

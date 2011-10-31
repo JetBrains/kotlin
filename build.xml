@@ -29,6 +29,7 @@
     <target name="jarRT" depends="compileRT">
         <jar destfile="${output}/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
+            <fileset dir="${basedir}/stdlib/ktSrc"/>
         </jar>
     </target>
 
