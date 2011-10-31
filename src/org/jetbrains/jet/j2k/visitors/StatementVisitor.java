@@ -5,7 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.jetbrains.jet.j2k.Converter.expressionToExpression;
+import static org.jetbrains.jet.j2k.Converter.expressionsToExpressionList;
 import static org.jetbrains.jet.j2k.Converter.statementToStatement;
 
 /**
@@ -74,11 +79,23 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitExpressionListStatement(PsiExpressionListStatement statement) {
     super.visitExpressionListStatement(statement);
+    myResult =
+      new ExpressionListStatement(expressionsToExpressionList(statement.getExpressionList().getExpressions()));
+
   }
 
   @Override
   public void visitForStatement(PsiForStatement statement) {
     super.visitForStatement(statement);
+
+    List<Statement> forStatements = new LinkedList<Statement>();
+    forStatements.add(statementToStatement(statement.getInitialization()));
+    forStatements.add(new WhileStatement(
+      expressionToExpression(statement.getCondition()),
+      new Block(
+        Arrays.asList(statementToStatement(statement.getBody()),
+          new Block(Arrays.asList(statementToStatement(statement.getUpdate())))))));
+    myResult = new Block(forStatements);
   }
 
   @Override

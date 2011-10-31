@@ -6,8 +6,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 
-import static org.jetbrains.jet.j2k.Converter.elementToElement;
-import static org.jetbrains.jet.j2k.Converter.expressionToExpression;
+import static org.jetbrains.jet.j2k.Converter.*;
 
 /**
  * @author ignatov
@@ -116,11 +115,6 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   }
 
   @Override
-  public void visitExpressionListStatement(PsiExpressionListStatement statement) {
-    super.visitExpressionListStatement(statement);
-  }
-
-  @Override
   public void visitExpressionStatement(PsiExpressionStatement statement) {
     super.visitExpressionStatement(statement);
   }
@@ -128,6 +122,8 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitExpressionList(PsiExpressionList list) {
     super.visitExpressionList(list);
+    myResult =
+          new ExpressionList(expressionsToExpressionList(list.getExpressions()));
   }
 
   @Override
