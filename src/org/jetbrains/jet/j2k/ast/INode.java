@@ -13,6 +13,6 @@ public interface INode {
   public Kind getKind();
 
   public enum Kind {
-    UNDEFINED, TYPE, CONSTRUCTOR,
+    UNDEFINED, TYPE, CONSTRUCTOR, BREAK, CONTINUE,
   }
 }

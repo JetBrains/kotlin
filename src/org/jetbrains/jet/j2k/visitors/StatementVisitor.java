@@ -39,11 +39,23 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitBreakStatement(PsiBreakStatement statement) {
     super.visitBreakStatement(statement);
+    if (statement.getLabelIdentifier() == null)
+      myResult = new BreakStatement();
+    else
+      myResult = new BreakStatement(
+        identifierToIdentifier(statement.getLabelIdentifier())
+      );
   }
 
   @Override
   public void visitContinueStatement(PsiContinueStatement statement) {
     super.visitContinueStatement(statement);
+    if (statement.getLabelIdentifier() == null)
+      myResult = new ContinueStatement();
+    else
+      myResult = new ContinueStatement(
+        identifierToIdentifier(statement.getLabelIdentifier())
+      );
   }
 
   @Override

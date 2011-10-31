@@ -2,6 +2,7 @@ package org.jetbrains.jet.j2k;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
@@ -120,12 +121,12 @@ public class Converter {
   }
 
   @NotNull
-  public static Statement statementToStatement(PsiStatement t) {
-    if (t == null)
+  public static Statement statementToStatement(@Nullable PsiStatement s) {
+    if (s == null)
       return Statement.EMPTY_STATEMENT;
     final StatementVisitor statementVisitor = new StatementVisitor();
-    t.accept(statementVisitor);
-    System.out.println(t.getClass());
+    s.accept(statementVisitor);
+    System.out.println(s.getClass());
     return statementVisitor.getStatement();
   }
 
@@ -139,7 +140,7 @@ public class Converter {
   }
 
   @NotNull
-  public static Expression expressionToExpression(PsiExpression e) {
+  public static Expression expressionToExpression(@Nullable PsiExpression e) {
     if (e == null)
       return new EmptyExpression();
     final ExpressionVisitor expressionVisitor = new ExpressionVisitor();
@@ -214,5 +215,12 @@ public class Converter {
       new IdentifierImpl(parameter.getName()), // TODO: remove
       typeToType(parameter.getType())
     );
+  }
+
+  @NotNull
+  public static Identifier identifierToIdentifier(@Nullable PsiIdentifier identifier) {
+    if (identifier == null)
+      return Identifier.EMPTY_IDENTIFIER;
+    return new IdentifierImpl(identifier.getText());
   }
 }
