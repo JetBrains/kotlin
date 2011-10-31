@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Block extends Statement {
   private List<Statement> myStatements;
-  private boolean myNotEmpty;
+  private boolean myNotEmpty = false;
 
   public Block(List<Statement> statements) {
     myStatements = statements;

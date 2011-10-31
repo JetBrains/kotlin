@@ -26,11 +26,9 @@ public class EnumTest extends JetTestCaseBase {
     );
   }
 
-  //
   public void testOverrideToString() throws Exception {
     Assert.assertEquals(
       classToKotlin(
-
         "enum Color {" +
           " WHITE, BLACK, RED, YELLOW, BLUE;" +
           "@Override String toString() {" +
@@ -109,4 +107,4 @@ public class EnumTest extends JetTestCaseBase {
 //      ""
 //    );
 //  }
-  }
+}

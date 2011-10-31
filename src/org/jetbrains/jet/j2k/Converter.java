@@ -121,6 +121,8 @@ public class Converter {
 
   @NotNull
   public static Statement statementToStatement(PsiStatement t) {
+    if (t == null)
+      return Statement.EMPTY_STATEMENT;
     final StatementVisitor statementVisitor = new StatementVisitor();
     t.accept(statementVisitor);
     System.out.println(t.getClass());

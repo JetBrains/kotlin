@@ -9,7 +9,7 @@ import org.jetbrains.jet.j2k.ast.*;
  * @author ignatov
  */
 public class StatementVisitor extends ElementVisitor implements Visitor {
-  private Statement myResult = new EmptyStatement();
+  private Statement myResult = Statement.EMPTY_STATEMENT;
 
   @NotNull
   public Statement getStatement() {
@@ -24,6 +24,10 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitBlockStatement(PsiBlockStatement statement) {
     super.visitBlockStatement(statement);
+    myResult = new Block(
+      Converter.statementsToStatementList(statement.getCodeBlock().getStatements()),
+      true
+    );
   }
 
   @Override
@@ -83,6 +87,11 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitIfStatement(PsiIfStatement statement) {
     super.visitIfStatement(statement);
+    myResult = new IfStatement(
+      Converter.expressionToExpression(statement.getCondition()),
+      Converter.statementToStatement(statement.getThenBranch()),
+      Converter.statementToStatement(statement.getElseBranch())
+    );
   }
 
   @Override
