@@ -1,9 +1,11 @@
 package org.jetbrains.jet.j2k.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author ignatov
  */
-public class IfStatement extends Statement {
+public class IfStatement extends Expression {
   private final Expression myCondition;
   private final Statement myThenStatement;
   private final Statement myElseStatement;
@@ -14,6 +16,7 @@ public class IfStatement extends Statement {
     myElseStatement = elseStatement;
   }
 
+  @NotNull
   @Override
   public String toKotlin() {
     String result = "if" + SPACE + "(" + myCondition.toKotlin() + ")" + N + myThenStatement.toKotlin() + N;

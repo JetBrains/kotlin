@@ -112,6 +112,13 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitConditionalExpression(PsiConditionalExpression expression) {
     super.visitConditionalExpression(expression);
+    myResult = new ParenthesizedExpression(
+      new IfStatement(
+        expressionToExpression(expression.getCondition()),
+        expressionToExpression(expression.getThenExpression()),
+        expressionToExpression(expression.getElseExpression())
+      )
+    );
   }
 
   @Override
