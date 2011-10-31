@@ -105,10 +105,15 @@ public class Converter {
   }
 
   @NotNull
-  public static Block blockToBlock(PsiCodeBlock block, boolean notEmpty) {
+  public static Block blockToBlock(@Nullable PsiCodeBlock block, boolean notEmpty) {
     if (block == null)
       return Block.EMPTY_BLOCK;
     return new Block(statementsToStatementList(block.getStatements()), notEmpty);
+  }
+
+  @NotNull
+  public static Block blockToBlock(@Nullable PsiCodeBlock block) {
+    return blockToBlock(block, true);
   }
 
   @NotNull

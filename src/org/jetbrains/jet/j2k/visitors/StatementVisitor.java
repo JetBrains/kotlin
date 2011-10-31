@@ -165,6 +165,10 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   @Override
   public void visitSynchronizedStatement(PsiSynchronizedStatement statement) {
     super.visitSynchronizedStatement(statement);
+    myResult = new SynchronizedStatement(
+      expressionToExpression(statement.getLockExpression()),
+      blockToBlock(statement.getBody())
+    );
   }
 
   @Override
