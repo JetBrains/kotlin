@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
 import java.util.Collection;
@@ -14,28 +16,35 @@ import java.util.Map;
 /**
  * @author svtk
  */
-public class JetControlFlowGraphTraverser {
-    public static <D> Map<Instruction, Pair<D, D>> traverseInstructionGraphUntilFactsStabilization(
-            Pseudocode pseudocode,
+public class JetControlFlowGraphTraverser<D> {
+    private final Pseudocode pseudocode;
+    private final Map<Instruction, Pair<D, D>> dataMap = Maps.newLinkedHashMap();
+
+    public static <D> JetControlFlowGraphTraverser<D> create(Pseudocode pseudocode) {
+        return new JetControlFlowGraphTraverser<D>(pseudocode);
+    }
+
+    private JetControlFlowGraphTraverser(Pseudocode pseudocode) {
+        this.pseudocode = pseudocode;
+    }
+
+    public void collectInformationFromInstructionGraph(
             InstructionsMergeStrategy<D> instructionsMergeStrategy,
             D initialDataValue,
             D initialDataValueForEnterInstruction,
             boolean straightDirection) {
-        Map<Instruction, Pair<D, D>> dataMap = Maps.newLinkedHashMap();
-        initializeDataMap(dataMap, pseudocode, initialDataValue);
+        initializeDataMap(pseudocode, initialDataValue);
         dataMap.put(pseudocode.getEnterInstruction(), Pair.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
 
         boolean[] changed = new boolean[1];
         changed[0] = true;
         while (changed[0]) {
             changed[0] = false;
-            traverseSubGraph(pseudocode, instructionsMergeStrategy, Collections.<Instruction>emptyList(), straightDirection, dataMap, changed, false);
+            traverseSubGraph(pseudocode, instructionsMergeStrategy, Collections.<Instruction>emptyList(), straightDirection, changed, false);
         }
-        return dataMap;
     }
 
-    private static <D> void initializeDataMap(
-            Map<Instruction, Pair<D, D>> dataMap,
+    private void initializeDataMap(
             Pseudocode pseudocode,
             D initialDataValue) {
         List<Instruction> instructions = pseudocode.getInstructions();
@@ -43,17 +52,16 @@ public class JetControlFlowGraphTraverser {
         for (Instruction instruction : instructions) {
             dataMap.put(instruction, initialPair);
             if (instruction instanceof LocalDeclarationInstruction) {
-                initializeDataMap(dataMap, ((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
+                initializeDataMap(((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
             }
         }
     }
 
-    private static <D> void traverseSubGraph(
+    private void traverseSubGraph(
             Pseudocode pseudocode,
             InstructionsMergeStrategy<D> instructionsMergeStrategy,
             Collection<Instruction> previousSubGraphInstructions,
             boolean straightDirection,
-            Map<Instruction, Pair<D, D>> dataMap,
             boolean[] changed,
             boolean isLocal) {
         List<Instruction> instructions = pseudocode.getInstructions();
@@ -76,7 +84,7 @@ public class JetControlFlowGraphTraverser {
 
             if (instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
-                traverseSubGraph(subroutinePseudocode, instructionsMergeStrategy, previousInstructions, straightDirection, dataMap, changed, true);
+                traverseSubGraph(subroutinePseudocode, instructionsMergeStrategy, previousInstructions, straightDirection, changed, true);
             }
             Pair<D, D> previousDataValue = dataMap.get(instruction);
 
@@ -93,24 +101,36 @@ public class JetControlFlowGraphTraverser {
         }
     }
 
-    public static void traverseAndAnalyzeInstructionGraph(
+    public void traverseAndAnalyzeInstructionGraph(
+            InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
+        traverseAndAnalyzeInstructionGraph(pseudocode, instructionDataAnalyzeStrategy);
+    }
+    
+    private void traverseAndAnalyzeInstructionGraph(
             Pseudocode pseudocode,
-            InstructionDataAnalyzeStrategy instructionDataAnalyzeStrategy) {
+            InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
         List<Instruction> instructions = pseudocode.getInstructions();
         for (Instruction instruction : instructions) {
             if (((InstructionImpl)instruction).isDead()) continue;
             if (instruction instanceof LocalDeclarationInstruction) {
                 traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), instructionDataAnalyzeStrategy);
             }
-            instructionDataAnalyzeStrategy.execute(instruction);
+            Pair<D, D> pair = dataMap.get(instruction);
+            instructionDataAnalyzeStrategy.execute(instruction,
+                                                   pair != null ? pair.getFirst() : null,
+                                                   pair != null ? pair.getSecond() : null);
         }
     }
     
+    public D getResultInfo() {
+        return dataMap.get(pseudocode.getExitInstruction()).getFirst();
+    }
+    
     interface InstructionsMergeStrategy<D> {
-        Pair<D, D> execute(Instruction instruction, Collection<D> incomingEdgesData);
+        Pair<D, D> execute(Instruction instruction, @NotNull Collection<D> incomingEdgesData);
     }
 
-    interface InstructionDataAnalyzeStrategy {
-        void execute(Instruction instruction);
+    interface InstructionDataAnalyzeStrategy<D> {
+        void execute(Instruction instruction, @Nullable D enterData, @Nullable D exitData);
     }
 }
