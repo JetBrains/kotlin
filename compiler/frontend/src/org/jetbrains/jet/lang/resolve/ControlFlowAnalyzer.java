@@ -40,6 +40,9 @@ public class ControlFlowAnalyzer {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass aClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
+
+            if (!context.completeAnalysisNeeded(aClass)) continue;
+
             checkClass(aClass, classDescriptor);
         }
         for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : context.getFunctions().entrySet()) {
@@ -60,10 +63,12 @@ public class ControlFlowAnalyzer {
             JetConstructor constructor = (JetConstructor) declaration;
             ConstructorDescriptor descriptor = entry.getValue();
 
+            if (!context.completeAnalysisNeeded(constructor)) continue;
             checkFunction(constructor, descriptor, JetStandardClasses.getUnitType());
         }
 
         for (JetProperty property : context.getProperties().keySet()) {
+            if (!context.completeAnalysisNeeded(property)) continue;
             checkProperty(property);
         }
     }
