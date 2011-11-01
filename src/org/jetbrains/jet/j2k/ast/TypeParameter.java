@@ -15,6 +15,6 @@ public class TypeParameter extends Element {
   @NotNull
   @Override
   public String toKotlin() {
-    return myName.toKotlin() + QUESTION;
+    return myName.toKotlin();
   }
 }

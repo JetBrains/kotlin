@@ -66,7 +66,7 @@ public class ClassTest extends JetTestCaseBase {
   public void testGenericClass() throws Exception {
     Assert.assertEquals(
       classToSingleLineKotlin("final class Entry<K, V> {}"),
-      "class Entry<K?, V?> { }"
+      "class Entry<K, V> { }"
     );
   }
 }
