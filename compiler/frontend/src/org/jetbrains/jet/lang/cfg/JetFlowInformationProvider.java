@@ -304,8 +304,8 @@ public class JetFlowInformationProvider {
         Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);
 
         Map<VariableDescriptor, InitializationPoints> initialMapForStartInstruction = Maps.newHashMap();
-        InitializationPoints initialPointsForDeclaredVariable = new InitializationPoints(true);
-        InitializationPoints initialPointsForExternalVariable = new InitializationPoints(false);
+        InitializationPoints initialPointsForDeclaredVariable = new InitializationPoints(false);
+        InitializationPoints initialPointsForExternalVariable = new InitializationPoints(true);
 
         for (VariableDescriptor variable : usedVariables) {
             if (declaredVariables.contains(variable)) {
@@ -337,13 +337,13 @@ public class JetFlowInformationProvider {
                         InitializationPoints exitInitializationPoints = exitData.get(variableDescriptor);
                         assert exitInitializationPoints != null;
 
-                        boolean canBeUnitialized = exitInitializationPoints.canBeUninitialized();
+                        boolean isInitialized = exitInitializationPoints.isInitialized();
                         if (variableDescriptor instanceof PropertyDescriptor) {
                             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) {
-                                canBeUnitialized = false;
+                                isInitialized = true;
                             }
                         }
-                        if (canBeUnitialized) {
+                        if (!isInitialized) {
                             trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
                         }
                     }
@@ -357,19 +357,19 @@ public class JetFlowInformationProvider {
                         InitializationPoints exitInitializationPoints = exitData.get(variableDescriptor);
                         assert exitInitializationPoints != null;
                         Set<JetElement> possiblePoints = enterInitializationPoints.getPossiblePoints();
-                        boolean hasAnotherInitializer = !possiblePoints.isEmpty() || !enterInitializationPoints.canBeUninitialized;
+                        boolean hasInitializer = !possiblePoints.isEmpty() || enterInitializationPoints.isInitialized();
                         if (possiblePoints.size() == 1) {
                             JetElement initializer = possiblePoints.iterator().next();
                             if (initializer == element.getParent()) {
-                                hasAnotherInitializer = false;
+                                hasInitializer = false;
                             }
                         }
                         JetSimpleNameExpression expression = (JetSimpleNameExpression) element;
-                        if (hasAnotherInitializer && !variableDescriptor.isVar()) {
+                        if (hasInitializer && !variableDescriptor.isVar()) {
                             trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor));
                         }
                         if (inAnonymousInitializers && variableDescriptor instanceof PropertyDescriptor &&
-                            enterInitializationPoints.canBeUninitialized && !exitInitializationPoints.canBeUninitialized) {
+                            !enterInitializationPoints.isInitialized() && exitInitializationPoints.isInitialized()) {
                             if (expression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
                                 trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD.on(expression, variableDescriptor));
                             }
@@ -385,7 +385,7 @@ public class JetFlowInformationProvider {
                 VariableDescriptor variable = entry.getKey();
                 if (variable instanceof PropertyDescriptor) {
                     InitializationPoints initializationPoints = entry.getValue();
-                    trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, !initializationPoints.canBeUninitialized);
+                    trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, initializationPoints.isInitialized());
                 }
             }
         }
@@ -488,22 +488,22 @@ public class JetFlowInformationProvider {
 
     private static class InitializationPoints {
         private Set<JetElement> possiblePoints = Sets.newHashSet();
-        private boolean canBeUninitialized;
+        private boolean isInitialized;
 
-        public InitializationPoints(boolean canBeUninitialized) {
-            this.canBeUninitialized = canBeUninitialized;
+        public InitializationPoints(boolean isInitialized) {
+            this.isInitialized = isInitialized;
         }
 
         public InitializationPoints(JetElement element) {
-            canBeUninitialized = false;
+            isInitialized = true;
             possiblePoints.add(element);
         }
         
         public InitializationPoints(Set<InitializationPoints> edgesData) {
-            canBeUninitialized = false;
+            isInitialized = true;
             for (InitializationPoints edgeData : edgesData) {
-                if (edgeData.canBeUninitialized) {
-                    canBeUninitialized = true;
+                if (!edgeData.isInitialized) {
+                    isInitialized = false;
                 }
                 possiblePoints.addAll(edgeData.possiblePoints);
             }
@@ -513,8 +513,8 @@ public class JetFlowInformationProvider {
             return possiblePoints;
         }
 
-        public boolean canBeUninitialized() {
-            return canBeUninitialized;
+        public boolean isInitialized() {
+            return isInitialized;
         }
 
         @Override
@@ -524,7 +524,7 @@ public class JetFlowInformationProvider {
 
             InitializationPoints that = (InitializationPoints) o;
 
-            if (canBeUninitialized != that.canBeUninitialized) return false;
+            if (isInitialized != that.isInitialized) return false;
             if (possiblePoints != null ? !possiblePoints.equals(that.possiblePoints) : that.possiblePoints != null) {
                 return false;
             }
@@ -535,7 +535,7 @@ public class JetFlowInformationProvider {
         @Override
         public int hashCode() {
             int result = possiblePoints != null ? possiblePoints.hashCode() : 0;
-            result = 31 * result + (canBeUninitialized ? 1 : 0);
+            result = 31 * result + (isInitialized ? 1 : 0);
             return result;
         }
     }
