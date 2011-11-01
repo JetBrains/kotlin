@@ -3,10 +3,8 @@ package org.jetbrains.jet.lang.cfg;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
-import org.jetbrains.jet.lang.cfg.pseudocode.SubroutineEnterInstruction;
+import com.intellij.openapi.util.Pair;
+import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,15 +15,15 @@ import java.util.Map;
  * @author svtk
  */
 public class JetControlFlowGraphTraverser {
-    public static <D> Map<Instruction, D> traverseInstructionGraphUntilFactsStabilization(
+    public static <D> Map<Instruction, Pair<D, D>> traverseInstructionGraphUntilFactsStabilization(
             Pseudocode pseudocode,
             InstructionsMergeStrategy<D> instructionsMergeStrategy,
             D initialDataValue,
             D initialDataValueForEnterInstruction,
             boolean straightDirection) {
-        Map<Instruction, D> dataMap = Maps.newHashMap();
+        Map<Instruction, Pair<D, D>> dataMap = Maps.newLinkedHashMap();
         initializeDataMap(dataMap, pseudocode, initialDataValue);
-        dataMap.put(pseudocode.getEnterInstruction(), initialDataValueForEnterInstruction);
+        dataMap.put(pseudocode.getEnterInstruction(), Pair.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
 
         boolean[] changed = new boolean[1];
         changed[0] = true;
@@ -37,12 +35,13 @@ public class JetControlFlowGraphTraverser {
     }
 
     private static <D> void initializeDataMap(
-            Map<Instruction, D> dataMap,
+            Map<Instruction, Pair<D, D>> dataMap,
             Pseudocode pseudocode,
             D initialDataValue) {
         List<Instruction> instructions = pseudocode.getInstructions();
+        Pair<D, D> initialPair = Pair.create(initialDataValue, initialDataValue);
         for (Instruction instruction : instructions) {
-            dataMap.put(instruction, initialDataValue);
+            dataMap.put(instruction, initialPair);
             if (instruction instanceof LocalDeclarationInstruction) {
                 initializeDataMap(dataMap, ((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
             }
@@ -54,7 +53,7 @@ public class JetControlFlowGraphTraverser {
             InstructionsMergeStrategy<D> instructionsMergeStrategy,
             Collection<Instruction> previousSubGraphInstructions,
             boolean straightDirection,
-            Map<Instruction, D> dataMap,
+            Map<Instruction, Pair<D, D>> dataMap,
             boolean[] changed,
             boolean isLocal) {
         List<Instruction> instructions = pseudocode.getInstructions();
@@ -79,14 +78,14 @@ public class JetControlFlowGraphTraverser {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
                 traverseSubGraph(subroutinePseudocode, instructionsMergeStrategy, previousInstructions, straightDirection, dataMap, changed, true);
             }
-            D previousDataValue = dataMap.get(instruction);
+            Pair<D, D> previousDataValue = dataMap.get(instruction);
 
             Collection<D> incomingEdgesData = Sets.newHashSet();
 
             for (Instruction previousInstruction : allPreviousInstructions) {
-                incomingEdgesData.add(dataMap.get(previousInstruction));
+                incomingEdgesData.add(dataMap.get(previousInstruction).getSecond());
             }
-            D mergedData = instructionsMergeStrategy.execute(instruction, incomingEdgesData);
+            Pair<D, D> mergedData = instructionsMergeStrategy.execute(instruction, incomingEdgesData);
             if (!mergedData.equals(previousDataValue)) {
                 changed[0] = true;
                 dataMap.put(instruction, mergedData);
@@ -99,6 +98,7 @@ public class JetControlFlowGraphTraverser {
             InstructionDataAnalyzeStrategy instructionDataAnalyzeStrategy) {
         List<Instruction> instructions = pseudocode.getInstructions();
         for (Instruction instruction : instructions) {
+            if (((InstructionImpl)instruction).isDead()) continue;
             if (instruction instanceof LocalDeclarationInstruction) {
                 traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), instructionDataAnalyzeStrategy);
             }
@@ -107,7 +107,7 @@ public class JetControlFlowGraphTraverser {
     }
     
     interface InstructionsMergeStrategy<D> {
-        D execute(Instruction instruction, Collection<D> incomingEdgesData);
+        Pair<D, D> execute(Instruction instruction, Collection<D> incomingEdgesData);
     }
 
     interface InstructionDataAnalyzeStrategy {
