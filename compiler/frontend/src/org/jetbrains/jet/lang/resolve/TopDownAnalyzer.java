@@ -46,6 +46,7 @@ public class TopDownAnalyzer {
             boolean declaredLocally) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, analyzeCompletely);
 //        context.enableDebugOutput();
+        context.debug("Enter");
 
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
         new DeclarationResolver(context).process();
@@ -54,7 +55,8 @@ public class TopDownAnalyzer {
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
         new DeclarationsChecker(context).process();
         new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
-        
+
+        context.debug("Exit");
         context.printDebugOutput(System.out);
     }
 
