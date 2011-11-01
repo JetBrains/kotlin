@@ -34,4 +34,11 @@ public class ArrayTypeTest extends JetTestCaseBase {
       "var a : LongArray? = array(1, 2, 3)"
     );
   }
+
+  public void testMethodArrayArgs() throws Exception {
+    Assert.assertEquals(
+      methodToSingleLineKotlin("void fromArrayToCollection(Foo[] a) {}"),
+      "fun fromArrayToCollection(a : Array<Foo?>?) : Unit { }"
+    );
+  }
 }

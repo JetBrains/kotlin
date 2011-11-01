@@ -190,6 +190,21 @@ public class Converter {
   }
 
   @NotNull
+  public static List<Type> typesToNotNullableTypeList(PsiType[] types) {
+    List<Type> result = new LinkedList<Type>(typesToTypeList(types));
+    for (Type p : result)
+      p.setNullable(false);
+    return result;
+  }
+
+  @NotNull
+  public static Type typeToNotNullableType(@Nullable PsiType type) {
+    Type result = typeToType(type);
+    result.setNullable(false);
+    return result;
+  }
+
+  @NotNull
   private static List<Import> importsToImportList(PsiImportStatementBase[] imports) {
     List<Import> result = new LinkedList<Import>();
     for (PsiImportStatementBase t : imports) {

@@ -2,9 +2,11 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
+
+import static org.jetbrains.jet.j2k.Converter.typeToType;
+import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
 
 /**
  * @author ignatov
@@ -19,6 +21,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitType(PsiType type) {
+    System.out.println(type.getClass()); // TODO: remove
     return super.visitType(type);
   }
 
@@ -37,13 +40,16 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitArrayType(PsiArrayType arrayType) {
-    myResult = new ArrayType(Converter.typeToType(arrayType.getComponentType()));
+    myResult = new ArrayType(typeToType(arrayType.getComponentType()));
     return super.visitArrayType(arrayType);
   }
 
   @Override
   public Type visitClassType(PsiClassType classType) {
-    myResult = new ClassType(new IdentifierImpl(classType.getClassName()));
+    myResult = new ClassType(
+      new IdentifierImpl(classType.getClassName()),
+      typesToTypeList(classType.getParameters())
+    );
     return super.visitClassType(classType);
   }
 
@@ -54,6 +60,12 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitWildcardType(PsiWildcardType wildcardType) {
+    if (wildcardType.isExtends())
+      myResult = new OutProjectionType(typeToType(wildcardType.getExtendsBound()));
+    else if (wildcardType.isSuper())
+      myResult = new InProjectionType(typeToType(wildcardType.getSuperBound()));
+    else
+      myResult = new StarProjectionType();
     return super.visitWildcardType(wildcardType);
   }
 

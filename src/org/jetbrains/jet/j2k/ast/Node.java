@@ -10,6 +10,8 @@ import java.util.Set;
  * @author ignatov
  */
 public abstract class Node implements INode {
+  public static final String STAR = "*";
+
   @NotNull
   @Override
   public Kind getKind() {
