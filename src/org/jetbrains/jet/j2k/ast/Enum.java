@@ -10,8 +10,8 @@ import java.util.List;
  * @author ignatov
  */
 public class Enum extends Class {
-  public Enum(Identifier name, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
-    super(name, innerClasses, methods, fields);
+  public Enum(Identifier name, List<Element> typeParameters, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+    super(name, typeParameters, innerClasses, methods, fields);
   }
 
   @Nullable
@@ -33,7 +33,7 @@ public class Enum extends Class {
   @NotNull
   @Override
   public String toKotlin() {
-    return "enum" + SPACE + myName.toKotlin() + primaryConstructorToKotlin() + SPACE + "{" + N +
+    return "enum" + SPACE + myName.toKotlin() + typeParametersToKotlin() + primaryConstructorToKotlin() + SPACE + "{" + N +
       AstUtil.joinNodes(myFields, N) + N +
       AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
       AstUtil.joinNodes(myInnerClasses, N) + N +

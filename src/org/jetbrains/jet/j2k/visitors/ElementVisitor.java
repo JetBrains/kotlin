@@ -45,6 +45,14 @@ public class ElementVisitor extends JavaElementVisitor implements Visitor {
   }
 
   @Override
+  public void visitTypeParameter(PsiTypeParameter classParameter) {
+    super.visitTypeParameter(classParameter);
+    myResult = new TypeParameter(
+      new IdentifierImpl(classParameter.getName())
+    );
+  }
+
+  @Override
   public void visitParameterList(PsiParameterList list) {
     super.visitParameterList(list);
     myResult = new ParameterList(

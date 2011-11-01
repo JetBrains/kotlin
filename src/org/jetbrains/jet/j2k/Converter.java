@@ -38,17 +38,16 @@ public class Converter {
 
   private static Class classToClass(PsiClass psiClass) {
     final List<Function> methods = methodsToFunctionList(psiClass.getMethods(), true);
-
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
-
     final List<Field> fields = fieldsToFieldList(psiClass.getAllFields());
+    final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
 
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
     if (psiClass.isInterface())
-      return new Trait(name, innerClasses, methods, fields);
+      return new Trait(name, typeParameters, innerClasses, methods, fields);
     if (psiClass.isEnum())
-      return new Enum(name, innerClasses, methods, fields);
-    return new Class(name, innerClasses, methods, fields);
+      return new Enum(name, typeParameters, innerClasses, methods, fields);
+    return new Class(name, typeParameters, innerClasses, methods, fields);
   }
 
   private static List<Field> fieldsToFieldList(PsiField[] fields) {

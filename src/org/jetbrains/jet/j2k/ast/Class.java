@@ -12,12 +12,14 @@ import java.util.List;
 public class Class extends Node {
   String TYPE = "class";
   final Identifier myName;
+  final List<Element> myTypeParameters;
   final List<Class> myInnerClasses;
   final List<Function> myMethods;
   final List<Field> myFields;
 
-  public Class(Identifier name, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+  public Class(Identifier name, List<Element> typeParameters, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
     myName = name;
+    myTypeParameters = typeParameters;
     myInnerClasses = innerClasses;
     myMethods = methods;
     myFields = fields;
@@ -32,10 +34,14 @@ public class Class extends Node {
     return result;
   }
 
+  String typeParametersToKotlin() {
+    return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
+  }
+
   @NotNull
   @Override
   public String toKotlin() {
-    return TYPE + SPACE + myName.toKotlin() + SPACE + "{" + N +
+    return TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() + SPACE + "{" + N +
       AstUtil.joinNodes(myFields, N) + N +
       AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
       AstUtil.joinNodes(myInnerClasses, N) + N +
