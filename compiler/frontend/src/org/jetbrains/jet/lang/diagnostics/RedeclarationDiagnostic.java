@@ -15,8 +15,8 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiElement> {
     public class SimpleRedeclarationDiagnostic extends DiagnosticWithPsiElementImpl<PsiElement> implements RedeclarationDiagnostic {
 
-        public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement) {
-            super(RedeclarationDiagnosticFactory.INSTANCE, ERROR, "Redeclaration", psiElement);
+        public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name) {
+            super(RedeclarationDiagnosticFactory.INSTANCE, ERROR, "Redeclaration: " + name, psiElement);
         }
     }
 
@@ -66,7 +66,7 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
         @NotNull
         @Override
         public String getMessage() {
-            return "Redeclaration";
+            return "Redeclaration: " + duplicatingDescriptor.getName();
         }
 
         @NotNull

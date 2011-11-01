@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
@@ -66,16 +67,21 @@ public class JetCompiler implements TranslatingCompiler {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
+                VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
+
                 GenerationState generationState = new GenerationState(compileContext.getProject(), false);
                 List<JetNamespace> namespaces = Lists.newArrayList();
-                for (VirtualFile virtualFile : virtualFiles) {
+                for (VirtualFile virtualFile : allFiles) {
                     PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);
                     if (psiFile instanceof JetFile) {
                         namespaces.add(((JetFile) psiFile).getRootNamespace());
                     }
                 }
 
-                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(compileContext.getProject(), namespaces, JetControlFlowDataTraceFactory.EMPTY);
+                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(
+                        compileContext.getProject(), namespaces,
+                        Predicates.<PsiFile>alwaysTrue(),
+                        JetControlFlowDataTraceFactory.EMPTY);
 
                 boolean errors = false;
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

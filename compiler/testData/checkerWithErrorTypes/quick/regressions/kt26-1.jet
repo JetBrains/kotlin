@@ -1,0 +1,7 @@
+// KT-26 Import namespaces defined in this file
+
+namespace foo {
+  import bar.* // Must not be an error
+}
+
+namespace bar {}

@@ -8,6 +8,9 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
  * @author abreslav
  */
 public class BindingContextUtils {
+    private BindingContextUtils() {
+    }
+
     public static PsiElement resolveToDeclarationPsiElement(BindingContext bindingContext, JetReferenceExpression referenceExpression) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
         if (declarationDescriptor == null) {

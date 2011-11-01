@@ -8,9 +8,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.lang.psi.*;
-
-import java.util.List;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.plugin.JetMainDetector;
 
 /**
  * @author yole
@@ -22,6 +25,17 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         super(JetRunConfigurationType.getInstance());
     }
 
+    private static String getFQName(JetClass jetClass) {
+        JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(jetClass, JetNamespace.class, JetClass.class);
+        if (parent instanceof JetNamespace) {
+            return ((JetNamespace) parent).getFQName() + "." + jetClass.getName();
+        }
+        if (parent instanceof JetClass) {
+            return getFQName(((JetClass) parent)) + "." + jetClass.getName();
+        }
+        return jetClass.getName();
+    }
+
     @Override
     public PsiElement getSourceElement() {
         return mySourceElement;
@@ -30,38 +44,19 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext configurationContext) {
         JetClass containingClass = (JetClass) location.getParentElement(JetClass.class);
-        if (containingClass != null && hasMain(containingClass.getDeclarations())) {
+        if (containingClass != null && JetMainDetector.hasMain(containingClass.getDeclarations())) {
             mySourceElement = containingClass;
-            return createConfigurationByQName(location.getModule(), configurationContext, containingClass.getFQName());
+            return createConfigurationByQName(location.getModule(), configurationContext, getFQName(containingClass));
         }
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
-            if (hasMain(namespace.getDeclarations())) {
+            if (JetMainDetector.hasMain(namespace.getDeclarations())) {
                 mySourceElement = namespace;
                 return createConfigurationByQName(location.getModule(), configurationContext, namespace.getFQName() + ".namespace");
             }
         }
         return null;
-    }
-
-    private boolean hasMain(List<JetDeclaration> declarations) {
-        for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction) declaration;
-                if ("main".equals(function.getName())) {
-                    List<JetParameter> parameters = function.getValueParameters();
-                    if (parameters.size() == 1) {
-                        JetTypeReference reference = parameters.get(0).getTypeReference();
-                        if (reference != null && reference.getText().equals("Array<String>")) {  // TODO correct check
-                            return true;
-                        }
-                    }
-                }
-
-            }
-        }
-        return false;
     }
 
     private RunnerAndConfigurationSettings createConfigurationByQName(Module module, ConfigurationContext context, String fqName) {

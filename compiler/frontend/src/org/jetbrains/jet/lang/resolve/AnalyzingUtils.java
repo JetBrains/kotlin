@@ -1,40 +1,33 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-//import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
-//import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 
 /**
  * @author abreslav
  */
 public class AnalyzingUtils {
-    private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
-    private static final Object lock = new Object();
-
     public static AnalyzingUtils getInstance(@NotNull ImportingStrategy importingStrategy) {
         return new AnalyzingUtils(importingStrategy);
     }
@@ -69,17 +62,24 @@ public class AnalyzingUtils {
         Project project = namespace.getProject();
         List<JetDeclaration> declarations = Collections.<JetDeclaration>singletonList(namespace);
 
-        return analyzeNamespaces(project, declarations, flowDataTraceFactory);
+        return analyzeNamespaces(project, declarations, Predicates.equalTo(namespace.getContainingFile()), flowDataTraceFactory);
     }
 
-    public BindingContext analyzeNamespaces(@NotNull Project project, @NotNull List<? extends JetDeclaration> declarations, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    public BindingContext analyzeNamespaces(
+            @NotNull Project project,
+            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
-        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
+
+        final WritableScope scope = new WritableScopeImpl(JetScope.EMPTY, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
         importingStrategy.addImports(project, semanticServices, bindingTraceContext, scope);
+        scope.importScope(libraryScope);
+
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 
             @Override
@@ -111,38 +111,8 @@ public class AnalyzingUtils {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
-        }, declarations, flowDataTraceFactory);
+        }, declarations, filesToAnalyzeCompletely, flowDataTraceFactory);
         return bindingTraceContext.getBindingContext();
     }
 
-    public BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
-        // TODO : Synchronization?
-        CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
-        if (bindingContextCachedValue == null) {
-            bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
-                @Override
-                public Result<BindingContext> compute() {
-                    synchronized (lock) {
-                        try {
-                            JetNamespace rootNamespace = file.getRootNamespace();
-                            BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
-                            return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                        catch (ProcessCanceledException e) {
-                            throw e;
-                        }
-                        catch (Throwable e) {
-                            e.printStackTrace();
-                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
-//                            bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
-                            bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-                            return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                    }
-                }
-            }, false);
-            file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
-        }
-        return bindingContextCachedValue.getValue();
-    }
 }

@@ -1,15 +1,20 @@
-namespace kotlin.modules
+namespace kotlin
+
+namespace modules {
 
 import java.util.*
 import jet.modules.*
 
-class ModuleSetBuilder() {
-    val modules: ArrayList<ModuleBuilder> = ArrayList<ModuleBuilder>()
+class ModuleSetBuilder(): IModuleSetBuilder {
+    val modules: ArrayList<IModuleBuilder?> = ArrayList<IModuleBuilder?>()
 
     fun module(name: String, callback: fun ModuleBuilder.()) {
         val builder = ModuleBuilder(name)
         builder.callback()
+        modules.add(builder)
     }
+
+    override fun getModules(): List<IModuleBuilder?>? = modules
 }
 
 class SourcesBuilder(val parent: ModuleBuilder) {
@@ -44,4 +49,7 @@ class ModuleBuilder(val name: String): IModuleBuilder {
 
     override fun getSourceFiles(): List<String?>? = sourceFiles
     override fun getClasspathRoots(): List<String?>? = classpathRoots
+    override fun getModuleName(): String? = name
+}
+
 }

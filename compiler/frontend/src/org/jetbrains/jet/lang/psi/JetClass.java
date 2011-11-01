@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -103,17 +102,6 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
         if (body == null) return Collections.emptyList();
 
         return body.getProperties();
-    }
-
-    public String getFQName() {
-        JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(this, JetNamespace.class, JetClass.class);
-        if (parent instanceof JetNamespace) {
-            return ((JetNamespace) parent).getFQName() + "." + getName();
-        }
-        if (parent instanceof JetClass) {
-            return ((JetClass) parent).getFQName() + "." + getName();
-        }
-        return getName();
     }
 
     public boolean isTrait() {

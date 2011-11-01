@@ -88,7 +88,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
     protected String blackBox() throws Exception {
         ClassFileFactory codegens = generateClassesInFile();
-        CodegensClassLoader loader = new CodegensClassLoader(codegens);
+        GeneratedClassLoader loader = new GeneratedClassLoader(codegens);
 
         final JetNamespace namespace = myFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
@@ -214,24 +214,5 @@ public abstract class CodegenTestCase extends JetLiteFixture {
       public Class<?> loadClass(String name) throws ClassNotFoundException {
         return super.loadClass(name);
       }
-    }
-
-    private static class CodegensClassLoader extends ClassLoader {
-        private final ClassFileFactory state;
-
-        public CodegensClassLoader(ClassFileFactory state) {
-            super(CodegenTestCase.class.getClassLoader());
-            this.state = state;
-        }
-
-        @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
-            String file = name.replace('.', '/') + ".class";
-            if (state.files().contains(file)) {
-                byte[] bytes = state.asBytes(file);
-                return defineClass(name, bytes, 0, bytes.length);
-            }
-            return super.findClass(name);
-        }
     }
 }

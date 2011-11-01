@@ -10,3 +10,14 @@ namespace b {
 
   }
 }
+
+namespace c {
+  import d.X
+  val x : X = X()
+}
+
+namespace d {
+  class X() {
+
+  }
+}

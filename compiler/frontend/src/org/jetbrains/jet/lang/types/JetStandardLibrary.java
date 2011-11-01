@@ -316,8 +316,8 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public JetType getArrayType(@NotNull Variance variance, @NotNull JetType argument) {
-        List<TypeProjection> types = Collections.singletonList(new TypeProjection(variance, argument));
+    public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
+        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
         return new JetTypeImpl(
                 Collections.<AnnotationDescriptor>emptyList(),
                 getArray().getTypeConstructor(),

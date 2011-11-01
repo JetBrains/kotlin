@@ -681,6 +681,9 @@ public abstract class StackValue {
             case Type.INT:
                 return JetTypeMapper.TYPE_SHARED_INT;
 
+            case Type.LONG:
+                return JetTypeMapper.TYPE_SHARED_LONG;
+
             case Type.BOOLEAN:
                 return JetTypeMapper.TYPE_SHARED_BOOLEAN;
 

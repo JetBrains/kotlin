@@ -147,7 +147,7 @@ public class ErrorUtils {
                     ERROR_PARAMETER_TYPE,
                     ERROR_PARAMETER_TYPE,
                     false,
-                    false));
+                    null));
         }
         return result;
     }

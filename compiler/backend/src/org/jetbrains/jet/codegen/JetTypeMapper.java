@@ -15,6 +15,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 import java.util.*;
@@ -360,10 +361,6 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getNullableBooleanType())) {
             return JL_BOOLEAN_TYPE;
         }
-        if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
-            return Type.getType(String.class);
-        }
-
         if(jetType.equals(standardLibrary.getByteArrayType())){
             return ARRAY_BYTE_TYPE;
         }
@@ -387,6 +384,10 @@ public class JetTypeMapper {
         }
         if(jetType.equals(standardLibrary.getBooleanArrayType())){
             return ARRAY_BOOL_TYPE;
+        }
+
+        if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
+            return Type.getType(String.class);
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -413,6 +414,34 @@ public class JetTypeMapper {
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    public static Type unboxType(final Type type) {
+        if (type == JL_INTEGER_TYPE) {
+            return Type.INT_TYPE;
+        }
+        else if (type == JL_BOOLEAN_TYPE) {
+            return Type.BOOLEAN_TYPE;
+        }
+        else if (type == JL_CHAR_TYPE) {
+            return Type.CHAR_TYPE;
+        }
+        else if (type == JL_SHORT_TYPE) {
+            return Type.SHORT_TYPE;
+        }
+        else if (type == JL_LONG_TYPE) {
+            return Type.LONG_TYPE;
+        }
+        else if (type == JL_BYTE_TYPE) {
+            return Type.BYTE_TYPE;
+        }
+        else if (type == JL_FLOAT_TYPE) {
+            return Type.FLOAT_TYPE;
+        }
+        else if (type == JL_DOUBLE_TYPE) {
+            return Type.DOUBLE_TYPE;
+        }
+        throw new UnsupportedOperationException("Unboxing: " + type);
     }
 
     public static Type boxType(Type asmType) {
@@ -462,9 +491,6 @@ public class JetTypeMapper {
         }
         for (ValueParameterDescriptor parameter : parameters) {
             Type type = mapType(parameter.getOutType());
-            if(parameter.isVararg()) {
-                type = Type.getType("[" + type.getDescriptor());
-            }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
@@ -488,7 +514,7 @@ public class JetTypeMapper {
         return mapToCallableMethod(functionDescriptor, kind);
     }
 
-    CallableMethod mapToCallableMethod(PsiMethod method) {
+    static CallableMethod mapToCallableMethod(PsiMethod method) {
         final PsiClass containingClass = method.getContainingClass();
         String owner = jvmName(containingClass);
         Method signature = getMethodDescriptor(method);
@@ -562,13 +588,7 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(receiver.getType()));
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            if(parameter.isVararg()) {
-                Type type = mapType(parameter.getOutType());
-                type = Type.getType("[" + type.getDescriptor());
-                parameterTypes.add(type);
-            }
-            else
-                parameterTypes.add(mapType(parameter.getOutType()));
+            parameterTypes.add(mapType(parameter.getOutType()));
         }
         Type returnType = mapReturnType(f.getReturnType());
         return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));

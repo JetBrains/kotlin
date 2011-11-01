@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.ImportingStrategy;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +81,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         }
 
         public void test(PsiFile psiFile) {
-            BindingContext bindingContext = AnalyzingUtils.getInstance(ImportingStrategy.NONE).analyzeFileWithCache((JetFile) psiFile);
+            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), (JetFile) psiFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, bindingContext).toString();
 
             List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();

@@ -42,7 +42,7 @@ public class FullJetPsiCheckerTest extends JetLiteFixture {
         String clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
 
         myFile = createPsiFile(myName, clearText);
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(myFile);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(myFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
 
         CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override

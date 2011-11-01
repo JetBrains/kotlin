@@ -387,13 +387,15 @@ public class CallResolver {
                         ResolvedValueArgument valueArgument = entry.getValue();
                         ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
 
+                        JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor);
+
                         for (JetExpression expression : valueArgument.getArgumentExpressions()) {
 //                            JetExpression expression = valueArgument.getArgumentExpression();
                             // TODO : more attempts, with different expected types
                             ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, temporaryTrace);
                             JetType type = temporaryServices.getType(scope, expression, NO_EXPECTED_TYPE);
                             if (type != null) {
-                                constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
+                                constraintSystem.addSubtypingConstraint(type, effectiveExpectedType);
                             }
                             else {
                                 candidateCall.argumentHasNoType();
@@ -512,6 +514,14 @@ public class CallResolver {
         return results;
     }
 
+    private JetType getEffectiveExpectedType(ValueParameterDescriptor valueParameterDescriptor) {
+        JetType effectiveExpectedType = valueParameterDescriptor.getVarargElementType();
+        if (effectiveExpectedType == null) {
+            effectiveExpectedType = valueParameterDescriptor.getOutType();
+        }
+        return effectiveExpectedType;
+    }
+
     private void recordAutoCastIfNecessary(ReceiverDescriptor receiver, BindingTrace trace) {
         if (receiver instanceof AutoCastReceiver) {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
@@ -606,7 +616,7 @@ public class CallResolver {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
 
-            JetType parameterType = parameterDescriptor.getOutType();
+            JetType parameterType = getEffectiveExpectedType(parameterDescriptor);
 
             List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
             for (JetExpression argumentExpression : argumentExpressions) {

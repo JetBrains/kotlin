@@ -16,8 +16,8 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
 
     public RedeclarationDiagnosticFactory() {}
 
-    public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement) {
-        return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement);
+    public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
+        return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement, name);
     }
 
     public Diagnostic on(DeclarationDescriptor duplicatingDescriptor, BindingContext contextToResolveToDeclaration) {

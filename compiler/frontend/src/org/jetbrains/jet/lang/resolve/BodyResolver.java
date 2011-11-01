@@ -71,7 +71,6 @@ public class BodyResolver {
 
     }
 
-
     public void resolveBehaviorDeclarationBodies() {
 
         resolveDelegationSpecifierLists();
@@ -86,34 +85,6 @@ public class BodyResolver {
         computeDeferredTypes();        
     }
     
-    private void computeDeferredTypes() {
-        Collection<DeferredType> deferredTypes = context.getTrace().get(DEFERRED_TYPES, DEFERRED_TYPE_KEY);
-        if (deferredTypes != null) {
-            final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size());
-            context.getTrace().addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<BindingContext.DeferredTypeKey, DeferredType>() {
-                @Override
-                public void handleRecord(WritableSlice<BindingContext.DeferredTypeKey, DeferredType> deferredTypeKeyDeferredTypeWritableSlice, BindingContext.DeferredTypeKey key, DeferredType value) {
-                    queue.addLast(value);
-                }
-            });
-            for (DeferredType deferredType : deferredTypes) {
-                queue.addLast(deferredType);
-            }
-            while (!queue.isEmpty()) {
-                DeferredType deferredType = queue.pullFirst();
-                if (!deferredType.isComputed()) {
-                    try {
-                        deferredType.getActualType(); // to compute
-                    }
-                    catch (ReenteringLazyValueComputationException e) {
-                        // A problem should be reported while computing the type
-                    }
-                }
-            }
-        }
-    }
-
-
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
@@ -125,6 +96,7 @@ public class BodyResolver {
     }
 
     private void resolveDelegationSpecifierList(final JetClassOrObject jetClass, final MutableClassDescriptor descriptor) {
+        if (!context.completeAnalysisNeeded(jetClass)) return;
         final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
@@ -278,7 +250,6 @@ public class BodyResolver {
     }
 
     private void resolveClassAnnotations() {
-
     }
 
     private void resolveAnonymousInitializers() {
@@ -291,6 +262,7 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject, MutableClassDescriptor classDescriptor) {
+        if (!context.completeAnalysisNeeded(jetClassOrObject)) return;
         List<JetClassInitializer> anonymousInitializers = jetClassOrObject.getAnonymousInitializers();
         if (jetClassOrObject.hasPrimaryConstructor()) {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
@@ -320,6 +292,7 @@ public class BodyResolver {
     }
 
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
+        if (!context.completeAnalysisNeeded(declaration)) return;
         final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 
         final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
@@ -419,6 +392,7 @@ public class BodyResolver {
         Set<JetProperty> processed = Sets.newHashSet();
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
+            if (!context.completeAnalysisNeeded(jetClass)) continue;
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             for (JetProperty property : jetClass.getProperties()) {
@@ -444,6 +418,7 @@ public class BodyResolver {
         // Top-level properties & properties of objects
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : this.context.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
+            if (!context.completeAnalysisNeeded(property)) return;
             if (processed.contains(property)) continue;
 
             final PropertyDescriptor propertyDescriptor = entry.getValue();
@@ -540,6 +515,7 @@ public class BodyResolver {
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetScope declaringScope) {
+        if (!context.completeAnalysisNeeded(function)) return;
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
@@ -563,5 +539,32 @@ public class BodyResolver {
         }
 
         assert functionDescriptor.getReturnType() != null;
+    }
+
+    private void computeDeferredTypes() {
+        Collection<DeferredType> deferredTypes = context.getTrace().get(DEFERRED_TYPES, DEFERRED_TYPE_KEY);
+        if (deferredTypes != null) {
+            final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size());
+            context.getTrace().addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<BindingContext.DeferredTypeKey, DeferredType>() {
+                @Override
+                public void handleRecord(WritableSlice<BindingContext.DeferredTypeKey, DeferredType> deferredTypeKeyDeferredTypeWritableSlice, BindingContext.DeferredTypeKey key, DeferredType value) {
+                    queue.addLast(value);
+                }
+            });
+            for (DeferredType deferredType : deferredTypes) {
+                queue.addLast(deferredType);
+            }
+            while (!queue.isEmpty()) {
+                DeferredType deferredType = queue.pullFirst();
+                if (!deferredType.isComputed()) {
+                    try {
+                        deferredType.getActualType(); // to compute
+                    }
+                    catch (ReenteringLazyValueComputationException e) {
+                        // A problem should be reported while computing the type
+                    }
+                }
+            }
+        }
     }
 }

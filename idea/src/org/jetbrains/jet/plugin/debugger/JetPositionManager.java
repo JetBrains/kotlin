@@ -21,8 +21,8 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import java.util.*;
 
@@ -125,7 +125,7 @@ public class JetPositionManager implements PositionManager {
         if (mapper != null) {
             return mapper;
         }
-        final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(myDebugProcess.getProject());
         final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         file.acceptChildren(new JetVisitorVoid() {

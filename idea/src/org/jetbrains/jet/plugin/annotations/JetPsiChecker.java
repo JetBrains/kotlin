@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetHighlighter;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
@@ -54,12 +55,13 @@ public class JetPsiChecker implements Annotator {
             JetFile file = (JetFile) element;
             Project project = element.getProject();
             try {
-                final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
+                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 
                 if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
+                        if (diagnostic.getFactory().getPsiFile(diagnostic) != file) continue; // This is needed because we have the same context for all files
                         Annotation annotation = null;
                         if (diagnostic.getSeverity() == Severity.ERROR) {
                             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {

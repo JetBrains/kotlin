@@ -12,9 +12,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 /**
  * @author yole
@@ -26,7 +26,7 @@ public class ShowExpressionTypeAction extends AnAction {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         assert editor != null && psiFile != null;
         JetExpression expression;
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) psiFile);
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
         if (editor.getSelectionModel().hasSelection()) {
             int startOffset = editor.getSelectionModel().getSelectionStart();
             int endOffset = editor.getSelectionModel().getSelectionEnd();

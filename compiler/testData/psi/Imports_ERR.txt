@@ -18,7 +18,8 @@ JetFile: Imports_ERR.jet
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiErrorElement:Expecting qualified name
-          PsiElement(SEMICOLON)(';')
+          <empty list>
+      PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -27,7 +28,9 @@ JetFile: Imports_ERR.jet
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiErrorElement:Expecting qualified name
-          PsiElement(MUL)('*')
+          <empty list>
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(MUL)('*')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -37,7 +40,8 @@ JetFile: Imports_ERR.jet
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiErrorElement:Expecting qualified name
-          PsiElement(SEMICOLON)(';')
+          <empty list>
+      PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
