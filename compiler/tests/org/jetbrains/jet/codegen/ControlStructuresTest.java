@@ -207,4 +207,9 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testKt299() throws Exception {
         blackBoxFile("regressions/kt299.jet");
     }
+
+    public void testKt416() throws Exception {
+        blackBoxFile("regressions/kt416.jet");
+        System.out.println(generateToText());
+    }
 }
