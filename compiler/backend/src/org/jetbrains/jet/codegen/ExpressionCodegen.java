@@ -1238,29 +1238,44 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitSafeQualifiedExpression(JetSafeQualifiedExpression expression, StackValue receiver) {
-        genToJVMStack(expression.getReceiverExpression());
-        Label ifnull = new Label();
-        Label end = new Label();
-        v.dup();
-        v.ifnull(ifnull);
-        JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression());
-        StackValue propValue = genQualified(StackValue.onStack(typeMapper.mapType(receiverType)), expression.getSelectorExpression());
-        Type type = propValue.type;
-        propValue.put(type, v);
-        if(JetTypeMapper.isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
-            StackValue.valueOf(v, type);
-            type = JetTypeMapper.boxType(type);
-        }
-        v.goTo(end);
+        JetExpression expr = expression.getReceiverExpression();
+        JetType receiverJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression());
+        Type receiverType = typeMapper.mapType(receiverJetType);
+        gen(expr, receiverType);
+        if(receiverType.getSort() != Type.OBJECT && receiverType.getSort() != Type.ARRAY) {
+            StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
+            Type type = propValue.type;
+            propValue.put(type, v);
+            if(JetTypeMapper.isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
+                StackValue.valueOf(v, type);
+                type = JetTypeMapper.boxType(type);
+            }
 
-        v.mark(ifnull);
-        v.pop();
-        if(!propValue.type.equals(Type.VOID_TYPE)) {
-            v.aconst(null);
+            return StackValue.onStack(type);
         }
-        v.mark(end);
+        else {
+            Label ifnull = new Label();
+            Label end = new Label();
+            v.dup();
+            v.ifnull(ifnull);
+            StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
+            Type type = propValue.type;
+            propValue.put(type, v);
+            if(JetTypeMapper.isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
+                StackValue.valueOf(v, type);
+                type = JetTypeMapper.boxType(type);
+            }
+            v.goTo(end);
 
-        return StackValue.onStack(type);
+            v.mark(ifnull);
+            v.pop();
+            if(!propValue.type.equals(Type.VOID_TYPE)) {
+                v.aconst(null);
+            }
+            v.mark(end);
+
+            return StackValue.onStack(type);
+        }
     }
 
     @Override

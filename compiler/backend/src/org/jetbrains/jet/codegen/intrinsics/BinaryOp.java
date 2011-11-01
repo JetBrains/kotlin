@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.objectweb.asm.Type;
@@ -21,6 +22,10 @@ public class BinaryOp implements IntrinsicMethod {
 
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
+        boolean nullable = expectedType.getSort() == Type.OBJECT;
+        if(nullable) {
+            expectedType = JetTypeMapper.unboxType(expectedType);
+        }
         if (arguments.size() == 1) {
             // intrinsic is called as an ordinary function
             if (receiver != null) {
@@ -33,6 +38,10 @@ public class BinaryOp implements IntrinsicMethod {
             codegen.gen(arguments.get(1), expectedType);
         }
         v.visitInsn(expectedType.getOpcode(opcode));
+
+        if(nullable) {
+            StackValue.onStack(expectedType).put(expectedType = JetTypeMapper.boxType(expectedType), v);
+        }
         return StackValue.onStack(expectedType);
     }
 }
