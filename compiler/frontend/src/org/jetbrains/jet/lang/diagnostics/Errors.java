@@ -144,8 +144,9 @@ public interface Errors {
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> VAL_REASSIGNMENT = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Val can not be reassigned", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Initialization using backing field required", NAME);
 
-    PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> FUNCTION_PARAMETERS_OF_INLINE_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Funciton parameters of inline funciton can only be invoked", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> FUNCTION_PARAMETERS_OF_INLINE_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function parameters of inline function can only be invoked", NAME);
 
     SimpleDiagnosticFactory UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR, "Unreachable code");
 

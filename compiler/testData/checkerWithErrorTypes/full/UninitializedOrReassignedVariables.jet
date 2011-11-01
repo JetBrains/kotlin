@@ -1,0 +1,250 @@
+namespace uninitialized_reassigned_variables
+
+fun doSmth(s: String) {}
+fun doSmth(i: Int) {}
+
+// ------------------------------------------------
+// uninitialized variables
+
+fun t1(b : Boolean) {
+    val v : Int
+    if (<!UNINITIALIZED_VARIABLE!>v<!> == 0) {}
+
+    var u: String
+    if (b) {
+        u = "s"
+    }
+    doSmth(<!UNINITIALIZED_VARIABLE!>u<!>)
+
+    var r: String
+    if (b) {
+        r = "s"
+    }
+    else {
+        r = "tg"
+    }
+    doSmth(r)
+
+    var t: String
+    if (b)
+        doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
+    else
+        t = "ss"
+    doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
+
+    val i = 3
+    doSmth(i)
+    if (b) {
+        return;
+    }
+    doSmth(i)
+    if (i is Int) {
+        return;
+    }
+}
+
+fun t2() {
+    val s = "ss"
+
+    for (i in 0..2) {
+        doSmth(s)
+    }
+}
+
+class A() {}
+
+fun t4(a: A, val b: A, var c: A) {
+    <!VAL_REASSIGNMENT!>a<!> = A()
+    <!VAL_REASSIGNMENT!>b<!> = A()
+    c = A()
+}
+
+// ------------------------------------------------
+// reassigned vals
+
+fun t1() {
+    val a : Int = 1
+    <!VAL_REASSIGNMENT!>a<!> = 2
+
+    var b : Int = 1
+    b = 3
+}
+
+abstract enum class ProtocolState {
+  WAITING {
+    override fun signal() = ProtocolState.TALKING
+  }
+
+  TALKING {
+    override fun signal() = ProtocolState.WAITING
+  }
+
+  abstract fun signal() : ProtocolState
+}
+
+fun t2() {
+   val x: ProtocolState = ProtocolState.WAITING
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+}
+
+fun t3() {
+    val x = 1
+    <!VAL_REASSIGNMENT!>x<!> += 2
+    val y = 3
+    <!VAL_REASSIGNMENT!>y<!> *= 4
+    var z = 5
+    z -= y
+}
+
+fun t4() {
+    for (i in 0..2) {
+        <!VAL_REASSIGNMENT!>i<!> += 1
+        fun t5() {
+            <!VAL_REASSIGNMENT!>i<!> += 3
+        }
+    }
+}
+
+// ------------------------------------------------
+// backing fields
+
+var x = 10
+val y = 10
+val z = 10
+
+class AnonymousInitializers(var a: String, val b: String) {
+    {
+        $a = "30"
+        a = "s"
+
+        <!VAL_REASSIGNMENT!>$b<!> = "3"
+        <!VAL_REASSIGNMENT!>b<!> = "tt"
+    }
+
+    val i: Int
+    {
+        $i = 121
+    }
+
+    {
+        x = 11
+        <!UNRESOLVED_REFERENCE!>$y<!> = 11
+        <!VAL_REASSIGNMENT!>z<!> = 10
+    }
+
+    val j: Int
+    get() = 20
+
+    {
+        <!VAL_REASSIGNMENT!>$i<!> = 13
+        <!NO_BACKING_FIELD!>$j<!> = 30
+        <!VAL_REASSIGNMENT!>j<!> = 34
+    }
+
+    val k: String
+    {
+        if (1 < 3) {
+            <!INITIALIZATION_USING_BACKING_FIELD!>k<!> = "a"
+        }
+        else {
+            $k = "b"
+        }
+    }
+
+    val l: String
+    {
+        if (1 < 3) {
+            $l = "a"
+        }
+        else {
+            $l = "b"
+        }
+    }
+
+    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>o<!>: String
+    {
+        if (1 < 3) {
+            $o = "a"
+        }
+    }
+
+    var m: Int = 30
+
+    {
+        $m = 400
+    }
+
+    val n: Int
+
+    {
+        while (<!UNINITIALIZED_VARIABLE!>n<!> == 0) {
+        }
+        $n = 10
+        while (n == 0) {
+        }
+    }
+
+    var p = 1
+    {
+        p++
+    }
+}
+
+fun reassignFunParams(val a: Int) {
+    <!VAL_REASSIGNMENT!>a<!> = 1
+}
+
+open class Open(a: Int, w: Int) {}
+
+class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
+    val x : Int
+    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+    {
+        $x = 1
+        val b = x
+    }
+    val b = a
+
+    fun foo() {
+        val r : Int
+        doSmth(x)
+        doSmth(y)
+        doSmth(<!UNINITIALIZED_VARIABLE!>r<!>)
+        doSmth(a)
+    }
+    var xx = w
+    var yy : Int
+    {
+        <!VAL_REASSIGNMENT!>w<!> += 1
+        $yy = w
+    }
+}
+
+class Outer() {
+    val a : Int
+    var b : Int
+
+    {
+        $a = 1
+        $b = 1
+    }
+
+    class Inner() {
+        {
+            <!VAL_REASSIGNMENT!>a<!>++
+            b++
+        }
+    }
+
+    fun foo() {
+        <!VAL_REASSIGNMENT!>a<!>++
+        b++
+    }
+}
+
+class ForwardAccessToBackingField() { //kt-147
+    val a = <!UNRESOLVED_REFERENCE, UNINITIALIZED_VARIABLE!>$a<!> // error
+    val b = <!UNINITIALIZED_VARIABLE!>$c<!> // error
+    val c = 1
+}

@@ -296,7 +296,7 @@ public class BodyResolver {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(createFieldAssignTrackingTrace()); // TODO : flow
+            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
@@ -499,22 +499,6 @@ public class BodyResolver {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
                             traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this context.getTrace()?
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    private ObservableBindingTrace createFieldAssignTrackingTrace() {
-        return new ObservableBindingTrace(traceForConstructors).addHandler(BindingContext.VARIABLE_ASSIGNMENT, new ObservableBindingTrace.RecordHandler<JetExpression, DeclarationDescriptor>() {
-            @Override
-            public void handleRecord(WritableSlice<JetExpression, DeclarationDescriptor> jetExpressionBooleanWritableSlice, JetExpression expression, DeclarationDescriptor descriptor) {
-                if (expression instanceof JetSimpleNameExpression) {
-                    JetSimpleNameExpression variable = (JetSimpleNameExpression) expression;
-                    if (variable.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                        if (descriptor instanceof PropertyDescriptor) {
-                            traceForMembers.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) descriptor);
                         }
                     }
                 }
