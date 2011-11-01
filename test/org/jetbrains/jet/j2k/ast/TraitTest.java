@@ -42,4 +42,18 @@ public class TraitTest extends JetTestCaseBase {
         "}"
     );
   }
+
+  public void testExtendsOneInterface() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("interface A extends I {}"),
+      "trait A : I { }"
+    );
+  }
+
+  public void testExtendsOneClassAndImplementsSeveralInterfaces() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("interface A extends I0, I1, I2 {}"),
+      "trait A : I0, I1, I2 { }"
+    );
+  }
 }

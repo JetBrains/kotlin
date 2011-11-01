@@ -69,4 +69,25 @@ public class ClassTest extends JetTestCaseBase {
       "class Entry<K, V> { }"
     );
   }
+
+  public void testSimpleInheritance() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class A extends Base {}"),
+      "class A : Base { }"
+    );
+  }
+
+  public void testExtendsOneClassAndImplementsOneInterface() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class A extends Base implements I {}"),
+      "class A : Base, I { }"
+    );
+  }
+
+  public void testExtendsOneClassAndImplementsSeveralInterfaces() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class A extends Base implements I0, I1, I2 {}"),
+      "class A : Base, I0, I1, I2 { }"
+    );
+  }
 }

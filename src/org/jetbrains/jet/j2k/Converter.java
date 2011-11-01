@@ -41,13 +41,19 @@ public class Converter {
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
     final List<Field> fields = fieldsToFieldList(psiClass.getAllFields());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
+    final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
+    final List<PsiClassType> extendsListTypes = new LinkedList<PsiClassType>();
+    for (PsiClassType e : psiClass.getExtendsListTypes())
+      if (!e.getCanonicalText().equals("java.lang.Enum"))
+        extendsListTypes.add(e);
+    final List<Type> extendsTypes = typesToNotNullableTypeList(extendsListTypes.toArray(new PsiType[extendsListTypes.size()]));
 
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
     if (psiClass.isInterface())
-      return new Trait(name, typeParameters, innerClasses, methods, fields);
+      return new Trait(name, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
     if (psiClass.isEnum())
-      return new Enum(name, typeParameters, innerClasses, methods, fields);
-    return new Class(name, typeParameters, innerClasses, methods, fields);
+      return new Enum(name, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+    return new Class(name, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
   }
 
   private static List<Field> fieldsToFieldList(PsiField[] fields) {

@@ -77,6 +77,20 @@ public class EnumTest extends JetTestCaseBase {
     );
   }
 
+  public void testEnumImplementsOneInterface() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("enum A implements I {}"),
+      "enum A : I { }"
+    );
+  }
+
+  public void testEnumImplementsSeveralInterfaces() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("enum A implements I0, I1, I2 {}"),
+      "enum A : I0, I1, I2 { }"
+    );
+  }
+
 //  public void testTwoConstructors() throws Exception {
 //    Assert.assertEquals(
 //      classToKotlin(
