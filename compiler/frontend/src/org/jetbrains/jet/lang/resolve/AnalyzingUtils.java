@@ -1,9 +1,12 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -59,19 +62,24 @@ public class AnalyzingUtils {
         Project project = namespace.getProject();
         List<JetDeclaration> declarations = Collections.<JetDeclaration>singletonList(namespace);
 
-        return analyzeNamespaces(project, declarations, flowDataTraceFactory);
+        return analyzeNamespaces(project, declarations, Predicates.equalTo(namespace.getContainingFile()), flowDataTraceFactory);
     }
 
-    public BindingContext analyzeNamespaces(@NotNull Project project, @NotNull Collection<? extends JetDeclaration> declarations, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    public BindingContext analyzeNamespaces(
+            @NotNull Project project,
+            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
-//        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
+
         final WritableScope scope = new WritableScopeImpl(JetScope.EMPTY, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
         importingStrategy.addImports(project, semanticServices, bindingTraceContext, scope);
         scope.importScope(libraryScope);
+
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 
             @Override
@@ -103,7 +111,7 @@ public class AnalyzingUtils {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
-        }, declarations, flowDataTraceFactory);
+        }, declarations, filesToAnalyzeCompletely, flowDataTraceFactory);
         return bindingTraceContext.getBindingContext();
     }
 

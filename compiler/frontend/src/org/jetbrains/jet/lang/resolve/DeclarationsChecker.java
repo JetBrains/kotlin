@@ -40,7 +40,8 @@ public class DeclarationsChecker {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass aClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
-            
+            if (!context.completeAnalysisNeeded(aClass)) continue;
+
             checkClass(aClass, classDescriptor);
             checkModifiers(aClass.getModifierList());
         }
@@ -50,6 +51,7 @@ public class DeclarationsChecker {
             JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor objectDescriptor = entry.getValue();
 
+            if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
             checkObject(objectDeclaration, objectDescriptor);
         }
 
@@ -58,6 +60,7 @@ public class DeclarationsChecker {
             JetNamedFunction function = entry.getKey();
             FunctionDescriptorImpl functionDescriptor = entry.getValue();
             
+            if (!context.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
             checkModifiers(function.getModifierList());
         }
@@ -67,6 +70,7 @@ public class DeclarationsChecker {
             JetProperty property = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
             
+            if (!context.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
             checkModifiers(property.getModifierList());
         }
@@ -77,6 +81,7 @@ public class DeclarationsChecker {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             MutableClassDescriptor classDescriptor = entry.getValue();
             JetClass jetClass = entry.getKey();
+            if (!context.completeAnalysisNeeded(jetClass)) return;
             if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null && !(classDescriptor.getKind() == ClassKind.TRAIT)) {
                 for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
                     if (context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {

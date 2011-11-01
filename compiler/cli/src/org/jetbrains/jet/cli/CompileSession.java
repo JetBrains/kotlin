@@ -1,5 +1,6 @@
 package org.jetbrains.jet.cli;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -82,7 +83,7 @@ public class CompileSession {
         final AnalyzingUtils instance = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
         List<JetNamespace> allNamespaces = new ArrayList<JetNamespace>(mySourceFileNamespaces);
         allNamespaces.addAll(myLibrarySourceFileNamespaces);
-        myBindingContext = instance.analyzeNamespaces(myEnvironment.getProject(), allNamespaces, JetControlFlowDataTraceFactory.EMPTY);
+        myBindingContext = instance.analyzeNamespaces(myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         ErrorCollector errorCollector = new ErrorCollector(myBindingContext);
         errorCollector.report();
         return !errorCollector.hasErrors;

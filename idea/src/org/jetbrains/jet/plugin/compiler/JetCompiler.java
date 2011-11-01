@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
@@ -77,7 +78,10 @@ public class JetCompiler implements TranslatingCompiler {
                     }
                 }
 
-                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(compileContext.getProject(), namespaces, JetControlFlowDataTraceFactory.EMPTY);
+                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(
+                        compileContext.getProject(), namespaces,
+                        Predicates.<PsiFile>alwaysTrue(),
+                        JetControlFlowDataTraceFactory.EMPTY);
 
                 boolean errors = false;
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

@@ -42,6 +42,8 @@ public class ControlFlowAnalyzer {
             JetNamedFunction function = entry.getKey();
             FunctionDescriptorImpl functionDescriptor = entry.getValue();
 
+            if (!context.completeAnalysisNeeded(function)) continue;
+
             final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();

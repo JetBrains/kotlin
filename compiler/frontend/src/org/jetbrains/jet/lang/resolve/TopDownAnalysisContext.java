@@ -1,13 +1,18 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,10 +37,42 @@ import java.util.Set;
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 
-    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace) {
+    private final Predicate<PsiFile> analyzeCompletely;
+    
+    private StringBuilder debugOutput;
+
+    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely) {
         this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+        this.analyzeCompletely = analyzeCompletely;
+    }
+
+    public void debug(Object message) {
+        if (debugOutput != null) {
+            debugOutput.append(message).append("\n");
+        }
+    }
+    
+    /*package*/ void enableDebugOutput() {
+        if (debugOutput == null) {
+            debugOutput = new StringBuilder();
+        }
+    }
+    
+    /*package*/ void printDebugOutput(PrintStream out) {
+        if (debugOutput != null) {
+            out.print(debugOutput);
+        }
+    }
+
+    public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
+        boolean result = containingFile != null && analyzeCompletely.apply(containingFile);
+        if (!result) {
+            debug(containingFile);
+        }
+        return result;
     }
 
     public ObservableBindingTrace getTrace() {

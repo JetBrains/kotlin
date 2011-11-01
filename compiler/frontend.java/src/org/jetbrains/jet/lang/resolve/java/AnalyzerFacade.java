@@ -1,7 +1,9 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -58,6 +60,7 @@ public class AnalyzerFacade {
                             BindingContext bindingContext = analyzingUtils.analyzeNamespaces(
                                     file.getProject(),
                                     declarationProvider.fun(file),
+                                    Predicates.<PsiFile>equalTo(file),
                                     JetControlFlowDataTraceFactory.EMPTY);
                             return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
                         }
