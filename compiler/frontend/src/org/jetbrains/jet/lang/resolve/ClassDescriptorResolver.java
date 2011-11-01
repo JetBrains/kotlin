@@ -246,19 +246,54 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type) {
+        JetType varargElementType = null;
+        JetType variableType = type;
+        if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
+            varargElementType = type;
+            variableType = getVarargParameterType(type);
+        }
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
             declarationDescriptor,
             index,
             annotationResolver.createAnnotationStubs(valueParameter.getModifierList()),
             JetPsiUtil.safeName(valueParameter.getName()),
-            valueParameter.isMutable() ? type : null,
-            type,
+            valueParameter.isMutable() ? variableType : null,
+            variableType,
             valueParameter.getDefaultValue() != null,
-            valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)
+            varargElementType
         );
 
         trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
         return valueParameterDescriptor;
+    }
+
+    private JetType getVarargParameterType(JetType type) {
+        JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
+        if (type.equals(standardLibrary.getByteType())) {
+            return standardLibrary.getByteArrayType();
+        }
+        if (type.equals(standardLibrary.getCharType())) {
+            return standardLibrary.getCharArrayType();
+        }
+        if (type.equals(standardLibrary.getShortType())) {
+            return standardLibrary.getShortArrayType();
+        }
+        if (type.equals(standardLibrary.getIntType())) {
+            return standardLibrary.getIntArrayType();
+        }
+        if (type.equals(standardLibrary.getLongType())) {
+            return standardLibrary.getLongArrayType();
+        }
+        if (type.equals(standardLibrary.getFloatType())) {
+            return standardLibrary.getFloatArrayType();
+        }
+        if (type.equals(standardLibrary.getDoubleType())) {
+            return standardLibrary.getDoubleArrayType();
+        }
+        if (type.equals(standardLibrary.getBooleanType())) {
+            return standardLibrary.getBooleanArrayType();
+        }
+        return standardLibrary.getArrayType(type);
     }
 
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {

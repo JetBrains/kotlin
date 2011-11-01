@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements MutableValueParameterDescriptor {
     private final boolean hasDefaultValue;
-    private final boolean isVararg;
+    private final JetType varargElementType;
     private final boolean isVar;
     private final int index;
     private final ValueParameterDescriptor original;
@@ -27,12 +27,12 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             @Nullable JetType inType,
             @NotNull JetType outType,
             boolean hasDefaultValue,
-            boolean isVararg) {
+            @Nullable JetType varargElementType) {
         super(containingDeclaration, annotations, name, inType, outType);
         this.original = this;
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
-        this.isVararg = isVararg;
+        this.varargElementType = varargElementType;
         this.isVar = inType != null;
     }
 
@@ -41,13 +41,14 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             @NotNull ValueParameterDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
             @Nullable JetType inType,
-            @NotNull JetType outType
+            @NotNull JetType outType,
+            @Nullable JetType varargElementType
             ) {
         super(containingDeclaration, annotations, original.getName(), inType, outType);
         this.original = original;
         this.index = original.getIndex();
         this.hasDefaultValue = original.hasDefaultValue();
-        this.isVararg = original.isVararg();
+        this.varargElementType = varargElementType;
         this.isVar = inType != null;
     }
 
@@ -76,9 +77,9 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         throw new UnsupportedOperationException(); // TODO
     }
 
-    @Override
-    public boolean isVararg() {
-        return isVararg;
+    @Nullable
+    public JetType getVarargElementType() {
+        return varargElementType;
     }
 
     @NotNull
@@ -106,6 +107,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), getInType(), getOutType(), hasDefaultValue, isVararg);
+        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), getInType(), getOutType(), hasDefaultValue, varargElementType);
     }
 }

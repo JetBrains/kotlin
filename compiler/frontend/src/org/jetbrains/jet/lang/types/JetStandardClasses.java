@@ -378,7 +378,7 @@ public class JetStandardClasses {
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         for (int i = first; i <= last; i++) {
             JetType parameterType =  arguments.get(i).getType();
-            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(), "p" + i, null, parameterType, false, false);
+            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(), "p" + i, null, parameterType, false, null);
             valueParameters.add(valueParameterDescriptor);
         }
         return valueParameters;

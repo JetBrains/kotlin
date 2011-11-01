@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -15,7 +16,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor {
     int getIndex();
     boolean hasDefaultValue();
     boolean isRef();
-    boolean isVararg();
+    @Nullable JetType getVarargElementType();
 
     @Override
     @NotNull
@@ -26,4 +27,5 @@ public interface ValueParameterDescriptor extends VariableDescriptor {
 
     @NotNull
     ValueParameterDescriptor copy(DeclarationDescriptor newOwner);
+
 }

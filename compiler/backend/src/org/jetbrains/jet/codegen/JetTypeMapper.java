@@ -462,7 +462,7 @@ public class JetTypeMapper {
         }
         for (ValueParameterDescriptor parameter : parameters) {
             Type type = mapType(parameter.getOutType());
-            if(parameter.isVararg()) {
+            if(parameter.getVarargElementType() != null) {
                 type = Type.getType("[" + type.getDescriptor());
             }
             valueParameterTypes.add(type);
@@ -562,7 +562,7 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(receiver.getType()));
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            if(parameter.isVararg()) {
+            if(parameter.getVarargElementType() != null) {
                 Type type = mapType(parameter.getOutType());
                 type = Type.getType("[" + type.getDescriptor());
                 parameterTypes.add(type);

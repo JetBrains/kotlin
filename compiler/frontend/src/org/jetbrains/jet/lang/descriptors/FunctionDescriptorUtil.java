@@ -16,35 +16,6 @@ import java.util.*;
  * @author abreslav
  */
 public class FunctionDescriptorUtil {
-    /** @return Minimal number of arguments to be passed */
-    public static int getMinimumArity(@NotNull FunctionDescriptor functionDescriptor) {
-        int result = 0;
-        for (ValueParameterDescriptor valueParameter : functionDescriptor.getValueParameters()) {
-            if (valueParameter.hasDefaultValue()) {
-                break;
-            }
-            result++;
-        }
-        return result;
-    }
-
-    /**
-     * @return Maximum number of arguments that can be passed. -1 if unbound (vararg)
-     */
-    public static int getMaximumArity(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
-        if (unsubstitutedValueParameters.isEmpty()) {
-            return 0;
-        }
-        // TODO : check somewhere that vararg is only the last one, and that varargs do not have default values
-
-        ValueParameterDescriptor lastParameter = unsubstitutedValueParameters.get(unsubstitutedValueParameters.size() - 1);
-        if (lastParameter.isVararg()) {
-            return -1;
-        }
-        return unsubstitutedValueParameters.size();
-    }
-
     public static Map<TypeConstructor, TypeProjection> createSubstitutionContext(@NotNull FunctionDescriptor functionDescriptor, List<JetType> typeArguments) {
         if (functionDescriptor.getTypeParameters().isEmpty()) return Collections.emptyMap();
 
@@ -69,13 +40,16 @@ public class FunctionDescriptorUtil {
             ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
             // TODO : Lazy?
             JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getOutType(), Variance.IN_VARIANCE);
+            JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
+            JetType substituteVarargElementType = varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,
                     unsubstitutedValueParameter,
                     unsubstitutedValueParameter.getAnnotations(),
                     unsubstitutedValueParameter.getInType() == null ? null : substitutedType,
-                    substitutedType
+                    substitutedType,
+                    substituteVarargElementType
             ));
         }
         return result;

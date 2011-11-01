@@ -84,7 +84,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                     }
                     else if (!valueParameters.isEmpty()) {
                         ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                        if (valueParameterDescriptor.isVararg()) {
+                        if (valueParameterDescriptor.getVarargElementType() != null) {
                             put(candidateCall, valueParameterDescriptor, valueArgument, varargs);
                             usedParameters.add(valueParameterDescriptor);
                         }
@@ -123,7 +123,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 }
 
                 ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                if (valueParameterDescriptor.isVararg()) {
+                if (valueParameterDescriptor.getVarargElementType() != null) {
 //                    temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), "Passing value as a vararg is only allowed inside a parenthesized argument list");
                     temporaryTrace.report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
                     error = true;
@@ -154,7 +154,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 if (valueParameter.hasDefaultValue()) {
                     candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
                 }
-                else if (valueParameter.isVararg()) {
+                else if (valueParameter.getVarargElementType() != null) {
                     candidateCall.recordValueArgument(valueParameter, new VarargValueArgument());
                 }
                 else {
@@ -182,7 +182,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
     }
 
     private static <D extends CallableDescriptor> void put(ResolvedCallImpl<D> candidateCall, ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument, Map<ValueParameterDescriptor, VarargValueArgument> varargs) {
-        if (valueParameterDescriptor.isVararg()) {
+        if (valueParameterDescriptor.getVarargElementType() != null) {
             VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
             if (vararg == null) {
                 vararg = new VarargValueArgument();

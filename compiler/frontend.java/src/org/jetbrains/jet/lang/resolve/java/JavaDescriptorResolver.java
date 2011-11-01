@@ -300,15 +300,26 @@ public class JavaDescriptorResolver {
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
             String name = parameter.getName();
+            PsiType psiType = parameter.getType();
+
+            JetType varargElementType;
+            if (psiType instanceof PsiEllipsisType) {
+                PsiEllipsisType psiEllipsisType = (PsiEllipsisType) psiType;
+                varargElementType = semanticServices.getTypeTransformer().transformToType(psiEllipsisType.getComponentType());
+            }
+            else {
+                varargElementType = null;
+            }
+            JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
             result.add(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO
                     name == null ? "p" + i : name,
                     null, // TODO : review
-                    semanticServices.getTypeTransformer().transformToType(parameter.getType()),
+                    outType,
                     false,
-                    parameter.isVarArgs()
+                    varargElementType
             ));
         }
         return result;
