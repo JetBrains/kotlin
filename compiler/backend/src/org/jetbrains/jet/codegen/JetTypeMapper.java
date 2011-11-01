@@ -361,10 +361,6 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getNullableBooleanType())) {
             return JL_BOOLEAN_TYPE;
         }
-        if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
-            return Type.getType(String.class);
-        }
-
         if(jetType.equals(standardLibrary.getByteArrayType())){
             return ARRAY_BYTE_TYPE;
         }
@@ -388,6 +384,10 @@ public class JetTypeMapper {
         }
         if(jetType.equals(standardLibrary.getBooleanArrayType())){
             return ARRAY_BOOL_TYPE;
+        }
+
+        if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
+            return Type.getType(String.class);
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -491,9 +491,6 @@ public class JetTypeMapper {
         }
         for (ValueParameterDescriptor parameter : parameters) {
             Type type = mapType(parameter.getOutType());
-            if(parameter.getVarargElementType() != null) {
-                type = Type.getType("[" + type.getDescriptor());
-            }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
@@ -517,7 +514,7 @@ public class JetTypeMapper {
         return mapToCallableMethod(functionDescriptor, kind);
     }
 
-    CallableMethod mapToCallableMethod(PsiMethod method) {
+    static CallableMethod mapToCallableMethod(PsiMethod method) {
         final PsiClass containingClass = method.getContainingClass();
         String owner = jvmName(containingClass);
         Method signature = getMethodDescriptor(method);
@@ -591,13 +588,7 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(receiver.getType()));
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            if(parameter.getVarargElementType() != null) {
-                Type type = mapType(parameter.getOutType());
-                type = Type.getType("[" + type.getDescriptor());
-                parameterTypes.add(type);
-            }
-            else
-                parameterTypes.add(mapType(parameter.getOutType()));
+            parameterTypes.add(mapType(parameter.getOutType()));
         }
         Type returnType = mapReturnType(f.getReturnType());
         return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));

@@ -79,7 +79,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.intrinsics = state.getIntrinsics();
     }
 
-    private CallableMethod asCallableMethod(FunctionDescriptor fd) {
+    private static CallableMethod asCallableMethod(FunctionDescriptor fd) {
         Method descriptor = ClosureCodegen.erasedInvokeSignature(fd);
         String owner = ClosureCodegen.getInternalClassName(fd);
         final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
@@ -1187,7 +1187,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     mask |= (1 << index);
                 }
                 else if(resolvedValueArgument instanceof VarargValueArgument) {
-                    throw new UnsupportedOperationException("Varargs are not supported yet");
+                    VarargValueArgument valueArgument = (VarargValueArgument) resolvedValueArgument;
+                    JetType outType = valueParameterDescriptor.getOutType();
+                    
+                    Type type = typeMapper.mapType(outType);
+                    assert type.getSort() == Type.ARRAY;
+                    Type elementType = type.getElementType();
+                    int size = valueArgument.getArgumentExpressions().size();
+                    
+                    v.iconst(valueArgument.getArgumentExpressions().size());
+                    v.newarray(elementType);
+                    for(int i = 0; i != size; ++i) {
+                        v.dup();
+                        v.iconst(i);
+                        gen(valueArgument.getArgumentExpressions().get(i), elementType);
+                        StackValue.arrayElement(elementType, false).store(v);
+                    }
+                    
+//                    throw new UnsupportedOperationException("Varargs are not supported yet");
                 }
                 else {
                     throw new UnsupportedOperationException();

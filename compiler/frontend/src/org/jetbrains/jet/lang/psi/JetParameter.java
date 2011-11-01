@@ -59,6 +59,11 @@ public class JetParameter extends JetNamedDeclaration {
         return findChildByType(JetTokens.VAR_KEYWORD) != null || isRef();
     }
 
+    public boolean isVarArg() {
+        JetModifierList modifierList = getModifierList();
+        return modifierList != null && modifierList.getModifierNode(JetTokens.VARARG_KEYWORD) != null;
+    }
+
     @Nullable
     public ASTNode getValOrVarNode() {
         ASTNode val = getNode().findChildByType(JetTokens.VAL_KEYWORD);
