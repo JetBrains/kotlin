@@ -105,5 +105,7 @@ public class QuickFixes {
         add(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
         
         add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
+        
+        add(Errors.INITIALIZATION_USING_BACKING_FIELD, ChangeToBackingFieldFix.createFactory());
     }
 }

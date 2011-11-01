@@ -56,8 +56,7 @@ public abstract class JetTestCaseBuilder {
             resultFilter = new FilenameFilter() {
                 @Override
                 public boolean accept(File file, String s) {
-                    if (extensionFilter.accept(file, s) && filter.accept(file, s)) return true;
-                    return false;        
+                    return extensionFilter.accept(file, s) && filter.accept(file, s);
                 }
             };
         }
@@ -77,7 +76,7 @@ public abstract class JetTestCaseBuilder {
             List<File> subdirs = Arrays.asList(files);
             Collections.sort(subdirs);
             for (File subdir : subdirs) {
-                suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, factory));
+                suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory));
             }
         }
         List<File> files = Arrays.asList(dir.listFiles(resultFilter));

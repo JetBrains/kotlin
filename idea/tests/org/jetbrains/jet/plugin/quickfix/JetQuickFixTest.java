@@ -60,7 +60,7 @@ public class JetQuickFixTest  extends LightQuickFixTestCase {
         List<String> subDirs = Arrays.asList(quickFixTestsFilter != null ? dir.list(quickFixTestsFilter) : dir.list());
         Collections.sort(subDirs);
         for (String subDirName : subDirs) {
-            suite.addTest(JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, false, fileNameFilter, namedTestFactory));
+            suite.addTest(JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, fileNameFilter, namedTestFactory));
 
         }
         return suite;
