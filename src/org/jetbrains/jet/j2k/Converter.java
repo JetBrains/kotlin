@@ -87,17 +87,20 @@ public class Converter {
     final Type type = typeToType(method.getReturnType());
     final Block body = blockToBlock(method.getBody(), notEmpty);
     final Element params = elementToElement(method.getParameterList());
+    final List<Element> typeParameters = elementsToElementList(method.getTypeParameters());
 
     if (method.isConstructor())
       return new Constructor(
         identifier,
         type,
+        typeParameters,
         params,
         body
       );
     return new Function(
       identifier,
       type,
+      typeParameters,
       params,
       body
     );

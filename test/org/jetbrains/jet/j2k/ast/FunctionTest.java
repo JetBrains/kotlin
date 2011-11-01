@@ -41,4 +41,25 @@ public class FunctionTest extends JetTestCaseBase {
       "fun isTrue() : Boolean { return true }"
     );
   }
+
+  public void testClassGenericParam() throws Exception {
+    Assert.assertEquals(
+      methodToSingleLineKotlin("T getT() {}"),
+      "fun getT() : T? { }"
+    );
+  }
+
+  public void testOwnGenericParam() throws Exception {
+    Assert.assertEquals(
+      methodToSingleLineKotlin("<U> void putU(U u) {}"),
+      "fun putU<U>(u : U?) : Unit { }"
+    );
+  }
+
+  public void testOwnSeveralGenericParams() throws Exception {
+    Assert.assertEquals(
+      methodToSingleLineKotlin("<U, V, W> void putUVW(U u, V v, W w) {}"),
+      "fun putUVW<U, V, W>(u : U?, v : V?, w : W?) : Unit { }"
+    );
+  }
 }
