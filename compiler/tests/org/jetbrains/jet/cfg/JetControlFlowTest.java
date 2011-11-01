@@ -32,7 +32,12 @@ public class JetControlFlowTest extends JetLiteFixture {
         super(dataPath);
         myName = name;
     }
-    
+
+    @Override
+    public String getName() {
+        return "test" + myName;
+    }
+
     protected String getTestFilePath() {
         return myFullDataPath + "/" + myName;
     }
@@ -94,14 +99,18 @@ public class JetControlFlowTest extends JetLiteFixture {
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
             JetElement correspondingElement = pseudocode.getCorrespondingElement();
-            String label;
-            assert correspondingElement instanceof JetNamedDeclaration;
+            String label = "";
+            assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetConstructor) :
+                    "Unexpected element class is pseudocode: " + correspondingElement.getClass();
             if (correspondingElement instanceof JetFunctionLiteral) {
                 label = "anonymous_" + i++;
             }
-            else {
+            else if (correspondingElement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
                 label = namedDeclaration.getName();
+            }
+            else {
+                label = "this";
             }
 
             instructionDump.append("== ").append(label).append(" ==\n");

@@ -782,6 +782,21 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitAnonymousInitializer(JetClassInitializer classInitializer) {
+            classInitializer.getBody().accept(this);
+        }
+
+        @Override
+        public void visitClass(JetClass klass) {
+            List<JetDeclaration> declarations = klass.getDeclarations();
+            for (JetDeclaration declaration : declarations) {
+                if (declaration instanceof JetProperty || declaration instanceof JetClassInitializer) {
+                    declaration.accept(this);
+                }
+            }
+        }
+
+        @Override
         public void visitJetElement(JetElement element) {
             builder.unsupported(element);
         }

@@ -4,9 +4,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -14,6 +12,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +37,11 @@ public class ControlFlowAnalyzer {
     }
 
     public void process() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClass aClass = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
+            checkClass(aClass, classDescriptor);
+        }
         for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : context.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             FunctionDescriptorImpl functionDescriptor = entry.getValue();
@@ -60,6 +64,11 @@ public class ControlFlowAnalyzer {
         for (JetProperty property : context.getProperties().keySet()) {
             checkProperty(property);
         }
+    }
+    
+    private void checkClass(JetClass klass, MutableClassDescriptor classDescriptor) {
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(klass, klass, flowDataTraceFactory, context.getTrace());
+        flowInformationProvider.markUninitializedVariables(klass, true);
     }
 
     private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
@@ -114,8 +123,7 @@ public class ControlFlowAnalyzer {
             });
         }
         if (!declaredLocally) {
-            flowInformationProvider.markUninitializedVariables(function.asElement(), functionDescriptor.getValueParameters());
-
+            flowInformationProvider.markUninitializedVariables(function.asElement(), false);
             if (((JetDeclaration) function).hasModifier(JetTokens.INLINE_KEYWORD)) {
                 //inline functions after M1
 //                flowInformationProvider.markNotOnlyInvokedFunctionVariables(function.asElement(), functionDescriptor.getValueParameters());

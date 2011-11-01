@@ -1,3 +1,15 @@
+== Test ==
+class Test {
+  var x : Int;
+}
+---------------------
+l0:
+    <START>    NEXT:[<END>]    PREV:[]
+l1:
+    <END>      NEXT:[]         PREV:[<START>]
+error:
+    <ERROR>    NEXT:[]         PREV:[]
+=====================
 == assignments ==
 fun assignments() : Unit {
     var x = 1
