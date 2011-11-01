@@ -40,6 +40,10 @@ fun Any?.equals(other : Any?) : Boolean// = this === other
 // Returns "null" for null
 fun Any?.toString() : String// = this === other
 
+// fun <T> array(vararg elements : T) : Array<T>
+
+// fun array(vararg elements : Int) : IntArray
+
 fun String?.plus(other: Any?) : String
 
 trait Iterator<out T> {

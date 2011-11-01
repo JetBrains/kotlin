@@ -59,4 +59,14 @@ public class VarArgTest extends CodegenTestCase {
         assertTrue(((String[])res).length == 1);
         assertTrue(((String[])res)[0].equals("239"));
     }
+
+    public void testArrayT () throws InvocationTargetException, IllegalAccessException {
+        loadText("fun test() = _array(2, 4); fun <T> _array(vararg elements : T) = elements");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        Object res = main.invoke(null, new Object[]{});
+        assertTrue(((Integer[])res).length == 2);
+        assertTrue(((Integer[])res)[0].equals(2));
+        assertTrue(((Integer[])res)[1].equals(4));
+    }
 }
