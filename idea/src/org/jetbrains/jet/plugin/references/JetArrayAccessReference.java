@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetContainerNode;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -40,8 +41,8 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
     @Override
     protected PsiElement doResolve() {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile());
-        FunctionDescriptor getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
-        FunctionDescriptor setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
+        ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
+        ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
         if (getFunction != null && setFunction != null) {
             return null; // Call doMultiResolve
         }
@@ -51,10 +52,10 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
     @Override
     protected ResolveResult[] doMultiResolve() {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile());
-        FunctionDescriptor getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
-        PsiElement getFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, getFunction);
-        FunctionDescriptor setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
-        PsiElement setFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, setFunction);
+        ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
+        PsiElement getFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, getFunction.getResultingDescriptor());
+        ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
+        PsiElement setFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, setFunction.getResultingDescriptor());
         return new ResolveResult[] {new PsiElementResolveResult(getFunctionElement, true), new PsiElementResolveResult(setFunctionElement, true)};
 //        return super.doMultiResolve();
     }

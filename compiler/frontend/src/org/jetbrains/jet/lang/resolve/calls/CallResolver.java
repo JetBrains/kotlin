@@ -78,7 +78,7 @@ public class CallResolver {
     }
     
     @Nullable
-    public FunctionDescriptor resolveCallWithGivenName(
+    public ResolvedCall<FunctionDescriptor> resolveCallWithGivenName(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull final Call call,
@@ -86,7 +86,7 @@ public class CallResolver {
             @NotNull String name,
             @NotNull JetType expectedType) {
         List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, call, name, trace.getBindingContext(), dataFlowInfo);
-        return resolveCallToDescriptor(trace, scope, call, expectedType, tasks, functionReference);
+        return doResolveCall(trace, scope, call, expectedType, tasks, functionReference);
     }
 
     @Nullable
@@ -174,7 +174,8 @@ public class CallResolver {
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCallImpl.convertCollection(constructors), call, DataFlowInfo.EMPTY));
             }
             else {
-                throw new UnsupportedOperationException("Type argument inference not implemented for " + call);
+                trace.report(UNSUPPORTED.on(call.getCallNode(), "Type argument inference is not supported for this callee: " + calleeExpression));
+                return null;
             }
         }
 

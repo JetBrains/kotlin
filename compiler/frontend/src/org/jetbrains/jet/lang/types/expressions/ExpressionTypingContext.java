@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
@@ -172,8 +173,14 @@ import java.util.Map;
 ////////// Call resolution utilities
 
     @Nullable
-    public FunctionDescriptor resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name, @NotNull ReceiverDescriptor receiver) {
+    public ResolvedCall<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
         return getCallResolver().resolveCallWithGivenName(trace, scope, call, functionReference, name, expectedType);
+    }
+
+    @Nullable
+    public FunctionDescriptor resolveCallWithGivenNameToDescriptor(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
+        ResolvedCall<FunctionDescriptor> resolvedCall = resolveCallWithGivenName(call, functionReference, name);
+        return resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
     }
 
     @Nullable

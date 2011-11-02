@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
@@ -1976,14 +1975,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             boolean isGetter = accessor.getSignature().getName().equals("get");
 
             if(isGetter) {
-                FunctionDescriptor setterDescriptor = bindingContext.get(BindingContext.INDEXED_LVALUE_SET, expression);
+                ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.INDEXED_LVALUE_SET, expression);
+                FunctionDescriptor setterDescriptor = resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
                 return StackValue.collectionElement(
                         accessor.getSignature().getReturnType(),
                         accessor,
                         setterDescriptor != null ? typeMapper.mapToCallableMethod(setterDescriptor, OwnerKind.IMPLEMENTATION) : null);
             }
             else {
-                FunctionDescriptor getterDescriptor = bindingContext.get(BindingContext.INDEXED_LVALUE_GET, expression);
+                ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.INDEXED_LVALUE_GET, expression);
+                FunctionDescriptor getterDescriptor = resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
                 return StackValue.collectionElement(
                         accessor.getSignature().getArgumentTypes()[1],
                         getterDescriptor != null ? typeMapper.mapToCallableMethod(getterDescriptor, OwnerKind.IMPLEMENTATION) : null,
