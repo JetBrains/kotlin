@@ -2,7 +2,6 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.Arrays;
@@ -36,7 +35,7 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   public void visitBlockStatement(PsiBlockStatement statement) {
     super.visitBlockStatement(statement);
     myResult = new Block(
-      Converter.statementsToStatementList(statement.getCodeBlock().getStatements()),
+      statementsToStatementList(statement.getCodeBlock().getStatements()),
       true
     );
   }
@@ -67,7 +66,7 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   public void visitDeclarationStatement(PsiDeclarationStatement statement) {
     super.visitDeclarationStatement(statement);
     myResult = new DeclarationStatement(
-      Converter.elementsToElementList(statement.getDeclaredElements())
+      elementsToElementList(statement.getDeclaredElements())
     );
   }
 

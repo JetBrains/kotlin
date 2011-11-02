@@ -30,4 +30,26 @@ public class DeclarationStatementTest extends JetTestCaseBase {
     );
   }
 
+  public void testSingleFinalStringDeclaration() throws Exception {
+    Assert.assertEquals(
+      statementToSingleLineKotlin("final String s;"),
+      "val s : String?"
+    );
+  }
+
+  public void testSingleFinalIntDeclaration() throws Exception {
+    Assert.assertEquals(
+      statementToSingleLineKotlin("final int s;"),
+      "val s : Int"
+    );
+  }
+
+  public void testMultiplyFinalIntDeclaration() throws Exception {
+    Assert.assertEquals(
+      statementToKotlin("final int k, l, m;"),
+      "val k : Int\n" +
+        "val l : Int\n" +
+        "val m : Int"
+    );
+  }
 }

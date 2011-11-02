@@ -18,10 +18,16 @@ public class DeclarationStatement extends Statement {
 
   private List<String> toStringList(List<Element> elements) {
     List<String> result = new LinkedList<String>();
-    for (String n : AstUtil.nodesToKotlin(elements))
-      result.add(
-        "var" + SPACE + n
-      );
+    for (Element e : elements) {
+      if (e instanceof LocalVariable) {
+        LocalVariable v = (LocalVariable) e;
+
+        final String varKeyword = v.hasModifier(Modifier.FINAL) ? "val" : "var";
+        result.add(
+          varKeyword + SPACE + e.toKotlin()
+        );
+      }
+    }
     return result;
   }
 
