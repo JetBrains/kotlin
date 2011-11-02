@@ -1970,23 +1970,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
         else {
-            final PsiElement declaration = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, expression);
-            assert declaration != null : "No declaration found for " + expression.getText();
-            final CallableMethod accessor;
-            if (declaration instanceof PsiMethod) {
-                accessor = typeMapper.mapToCallableMethod((PsiMethod) declaration);
-            }
-            else if (declaration instanceof JetNamedFunction) {
-                accessor = typeMapper.mapToCallableMethod((JetNamedFunction) declaration, null);
+            DeclarationDescriptor operationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+            CallableMethod accessor = typeMapper.mapToCallableMethod((FunctionDescriptor) operationDescriptor, OwnerKind.IMPLEMENTATION);
+
+            boolean isGetter = accessor.getSignature().getName().equals("get");
+
+            if(isGetter) {
+                FunctionDescriptor setterDescriptor = bindingContext.get(BindingContext.INDEXED_LVALUE_SET, expression);
+                return StackValue.collectionElement(
+                        accessor.getSignature().getReturnType(),
+                        accessor,
+                        setterDescriptor != null ? typeMapper.mapToCallableMethod(setterDescriptor, OwnerKind.IMPLEMENTATION) : null);
             }
             else {
-                throw new UnsupportedOperationException("unknown accessor type: " + declaration);
+                FunctionDescriptor getterDescriptor = bindingContext.get(BindingContext.INDEXED_LVALUE_GET, expression);
+                return StackValue.collectionElement(
+                        accessor.getSignature().getArgumentTypes()[1],
+                        getterDescriptor != null ? typeMapper.mapToCallableMethod(getterDescriptor, OwnerKind.IMPLEMENTATION) : null,
+                        accessor);
             }
-            boolean isGetter = accessor.getSignature().getName().equals("get");
-            return StackValue.collectionElement(
-                    isGetter ? accessor.getSignature().getReturnType() : accessor.getSignature().getArgumentTypes()[1],
-                    isGetter ? accessor : null,
-                    isGetter ? null : accessor);
         }
     }
 

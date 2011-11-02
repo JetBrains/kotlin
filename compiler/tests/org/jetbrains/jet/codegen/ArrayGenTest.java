@@ -96,4 +96,15 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         foo.invoke(null);
     }
+
+    public void testCollectionPlusAssign () throws Exception {
+        blackBoxFile("regressions/kt33.jet");
+    }
+
+    public void testArrayPlusAssign () throws Exception {
+        loadText("fun box() : Int { val s = IntArray(1); s [0] = 5; s[0] += 7; return s[0] }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertTrue((Integer)foo.invoke(null) == 12);
+    }
 }
