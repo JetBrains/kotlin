@@ -20,7 +20,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.getExpressionReceiver;
 
 /**
@@ -110,7 +109,8 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
     @Override
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext context) {
         // If there's += (or similar op) defined as such, we just call it.
-        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        IElementType operationType = operationSign.getReferencedNameElementType();
         String name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
 
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(context.trace);
@@ -120,13 +120,13 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         if (assignmentOperationType == null) {
             String counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
 
+            JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
+            if (left instanceof JetArrayAccessExpression) {
+                JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
+                resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), operationSign, context);
+            }
             JetType typeForBinaryCall = getTypeForBinaryCall(scope, counterpartName, context, expression);
             if (typeForBinaryCall != null) {
-                JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
-                if (left instanceof JetArrayAccessExpression) {
-                    resolveArrayAccessToLValue((JetArrayAccessExpression) left, expression.getRight(), expression.getOperationReference(), context);
-                }
-
                 context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                 ExpressionTypingUtils.checkWrappingInRef(expression.getLeft(), context);
             }
@@ -188,7 +188,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
 //            context.trace.record(INDEXED_LVALUE_GET, arrayAccessExpression, getFunctionCall);
 //        }
 //        else {
-            context.trace.record(REFERENCE_TARGET, operationSign, setFunctionDescriptor);
+//            context.trace.record(REFERENCE_TARGET, operationSign, setFunctionDescriptor);
 //        }
         return DataFlowUtils.checkType(setFunctionDescriptor.getReturnType(), arrayAccessExpression, context);
     }
