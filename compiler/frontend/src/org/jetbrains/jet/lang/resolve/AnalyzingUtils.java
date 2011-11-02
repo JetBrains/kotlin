@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -23,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -82,14 +84,17 @@ public class AnalyzingUtils {
 
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 
+            private Map<String, NamespaceDescriptorImpl> declaredNamespaces = Maps.newHashMap();
+
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {
-                return null;
+                return declaredNamespaces.get(name);
             }
 
             @Override
             public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
                 scope.addNamespace(namespaceDescriptor);
+                declaredNamespaces.put(namespaceDescriptor.getName(), (NamespaceDescriptorImpl) namespaceDescriptor);
             }
 
             @Override
