@@ -29,6 +29,24 @@ public class Class extends Node {
     myFields = fields;
   }
 
+  private boolean hasWhere() {
+    for (Element t : myTypeParameters)
+      if (t instanceof TypeParameter && ((TypeParameter)t).hasWhere())
+        return true;
+    return false;
+  }
+
+  String typeParameterWhereToKotlin() {
+    if (hasWhere()) {
+      List<String> wheres = new LinkedList<String >();
+      for (Element t : myTypeParameters)
+        if (t instanceof TypeParameter)
+          wheres.add(((TypeParameter)t).getWhereToKotlin());
+      return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
+    }
+    return EMPTY;
+  }
+
   @NotNull
   List<Function> methodsExceptConstructors() {
     final LinkedList<Function> result = new LinkedList<Function>();
@@ -55,7 +73,10 @@ public class Class extends Node {
   @NotNull
   @Override
   public String toKotlin() {
-    return TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
+    return TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() +
+      implementTypesToKotlin() +
+      typeParameterWhereToKotlin() +
+      SPACE + "{" + N +
       AstUtil.joinNodes(myFields, N) + N +
       AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
       AstUtil.joinNodes(myInnerClasses, N) + N +
