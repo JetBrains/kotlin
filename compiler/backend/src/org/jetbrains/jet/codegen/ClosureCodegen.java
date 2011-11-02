@@ -104,40 +104,22 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
     }
 
     private void generateConstInstance(JetFunctionLiteralExpression fun) {
-        cv.newField(fun, ACC_PRIVATE | ACC_STATIC, "$instance", "Ljava/lang/ref/SoftReference;", null, null);
+        String classDescr = "L" + name + ";";
+        cv.newField(fun, ACC_PRIVATE | ACC_STATIC, "$instance", classDescr, null, null);
 
-        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()L" + name + ";", null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()" + classDescr, null, new String[0]);
         mv.visitCode();
-        mv.visitFieldInsn(GETSTATIC, name, "$instance", "Ljava/lang/ref/SoftReference;");
+        mv.visitFieldInsn(GETSTATIC, name, "$instance", classDescr);
         mv.visitInsn(DUP);
-        Label makeNew = new Label();
-        mv.visitJumpInsn(IFNULL, makeNew);
-
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/ref/SoftReference", "get", "()Ljava/lang/Object;");
-        mv.visitInsn(DUP);
-
         Label ret = new Label();
-        mv.visitJumpInsn(IFNULL, makeNew);
-        mv.visitTypeInsn(CHECKCAST, name);
-        mv.visitJumpInsn(GOTO, ret);
+        mv.visitJumpInsn(IFNONNULL, ret);
 
-        mv.visitLabel(makeNew);
         mv.visitInsn(POP);
-
-        mv.visitTypeInsn(NEW, "java/lang/ref/SoftReference");
-        mv.visitInsn(DUP);
-
         mv.visitTypeInsn(NEW, name);
         mv.visitInsn(DUP);
-        mv.visitVarInsn(ASTORE, 0);
-
-        mv.visitInsn(DUP);
         mv.visitMethodInsn(INVOKESPECIAL, name, "<init>", "()V");
-
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/ref/SoftReference", "<init>", "(Ljava/lang/Object;)V");
-        mv.visitFieldInsn(PUTSTATIC, name, "$instance", "Ljava/lang/ref/SoftReference;");
-
-        mv.visitVarInsn(ALOAD, 0);
+        mv.visitInsn(DUP);
+        mv.visitFieldInsn(PUTSTATIC, name, "$instance", classDescr);
 
         mv.visitLabel(ret);
         mv.visitInsn(ARETURN);
