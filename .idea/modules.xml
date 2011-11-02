@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/k2js.iml" filepath="$PROJECT_DIR$/k2js.iml" />
+    </modules>
+  </component>
+</project>
+
