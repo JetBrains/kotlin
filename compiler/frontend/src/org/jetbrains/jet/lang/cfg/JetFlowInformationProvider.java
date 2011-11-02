@@ -332,8 +332,10 @@ public class JetFlowInformationProvider {
             @Override
             public Void visitProperty(JetProperty property, Void data) {
                 DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-                assert descriptor instanceof VariableDescriptor;
-                declaredVariables.add((VariableDescriptor) descriptor);
+                if (descriptor != null) {
+                    assert descriptor instanceof VariableDescriptor;
+                    declaredVariables.add((VariableDescriptor) descriptor);
+                }
                 return null;
             }
 
@@ -342,8 +344,10 @@ public class JetFlowInformationProvider {
                 JetParameter loopParameter = expression.getLoopParameter();
                 if (loopParameter != null) {
                     DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, loopParameter);
-                    assert descriptor instanceof VariableDescriptor;
-                    declaredVariables.add((VariableDescriptor) descriptor);
+                    if (descriptor != null) {
+                        assert descriptor instanceof VariableDescriptor;
+                        declaredVariables.add((VariableDescriptor) descriptor);
+                    }
                 }
                 return null;
             }
