@@ -15,8 +15,6 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.commons.Method;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,26 +59,21 @@ public class GenerationState {
         return intrinsics;
     }
 
-    public ClassVisitor forClassInterface(ClassDescriptor aClass) {
-        return factory.newVisitor(JetTypeMapper.jvmNameForInterface(aClass) + ".class");
-    }
-
     public ClassCodegen forClass() {
         return new ClassCodegen(this);
     }
 
-    public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
+    public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
         return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.IMPLEMENTATION) + ".class");
     }
 
-    public ClassVisitor forTraitImplementation(ClassDescriptor aClass) {
+    public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
         return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.TRAIT_IMPL) + ".class");
     }
 
-    public Pair<String, ClassVisitor> forAnonymousSubclass(JetExpression expression) {
+    public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
         String className = typeMapper.classNameForAnonymousClass(expression);
-        ClassVisitor visitor = factory.forAnonymousSubclass(className);
-        return Pair.create(className, visitor);
+        return Pair.create(className, factory.forAnonymousSubclass(className));
     }
 
     public NamespaceCodegen forNamespace(JetNamespace namespace) {
@@ -123,7 +116,7 @@ public class GenerationState {
 
     public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, FunctionOrClosureCodegen closure) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
-        Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
+        Pair<String, ClassBuilder> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();

@@ -7,15 +7,12 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
-    public TraitImplBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
+    public TraitImplBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
     }
 
@@ -48,12 +45,12 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration() {
-        v.visit(Opcodes.V1_6,
-                Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
-                jvmName(),
-                null,
-                "java/lang/Object",
-                new String[0]
+        v.defineClass(Opcodes.V1_6,
+                      Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
+                      jvmName(),
+                      null,
+                      "java/lang/Object",
+                      new String[0]
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
     }

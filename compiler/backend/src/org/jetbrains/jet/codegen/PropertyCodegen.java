@@ -2,12 +2,14 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -19,10 +21,10 @@ import org.objectweb.asm.commons.InstructionAdapter;
 public class PropertyCodegen {
     private final GenerationState state;
     private final FunctionCodegen functionCodegen;
-    private final ClassVisitor v;
+    private final ClassBuilder v;
     private final OwnerKind kind;
 
-    public PropertyCodegen(ClassContext context, ClassVisitor v, FunctionCodegen functionCodegen, GenerationState state) {
+    public PropertyCodegen(ClassContext context, ClassBuilder v, FunctionCodegen functionCodegen, GenerationState state) {
         this.v = v;
         this.functionCodegen = functionCodegen;
         this.state = state;
@@ -41,9 +43,9 @@ public class PropertyCodegen {
             generateSetter(p, propertyDescriptor);
         }
         else if (kind instanceof OwnerKind.DelegateKind) {
-            generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
+            generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, p);
             if (propertyDescriptor.isVar()) {
-                generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
+                generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, p);
             }
         }
     }
@@ -71,7 +73,7 @@ public class PropertyCodegen {
             else {
                 modifiers = Opcodes.ACC_PRIVATE;
             }
-            v.visitField(modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
+            v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
         }
     }
 
@@ -114,10 +116,10 @@ public class PropertyCodegen {
     private void generateDefaultGetter(JetProperty p, JetDeclaration declaration) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
-        generateDefaultGetter(propertyDescriptor, flags);
+        generateDefaultGetter(propertyDescriptor, flags, p);
     }
 
-    public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags) {
+    public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
@@ -129,7 +131,7 @@ public class PropertyCodegen {
 
         final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor).getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
-        MethodVisitor mv = v.visitMethod(flags, getterName, signature, null, null);
+        MethodVisitor mv = v.newMethod(origin, flags, getterName, signature, null, null);
         if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -156,10 +158,10 @@ public class PropertyCodegen {
     private void generateDefaultSetter(JetProperty p, JetDeclaration declaration) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
-        generateDefaultSetter(propertyDescriptor, flags);
+        generateDefaultSetter(propertyDescriptor, flags, p);
     }
 
-    public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags) {
+    public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
@@ -170,7 +172,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_ABSTRACT;
 
         final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor).getDescriptor();
-        MethodVisitor mv = v.visitMethod(flags, setterName(propertyDescriptor.getName()), signature, null, null);
+        MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), signature, null, null);
         if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
