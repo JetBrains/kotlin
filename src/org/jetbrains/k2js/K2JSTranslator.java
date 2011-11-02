@@ -45,7 +45,7 @@ public class K2JSTranslator {
     public static void main(String[] args) {
         System.setProperty("java.awt.headless", "true");
         Arguments arguments = new Arguments();
-        arguments.src = "C:\\Dev\\Projects\\k2js\\test_files\\test.kt";
+        arguments.src = "C:\\Dev\\Projects\\jet-contrib\\k2js\\test_files\\test.kt";
 
         Disposable root = new Disposable() {
             @Override

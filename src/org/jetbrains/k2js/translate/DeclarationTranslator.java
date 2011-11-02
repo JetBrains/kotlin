@@ -32,8 +32,9 @@ public class DeclarationTranslator extends AbstractTranslator {
             return AstUtil.convertToStatement((new FunctionTranslator(translationContext()))
                     .translateFunction((JetNamedFunction) declaration));
         }
-        else if (declaration instanceof JetClassOrObject) {
-            //classCodegen.translate(context, (JetClassOrObject) declaration);
+        else if (declaration instanceof JetClass) {
+            ClassTranslator classTranslator = new ClassTranslator(translationContext());
+            return classTranslator.translateClass((JetClass)declaration);
         }
         else if (declaration instanceof JetNamespace) {
            // JetNamespace childNamespace = (JetNamespace) declaration;

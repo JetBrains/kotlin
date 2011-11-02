@@ -17,6 +17,8 @@ public class TranslationContext {
     private final BindingContext context;
     private final JsScope enclosingScope;
     private final ContextType type;
+    private final JsNameRef classObjectReference;
+    private final JsNameRef classCreationMethodReference;
 
 
     private TranslationContext(JsNameRef namespace, JsBlock block, JsProgram program,
@@ -32,6 +34,8 @@ public class TranslationContext {
         this.context = bindingContext;
         this.enclosingScope = enclosingScope;
         this.type = type;
+        this.classObjectReference = new JsNameRef(getJSName("Class"));
+        this.classCreationMethodReference = AstUtil.newQualifiedNameRef("Class.create");
     }
 
     @NotNull
@@ -85,6 +89,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsNameRef classObjectReference() {
+        return classObjectReference;
+    }
+
+    @NotNull
     public JsProgram program() {
         return program;
     }
@@ -102,6 +111,11 @@ public class TranslationContext {
     @NotNull
     ContextType type() {
         return type;
+    }
+
+    @NotNull
+    JsNameRef classCreationMethodReference() {
+        return classCreationMethodReference;
     }
 
 

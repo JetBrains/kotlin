@@ -12,51 +12,51 @@ import java.util.List;
  */
 public final class JsInvocation extends JsExpression implements HasArguments {
 
-  private final List<JsExpression> args = new ArrayList<JsExpression>();
-  private JsExpression qualifier;
+    private final List<JsExpression> args = new ArrayList<JsExpression>();
+    private JsExpression qualifier;
 
-  public JsInvocation() {
-  }
-
-  @Override
-  public List<JsExpression> getArguments() {
-    return args;
-  }
-
-  public JsExpression getQualifier() {
-    return qualifier;
-  }
-
-  @Override
-  public boolean hasSideEffects() {
-    return true;
-  }
-
-  @Override
-  public boolean isDefinitelyNotNull() {
-    return false;
-  }
-
-  @Override
-  public boolean isDefinitelyNull() {
-    return false;
-  }
-
-  public void setQualifier(JsExpression qualifier) {
-    this.qualifier = qualifier;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
-      qualifier = v.accept(qualifier);
-      v.acceptList(args);
+    public JsInvocation() {
     }
-    v.endVisit(this, ctx);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.INVOKE;
-  }
+    @Override
+    public List<JsExpression> getArguments() {
+        return args;
+    }
+
+    public JsExpression getQualifier() {
+        return qualifier;
+    }
+
+    @Override
+    public boolean hasSideEffects() {
+        return true;
+    }
+
+    @Override
+    public boolean isDefinitelyNotNull() {
+        return false;
+    }
+
+    @Override
+    public boolean isDefinitelyNull() {
+        return false;
+    }
+
+    public void setQualifier(JsExpression qualifier) {
+        this.qualifier = qualifier;
+    }
+
+    @Override
+    public void traverse(JsVisitor v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            qualifier = v.accept(qualifier);
+            v.acceptList(args);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.INVOKE;
+    }
 }

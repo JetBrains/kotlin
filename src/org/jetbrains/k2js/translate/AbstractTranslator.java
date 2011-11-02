@@ -36,8 +36,7 @@ public abstract class AbstractTranslator {
 
     @NotNull
     protected JsName getJSName(String jetName) {
-        //TODO dummy implemetation
-        return new JsName(program().getScope(), jetName, jetName, jetName);
+        return context.getJSName(jetName);
     }
 
     @NotNull

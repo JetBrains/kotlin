@@ -12,7 +12,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import java.util.List;
 
 /**
- * Talanov Pavel
+ * @author Talanov Pavel
  */
 class ExpressionTranslator extends AbstractTranslator {
 

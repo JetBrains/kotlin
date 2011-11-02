@@ -5,15 +5,18 @@ val b : Int = 235456
 var c : Int = 1324
 var myFavouriteName : Int = 1245
 
-fun main() : Int {
-    return 5
+
+open class B() {
+
 }
 
-fun eval(x : Int, y : String) : Int {
-    return (1456 - 34) * 5
-}
+class A() : B() {
+   var a : Int
+    get() : Int {
+        return 4
+    }
 
-fun olol(abab : Int) : Int {
-    var a : Int = 5
-    return a
+    set() {
+
+    }
 }
