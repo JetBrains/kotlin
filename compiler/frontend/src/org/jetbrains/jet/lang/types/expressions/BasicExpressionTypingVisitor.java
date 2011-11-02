@@ -758,6 +758,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     "get",
                     receiver);
             if (functionDescriptor != null) {
+                context.trace.record(INDEXED_LVALUE_GET, expression, functionDescriptor);
                 return DataFlowUtils.checkType(functionDescriptor.getReturnType(), expression, contextWithExpectedType);
             }
         }
