@@ -165,10 +165,14 @@ public class CallMaker {
         return makeCall(expression, baseAsReceiver, null, expression.getOperationSign(), Collections.<ValueArgument>emptyList());
     }
 
-    public static Call makeCall(@NotNull ReceiverDescriptor arrayAsReceiver,JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide) {
+    public static Call makeArraySetCall(@NotNull ReceiverDescriptor arrayAsReceiver, JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide) {
         List<JetExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());
         arguments.add(rightHandSide);
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arguments);
+    }
+
+    public static Call makeArrayGetCall(@NotNull ReceiverDescriptor arrayAsReceiver, JetArrayAccessExpression arrayAccessExpression) {
+        return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions());
     }
 
     public static ValueArgument makeValueArgument(@NotNull JetExpression expression) {

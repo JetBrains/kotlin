@@ -38,7 +38,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
         return new ExpressionTypingVisitorDispatcher(new Function<ExpressionTypingInternals, BasicExpressionTypingVisitor>() {
                 @Override
                 public BasicExpressionTypingVisitor fun(ExpressionTypingInternals facade) {
-                    return  new ExpressionTypingVisitorWithWritableScope(facade, writableScope);
+                    return  new ExpressionTypingVisitorForStatements(facade, writableScope);
                 }
             });
     }

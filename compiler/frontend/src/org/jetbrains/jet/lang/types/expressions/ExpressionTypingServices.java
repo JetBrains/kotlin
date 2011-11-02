@@ -246,7 +246,7 @@ public class ExpressionTypingServices {
                             }
                         }
                         if (mightBeUnit) {
-                            // ExpressionTypingVisitorWithWritableScope should return only null or Unit for declarations and assignments
+                            // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
                             assert result == null || JetStandardClasses.isUnit(result);
                             result = JetStandardClasses.getUnitType();
                         }
