@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ClassType extends Type {
   private final Identifier myType;
-  private List<Type> myParameters;
+  private final List<Type> myParameters;
 
   public ClassType(Identifier type, List<Type> parameters) {
     myType = type;

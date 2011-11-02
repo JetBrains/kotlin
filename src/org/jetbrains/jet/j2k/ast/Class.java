@@ -12,9 +12,9 @@ import java.util.List;
 public class Class extends Node {
   String TYPE = "class";
   final Identifier myName;
-  final List<Element> myTypeParameters;
-  final List<Type> myExtendsTypes;
-  final List<Type> myImplementsTypes;
+  private final List<Element> myTypeParameters;
+  private final List<Type> myExtendsTypes;
+  private final List<Type> myImplementsTypes;
   final List<Class> myInnerClasses;
   final List<Function> myMethods;
   final List<Field> myFields;
@@ -31,17 +31,17 @@ public class Class extends Node {
 
   private boolean hasWhere() {
     for (Element t : myTypeParameters)
-      if (t instanceof TypeParameter && ((TypeParameter)t).hasWhere())
+      if (t instanceof TypeParameter && ((TypeParameter) t).hasWhere())
         return true;
     return false;
   }
 
   String typeParameterWhereToKotlin() {
     if (hasWhere()) {
-      List<String> wheres = new LinkedList<String >();
+      List<String> wheres = new LinkedList<String>();
       for (Element t : myTypeParameters)
         if (t instanceof TypeParameter)
-          wheres.add(((TypeParameter)t).getWhereToKotlin());
+          wheres.add(((TypeParameter) t).getWhereToKotlin());
       return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
     }
     return EMPTY;

@@ -10,8 +10,6 @@ import java.util.Set;
  * @author ignatov
  */
 public abstract class Node implements INode {
-  public static final String STAR = "*";
-
   @NotNull
   @Override
   public Kind getKind() {
@@ -39,6 +37,7 @@ public abstract class Node implements INode {
   static final String IN = "in";
   static final String AT = "@";
   static final String BACKTICK = "`";
-  static final String QUESTION = "?";
+  static final String QUEST = "?";
   static final String COMMA_WITH_SPACE = "," + SPACE;
+  static final String STAR = "*";
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public class Function extends Node {
   private final Identifier myName;
   private final Type myType;
-  private List<Element> myTypeParameters;
+  private final List<Element> myTypeParameters;
   final Element myParams;
   private final Block myBlock;
 
@@ -30,17 +30,17 @@ public class Function extends Node {
 
   private boolean hasWhere() {
     for (Element t : myTypeParameters)
-      if (t instanceof TypeParameter && ((TypeParameter)t).hasWhere())
+      if (t instanceof TypeParameter && ((TypeParameter) t).hasWhere())
         return true;
     return false;
   }
 
   String typeParameterWhereToKotlin() {
     if (hasWhere()) {
-      List<String> wheres = new LinkedList<String >();
+      List<String> wheres = new LinkedList<String>();
       for (Element t : myTypeParameters)
         if (t instanceof TypeParameter)
-          wheres.add(((TypeParameter)t).getWhereToKotlin());
+          wheres.add(((TypeParameter) t).getWhereToKotlin());
       return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
     }
     return EMPTY;

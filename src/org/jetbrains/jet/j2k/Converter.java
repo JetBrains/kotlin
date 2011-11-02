@@ -198,7 +198,7 @@ public class Converter {
   }
 
   @NotNull
-  public static List<Type> typesToNotNullableTypeList(PsiType[] types) {
+  private static List<Type> typesToNotNullableTypeList(PsiType[] types) {
     List<Type> result = new LinkedList<Type>(typesToTypeList(types));
     for (Type p : result)
       p.setNullable(false);

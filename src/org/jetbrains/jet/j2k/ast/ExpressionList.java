@@ -10,11 +10,10 @@ import java.util.List;
  */
 public class ExpressionList extends Expression {
   private final List<Expression> myExpressions;
-  private List<Type> myTypes; // TODO: add types to toKotlin
 
   public ExpressionList(List<Expression> expressions, List<Type> types) {
     myExpressions = expressions;
-    myTypes = types;
+    List<Type> types1 = types;
   }
 
   public ExpressionList(List<Expression> expressions) {

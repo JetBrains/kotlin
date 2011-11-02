@@ -1,7 +1,6 @@
 package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
@@ -9,8 +8,8 @@ import java.util.List;
  * @author ignatov
  */
 public class TypeParameter extends Element {
-  private Identifier myName;
-  private List<Type> myExtendsTypes;
+  private final Identifier myName;
+  private final List<Type> myExtendsTypes;
 
   public TypeParameter(Identifier name, List<Type> extendsTypes) {
     myName = name;

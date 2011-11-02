@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public abstract class Type extends Element {
-  public static Type EMPTY_TYPE = new EmptyType();
-  protected boolean myNullable = true;
+  public static final Type EMPTY_TYPE = new EmptyType();
+  private boolean myNullable = true;
 
   @NotNull
   @Override
@@ -19,12 +19,12 @@ public abstract class Type extends Element {
     myNullable = nullable;
   }
 
-  public boolean isNullable() {
+  boolean isNullable() {
     return myNullable;
   }
 
-  protected String isNullableStr() {
-    return isNullable() ? QUESTION : EMPTY;
+  String isNullableStr() {
+    return isNullable() ? QUEST : EMPTY;
   }
 
   /**

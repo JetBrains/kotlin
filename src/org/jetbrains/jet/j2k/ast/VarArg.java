@@ -6,15 +6,10 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class VarArg extends Type {
-  private Type myType;
+  private final Type myType;
 
   public VarArg(Type type) {
     myType = type;
-  }
-
-  @NotNull
-  public Type getType() {
-    return myType;
   }
 
   @NotNull
