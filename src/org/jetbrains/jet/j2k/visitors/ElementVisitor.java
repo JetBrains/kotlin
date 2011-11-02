@@ -48,7 +48,8 @@ public class ElementVisitor extends JavaElementVisitor implements Visitor {
   public void visitTypeParameter(PsiTypeParameter classParameter) {
     super.visitTypeParameter(classParameter);
     myResult = new TypeParameter(
-      new IdentifierImpl(classParameter.getName())
+      new IdentifierImpl(classParameter.getName()), // TODO
+      typesToTypeList(classParameter.getExtendsListTypes())
     );
   }
 

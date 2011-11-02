@@ -3,6 +3,7 @@ package org.jetbrains.jet.j2k.ast;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,10 +28,30 @@ public class Function extends Node {
     return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
   }
 
+  private boolean hasWhere() {
+    for (Element t : myTypeParameters)
+      if (t instanceof TypeParameter && ((TypeParameter)t).hasWhere())
+        return true;
+    return false;
+  }
+
+  String typeParameterWhereToKotlin() {
+    if (hasWhere()) {
+      List<String> wheres = new LinkedList<String >();
+      for (Element t : myTypeParameters)
+        if (t instanceof TypeParameter)
+          wheres.add(((TypeParameter)t).getWhereToKotlin());
+      return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
+    }
+    return EMPTY;
+  }
+
   @NotNull
   @Override
   public String toKotlin() {
     return "fun" + SPACE + myName.toKotlin() + typeParametersToKotlin() + "(" + myParams.toKotlin() + ")" + SPACE + COLON +
-      SPACE + myType.toKotlin() + SPACE + myBlock.toKotlin();
+      SPACE + myType.toKotlin() + SPACE +
+      typeParameterWhereToKotlin() +
+      myBlock.toKotlin();
   }
 }

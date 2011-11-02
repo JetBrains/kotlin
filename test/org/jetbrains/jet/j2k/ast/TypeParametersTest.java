@@ -21,4 +21,19 @@ public class TypeParametersTest extends JetTestCaseBase {
     );
   }
 
+  public void testWhere() throws Exception {
+    Assert.assertEquals(
+      methodToSingleLineKotlin(
+        "<T extends Object & Comparable<? super T>> T max(Collection<? extends T> coll) {}"),
+      "fun max<T : Object?>(coll : Collection<out T?>?) : T? where T : Comparable<in T?>? { }"
+    );
+  }
+
+  public void testMethodDoubleParametrizationWithTwoBounds() throws Exception {
+    Assert.assertEquals(
+      methodToSingleLineKotlin(
+        "<T extends Object & Comparable<? super T>, K extends Node & Collection<? super K>> T max(Collection<? extends T> coll) {}"),
+      "fun max<T : Object?, K : Node?>(coll : Collection<out T?>?) : T? where T : Comparable<in T?>?, K : Collection<in K?>? { }"
+    );
+  }
 }
