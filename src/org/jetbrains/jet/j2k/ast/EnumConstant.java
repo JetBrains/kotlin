@@ -2,12 +2,14 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 /**
  * @author ignatov
  */
 public class EnumConstant extends Field {
-  public EnumConstant(Identifier identifier, Type type, Element params) {
-    super(identifier, type, params);
+  public EnumConstant(Identifier identifier, HashSet<String> modifiers, Type type, Element params) {
+    super(identifier, modifiers, type, params);
   }
 
   @NotNull

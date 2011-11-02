@@ -4,7 +4,6 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
-import org.jetbrains.jet.j2k.ast.Modifier;
 
 import java.util.HashSet;
 
@@ -25,18 +24,10 @@ public class ElementVisitor extends JavaElementVisitor implements Visitor {
   @Override
   public void visitLocalVariable(PsiLocalVariable variable) {
     super.visitLocalVariable(variable);
-    final PsiModifierList modifierList = variable.getModifierList();
-
-    HashSet<String> modifiersSet = new HashSet<String>();
-
-    if (modifierList != null) {
-      if (modifierList.hasModifierProperty("final"))
-        modifiersSet.add(Modifier.FINAL);
-    }
 
     myResult = new LocalVariable(
       new IdentifierImpl(variable.getName()), // TODO
-      modifiersSet,
+      getModifiersSet(variable.getModifierList()),
       typeToType(variable.getType()),
       expressionToExpression(variable.getInitializer())
     );
