@@ -1,5 +1,6 @@
 package org.jetbrains.k2js;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -83,7 +84,7 @@ public class K2JSTranslator {
         }
 
         BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS)
-                .analyzeNamespaces(project, namespaces, JetControlFlowDataTraceFactory.EMPTY);
+                .analyzeNamespaces(project, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
         ErrorCollector errorCollector = new ErrorCollector(bindingContext);
         errorCollector.report();

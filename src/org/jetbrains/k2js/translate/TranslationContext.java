@@ -74,6 +74,12 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsName getJSName(String jetName) {
+        //TODO dummy implemetation
+        return new JsName(program().getScope(), jetName, jetName, jetName);
+    }
+
+    @NotNull
     public BindingContext bindingContext() {
         return context;
     }
