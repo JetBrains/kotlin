@@ -12,7 +12,7 @@ import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
  * @author ignatov
  */
 public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
-  private Type myResult = new EmptyType();
+  private Type myResult = Type.EMPTY_TYPE;
 
   @NotNull
   public Type getResult() {
@@ -40,7 +40,8 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitArrayType(PsiArrayType arrayType) {
-    myResult = new ArrayType(typeToType(arrayType.getComponentType()));
+    if (myResult == Type.EMPTY_TYPE)
+      myResult = new ArrayType(typeToType(arrayType.getComponentType()));
     return super.visitArrayType(arrayType);
   }
 
@@ -71,6 +72,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitEllipsisType(PsiEllipsisType ellipsisType) {
+    myResult = new VarArg(typeToType(ellipsisType.getComponentType()));
     return super.visitEllipsisType(ellipsisType);
   }
 

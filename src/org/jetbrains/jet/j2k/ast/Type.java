@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public abstract class Type extends Element {
+  public static Type EMPTY_TYPE = new EmptyType();
   protected boolean myNullable = true;
 
   @NotNull
@@ -24,5 +25,16 @@ public abstract class Type extends Element {
 
   protected String isNullableStr() {
     return isNullable() ? QUESTION : EMPTY;
+  }
+
+  /**
+   * @author ignatov
+   */
+  private static class EmptyType extends Type {
+    @NotNull
+    @Override
+    public String toKotlin() {
+      return "UNRESOLVED_TYPE";
+    }
   }
 }

@@ -182,7 +182,7 @@ public class Converter {
   @NotNull
   public static Type typeToType(@Nullable PsiType type) {
     if (type == null)
-      return new EmptyType(); // TODO
+      return Type.EMPTY_TYPE; // TODO
     TypeVisitor typeVisitor = new TypeVisitor();
     type.accept(typeVisitor);
     return typeVisitor.getResult();

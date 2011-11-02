@@ -17,6 +17,7 @@ public class Parameter extends Expression {
   @NotNull
   @Override
   public String toKotlin() {
-    return myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
+    String vararg = myType.getKind() == Kind.VARARG ? "vararg" + SPACE : EMPTY;
+    return vararg + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
   }
 }
