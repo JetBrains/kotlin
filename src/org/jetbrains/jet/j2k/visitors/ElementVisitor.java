@@ -11,7 +11,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
  * @author ignatov
  */
 public class ElementVisitor extends JavaElementVisitor implements Visitor {
-  private Element myResult = new EmptyElement();
+  private Element myResult = Element.EMPTY_ELEMENT;
 
   @NotNull
   @Override

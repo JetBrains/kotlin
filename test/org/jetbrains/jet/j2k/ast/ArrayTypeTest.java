@@ -41,4 +41,25 @@ public class ArrayTypeTest extends JetTestCaseBase {
       "fun fromArrayToCollection(a : Array<Foo?>?) : Unit { }"
     );
   }
+
+  public void testArrayInitializationStatement() throws Exception {
+    Assert.assertEquals(
+      statementToSingleLineKotlin("int [][] d2 = new int[][]{};"),
+      "var d2 : Array<IntArray?>? = array()" // more precisely: "var d2 : Array<IntArray?>? = array<IntArray?>()"
+    );
+  }
+
+  public void testArrayInitializationStatementWithDimension() throws Exception {
+    Assert.assertEquals(
+      statementToSingleLineKotlin("int [][] d2 = new int[5][];"),
+      "var d2 : Array<IntArray?>? = Array<IntArray?>?(5, {null})" // another variant: "var d2 : Array<IntArray?>? = array(5, {null, null, null, null, null})"
+    );
+  }
+
+//  public void testArrayInitializationStatementWithThreeDimension() throws Exception {
+//    Assert.assertEquals(
+//      statementToSingleLineKotlin("int[][][] d3= new int[5][5][5];"),
+//      "var d3 : Array<Array<IntArray?>?>? = Array<Array<IntArray?>?>?()"
+//    );
+//  }
 }

@@ -164,6 +164,8 @@ public class Converter {
 
   @NotNull
   public static Element elementToElement(PsiElement e) {
+    if (e == null)
+      return Element.EMPTY_ELEMENT;
     final ElementVisitor elementVisitor = new ElementVisitor();
     e.accept(elementVisitor);
     System.out.println(e.getClass());

@@ -6,6 +6,8 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 
+import java.util.List;
+
 import static org.jetbrains.jet.j2k.Converter.*;
 
 /**
@@ -171,13 +173,20 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
 
     if (expression.getArrayInitializer() != null) // new Foo[] {}
       myResult = expressionToExpression(expression.getArrayInitializer());
-    else {
+    else if (expression.getArrayDimensions().length > 0) { // new Foo[5]
+      final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
+      callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
+
+      myResult = new NewClassExpression(
+        typeToType(expression.getType()), // TODO: remove
+        new ExpressionList(callExpression)
+      );
+    } else {
       myResult = new NewClassExpression(
         elementToElement(expression.getClassOrAnonymousClassReference()),
         elementToElement(expression.getArgumentList())
       );
     }
-
   }
 
   @Override
