@@ -32,7 +32,7 @@ public class Increment implements IntrinsicMethod {
             }
         }
         StackValue value = codegen.genQualified(receiver, operand);
-        value.dupReceiver(v, 0);
+        value. dupReceiver(v);
         value.put(expectedType, v);
         if (expectedType == Type.LONG_TYPE) {
             v.lconst(myDelta);

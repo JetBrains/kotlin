@@ -547,6 +547,9 @@ public class JetTypeMapper {
     }
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        if(functionDescriptor == null)
+            return null;
+
         final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
         final List<Type> valueParameterTypes = new ArrayList<Type>();
         Method descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, kind);

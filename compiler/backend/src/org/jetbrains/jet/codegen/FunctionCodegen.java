@@ -81,9 +81,10 @@ public class FunctionCodegen {
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
+                int add = functionDescriptor.getReceiverParameter().exists() ? state.getTypeMapper().mapType(functionDescriptor.getReceiverParameter().getType()).getSize() : 0;
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     ValueParameterDescriptor parameter = paramDescrs.get(i);
-                    frameMap.enter(parameter, argTypes[i].getSize());
+                    frameMap.enter(parameter, argTypes[i+add].getSize());
                 }
 
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
