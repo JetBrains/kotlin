@@ -22,8 +22,8 @@ public class TraitTest extends JetTestCaseBase {
         "}"
     ),
       "trait INode {\n" +
-        "fun getTag() : Tag? \n" +
-        "fun toKotlin() : String? \n" +
+        "public fun getTag() : Tag? \n" +
+        "public fun toKotlin() : String? \n" +
         "}");
   }
 
@@ -36,9 +36,9 @@ public class TraitTest extends JetTestCaseBase {
         "}"
     ),
       "trait INode {\n" +
-        "var IN : String? = \"in\"\n" +
-        "var AT : String? = \"@\"\n" +
-        "var COMMA_WITH_SPACE : String? = (COMMA + SPACE)\n" +
+        "val IN : String? = \"in\"\n" +
+        "val AT : String? = \"@\"\n" +
+        "val COMMA_WITH_SPACE : String? = (COMMA + SPACE)\n" +
         "}"
     );
   }

@@ -56,7 +56,7 @@ public class EnumTest extends JetTestCaseBase {
           "\n" +
           " private int code;\n" +
           "\n" +
-          " private Color(int c) {\n" +
+          " private Color(int c) {\n" + // TODO: private constructor, WTF?
           "   code = c;\n" +
           " }\n" +
           "\n" +
@@ -70,7 +70,7 @@ public class EnumTest extends JetTestCaseBase {
         "YELLOW(24)\n" +
         "BLUE(25)\n" +
         "var code : Int\n" +
-        "fun getCode() : Int {\n" +
+        "public fun getCode() : Int {\n" +
         "return code\n" +
         "}\n" +
         "}"

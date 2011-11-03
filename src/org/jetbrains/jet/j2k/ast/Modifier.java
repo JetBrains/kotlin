@@ -11,4 +11,5 @@ public abstract class Modifier {
   public static String STATIC = "static";
   public static String ABSTRACT = "abstract";
   public static String FINAL = "final";
+  public static String OPEN = "open";
 }

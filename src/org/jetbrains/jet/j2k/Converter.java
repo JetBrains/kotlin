@@ -67,7 +67,7 @@ public class Converter {
   }
 
   private static Field fieldToField(PsiField field) {
-    HashSet<String> modifiers = getModifiersSet(field.getModifierList());
+    HashSet<String> modifiers = modifiersListToModifiersSet(field.getModifierList());
     if (field instanceof PsiEnumConstant) // TODO: remove instanceof
       return new EnumConstant(
         new IdentifierImpl(field.getName()), // TODO
@@ -95,6 +95,7 @@ public class Converter {
   @NotNull
   private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
+    final HashSet<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
     final Type type = typeToType(method.getReturnType());
     final Block body = blockToBlock(method.getBody(), notEmpty);
     final Element params = elementToElement(method.getParameterList());
@@ -103,6 +104,7 @@ public class Converter {
     if (method.isConstructor())
       return new Constructor(
         identifier,
+        modifiers,
         type,
         typeParameters,
         params,
@@ -110,6 +112,7 @@ public class Converter {
       );
     return new Function(
       identifier,
+      modifiers,
       type,
       typeParameters,
       params,
@@ -259,10 +262,14 @@ public class Converter {
     return new IdentifierImpl(identifier.getText());
   }
 
-  public static HashSet<String> getModifiersSet(PsiModifierList modifierList) {
+  public static HashSet<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {
-      if (modifierList.hasModifierProperty("final")) modifiersSet.add(Modifier.FINAL);
+      if (modifierList.hasModifierProperty(PsiModifier.FINAL)) modifiersSet.add(Modifier.FINAL);
+      if (modifierList.hasModifierProperty(PsiModifier.PUBLIC)) modifiersSet.add(Modifier.PUBLIC);
+      if (modifierList.hasModifierProperty(PsiModifier.PROTECTED)) modifiersSet.add(Modifier.PROTECTED);
+      if (modifierList.hasModifierProperty(PsiModifier.PACKAGE_LOCAL)) modifiersSet.add(Modifier.INTERNAL);
+      if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) modifiersSet.add(Modifier.PRIVATE);
     }
     return modifiersSet;
   }

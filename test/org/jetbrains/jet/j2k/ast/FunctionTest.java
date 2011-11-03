@@ -62,4 +62,20 @@ public class FunctionTest extends JetTestCaseBase {
       "fun putUVW<U, V, W>(u : U?, v : V?, w : W?) : Unit { }"
     );
   }
+
+  public void testInternal() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("void test() {}"), "fun test() : Unit { }");
+  }
+
+  public void testPrivate() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("private void test() {}"), "private fun test() : Unit { }");
+  }
+
+  public void testProtected() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("protected void test() {}"), "protected fun test() : Unit { }");
+  }
+
+  public void testPublic() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("public void test() {}"), "public fun test() : Unit { }");
+  }
 }

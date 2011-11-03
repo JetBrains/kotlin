@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
-import java.util.HashSet;
-
 import static org.jetbrains.jet.j2k.Converter.*;
 
 /**
@@ -27,7 +25,7 @@ public class ElementVisitor extends JavaElementVisitor implements Visitor {
 
     myResult = new LocalVariable(
       new IdentifierImpl(variable.getName()), // TODO
-      getModifiersSet(variable.getModifierList()),
+      modifiersListToModifiersSet(variable.getModifierList()),
       typeToType(variable.getType()),
       expressionToExpression(variable.getInitializer())
     );
