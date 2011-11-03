@@ -140,6 +140,9 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitInstanceOfExpression(PsiInstanceOfExpression expression) {
     super.visitInstanceOfExpression(expression);
+    myResult = new IsOperator(
+      expressionToExpression(expression.getOperand()),
+      elementToElement(expression.getCheckType()));
   }
 
   @Override
