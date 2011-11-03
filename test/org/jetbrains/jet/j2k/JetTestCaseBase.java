@@ -100,12 +100,16 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     return toSingleLine(classToKotlin(text));
   }
 
-  String fileToKotlin(String text) throws IOException {
+  protected String fileToKotlin(String text) throws IOException {
     configureFromText(text);
     return prettify(Converter.fileToFile((PsiJavaFile) myFile).toKotlin());
   }
 
-  String methodToKotlin(String text) throws IOException {
+  protected String fileToSingleLineKotlin(String text) throws IOException {
+    return toSingleLine(fileToKotlin(text));
+  }
+
+  protected String methodToKotlin(String text) throws IOException {
     String result = classToKotlin("final class C {" + text + "}")
       .replaceAll("class C \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));

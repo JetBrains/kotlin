@@ -4,12 +4,13 @@ package org.jetbrains.jet.j2k.ast;
  * @author ignatov
  */
 public abstract class Modifier {
-  public static String PUBLIC = "public";
-  public static String PROTECTED = "protected";
-  public static String PRIVATE = "private";
-  public static String INTERNAL = "internal";
-  public static String STATIC = "static";
-  public static String ABSTRACT = "abstract";
-  public static String FINAL = "final";
-  public static String OPEN = "open";
+  public static final String PUBLIC = "public";
+  public static final String PROTECTED = "protected";
+  public static final String PRIVATE = "private";
+  public static final String INTERNAL = "internal";
+  public static final String STATIC = "static";
+  public static final String ABSTRACT = "abstract";
+  public static final String FINAL = "final";
+  public static final String OPEN = "open";
+  public static final String OVERRIDE = "override";
 }

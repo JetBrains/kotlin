@@ -51,6 +51,9 @@ public class Function extends Member {
   private String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
+    if (myModifiers.contains(Modifier.OVERRIDE))
+      modifierList.add(Modifier.OVERRIDE);
+
     modifierList.add(accessModifier());
 
     if (modifierList.size() > 0)

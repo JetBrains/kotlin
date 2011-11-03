@@ -97,11 +97,14 @@ public class Converter {
   @NotNull
   private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
-    final Set<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
     final Type type = typeToType(method.getReturnType());
     final Block body = blockToBlock(method.getBody(), notEmpty);
     final Element params = elementToElement(method.getParameterList());
     final List<Element> typeParameters = elementsToElementList(method.getTypeParameters());
+
+    final Set<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
+    if (method.getHierarchicalMethodSignature().getSuperSignatures().size() > 0)
+      modifiers.add(Modifier.OVERRIDE);
 
     if (method.isConstructor())
       return new Constructor(

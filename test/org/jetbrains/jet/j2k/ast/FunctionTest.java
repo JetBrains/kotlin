@@ -78,4 +78,10 @@ public class FunctionTest extends JetTestCaseBase {
   public void testPublic() throws Exception {
     Assert.assertEquals(methodToSingleLineKotlin("public void test() {}"), "public fun test() : Unit { }");
   }
+
+  public void testOverride() throws Exception {
+    Assert.assertEquals(fileToSingleLineKotlin("class A {void a() {}} final class B extends A {void a() {}}"),
+      "namespace { open class A { fun a() : Unit { } } class B : A { override fun a() : Unit { } } }");
+  }
+
 }
