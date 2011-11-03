@@ -29,15 +29,25 @@ class ClasspathBuilder(val parent: ModuleBuilder) {
     }
 }
 
+class JarBuilder(val parent: ModuleBuilder) {
+    fun name(jarName: String) {
+        parent.setJarName(jarName)
+    }
+}
+
 class ModuleBuilder(val name: String): IModuleBuilder {
     val sourceFiles: ArrayList<String?> = ArrayList<String?>()
     val classpathRoots: ArrayList<String?> = ArrayList<String?>()
+    var _jarName: String? = null
 
     val source: SourcesBuilder
       get() = SourcesBuilder(this)
 
     val classpath: ClasspathBuilder
       get() = ClasspathBuilder(this)
+
+    val jar: JarBuilder
+      get() = JarBuilder(this)
 
     fun addSourceFiles(pattern: String) {
         sourceFiles.add(pattern)
@@ -47,9 +57,13 @@ class ModuleBuilder(val name: String): IModuleBuilder {
         classpathRoots.add(name)
     }
 
+    fun setJarName(name: String) {
+        _jarName = name
+    }
+
     override fun getSourceFiles(): List<String?>? = sourceFiles
     override fun getClasspathRoots(): List<String?>? = classpathRoots
     override fun getModuleName(): String? = name
-}
+    override fun getJarName(): String? = _jarName
 
 }

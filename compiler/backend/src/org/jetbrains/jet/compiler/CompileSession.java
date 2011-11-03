@@ -1,4 +1,4 @@
-package org.jetbrains.jet.cli;
+package org.jetbrains.jet.compiler;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,10 +15,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The session which handles analyzing and compiling a single module.
+ *
  * @author yole
  */
 public class CompileSession {
@@ -73,10 +76,10 @@ public class CompileSession {
         return mySourceFileNamespaces;
     }
 
-    public boolean analyze() {
+    public boolean analyze(final PrintStream out) {
         if (!myErrors.isEmpty()) {
             for (String error : myErrors) {
-                System.out.println(error);
+                out.println(error);
             }
             return false;
         }
@@ -85,7 +88,7 @@ public class CompileSession {
         allNamespaces.addAll(myLibrarySourceFileNamespaces);
         myBindingContext = instance.analyzeNamespaces(myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         ErrorCollector errorCollector = new ErrorCollector(myBindingContext);
-        errorCollector.report();
+        errorCollector.report(out);
         return !errorCollector.hasErrors;
     }
 

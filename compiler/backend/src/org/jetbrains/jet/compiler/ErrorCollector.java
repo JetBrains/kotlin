@@ -1,4 +1,4 @@
-package org.jetbrains.jet.cli;
+package org.jetbrains.jet.compiler;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
+import java.io.PrintStream;
 import java.util.Collection;
 
 /**
@@ -36,14 +37,14 @@ class ErrorCollector {
         }
     }
 
-    void report() {
+    void report(final PrintStream out) {
         if(!maps.isEmpty()) {
             for (PsiFile psiFile : maps.keySet()) {
-                System.out.println(psiFile.getVirtualFile().getPath());
+                out.println(psiFile.getVirtualFile().getPath());
                 Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
                 for (DiagnosticWithTextRange diagnosticWithTextRange : diagnosticWithTextRanges) {
                     String position = DiagnosticUtils.formatPosition(diagnosticWithTextRange);
-                    System.out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + position + " " + diagnosticWithTextRange.getMessage());
+                    out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + position + " " + diagnosticWithTextRange.getMessage());
                 }
             }
         }
