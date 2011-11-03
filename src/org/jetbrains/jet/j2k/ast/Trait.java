@@ -17,10 +17,4 @@ public class Trait extends Class {
   boolean needOpenModifier() {
     return false;
   }
-
-  @NotNull
-  @Override
-  public Kind getKind() {
-    return Kind.TRAIT;
-  }
 }

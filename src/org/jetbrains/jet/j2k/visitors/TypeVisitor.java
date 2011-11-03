@@ -21,8 +21,6 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitType(PsiType type) {
-    if (type instanceof PsiIntersectionType)
-      System.out.println("&");
     return super.visitType(type);
   }
 
@@ -35,7 +33,8 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
       myResult = new PrimitiveType(new IdentifierImpl("Unit"));
     else if (Node.PRIMITIVE_TYPES.contains(name))
       myResult = new PrimitiveType(new IdentifierImpl(AstUtil.upperFirstCharacter(name)));
-    else myResult = new PrimitiveType(identifier);
+    else
+        myResult = new PrimitiveType(identifier);
     return super.visitPrimitiveType(primitiveType);
   }
 
@@ -56,11 +55,6 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
   }
 
   @Override
-  public Type visitCapturedWildcardType(PsiCapturedWildcardType capturedWildcardType) {
-    return super.visitCapturedWildcardType(capturedWildcardType);
-  }
-
-  @Override
   public Type visitWildcardType(PsiWildcardType wildcardType) {
     if (wildcardType.isExtends())
       myResult = new OutProjectionType(typeToType(wildcardType.getExtendsBound()));
@@ -76,6 +70,11 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
     myResult = new VarArg(typeToType(ellipsisType.getComponentType()));
     return super.visitEllipsisType(ellipsisType);
   }
+
+    @Override
+    public Type visitCapturedWildcardType(PsiCapturedWildcardType capturedWildcardType) {
+        return super.visitCapturedWildcardType(capturedWildcardType);
+    }
 
   @Override
   public Type visitDisjunctionType(PsiDisjunctionType disjunctionType) {
