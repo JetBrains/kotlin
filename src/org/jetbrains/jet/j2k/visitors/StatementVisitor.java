@@ -80,12 +80,6 @@ public class StatementVisitor extends ElementVisitor implements Visitor {
   }
 
   @Override
-  public void visitEmptyStatement(PsiEmptyStatement statement) {
-    super.visitEmptyStatement(statement);
-    myResult = Statement.EMPTY_STATEMENT;
-  }
-
-  @Override
   public void visitExpressionStatement(PsiExpressionStatement statement) {
     super.visitExpressionStatement(statement);
     myResult = expressionToExpression(statement.getExpression());

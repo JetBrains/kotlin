@@ -6,9 +6,9 @@ import java.util.Set;
  * @author ignatov
  */
 public abstract class Member extends Node implements IMember {
-  protected Set<String> myModifiers;
+  Set<String> myModifiers;
 
-  protected String accessModifier() {
+  String accessModifier() {
     for (String m : myModifiers)
       if (m.equals(Modifier.PUBLIC) || m.equals(Modifier.PROTECTED) || m.equals(Modifier.PRIVATE))
         return m;
