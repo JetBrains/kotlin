@@ -10,8 +10,20 @@ import org.jetbrains.jet.parsing.JetParsingTest;
  * @author yole
  */
 public class CompileEnvironmentTest extends TestCase {
+    private CompileEnvironment environment;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        environment = new CompileEnvironment();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        environment.dispose();
+        super.tearDown();
+    }
+
     public void testSmoke() {
-        CompileEnvironment environment = new CompileEnvironment();
         environment.setJavaRuntime(CompileEnvironment.findActiveRtJar());
         environment.initializeKotlinRuntime();
         final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";
