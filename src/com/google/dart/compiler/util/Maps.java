@@ -6,8 +6,8 @@ package com.google.dart.compiler.util;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Utility methods for operating on memory-efficient maps. All maps of size 0 or

@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.translate;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 /**
  * @author Talanov Pavel
  */

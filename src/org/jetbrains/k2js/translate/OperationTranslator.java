@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsOperator;
 import org.jetbrains.jet.lexer.JetToken;
@@ -21,6 +20,12 @@ public final class OperationTranslator {
         map.put(JetTokens.MINUS, JsBinaryOperator.SUB);
         map.put(JetTokens.MUL, JsBinaryOperator.MUL);
         map.put(JetTokens.DIV, JsBinaryOperator.DIV);
+        map.put(JetTokens.EQ, JsBinaryOperator.ASG);
+        map.put(JetTokens.GT, JsBinaryOperator.GT);
+        map.put(JetTokens.GTEQ, JsBinaryOperator.GTE);
+        map.put(JetTokens.LT, JsBinaryOperator.LT);
+        map.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
+        map.put(JetTokens.EQEQ, JsBinaryOperator.EQ);
     }
 
     public static JsBinaryOperator getBinaryOperator(JetToken token) {
@@ -29,7 +34,7 @@ public final class OperationTranslator {
         if (result instanceof JsBinaryOperator) {
             return (JsBinaryOperator)result;
         }
-        throw new AssertionError("Invalid map");
+        throw new AssertionError("Invalid map: shoild containd token: " + token.toString());
     }
 
 

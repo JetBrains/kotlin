@@ -1,15 +1,13 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsStatement;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Talanov Pavel
@@ -79,7 +77,7 @@ public class DeclarationTranslator extends AbstractTranslator {
         @NotNull
         public JsStatement translateProperty(JetProperty declaration) {
             String propertyName = declaration.getName();
-            JsNameRef jsPropertyNameReference = translationContext().getQualifiedReference(getJSName(propertyName));
+            JsNameRef jsPropertyNameReference = translationContext().getNamespaceQualifiedReference(getJSName(propertyName));
             JsExpression jsInitExpression = translateInitializer(declaration);
             JsExpression result;
             if (jsInitExpression != null) {

@@ -2,95 +2,104 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import com.sun.xml.internal.ws.wsdl.writer.document.Binding;
+import org.apache.velocity.runtime.directive.Scope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+
+import java.awt.peer.ScrollbarPeer;
 
 /**
  * @author Talanov Pavel
  */
 public class TranslationContext {
 
-    private final JsBlock currentBlock;
-    private final JsNameRef currentNamespace;
     private final JsProgram program;
-    private final BindingContext context;
-    private final JsScope enclosingScope;
+    private final BindingContext bindingContext;
     private final ContextType type;
-    private final JsNameRef classObjectReference;
-    private final JsNameRef classCreationMethodReference;
+    private final Scopes scopes;
+    private final JsName currentNamespace;
 
 
-    private TranslationContext(JsNameRef namespace, JsBlock block, JsProgram program,
-                               BindingContext bindingContext, JsScope enclosingScope, ContextType type) {
-        assert block != null;
+    private static class Scopes {
+
+        public Scopes(JsScope enclosing, JsScope function, JsScope namespace) {
+            this.enclosingScope = enclosing;
+            this.functionScope = function;
+            this.namespaceScope = function;
+        }
+
+        public Scopes(Scopes other) {
+            this(other.enclosingScope, other.functionScope, other.namespaceScope);
+        }
+
+        public final JsScope enclosingScope;
+        public final JsScope functionScope;
+        public final JsScope namespaceScope;
+    }
+
+    private TranslationContext(JsName currentNamespace, JsProgram program,
+                               BindingContext bindingContext, Scopes scopes, ContextType type) {
         assert program != null;
         assert bindingContext != null;
-        assert enclosingScope != null;
+        assert scopes != null;
+        assert currentNamespace != null;
         assert type != null;
-        this.currentBlock = block;
-        this.currentNamespace = namespace;
         this.program = program;
-        this.context = bindingContext;
-        this.enclosingScope = enclosingScope;
+        this.bindingContext = bindingContext;
         this.type = type;
-        this.classObjectReference = new JsNameRef(getJSName("Class"));
-        this.classCreationMethodReference = AstUtil.newQualifiedNameRef("Class.create");
+        this.currentNamespace = currentNamespace;
+        this.scopes = scopes;
     }
 
     @NotNull
     public static TranslationContext rootContext(JsProgram program, BindingContext bindingContext) {
-        return new TranslationContext(null, program.getFragmentBlock(0),
-                program, bindingContext, program.getRootScope(), ContextType.NAMESPACE_BODY);
+        JsScope rootScope = program.getRootScope();
+        Scopes scopes = new Scopes(rootScope, rootScope, rootScope);
+        return new TranslationContext(null,
+                program, bindingContext, scopes, ContextType.NAMESPACE_BODY);
     }
 
     //TODO implement correct factories
     @NotNull
-    public TranslationContext newNamespace(JsNameRef newNamespace) {
-        return new TranslationContext(newNamespace, currentBlock, program,
-                context, enclosingScope, type);
+    public TranslationContext newNamespace(JsName namespaceName, JsFunction namespaceDummyFunction) {
+        JsScope newScope = namespaceDummyFunction.getScope();
+        Scopes newScopes = new Scopes(newScope, newScope, newScope);
+        return new TranslationContext(namespaceName, program,
+                bindingContext, newScopes, ContextType.NAMESPACE_BODY);
     }
 
     @NotNull
-    public TranslationContext newBlock(JsBlock newBlock) {
-        return new TranslationContext(currentNamespace, newBlock, program,
-                context, enclosingScope, type);
+    public TranslationContext newBlock() {
+        Scopes newScopes = new Scopes(new JsScope
+                (scopes.enclosingScope, "dummy enclosingScope for a block"), scopes.functionScope, scopes.namespaceScope);
+        return new TranslationContext(currentNamespace, program,
+                bindingContext, newScopes, type);
     }
 
     @NotNull
-    public TranslationContext newScope(JsScope newScope) {
-        return new TranslationContext(currentNamespace, currentBlock, program,
-                context, newScope, type);
+    public TranslationContext newFunction(JsFunction function) {
+        JsScope functionScope = function.getScope();
+        Scopes newScopes = new Scopes(functionScope, functionScope, scopes.namespaceScope);
+        return new TranslationContext(currentNamespace, program,
+                bindingContext, newScopes, ContextType.FUNCTION_BODY);
     }
 
     @NotNull
-    public TranslationContext newType(ContextType newType) {
-        return new TranslationContext(currentNamespace, currentBlock, program,
-                context, enclosingScope, newType);
-    }
-
-    @NotNull
-    public JsNameRef getQualifiedReference(JsName name) {
+    public JsNameRef getNamespaceQualifiedReference(JsName name) {
         if (currentNamespace != null) {
-            return AstUtil.newNameRef(currentNamespace, name);
+            return AstUtil.newNameRef(currentNamespace.makeRef(), name);
         }
         return new JsNameRef(name);
     }
 
     @NotNull
     public JsName getJSName(String jetName) {
-        //TODO dummy implemetation
         return new JsName(program().getScope(), jetName, jetName, jetName);
     }
 
     @NotNull
     public BindingContext bindingContext() {
-        return context;
-    }
-
-    @NotNull
-    public JsNameRef classObjectReference() {
-        return classObjectReference;
+        return bindingContext;
     }
 
     @NotNull
@@ -99,24 +108,12 @@ public class TranslationContext {
     }
 
     @NotNull
-    JsScope scope() {
-        return enclosingScope;
-    }
-
-    @NotNull
-    JsBlock block() {
-        return currentBlock;
+    JsScope enclosingScope() {
+        return scopes.enclosingScope;
     }
 
     @NotNull
     ContextType type() {
         return type;
     }
-
-    @NotNull
-    JsNameRef classCreationMethodReference() {
-        return classCreationMethodReference;
-    }
-
-
 }

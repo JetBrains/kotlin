@@ -1,9 +1,6 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.google.dart.compiler.backend.js.ast.JsParameter;
-import com.google.dart.compiler.backend.js.ast.JsScope;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -23,11 +20,16 @@ public class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsFunction translateFunction(JetNamedFunction jetFunction) {
-        String name = jetFunction.getName();
+    public JsStatement translateFunction(JetNamedFunction jetFunction) {
+        JsNameRef functionName = translationContext().getNamespaceQualifiedReference(getJSName(jetFunction.getName()));
+        JsFunction function = generateFunctionObject(jetFunction);
+        return AstUtil.convertToStatement(AstUtil.newAssignment(functionName, function));
+    }
+
+    private JsFunction generateFunctionObject(JetNamedFunction jetFunction) {
         JetExpression jetBodyExpression = jetFunction.getBodyExpression();
-        JsFunction result = new JsFunction(scope(), getJSName(name));
-        JsNode jsBody = (new ExpressionTranslator(functionBodyContext(result.getScope())))
+        JsFunction result = new JsFunction(scope());
+        JsNode jsBody = (new ExpressionTranslator(functionBodyContext(result)))
                 .translate(jetBodyExpression);
         List<JsParameter> jsParameters = translateParameters(jetFunction.getValueParameters());
         result.setParameters(jsParameters);
@@ -35,8 +37,8 @@ public class FunctionTranslator extends AbstractTranslator {
         return result;
     }
 
-    private TranslationContext functionBodyContext(JsScope functionScope) {
-        return translationContext().newType(ContextType.FUNCTION_BODY).newScope(functionScope);
+    private TranslationContext functionBodyContext(JsFunction function) {
+        return translationContext().newFunction(function);
     }
 
     @NotNull

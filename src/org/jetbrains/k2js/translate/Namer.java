@@ -1,9 +1,10 @@
 package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
-
-import java.util.Set;
 
 /**
  * @author Talanov Pavel
@@ -23,6 +24,8 @@ public final class Namer {
     private static final String CLASS_CREATE_METHOD_NAME = "create";
     private static final String SETTER_PREFIX = "_set_";
     private static final String GETTER_PREFIX = "_get_";
+    private static final String BACKING_FIELD_PREFIX = "_$_";
+    public static final String DEFAULT_SETTER_PARAM_NAME = "val";
 
     public static JsName getClassObjectName() {
         //TODO dummy representation
@@ -30,14 +33,50 @@ public final class Namer {
     }
 
     public static JsName getNameForAccessor(String propertyName, JetPropertyAccessor accessor) {
-        String name = propertyName;
         if (accessor.isGetter()) {
-            name += GETTER_PREFIX;
+            return getNameForGetter(propertyName);
         }
         if (accessor.isSetter()) {
-            name += SETTER_PREFIX;
+            return getNameForSetter(propertyName);
         }
+        throw new AssertionError("accessor should be a getter or a setter!");
+    }
+
+    public static JsName getBackingFieldNameForProperty(String propertyName) {
+        String name = BACKING_FIELD_PREFIX + propertyName;
         return new JsName(null, name, name, name);
     }
+
+    public static JsName getBackingFieldNameForProperty(JetProperty property) {
+        return getNameWithPrefix(property.getName(), BACKING_FIELD_PREFIX);
+    }
+
+    public static JsName getNameForGetter(String propertyName) {
+        return getNameWithPrefix(propertyName, GETTER_PREFIX);
+    }
+
+    public static JsName getNameForSetter(String propertyName) {
+        return getNameWithPrefix(propertyName, SETTER_PREFIX);
+    }
+
+    private static JsName getNameWithPrefix(String name, String prefix) {
+        String resultingName = prefix + name;
+        return new JsName(null, resultingName, resultingName, resultingName);
+    }
+
+    public static JsName getNameForNamespace(String name) {
+        return new JsName(null, name, name, name);
+    }
+
+    public static JsNameRef classObjectReference() {
+        //TODO dummy
+        return AstUtil.newQualifiedNameRef("Class");
+    }
+
+    public static JsNameRef creationMethodReference() {
+        return AstUtil.newQualifiedNameRef("Class.create");
+    }
+
+
 
 }

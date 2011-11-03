@@ -23,10 +23,11 @@ import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
-import org.jetbrains.k2js.translate.GenerationState;
 import org.jetbrains.k2js.generate.CodeGenerator;
+import org.jetbrains.k2js.translate.GenerationState;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -45,8 +46,12 @@ public class K2JSTranslator {
     public static void main(String[] args) {
         System.setProperty("java.awt.headless", "true");
         Arguments arguments = new Arguments();
-        arguments.src = "C:\\Dev\\Projects\\jet-contrib\\k2js\\test_files\\test.kt";
+        arguments.src = "test_files\\test_cases\\test.kt";
+        arguments.outputDir = null;
+        translate(arguments);
+    }
 
+    public static void translate(Arguments arguments) {
         Disposable root = new Disposable() {
             @Override
             public void dispose() {
@@ -93,7 +98,17 @@ public class K2JSTranslator {
             // Translate generated psi
             CodeGenerator generator = new CodeGenerator();
             JsProgram program = generationState.compileCorrectNamespaces(bindingContext, namespaces);
-            generator.generate(program);
+            if (arguments.outputDir == null) {
+                generator.generateToConsole(program);
+            } else {
+                File outputFile = new File(arguments.outputDir);
+                try {
+                    generator.generateToFile(program, outputFile);
+                }
+                catch (IOException e) {
+                    System.out.println("Failed to write to specified file");
+                }
+            }
         }
 
     }

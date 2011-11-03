@@ -1,15 +1,8 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
-import groovyjarjarantlr.collections.AST;
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lexer.JetToken;
-
-import java.util.List;
+import org.jetbrains.jet.lang.psi.JetExpression;
 
 /**
  * @author Talanov Pavel

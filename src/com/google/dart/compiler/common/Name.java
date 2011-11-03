@@ -4,19 +4,15 @@
 
 package com.google.dart.compiler.common;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 
 /**
- * Instead of Strings, we use Names to abstract the underlying representation.
+ * Instead of Strings, we use GlobalNames to abstract the underlying representation.
  * 
  * <ul>
- * <li>Names are globally unique and use identity for equality.</li>
- * <li>Names are interned, so all references to the same name use the same
+ * <li>GlobalNames are globally unique and use identity for equality.</li>
+ * <li>GlobalNames are interned, so all references to the same name use the same
  * bytes.</li>
  * </ul>
  * TODO(scottb): use byte[] instead of char[] when the parser is rewritten

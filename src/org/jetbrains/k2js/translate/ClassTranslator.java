@@ -24,13 +24,13 @@ public class ClassTranslator extends AbstractTranslator {
 
     public JsStatement translateClass(JetClass classDeclaration) {
         JsInvocation jsClassDeclaration = new JsInvocation();
-        jsClassDeclaration.setQualifier(translationContext().classCreationMethodReference());
+        jsClassDeclaration.setQualifier(Namer.creationMethodReference());
         JsObjectLiteral jsClassDescription = translateClassDeclarations(classDeclaration);
         jsClassDeclaration.getArguments().add(jsClassDescription);
         //getSuperClassName(classDeclaration);
         String className = classDeclaration.getName();
         JsStatement result = AstUtil.convertToStatement(AstUtil.newAssignment(
-                translationContext().getQualifiedReference(getJSName(className)), jsClassDeclaration));
+                translationContext().getNamespaceQualifiedReference(getJSName(className)), jsClassDeclaration));
         return result;
     }
 

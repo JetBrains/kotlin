@@ -4,12 +4,7 @@
 
 package com.google.dart.compiler.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Utility methods for operating on memory-efficient lists. All lists of size 0

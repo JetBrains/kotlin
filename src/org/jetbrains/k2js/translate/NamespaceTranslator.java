@@ -2,10 +2,10 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import org.jaxen.expr.Expr;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamespace;
 
-import java.beans.Expression;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,27 +27,37 @@ public class NamespaceTranslator extends AbstractTranslator {
     }
 
     public JsBlock translate(JetNamespace namespace) {
-        // TODO write namespace change logic
+        // TODO support multiple namespaces
         JsBlock block = program().getFragmentBlock(0);
-        JsFunction dummyFunc = newNamespace(namespace.getName());
-        JsBlock namespaceBlock = new JsBlock();
-        dummyFunc.setBody(namespaceBlock);
-        TranslationContext newContext = translationContext()
-                .newBlock(namespaceBlock).newScope(dummyFunc.getScope()).newNamespace(new JsNameRef(getJSName(namespace.getName())));
-        DeclarationTranslator declarationTranslator = new DeclarationTranslator(newContext);
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
-            namespaceBlock.addStatement(declarationTranslator.translateDeclaration(declaration));
-        }
+        JsName namespaceName = Namer.getNameForNamespace(namespace.getName());
+        block.addStatement(namespaceInitStatement(namespaceName));
+        JsFunction dummyFunction = new JsFunction(scope());
+        TranslationContext newContext = translationContext().newNamespace(namespaceName, dummyFunction);
+        JsBlock namespaceDeclarations = translateDeclaration(namespace, newContext);
+        block.addStatement(AstUtil.convertToStatement(newNamespace(namespaceName, namespaceDeclarations, dummyFunction)));
         return block;
     }
 
-    public JsFunction newNamespace(String namespaceId) {
-        JsFunction result = new JsFunction(scope());
+    @NotNull
+    private JsBlock translateDeclaration(JetNamespace namespace, TranslationContext newContext) {
+        DeclarationTranslator declarationTranslator = new DeclarationTranslator(newContext);
+        JsBlock namespaceDeclarations = new JsBlock();
+        for (JetDeclaration declaration : namespace.getDeclarations()) {
+            namespaceDeclarations.addStatement(declarationTranslator.translateDeclaration(declaration));
+        }
+        return namespaceDeclarations;
+    }
+
+    private JsStatement namespaceInitStatement(JsName namespaceName) {
+        return AstUtil.convertToStatement(AstUtil.newAssignment(namespaceName.makeRef(), new JsObjectLiteral()));
+    }
+
+    public JsInvocation newNamespace(JsName name, JsBlock namespaceDeclarations, JsFunction dummyFunction) {
         List<JsParameter> params = new ArrayList<JsParameter>();
-        params.add(new JsParameter(getJSName(namespaceId)));
-        result.setParameters(params);
-        JsExpression invocationParam = new JsNameRef(namespaceId);
-        block().addStatement(AstUtil.convertToStatement(AstUtil.newInvocation((result), invocationParam)));
-        return result;
+        params.add(new JsParameter(name));
+        dummyFunction.setParameters(params);
+        JsExpression invocationParam = name.makeRef();
+        dummyFunction.setBody(namespaceDeclarations);
+        return AstUtil.newInvocation(dummyFunction, invocationParam);
     }
 }

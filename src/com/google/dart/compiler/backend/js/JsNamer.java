@@ -16,7 +16,7 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
  */
 public interface JsNamer {
   /**
-   * Names the shortNames of all JsNames of the program so that they are valid
+   * GlobalNames the shortNames of all JsNames of the program so that they are valid
    * JS-identifiers and that there are no clashes and no shadowing.
    */
   public void exec(JsProgram program);

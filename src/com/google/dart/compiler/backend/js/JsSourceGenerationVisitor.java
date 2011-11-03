@@ -8,7 +8,7 @@ import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsContext;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.backend.js.ast.JsProgramFragment;
-import com.google.dart.compiler.util.*;
+import com.google.dart.compiler.util.TextOutput;
 
 /**
  * Generates JavaScript source from an AST.

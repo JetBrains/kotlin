@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,9 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
         if (value instanceof Integer) {
             result = context.program().getNumberLiteral((Integer) value);
         }
+        if (value instanceof Boolean) {
+            return context.program().getBooleanLiteral((Boolean) value);
+        }
         assert result != null;
         return result;
     }
@@ -35,12 +39,10 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     public JsNode visitBlockExpression(JetBlockExpression jetBlock, TranslationContext context) {
         List<JetElement> jetElements = jetBlock.getStatements();
         JsBlock jsBlock = new JsBlock();
-        ExpressionTranslator expressionTranslator =
-                new ExpressionTranslator(context.newBlock(jsBlock));
         for (JetElement jetElement : jetElements) {
             //TODO hack alert
             JetExpression jetExpression = (JetExpression) jetElement;
-            JsNode jsNode = jetExpression.accept(this, context.newBlock(jsBlock));
+            JsNode jsNode = jetExpression.accept(this, context.newBlock());
             jsBlock.addStatement(AstUtil.convertToStatement(jsNode));
         }
         assert jsBlock != null;
@@ -51,9 +53,12 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     @NotNull
     public JsNode visitReturnExpression(JetReturnExpression jetReturnExpression, TranslationContext context) {
         //TODO hack alert
-        JsExpression jsExpression = (JsExpression) (jetReturnExpression.getReturnedExpression().accept(this, context));
-        JsReturn jsReturnExpression = new JsReturn(jsExpression);
-        return jsReturnExpression;
+        if (jetReturnExpression.getReturnedExpression() != null) {
+            JsExpression jsExpression = (JsExpression) (jetReturnExpression.getReturnedExpression().accept(this, context));
+            JsReturn jsReturnExpression = new JsReturn(jsExpression);
+            return jsReturnExpression;
+        }
+        return new JsReturn();
     }
 
     @Override
@@ -78,7 +83,11 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     @NotNull
     public JsNode visitSimpleNameExpression(JetSimpleNameExpression expression, TranslationContext context) {
         String referencedName = expression.getReferencedName();
-        return new JsNameRef(context.getJSName(referencedName));
+        if (context.enclosingScope().findExistingName(referencedName) == null) {
+            JsName name = context.enclosingScope().declareName(referencedName);
+            return name.makeRef();
+        }
+        return context.getNamespaceQualifiedReference(context.getJSName(referencedName));
     }
 
     @Override
@@ -86,6 +95,29 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     public JsNode visitProperty(JetProperty expression, TranslationContext context) {
         DeclarationTranslator translator = new DeclarationTranslator(context);
         return translator.translateProperty(expression);
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
+        JsExpression callee = getCallee(expression, context);
+        List<JsExpression> arguments = generateArgumentList(expression.getFunctionLiteralArguments(), context);
+        return AstUtil.newInvocation(callee, arguments);
+    }
+
+    @NotNull
+    private JsExpression getCallee(JetCallExpression expression, TranslationContext context) {
+        JsNode jsCallee = expression.getCalleeExpression().accept(this, context);
+        return AstUtil.convertToExpression(jsCallee);
+    }
+
+    @NotNull
+    private List<JsExpression> generateArgumentList(List<JetExpression> jetArguments, TranslationContext context) {
+        List<JsExpression> jsArguments = new ArrayList<JsExpression>();
+        for (JetExpression jetExpression : jetArguments) {
+            jsArguments.add(AstUtil.convertToExpression(jetExpression.accept(this, context)));
+        }
+        return jsArguments;
     }
 
 }

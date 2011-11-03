@@ -8,9 +8,10 @@
     </content>
     <orderEntry type="jdk" jdkName="IDEA IC-110.240" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="lib" level="project" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="library" name="rhino" level="project" />
+    <orderEntry type="library" name="junit" level="project" />
   </component>
 </module>
 

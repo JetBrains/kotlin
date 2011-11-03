@@ -41,11 +41,6 @@ public abstract class AbstractTranslator {
 
     @NotNull
     protected JsScope scope() {
-        return context.scope();
-    }
-
-    @NotNull
-    protected JsBlock block() {
-        return context.block();
+        return context.enclosingScope();
     }
 }

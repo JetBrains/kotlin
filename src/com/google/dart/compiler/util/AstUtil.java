@@ -8,9 +8,7 @@ import com.google.dart.compiler.InternalCompilerException;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import com.google.dart.compiler.common.SourceInfo;
-import com.sun.org.apache.xpath.internal.functions.Function;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +18,16 @@ public class AstUtil {
 
     public static JsInvocation newInvocation(
             JsExpression target, JsExpression... params) {
+        JsInvocation invoke = new JsInvocation();
+        invoke.setQualifier(target);
+        for (JsExpression expr : params) {
+            invoke.getArguments().add(expr);
+        }
+        return invoke;
+    }
+
+    public static JsInvocation newInvocation(
+            JsExpression target, List<JsExpression> params) {
         JsInvocation invoke = new JsInvocation();
         invoke.setQualifier(target);
         for (JsExpression expr : params) {
@@ -244,5 +252,10 @@ public class AstUtil {
 
     public static JsExpression in(SourceInfo src, JsExpression propName, JsExpression obj) {
         return new JsBinaryOperation(JsBinaryOperator.INOP, propName, obj).setSourceRef(src);
+    }
+
+    public static JsPropertyInitializer newNamedMethod(JsName name, JsFunction function) {
+        JsNameRef methodName = name.makeRef();
+        return new JsPropertyInitializer(methodName, function);
     }
 }
