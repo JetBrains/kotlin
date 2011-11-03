@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
@@ -173,8 +174,29 @@ public class CallResolver {
                 }
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCallImpl.convertCollection(constructors), call, DataFlowInfo.EMPTY));
             }
+            else if (calleeExpression != null) {
+                // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
+                ExpressionTypingServices typingServices = new ExpressionTypingServices(semanticServices, trace);
+                JetType calleeType = typingServices.safeGetType(scope, calleeExpression, NO_EXPECTED_TYPE);// We are actually expecting a function, but there seems to be no easy way of expressing this
+
+                if (!JetStandardClasses.isFunctionType(calleeType)) {
+                    checkTypesWithNoCallee(trace, scope, call);
+                    if (!ErrorUtils.isErrorType(calleeType)) {
+                        trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));
+                    }
+                    return null;
+                }
+                
+                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "for expression " + calleeExpression.getText());
+                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType);
+                ResolvedCallImpl<FunctionDescriptor> resolvedCall = ResolvedCallImpl.<FunctionDescriptor>create(functionDescriptor);
+                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(
+                        Collections.singleton(resolvedCall), call, dataFlowInfo));
+                functionReference = new JetReferenceExpression(calleeExpression.getNode()) {
+                };
+            }
             else {
-                trace.report(UNSUPPORTED.on(call.getCallNode(), "Type argument inference is not supported for this callee: " + calleeExpression));
+                checkTypesWithNoCallee(trace, scope, call);
                 return null;
             }
         }
@@ -233,7 +255,15 @@ public class CallResolver {
 
             @Override
             public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-                trace.report(NO_VALUE_FOR_PARAMETER.on(reference, valueParameter));
+                PsiElement reportOn;
+                JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+                if (valueArgumentList != null) {
+                    reportOn = valueArgumentList;
+                }
+                else {
+                    reportOn = reference;
+                }
+                trace.report(NO_VALUE_FOR_PARAMETER.on(reportOn, valueParameter));
             }
 
             @Override

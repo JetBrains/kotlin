@@ -196,6 +196,7 @@ public interface Errors {
     AmbiguousDescriptorDiagnosticFactory ITERATOR_AMBIGUITY = AmbiguousDescriptorDiagnosticFactory.create("Method 'iterator()' is ambiguous for this expression: {0}");
 
     ParameterizedDiagnosticFactory1<JetType> COMPARE_TO_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "compareTo() must return Int, but returns {0}");
+    ParameterizedDiagnosticFactory1<JetType> CALLEE_NOT_A_FUNCTION = ParameterizedDiagnosticFactory1.create(ERROR, "Expecting a function type, but found {0}");
 
     SimpleDiagnosticFactory RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = SimpleDiagnosticFactory.create(ERROR, "Returns are not allowed for functions with expression body. Use block body in '{...}'");
     SimpleDiagnosticFactory NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = SimpleDiagnosticFactory.create(ERROR, "A 'return' expression required in a function with a block body ('{...}')");

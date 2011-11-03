@@ -83,4 +83,13 @@ public class FunctionDescriptorUtil {
         return parameterScope;
     }
 
+    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType) {
+        assert JetStandardClasses.isFunctionType(functionType);
+        functionDescriptor.initialize(JetStandardClasses.getReceiverType(functionType),
+                                      ReceiverDescriptor.NO_RECEIVER,
+                                      Collections.<TypeParameterDescriptor>emptyList(),
+                                      JetStandardClasses.getValueParameters(functionDescriptor, functionType),
+                                      JetStandardClasses.getReturnType(functionType),
+                                      Modality.FINAL, Visibility.LOCAL);
+    }
 }
