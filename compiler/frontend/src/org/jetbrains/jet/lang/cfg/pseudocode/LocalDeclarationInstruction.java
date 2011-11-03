@@ -30,9 +30,12 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
     @NotNull
     @Override
     public Collection<Instruction> getNextInstructions() {
-        ArrayList<Instruction> instructions = Lists.newArrayList(sink);
-        instructions.addAll(super.getNextInstructions());
-        return instructions;
+        if (sink != null) {
+            ArrayList<Instruction> instructions = Lists.newArrayList(sink);
+            instructions.addAll(super.getNextInstructions());
+            return instructions;
+        }
+        return super.getNextInstructions();
     }
 
     public void setSink(SubroutineSinkInstruction sink) {

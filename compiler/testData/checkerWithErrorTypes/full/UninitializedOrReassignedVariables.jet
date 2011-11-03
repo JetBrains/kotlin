@@ -248,3 +248,61 @@ class ForwardAccessToBackingField() { //kt-147
     val b = <!UNINITIALIZED_VARIABLE!>$c<!> // error
     val c = 1
 }
+
+class ClassObject() {
+    class object {
+        val x : Int
+
+        {
+            $x = 1
+        }
+
+
+        fun foo() {
+            val a : Int
+            doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
+        }
+    }
+}
+
+fun foo() {
+    val a = object {
+        val x : Int
+        val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+        {
+            $x = 1
+        }
+//todo
+/*        fun foo() {
+            <VAL_REASSIGNMENT>y<> = 10
+        }*/
+    }
+}
+
+object O {
+    val x : Int
+    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+    {
+        $x = 1
+    }
+
+    fun foo() {
+        <!VAL_REASSIGNMENT!>y<!> = 10
+        val i: Int
+        if (1 < 3) {
+            i = 10
+        }
+        doSmth(<!UNINITIALIZED_VARIABLE!>i<!>)
+    }
+}
+
+fun foo() {
+    val b = 1
+    val a = object {
+        val x = b
+        {
+            <!VAL_REASSIGNMENT!>b<!> = 4
+            <!UNRESOLVED_REFERENCE!>$b<!> = 3
+        }
+    }
+}

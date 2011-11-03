@@ -733,36 +733,47 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-            value(expression.getObjectDeclaration(), inCondition);
+            JetObjectDeclaration declaration = expression.getObjectDeclaration();
+            value(declaration, inCondition);
+
+            List<JetDeclaration> declarations = declaration.getDeclarations();
+            List<JetDeclaration> functions = Lists.newArrayList();
+            for (JetDeclaration localDeclaration : declarations) {
+                if (!(localDeclaration instanceof JetProperty) && !(localDeclaration instanceof JetClassInitializer)) {
+                    functions.add(localDeclaration);
+                }
+            }
+            Queue<Label> declarationLabels = new LinkedList<Label>();
+            for (JetDeclaration function : functions) {
+                declarationLabels.add(builder.createUnboundLabel());
+            }
+            builder.nondeterministicJump(Lists.newArrayList(declarationLabels));
+
+            for (JetDeclaration function : functions) {
+                if (function instanceof JetNamedDeclaration) {
+                    if (function instanceof JetDeclarationWithBody) {
+                        JetExpression bodyExpression = ((JetDeclarationWithBody) function).getBodyExpression();
+                        generate(function, bodyExpression != null ? bodyExpression : function);
+                    }
+                    else {
+                        generate(function, function);
+                    }
+                }
+                else {
+                    generate(declaration, function);
+                }
+                builder.bindLabel(declarationLabels.remove());
+            }
+
             builder.read(expression);
         }
 
         @Override
-        public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-//            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
+        public void visitObjectDeclaration(JetObjectDeclaration objectDeclaration) {
+//            for (JetDelegationSpecifier delegationSpecifier : objectDeclaration.getDelegationSpecifiers()) {
 //                value(delegationSpecifier, inCondition);
 //            }
-            Queue<Label> declarationLabels = new LinkedList<Label>();
-            List<JetDeclaration> declarations = declaration.getDeclarations();
-            for (JetDeclaration localDeclaration : declarations) {
-                declarationLabels.add(builder.createUnboundLabel());
-            }
-            builder.nondeterministicJump(Lists.newArrayList(declarationLabels));
-            for (JetDeclaration localDeclaration : declarations) {
-                if (localDeclaration instanceof JetNamedDeclaration) {
-                    if (localDeclaration instanceof JetDeclarationWithBody) {
-                        JetExpression bodyExpression = ((JetDeclarationWithBody) localDeclaration).getBodyExpression();
-                        generate(localDeclaration, bodyExpression != null ? bodyExpression : localDeclaration);
-                    }
-                    else {
-                        generate(localDeclaration, localDeclaration);
-                    }
-                }
-                else {
-                    generate(declaration, localDeclaration);
-                }
-                builder.bindLabel(declarationLabels.remove());
-            }
+            visitClassOrObject(objectDeclaration);
         }
 
         @Override
@@ -783,17 +794,22 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitAnonymousInitializer(JetClassInitializer classInitializer) {
-            classInitializer.getBody().accept(this);
+            value(classInitializer.getBody(), inCondition);
+        }
+        
+        private void visitClassOrObject(JetClassOrObject classOrObject) {
+            List<JetDeclaration> declarations = classOrObject.getDeclarations();
+            for (JetDeclaration declaration : declarations) {
+                if (declaration instanceof JetProperty || declaration instanceof JetClassInitializer) {
+                    //declaration.accept(this);
+                    value(declaration, inCondition);
+                }
+            }            
         }
 
         @Override
         public void visitClass(JetClass klass) {
-            List<JetDeclaration> declarations = klass.getDeclarations();
-            for (JetDeclaration declaration : declarations) {
-                if (declaration instanceof JetProperty || declaration instanceof JetClassInitializer) {
-                    declaration.accept(this);
-                }
-            }
+            visitClassOrObject(klass);
         }
 
         @Override

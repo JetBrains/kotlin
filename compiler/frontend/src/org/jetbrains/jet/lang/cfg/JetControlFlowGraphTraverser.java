@@ -18,14 +18,16 @@ import java.util.Map;
  */
 public class JetControlFlowGraphTraverser<D> {
     private final Pseudocode pseudocode;
+    private final boolean lookInside;
     private final Map<Instruction, Pair<D, D>> dataMap = Maps.newLinkedHashMap();
 
-    public static <D> JetControlFlowGraphTraverser<D> create(Pseudocode pseudocode) {
-        return new JetControlFlowGraphTraverser<D>(pseudocode);
+    public static <D> JetControlFlowGraphTraverser<D> create(Pseudocode pseudocode, boolean lookInside) {
+        return new JetControlFlowGraphTraverser<D>(pseudocode, lookInside);
     }
 
-    private JetControlFlowGraphTraverser(Pseudocode pseudocode) {
+    private JetControlFlowGraphTraverser(Pseudocode pseudocode, boolean lookInside) {
         this.pseudocode = pseudocode;
+        this.lookInside = lookInside;
     }
 
     public void collectInformationFromInstructionGraph(
@@ -51,7 +53,7 @@ public class JetControlFlowGraphTraverser<D> {
         Pair<D, D> initialPair = Pair.create(initialDataValue, initialDataValue);
         for (Instruction instruction : instructions) {
             dataMap.put(instruction, initialPair);
-            if (instruction instanceof LocalDeclarationInstruction) {
+            if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 initializeDataMap(((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
             }
         }
@@ -82,7 +84,7 @@ public class JetControlFlowGraphTraverser<D> {
                 allPreviousInstructions = previousInstructions;
             }
 
-            if (instruction instanceof LocalDeclarationInstruction) {
+            if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
                 traverseSubGraph(subroutinePseudocode, instructionsMergeStrategy, previousInstructions, straightDirection, changed, true);
             }
@@ -111,11 +113,11 @@ public class JetControlFlowGraphTraverser<D> {
             InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
         List<Instruction> instructions = pseudocode.getInstructions();
         for (Instruction instruction : instructions) {
-            if (((InstructionImpl)instruction).isDead()) continue;
-            if (instruction instanceof LocalDeclarationInstruction) {
+            if (instruction.isDead()) continue;
+            Pair<D, D> pair = dataMap.get(instruction);
+            if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), instructionDataAnalyzeStrategy);
             }
-            Pair<D, D> pair = dataMap.get(instruction);
             instructionDataAnalyzeStrategy.execute(instruction,
                                                    pair != null ? pair.getFirst() : null,
                                                    pair != null ? pair.getSecond() : null);
@@ -123,7 +125,7 @@ public class JetControlFlowGraphTraverser<D> {
     }
     
     public D getResultInfo() {
-        return dataMap.get(pseudocode.getExitInstruction()).getFirst();
+        return dataMap.get(pseudocode.getSinkInstruction()).getFirst();
     }
     
     interface InstructionsMergeStrategy<D> {

@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,13 +26,13 @@ public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
     private ExpressionTypingServices typeInferrerServices;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
-    private final boolean declaredLocally;
+    private final boolean isDeclaredLocally;
 
     public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean declaredLocally) {
         this.context = context;
         this.flowDataTraceFactory = flowDataTraceFactory;
+        isDeclaredLocally = declaredLocally;
         this.typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
-        this.declaredLocally = declaredLocally;
     }
 
     public void process() {
@@ -43,8 +42,18 @@ public class ControlFlowAnalyzer {
 
             if (!context.completeAnalysisNeeded(aClass)) continue;
 
-            checkClass(aClass, classDescriptor);
+            checkClassOrObject(aClass, classDescriptor);
         }
+
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
+            JetObjectDeclaration objectDeclaration = entry.getKey();
+            MutableClassDescriptor objectDescriptor = entry.getValue();
+
+            if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
+
+            checkClassOrObject(objectDeclaration, objectDescriptor);
+        }
+
         for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : context.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             FunctionDescriptorImpl functionDescriptor = entry.getValue();
@@ -73,9 +82,9 @@ public class ControlFlowAnalyzer {
         }
     }
     
-    private void checkClass(JetClass klass, MutableClassDescriptor classDescriptor) {
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(klass, klass, flowDataTraceFactory, context.getTrace());
-        flowInformationProvider.markUninitializedVariables(klass, true);
+    private void checkClassOrObject(JetClassOrObject klass, MutableClassDescriptor classDescriptor) {
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
+        flowInformationProvider.markUninitializedVariables((JetElement) klass, true, isDeclaredLocally);
     }
 
     private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
@@ -129,12 +138,10 @@ public class ControlFlowAnalyzer {
                 }
             });
         }
-        if (!declaredLocally) {
-            flowInformationProvider.markUninitializedVariables(function.asElement(), false);
-            if (((JetDeclaration) function).hasModifier(JetTokens.INLINE_KEYWORD)) {
-                //inline functions after M1
+        flowInformationProvider.markUninitializedVariables(function.asElement(), false, isDeclaredLocally);
+        if (((JetDeclaration) function).hasModifier(JetTokens.INLINE_KEYWORD)) {
+            //inline functions after M1
 //                flowInformationProvider.markNotOnlyInvokedFunctionVariables(function.asElement(), functionDescriptor.getValueParameters());
-            }
         }
     }
 

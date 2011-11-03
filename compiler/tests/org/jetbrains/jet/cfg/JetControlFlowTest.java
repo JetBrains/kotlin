@@ -285,8 +285,9 @@ public class JetControlFlowTest extends JetLiteFixture {
 
                 @Override
                 public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
-                    //todo print edges
-                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
+                    for (Instruction nextInstruction : instruction.getNextInstructions()) {
+                        printEdge(out, nodeToName.get(instruction), nodeToName.get(nextInstruction), null);
+                    }
                 }
 
                 @Override
@@ -313,6 +314,13 @@ public class JetControlFlowTest extends JetLiteFixture {
 
                 @Override
                 public void visitSubroutineExit(SubroutineExitInstruction instruction) {
+                    if (!instruction.getNextInstructions().isEmpty()) {
+                        printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNextInstructions().iterator().next()), null);
+                    }
+                }
+
+                @Override
+                public void visitSubroutineSink(SubroutineSinkInstruction instruction) {
                     // Nothing
                 }
 
@@ -367,7 +375,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     }
 
     private void dumpDot(String name, Collection<Pseudocode> pseudocodes) throws FileNotFoundException {
-        String graphFileName = getTestDataPath() + "/" + getTestFilePath() + ".dot";
+        String graphFileName = getTestFilePath() + ".dot";
         File target = new File(graphFileName);
 
         PrintStream out = new PrintStream(target);

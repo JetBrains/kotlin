@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
@@ -122,11 +123,11 @@ public class JetFlowInformationProvider {
         }
     }
 
-    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean inAnonymousInitializers) {
+    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean inAnonymousInitializers, final boolean declaredLocally) {
         final Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
-        JetControlFlowGraphTraverser<Map<VariableDescriptor, InitializationPoints>> traverser = JetControlFlowGraphTraverser.create(pseudocode);
+        JetControlFlowGraphTraverser<Map<VariableDescriptor, InitializationPoints>> traverser = JetControlFlowGraphTraverser.create(pseudocode, true);
 
         JetControlFlowGraphTraverser.InstructionsMergeStrategy<Map<VariableDescriptor, InitializationPoints>> instructionsMergeStrategy =
                 new JetControlFlowGraphTraverser.InstructionsMergeStrategy<Map<VariableDescriptor, InitializationPoints>>() {
@@ -163,7 +164,9 @@ public class JetFlowInformationProvider {
             }
         };
 
-        Map<VariableDescriptor, InitializationPoints> initialMapForStartInstruction = prepareInitialMapForStartInstruction(subroutine, pseudocode);
+        Collection<VariableDescriptor> usedVariables = collectUsedVariables(pseudocode);
+        Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);
+        Map<VariableDescriptor, InitializationPoints> initialMapForStartInstruction = prepareInitialMapForStartInstruction(usedVariables, declaredVariables);
         
         traverser.collectInformationFromInstructionGraph(instructionsMergeStrategy,
                                                          Collections.<VariableDescriptor, InitializationPoints>emptyMap(),
@@ -189,7 +192,7 @@ public class JetFlowInformationProvider {
                                 isInitialized = true;
                             }
                         }
-                        if (!isInitialized) {
+                        if (!declaredLocally && !isInitialized) {
                             trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
                         }
                     }
@@ -211,10 +214,12 @@ public class JetFlowInformationProvider {
                             }
                         }
                         JetSimpleNameExpression expression = (JetSimpleNameExpression) element;
-                        if (hasInitializer && !variableDescriptor.isVar()) {
-                            trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor));
+                        if (!declaredLocally && hasInitializer && !variableDescriptor.isVar()) {
+                            PsiElement psiElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
+                            JetProperty property = psiElement instanceof JetProperty ? (JetProperty) psiElement : null;
+                            trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[] { property }));
                         }
-                        if (inAnonymousInitializers && variableDescriptor instanceof PropertyDescriptor &&
+                        if (!declaredLocally && inAnonymousInitializers && variableDescriptor instanceof PropertyDescriptor &&
                             !enterInitializationPoints.isInitialized() && exitInitializationPoints.isInitialized()) {
                             if (expression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
                                 trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD.on(expression, variableDescriptor));
@@ -225,22 +230,17 @@ public class JetFlowInformationProvider {
             }
         });
 
-        if (inAnonymousInitializers) {
-            Map<VariableDescriptor, InitializationPoints> lastInfo = traverser.getResultInfo();
-            for (Map.Entry<VariableDescriptor, InitializationPoints> entry : lastInfo.entrySet()) {
-                VariableDescriptor variable = entry.getKey();
-                if (variable instanceof PropertyDescriptor) {
-                    InitializationPoints initializationPoints = entry.getValue();
-                    trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, initializationPoints.isInitialized());
-                }
+        Map<VariableDescriptor, InitializationPoints> lastInfo = traverser.getResultInfo();
+        for (Map.Entry<VariableDescriptor, InitializationPoints> entry : lastInfo.entrySet()) {
+            VariableDescriptor variable = entry.getKey();
+            if (variable instanceof PropertyDescriptor && declaredVariables.contains(variable)) {
+                InitializationPoints initializationPoints = entry.getValue();
+                trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, initializationPoints.isInitialized());
             }
         }
     }
 
-    private Map<VariableDescriptor, InitializationPoints> prepareInitialMapForStartInstruction(JetElement subroutine, Pseudocode pseudocode) {
-        Collection<VariableDescriptor> usedVariables = collectUsedVariables(pseudocode);
-        Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);
-
+    private Map<VariableDescriptor, InitializationPoints> prepareInitialMapForStartInstruction(Collection<VariableDescriptor> usedVariables, Collection<VariableDescriptor> declaredVariables) {
         Map<VariableDescriptor, InitializationPoints> initialMapForStartInstruction = Maps.newHashMap();
         InitializationPoints initialPointsForDeclaredVariable = new InitializationPoints(false);
         InitializationPoints initialPointsForExternalVariable = new InitializationPoints(true);
@@ -267,7 +267,7 @@ public class JetFlowInformationProvider {
         Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
-        JetControlFlowGraphTraverser.<Void>create(pseudocode).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
+        JetControlFlowGraphTraverser.<Void>create(pseudocode, true).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
             @Override
             public void execute(Instruction instruction, Void enterData, Void exitData) {
                 if (instruction instanceof ReadValueInstruction) {
@@ -314,7 +314,7 @@ public class JetFlowInformationProvider {
 
     private Collection<VariableDescriptor> collectUsedVariables(Pseudocode pseudocode) {
         final Set<VariableDescriptor> usedVariables = Sets.newHashSet();
-        JetControlFlowGraphTraverser.<Void>create(pseudocode).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
+        JetControlFlowGraphTraverser.<Void>create(pseudocode, true).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
             @Override
             public void execute(Instruction instruction, Void enterData, Void exitData) {
                 VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction);
@@ -336,7 +336,7 @@ public class JetFlowInformationProvider {
                     assert descriptor instanceof VariableDescriptor;
                     declaredVariables.add((VariableDescriptor) descriptor);
                 }
-                return null;
+                return super.visitProperty(property, data);
             }
 
             @Override
@@ -349,7 +349,7 @@ public class JetFlowInformationProvider {
                         declaredVariables.add((VariableDescriptor) descriptor);
                     }
                 }
-                return null;
+                return super.visitForExpression(expression, data);
             }
         }, null);
         return declaredVariables;
