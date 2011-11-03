@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -46,6 +48,26 @@ public class JetCallExpression extends JetExpression implements JetCallElement {
     @Override
     @NotNull
     public List<JetExpression> getFunctionLiteralArguments() {
+        JetExpression calleeExpression = getCalleeExpression();
+        if (calleeExpression instanceof JetFunctionLiteralExpression) {
+            List<JetExpression> result = new SmartList<JetExpression>();
+            ASTNode treeNext = calleeExpression.getNode().getTreeNext();
+            while (treeNext != null) {
+                PsiElement psi = treeNext.getPsi();
+                if (psi instanceof JetFunctionLiteralExpression) {
+                    result.add((JetFunctionLiteralExpression) psi);
+                }
+                else if (psi instanceof JetLabelQualifiedExpression) {
+                    JetLabelQualifiedExpression labelQualifiedExpression = (JetLabelQualifiedExpression) psi;
+                    JetExpression labeledExpression = labelQualifiedExpression.getLabeledExpression();
+                    if (labeledExpression instanceof JetFunctionLiteralExpression) {
+                        result.add(labeledExpression);
+                    }
+                }
+                treeNext = treeNext.getTreeNext();
+            }
+            return result;
+        }
         return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
     }
 

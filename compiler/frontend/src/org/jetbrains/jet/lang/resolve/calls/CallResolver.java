@@ -187,9 +187,10 @@ public class CallResolver {
                     return null;
                 }
                 
-                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "for expression " + calleeExpression.getText());
+                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "[for expression " + calleeExpression.getText() + "]");
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType);
                 ResolvedCallImpl<FunctionDescriptor> resolvedCall = ResolvedCallImpl.<FunctionDescriptor>create(functionDescriptor);
+                resolvedCall.setReceiverArgument(call.getExplicitReceiver());
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(
                         Collections.singleton(resolvedCall), call, dataFlowInfo));
                 functionReference = new JetReferenceExpression(calleeExpression.getNode()) {

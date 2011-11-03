@@ -525,8 +525,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            // TODO : not a simple name -> resolve in scope, expect property type or a function type
-            context.trace.report(UNSUPPORTED.on(selectorExpression, "getSelectorReturnType"));
+            context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
         return null;
     }
