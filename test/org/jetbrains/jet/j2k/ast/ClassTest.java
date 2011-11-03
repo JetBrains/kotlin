@@ -142,4 +142,11 @@ public class ClassTest extends JetTestCaseBase {
       "class S { class object { var myI : Int = 10 } fun sB() : Boolean { return true } }"
     );
   }
+
+  public void testInnerStaticClass() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class S { static class Inner {} }"),
+      "class S { class object { open class Inner { } } }"
+    );
+  }
 }

@@ -19,12 +19,6 @@ public class Trait extends Class {
     return false;
   }
 
-  String bodyToKotlin() {
-    return AstUtil.joinNodes(myFields, N) + N +
-      AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
-      AstUtil.joinNodes(myInnerClasses, N) + N;
-  }
-
   @NotNull
   @Override
   public Kind getKind() {
