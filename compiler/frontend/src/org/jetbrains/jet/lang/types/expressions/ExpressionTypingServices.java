@@ -53,10 +53,15 @@ public class ExpressionTypingServices {
 
     @Nullable
     public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType) {
+        return getType(scope, expression, expectedType, DataFlowInfo.EMPTY);
+    }
+
+    @Nullable
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, DataFlowInfo dataFlowInfo) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                trace, scope, DataFlowInfo.EMPTY, expectedType, FORBIDDEN, false
+                trace, scope, dataFlowInfo, expectedType, FORBIDDEN, false
         );
         return expressionTypingFacade.getType(expression, context);
     }
