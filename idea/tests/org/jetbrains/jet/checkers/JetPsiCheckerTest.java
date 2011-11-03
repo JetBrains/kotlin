@@ -55,13 +55,17 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(JetTestCaseBuilder.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, new JetTestCaseBuilder.NamedTestFactory() {
+        final TestSuite checkerSuite = JetTestCaseBuilder.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
-        }));
+        });
+        if (checkerSuite.countTestCases() == 0) {
+            throw new RuntimeException("didn't find any testcases under /checker/");
+        }
+        suite.addTest(checkerSuite);
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/regression/", false, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
