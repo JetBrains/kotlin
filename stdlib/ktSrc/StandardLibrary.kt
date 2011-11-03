@@ -13,10 +13,7 @@ namespace io {
   fun print(message : Float) { System.out?.print(message) }
   fun print(message : Double) { System.out?.print(message) }
 
-  fun println(message : Any?) {
-    System.out?.println(message)
-  }
-
+  fun println(message : Any?) { System.out?.println(message) }
   fun println(message : Int) { System.out?.println(message) }
   fun println(message : Long) { System.out?.println(message) }
   fun println(message : Byte) { System.out?.println(message) }
