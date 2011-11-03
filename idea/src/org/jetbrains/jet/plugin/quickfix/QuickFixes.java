@@ -71,6 +71,7 @@ public class QuickFixes {
         add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD, new JetToken[] {JetTokens.OPEN_KEYWORD}));
 
         add(Errors.VAL_WITH_SETTER, ChangeVariableMutabilityFix.createFactory());
+        add(Errors.VAL_REASSIGNMENT, ChangeVariableMutabilityFix.createFromSimpleNameFactory());
 
         add(Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
         add(Errors.USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());

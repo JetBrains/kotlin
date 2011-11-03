@@ -7,9 +7,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -55,10 +60,25 @@ public class ChangeVariableMutabilityFix extends JetIntentionAction<JetProperty>
 
     public static JetIntentionActionFactory<JetProperty> createFactory() {
         return new JetIntentionActionFactory<JetProperty>() {
+            @Nullable
             @Override
             public JetIntentionAction<JetProperty> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetProperty;
                 return new ChangeVariableMutabilityFix((JetProperty) diagnostic.getPsiElement());
+            }
+        };
+    }
+    
+    public static JetIntentionActionFactory<JetElement> createFromSimpleNameFactory() {
+        return new JetIntentionActionFactory<JetElement>() {
+            @Override
+            public JetIntentionAction<JetElement> createAction(DiagnosticWithPsiElement diagnostic) {
+                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.PROPERTY);
+                JetProperty property = diagnosticWithParameters.getParameter(DiagnosticParameters.PROPERTY);
+                if (diagnostic.getPsiElement().getContainingFile() == property.getContainingFile()) {
+                    return (JetIntentionAction) new ChangeVariableMutabilityFix(property);
+                }
+                return null;
             }
         };
     }
