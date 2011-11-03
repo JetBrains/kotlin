@@ -64,7 +64,7 @@ public class KotlinCompiler {
         String javaHome = System.getenv("JAVA_HOME");
         File rtJar;
         if (javaHome == null) {
-            rtJar = CompileEnvironment.findActiveRtJar();
+            rtJar = CompileEnvironment.findActiveRtJar(false);
 
             if(rtJar == null) {
                 System.out.println("JAVA_HOME environment variable needs to be defined");

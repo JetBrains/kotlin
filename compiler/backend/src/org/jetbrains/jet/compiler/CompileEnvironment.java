@@ -4,7 +4,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.modules.IModuleBuilder;
 import jet.modules.IModuleSetBuilder;
@@ -40,7 +42,7 @@ public class CompileEnvironment {
         myEnvironment = new JetCoreEnvironment(myRootDisposable);
     }
 
-    public void setMyErrorStream(PrintStream errorStream) {
+    public void setErrorStream(PrintStream errorStream) {
         myErrorStream = errorStream;
     }
 
@@ -86,7 +88,7 @@ public class CompileEnvironment {
         myEnvironment.addToClasspath(rtJarPath);
     }
     
-    public static File findActiveRtJar() {
+    public static File findActiveRtJar(boolean failOnError) {
         ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
         if (systemClassLoader instanceof URLClassLoader) {
             URLClassLoader loader = (URLClassLoader) systemClassLoader;
@@ -100,6 +102,17 @@ public class CompileEnvironment {
                     }
                 }
             }
+            if (failOnError) {
+                throw new CompileEnvironmentException("Could not find rt.jar in system class loader: " + StringUtil.join(loader.getURLs(), new Function<URL, String>() {
+                    @Override
+                    public String fun(URL url) {
+                        return url.toString();
+                    }
+                }, ", "));
+            }
+        }
+        else if (failOnError) {
+            throw new CompileEnvironmentException("System class loader is not an URLClassLoader: " + systemClassLoader);
         }
         return null;
     }

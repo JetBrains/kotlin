@@ -6,6 +6,8 @@ import junit.framework.TestCase;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
+import java.io.File;
+
 /**
  * @author yole
  */
@@ -24,7 +26,8 @@ public class CompileEnvironmentTest extends TestCase {
     }
 
     public void testSmoke() {
-        environment.setJavaRuntime(CompileEnvironment.findActiveRtJar());
+        final File activeRtJar = CompileEnvironment.findActiveRtJar(true);
+        environment.setJavaRuntime(activeRtJar);
         environment.initializeKotlinRuntime();
         final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";
         final IModuleSetBuilder setBuilder = environment.loadModuleScript(testDataDir + "Smoke.kts");
