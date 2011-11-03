@@ -6,3 +6,4 @@ fun box() : Boolean {
     var c = 4;
     return (a < c)
 }
+

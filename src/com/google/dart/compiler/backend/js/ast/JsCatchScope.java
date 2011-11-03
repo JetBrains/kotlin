@@ -65,7 +65,7 @@ public class JsCatchScope extends JsScope {
   }
 
   @Override
-  protected JsName findExistingNameNoRecurse(String ident) {
+  public JsName findExistingNameNoRecurse(String ident) {
     if (name.getIdent().equals(ident)) {
       return name;
     } else {

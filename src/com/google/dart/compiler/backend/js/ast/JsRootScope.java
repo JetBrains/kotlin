@@ -33,7 +33,7 @@ public final class JsRootScope extends JsScope {
   }
 
   @Override
-  protected JsName findExistingNameNoRecurse(String ident) {
+  public JsName findExistingNameNoRecurse(String ident) {
     JsName name = super.findExistingNameNoRecurse(ident);
     if (name == null) {
       if (JsReservedIdentifiers.getReservedGlobalSymbols().contains(ident)) {

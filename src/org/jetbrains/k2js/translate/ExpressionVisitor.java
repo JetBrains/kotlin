@@ -5,6 +5,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetToken;
 
@@ -39,10 +40,11 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     public JsNode visitBlockExpression(JetBlockExpression jetBlock, TranslationContext context) {
         List<JetElement> jetElements = jetBlock.getStatements();
         JsBlock jsBlock = new JsBlock();
+        TranslationContext newContext = context.newBlock();
         for (JetElement jetElement : jetElements) {
             //TODO hack alert
             JetExpression jetExpression = (JetExpression) jetElement;
-            JsNode jsNode = jetExpression.accept(this, context.newBlock());
+            JsNode jsNode = jetExpression.accept(this, newContext);
             jsBlock.addStatement(AstUtil.convertToStatement(jsNode));
         }
         assert jsBlock != null;
@@ -79,15 +81,24 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
         return jsBinaryOperation;
     }
 
+    //TODO think about recursive/non-recursive name look-up
     @Override
     @NotNull
     public JsNode visitSimpleNameExpression(JetSimpleNameExpression expression, TranslationContext context) {
         String referencedName = expression.getReferencedName();
-        if (context.enclosingScope().findExistingName(referencedName) == null) {
-            JsName name = context.enclosingScope().declareName(referencedName);
-            return name.makeRef();
+        JsName jsName = context.enclosingScope().findExistingNameNoRecurse(referencedName);
+        if (jsName != null) {
+            return jsName.makeRef();
         }
-        return context.getNamespaceQualifiedReference(context.getJSName(referencedName));
+        jsName = context.functionScope().findExistingNameNoRecurse(referencedName);
+        if (jsName != null) {
+            return context.getNamespaceQualifiedReference(jsName);
+        }
+        jsName = context.namespaceScope().findExistingNameNoRecurse(referencedName);
+        if (jsName != null) {
+            return context.getNamespaceQualifiedReference(jsName);
+        }
+        throw new AssertionError("Unindentified name " + expression.getReferencedName());
     }
 
     @Override
@@ -101,7 +112,7 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     @NotNull
     public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
         JsExpression callee = getCallee(expression, context);
-        List<JsExpression> arguments = generateArgumentList(expression.getFunctionLiteralArguments(), context);
+        List<JsExpression> arguments = generateArgumentList(expression.getValueArguments(), context);
         return AstUtil.newInvocation(callee, arguments);
     }
 
@@ -112,9 +123,10 @@ public class ExpressionVisitor extends K2JsVisitor<JsNode>  {
     }
 
     @NotNull
-    private List<JsExpression> generateArgumentList(List<JetExpression> jetArguments, TranslationContext context) {
+    private List<JsExpression> generateArgumentList(List<? extends ValueArgument> jetArguments, TranslationContext context) {
         List<JsExpression> jsArguments = new ArrayList<JsExpression>();
-        for (JetExpression jetExpression : jetArguments) {
+        for (ValueArgument argument : jetArguments) {
+            JetExpression jetExpression = argument.getArgumentExpression();
             jsArguments.add(AstUtil.convertToExpression(jetExpression.accept(this, context)));
         }
         return jsArguments;

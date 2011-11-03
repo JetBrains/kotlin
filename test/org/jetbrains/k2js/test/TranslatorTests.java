@@ -45,6 +45,8 @@ public class TranslatorTests {
             Object functionArgs[] = {};
             Function function = (Function) box;
             Object result = function.call(cx, scope, scope, functionArgs);
+            assertTrue(result instanceof Boolean);
+            assertTrue((Boolean)result == true);
             String report = "foo.box() = " + Context.toString(result);
             System.out.println(report);
 

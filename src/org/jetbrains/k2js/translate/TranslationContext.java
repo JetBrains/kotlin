@@ -25,11 +25,7 @@ public class TranslationContext {
         public Scopes(JsScope enclosing, JsScope function, JsScope namespace) {
             this.enclosingScope = enclosing;
             this.functionScope = function;
-            this.namespaceScope = function;
-        }
-
-        public Scopes(Scopes other) {
-            this(other.enclosingScope, other.functionScope, other.namespaceScope);
+            this.namespaceScope = namespace;
         }
 
         public final JsScope enclosingScope;
@@ -42,7 +38,6 @@ public class TranslationContext {
         assert program != null;
         assert bindingContext != null;
         assert scopes != null;
-        assert currentNamespace != null;
         assert type != null;
         this.program = program;
         this.bindingContext = bindingContext;
@@ -59,7 +54,6 @@ public class TranslationContext {
                 program, bindingContext, scopes, ContextType.NAMESPACE_BODY);
     }
 
-    //TODO implement correct factories
     @NotNull
     public TranslationContext newNamespace(JsName namespaceName, JsFunction namespaceDummyFunction) {
         JsScope newScope = namespaceDummyFunction.getScope();
@@ -110,6 +104,21 @@ public class TranslationContext {
     @NotNull
     JsScope enclosingScope() {
         return scopes.enclosingScope;
+    }
+
+    @NotNull
+    JsScope namespaceScope() {
+        return scopes.namespaceScope;
+    }
+
+    @NotNull
+    JsScope functionScope() {
+        return scopes.functionScope;
+    }
+
+    @NotNull
+    JsName declareLocalName(String name) {
+        return scopes.enclosingScope.declareFreshName(name);
     }
 
     @NotNull

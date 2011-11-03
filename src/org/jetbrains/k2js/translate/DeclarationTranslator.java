@@ -65,8 +65,7 @@ public class DeclarationTranslator extends AbstractTranslator {
     public final class FunctionVariableDeclaration extends State {
         @NotNull
         public JsStatement translateProperty(JetProperty declaration) {
-            String propertyName = declaration.getName();
-            JsName jsPropertyName = getJSName(propertyName);
+            JsName jsPropertyName = translationContext().declareLocalName(declaration.getName());
             JsExpression jsInitExpression = translateInitializer(declaration);
             return AstUtil.newVar(jsPropertyName, jsInitExpression);
         }
@@ -76,8 +75,9 @@ public class DeclarationTranslator extends AbstractTranslator {
     public final class NamespacePropertyDeclaration extends State {
         @NotNull
         public JsStatement translateProperty(JetProperty declaration) {
-            String propertyName = declaration.getName();
-            JsNameRef jsPropertyNameReference = translationContext().getNamespaceQualifiedReference(getJSName(propertyName));
+            JsName propertyName = translationContext().declareLocalName(declaration.getName());
+            JsNameRef jsPropertyNameReference =
+                    translationContext().getNamespaceQualifiedReference(propertyName);
             JsExpression jsInitExpression = translateInitializer(declaration);
             JsExpression result;
             if (jsInitExpression != null) {
