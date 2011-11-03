@@ -2,18 +2,18 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author ignatov
  */
 public class Field extends Node {
   final Identifier myIdentifier;
-  private HashSet<String> myModifiers;
+  private Set<String> myModifiers;
   private final Type myType;
   final Element myInitializer;
 
-  public Field(Identifier identifier, HashSet<String> modifiers, Type type, Element initializer) {
+  public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer) {
     myIdentifier = identifier;
     myModifiers = modifiers;
     myType = type;

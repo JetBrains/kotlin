@@ -2,18 +2,18 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author ignatov
  */
 public class LocalVariable extends Expression {
   private final Identifier myIdentifier;
-  private HashSet<String> myModifiersSet;
+  private Set<String> myModifiersSet;
   private final Type myType;
   private final Expression myInitializer;
 
-  public LocalVariable(Identifier identifier, HashSet<String> modifiersSet, Type type, Expression initializer) {
+  public LocalVariable(Identifier identifier, Set<String> modifiersSet, Type type, Expression initializer) {
     myIdentifier = identifier;
     myModifiersSet = modifiersSet;
     myType = type;

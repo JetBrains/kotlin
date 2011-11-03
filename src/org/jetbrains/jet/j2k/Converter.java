@@ -15,6 +15,7 @@ import org.jetbrains.jet.j2k.visitors.TypeVisitor;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ignatov
@@ -67,7 +68,7 @@ public class Converter {
   }
 
   private static Field fieldToField(PsiField field) {
-    HashSet<String> modifiers = modifiersListToModifiersSet(field.getModifierList());
+    Set<String> modifiers = modifiersListToModifiersSet(field.getModifierList());
     if (field instanceof PsiEnumConstant) // TODO: remove instanceof
       return new EnumConstant(
         new IdentifierImpl(field.getName()), // TODO
@@ -95,7 +96,7 @@ public class Converter {
   @NotNull
   private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
-    final HashSet<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
+    final Set<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
     final Type type = typeToType(method.getReturnType());
     final Block body = blockToBlock(method.getBody(), notEmpty);
     final Element params = elementToElement(method.getParameterList());
@@ -262,7 +263,7 @@ public class Converter {
     return new IdentifierImpl(identifier.getText());
   }
 
-  public static HashSet<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
+  public static Set<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {
       if (modifierList.hasModifierProperty(PsiModifier.FINAL)) modifiersSet.add(Modifier.FINAL);
