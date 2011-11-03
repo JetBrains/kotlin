@@ -652,7 +652,7 @@ public class CallResolver {
             List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
             for (JetExpression argumentExpression : argumentExpressions) {
                 ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, candidateCall.getTrace());
-                JetType type = temporaryServices.getType(scope, argumentExpression, parameterType);
+                JetType type = temporaryServices.getType(scope, argumentExpression, parameterType, dataFlowInfo);
                 if (type == null) {
                     candidateCall.argumentHasNoType();
                 }
