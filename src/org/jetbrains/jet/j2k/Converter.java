@@ -149,7 +149,6 @@ public class Converter {
       return Statement.EMPTY_STATEMENT;
     final StatementVisitor statementVisitor = new StatementVisitor();
     s.accept(statementVisitor);
-    System.out.println(s.getClass());
     return statementVisitor.getResult();
   }
 
@@ -168,7 +167,6 @@ public class Converter {
       return Expression.EMPTY_EXPRESSION;
     final ExpressionVisitor expressionVisitor = new ExpressionVisitor();
     e.accept(expressionVisitor);
-    System.out.println(e.getClass());
     return expressionVisitor.getResult();
   }
 
@@ -178,7 +176,6 @@ public class Converter {
       return Element.EMPTY_ELEMENT;
     final ElementVisitor elementVisitor = new ElementVisitor();
     e.accept(elementVisitor);
-    System.out.println(e.getClass());
     return elementVisitor.getResult();
   }
 

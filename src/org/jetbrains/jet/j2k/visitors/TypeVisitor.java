@@ -21,7 +21,6 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
 
   @Override
   public Type visitType(PsiType type) {
-    System.out.println(type.getClass()); // TODO: remove
     if (type instanceof PsiIntersectionType)
       System.out.println("&");
     return super.visitType(type);
