@@ -69,7 +69,7 @@ public class EnumTest extends JetTestCaseBase {
         "RED(23)\n" +
         "YELLOW(24)\n" +
         "BLUE(25)\n" +
-        "var code : Int\n" +
+        "private var code : Int\n" +
         "public fun getCode() : Int {\n" +
         "return code\n" +
         "}\n" +

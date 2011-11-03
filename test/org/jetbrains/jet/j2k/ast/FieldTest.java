@@ -27,4 +27,20 @@ public class FieldTest extends JetTestCaseBase {
       "val f : Foo? = Foo(1, 2)"
     );
   }
+
+  public void testPrivateField() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("private Foo f;"), "private var f : Foo?");
+  }
+
+  public void testProtectedField() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("protected Foo f;"), "protected var f : Foo?");
+  }
+
+  public void testPublicField() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("public Foo f;"), "public var f : Foo?");
+  }
+
+  public void testInternalField() throws Exception {
+    Assert.assertEquals(methodToSingleLineKotlin("Foo f;"), "var f : Foo?");
+  }
 }

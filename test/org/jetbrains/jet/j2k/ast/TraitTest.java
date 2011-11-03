@@ -36,9 +36,9 @@ public class TraitTest extends JetTestCaseBase {
         "}"
     ),
       "trait INode {\n" +
-        "val IN : String? = \"in\"\n" +
-        "val AT : String? = \"@\"\n" +
-        "val COMMA_WITH_SPACE : String? = (COMMA + SPACE)\n" +
+        "public val IN : String? = \"in\"\n" +
+        "public val AT : String? = \"@\"\n" +
+        "public val COMMA_WITH_SPACE : String? = (COMMA + SPACE)\n" +
         "}"
     );
   }
