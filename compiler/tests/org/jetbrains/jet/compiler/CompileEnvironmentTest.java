@@ -26,7 +26,7 @@ public class CompileEnvironmentTest extends TestCase {
     }
 
     public void testSmoke() {
-        final File activeRtJar = CompileEnvironment.findActiveRtJar(true);
+        final File activeRtJar = CompileEnvironment.findRtJar(true);
         environment.setJavaRuntime(activeRtJar);
         environment.initializeKotlinRuntime();
         final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";

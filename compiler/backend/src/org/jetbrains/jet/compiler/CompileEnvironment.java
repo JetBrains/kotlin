@@ -88,6 +88,34 @@ public class CompileEnvironment {
         myEnvironment.addToClasspath(rtJarPath);
     }
     
+    public static File findRtJar(boolean failOnError) {
+        String javaHome = System.getenv("JAVA_HOME");
+        File rtJar;
+        if (javaHome == null) {
+            rtJar = findActiveRtJar(failOnError);
+
+            if(rtJar == null && failOnError) {
+                throw new CompileEnvironmentException("JAVA_HOME environment variable needs to be defined");
+            }
+        }
+        else {
+            rtJar = findRtJar(javaHome);
+        }
+
+        if ((rtJar == null || !rtJar.exists()) && failOnError) {
+            throw new CompileEnvironmentException("No rt.jar found under JAVA_HOME=" + javaHome);
+        }
+        return rtJar;
+    }
+
+    private static File findRtJar(String javaHome) {
+        File rtJar = new File(javaHome, "jre/lib/rt.jar");
+        if (rtJar.exists()) {
+            return rtJar;
+        }
+        return null;
+    }
+
     public static File findActiveRtJar(boolean failOnError) {
         ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
         if (systemClassLoader instanceof URLClassLoader) {
