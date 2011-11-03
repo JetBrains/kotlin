@@ -16,7 +16,7 @@ import java.util.List;
  * @author abreslav
  */
 public abstract class JetTestCaseBuilder {
-    private static FilenameFilter emptyFilter = new FilenameFilter() {
+    public static FilenameFilter emptyFilter = new FilenameFilter() {
         @Override
         public boolean accept(File file, String name) {
             return true;
@@ -43,6 +43,11 @@ public abstract class JetTestCaseBuilder {
     @NotNull
     public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
+        appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
+        return suite;
+    }
+
+    public static void appendTestsInDirectory(String baseDataDir, String dataPath, boolean recursive, final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
         final String extensionJet = ".jet";
         final String extensionKt = ".kt";
         final FilenameFilter extensionFilter = new FilenameFilter() {
@@ -76,7 +81,7 @@ public abstract class JetTestCaseBuilder {
             List<File> subdirs = Arrays.asList(files);
             Collections.sort(subdirs);
             for (File subdir : subdirs) {
-                suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory));
+                appendTestsInDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory, suite);
             }
         }
         List<File> files = Arrays.asList(dir.listFiles(resultFilter));
@@ -87,6 +92,5 @@ public abstract class JetTestCaseBuilder {
             String extension = fileName.endsWith(extensionJet) ? extensionJet : extensionKt;
             suite.addTest(factory.createTest(dataPath, fileName.substring(0, fileName.length() - extension.length())));
         }
-        return suite;
     }
 }
