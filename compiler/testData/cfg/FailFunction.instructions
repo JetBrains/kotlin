@@ -13,7 +13,9 @@ l0:
     r(java.lang.RuntimeException())    NEXT:[jmp(error)]                         PREV:[r(RuntimeException())]
     jmp(error)                         NEXT:[<ERROR>]                            PREV:[r(java.lang.RuntimeException())]
 l1:
-    <END>                              NEXT:[]                                   PREV:[]
+    <END>                              NEXT:[<SINK>]                             PREV:[]
 error:
     <ERROR>                            NEXT:[]                                   PREV:[jmp(error)]
+sink:
+    <SINK>                             NEXT:[]                                   PREV:[<END>]
 =====================

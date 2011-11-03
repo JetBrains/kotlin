@@ -2,12 +2,14 @@
 {1}
 ---------------------
 l2:
-    <START>    NEXT:[r(1)]     PREV:[]
-    r(1)       NEXT:[<END>]    PREV:[<START>]
+    <START>    NEXT:[r(1)]      PREV:[]
+    r(1)       NEXT:[<END>]     PREV:[<START>]
 l3:
-    <END>      NEXT:[]         PREV:[r(1)]
+    <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
-    <ERROR>    NEXT:[]         PREV:[]
+    <ERROR>    NEXT:[]          PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<END>]
 =====================
 == f ==
 fun f(a : Boolean) : Unit {
@@ -41,7 +43,7 @@ l0:
     r(foo(a, 3))        NEXT:[r(genfun)]                  PREV:[r(foo)]
     r(genfun)           NEXT:[r(genfun<Any>())]           PREV:[r(foo(a, 3))]
     r(genfun<Any>())    NEXT:[df({1})]                    PREV:[r(genfun)]
-    df({1})             NEXT:[r({1})]                     PREV:[r(genfun<Any>())]
+    df({1})             NEXT:[<SINK>, r({1})]             PREV:[r(genfun<Any>())]
     r({1})              NEXT:[r(flfun)]                   PREV:[df({1})]
     r(flfun)            NEXT:[r(flfun {1})]               PREV:[r({1})]
     r(flfun {1})        NEXT:[r(3)]                       PREV:[r(flfun)]
@@ -69,16 +71,20 @@ l4:
 l5:
     r(a || false)       NEXT:[<END>]                      PREV:[jt(l5), r(false)]
 l1:
-    <END>               NEXT:[]                           PREV:[r(a || false)]
+    <END>               NEXT:[<SINK>]                     PREV:[r(a || false)]
 error:
     <ERROR>             NEXT:[]                           PREV:[]
+sink:
+    <SINK>              NEXT:[]                           PREV:[df({1}), <END>]
 l2:
-    <START>    NEXT:[r(1)]     PREV:[]
-    r(1)       NEXT:[<END>]    PREV:[<START>]
+    <START>    NEXT:[r(1)]      PREV:[]
+    r(1)       NEXT:[<END>]     PREV:[<START>]
 l3:
-    <END>      NEXT:[]         PREV:[r(1)]
+    <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
-    <ERROR>    NEXT:[]         PREV:[]
+    <ERROR>    NEXT:[]          PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<END>]
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}
@@ -87,9 +93,11 @@ l0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>          NEXT:[]               PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]               PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<END>]
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
@@ -98,9 +106,11 @@ l0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>          NEXT:[]               PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]               PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<END>]
 =====================
 == flfun ==
 fun flfun(f : fun () : Any) : Unit {}
@@ -109,7 +119,9 @@ l0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>          NEXT:[]               PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]               PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<END>]
 =====================

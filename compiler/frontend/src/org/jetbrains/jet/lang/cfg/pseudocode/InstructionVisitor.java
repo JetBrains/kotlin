@@ -8,8 +8,8 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitFunctionLiteralValue(LocalDeclarationInstruction instruction) {
-        visitReadValue(instruction);
+    public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
+        visitInstructionWithNext(instruction);
     }
 
     public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
@@ -37,6 +37,10 @@ public class InstructionVisitor {
     }
 
     public void visitSubroutineExit(SubroutineExitInstruction instruction) {
+        visitInstruction(instruction);
+    }
+
+    public void visitSubroutineSink(SubroutineSinkInstruction instruction) {
         visitInstruction(instruction);
     }
 

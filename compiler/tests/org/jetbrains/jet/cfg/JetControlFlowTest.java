@@ -123,7 +123,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             //check edges directions
             Collection<Instruction> instructions = pseudocode.getInstructions();
             for (Instruction instruction : instructions) {
-                if (!((InstructionImpl) instruction).isDead()) {
+                if (!instruction.isDead()) {
                     for (Instruction nextInstruction : instruction.getNextInstructions()) {
                         assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
                                    nextInstruction.getPreviousInstructions().contains(instruction));
@@ -170,7 +170,7 @@ public class JetControlFlowTest extends JetLiteFixture {
 
     private static String formatInstruction(Instruction instruction, int maxLength) {
         String[] parts = instruction.toString().split("\n");
-        String prefix = ((InstructionImpl)instruction).isDead() ? "*   " : "    ";
+        String prefix = instruction.isDead() ? "*   " : "    ";
         if (parts.length == 1) {
             return prefix + String.format("%1$-" + maxLength + "s", instruction);
         }
@@ -266,7 +266,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         for (final Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
                 @Override
-                public void visitFunctionLiteralValue(LocalDeclarationInstruction instruction) {
+                public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
                     printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().getInstructions().get(0)), null);

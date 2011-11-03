@@ -23,9 +23,11 @@ l5:
 l2:
     read (Unit)     NEXT:[<END>]                PREV:[jmp?(l2), jmp?(l4)]
 l1:
-    <END>           NEXT:[]                     PREV:[read (Unit)]
+    <END>           NEXT:[<SINK>]               PREV:[read (Unit)]
 error:
     <ERROR>         NEXT:[]                     PREV:[]
+sink:
+    <SINK>          NEXT:[]                     PREV:[<END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
@@ -34,7 +36,9 @@ l0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>          NEXT:[]               PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]               PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<END>]
 =====================

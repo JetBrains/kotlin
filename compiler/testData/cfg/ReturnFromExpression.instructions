@@ -12,7 +12,9 @@ l0:
 l2:
     r(false || (return false))    NEXT:[<END>]                                   PREV:[jt(l2)]
 l1:
-    <END>                         NEXT:[]                                        PREV:[ret(*) l1, r(false || (return false))]
+    <END>                         NEXT:[<SINK>]                                  PREV:[ret(*) l1, r(false || (return false))]
 error:
     <ERROR>                       NEXT:[]                                        PREV:[]
+sink:
+    <SINK>                        NEXT:[]                                        PREV:[<END>]
 =====================

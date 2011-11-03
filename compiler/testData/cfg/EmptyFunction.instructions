@@ -5,7 +5,9 @@ l0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>          NEXT:[]               PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]               PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<END>]
 =====================

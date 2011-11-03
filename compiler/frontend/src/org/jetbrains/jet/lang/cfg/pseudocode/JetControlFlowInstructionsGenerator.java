@@ -70,11 +70,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         private final Pseudocode pseudocode;
         private final Label error;
+        private final Label sink;
         private final JetElement currentSubroutine;
 
         private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement currentSubroutine) {
             this.pseudocode = new Pseudocode(scopingElement);
             this.error = pseudocode.createLabel("error");
+            this.sink = pseudocode.createLabel("sink");
             this.currentSubroutine = currentSubroutine;
         }
 
@@ -183,6 +185,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
             bindLabel(error);
             add(new SubroutineExitInstruction(subroutine, "<ERROR>"));
+            bindLabel(sink);
+            pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
             elementToBlockInfo.remove(subroutine);
             allBlocks.pop();
         }

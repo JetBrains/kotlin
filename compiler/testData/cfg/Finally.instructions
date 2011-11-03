@@ -14,9 +14,11 @@ l0:
 l2:
     r(2)        NEXT:[<END>]         PREV:[jmp?(l2), r(1)]
 l1:
-    <END>       NEXT:[]              PREV:[r(2)]
+    <END>       NEXT:[<SINK>]        PREV:[r(2)]
 error:
     <ERROR>     NEXT:[]              PREV:[]
+sink:
+    <SINK>      NEXT:[]              PREV:[<END>]
 =====================
 == t3 ==
 fun t3() {
@@ -48,9 +50,11 @@ l2:
 l4:
     r(2)           NEXT:[<END>]                PREV:[jmp?(l2), read (Unit)]
 l1:
-    <END>          NEXT:[]                     PREV:[ret l1, r(2)]
+    <END>          NEXT:[<SINK>]               PREV:[ret l1, r(2)]
 error:
     <ERROR>        NEXT:[]                     PREV:[]
+sink:
+    <SINK>         NEXT:[]                     PREV:[<END>]
 =====================
 == anonymous_0 ==
 { () =>
@@ -72,9 +76,11 @@ l5:
     read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
 l6:
-    <END>          NEXT:[]                       PREV:[ret l4, read (Unit)]
+    <END>          NEXT:[<SINK>]                 PREV:[ret l4, read (Unit)]
 error:
     <ERROR>        NEXT:[]                       PREV:[]
+sink:
+    <SINK>         NEXT:[]                       PREV:[<END>]
 =====================
 == t3 ==
 fun t3() {
@@ -91,25 +97,27 @@ fun t3() {
 }
 ---------------------
 l0:
-    <START>                 NEXT:[jmp?(l2)]                           PREV:[]
-    jmp?(l2)                NEXT:[r(2), r(1)]                         PREV:[<START>]
-    r(1)                    NEXT:[df({ () => if (2 > 3) { retu..)]    PREV:[jmp?(l2)]
+    <START>                 NEXT:[jmp?(l2)]                                   PREV:[]
+    jmp?(l2)                NEXT:[r(2), r(1)]                                 PREV:[<START>]
+    r(1)                    NEXT:[df({ () => if (2 > 3) { retu..)]            PREV:[jmp?(l2)]
     df({ () =>          
             if (2 > 3) {
               return@   
             }           
-        })                  NEXT:[r({ () => if (2 > 3) { retur..)]    PREV:[r(1)]
+        })                  NEXT:[<SINK>, r({ () => if (2 > 3) { retur..)]    PREV:[r(1)]
     r({ () =>           
             if (2 > 3) {
               return@   
             }           
-        })                  NEXT:[r(2)]                               PREV:[df({ () => if (2 > 3) { retu..)]
+        })                  NEXT:[r(2)]                                       PREV:[df({ () => if (2 > 3) { retu..)]
 l2:
-    r(2)                    NEXT:[<END>]                              PREV:[jmp?(l2), r({ () => if (2 > 3) { retur..)]
+    r(2)                    NEXT:[<END>]                                      PREV:[jmp?(l2), r({ () => if (2 > 3) { retur..)]
 l1:
-    <END>                   NEXT:[]                                   PREV:[r(2)]
+    <END>                   NEXT:[<SINK>]                                     PREV:[r(2)]
 error:
-    <ERROR>                 NEXT:[]                                   PREV:[]
+    <ERROR>                 NEXT:[]                                           PREV:[]
+sink:
+    <SINK>                  NEXT:[]                                           PREV:[df({ () => if (2 > 3) { retu..), <END>]
 l3:
     <START>        NEXT:[r(2)]                   PREV:[]
     r(2)           NEXT:[r(3)]                   PREV:[<START>]
@@ -123,9 +131,11 @@ l5:
     read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
 l6:
-    <END>          NEXT:[]                       PREV:[ret l4, read (Unit)]
+    <END>          NEXT:[<SINK>]                 PREV:[ret l4, read (Unit)]
 error:
     <ERROR>        NEXT:[]                       PREV:[]
+sink:
+    <SINK>         NEXT:[]                       PREV:[<END>]
 =====================
 == anonymous_1 ==
 { () =>
@@ -157,9 +167,11 @@ l4:
 l6:
     r(2)           NEXT:[<END>]                PREV:[jmp?(l4), read (Unit)]
 l3:
-    <END>          NEXT:[]                     PREV:[ret l3, r(2)]
+    <END>          NEXT:[<SINK>]               PREV:[ret l3, r(2)]
 error:
     <ERROR>        NEXT:[]                     PREV:[]
+sink:
+    <SINK>         NEXT:[]                     PREV:[<END>]
 =====================
 == t3 ==
 fun t3() {
@@ -176,7 +188,7 @@ fun t3() {
 }
 ---------------------
 l0:
-    <START>               NEXT:[df({ () => try { 1 if (2 > 3..)]    PREV:[]
+    <START>               NEXT:[df({ () => try { 1 if (2 > 3..)]            PREV:[]
     df({ () =>        
         try {         
           1           
@@ -186,7 +198,7 @@ l0:
         } finally {   
           2           
         }             
-      })                  NEXT:[r({ () => try { 1 if (2 > 3)..)]    PREV:[<START>]
+      })                  NEXT:[<SINK>, r({ () => try { 1 if (2 > 3)..)]    PREV:[<START>]
     r({ () =>         
         try {         
           1           
@@ -196,11 +208,13 @@ l0:
         } finally {   
           2           
         }             
-      })                  NEXT:[<END>]                              PREV:[df({ () => try { 1 if (2 > 3..)]
+      })                  NEXT:[<END>]                                      PREV:[df({ () => try { 1 if (2 > 3..)]
 l1:
-    <END>                 NEXT:[]                                   PREV:[r({ () => try { 1 if (2 > 3)..)]
+    <END>                 NEXT:[<SINK>]                                     PREV:[r({ () => try { 1 if (2 > 3)..)]
 error:
-    <ERROR>               NEXT:[]                                   PREV:[]
+    <ERROR>               NEXT:[]                                           PREV:[]
+sink:
+    <SINK>                NEXT:[]                                           PREV:[df({ () => try { 1 if (2 > 3..), <END>]
 l2:
     <START>        NEXT:[jmp?(l4)]             PREV:[]
     jmp?(l4)       NEXT:[r(2), r(1)]           PREV:[<START>]
@@ -219,9 +233,11 @@ l4:
 l6:
     r(2)           NEXT:[<END>]                PREV:[jmp?(l4), read (Unit)]
 l3:
-    <END>          NEXT:[]                     PREV:[ret l3, r(2)]
+    <END>          NEXT:[<SINK>]               PREV:[ret l3, r(2)]
 error:
     <ERROR>        NEXT:[]                     PREV:[]
+sink:
+    <SINK>         NEXT:[]                     PREV:[<END>]
 =====================
 == t3 ==
 fun t3() {
@@ -263,9 +279,11 @@ l8:
 l3:
     read (Unit)    NEXT:[<END>]                    PREV:[jf(l3), jmp(l3)]
 l1:
-    <END>          NEXT:[]                         PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]                   PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]                         PREV:[]
+sink:
+    <SINK>         NEXT:[]                         PREV:[<END>]
 =====================
 == t3 ==
 fun t3() {
@@ -308,9 +326,11 @@ l4:
 l2:
     r(2)           NEXT:[<END>]                   PREV:[jmp?(l2), r(5)]
 l1:
-    <END>          NEXT:[]                        PREV:[r(2)]
+    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
 error:
     <ERROR>        NEXT:[]                        PREV:[]
+sink:
+    <SINK>         NEXT:[]                        PREV:[<END>]
 =====================
 == t3 ==
 fun t3() {
@@ -351,9 +371,11 @@ l4:
 l2:
     r(2)           NEXT:[<END>]                   PREV:[jmp?(l2), read (Unit)]
 l1:
-    <END>          NEXT:[]                        PREV:[r(2)]
+    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
 error:
     <ERROR>        NEXT:[]                        PREV:[]
+sink:
+    <SINK>         NEXT:[]                        PREV:[<END>]
 =====================
 == t3 ==
 fun t3(a : Int) {
@@ -399,9 +421,11 @@ l8:
 l2:
     read (Unit)    NEXT:[<END>]                    PREV:[jmp?(l2), jmp?(l4)]
 l1:
-    <END>          NEXT:[]                         PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]                   PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]                         PREV:[]
+sink:
+    <SINK>         NEXT:[]                         PREV:[<END>]
 =====================
 == t3 ==
 fun t3(a : Int) {
@@ -448,9 +472,11 @@ l3:
 l2:
     r(2)           NEXT:[<END>]                   PREV:[jmp?(l2), r(5)]
 l1:
-    <END>          NEXT:[]                        PREV:[r(2)]
+    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
 error:
     <ERROR>        NEXT:[]                        PREV:[]
+sink:
+    <SINK>         NEXT:[]                        PREV:[<END>]
 =====================
 == t3 ==
 fun t3(a : Int) {
@@ -495,9 +521,11 @@ l3:
 l2:
     r(2)           NEXT:[<END>]                   PREV:[jmp?(l2), read (Unit)]
 l1:
-    <END>          NEXT:[]                        PREV:[r(2)]
+    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
 error:
     <ERROR>        NEXT:[]                        PREV:[]
+sink:
+    <SINK>         NEXT:[]                        PREV:[<END>]
 =====================
 == tf ==
 fun tf() {
@@ -520,7 +548,9 @@ l2:
     r(2)         NEXT:[ret(*) l1]     PREV:[jmp?(l2)]
     ret(*) l1    NEXT:[<END>]         PREV:[r(2)]
 l1:
-    <END>        NEXT:[]              PREV:[ret(*) l1, ret(*) l1]
+    <END>        NEXT:[<SINK>]        PREV:[ret(*) l1, ret(*) l1]
 error:
     <ERROR>      NEXT:[]              PREV:[]
+sink:
+    <SINK>       NEXT:[]              PREV:[<END>]
 =====================

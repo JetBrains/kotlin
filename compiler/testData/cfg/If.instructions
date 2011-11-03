@@ -42,9 +42,11 @@ l5:
     r(doSmth)       NEXT:[r(doSmth(r))]           PREV:[r(r)]
     r(doSmth(r))    NEXT:[<END>]                  PREV:[r(doSmth)]
 l1:
-    <END>           NEXT:[]                       PREV:[r(doSmth(r))]
+    <END>           NEXT:[<SINK>]                 PREV:[r(doSmth(r))]
 error:
     <ERROR>         NEXT:[]                       PREV:[]
+sink:
+    <SINK>          NEXT:[]                       PREV:[<END>]
 =====================
 == t2 ==
 fun t2(b: Boolean) {
@@ -81,9 +83,11 @@ l4:
     read (Unit)     NEXT:[<END>]                  PREV:[jf(l4)]
 l1:
 l5:
-    <END>           NEXT:[]                       PREV:[ret l1, ret l1, read (Unit)]
+    <END>           NEXT:[<SINK>]                 PREV:[ret l1, ret l1, read (Unit)]
 error:
     <ERROR>         NEXT:[]                       PREV:[]
+sink:
+    <SINK>          NEXT:[]                       PREV:[<END>]
 =====================
 == doSmth ==
 fun doSmth(s: String) {}
@@ -92,7 +96,9 @@ l0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
 l1:
-    <END>          NEXT:[]               PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]               PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<END>]
 =====================

@@ -59,6 +59,7 @@ public class Pseudocode {
 
     private final JetElement correspondingElement;
     private SubroutineExitInstruction exitInstruction;
+    private SubroutineSinkInstruction sinkInstruction;
     private boolean postPrecessed = false;
 
     public Pseudocode(JetElement correspondingElement) {
@@ -84,7 +85,7 @@ public class Pseudocode {
     public List<Instruction> getDeadInstructions() {
         List<Instruction> deadInstructions = Lists.newArrayList();
         for (Instruction instruction : instructions) {
-            if (((InstructionImpl)instruction).isDead()) {
+            if (instruction.isDead()) {
                 deadInstructions.add(instruction);
             }
         }
@@ -101,6 +102,12 @@ public class Pseudocode {
         assert this.exitInstruction == null;
         this.exitInstruction = exitInstruction;
     }
+    
+    public void addSinkInstruction(SubroutineSinkInstruction sinkInstruction) {
+        addInstruction(sinkInstruction);
+        assert this.sinkInstruction == null;
+        this.sinkInstruction = sinkInstruction;
+    }
 
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
@@ -111,6 +118,12 @@ public class Pseudocode {
     public SubroutineExitInstruction getExitInstruction() {
         return exitInstruction;
     }
+
+    @NotNull
+    public SubroutineSinkInstruction getSinkInstruction() {
+        return sinkInstruction;
+    }
+
 
     @NotNull
     public SubroutineEnterInstruction getEnterInstruction() {
@@ -163,13 +176,19 @@ public class Pseudocode {
                 }
 
                 @Override
-                public void visitFunctionLiteralValue(LocalDeclarationInstruction instruction) {
+                public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
                     instruction.getBody().postProcess();
-                    super.visitFunctionLiteralValue(instruction);
+                    instruction.setSink(getSinkInstruction());
+                    super.visitLocalDeclarationInstruction(instruction);
                 }
 
                 @Override
                 public void visitSubroutineExit(SubroutineExitInstruction instruction) {
+                    // Nothing
+                }
+
+                @Override
+                public void visitSubroutineSink(SubroutineSinkInstruction instruction) {
                     // Nothing
                 }
 
@@ -179,6 +198,7 @@ public class Pseudocode {
                 }
             });
         }
+        getExitInstruction().setSink(getSinkInstruction());
         removeDeadInstructions();
     }
 
@@ -188,7 +208,7 @@ public class Pseudocode {
         while (hasRemovedInstruction) {
             hasRemovedInstruction = false;
             for (Instruction instruction : instructions) {
-                if (!(instruction instanceof SubroutineEnterInstruction || instruction instanceof SubroutineExitInstruction) &&
+                if (!(instruction instanceof SubroutineEnterInstruction || instruction instanceof SubroutineExitInstruction || instruction instanceof SubroutineSinkInstruction) &&
                     instruction.getPreviousInstructions().isEmpty() && !processedInstructions.contains(instruction)) {
                     hasRemovedInstruction = true;
                     for (Instruction nextInstruction : instruction.getNextInstructions()) {

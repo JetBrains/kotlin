@@ -32,7 +32,9 @@ l0:
     r(+=)            NEXT:[w(a[10])]         PREV:[r(1)]
     w(a[10])         NEXT:[<END>]            PREV:[r(+=)]
 l1:
-    <END>            NEXT:[]                 PREV:[w(a[10])]
+    <END>            NEXT:[<SINK>]           PREV:[w(a[10])]
 error:
     <ERROR>          NEXT:[]                 PREV:[]
+sink:
+    <SINK>           NEXT:[]                 PREV:[<END>]
 =====================

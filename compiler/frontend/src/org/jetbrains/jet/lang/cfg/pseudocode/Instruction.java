@@ -20,4 +20,6 @@ public interface Instruction {
     Collection<Instruction> getNextInstructions();
 
     void accept(InstructionVisitor visitor);
+
+    boolean isDead();
 }

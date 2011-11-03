@@ -1,17 +1,22 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
 * @author abreslav
 */
-public class LocalDeclarationInstruction extends ReadValueInstruction {
+public class LocalDeclarationInstruction extends InstructionWithNext {
 
-    private Pseudocode body;
+    private final Pseudocode body;
+    private Instruction sink;
 
     public LocalDeclarationInstruction(@NotNull JetDeclaration element, Pseudocode body) {
         super(element);
@@ -22,9 +27,21 @@ public class LocalDeclarationInstruction extends ReadValueInstruction {
         return body;
     }
 
+    @NotNull
+    @Override
+    public Collection<Instruction> getNextInstructions() {
+        ArrayList<Instruction> instructions = Lists.newArrayList(sink);
+        instructions.addAll(super.getNextInstructions());
+        return instructions;
+    }
+
+    public void setSink(SubroutineSinkInstruction sink) {
+        this.sink = outgoingEdgeTo(sink);
+    }
+
     @Override
     public void accept(InstructionVisitor visitor) {
-        visitor.visitFunctionLiteralValue(this);
+        visitor.visitLocalDeclarationInstruction(this);
     }
 
     @Override

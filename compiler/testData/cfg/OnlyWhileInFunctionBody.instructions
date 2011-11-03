@@ -20,9 +20,11 @@ l4:
 l3:
     read (Unit)    NEXT:[<END>]                PREV:[jf(l3)]
 l1:
-    <END>          NEXT:[]                     PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]               PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[]                     PREV:[]
+sink:
+    <SINK>         NEXT:[]                     PREV:[<END>]
 =====================
 == dowhile ==
 fun dowhile() {
@@ -44,7 +46,9 @@ l5:
 l3:
 *   read (Unit)    NEXT:[<END>]                  PREV:[]
 l1:
-    <END>          NEXT:[]                       PREV:[ret l1]
+    <END>          NEXT:[<SINK>]                 PREV:[ret l1]
 error:
     <ERROR>        NEXT:[]                       PREV:[]
+sink:
+    <SINK>         NEXT:[]                       PREV:[<END>]
 =====================

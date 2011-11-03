@@ -4,11 +4,13 @@ class Test {
 }
 ---------------------
 l0:
-    <START>    NEXT:[<END>]    PREV:[]
+    <START>    NEXT:[<END>]     PREV:[]
 l1:
-    <END>      NEXT:[]         PREV:[<START>]
+    <END>      NEXT:[<SINK>]    PREV:[<START>]
 error:
-    <ERROR>    NEXT:[]         PREV:[]
+    <ERROR>    NEXT:[]          PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<END>]
 =====================
 == assignments ==
 fun assignments() : Unit {
@@ -63,7 +65,9 @@ l5:
     r(=)                NEXT:[w(t.x)]                        PREV:[r(t)]
     w(t.x)              NEXT:[<END>]                         PREV:[r(=)]
 l1:
-    <END>               NEXT:[]                              PREV:[w(t.x)]
+    <END>               NEXT:[<SINK>]                        PREV:[w(t.x)]
 error:
     <ERROR>             NEXT:[]                              PREV:[]
+sink:
+    <SINK>              NEXT:[]                              PREV:[<END>]
 =====================

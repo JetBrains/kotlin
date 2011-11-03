@@ -2,10 +2,12 @@
 fun short() = 1
 ---------------------
 l0:
-    <START>    NEXT:[r(1)]     PREV:[]
-    r(1)       NEXT:[<END>]    PREV:[<START>]
+    <START>    NEXT:[r(1)]      PREV:[]
+    r(1)       NEXT:[<END>]     PREV:[<START>]
 l1:
-    <END>      NEXT:[]         PREV:[r(1)]
+    <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
-    <ERROR>    NEXT:[]         PREV:[]
+    <ERROR>    NEXT:[]          PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<END>]
 =====================
