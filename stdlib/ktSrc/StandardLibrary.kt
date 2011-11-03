@@ -26,7 +26,7 @@ namespace io {
   fun println(message : Float) { System.out?.println(message) }
   fun println(message : Double) { System.out?.println(message) }
 
-  private var systemIn : InputStream? = null // Unfortunately, System.in may change
+  private var systemIn : InputStream? = null // Unfortunately, System.in may change                                                                                                    Yt pf xn
   private var stdin : BufferedReader? = null // This may introduce leaks of system.in objects...
 
   fun readLine() : String? {
