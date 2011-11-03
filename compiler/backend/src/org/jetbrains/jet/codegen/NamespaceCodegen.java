@@ -9,10 +9,14 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.objectweb.asm.*;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -20,20 +24,20 @@ import static org.objectweb.asm.Opcodes.*;
  * @author max
  */
 public class NamespaceCodegen {
-    private final ClassVisitor v;
+    private final ClassBuilder v;
     private final GenerationState state;
 
-    public NamespaceCodegen(ClassVisitor v, String fqName, GenerationState state, PsiFile sourceFile) {
+    public NamespaceCodegen(ClassBuilder v, String fqName, GenerationState state, PsiFile sourceFile) {
         this.v = v;
         this.state = state;
 
-        v.visit(V1_6,
-                ACC_PUBLIC,
-                getJVMClassName(fqName),
-                null,
-                //"jet/lang/Namespace",
-                "java/lang/Object",
-                new String[0]
+        v.defineClass(V1_6,
+                      ACC_PUBLIC,
+                      getJVMClassName(fqName),
+                      null,
+                      //"jet/lang/Namespace",
+                      "java/lang/Object",
+                      new String[0]
         );
         // TODO figure something out for a namespace that spans multiple files
         v.visitSource(sourceFile.getName(), null);
@@ -76,8 +80,8 @@ public class NamespaceCodegen {
     }
 
     private void generateStaticInitializers(JetNamespace namespace) {
-        MethodVisitor mv = v.visitMethod(ACC_PUBLIC | ACC_STATIC,
-                "<clinit>", "()V", null, null);
+        MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC,
+                                       "<clinit>", "()V", null, null);
         mv.visitCode();
 
         FrameMap frameMap = new FrameMap();
@@ -104,9 +108,9 @@ public class NamespaceCodegen {
             String jvmClassName = getJVMClassName(namespace.getName());
             for(Map.Entry<JetType,Integer> e : (context.typeInfoConstants != null ? context.typeInfoConstants : Collections.<JetType,Integer>emptyMap()).entrySet()) {
                 String fieldName = "$typeInfoCache$" + e.getValue();
-                v.visitField(ACC_PRIVATE|ACC_STATIC|ACC_SYNTHETIC, fieldName, "Ljet/typeinfo/TypeInfo;", null, null);
+                v.newField(null, ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, fieldName, "Ljet/typeinfo/TypeInfo;", null, null);
 
-                MethodVisitor mmv = v.visitMethod(ACC_PUBLIC|ACC_STATIC|ACC_SYNTHETIC, "$getCachedTypeInfo$" + e.getValue(), "()Ljet/typeinfo/TypeInfo;", null, null);
+                MethodVisitor mmv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getCachedTypeInfo$" + e.getValue(), "()Ljet/typeinfo/TypeInfo;", null, null);
                 InstructionAdapter v = new InstructionAdapter(mmv);
                 v.visitFieldInsn(GETSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");
                 v.visitInsn(DUP);
@@ -185,7 +189,7 @@ public class NamespaceCodegen {
     }
 
     public void done() {
-        v.visitEnd();
+        v.done();
     }
 
     public static String getJVMClassName(String fqName) {

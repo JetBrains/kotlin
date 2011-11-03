@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.*;
@@ -559,11 +560,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ExpressionReceiver receiver = getExpressionReceiver(facade, baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(context.scope));
         if (receiver == null) return null;
 
-        FunctionDescriptor functionDescriptor = context.resolveCallWithGivenName(
+        FunctionDescriptor functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, expression),
                 expression.getOperationSign(),
-                name,
-                receiver);
+                name);
 
         if (functionDescriptor == null) return null;
         JetType returnType = functionDescriptor.getReturnType();
@@ -705,10 +705,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public void checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @NotNull JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
         String name = "contains";
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        FunctionDescriptor functionDescriptor = context.resolveCallWithGivenName(
+        FunctionDescriptor functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
                 operationSign,
-                name, receiver);
+                name);
         JetType containsType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
         ensureBooleanResult(operationSign, name, containsType, context);
     }
@@ -752,14 +752,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ExpressionReceiver receiver = getExpressionReceiver(facade, arrayExpression, context.replaceScope(context.scope));
 
         if (receiver != null) {
-            FunctionDescriptor functionDescriptor = context.resolveCallWithGivenName(
+            ResolvedCall<FunctionDescriptor> resolvedCall = context.resolveCallWithGivenName(
                     CallMaker.makeCallWithExpressions(expression, receiver, null, expression, expression.getIndexExpressions()),
                     expression,
-                    "get",
-                    receiver);
-            if (functionDescriptor != null) {
-                context.trace.record(INDEXED_LVALUE_GET, expression, functionDescriptor);
-                return DataFlowUtils.checkType(functionDescriptor.getReturnType(), expression, contextWithExpectedType);
+                    "get"
+            );
+            if (resolvedCall != null) {
+                context.trace.record(INDEXED_LVALUE_GET, expression, resolvedCall);
+                return DataFlowUtils.checkType(resolvedCall.getResultingDescriptor().getReturnType(), expression, contextWithExpectedType);
             }
         }
         return null;
@@ -768,11 +768,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Nullable
     protected JetType getTypeForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
-        FunctionDescriptor functionDescriptor = context.replaceScope(scope).resolveCallWithGivenName(
+        FunctionDescriptor functionDescriptor = context.replaceScope(scope).resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, binaryExpression),
                 binaryExpression.getOperationReference(),
-                name,
-                receiver);
+                name
+        );
         if (functionDescriptor != null) {
             return functionDescriptor.getReturnType();
         }

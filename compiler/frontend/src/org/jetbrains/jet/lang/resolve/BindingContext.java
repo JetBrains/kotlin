@@ -36,8 +36,8 @@ public interface BindingContext {
     WritableSlice<JetExpression, CallableDescriptor> LOOP_RANGE_HAS_NEXT = Slices.createSimpleSlice("LOOP_RANGE_HAS_NEXT");
     WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_NEXT = Slices.createSimpleSlice("LOOP_RANGE_NEXT");
 
-    WritableSlice<JetExpression, FunctionDescriptor> INDEXED_LVALUE_GET = Slices.createSimpleSlice("INDEXED_LVALUE_GET");
-    WritableSlice<JetExpression, FunctionDescriptor> INDEXED_LVALUE_SET = Slices.createSimpleSlice("INDEXED_LVALUE_SET");
+    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_GET = Slices.createSimpleSlice("INDEXED_LVALUE_GET");
+    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice("INDEXED_LVALUE_SET");
 
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice("AUTOCAST");
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice("RESOLUTION_SCOPE");

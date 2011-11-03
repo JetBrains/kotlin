@@ -5,13 +5,18 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.objectweb.asm.*;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
@@ -44,7 +49,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
     }
 
     public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
-        final Pair<String, ClassVisitor> nameAndVisitor = state.forAnonymousSubclass(fun);
+        final Pair<String, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(fun);
 
         final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, fun);
 
@@ -63,32 +68,32 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         appendType(signatureWriter, funDescriptor.getReturnType(), '=');
         signatureWriter.visitEnd();
 
-        cv.visit(V1_6,
-                ACC_PUBLIC,
-                name,
-                null,
-                funClass,
-                new String[0]
+        cv.defineClass(V1_6,
+                       ACC_PUBLIC,
+                       name,
+                       null,
+                       funClass,
+                       new String[0]
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
 
 
-        generateBridge(name, funDescriptor, cv);
+        generateBridge(name, funDescriptor, fun, cv);
         captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
         final Type enclosingType = context.enclosingClassType(state.getTypeMapper());
         if (enclosingType == null) captureThis = false;
 
-        final Method constructor = generateConstructor(funClass, captureThis, funDescriptor.getReturnType());
+        final Method constructor = generateConstructor(funClass, captureThis, fun, funDescriptor.getReturnType());
 
         if (captureThis) {
-            cv.visitField(0, "this$0", enclosingType.getDescriptor(), null, null);
+            cv.newField(fun, 0, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
         if(isConst()) {
-            generateConstInstance();
+            generateConstInstance(fun);
         }
 
-        cv.visitEnd();
+        cv.done();
 
         final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor, captureThis);
         for (DeclarationDescriptor descriptor : closure.keySet()) {
@@ -98,41 +103,23 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         return answer;
     }
 
-    private void generateConstInstance() {
-        cv.visitField(ACC_PRIVATE| ACC_STATIC, "$instance", "Ljava/lang/ref/SoftReference;", null, null);
+    private void generateConstInstance(JetFunctionLiteralExpression fun) {
+        String classDescr = "L" + name + ";";
+        cv.newField(fun, ACC_PRIVATE | ACC_STATIC, "$instance", classDescr, null, null);
 
-        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC | ACC_STATIC, "$getInstance", "()L" + name + ";", null, new String[0]);
+        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()" + classDescr, null, new String[0]);
         mv.visitCode();
-        mv.visitFieldInsn(GETSTATIC, name, "$instance", "Ljava/lang/ref/SoftReference;");
+        mv.visitFieldInsn(GETSTATIC, name, "$instance", classDescr);
         mv.visitInsn(DUP);
-        Label makeNew = new Label();
-        mv.visitJumpInsn(IFNULL, makeNew);
-
-        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/ref/SoftReference", "get", "()Ljava/lang/Object;");
-        mv.visitInsn(DUP);
-
         Label ret = new Label();
-        mv.visitJumpInsn(IFNULL, makeNew);
-        mv.visitTypeInsn(CHECKCAST, name);
-        mv.visitJumpInsn(GOTO, ret);
+        mv.visitJumpInsn(IFNONNULL, ret);
 
-        mv.visitLabel(makeNew);
         mv.visitInsn(POP);
-
-        mv.visitTypeInsn(NEW, "java/lang/ref/SoftReference");
-        mv.visitInsn(DUP);
-
         mv.visitTypeInsn(NEW, name);
         mv.visitInsn(DUP);
-        mv.visitVarInsn(ASTORE, 0);
-
-        mv.visitInsn(DUP);
         mv.visitMethodInsn(INVOKESPECIAL, name, "<init>", "()V");
-
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/ref/SoftReference", "<init>", "(Ljava/lang/Object;)V");
-        mv.visitFieldInsn(PUTSTATIC, name, "$instance", "Ljava/lang/ref/SoftReference;");
-
-        mv.visitVarInsn(ALOAD, 0);
+        mv.visitInsn(DUP);
+        mv.visitFieldInsn(PUTSTATIC, name, "$instance", classDescr);
 
         mv.visitLabel(ret);
         mv.visitInsn(ARETURN);
@@ -140,21 +127,21 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         mv.visitEnd();
     }
 
-    private boolean generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
+    private boolean generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetFunctionLiteral body) {
         final ClassContext closureContext = context.intoClosure(name, this);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
         return closureContext.isThisWasUsed();
     }
 
-    private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {
+    private void generateBridge(String className, FunctionDescriptor funDescriptor, JetFunctionLiteralExpression fun, ClassBuilder cv) {
         final Method bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = invokeSignature(funDescriptor);
 
         if(bridge.getDescriptor().equals(delegate.getDescriptor()))
             return;
 
-        final MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
+        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
         mv.visitCode();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
@@ -185,7 +172,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         mv.visitEnd();
     }
 
-    private Method generateConstructor(String funClass, boolean captureThis, JetType returnType) {
+    private Method generateConstructor(String funClass, boolean captureThis, JetFunctionLiteralExpression fun, JetType returnType) {
         int argCount = closure.size();
 
         if (captureThis) {
@@ -208,7 +195,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         }
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        final MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
+        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);

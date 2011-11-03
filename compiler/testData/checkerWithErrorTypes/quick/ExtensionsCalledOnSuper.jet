@@ -16,6 +16,6 @@ class C : T {
         super.foo() // OK
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>.bar() // Error
         super.buzz() // OK, resolved to a member
-        super.<!NO_VALUE_FOR_PARAMETER!>buzz1<!>() // Resolved to a member, but error: no parameter passed where required
+        super.buzz1<!NO_VALUE_FOR_PARAMETER!>()<!> // Resolved to a member, but error: no parameter passed where required
     }
 }

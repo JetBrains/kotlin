@@ -9,17 +9,17 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.getExpressionReceiver;
 
 /**
@@ -109,7 +109,8 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
     @Override
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext context) {
         // If there's += (or similar op) defined as such, we just call it.
-        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        IElementType operationType = operationSign.getReferencedNameElementType();
         String name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
 
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(context.trace);
@@ -119,13 +120,13 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         if (assignmentOperationType == null) {
             String counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
 
+            JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
+            if (left instanceof JetArrayAccessExpression) {
+                JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
+                resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), operationSign, context);
+            }
             JetType typeForBinaryCall = getTypeForBinaryCall(scope, counterpartName, context, expression);
             if (typeForBinaryCall != null) {
-                JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
-                if (left instanceof JetArrayAccessExpression) {
-                    resolveArrayAccessToLValue((JetArrayAccessExpression) left, expression.getRight(), expression.getOperationReference(), context, true);
-                }
-
                 context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                 ExpressionTypingUtils.checkWrappingInRef(expression.getLeft(), context);
             }
@@ -138,14 +139,14 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
 
     @Override
     protected JetType visitAssignment(JetBinaryExpression expression, ExpressionTypingContext context) {
-        boolean getterNeeded = false;
         JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-            return resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context, getterNeeded);
+            return resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
         }
-        JetType leftType = facade.getType(left, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
+        JetType leftType = left == null ? ErrorUtils.createErrorType("No expression")
+                                        : facade.getType(left, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
         if (right != null) {
             JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
         }
@@ -164,30 +165,32 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         return checkExpectedType(expression, context);
     }
 
-    private JetType resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign, ExpressionTypingContext context, boolean getterNeeded) {
+    private JetType resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign, ExpressionTypingContext context) {
         ExpressionReceiver receiver = getExpressionReceiver(facade, arrayAccessExpression.getArrayExpression(), context.replaceScope(scope));
         if (receiver == null) return null;
 
         Call call = CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide);
-        FunctionDescriptor setFunction = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
+        ResolvedCall<FunctionDescriptor> setFunctionCall = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
                 call,
                 arrayAccessExpression,
-                "set", receiver);
-        if (setFunction == null) return null;
-        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunction);
+                "set");
+        if (setFunctionCall == null) return null;
+        FunctionDescriptor setFunctionDescriptor = setFunctionCall.getResultingDescriptor();
 
-        if (getterNeeded) {
-            FunctionDescriptor getFunction = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
-                    CallMaker.makeArrayGetCall(receiver, arrayAccessExpression),
-                    arrayAccessExpression,
-                    "get", receiver);
-            if (getFunction == null) return null;
-            context.trace.record(INDEXED_LVALUE_GET, arrayAccessExpression, getFunction);
-        }
-        else {
-            context.trace.record(REFERENCE_TARGET, operationSign, setFunction);
-        }
-        return DataFlowUtils.checkType(setFunction.getReturnType(), arrayAccessExpression, context);
+        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunctionCall);
+
+//        if (getterNeeded) {
+//            ResolvedCall<FunctionDescriptor> getFunctionCall = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
+//                    CallMaker.makeArrayGetCall(receiver, arrayAccessExpression),
+//                    arrayAccessExpression,
+//                    "get");
+//            if (getFunctionCall == null) return null;
+//            context.trace.record(INDEXED_LVALUE_GET, arrayAccessExpression, getFunctionCall);
+//        }
+//        else {
+//            context.trace.record(REFERENCE_TARGET, operationSign, setFunctionDescriptor);
+//        }
+        return DataFlowUtils.checkType(setFunctionDescriptor.getReturnType(), arrayAccessExpression, context);
     }
 
     @Override

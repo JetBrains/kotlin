@@ -3,7 +3,6 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.objectweb.asm.ClassVisitor;
 
 /**
  * @author max
@@ -33,7 +32,7 @@ public class ClassCodegen {
 
     private void generateImplementation(ClassContext parentContext, JetClassOrObject aClass, OwnerKind kind) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-        ClassVisitor v = state.forClassImplementation(descriptor);
+        ClassBuilder v = state.forClassImplementation(descriptor);
         new ImplementationBodyCodegen(aClass, parentContext.intoClass(null, descriptor, kind), v, state).generate();
         
         if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {

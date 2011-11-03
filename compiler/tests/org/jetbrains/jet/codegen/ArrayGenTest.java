@@ -96,4 +96,74 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         foo.invoke(null);
     }
+
+    public void testCollectionPlusAssign () throws Exception {
+        blackBoxFile("regressions/kt33.jet");
+    }
+
+    public void testArrayPlusAssign () throws Exception {
+        loadText("fun box() : Int { val s = IntArray(1); s [0] = 5; s[0] += 7; return s[0] }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertTrue((Integer)foo.invoke(null) == 12);
+    }
+
+    public void testCollectionAssignGetMultiIndex () throws Exception {
+            loadText("import java.util.ArrayList\n" +
+                         "fun box() : String { val s = ArrayList<String>(1); s.add(\"\"); s [1, -1] = \"5\"; s[2, -2] += \"7\"; return s[2,-2] }\n" +
+                         "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
+                         "fun ArrayList<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem }\n");
+            System.out.println(generateToText());
+            Method foo = generateFunction("box");
+        assertTrue(foo.invoke(null).equals("57"));
+        }
+
+    public void testArrayGetAssignMultiIndex () throws Exception {
+        loadText(
+                     "fun box() : String? { val s = Array<String>(1,{ \"\" }); s [1, -1] = \"5\"; s[2, -2] += \"7\"; return s[-3,3] }\n" +
+                     "fun Array<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
+                     "fun Array<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem\n }");
+        System.out.println(generateToText());
+        Method foo = generateFunction("box");
+        assertTrue(foo.invoke(null).equals("57"));
+    }
+
+    public void testCollectionGetMultiIndex () throws Exception {
+            loadText("import java.util.ArrayList\n" +
+                         "fun box() : String { val s = ArrayList<String>(1); s.add(\"\"); s [1, -1] = \"5\"; return s[2, -2] }\n" +
+                         "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
+                         "fun ArrayList<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem }\n");
+            System.out.println(generateToText());
+            Method foo = generateFunction("box");
+            assertTrue(foo.invoke(null).equals("5"));
+        }
+
+    public void testArrayGetMultiIndex () throws Exception {
+        loadText(
+                     "fun box() : String? { val s = Array<String>(1,{ \"\" }); s [1, -1] = \"5\"; return s[-2, 2] }\n" +
+                     "fun Array<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
+                     "fun Array<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem\n }");
+        System.out.println(generateToText());
+        Method foo = generateFunction("box");
+        assertTrue(foo.invoke(null).equals("5"));
+    }
+
+    public void testMap () throws Exception {
+        loadText(
+                     "fun box() : Int? { val s = java.util.HashMap<String,Int?>(); s[\"239\"] = 239; return s[\"239\"] }\n" +
+                     "fun java.util.HashMap<String,Int?>.set(index: String, elem: Int?) { this.put(index, elem) }");
+        System.out.println(generateToText());
+        Method foo = generateFunction("box");
+        assertTrue((Integer)foo.invoke(null) == 239);
+    }
+
+    public void testLongDouble () throws Exception {
+        loadText(
+                     "fun box() : Int { var l = IntArray(1); l[0.lng] = 4; l[0.lng] += 6; return l[0.lng];}\n" +
+                     "fun IntArray.set(index: Long, elem: Int) { this[index.int] = elem }\n" +
+                     "fun IntArray.get(index: Long) = this[index.int]");
+        System.out.println(generateToText());
+        Method foo = generateFunction("box");
+        assertTrue((Integer)foo.invoke(null) == 10);
+    }
 }

@@ -38,7 +38,7 @@ public abstract class StackValue {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
 
-    public void dupReceiver(InstructionAdapter v, int below) {
+    public void dupReceiver(InstructionAdapter v) {
     }
 
     public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
@@ -84,8 +84,8 @@ public abstract class StackValue {
         return new ArrayElement(type, unbox);
     }
 
-    public static StackValue collectionElement(Type type, CallableMethod getter, CallableMethod setter) {
-        return new CollectionElement(type, getter, setter);
+    public static StackValue collectionElement(Type type, CallableMethod getter, CallableMethod setter, FrameMap frame) {
+        return new CollectionElement(type, getter, setter, frame);
     }
 
     public static StackValue field(Type type, String owner, String name, boolean isStatic) {
@@ -456,24 +456,21 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v, int below) {
-            if (below == 1) {
-                v.dup2X1();
-            }
-            else {
-                v.dup2();   // array and index
-            }
+        public void dupReceiver(InstructionAdapter v) {
+            v.dup2();   // array and index
         }
     }
 
     private static class CollectionElement extends StackValue {
         private final CallableMethod getter;
         private final CallableMethod setter;
+        private final FrameMap frame;
 
-        public CollectionElement(Type type, CallableMethod getter, CallableMethod setter) {
+        public CollectionElement(Type type, CallableMethod getter, CallableMethod setter, FrameMap frame) {
             super(type);
             this.getter = getter;
             this.setter = setter;
+            this.frame = frame;
         }
 
         @Override
@@ -494,13 +491,70 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v, int below) {
-            if (below == 1) {
-                v.dup2X1();
-            }
-            else {
+        public void dupReceiver(InstructionAdapter v) {
+            int size = calcSize();
+            
+            if(size == 2) {
                 v.dup2();   // collection and index
             }
+            else {
+                Method signature = getter.getSignature();
+                Type[] argumentTypes = signature.getArgumentTypes();
+
+                int firstIndex = frame.enterTemp();
+                int lastIndex = firstIndex;
+                frame.leaveTemp();
+                
+                for(int i = argumentTypes.length-1; i >= 0; i--) {
+                    int sz = argumentTypes[i].getSize();
+                    frame.enterTemp(sz);
+                    lastIndex += sz;
+                    v.store(lastIndex-sz, argumentTypes[i]);
+                }
+
+                if(getter.getInvokeOpcode() != Opcodes.INVOKESTATIC) {
+                    frame.enterTemp();
+                    lastIndex++;
+                    v.store(lastIndex-1, JetTypeMapper.TYPE_OBJECT);
+                }
+
+                firstIndex = lastIndex;
+                int curIndex = lastIndex;
+                if(getter.getInvokeOpcode() != Opcodes.INVOKESTATIC) {
+                    v.load(curIndex-1, JetTypeMapper.TYPE_OBJECT);
+                    curIndex--;
+                }
+
+                for(int i = 0; i != argumentTypes.length; i++) {
+                    int sz = argumentTypes[i].getSize();
+                    v.load(curIndex-sz, argumentTypes[i]);
+                    curIndex -= sz;
+                }
+
+                curIndex = firstIndex;
+                if(getter.getInvokeOpcode() != Opcodes.INVOKESTATIC) {
+                    v.load(curIndex-1, JetTypeMapper.TYPE_OBJECT);
+                    curIndex--;
+                }
+
+                for(int i = 0; i != argumentTypes.length; i++) {
+                    int sz = argumentTypes[i].getSize();
+                    v.load(curIndex-sz, argumentTypes[i]);
+                    curIndex -= sz;
+                }
+
+                frame.leaveTemp(size);
+            }
+        }
+
+        private int calcSize() {
+            assert getter != null;
+            int size = getter.getInvokeOpcode() == Opcodes.INVOKESTATIC ? 0 : 1;
+            Method signature = getter.getSignature();
+            Type[] argumentTypes = signature.getArgumentTypes();
+            for(int i = 0; i != argumentTypes.length; ++i)
+                size += argumentTypes[i].getSize();
+            return size;
         }
     }
 
@@ -523,14 +577,9 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v, int below) {
+        public void dupReceiver(InstructionAdapter v) {
             if (!isStatic) {
-                if (below == 1) {
-                    v.dupX1();
-                }
-                else {
-                    v.dup();
-                }
+                v.dup();
             }
         }
 
@@ -557,7 +606,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v, int below) {
+        public void dupReceiver(InstructionAdapter v) {
         }
 
         @Override
@@ -607,14 +656,9 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v, int below) {
+        public void dupReceiver(InstructionAdapter v) {
             if (!isStatic) {
-                if (below == 1) {
-                    v.dupX1();
-                }
-                else {
-                    v.dup();
-                }
+                v.dup();
             }
         }
     }
@@ -716,13 +760,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v, int below) {
-            if (below == 1) {
-                v.dupX1();
-            }
-            else {
-                v.dup();
-            }
+        public void dupReceiver(InstructionAdapter v) {
+            v.dup();
         }
 
         @Override

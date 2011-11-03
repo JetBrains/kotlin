@@ -2,7 +2,6 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -18,7 +17,7 @@ public class FunctionOrClosureCodegen {
     public final GenerationState state;
     protected final ExpressionCodegen exprContext;
     protected final ClassContext context;
-    protected ClassVisitor cv = null;
+    protected ClassBuilder cv = null;
     public String name = null;
     protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
 
@@ -46,7 +45,7 @@ public class FunctionOrClosureCodegen {
             final String fieldName = "$" + (closure.size() + 1); // + "$" + vd.getName();
             StackValue innerValue = sharedVarType != null ? StackValue.fieldForSharedVar(localType, name, fieldName) : StackValue.field(type, name, fieldName, false);
 
-            cv.visitField(Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
+            cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 
             answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
             closure.put(d, answer);

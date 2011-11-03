@@ -17,7 +17,7 @@ public class ClassFileFactory {
     private final Project project;
     private final boolean isText;
     private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
-    private final Map<String, ClassVisitor> generators = new LinkedHashMap<String, ClassVisitor>();
+    private final Map<String, ClassBuilder> generators = new LinkedHashMap<String, ClassBuilder>();
     private boolean isDone = false;
     public final GenerationState state;
 
@@ -27,7 +27,7 @@ public class ClassFileFactory {
         this.state = state;
     }
 
-    ClassVisitor newVisitor(String filePath) {
+    ClassBuilder newVisitor(String filePath) {
         ClassVisitor visitor;
         if (isText) {
             visitor = new TraceClassVisitor(new PrintWriter(new StringWriter()));
@@ -36,11 +36,12 @@ public class ClassFileFactory {
             visitor = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         }
 
-        generators.put(filePath, visitor);
-        return visitor;
+        final ClassBuilder answer = new ClassBuilder(visitor);
+        generators.put(filePath, answer);
+        return answer;
     }
 
-    ClassVisitor forAnonymousSubclass(String className) {
+    ClassBuilder forAnonymousSubclass(String className) {
         return newVisitor(className + ".class");
     }
 
@@ -49,8 +50,8 @@ public class ClassFileFactory {
         String fqName = namespace.getFQName();
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
-            final ClassVisitor classVisitor = newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class");
-            codegen = new NamespaceCodegen(classVisitor, fqName, state, namespace.getContainingFile());
+            final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class");
+            codegen = new NamespaceCodegen(builder, fqName, state, namespace.getContainingFile());
             ns2codegen.put(fqName, codegen);
         }
 
@@ -71,7 +72,7 @@ public class ClassFileFactory {
 
         done();
 
-        TraceClassVisitor visitor = (TraceClassVisitor) generators.get(file);
+        TraceClassVisitor visitor = (TraceClassVisitor) generators.get(file).getVisitor();
 
         StringWriter writer = new StringWriter();
         visitor.print(new PrintWriter(writer));
@@ -84,7 +85,7 @@ public class ClassFileFactory {
 
         done();
 
-        ClassWriter visitor = (ClassWriter) generators.get(file);
+        ClassWriter visitor = (ClassWriter) generators.get(file).getVisitor();
         return visitor.toByteArray();
     }
 

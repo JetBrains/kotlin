@@ -1,10 +1,10 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -23,12 +23,12 @@ public abstract class ClassBodyCodegen {
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
-    protected final ClassVisitor v;
+    protected final ClassBuilder v;
     protected final ClassContext context;
 
     protected final List<CodeChunk> staticInitializerChunks = new ArrayList<CodeChunk>();
 
-    public ClassBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
+    public ClassBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
         this.state = state;
         descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;
@@ -46,7 +46,7 @@ public abstract class ClassBodyCodegen {
 
         generateStaticInitializer();
 
-        v.visitEnd();
+        v.done();
     }
 
     protected abstract void generateDeclaration();
@@ -62,7 +62,7 @@ public abstract class ClassBodyCodegen {
             generateDeclaration(propertyCodegen, declaration, functionCodegen);
         }
 
-        generatePrimaryConstructorProperties(propertyCodegen);
+        generatePrimaryConstructorProperties(propertyCodegen, myClass);
     }
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
@@ -82,20 +82,20 @@ public abstract class ClassBodyCodegen {
         functionCodegen.gen(declaration);
     }
 
-    private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen) {
+    private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, PsiElement origin) {
         OwnerKind kind = context.getContextKind();
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
+                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, p);
                     if (propertyDescriptor.isVar()) {
-                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
+                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, origin);
                     }
 
                     //noinspection ConstantConditions
                     if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                        v.visitField(Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
+                        v.newField(p, Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
                     }
                 }
             }
@@ -111,8 +111,8 @@ public abstract class ClassBodyCodegen {
 
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
-            final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                    "<clinit>", "()V", null, null);
+            final MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                                                 "<clinit>", "()V", null, null);
             mv.visitCode();
 
             InstructionAdapter v = new InstructionAdapter(mv);
