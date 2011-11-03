@@ -114,4 +114,32 @@ public class ClassTest extends JetTestCaseBase {
   public void testInternalClass() throws Exception {
     Assert.assertEquals(classToSingleLineKotlin("class Test {}"), "open class Test { }");
   }
+
+  public void testOneStaticMethod() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class S { static boolean staticF() { return true; } }"),
+      "class S { class object { fun staticF() : Boolean { return true } } }"
+    );
+  }
+
+  public void testTwoStaticMethod() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class S { static boolean sB() { return true; } static int sI() { return 1; } }"),
+      "class S { class object { fun sB() : Boolean { return true } fun sI() : Int { return 1 } } }"
+    );
+  }
+
+  public void testOneStaticMethodOneNonStatic() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class S { boolean sB() { return true; } static int sI() { return 1; } }"),
+      "class S { class object { fun sI() : Int { return 1 } } fun sB() : Boolean { return true } }"
+    );
+  }
+
+  public void testOneStaticFieldOneNonStatic() throws Exception {
+    Assert.assertEquals(
+      classToSingleLineKotlin("final class S { boolean sB() { return true; } static int myI = 10; }"),
+      "class S { class object { var myI : Int = 10 } fun sB() : Boolean { return true } }"
+    );
+  }
 }

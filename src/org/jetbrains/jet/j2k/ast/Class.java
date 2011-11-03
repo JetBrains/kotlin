@@ -10,10 +10,9 @@ import java.util.Set;
 /**
  * @author ignatov
  */
-public class Class extends Node {
+public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
-  private Set<String> myModifiers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
@@ -74,13 +73,6 @@ public class Class extends Node {
     return allTypes.size() == 0 ? EMPTY : SPACE + COLON + SPACE + AstUtil.joinNodes(allTypes, COMMA_WITH_SPACE);
   }
 
-  private String accessModifier() {
-    for (String m : myModifiers)
-      if (m.equals(Modifier.PUBLIC) || m.equals(Modifier.PROTECTED) || m.equals(Modifier.PRIVATE))
-        return m;
-    return EMPTY; // package local converted to internal, but we use internal by default
-  }
-
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
@@ -96,9 +88,45 @@ public class Class extends Node {
   }
 
   boolean needOpenModifier() {
-    return getKind() != Kind.TRAIT && !myModifiers.contains(Modifier.FINAL);
+    return !myModifiers.contains(Modifier.FINAL);
   }
 
+  String bodyToKotlin() {
+    return classObjectToKotlin() + N +
+      AstUtil.joinNodes(getNonStatic(myFields), N) + N +
+      AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
+      AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N;
+  }
+
+  private List<Member> getStatic(List<? extends Member> members) {
+    List<Member> result = new LinkedList<Member>();
+    for (Member m : members)
+      if (m.isStatic())
+        result.add(m);
+    return result;
+  }
+
+  private List<Member> getNonStatic(List<? extends Member> members) {
+    List<Member> result = new LinkedList<Member>();
+    for (Member m : members)
+      if (!m.isStatic())
+        result.add(m);
+    return result;
+  }
+
+  private String classObjectToKotlin() {
+    final List<Member> staticFields = getStatic(myFields);
+    final List<Member> staticMethods = getStatic(methodsExceptConstructors());
+    final List<Member> staticInnerClasses = getStatic(myInnerClasses);
+    if (staticFields.size() + staticMethods.size() + staticInnerClasses.size() > 0) {
+      return "class" + SPACE + "object" + SPACE + "{" + N +
+        AstUtil.joinNodes(staticFields, N) + N +
+        AstUtil.joinNodes(staticMethods, N) + N +
+        AstUtil.joinNodes(staticInnerClasses, N) + N +
+        "}";
+    }
+    return EMPTY;
+  }
 
   @NotNull
   @Override
@@ -107,9 +135,7 @@ public class Class extends Node {
       implementTypesToKotlin() +
       typeParameterWhereToKotlin() +
       SPACE + "{" + N +
-      AstUtil.joinNodes(myFields, N) + N +
-      AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
-      AstUtil.joinNodes(myInnerClasses, N) + N +
+      bodyToKotlin() +
       "}";
   }
 }

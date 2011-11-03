@@ -10,9 +10,8 @@ import java.util.Set;
 /**
  * @author ignatov
  */
-public class Function extends Node {
+public class Function extends Member {
   private final Identifier myName;
-  private Set<String> myModifiers;
   private final Type myType;
   private final List<Element> myTypeParameters;
   final Element myParams;
@@ -36,13 +35,6 @@ public class Function extends Node {
       if (t instanceof TypeParameter && ((TypeParameter) t).hasWhere())
         return true;
     return false;
-  }
-
-  private String accessModifier() {
-    for (String m : myModifiers)
-      if (m.equals(Modifier.PUBLIC) || m.equals(Modifier.PROTECTED) || m.equals(Modifier.PRIVATE))
-        return m;
-    return EMPTY; // package local converted to internal, but we use internal by default
   }
 
   private String typeParameterWhereToKotlin() {

@@ -10,9 +10,8 @@ import java.util.Set;
 /**
  * @author ignatov
  */
-public class Field extends Node {
+public class Field extends Member {
   final Identifier myIdentifier;
-  private Set<String> myModifiers;
   private final Type myType;
   final Element myInitializer;
 
@@ -21,13 +20,6 @@ public class Field extends Node {
     myModifiers = modifiers;
     myType = type;
     myInitializer = initializer;
-  }
-
-  private String accessModifier() {
-    for (String m : myModifiers)
-      if (m.equals(Modifier.PUBLIC) || m.equals(Modifier.PROTECTED) || m.equals(Modifier.PRIVATE))
-        return m;
-    return EMPTY; // package local converted to internal, but we use internal by default
   }
 
   String modifiersToKotlin() {
@@ -41,6 +33,11 @@ public class Field extends Node {
       return AstUtil.join(modifierList, SPACE) + SPACE;
 
     return EMPTY;
+  }
+
+  @Override
+  public boolean isStatic() {
+    return myModifiers.contains(Modifier.STATIC);
   }
 
   @NotNull

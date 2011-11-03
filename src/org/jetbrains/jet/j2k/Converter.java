@@ -268,6 +268,7 @@ public class Converter {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {
       if (modifierList.hasModifierProperty(PsiModifier.FINAL)) modifiersSet.add(Modifier.FINAL);
+      if (modifierList.hasModifierProperty(PsiModifier.STATIC)) modifiersSet.add(Modifier.STATIC);
       if (modifierList.hasModifierProperty(PsiModifier.PUBLIC)) modifiersSet.add(Modifier.PUBLIC);
       if (modifierList.hasModifierProperty(PsiModifier.PROTECTED)) modifiersSet.add(Modifier.PROTECTED);
       if (modifierList.hasModifierProperty(PsiModifier.PACKAGE_LOCAL)) modifiersSet.add(Modifier.INTERNAL);

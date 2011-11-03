@@ -72,4 +72,20 @@ public class TraitTest extends JetTestCaseBase {
   public void testInternalInterface() throws Exception {
     Assert.assertEquals(classToSingleLineKotlin("interface Test {}"), "trait Test { }");
   }
+
+  public void testInterfaceWithStaticFields() throws Exception {
+    Assert.assertEquals(classToKotlin(
+      "public interface INode {" +
+        "  public static final String IN = \"in\";" +
+        "  public static final String AT = \"@\";" +
+        "  public static final String COMMA_WITH_SPACE = COMMA + SPACE;" +
+        "}"
+    ),
+      "public trait INode {\n" +
+        "public val IN : String? = \"in\"\n" +
+        "public val AT : String? = \"@\"\n" +
+        "public val COMMA_WITH_SPACE : String? = (COMMA + SPACE)\n" +
+        "}"
+    );
+  }
 }
