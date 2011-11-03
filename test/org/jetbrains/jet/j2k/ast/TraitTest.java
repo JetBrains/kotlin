@@ -56,4 +56,20 @@ public class TraitTest extends JetTestCaseBase {
       "trait A : I0, I1, I2 { }"
     );
   }
+
+  public void testPublicInterface() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("public interface Test {}"), "public trait Test { }");
+  }
+
+  public void testProtectedInterface() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("protected interface Test {}"), "protected trait Test { }");
+  }
+
+  public void testPrivateInterface() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("private interface Test {}"), "private trait Test { }");
+  }
+
+  public void testInternalInterface() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("interface Test {}"), "trait Test { }");
+  }
 }

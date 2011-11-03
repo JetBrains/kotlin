@@ -93,7 +93,6 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
     String result = prettify(Converter.fileToFile(javaFile).toKotlin()).replaceAll("namespace \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));
     return prettify(result);
-
   }
 
   @NotNull
@@ -107,7 +106,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   }
 
   String methodToKotlin(String text) throws IOException {
-    String result = classToKotlin("class C {" + text + "}")
+    String result = classToKotlin("final class C {" + text + "}")
       .replaceAll("class C \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));
     return prettify(result);

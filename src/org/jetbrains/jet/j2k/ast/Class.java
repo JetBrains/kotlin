@@ -5,6 +5,7 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ignatov
@@ -12,6 +13,7 @@ import java.util.List;
 public class Class extends Node {
   String TYPE = "class";
   final Identifier myName;
+  private Set<String> myModifiers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
@@ -19,8 +21,10 @@ public class Class extends Node {
   final List<Function> myMethods;
   final List<Field> myFields;
 
-  public Class(Identifier name, List<Element> typeParameters, List<Type> extendsTypes, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+  public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
+               List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
     myName = name;
+    myModifiers = modifiers;
     myTypeParameters = typeParameters;
     myExtendsTypes = extendsTypes;
     myImplementsTypes = implementsTypes;
@@ -70,10 +74,36 @@ public class Class extends Node {
     return allTypes.size() == 0 ? EMPTY : SPACE + COLON + SPACE + AstUtil.joinNodes(allTypes, COMMA_WITH_SPACE);
   }
 
+  private String accessModifier() {
+    for (String m : myModifiers)
+      if (m.equals(Modifier.PUBLIC) || m.equals(Modifier.PROTECTED) || m.equals(Modifier.PRIVATE))
+        return m;
+    return EMPTY; // package local converted to internal, but we use internal by default
+  }
+
+  String modifiersToKotlin() {
+    List<String> modifierList = new LinkedList<String>();
+
+    modifierList.add(accessModifier());
+
+    if (needOpenModifier())
+      modifierList.add(Modifier.OPEN);
+
+    if (modifierList.size() > 0)
+      return AstUtil.join(modifierList, SPACE) + SPACE;
+
+    return EMPTY;
+  }
+
+  boolean needOpenModifier() {
+    return getKind() != Kind.TRAIT && !myModifiers.contains(Modifier.FINAL);
+  }
+
+
   @NotNull
   @Override
   public String toKotlin() {
-    return TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() +
+    return modifiersToKotlin() + TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() +
       implementTypesToKotlin() +
       typeParameterWhereToKotlin() +
       SPACE + "{" + N +

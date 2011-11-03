@@ -47,14 +47,21 @@ public class FileTest extends JetTestCaseBase {
 
   public void testPackageWithClass() throws Exception {
     Assert.assertEquals(
-      toSingleLine(fileToKotlin("package test; class C {}")),
+      toSingleLine(fileToKotlin("package test; final class C {}")),
       "namespace test { class C { } }"
+    );
+  }
+
+  public void testPackageWithOpenClass() throws Exception {
+    Assert.assertEquals(
+      toSingleLine(fileToKotlin("package test; class C {}")),
+      "namespace test { open class C { } }"
     );
   }
 
   public void testPackageWithClasses() throws Exception {
     Assert.assertEquals(
-      toSingleLine(fileToKotlin("class A {} class B {}")),
+      toSingleLine(fileToKotlin("final class A {} final class B {}")),
       "namespace { class A { } class B { } }");
   }
 }

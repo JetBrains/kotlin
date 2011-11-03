@@ -5,13 +5,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ignatov
  */
 public class Enum extends Class {
-  public Enum(Identifier name, List<Element> typeParameters, List<Type> extendsTypes, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
-    super(name, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+  public Enum(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+    super(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
   }
 
   @Nullable
@@ -29,11 +30,10 @@ public class Enum extends Class {
     return EMPTY;
   }
 
-
   @NotNull
   @Override
   public String toKotlin() {
-    return "enum" + SPACE + myName.toKotlin() + typeParametersToKotlin() + primaryConstructorToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
+    return modifiersToKotlin() + "enum" + SPACE + myName.toKotlin() + typeParametersToKotlin() + primaryConstructorToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
       AstUtil.joinNodes(myFields, N) + N +
       AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
       AstUtil.joinNodes(myInnerClasses, N) + N +

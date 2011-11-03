@@ -90,4 +90,28 @@ public class ClassTest extends JetTestCaseBase {
       "class A : Base, I0, I1, I2 { }"
     );
   }
+
+  public void testClass() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("class Test {}"), "open class Test { }");
+  }
+
+  public void testFinalClass() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("final class Test {}"), "class Test { }");
+  }
+
+  public void testPublicClass() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("public class Test {}"), "public open class Test { }");
+  }
+
+  public void testProtectedClass() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("protected class Test {}"), "protected open class Test { }");
+  }
+
+  public void testPivateClass() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("private class Test {}"), "private open class Test { }");
+  }
+
+  public void testInternalClass() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("class Test {}"), "open class Test { }");
+  }
 }

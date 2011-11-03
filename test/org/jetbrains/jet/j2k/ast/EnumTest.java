@@ -91,6 +91,22 @@ public class EnumTest extends JetTestCaseBase {
     );
   }
 
+  public void testPublicEnum() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("public enum Test {}"), "public enum Test { }");
+  }
+
+  public void testProtectedEnum() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("protected enum Test {}"), "protected enum Test { }");
+  }
+
+  public void testPrivateEnum() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("private enum Test {}"), "private enum Test { }");
+  }
+
+  public void testInternalEnum() throws Exception {
+    Assert.assertEquals(classToSingleLineKotlin("enum Test {}"), "enum Test { }");
+  }
+
 //  public void testTwoConstructors() throws Exception {
 //    Assert.assertEquals(
 //      classToKotlin(
