@@ -10,6 +10,7 @@ import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.modules.IModuleBuilder;
 import jet.modules.IModuleSetBuilder;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -154,7 +155,12 @@ public class CompileEnvironment {
         final String directory = new File(moduleFile).getParent();
         for (IModuleBuilder moduleBuilder : moduleSetBuilder.getModules()) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
-            writeToJar(moduleFactory, new File(directory, moduleBuilder.getModuleName() + ".jar").getPath(), null, true);
+            final String path = new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+            try {
+                writeToJar(moduleFactory, new FileOutputStream(path), null, true);
+            } catch (FileNotFoundException e) {
+                throw new CompileEnvironmentException("Invalid jar path " + path, e);
+            }
         }
     }
 
@@ -232,7 +238,7 @@ public class CompileEnvironment {
        return new File(PathManager.getResourceRoot(CompileEnvironment.class, "/org/jetbrains/jet/compiler/CompileEnvironment.class")).getParentFile().getParentFile().getParent();
     }
 
-    public static void writeToJar(ClassFileFactory factory, String jar, String mainClass, boolean includeRuntime) {
+    public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable String mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
             final Attributes mainAttributes = manifest.getMainAttributes();
@@ -241,7 +247,6 @@ public class CompileEnvironment {
             if (mainClass != null) {
                 mainAttributes.putValue("Main-Class", mainClass);
             }
-            FileOutputStream fos = new FileOutputStream(jar);
             JarOutputStream stream = new JarOutputStream(fos, manifest);
             try {
                 for (String file : factory.files()) {
@@ -327,7 +332,11 @@ public class CompileEnvironment {
 
         ClassFileFactory factory = session.generate();
         if (jar != null) {
-            writeToJar(factory, jar, mainClass, true);
+            try {
+                writeToJar(factory, new FileOutputStream(jar), mainClass, true);
+            } catch (FileNotFoundException e) {
+                throw new CompileEnvironmentException("Invalid jar path " + jar, e);
+            }
         }
         else if (outputDir != null) {
             writeToOutputDirectory(factory, outputDir);
