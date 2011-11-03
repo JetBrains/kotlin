@@ -197,26 +197,27 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     );
   }
 
+  @NotNull
+  private String getPlusOrMinus(@NotNull PsiJavaToken token) {
+    if (token.getTokenType() == JavaTokenType.PLUSPLUS) return "++";
+    if (token.getTokenType() == JavaTokenType.MINUSMINUS) return "--";
+    return "";
+  }
+
   @Override
   public void visitPostfixExpression(PsiPostfixExpression expression) {
     super.visitPostfixExpression(expression);
-
-    String op = "";
-    if (expression.getOperationSign().getTokenType() == JavaTokenType.PLUSPLUS) op = "++";
-    if (expression.getOperationSign().getTokenType() == JavaTokenType.MINUSMINUS) op = "--";
-
-    myResult = new PostfixOperator(op, expressionToExpression(expression.getOperand()));
+    myResult = new PostfixOperator(
+      getPlusOrMinus(expression.getOperationSign()),
+      expressionToExpression(expression.getOperand()));
   }
 
   @Override
   public void visitPrefixExpression(PsiPrefixExpression expression) {
     super.visitPrefixExpression(expression);
-
-    String op = "";
-    if (expression.getOperationSign().getTokenType() == JavaTokenType.PLUSPLUS) op = "++";
-    if (expression.getOperationSign().getTokenType() == JavaTokenType.MINUSMINUS) op = "--";
-
-    myResult = new PrefixOperator(op, expressionToExpression(expression.getOperand()));
+    myResult = new PrefixOperator(
+      getPlusOrMinus(expression.getOperationSign()),
+      expressionToExpression(expression.getOperand()));
   }
 
   @Override
