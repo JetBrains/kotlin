@@ -8,6 +8,7 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticParameter;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
@@ -17,6 +18,8 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import java.util.Arrays;
 
 /**
  * @author svtk
@@ -73,10 +76,12 @@ public class ChangeVariableMutabilityFix extends JetIntentionAction<JetProperty>
         return new JetIntentionActionFactory<JetElement>() {
             @Override
             public JetIntentionAction<JetElement> createAction(DiagnosticWithPsiElement diagnostic) {
-                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.PROPERTY);
-                JetProperty property = diagnosticWithParameters.getParameter(DiagnosticParameters.PROPERTY);
-                if (diagnostic.getPsiElement().getContainingFile() == property.getContainingFile()) {
-                    return (JetIntentionAction) new ChangeVariableMutabilityFix(property);
+                if (diagnostic instanceof DiagnosticWithParameters) {
+                    DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.PROPERTY);
+                    JetProperty property = diagnosticWithParameters.getParameter(DiagnosticParameters.PROPERTY);
+                    if (diagnostic.getPsiElement().getContainingFile() == property.getContainingFile()) {
+                        return (JetIntentionAction) new ChangeVariableMutabilityFix(property);
+                    }
                 }
                 return null;
             }

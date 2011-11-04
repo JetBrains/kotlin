@@ -159,3 +159,8 @@ fun nullIsNotNothing() : Unit {
     }
     fail()
 }
+
+fun returnInWhile(a: Int) {
+    do {return}
+    while (<!UNREACHABLE_CODE!>1 > a<!>)
+}

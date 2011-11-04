@@ -26,12 +26,12 @@ public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
     private ExpressionTypingServices typeInferrerServices;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
-    private final boolean isDeclaredLocally;
+    private final boolean analyzeLocalDeclaration;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean declaredLocally) {
+    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean analyzeLocalDeclaration) {
         this.context = context;
         this.flowDataTraceFactory = flowDataTraceFactory;
-        isDeclaredLocally = declaredLocally;
+        this.analyzeLocalDeclaration = analyzeLocalDeclaration;
         this.typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
     }
 
@@ -84,7 +84,7 @@ public class ControlFlowAnalyzer {
     
     private void checkClassOrObject(JetClassOrObject klass, MutableClassDescriptor classDescriptor) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, true, isDeclaredLocally);
+        flowInformationProvider.markUninitializedVariables((JetElement) klass, true, analyzeLocalDeclaration);
     }
 
     private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
@@ -138,7 +138,7 @@ public class ControlFlowAnalyzer {
                 }
             });
         }
-        flowInformationProvider.markUninitializedVariables(function.asElement(), false, isDeclaredLocally);
+        flowInformationProvider.markUninitializedVariables(function.asElement(), false, analyzeLocalDeclaration);
         if (((JetDeclaration) function).hasModifier(JetTokens.INLINE_KEYWORD)) {
             //inline functions after M1
 //                flowInformationProvider.markNotOnlyInvokedFunctionVariables(function.asElement(), functionDescriptor.getValueParameters());
