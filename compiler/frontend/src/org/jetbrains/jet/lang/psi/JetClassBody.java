@@ -1,10 +1,13 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -47,5 +50,10 @@ public class JetClassBody extends JetElement {
     @Nullable
     public JetClassObject getClassObject() {
         return (JetClassObject) findChildByType(JetNodeTypes.CLASS_OBJECT);
+    }
+
+    public PsiElement getRBrace() {
+        final ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.RBRACE));
+        return children.length == 1 ? children[0].getPsi() : null;
     }
 }

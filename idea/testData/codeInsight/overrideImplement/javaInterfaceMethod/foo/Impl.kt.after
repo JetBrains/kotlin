@@ -1,0 +1,8 @@
+import foo.Intf
+
+class Impl(): Intf {
+
+    override fun getFooBar(): String? {
+        return null
+    }
+}

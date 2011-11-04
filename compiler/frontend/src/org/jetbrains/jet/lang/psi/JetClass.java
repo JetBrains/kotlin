@@ -75,7 +75,7 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
 
     @NotNull
     public List<JetClassInitializer> getAnonymousInitializers() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        JetClassBody body = getBody();
         if (body == null) return Collections.emptyList();
 
         return body.getAnonymousInitializers();
@@ -90,15 +90,20 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
         return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
     }
 
+    @Override
+    public JetClassBody getBody() {
+        return (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+    }
+
     @Nullable
     public JetClassObject getClassObject() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        JetClassBody body = getBody();
         if (body == null) return null;
         return body.getClassObject();
     }
 
     public List<JetProperty> getProperties() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        JetClassBody body = getBody();
         if (body == null) return Collections.emptyList();
 
         return body.getProperties();

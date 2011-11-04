@@ -67,3 +67,4 @@ class ModuleBuilder(val name: String): IModuleBuilder {
     override fun getJarName(): String? = _jarName
 
 }
+}

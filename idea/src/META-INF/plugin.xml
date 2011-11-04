@@ -54,5 +54,6 @@
       <fileTypeIndentOptionsProvider implementation="org.jetbrains.jet.plugin.formatter.JetIndentOptionsProvider"/>
       <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
       <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
+      <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
   </extensions>
 </idea-plugin>

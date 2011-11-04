@@ -7,6 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 import java.io.FilenameFilter;
