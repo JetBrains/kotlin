@@ -70,9 +70,14 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     }
 
     @Override
+    public JetClassBody getBody() {
+        return (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+    }
+
+    @Override
     @NotNull
     public List<JetDeclaration> getDeclarations() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        JetClassBody body = getBody();
         if (body == null) return Collections.emptyList();
 
         return body.getDeclarations();

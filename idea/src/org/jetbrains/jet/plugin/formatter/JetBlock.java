@@ -24,6 +24,7 @@ public class JetBlock implements ASTBlock {
     private Indent myIndent;
     private Wrap myWrap;
     private CodeStyleSettings mySettings;
+    private final SpacingBuilder mySpacingBuilder;
     private List<Block> mySubBlocks;
 
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
@@ -35,12 +36,14 @@ public class JetBlock implements ASTBlock {
             JetNodeTypes.THEN,
             JetNodeTypes.ELSE);
 
-    public JetBlock(ASTNode node, Alignment alignment, Indent indent, Wrap wrap, CodeStyleSettings settings) {
+    public JetBlock(ASTNode node, Alignment alignment, Indent indent, Wrap wrap, CodeStyleSettings settings,
+                    SpacingBuilder spacingBuilder) {
         myNode = node;
         myAlignment = alignment;
         myIndent = indent;
         myWrap = wrap;
         mySettings = settings;
+        mySpacingBuilder = spacingBuilder;
     }
 
     @Override
@@ -110,7 +113,7 @@ public class JetBlock implements ASTBlock {
             childIndent = Indent.getNormalIndent();
         }
 
-        return new JetBlock(child, childAlignment, childIndent, wrap, mySettings);
+        return new JetBlock(child, childAlignment, childIndent, wrap, mySettings, mySpacingBuilder);
     }
 
     private static Indent indentIfNotBrace(ASTNode child) {
@@ -120,8 +123,8 @@ public class JetBlock implements ASTBlock {
     }
 
     @Override
-    public Spacing getSpacing(Block block, Block block1) {
-        return null;
+    public Spacing getSpacing(Block child1, Block child2) {
+        return mySpacingBuilder.getSpacing(this, child1, child2);
     }
 
     @NotNull

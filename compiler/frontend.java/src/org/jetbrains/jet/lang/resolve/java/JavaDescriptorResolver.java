@@ -189,6 +189,7 @@ public class JavaDescriptorResolver {
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 owner,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
+                false,
                 Variance.INVARIANT,
                 typeParameter.getName(),
                 typeParameter.getIndex()

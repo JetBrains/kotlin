@@ -1,0 +1,8 @@
+trait T {
+    val v : Int
+}
+
+class GC() : T {
+
+    override val v: Int = 0
+}

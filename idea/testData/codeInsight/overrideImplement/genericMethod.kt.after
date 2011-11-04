@@ -1,0 +1,10 @@
+trait G<T> {
+    fun foo(t : T) : T
+}
+
+class GC() : G<Int> {
+
+    override fun foo(t: Int): Int {
+        return 0
+    }
+}

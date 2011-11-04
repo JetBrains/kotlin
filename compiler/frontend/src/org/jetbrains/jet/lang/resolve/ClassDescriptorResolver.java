@@ -50,6 +50,7 @@ public class ClassDescriptorResolver {
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                     descriptor,
                     annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
+                    true,
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
                     index
@@ -313,6 +314,7 @@ public class ClassDescriptorResolver {
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 containingDescriptor,
                 annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
+                true,
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index

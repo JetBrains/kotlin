@@ -32,4 +32,7 @@ public interface JetClassOrObject extends PsiElement {
 
     @Nullable
     JetObjectDeclarationName getNameAsDeclaration();
+
+    @Nullable
+    JetClassBody getBody();
 }

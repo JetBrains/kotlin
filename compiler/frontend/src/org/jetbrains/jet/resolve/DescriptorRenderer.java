@@ -311,6 +311,9 @@ public class DescriptorRenderer implements Renderer {
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
+            if (!descriptor.isReified()) {
+                builder.append(renderKeyword("erased")).append(" ");
+            }
             renderName(descriptor, builder);
             if (!descriptor.getUpperBounds().isEmpty()) {
                 JetType bound = descriptor.getUpperBounds().iterator().next();

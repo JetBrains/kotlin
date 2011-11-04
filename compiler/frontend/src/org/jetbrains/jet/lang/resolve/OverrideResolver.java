@@ -103,66 +103,10 @@ public class OverrideResolver {
         }
 
         // Check if everything that must be overridden, actually is
-
-        // Everything from supertypes
-        Map<CallableMemberDescriptor, CallableMemberDescriptor> implementedWithDelegationBy = Maps.newHashMap();
-        Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
-        for (JetType supertype : classDescriptor.getSupertypes()) {
-            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
-                if (descriptor instanceof CallableMemberDescriptor) {
-                    CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
-                    inheritedFunctions.add(memberDescriptor);
-                }
-            }
-        }
-
-        // Only those actually inherited
-        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOverrides(inheritedFunctions);
-
-        // Group members with "the same" signature
-        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();
-        for (CallableMemberDescriptor one : filteredMembers) {
-            if (factoredMembers.values().contains(one)) continue;
-            for (CallableMemberDescriptor another : filteredMembers) {
-//                if (one == another) continue;
-                factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).isSuccess()
-                        || OverridingUtil.isOverridableBy(another, one).isSuccess()) {
-                    factoredMembers.put(one, another);
-                }
-            }
-        }
-
         // More than one implementation or no implementations at all
         Set<CallableMemberDescriptor> abstractNoImpl = Sets.newLinkedHashSet();
         Set<CallableMemberDescriptor> manyImpl = Sets.newLinkedHashSet();
-        for (CallableMemberDescriptor key : factoredMembers.keySet()) {
-            Collection<CallableMemberDescriptor> mutuallyOverridable = factoredMembers.get(key);
-
-            int implementationCount = 0;
-            for (CallableMemberDescriptor member : mutuallyOverridable) {
-                if (member.getModality() != Modality.ABSTRACT) {
-                    implementationCount++;
-                }
-            }
-            
-            if (implementationCount == 0) {
-                abstractNoImpl.addAll(mutuallyOverridable);
-            }
-            else if (implementationCount > 1) {
-                manyImpl.addAll(mutuallyOverridable);
-            }
-        }
-
-        // Members actually present (declared) in the class
-        Set<CallableMemberDescriptor> actuallyOverridden = Sets.newHashSet(implementedWithDelegationBy.keySet());
-        for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
-            actuallyOverridden.addAll(member.getOverriddenDescriptors());
-        }
-
-        // Those to be overridden that are actually not
-        abstractNoImpl.removeAll(actuallyOverridden);
-        manyImpl.removeAll(actuallyOverridden);
+        collectMissingImplementations(classDescriptor, abstractNoImpl, manyImpl);
 
         PsiElement nameIdentifier = klass;
         if (klass instanceof JetClass) {
@@ -214,6 +158,70 @@ public class OverrideResolver {
 //                }
 //            }
 //        }
+    }
+
+    public static void collectMissingImplementations(MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
+        // Everything from supertypes
+        Map<CallableMemberDescriptor, CallableMemberDescriptor> implementedWithDelegationBy = Maps.newHashMap();
+        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = collectSuperMethods(classDescriptor);
+
+        for (CallableMemberDescriptor key : factoredMembers.keySet()) {
+            Collection<CallableMemberDescriptor> mutuallyOverridable = factoredMembers.get(key);
+
+            int implementationCount = 0;
+            for (CallableMemberDescriptor member : mutuallyOverridable) {
+                if (member.getModality() != Modality.ABSTRACT) {
+                    implementationCount++;
+                }
+            }
+
+            if (implementationCount == 0) {
+                abstractNoImpl.addAll(mutuallyOverridable);
+            }
+            else if (implementationCount > 1) {
+                manyImpl.addAll(mutuallyOverridable);
+            }
+        }
+
+        // Members actually present (declared) in the class
+        Set<CallableMemberDescriptor> actuallyOverridden = Sets.newHashSet(implementedWithDelegationBy.keySet());
+        for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
+            actuallyOverridden.addAll(member.getOverriddenDescriptors());
+        }
+
+        // Those to be overridden that are actually not
+        abstractNoImpl.removeAll(actuallyOverridden);
+        manyImpl.removeAll(actuallyOverridden);
+    }
+
+    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
+        Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
+        for (JetType supertype : classDescriptor.getSupertypes()) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                if (descriptor instanceof CallableMemberDescriptor) {
+                    CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
+                    inheritedFunctions.add(memberDescriptor);
+                }
+            }
+        }
+
+        // Only those actually inherited
+        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOverrides(inheritedFunctions);
+
+        // Group members with "the same" signature
+        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+        for (CallableMemberDescriptor one : filteredMembers) {
+            if (factoredMembers.values().contains(one)) continue;
+            for (CallableMemberDescriptor another : filteredMembers) {
+//                if (one == another) continue;
+                factoredMembers.put(one, one);
+                if (OverridingUtil.isOverridableBy(one, another).isSuccess()
+                        || OverridingUtil.isOverridableBy(another, one).isSuccess()) {
+                    factoredMembers.put(one, another);
+                }
+            }
+        }
+        return factoredMembers;
     }
 
     private void checkOverride(CallableMemberDescriptor declared) {

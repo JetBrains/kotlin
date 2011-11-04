@@ -21,10 +21,11 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
+            boolean reified,
             @NotNull Variance variance,
             @NotNull String name,
             int index) {
-        TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, variance, name, index);
+        TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index);
         typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
         return typeParameterDescriptor;
     }
@@ -32,10 +33,11 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     public static TypeParameterDescriptor createForFurtherModification(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
+            boolean reified,
             @NotNull Variance variance,
             @NotNull String name,
             int index) {
-        return new TypeParameterDescriptor(containingDeclaration, annotations, variance, name, index);
+        return new TypeParameterDescriptor(containingDeclaration, annotations, reified, variance, name, index);
     }
 
     private final int index;
@@ -47,9 +49,12 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     private final Set<JetType> classObjectUpperBounds = Sets.newLinkedHashSet();
     private JetType classObjectBoundsAsType;
 
+    private final boolean reified;
+
     private TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
+            boolean reified,
             @NotNull Variance variance,
             @NotNull String name,
             int index) {
@@ -57,6 +62,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
         this.index = index;
         this.variance = variance;
         this.upperBounds = Sets.newLinkedHashSet();
+        this.reified = reified;
         // TODO: Should we actually pass the annotations on to the type constructor?
         this.typeConstructor = new TypeConstructorImpl(
                 this,
@@ -65,6 +71,10 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                 "&" + name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
+    }
+
+    public boolean isReified() {
+        return reified;
     }
 
     public Variance getVariance() {
@@ -162,6 +172,6 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     
     @NotNull
     public TypeParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new TypeParameterDescriptor(newOwner, Lists.newArrayList(getAnnotations()), variance, getName(), index);
+        return new TypeParameterDescriptor(newOwner, Lists.newArrayList(getAnnotations()), reified, variance, getName(), index);
     }
 }
