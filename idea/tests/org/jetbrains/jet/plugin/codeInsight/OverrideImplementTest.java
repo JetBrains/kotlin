@@ -37,10 +37,21 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     public void testJavaParameters() {
         doDirectoryTest();
     }
+    
+    public void testGenericMethod() {
+        myFixture.configureByFile("genericMethod.kt");
+        doImplement();
+        myFixture.checkResultByFile("genericMethod.kt.after");
+    }
 
     private void doDirectoryTest() {
         myFixture.copyDirectoryToProject(getTestName(true), "");
         myFixture.configureFromTempProjectFile("foo/Impl.kt");
+        doImplement();
+        myFixture.checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
+    }
+
+    private void doImplement() {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         final Set<CallableMemberDescriptor> descriptors = ImplementMethodsHandler.collectMethodsToImplement(classOrObject);
@@ -52,6 +63,5 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
                                                                                ImplementMethodsHandler.membersFromDescriptors(descriptors));
             }
         }.execute();
-        myFixture.checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
     }
 }

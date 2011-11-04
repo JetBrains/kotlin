@@ -115,12 +115,21 @@ public class ImplementMethodsHandler implements LanguageCodeInsightActionHandler
         }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();
-        if (!returnType.equals(JetStandardLibrary.getJetStandardLibrary(project).getTuple0Type())) {
+        final JetStandardLibrary stdlib = JetStandardLibrary.getJetStandardLibrary(project);
+        if (!returnType.equals(stdlib.getTuple0Type())) {
             bodyBuilder.append(": ").append(returnType.toString());
         }
         bodyBuilder.append("{");
         if (returnType.isNullable()) {
             bodyBuilder.append("return null");
+        }
+        else if (returnType.equals(stdlib.getIntType()) || returnType.equals(stdlib.getLongType()) ||
+                 returnType.equals(stdlib.getShortType()) || returnType.equals(stdlib.getByteType()) ||
+                 returnType.equals(stdlib.getFloatType()) || returnType.equals(stdlib.getDoubleType())) {
+            bodyBuilder.append("return 0");
+        }
+        else if (returnType.equals(stdlib.getBooleanType())) {
+            bodyBuilder.append("return false");
         }
         bodyBuilder.append("}");
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());
