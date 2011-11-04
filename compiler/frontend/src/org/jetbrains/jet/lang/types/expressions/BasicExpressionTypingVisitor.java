@@ -579,6 +579,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 else {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                     ExpressionTypingUtils.checkWrappingInRef(baseExpression, context);
+
+                    checkLValue(context.trace, baseExpression);
                 }
                 // TODO : Maybe returnType?
                 result = receiverType;
@@ -589,6 +591,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         return DataFlowUtils.checkType(result, expression, context);
+    }
+
+    protected void checkLValue(BindingTrace trace, JetExpression expression) {
+        checkLValue(trace, expression, false);
+    }
+
+    private void checkLValue(BindingTrace trace, JetExpression expressionWithParenthesis, boolean canBeThis) {
+        JetExpression expression = JetPsiUtil.deparenthesize(expressionWithParenthesis);
+        if (expression instanceof JetArrayAccessExpression) {
+            checkLValue(trace, ((JetArrayAccessExpression) expressionWithParenthesis).getArrayExpression(), true);
+            return;
+        }
+        if (canBeThis && expression instanceof JetThisExpression) return;
+        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
+        if (variable == null) {
+            trace.report(VARIABLE_EXPECTED.on(expression != null ? expression : expressionWithParenthesis));
+        }
     }
 
     @Override

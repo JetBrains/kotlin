@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -14,7 +15,7 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static PsiElement resolveToDeclarationPsiElement(BindingContext bindingContext, JetReferenceExpression referenceExpression) {
+    public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
         if (declarationDescriptor == null) {
             return bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression);
@@ -23,7 +24,7 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static VariableDescriptor extractVariableDescriptorIfAny(BindingContext bindingContext, JetElement element, boolean onlyReference) {
+    public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
         if (!onlyReference && (element instanceof JetProperty || element instanceof JetParameter)) {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);

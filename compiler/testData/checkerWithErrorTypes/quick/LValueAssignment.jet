@@ -56,3 +56,74 @@ fun canBe(var i: Int, val j: Int) {
 class A() {
     var a: Int = 3
 }
+
+class Test() {
+    fun testIllegalValues() {
+        <!VARIABLE_EXPECTED!>1<!> += 23
+        (<!VARIABLE_EXPECTED!>1<!> : Int) += 43
+        (@l <!VARIABLE_EXPECTED!>1<!>) += 23
+
+        <!VARIABLE_EXPECTED!>getInt()<!> += 343
+        (@f <!VARIABLE_EXPECTED!>getInt()<!>) += 343
+        (<!VARIABLE_EXPECTED!>getInt()<!> : Int) += 343
+
+        <!VARIABLE_EXPECTED!>1<!>++
+        (@r <!VARIABLE_EXPECTED!>1<!>)++
+        (<!VARIABLE_EXPECTED!>1<!> : Int)++
+
+        <!VARIABLE_EXPECTED!>getInt()<!>++
+        (@m <!VARIABLE_EXPECTED!>getInt()<!>)++
+        (<!VARIABLE_EXPECTED!>getInt()<!> : Int)++
+
+        this<!UNRESOLVED_REFERENCE!>++<!>
+
+        var s : String = "r"
+        s += "ss"
+        s += this
+        s += (@a 2)
+    }
+
+    fun testVariables() {
+        var a: Int = 34
+        val b: Int = 34
+
+        a += 34
+        (@l a) += 34
+        (a : Int) += 34
+
+        <!VAL_REASSIGNMENT!>b<!> += 34
+        (@l <!VAL_REASSIGNMENT!>b<!>) += 34
+        (<!VAL_REASSIGNMENT!>b<!> : Int) += 34
+        (<!VAL_REASSIGNMENT!>b<!>) += 3
+
+        a++
+        (@ a)++
+        (a : Int)++
+        (a)++
+    }
+
+    fun testArrays(a: Array<Int>, ab: Ab) {
+        a[3] = 4
+        a[4]++
+        a[6] += 43
+
+        <!VARIABLE_EXPECTED!>ab.getArray()<!>[54] = 23
+        <!VARIABLE_EXPECTED!>ab.getArray()<!>[54]++
+
+        (@f a)[3] = 4
+        (a : Array<Int>)[4]++
+        (<!VARIABLE_EXPECTED!>ab.getArray()<!> : Array<Int>)[54] += 43
+
+        <!UNRESOLVED_REFERENCE!>this[54]<!> = 34
+    }
+}
+
+fun Array<Int>.checkThis() {
+    this[45] = 34
+    this[352]++
+    this[35] += 234
+}
+
+abstract class Ab {
+    abstract fun getArray() : Array<Int>
+}

@@ -117,11 +117,11 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(context.trace);
         JetType assignmentOperationType = getTypeForBinaryCall(scope, name, context.replaceBindingTrace(temporaryBindingTrace), expression);
 
+        JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
         // If there isn't, we call plus (or like) and then assign
         if (assignmentOperationType == null) {
             String counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
 
-            JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
             if (left instanceof JetArrayAccessExpression) {
                 JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
                 resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), operationSign, context);
@@ -135,6 +135,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         else {
             temporaryBindingTrace.commit();
         }
+        checkLValue(context.trace, expression.getLeft());
         return checkExpectedType(expression, context);
     }
 
@@ -144,15 +145,16 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-            return resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
+            JetType resultType = resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
+            checkLValue(context.trace, arrayAccessExpression);
+            return resultType;
         }
         JetType leftType = facade.getType(expression.getLeft(), context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
         if (right != null) {
             JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
         }
-        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), left, true);
-        if (variable == null && leftType != null) { //if leftType == null, some another error has been generated
-            context.trace.report(VARIABLE_EXPECTED.on(left != null ? left : expression.getLeft()));
+        if (leftType != null) { //if leftType == null, some another error has been generated
+            checkLValue(context.trace, expression.getLeft());
         }
         if (left instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression simpleName = (JetSimpleNameExpression) left;
