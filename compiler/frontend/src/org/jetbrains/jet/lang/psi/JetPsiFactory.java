@@ -54,7 +54,7 @@ public class JetPsiFactory {
         return createProperty(project, text);
     }
 
-    private static JetProperty createProperty(Project project, String text) {
+    public static JetProperty createProperty(Project project, String text) {
         return createDeclaration(project, text, JetProperty.class);
     }
 

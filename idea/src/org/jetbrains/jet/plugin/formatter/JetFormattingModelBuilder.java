@@ -29,6 +29,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
         return new SpacingBuilder(settings)
                 .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
                 .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
+                .around(EQ).spaceIf(settings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
                 .beforeInside(BLOCK, FUN).spaceIf(settings.SPACE_BEFORE_METHOD_LBRACE)
                 .afterInside(LBRACE, BLOCK).lineBreakInCode()
                 .beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()

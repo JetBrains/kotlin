@@ -96,7 +96,30 @@ public class ImplementMethodsHandler implements LanguageCodeInsightActionHandler
                 JetElement target = overrideFunction(project, (FunctionDescriptor) descriptor);
                 body.addBefore(target, body.getRBrace());
             }
+            else if (descriptor instanceof PropertyDescriptor) {
+                JetElement target = overrideProperty(project, (PropertyDescriptor) descriptor);
+                body.addBefore(target, body.getRBrace());
+            }
         }
+    }
+
+    private static JetElement overrideProperty(Project project, PropertyDescriptor descriptor) {
+        StringBuilder bodyBuilder = new StringBuilder("override ");
+        if (descriptor.isVar()) {
+            bodyBuilder.append("var ");
+        }
+        else {
+            bodyBuilder.append("val ");
+        }
+        bodyBuilder.append(descriptor.getName()).append(": ").append(descriptor.getOutType());
+        String initializer = defaultInitializer(descriptor.getOutType(), JetStandardLibrary.getJetStandardLibrary(project));
+        if (initializer != null) {
+            bodyBuilder.append("=").append(initializer);
+        }
+        else {
+            bodyBuilder.append("= ?");
+        }
+        return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
     private static JetElement overrideFunction(Project project, FunctionDescriptor descriptor) {
@@ -120,19 +143,27 @@ public class ImplementMethodsHandler implements LanguageCodeInsightActionHandler
             bodyBuilder.append(": ").append(returnType.toString());
         }
         bodyBuilder.append("{");
+        final String initializer = defaultInitializer(returnType, stdlib);
+        if (initializer != null) {
+            bodyBuilder.append("return " ).append(initializer);
+        }
+        bodyBuilder.append("}");
+        return JetPsiFactory.createFunction(project, bodyBuilder.toString());
+    }
+
+    private static String defaultInitializer(JetType returnType, JetStandardLibrary stdlib) {
         if (returnType.isNullable()) {
-            bodyBuilder.append("return null");
+            return "null";
         }
         else if (returnType.equals(stdlib.getIntType()) || returnType.equals(stdlib.getLongType()) ||
                  returnType.equals(stdlib.getShortType()) || returnType.equals(stdlib.getByteType()) ||
                  returnType.equals(stdlib.getFloatType()) || returnType.equals(stdlib.getDoubleType())) {
-            bodyBuilder.append("return 0");
+            return "0";
         }
         else if (returnType.equals(stdlib.getBooleanType())) {
-            bodyBuilder.append("return false");
+            return "false";
         }
-        bodyBuilder.append("}");
-        return JetPsiFactory.createFunction(project, bodyBuilder.toString());
+        return null;
     }
 
     private static MemberChooser<DescriptorClassMember> showOverrideImplementChooser(Project project,

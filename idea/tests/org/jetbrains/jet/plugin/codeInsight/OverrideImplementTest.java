@@ -39,9 +39,17 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
     
     public void testGenericMethod() {
-        myFixture.configureByFile("genericMethod.kt");
+        doFileTest();
+    }
+
+    public void testProperty() {
+        doFileTest();
+    }
+
+    private void doFileTest() {
+        myFixture.configureByFile(getTestName(true) + ".kt");
         doImplement();
-        myFixture.checkResultByFile("genericMethod.kt.after");
+        myFixture.checkResultByFile(getTestName(true) + ".kt.after");
     }
 
     private void doDirectoryTest() {
