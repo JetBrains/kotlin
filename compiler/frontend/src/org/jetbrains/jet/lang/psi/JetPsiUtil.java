@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,11 +14,25 @@ import java.util.Set;
 public class JetPsiUtil {
     @Nullable
     public static JetExpression deparenthesize(@NotNull JetExpression expression) {
-        JetExpression result = expression;
-        while (result instanceof JetParenthesizedExpression) {
-            result = ((JetParenthesizedExpression) expression).getExpression();
+        if (expression instanceof JetBinaryExpressionWithTypeRHS) {
+            JetSimpleNameExpression operationSign = ((JetBinaryExpressionWithTypeRHS) expression).getOperationSign();
+            if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
+                expression = ((JetBinaryExpressionWithTypeRHS) expression).getLeft();
+            }
         }
-        return result;
+        else if (expression instanceof JetPrefixExpression) {
+            if (JetTokens.LABELS.contains(((JetPrefixExpression) expression).getOperationSign().getReferencedNameElementType())) {
+                JetExpression baseExpression = ((JetPrefixExpression) expression).getBaseExpression();
+                if (baseExpression != null) {
+                    expression = baseExpression;
+                }
+            }
+        }
+        if (expression instanceof JetParenthesizedExpression) {
+            JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
+            return innerExpression != null ? deparenthesize(innerExpression) : null;
+        }
+        return expression;
     }
 
     @NotNull

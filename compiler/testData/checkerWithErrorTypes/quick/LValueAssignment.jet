@@ -32,7 +32,27 @@ class D() {
     }
 }
 
-fun cannotBe() {
+fun cannotBe(var i: Int) {
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
     <!VARIABLE_EXPECTED!>()<!> = ();
+
+    (<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as<!> Int<!>) = 34
+    (<!VARIABLE_EXPECTED!>i is Int<!>) = false
+    <!VARIABLE_EXPECTED!>A()<!> = A()
+    <!VARIABLE_EXPECTED!>5<!> = 34
+}
+
+fun canBe(var i: Int, val j: Int) {
+    (i: Int) = 36
+    (@label i) = 34
+
+    (<!VAL_REASSIGNMENT!>j<!>: Int) = 36
+    (@label <!VAL_REASSIGNMENT!>j<!>) = 34
+
+    val a = A()
+    (@ a.a) = 3894
+}
+
+class A() {
+    var a: Int = 3
 }
