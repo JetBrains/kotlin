@@ -483,23 +483,18 @@ public class CallResolver {
             else {
                 // Explicit type arguments passed
 
-                for (JetTypeProjection typeArgument : jetTypeArguments) {
-                    if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-//                        temporaryTrace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
-                        temporaryTrace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(typeArgument));
+                List<JetType> typeArguments = new ArrayList<JetType>();
+                for (JetTypeProjection projection : jetTypeArguments) {
+                    if (projection.getProjectionKind() != JetProjectionKind.NONE) {
+                        temporaryTrace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
+                    }
+                    JetTypeReference typeReference = projection.getTypeReference();
+                    if (typeReference != null) {
+                        typeArguments.add(new TypeResolver(semanticServices, temporaryTrace, true).resolveType(scope, typeReference));
                     }
                 }
-
                 int expectedTypeArgumentCount = candidate.getTypeParameters().size();
                 if (expectedTypeArgumentCount == jetTypeArguments.size()) {
-                    List<JetType> typeArguments = new ArrayList<JetType>();
-                    for (JetTypeProjection projection : jetTypeArguments) {
-                        // TODO : check that there's no projection
-                        JetTypeReference typeReference = projection.getTypeReference();
-                        if (typeReference != null) {
-                            typeArguments.add(new TypeResolver(semanticServices, temporaryTrace, true).resolveType(scope, typeReference));
-                        }
-                    }
 
                     checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, temporaryTrace);
                     
