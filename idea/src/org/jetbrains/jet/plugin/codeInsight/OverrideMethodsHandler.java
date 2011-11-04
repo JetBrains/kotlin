@@ -4,6 +4,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,7 +16,13 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
         for (CallableMemberDescriptor member : descriptor.getCallableMembers()) {
             superMethods.removeAll(member.getOverriddenDescriptors());
         }
-        return superMethods;
+        Set<CallableMemberDescriptor> result = new HashSet<CallableMemberDescriptor>();
+        for (CallableMemberDescriptor superMethod : superMethods) {
+            if (superMethod.getModality().isOverridable()) {
+                result.add(superMethod);
+            }
+        }
+        return result;
     }
 
     protected String getChooserTitle() {
