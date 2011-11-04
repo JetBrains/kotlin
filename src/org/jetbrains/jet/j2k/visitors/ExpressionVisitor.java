@@ -85,15 +85,31 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     }
   }
 
-  private String getOperatorString(PsiJavaToken op) {
-    if (op.getTokenType() == JavaTokenType.GTGT) return "shr";
-    if (op.getTokenType() == JavaTokenType.LTLT) return "shl";
-    if (op.getTokenType() == JavaTokenType.XOR) return "xor";
-    if (op.getTokenType() == JavaTokenType.AND) return "and";
-    if (op.getTokenType() == JavaTokenType.OR) return "or";
-    if (op.getTokenType() == JavaTokenType.OR) return "or";
+  @NotNull
+  private String getOperatorString(@NotNull IElementType tokenType) {
+    if (tokenType == JavaTokenType.PLUS) return "+";
+    if (tokenType == JavaTokenType.MINUS) return "-";
+    if (tokenType == JavaTokenType.ASTERISK) return "*";
+    if (tokenType == JavaTokenType.DIV) return "/";
+    if (tokenType == JavaTokenType.PERC) return "%";
+    if (tokenType == JavaTokenType.GTGT) return "shr";
+    if (tokenType == JavaTokenType.LTLT) return "shl";
+    if (tokenType == JavaTokenType.XOR) return "xor";
+    if (tokenType == JavaTokenType.AND) return "and";
+    if (tokenType == JavaTokenType.OR) return "or";
+    if (tokenType == JavaTokenType.OR) return "or";
+    if (tokenType == JavaTokenType.GT) return ">";
+    if (tokenType == JavaTokenType.LT) return "<";
+    if (tokenType == JavaTokenType.GE) return ">=";
+    if (tokenType == JavaTokenType.LE) return "<=";
+    if (tokenType == JavaTokenType.NE) return "!=";
+    if (tokenType == JavaTokenType.ANDAND) return "&&";
+    if (tokenType == JavaTokenType.OROR) return "||";
+    if (tokenType == JavaTokenType.PLUSPLUS) return "++";
+    if (tokenType == JavaTokenType.MINUSMINUS) return "--";
 
-    return op.getText();
+    System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType.toString());
+    return "";
   }
 
   @Override
@@ -110,7 +126,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
         new BinaryExpression(
           expressionToExpression(expression.getLOperand()),
           expressionToExpression(expression.getROperand()),
-          getOperatorString(expression.getOperationSign())
+          getOperatorString(expression.getOperationSign().getTokenType())
         );
   }
 
@@ -200,27 +216,22 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     );
   }
 
-  @NotNull
-  private String getPlusOrMinus(@NotNull PsiJavaToken token) {
-    if (token.getTokenType() == JavaTokenType.PLUSPLUS) return "++";
-    if (token.getTokenType() == JavaTokenType.MINUSMINUS) return "--";
-    return "";
-  }
-
   @Override
   public void visitPostfixExpression(PsiPostfixExpression expression) {
     super.visitPostfixExpression(expression);
     myResult = new PostfixOperator(
-      getPlusOrMinus(expression.getOperationSign()),
-      expressionToExpression(expression.getOperand()));
+      getOperatorString(expression.getOperationSign().getTokenType()),
+      expressionToExpression(expression.getOperand())
+    );
   }
 
   @Override
   public void visitPrefixExpression(PsiPrefixExpression expression) {
     super.visitPrefixExpression(expression);
     myResult = new PrefixOperator(
-      getPlusOrMinus(expression.getOperationSign()),
-      expressionToExpression(expression.getOperand()));
+      getOperatorString(expression.getOperationSign().getTokenType()),
+      expressionToExpression(expression.getOperand())
+    );
   }
 
   @Override
@@ -255,5 +266,13 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitPolyadicExpression(PsiPolyadicExpression expression) {
     super.visitPolyadicExpression(expression);
+    if (expression.getOperationTokenType() != JavaTokenType.GTGTGT)
+      myResult = new PolyadicExpression(
+        expressionsToExpressionList(expression.getOperands()),
+        getOperatorString(expression.getOperationTokenType())
+      );
+    else {
+      // TODO: support GTGTGT
+    }
   }
-}
+  }

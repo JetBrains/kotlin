@@ -48,7 +48,7 @@ public class EnumTest extends JetTestCaseBase {
     );
   }
 
-  public void testFields() throws Exception {
+  public void testFieldsWithPrimaryPrivateConstructor() throws Exception {
     Assert.assertEquals(
       classToKotlin(
         "enum Color {\n" +
@@ -56,20 +56,23 @@ public class EnumTest extends JetTestCaseBase {
           "\n" +
           " private int code;\n" +
           "\n" +
-          " private Color(int c) {\n" + // TODO: private constructor, WTF?
+          " private Color(int c) {\n" +
           "   code = c;\n" +
           " }\n" +
           "\n" +
           " public int getCode() {\n" +
           "   return code;\n" +
           " }"),
-      "enum Color(c : Int) {\n" +
+      "enum Color {\n" +
         "WHITE(21)\n" +
         "BLACK(22)\n" +
         "RED(23)\n" +
         "YELLOW(24)\n" +
         "BLUE(25)\n" +
         "private var code : Int\n" +
+        "private (c : Int) {\n" +
+        "code = c\n" +
+        "}\n" +
         "public fun getCode() : Int {\n" +
         "return code\n" +
         "}\n" +
@@ -85,11 +88,11 @@ public class EnumTest extends JetTestCaseBase {
   }
 
   public void testEnumWithNameField() throws Exception {
-      Assert.assertEquals(
-        classToKotlin("enum E { I; private String name; }"),
-        "enum E {\nI\nprivate var name : String?\n}"
-      );
-    }
+    Assert.assertEquals(
+      classToKotlin("enum E { I; private String name; }"),
+      "enum E {\nI\nprivate var name : String?\n}"
+    );
+  }
 
   public void testEnumImplementsSeveralInterfaces() throws Exception {
     Assert.assertEquals(
@@ -129,19 +132,28 @@ public class EnumTest extends JetTestCaseBase {
 //      "" // TODO: will fail
 //    );
 //  }
-//
-//  public void testInterfaceImplementation() throws Exception {
-//    Assert.assertEquals(
-//      classToKotlin(
-//        "enum Color implements Runnable {\n" +
-//          " WHITE, BLACK, RED, YELLOW, BLUE;\n" +
-//          "\n" +
-//          " public void run() {\n" +
-//          "   System.out.println(\"name()=\" + name() +\n" +
-//          "       \", toString()=\" + toString());\n" +
-//          " }\n" +
-//          "}"),
-//      ""
-//    );
-//  }
+
+  public void testRunnableImplementation() throws Exception {
+    Assert.assertEquals(
+      classToKotlin(
+        "enum Color implements Runnable {\n" +
+          " WHITE, BLACK, RED, YELLOW, BLUE;\n" +
+          "\n" +
+          " public void run() {\n" +
+          "   System.out.println(\"name()=\" + name() +\n" +
+          "       \", toString()=\" + toString());\n" +
+          " }\n" +
+          "}"),
+      "enum Color : Runnable {\n" +
+        "WHITE\n" +
+        "BLACK\n" +
+        "RED\n" +
+        "YELLOW\n" +
+        "BLUE\n" +
+        "override public fun run() : Unit {\n" +
+        "System.out.println((\"name()=\" + name() + \", toString()=\" + toString()))\n" +
+        "}\n" +
+        "}"
+    );
+  }
 }
