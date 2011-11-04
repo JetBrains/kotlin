@@ -116,7 +116,7 @@ public class JetStandardClasses {
                 parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
-                        Variance.OUT_VARIANCE, "T" + j, j));
+                        true, Variance.OUT_VARIANCE, "T" + j, j));
             }
             TUPLE[i] = classDescriptor.initialize(
                     true,
@@ -159,7 +159,7 @@ public class JetStandardClasses {
             parameters.add(0, TypeParameterDescriptor.createWithDefaultBound(
                     receiverFunction,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Variance.IN_VARIANCE, "T", 0));
+                    true, Variance.IN_VARIANCE, "T", 0));
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
@@ -174,12 +174,12 @@ public class JetStandardClasses {
             parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                     function,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Variance.IN_VARIANCE, "P" + j, j + 1));
+                    true, Variance.IN_VARIANCE, "P" + j, j + 1));
         }
         parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                 function,
                 Collections.<AnnotationDescriptor>emptyList(),
-                Variance.OUT_VARIANCE, "R", parameterCount + 1));
+                true, Variance.OUT_VARIANCE, "R", parameterCount + 1));
         return parameters;
     }
 

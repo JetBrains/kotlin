@@ -40,6 +40,7 @@ public class DescriptorSubstitutor {
             TypeParameterDescriptor substituted = TypeParameterDescriptor.createForFurtherModification(
                     newContainingDeclaration,
                     descriptor.getAnnotations(),
+                    descriptor.isReified(),
                     descriptor.getVariance(),
                     descriptor.getName(),
                     descriptor.getIndex());
