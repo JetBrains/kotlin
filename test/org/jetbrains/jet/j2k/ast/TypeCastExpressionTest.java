@@ -28,32 +28,38 @@ public class TypeCastExpressionTest extends JetTestCaseBase {
     );
   }
 
-//  TODO: add support for generics and uncomment
-//  public void testSimpleGenericCast() throws Exception {
-//    Assert.assertEquals(
-//      expressionToKotlin("(List<Expression>)list"),
-//      "(list as List<Expression?>)"
-//    );
-//  }
-//
-//  public void testExtendsWildcardCast() throws Exception {
-//    Assert.assertEquals(
-//      expressionToKotlin("(List<? extends String>)list"),
-//      "(list as List<out String?>)"
-//    );
-//  }
-//
-//  public void testSuperWildcardCast() throws Exception {
-//    Assert.assertEquals(
-//      expressionToKotlin("(List<? super String>)list"),
-//      "(list as List<in String?>)"
-//    );
-//  }
-//
-//  public void testWildcardCast() throws Exception {
-//    Assert.assertEquals(
-//      expressionToKotlin("(List<?>)list"),
-//      "(list as List<*>)"
-//    );
-//  }
+  public void testPrimitiveType() throws Exception {
+    Assert.assertEquals(
+      expressionToKotlin("(int)100.00;"),
+      "(100.00 as Int)"
+    );
+  }
+
+  public void testSimpleGenericCast() throws Exception {
+    Assert.assertEquals(
+      expressionToKotlin("(List<Expression>)list"),
+      "(list as List<Expression?>?)"
+    );
+  }
+
+  public void testExtendsWildcardCast() throws Exception {
+    Assert.assertEquals(
+      expressionToKotlin("(List<? extends String>)list"),
+      "(list as List<out String?>?)"
+    );
+  }
+
+  public void testSuperWildcardCast() throws Exception {
+    Assert.assertEquals(
+      expressionToKotlin("(List<? super String>)list"),
+      "(list as List<in String?>?)"
+    );
+  }
+
+  public void testWildcardCast() throws Exception {
+    Assert.assertEquals(
+      expressionToKotlin("(List<?>)list"),
+      "(list as List<*>?)"
+    );
+  }
 }
