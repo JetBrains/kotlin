@@ -40,7 +40,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   }
 
   private static Sdk jdkFromIdeaHome() {
-    return new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
+    return new JavaSdkImpl().createJdk("JDK", "jre", true);
   }
 
   @Override

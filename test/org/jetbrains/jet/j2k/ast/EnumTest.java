@@ -41,7 +41,7 @@ public class EnumTest extends JetTestCaseBase {
         "RED\n" +
         "YELLOW\n" +
         "BLUE\n" +
-        "fun toString() : String? {\n" +
+        "override fun toString() : String? {\n" +
         "return \"COLOR\"\n" +
         "}\n" +
         "}"
@@ -83,6 +83,13 @@ public class EnumTest extends JetTestCaseBase {
       "enum A : I { }"
     );
   }
+
+  public void testEnumWithNameField() throws Exception {
+      Assert.assertEquals(
+        classToKotlin("enum E { I; private String name; }"),
+        "enum E {\nI\nprivate var name : String?\n}"
+      );
+    }
 
   public void testEnumImplementsSeveralInterfaces() throws Exception {
     Assert.assertEquals(

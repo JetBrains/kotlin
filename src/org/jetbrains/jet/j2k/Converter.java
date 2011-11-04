@@ -56,8 +56,29 @@ public class Converter {
     if (psiClass.isInterface())
       return new Trait(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
     if (psiClass.isEnum())
-      return new Enum(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+      return new Enum(name, modifiers, typeParameters, new LinkedList<Type>(), implementsTypes, innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
     return new Class(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+  }
+
+  // TODO: hack for enums
+  private static List<Field> fieldsToFieldListForEnums(PsiField[] fields) {
+    List<Field> result = new LinkedList<Field>();
+    for (PsiField f : fields) {
+      if ((f.getName().equals("ordinal")
+        && f.getType().getCanonicalText().equals("int")
+        && f.hasModifierProperty(PsiModifier.PRIVATE)
+        && f.hasModifierProperty(PsiModifier.FINAL)
+      ) ||
+        (f.getName().equals("name")
+          && f.getType().getCanonicalText().equals("java.lang.String")
+          && f.hasModifierProperty(PsiModifier.PRIVATE)
+          && f.hasModifierProperty(PsiModifier.FINAL)
+        ))
+        continue;
+
+      result.add(fieldToField(f));
+    }
+    return result;
   }
 
   private static List<Field> fieldsToFieldList(PsiField[] fields) {
