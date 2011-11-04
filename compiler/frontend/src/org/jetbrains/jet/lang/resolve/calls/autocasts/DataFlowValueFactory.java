@@ -101,20 +101,6 @@ public class DataFlowValueFactory {
         return Pair.create(null, false);
     }
 
-    @Nullable
-    public static VariableDescriptor getVariableDescriptorFromSimpleName(@NotNull BindingContext bindingContext, @NotNull JetExpression expression) {
-        JetExpression receiver = JetPsiUtil.deparenthesize(expression);
-        VariableDescriptor variableDescriptor = null;
-        if (receiver instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) receiver;
-            DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, nameExpression);
-            if (declarationDescriptor instanceof VariableDescriptor) {
-                variableDescriptor = (VariableDescriptor) declarationDescriptor;
-            }
-        }
-        return variableDescriptor;
-    }
-
     public static boolean isStableVariable(@NotNull VariableDescriptor variableDescriptor) {
         if (variableDescriptor.isVar()) return false;
         if (variableDescriptor instanceof PropertyDescriptor) {

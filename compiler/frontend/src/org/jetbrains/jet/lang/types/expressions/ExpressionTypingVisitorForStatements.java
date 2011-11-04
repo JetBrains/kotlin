@@ -146,8 +146,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
             return resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
         }
-        JetType leftType = left == null ? ErrorUtils.createErrorType("No expression")
-                                        : facade.getType(left, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
+        JetType leftType = facade.getType(expression.getLeft(), context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
         if (right != null) {
             JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
         }

@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -102,7 +103,7 @@ public class ExpressionTypingUtils {
     public static void checkWrappingInRef(JetExpression expression, ExpressionTypingContext context) {
         if (!(expression instanceof JetSimpleNameExpression)) return;
         JetSimpleNameExpression simpleName = (JetSimpleNameExpression) expression;
-        VariableDescriptor variable = DataFlowValueFactory.getVariableDescriptorFromSimpleName(context.trace.getBindingContext(), simpleName);
+        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), simpleName, true);
         if (variable != null) {
             DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
             if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {

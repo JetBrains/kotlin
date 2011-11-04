@@ -13,6 +13,7 @@ public class BindingContextUtils {
     private BindingContextUtils() {
     }
 
+    @Nullable
     public static PsiElement resolveToDeclarationPsiElement(BindingContext bindingContext, JetReferenceExpression referenceExpression) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
         if (declarationDescriptor == null) {
