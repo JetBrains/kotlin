@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -149,6 +150,10 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
                                         : facade.getType(left, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope));
         if (right != null) {
             JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
+        }
+        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), left, true);
+        if (variable == null && leftType != null) { //if leftType == null, some another error has been generated
+            context.trace.report(VARIABLE_EXPECTED.on(left != null ? left : expression.getLeft()));
         }
         if (left instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression simpleName = (JetSimpleNameExpression) left;

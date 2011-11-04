@@ -143,17 +143,18 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
-    PsiElementOnlyDiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetProperty[]> VAL_REASSIGNMENT = new PsiElementOnlyDiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetProperty[]>(ERROR, "Val can not be reassigned", NAME) {
+    PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]> VAL_REASSIGNMENT = new PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]>(ERROR, "Val can not be reassigned", NAME) {
         @NotNull
         @Override
-        public DiagnosticWithPsiElement<JetSimpleNameExpression> on(@NotNull JetSimpleNameExpression elementToBlame, @NotNull ASTNode nodeToMark, @NotNull DeclarationDescriptor declarationDescriptor, @NotNull JetProperty[] property) {
-            DiagnosticWithPsiElement<JetSimpleNameExpression> diagnostic = super.on(elementToBlame, nodeToMark, declarationDescriptor, property);
+        public DiagnosticWithPsiElement<JetExpression> on(@NotNull JetExpression elementToBlame, @NotNull ASTNode nodeToMark, @NotNull DeclarationDescriptor declarationDescriptor, @NotNull JetProperty[] property) {
+            DiagnosticWithPsiElement<JetExpression> diagnostic = super.on(elementToBlame, nodeToMark, declarationDescriptor, property);
             if (property.length == 1) {
                 return diagnostic.add(DiagnosticParameters.PROPERTY, property[0]);
             }
             return diagnostic;
         }
     };
+    SimplePsiElementOnlyDiagnosticFactory<JetExpression> VARIABLE_EXPECTED = new SimplePsiElementOnlyDiagnosticFactory<JetExpression>(ERROR, "Variable expected");
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Initialization using backing field required", NAME);
 

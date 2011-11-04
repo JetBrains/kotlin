@@ -1,0 +1,38 @@
+namespace lvalue_assignment
+
+open class B() {
+    var b: Int = 2
+    val c: Int = 34
+}
+
+class C() : B() {
+    var x = 4
+    fun foo(c: C) {
+        this.x = 34
+        this.b = 123
+        super.b = 23
+        <!VAL_REASSIGNMENT!>this.c<!> = 34
+        <!VAL_REASSIGNMENT!>super.c<!> = 3535
+
+        <!VARIABLE_EXPECTED!>getInt()<!> = 12
+    }
+
+    fun foo(c: C) {
+        <!VARIABLE_EXPECTED!>this<!> = c  //should be an error
+    }
+}
+
+fun getInt() = 0
+
+class D() {
+    class B() {
+        fun foo() {
+            <!VARIABLE_EXPECTED!>this@D<!> = D()
+        }
+    }
+}
+
+fun cannotBe() {
+    <!UNRESOLVED_REFERENCE!>z<!> = 30;
+    <!VARIABLE_EXPECTED!>()<!> = ();
+}
