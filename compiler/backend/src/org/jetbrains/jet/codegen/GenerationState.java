@@ -28,10 +28,10 @@ public class GenerationState {
     private final JetStandardLibrary standardLibrary;
     private final IntrinsicMethods intrinsics;
 
-    public GenerationState(Project project, boolean text) {
+    public GenerationState(Project project, ClassBuilderFactory builderFactory) {
         this.project = project;
         this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
-        this.factory = new ClassFileFactory(project, text, this);
+        this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
     }
 
