@@ -13,13 +13,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -105,9 +103,21 @@ public class ImplementMethodsHandler implements LanguageCodeInsightActionHandler
         StringBuilder bodyBuilder = new StringBuilder("override fun ");
         bodyBuilder.append(descriptor.getName());
         bodyBuilder.append("(");
+        boolean first = true;
+        for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
+            if (!first) {
+                bodyBuilder.append(",");
+            }
+            first = false;
+            bodyBuilder.append(parameterDescriptor.getName());
+            bodyBuilder.append(": ");
+            bodyBuilder.append(parameterDescriptor.getOutType().toString());
+        }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();
-        bodyBuilder.append(": ").append(returnType.toString());
+        if (!returnType.equals(JetStandardLibrary.getJetStandardLibrary(project).getTuple0Type())) {
+            bodyBuilder.append(": ").append(returnType.toString());
+        }
         bodyBuilder.append("{");
         if (returnType.isNullable()) {
             bodyBuilder.append("return null");

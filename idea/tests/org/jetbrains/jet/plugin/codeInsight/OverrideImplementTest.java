@@ -31,7 +31,15 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testJavaInterfaceMethod() {
-        myFixture.copyDirectoryToProject("javaInterfaceMethod", "");
+        doDirectoryTest();
+    }
+
+    public void testJavaParameters() {
+        doDirectoryTest();
+    }
+
+    private void doDirectoryTest() {
+        myFixture.copyDirectoryToProject(getTestName(true), "");
         myFixture.configureFromTempProjectFile("foo/Impl.kt");
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
@@ -44,7 +52,6 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
                                                                                ImplementMethodsHandler.membersFromDescriptors(descriptors));
             }
         }.execute();
-        myFixture.checkResultByFile("javaInterfaceMethod/foo/Impl.kt.after");
-
+        myFixture.checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
     }
 }
