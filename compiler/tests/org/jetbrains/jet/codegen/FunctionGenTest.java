@@ -80,4 +80,55 @@ public class FunctionGenTest extends CodegenTestCase {
     public void testKt395 () {
         blackBoxFile("regressions/kt395.jet");
     }
+/*
+    public void testFunction () throws InvocationTargetException, IllegalAccessException {
+        loadText("fun Any.foo() : fun(): String {\n" +
+                 "  return { \"239\" + this }\n" +
+                 "}\n" +
+                 "fun box() : String {\n" +
+                 "  return if((10.foo())() == \"23910\") \"OK\" else \"fail\"" +
+                 "}" +
+                 "");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertTrue((Boolean) foo.invoke(null, "lala"));
+        assertFalse((Boolean) foo.invoke(null, "mama"));
+    }
+
+fun Any.foo() : fun() : Unit {
+  return {}
+}
+
+fun Any.foo1() : fun(i : Int) : Unit {
+  return {}
+}
+
+fun foo2() : fun(i : fun()) : Unit {
+  return {}
+}
+
+fun fooT1<T>(t : T) : fun() : T {
+  return {t}
+}
+
+fun fooT2<T>() : fun(t : T) : T {
+  return {it}
+}
+
+fun main(args : Array<String>) {
+    args.foo()()
+
+    args.foo1()(1)
+
+    foo2()({})
+    (foo2()){}
+
+    val a = fooT1(1)()
+    a : Int
+
+    val b = fooT2<Int>()(1)
+    b : Int
+    fooT2()(1) // : Any?
+}
+ */
 }

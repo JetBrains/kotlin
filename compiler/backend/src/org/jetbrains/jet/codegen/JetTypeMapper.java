@@ -627,18 +627,29 @@ public class JetTypeMapper {
         answer.append(p.getName()); // TODO: BOUND!
     }
 
-    public Method mapGetterSignature(PropertyDescriptor descriptor) {
+    public Method mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         Type returnType = mapType(descriptor.getOutType());
-        return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[0]);
+        if(kind != OwnerKind.TRAIT_IMPL)
+            return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[0]);
+        else {
+            ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+            return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[] { mapType(containingDeclaration.getDefaultType()) });
+        }
     }
 
-    public Method mapSetterSignature(PropertyDescriptor descriptor) {
+    public Method mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         final JetType inType = descriptor.getInType();
         if (inType == null) {
             return null;
         }
         Type paramType = mapType(inType);
-        return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
+        if(kind != OwnerKind.TRAIT_IMPL) {
+            return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
+        }
+        else {
+            ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+            return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { mapType(containingDeclaration.getDefaultType()), paramType });
+        }
     }
 
     private Method mapConstructorSignature(ConstructorDescriptor descriptor, List<Type> valueParameterTypes) {

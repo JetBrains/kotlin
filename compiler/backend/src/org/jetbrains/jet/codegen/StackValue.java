@@ -96,8 +96,8 @@ public abstract class StackValue {
         return new InstanceField(type, owner, name);
     }
 
-    public static StackValue property(String name, String owner, Type type, boolean isStatic, boolean isInterface, Method getter, Method setter) {
-        return new Property(name, owner, getter, setter, isStatic, isInterface, type);
+    public static StackValue property(String name, String owner, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter) {
+        return new Property(name, owner, getter, setter, isStatic, isInterface, isSuper, type);
     }
 
     public static StackValue expression(Type type, JetExpression expression, ExpressionCodegen generator) {
@@ -623,8 +623,9 @@ public abstract class StackValue {
         private final String owner;
         private final boolean isStatic;
         private final boolean isInterface;
+        private boolean isSuper;
 
-        public Property(String name, String owner, Method getter, Method setter, boolean aStatic, boolean isInterface, Type type) {
+        public Property(String name, String owner, Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type) {
             super(type);
             this.name = name;
             this.owner = owner;
@@ -632,26 +633,37 @@ public abstract class StackValue {
             this.setter = setter;
             isStatic = aStatic;
             this.isInterface = isInterface;
+            this.isSuper = isSuper;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if (getter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+            if(isSuper && isInterface) {
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + "$$TImpl", getter.getName(), getter.getDescriptor().replace("(","(L" + owner + ";"));
             }
             else {
-                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
+                if (getter == null) {
+                    v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+                }
+                else {
+                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isSuper ? Opcodes.INVOKESPECIAL : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
+                }
             }
             coerce(type, v);
         }
 
         @Override
         public void store(InstructionAdapter v) {
-            if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+            if(isSuper && isInterface) {
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + "$$TImpl", setter.getName(), setter.getDescriptor().replace("(","(L" + owner + ";"));
             }
             else {
-                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
+                if (setter == null) {
+                    v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+                }
+                else {
+                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isSuper ? Opcodes.INVOKESPECIAL : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
+                }
             }
         }
 

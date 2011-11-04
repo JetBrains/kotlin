@@ -95,7 +95,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         v.defineClass(Opcodes.V1_6,
                       Opcodes.ACC_PUBLIC | (isAbstract ? Opcodes.ACC_ABSTRACT : 0) | (isInterface
                                                                                       ? Opcodes.ACC_INTERFACE
-                                                                                      : 0),
+                                                                                      : 0/*Opcodes.ACC_SUPER*/),
                       jvmName(),
                       null,
                       superClass,
@@ -652,7 +652,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if(propertyDescriptor.getOutType().isNullable())
                             type = JetTypeMapper.boxType(type);
                         codegen.gen(initializer, type);
-                        codegen.intermediateValueForProperty(propertyDescriptor, false, false).store(iv);
+                        codegen.intermediateValueForProperty(propertyDescriptor, false, false, false).store(iv);
                     }
 
                 }

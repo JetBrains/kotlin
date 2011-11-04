@@ -69,7 +69,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         signatureWriter.visitEnd();
 
         cv.defineClass(V1_6,
-                       ACC_PUBLIC,
+                       ACC_PUBLIC/*|ACC_SUPER*/,
                        name,
                        null,
                        funClass,

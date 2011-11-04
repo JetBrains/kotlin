@@ -32,7 +32,7 @@ public class NamespaceCodegen {
         this.state = state;
 
         v.defineClass(V1_6,
-                      ACC_PUBLIC,
+                      ACC_PUBLIC/*|ACC_SUPER*/,
                       getJVMClassName(fqName),
                       null,
                       //"jet/lang/Namespace",
@@ -93,7 +93,7 @@ public class NamespaceCodegen {
                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
                     final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                     codegen.genToJVMStack(initializer);
-                    codegen.intermediateValueForProperty(descriptor, true, false).store(new InstructionAdapter(mv));
+                    codegen.intermediateValueForProperty(descriptor, true, false, false).store(new InstructionAdapter(mv));
                 }
             }
         }
