@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -116,14 +117,13 @@ public class JetFlowInformationProvider {
 
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
             if (deadInstruction instanceof JetElementInstruction &&
-                // TODO : do {return} while (1 > a)
                 !(deadInstruction instanceof ReadUnitValueInstruction)) {
                 unreachableElements.add(((JetElementInstruction) deadInstruction).getElement());
             }
         }
     }
 
-    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean inAnonymousInitializers, final boolean declaredLocally) {
+    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean inAnonymousInitializers, final boolean analyzeLocalDeclaration) {
         final Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
@@ -155,7 +155,7 @@ public class JetFlowInformationProvider {
                 
                 Map<VariableDescriptor, InitializationPoints> exitInstructionPointsMap = Maps.newHashMap(enterInstructionPointsMap);
                 if (instruction instanceof WriteValueInstruction) {
-                    VariableDescriptor variable = extractVariableDescriptorIfAny(instruction);
+                    VariableDescriptor variable = extractVariableDescriptorIfAny(instruction, false);
                     InitializationPoints initializationAtThisPoint = new InitializationPoints(((WriteValueInstruction) instruction).getElement());
                     exitInstructionPointsMap.put(variable, initializationAtThisPoint);
                 }
@@ -165,7 +165,7 @@ public class JetFlowInformationProvider {
         };
 
         Collection<VariableDescriptor> usedVariables = collectUsedVariables(pseudocode);
-        Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);
+        final Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);
         Map<VariableDescriptor, InitializationPoints> initialMapForStartInstruction = prepareInitialMapForStartInstruction(usedVariables, declaredVariables);
         
         traverser.collectInformationFromInstructionGraph(instructionsMergeStrategy,
@@ -178,10 +178,9 @@ public class JetFlowInformationProvider {
             public void execute(Instruction instruction, @Nullable Map<VariableDescriptor, InitializationPoints> enterData, @Nullable Map<VariableDescriptor, InitializationPoints> exitData) {
                 assert enterData != null && exitData != null;
                 if (instruction instanceof ReadValueInstruction) {
-                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction);
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, false);
                     JetElement element = ((ReadValueInstruction) instruction).getElement();
-                    if (element instanceof JetSimpleNameExpression && variableDescriptor != null &&
-                        (inAnonymousInitializers || variableDescriptor instanceof LocalVariableDescriptor)) {
+                    if (element instanceof JetSimpleNameExpression && variableDescriptor != null && declaredVariables.contains(variableDescriptor)) {
 
                         InitializationPoints exitInitializationPoints = exitData.get(variableDescriptor);
                         assert exitInitializationPoints != null;
@@ -192,15 +191,15 @@ public class JetFlowInformationProvider {
                                 isInitialized = true;
                             }
                         }
-                        if (!declaredLocally && !isInitialized) {
+                        if (!analyzeLocalDeclaration && !isInitialized) {
                             trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
                         }
                     }
                 }
                 else if (instruction instanceof WriteValueInstruction) {
                     JetElement element = ((WriteValueInstruction) instruction).getlValue();
-                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction);
-                    if (element instanceof JetSimpleNameExpression && variableDescriptor != null) {
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, true);
+                    if (element instanceof JetExpression && variableDescriptor != null) {
                         InitializationPoints enterInitializationPoints = enterData.get(variableDescriptor);
                         assert enterInitializationPoints != null;
                         InitializationPoints exitInitializationPoints = exitData.get(variableDescriptor);
@@ -213,16 +212,17 @@ public class JetFlowInformationProvider {
                                 hasInitializer = false;
                             }
                         }
-                        JetSimpleNameExpression expression = (JetSimpleNameExpression) element;
-                        if (!declaredLocally && hasInitializer && !variableDescriptor.isVar()) {
+                        JetExpression expression = (JetExpression) element;
+                        if (!analyzeLocalDeclaration && hasInitializer && !variableDescriptor.isVar()) {
                             PsiElement psiElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
                             JetProperty property = psiElement instanceof JetProperty ? (JetProperty) psiElement : null;
                             trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[] { property }));
                         }
-                        if (!declaredLocally && inAnonymousInitializers && variableDescriptor instanceof PropertyDescriptor &&
-                            !enterInitializationPoints.isInitialized() && exitInitializationPoints.isInitialized()) {
-                            if (expression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
-                                trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD.on(expression, variableDescriptor));
+                        if (expression instanceof JetSimpleNameExpression && !analyzeLocalDeclaration && inAnonymousInitializers &&
+                            variableDescriptor instanceof PropertyDescriptor && !enterInitializationPoints.isInitialized() && exitInitializationPoints.isInitialized()) {
+                            JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
+                            if (simpleNameExpression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
+                                trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD.on(simpleNameExpression, variableDescriptor));
                             }
                         }
                     }
@@ -271,7 +271,7 @@ public class JetFlowInformationProvider {
             @Override
             public void execute(Instruction instruction, Void enterData, Void exitData) {
                 if (instruction instanceof ReadValueInstruction) {
-                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction);
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, false);
                     if (variableDescriptor != null && functionVariables.contains(variableDescriptor)) {
                         //check that we only invoke this variable
                         JetElement element = ((ReadValueInstruction) instruction).getElement();
@@ -285,29 +285,15 @@ public class JetFlowInformationProvider {
     }
 
     @Nullable
-    private VariableDescriptor extractVariableDescriptorIfAny(Instruction instruction) {
+    private VariableDescriptor extractVariableDescriptorIfAny(Instruction instruction, boolean onlyReference) {
         VariableDescriptor variableDescriptor = null;
         if (instruction instanceof ReadValueInstruction) {
             JetElement element = ((ReadValueInstruction) instruction).getElement();
-            if (element instanceof JetSimpleNameExpression) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
-                if (descriptor instanceof VariableDescriptor) {
-                    variableDescriptor = (VariableDescriptor) descriptor;
-                }
-            }
+            variableDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), element, onlyReference);
         }
         else if (instruction instanceof WriteValueInstruction) {
-            DeclarationDescriptor descriptor = null;
             JetElement lValue = ((WriteValueInstruction) instruction).getlValue();
-            if (lValue instanceof JetProperty || lValue instanceof JetParameter) {
-                descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, lValue);
-            }
-            else if (lValue instanceof JetSimpleNameExpression) {
-                descriptor = trace.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) lValue);
-            }
-            if (descriptor instanceof VariableDescriptor) {
-                variableDescriptor = (VariableDescriptor) descriptor;
-            }
+            variableDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), lValue, onlyReference);
         }
         return variableDescriptor;
     }
@@ -317,7 +303,7 @@ public class JetFlowInformationProvider {
         JetControlFlowGraphTraverser.<Void>create(pseudocode, true).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
             @Override
             public void execute(Instruction instruction, Void enterData, Void exitData) {
-                VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction);
+                VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, false);
                 if (variableDescriptor != null) {
                     usedVariables.add(variableDescriptor);
                 }

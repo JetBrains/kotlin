@@ -306,3 +306,17 @@ fun foo() {
         }
     }
 }
+
+// ------------------------------------------------
+// dot qualifiers
+class M() {
+    val x = 11
+    var y = 12
+}
+
+fun test(m : M) {
+    <!VAL_REASSIGNMENT!>m.x<!> = 23
+    m.y = 23
+    <!VAL_REASSIGNMENT!>m.x<!>++
+    m.y--
+}
