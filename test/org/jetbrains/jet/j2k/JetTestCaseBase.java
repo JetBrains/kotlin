@@ -197,7 +197,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  static String toSingleLine(String string) {
+  public static String toSingleLine(String string) {
     return prettify(string.replaceAll("\n", " "));
   }
 }

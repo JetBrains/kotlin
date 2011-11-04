@@ -1,6 +1,7 @@
-package org.jetbrains.jet.j2k;
+package org.jetbrains.jet.j2k.ast;
 
 import junit.framework.Assert;
+import org.jetbrains.jet.j2k.JetTestCaseBase;
 
 /**
  * @author ignatov
