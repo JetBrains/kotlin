@@ -1,42 +1,26 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.*;
 
 /**
  * @author max
  */
 public class ClassFileFactory {
-    private final Project project;
-    private final boolean isText;
+    private final ClassBuilderFactory builderFactory;
     private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
     private final Map<String, ClassBuilder> generators = new LinkedHashMap<String, ClassBuilder>();
     private boolean isDone = false;
     public final GenerationState state;
 
-    public ClassFileFactory(Project project, boolean text, GenerationState state) {
-        this.project = project;
-        isText = text;
+    public ClassFileFactory(ClassBuilderFactory builderFactory, GenerationState state) {
+        this.builderFactory = builderFactory;
         this.state = state;
     }
 
     ClassBuilder newVisitor(String filePath) {
-        ClassVisitor visitor;
-        if (isText) {
-            visitor = new TraceClassVisitor(new PrintWriter(new StringWriter()));
-        }
-        else {
-            visitor = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        }
-
-        final ClassBuilder answer = new ClassBuilder(visitor);
+        final ClassBuilder answer = builderFactory.newClassBuilder();
         generators.put(filePath, answer);
         return answer;
     }
@@ -68,25 +52,13 @@ public class ClassFileFactory {
     }
 
     public String asText(String file) {
-        assert isText : "Need to create with text=true";
-
         done();
-
-        TraceClassVisitor visitor = (TraceClassVisitor) generators.get(file).getVisitor();
-
-        StringWriter writer = new StringWriter();
-        visitor.print(new PrintWriter(writer));
-
-        return writer.toString();
+        return builderFactory.asText(generators.get(file));
     }
 
     public byte[] asBytes(String file) {
-        assert !isText : "This is debug stuff, only produces texts.";
-
         done();
-
-        ClassWriter visitor = (ClassWriter) generators.get(file).getVisitor();
-        return visitor.toByteArray();
+        return builderFactory.asBytes(generators.get(file));
     }
 
     public List<String> files() {

@@ -16,6 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -69,7 +70,7 @@ public class JetCompiler implements TranslatingCompiler {
             public void run() {
                 VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
 
-                GenerationState generationState = new GenerationState(compileContext.getProject(), false);
+                GenerationState generationState = new GenerationState(compileContext.getProject(), ClassBuilderFactory.BINARIES);
                 List<JetNamespace> namespaces = Lists.newArrayList();
                 for (VirtualFile virtualFile : allFiles) {
                     PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);

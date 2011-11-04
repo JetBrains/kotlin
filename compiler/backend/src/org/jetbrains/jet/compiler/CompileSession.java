@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.jet.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -93,7 +94,7 @@ public class CompileSession {
     }
 
     public ClassFileFactory generate() {
-        GenerationState generationState = new GenerationState(myEnvironment.getProject(), false);
+        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES);
         generationState.compileCorrectNamespaces(myBindingContext, mySourceFileNamespaces);
         return generationState.getFactory();
     }

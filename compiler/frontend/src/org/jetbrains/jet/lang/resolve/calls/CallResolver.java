@@ -177,7 +177,7 @@ public class CallResolver {
             else if (calleeExpression != null) {
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
                 ExpressionTypingServices typingServices = new ExpressionTypingServices(semanticServices, trace);
-                JetType calleeType = typingServices.safeGetType(scope, calleeExpression, NO_EXPECTED_TYPE);// We are actually expecting a function, but there seems to be no easy way of expressing this
+                JetType calleeType = typingServices.safeGetType(scope, calleeExpression, NO_EXPECTED_TYPE); // We are actually expecting a function, but there seems to be no easy way of expressing this
 
                 if (!JetStandardClasses.isFunctionType(calleeType)) {
                     checkTypesWithNoCallee(trace, scope, call);
@@ -187,13 +187,17 @@ public class CallResolver {
                     return null;
                 }
                 
-                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "for expression " + calleeExpression.getText());
+                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "[for expression " + calleeExpression.getText() + "]");
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType);
                 ResolvedCallImpl<FunctionDescriptor> resolvedCall = ResolvedCallImpl.<FunctionDescriptor>create(functionDescriptor);
+                resolvedCall.setReceiverArgument(call.getExplicitReceiver());
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(
                         Collections.singleton(resolvedCall), call, dataFlowInfo));
-                functionReference = new JetReferenceExpression(calleeExpression.getNode()) {
-                };
+
+                // strictly speaking, this is a hack:
+                // we need to pass a reference, but there's no reference in the PSI,
+                // so we wrap what we have into a fake reference and pass it on (unwrap on the other end)
+                functionReference = new JetFakeReference(calleeExpression);
             }
             else {
                 checkTypesWithNoCallee(trace, scope, call);
@@ -238,9 +242,17 @@ public class CallResolver {
 //                    trace.record(REFERENCE_TARGET, reference, variableAsFunctionDescriptor.getVariableDescriptor());
 //                }
 //                else {
-                    trace.record(REFERENCE_TARGET, reference, descriptor);
 //                }
-                trace.record(RESOLVED_CALL, reference, resolvedCall);
+                if (reference instanceof JetFakeReference) {
+                    // This means that the callable being invoked was represented by an expression
+                    // rather than a reference expression
+                    JetFakeReference fakeReference = (JetFakeReference) reference;
+                    trace.record(RESOLVED_CALL, fakeReference.getActualElement(), resolvedCall);
+                }
+                else {
+                    trace.record(RESOLVED_CALL, reference, resolvedCall);
+                    trace.record(REFERENCE_TARGET, reference, descriptor);
+                }
             }
 
             @Override
@@ -471,23 +483,18 @@ public class CallResolver {
             else {
                 // Explicit type arguments passed
 
-                for (JetTypeProjection typeArgument : jetTypeArguments) {
-                    if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-//                        temporaryTrace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
-                        temporaryTrace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(typeArgument));
+                List<JetType> typeArguments = new ArrayList<JetType>();
+                for (JetTypeProjection projection : jetTypeArguments) {
+                    if (projection.getProjectionKind() != JetProjectionKind.NONE) {
+                        temporaryTrace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
+                    }
+                    JetTypeReference typeReference = projection.getTypeReference();
+                    if (typeReference != null) {
+                        typeArguments.add(new TypeResolver(semanticServices, temporaryTrace, true).resolveType(scope, typeReference));
                     }
                 }
-
                 int expectedTypeArgumentCount = candidate.getTypeParameters().size();
                 if (expectedTypeArgumentCount == jetTypeArguments.size()) {
-                    List<JetType> typeArguments = new ArrayList<JetType>();
-                    for (JetTypeProjection projection : jetTypeArguments) {
-                        // TODO : check that there's no projection
-                        JetTypeReference typeReference = projection.getTypeReference();
-                        if (typeReference != null) {
-                            typeArguments.add(new TypeResolver(semanticServices, temporaryTrace, true).resolveType(scope, typeReference));
-                        }
-                    }
 
                     checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, temporaryTrace);
                     

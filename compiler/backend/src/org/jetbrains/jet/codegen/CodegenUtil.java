@@ -1,14 +1,9 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.objectweb.asm.Type;
 
 /**
@@ -66,40 +61,5 @@ public class CodegenUtil {
             return true;
 
         return hasOuterTypeInfo(outerClassDescriptor);
-    }
-
-    public static boolean hasTypeInfoField(JetType type) {
-        if(type.getConstructor().getParameters().size() > 0)
-            return true;
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasTypeInfoField(jetType))
-                return true;
-        }
-
-        ClassDescriptor outerClassDescriptor = getOuterClassDescriptor(type.getConstructor().getDeclarationDescriptor());
-        if(outerClassDescriptor == null)
-            return false;
-
-        return hasTypeInfoField(outerClassDescriptor.getDefaultType());
-    }
-
-    public static boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
-        if(!exceptOwn) {
-            if(!isInterface(type))
-                if(hasTypeInfoField(type))
-                    return true;
-        }
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasDerivedTypeInfoField(jetType, false))
-                return true;
-        }
-
-        return false;
-    }
-    
-    public static Type arrayElementType(Type type) {
-        return Type.getType(type.getDescriptor().substring(1));
     }
 }

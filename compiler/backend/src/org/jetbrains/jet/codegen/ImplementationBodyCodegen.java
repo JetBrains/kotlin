@@ -95,7 +95,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         v.defineClass(Opcodes.V1_6,
                       Opcodes.ACC_PUBLIC | (isAbstract ? Opcodes.ACC_ABSTRACT : 0) | (isInterface
                                                                                       ? Opcodes.ACC_INTERFACE
-                                                                                      : 0),
+                                                                                      : 0/*Opcodes.ACC_SUPER*/),
                       jvmName(),
                       null,
                       superClass,
@@ -339,7 +339,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.putfield(classname, fieldName, interfaceDesc);
         }
 
-        if (CodegenUtil.hasTypeInfoField(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
+        if (state.getTypeMapper().hasTypeInfoField(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
             generateTypeInfoInitializer(frameMap.getFirstTypeParameter(), frameMap.getTypeParameterCount(), iv);
         }
 
@@ -652,7 +652,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if(propertyDescriptor.getOutType().isNullable())
                             type = JetTypeMapper.boxType(type);
                         codegen.gen(initializer, type);
-                        codegen.intermediateValueForProperty(propertyDescriptor, false, false).store(iv);
+                        codegen.intermediateValueForProperty(propertyDescriptor, false, false, false).store(iv);
                     }
 
                 }
@@ -706,8 +706,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
 
         JetType defaultType = descriptor.getDefaultType();
-        if(CodegenUtil.hasTypeInfoField(defaultType)) {
-            if(!CodegenUtil.hasDerivedTypeInfoField(defaultType, true)) {
+        if(state.getTypeMapper().hasTypeInfoField(defaultType)) {
+            if(!state.getTypeMapper().hasDerivedTypeInfoField(defaultType, true)) {
                 v.newField(myClass, Opcodes.ACC_PRIVATE, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
 
                 MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);

@@ -240,6 +240,8 @@ public interface Errors {
     SimpleDiagnosticFactory SUPERTYPE_APPEARS_TWICE = SimpleDiagnosticFactory.create(ERROR, "A supertype appears twice");
     SimpleDiagnosticFactory FINAL_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "This type is final, so it cannot be inherited from");
 
+    ParameterizedDiagnosticFactory1<String> ILLEGAL_SELECTOR = ParameterizedDiagnosticFactory1.create(ERROR, "Expression ''{0}'' cannot be a selector (occur after a dot)");
+
     SimpleDiagnosticFactory REF_PARAMETER_WITH_VAL_OR_VAR = SimpleDiagnosticFactory.create(ERROR, "'val' and 'var' are not allowed on ref-parameters");
     SimpleDiagnosticFactory VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = SimpleDiagnosticFactory.create(ERROR, "A type annotation is required on a value parameter");
     SimpleDiagnosticFactory BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = SimpleDiagnosticFactory.create(ERROR, "'break' and 'continue' are only allowed inside a loop");

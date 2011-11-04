@@ -48,3 +48,35 @@ fun main(args : Array<String>) {
     <!CALLEE_NOT_A_FUNCTION!>1<!>{}
     <!CALLEE_NOT_A_FUNCTION!>1<!>(){}
 }
+
+fun f() : fun Int.() : Unit = {}
+
+fun main1(args : Array<String>) {
+    1.{Int.() => 1}();
+    {1}()
+    {(x : Int) => x}(1)
+    1.{Int.(x : Int) => x}(1)
+    @l{1}()
+    1.({Int.() => 1})()
+    1.(f())()
+    1.if(true){f()}else{f()}()
+    1.if(true){Int.() => 1}else{f()}()
+    1.if(true){Int.() => 1}else{Int.() => 1}()
+
+    1.<!CALLEE_NOT_A_FUNCTION!>"sdf"<!>()
+
+    1.<!ILLEGAL_SELECTOR!>"sdf"<!>
+    1.<!ILLEGAL_SELECTOR!>{}<!>
+    1.<!ILLEGAL_SELECTOR!>if (true) {}<!>
+}
+
+fun test() {
+    {(x : Int) => 1}<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!MISSING_RECEIVER!>{Int.() => 1}<!>()
+    <!TYPE_MISMATCH!>"sd"<!>.{Int.() => 1}()
+    val i : Int? = null
+    i<!UNSAFE_CALL!>.<!>{Int.() => 1}()
+    {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() => 1}()
+    1.<!NO_RECEIVER_ADMITTED!>{}<!>()
+}

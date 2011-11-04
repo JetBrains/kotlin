@@ -37,8 +37,9 @@ public class PropertyCodegen {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION) {
-            generateBackingField(p, propertyDescriptor);
+        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind ==OwnerKind.TRAIT_IMPL ) {
+            if(kind != OwnerKind.TRAIT_IMPL)
+                generateBackingField(p, propertyDescriptor);
             generateGetter(p, propertyDescriptor);
             generateSetter(p, propertyDescriptor);
         }
@@ -81,7 +82,7 @@ public class PropertyCodegen {
         final JetPropertyAccessor getter = p.getGetter();
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
-                functionCodegen.generateMethod(getter, state.getTypeMapper().mapGetterSignature(propertyDescriptor), propertyDescriptor.getGetter());
+                functionCodegen.generateMethod(getter, state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind), propertyDescriptor.getGetter());
             }
             else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultGetter(p, getter);
@@ -102,7 +103,7 @@ public class PropertyCodegen {
             if (setter.getBodyExpression() != null) {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
-                functionCodegen.generateMethod(setter, state.getTypeMapper().mapSetterSignature(propertyDescriptor), setterDescriptor);
+                functionCodegen.generateMethod(setter, state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind), setterDescriptor);
             }
             else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultSetter(p, setter);
@@ -120,6 +121,10 @@ public class PropertyCodegen {
     }
 
     public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+        if (kind == OwnerKind.TRAIT_IMPL) {
+            return;
+        }
+
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
@@ -129,7 +134,7 @@ public class PropertyCodegen {
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
-        final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor).getDescriptor();
+        final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind).getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, signature, null, null);
         if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
@@ -162,6 +167,10 @@ public class PropertyCodegen {
     }
 
     public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+        if (kind == OwnerKind.TRAIT_IMPL) {
+            return;
+        }
+
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
@@ -171,7 +180,7 @@ public class PropertyCodegen {
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
-        final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor).getDescriptor();
+        final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind).getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), signature, null, null);
         if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
             mv.visitCode();

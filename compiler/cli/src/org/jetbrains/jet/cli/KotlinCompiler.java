@@ -5,8 +5,6 @@ import com.sampullara.cli.Argument;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 
-import java.io.File;
-
 /**
  * @author yole
  * @author alex.tkachman
@@ -38,11 +36,8 @@ public class KotlinCompiler {
 
         CompileEnvironment environment = new CompileEnvironment();
 
-        File rtJar = initJdk();
-        if (rtJar == null) return;
-
         try {
-            environment.setJavaRuntime(rtJar);
+            environment.setJavaRuntime(CompileEnvironment.findRtJar(true));
             if (!environment.initializeKotlinRuntime()) {
                 System.out.println("No runtime library found");
                 return;
@@ -60,33 +55,4 @@ public class KotlinCompiler {
         }
     }
 
-    private static File initJdk() {
-        String javaHome = System.getenv("JAVA_HOME");
-        File rtJar;
-        if (javaHome == null) {
-            rtJar = CompileEnvironment.findActiveRtJar();
-
-            if(rtJar == null) {
-                System.out.println("JAVA_HOME environment variable needs to be defined");
-                return null;
-            }
-        }
-        else {
-            rtJar = findRtJar(javaHome);
-        }
-
-        if (rtJar == null || !rtJar.exists()) {
-            System.out.print("No rt.jar found under JAVA_HOME=" + javaHome);
-            return null;
-        }
-        return rtJar;
-    }
-
-    private static File findRtJar(String javaHome) {
-        File rtJar = new File(javaHome, "jre/lib/rt.jar");
-        if (rtJar.exists()) {
-            return rtJar;
-        }
-        return null;
-    }
 }
