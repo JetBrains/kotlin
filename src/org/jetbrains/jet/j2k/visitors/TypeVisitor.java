@@ -34,7 +34,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
     else if (Node.PRIMITIVE_TYPES.contains(name))
       myResult = new PrimitiveType(new IdentifierImpl(AstUtil.upperFirstCharacter(name)));
     else
-        myResult = new PrimitiveType(identifier);
+      myResult = new PrimitiveType(identifier);
     return super.visitPrimitiveType(primitiveType);
   }
 
@@ -48,10 +48,24 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
   @Override
   public Type visitClassType(PsiClassType classType) {
     myResult = new ClassType(
-      new IdentifierImpl(classType.getClassName()),
+      new IdentifierImpl(getClassTypeName(classType)),
       typesToTypeList(classType.getParameters())
     );
     return super.visitClassType(classType);
+  }
+
+  @NotNull
+  private String getClassTypeName(@NotNull PsiClassType classType) {
+    String canonicalTypeStr = classType.getCanonicalText();
+    if (canonicalTypeStr.equals("java.lang.Byte")) return "Byte";
+    if (canonicalTypeStr.equals("java.lang.Character")) return "Char";
+    if (canonicalTypeStr.equals("java.lang.Double")) return "Double";
+    if (canonicalTypeStr.equals("java.lang.Float")) return "Float";
+    if (canonicalTypeStr.equals("java.lang.Integer")) return "Int";
+    if (canonicalTypeStr.equals("java.lang.Long")) return "Long";
+    if (canonicalTypeStr.equals("java.lang.Short")) return "Short";
+    if (canonicalTypeStr.equals("java.lang.Boolean")) return "Boolean";
+    return classType.getClassName();
   }
 
   @Override
@@ -71,10 +85,10 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
     return super.visitEllipsisType(ellipsisType);
   }
 
-    @Override
-    public Type visitCapturedWildcardType(PsiCapturedWildcardType capturedWildcardType) {
-        return super.visitCapturedWildcardType(capturedWildcardType);
-    }
+  @Override
+  public Type visitCapturedWildcardType(PsiCapturedWildcardType capturedWildcardType) {
+    return super.visitCapturedWildcardType(capturedWildcardType);
+  }
 
   @Override
   public Type visitDisjunctionType(PsiDisjunctionType disjunctionType) {
