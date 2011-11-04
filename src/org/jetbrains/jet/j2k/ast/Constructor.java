@@ -14,7 +14,7 @@ public class Constructor extends Function {
   }
 
   public String primary() {
-    return "(" + myParams.toKotlin() + ")";
+    return modifiersToKotlin() + "(" + myParams.toKotlin() + ")" + SPACE + myBlock.toKotlin();
   }
 
   @NotNull

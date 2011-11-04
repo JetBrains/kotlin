@@ -33,8 +33,9 @@ public class Enum extends Class {
   @NotNull
   @Override
   public String toKotlin() {
-    return modifiersToKotlin() + "enum" + SPACE + myName.toKotlin() + typeParametersToKotlin() + primaryConstructorToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
+    return modifiersToKotlin() + "enum" + SPACE + myName.toKotlin() + typeParametersToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
       AstUtil.joinNodes(myFields, N) + N +
+      primaryConstructorToKotlin() + N +
       AstUtil.joinNodes(methodsExceptConstructors(), N) + N +
       AstUtil.joinNodes(myInnerClasses, N) + N +
       "}";

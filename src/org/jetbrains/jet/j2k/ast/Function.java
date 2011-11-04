@@ -15,7 +15,7 @@ public class Function extends Member {
   private final Type myType;
   private final List<Element> myTypeParameters;
   final Element myParams;
-  private final Block myBlock;
+  final Block myBlock;
 
   public Function(Identifier name, Set<String> modifiers, Type type, List<Element> typeParameters, Element params, Block block) {
     myName = name;
@@ -48,7 +48,7 @@ public class Function extends Member {
     return EMPTY;
   }
 
-  private String modifiersToKotlin() {
+  String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
     if (myModifiers.contains(Modifier.OVERRIDE))
