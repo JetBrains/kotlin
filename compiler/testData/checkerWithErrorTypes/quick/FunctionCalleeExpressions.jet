@@ -70,3 +70,13 @@ fun main1(args : Array<String>) {
     1.<!ILLEGAL_SELECTOR!>if (true) {}<!>
 }
 
+fun test() {
+    {(x : Int) => 1}<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!MISSING_RECEIVER!>{Int.() => 1}<!>()
+    <!TYPE_MISMATCH!>"sd"<!>.{Int.() => 1}()
+    val i : Int? = null
+    i<!UNSAFE_CALL!>.<!>{Int.() => 1}()
+    {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() => 1}()
+    1.<!NO_RECEIVER_ADMITTED!>{}<!>()
+}
