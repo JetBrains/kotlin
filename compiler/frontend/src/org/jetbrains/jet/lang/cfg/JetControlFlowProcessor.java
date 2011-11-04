@@ -273,6 +273,7 @@ public class JetControlFlowProcessor {
             JetSimpleNameExpression operationSign = expression.getOperationSign();
             IElementType operationType = operationSign.getReferencedNameElementType();
             JetExpression baseExpression = expression.getBaseExpression();
+            if (baseExpression == null) return;
             if (JetTokens.LABELS.contains(operationType)) {
                 String referencedName = operationSign.getReferencedName();
                 referencedName = referencedName == null ? " <?>" : referencedName;
