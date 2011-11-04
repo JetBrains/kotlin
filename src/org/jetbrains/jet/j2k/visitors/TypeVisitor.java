@@ -57,6 +57,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
   @NotNull
   private String getClassTypeName(@NotNull PsiClassType classType) {
     String canonicalTypeStr = classType.getCanonicalText();
+    if (canonicalTypeStr.equals("java.lang.Object")) return "Any";
     if (canonicalTypeStr.equals("java.lang.Byte")) return "Byte";
     if (canonicalTypeStr.equals("java.lang.Character")) return "Char";
     if (canonicalTypeStr.equals("java.lang.Double")) return "Double";

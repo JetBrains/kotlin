@@ -25,7 +25,7 @@ public class TypeParametersTest extends JetTestCaseBase {
     Assert.assertEquals(
       methodToSingleLineKotlin(
         "<T extends Object & Comparable<? super T>> T max(Collection<? extends T> coll) {}"),
-      "fun max<T : Object?>(coll : Collection<out T?>?) : T? where T : Comparable<in T?>? { }"
+      "fun max<T : Any?>(coll : Collection<out T?>?) : T? where T : Comparable<in T?>? { }"
     );
   }
 
@@ -33,7 +33,7 @@ public class TypeParametersTest extends JetTestCaseBase {
     Assert.assertEquals(
       methodToSingleLineKotlin(
         "<T extends Object & Comparable<? super T>, K extends Node & Collection<? super K>> T max(Collection<? extends T> coll) {}"),
-      "fun max<T : Object?, K : Node?>(coll : Collection<out T?>?) : T? where T : Comparable<in T?>?, K : Collection<in K?>? { }"
+      "fun max<T : Any?, K : Node?>(coll : Collection<out T?>?) : T? where T : Comparable<in T?>?, K : Collection<in K?>? { }"
     );
   }
 

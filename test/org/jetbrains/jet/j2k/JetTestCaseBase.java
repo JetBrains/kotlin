@@ -133,7 +133,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
   protected String expressionToKotlin(String code) throws Exception {
     String result = statementToKotlin("Object o =" + code + "}");
-    result = result.replaceFirst("var o : Object\\? =", "");
+    result = result.replaceFirst("var o : Any\\? =", "");
     return prettify(result);
   }
 

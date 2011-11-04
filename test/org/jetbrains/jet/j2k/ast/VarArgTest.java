@@ -10,14 +10,14 @@ public class VarArgTest extends JetTestCaseBase {
   public void testEllipsisTypeSingleParams() throws Exception {
     Assert.assertEquals(
       methodToSingleLineKotlin("void pushAll(Object... objs) {}"),
-      "fun pushAll(vararg objs : Object?) : Unit { }"
+      "fun pushAll(vararg objs : Any?) : Unit { }"
     );
   }
 
   public void testEllipsisTypeSeveralParams() throws Exception {
     Assert.assertEquals(
       methodToSingleLineKotlin("String format(String pattern, Object... arguments);"),
-      "fun format(pattern : String?, vararg arguments : Object?) : String?"
+      "fun format(pattern : String?, vararg arguments : Any?) : String?"
     );
   }
 }

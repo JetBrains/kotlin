@@ -7,6 +7,10 @@ import org.jetbrains.jet.j2k.JetTestCaseBase;
  * @author ignatov
  */
 public class BoxedTypeTest extends JetTestCaseBase {
+  public void testObject() throws Exception {
+    Assert.assertEquals(statementToKotlin("Object i = 10;"), "var i : Any? = 10");
+  }
+
   public void testBoolean() throws Exception {
     Assert.assertEquals(statementToKotlin("Boolean i = 10;"), "var i : Boolean? = 10");
   }
