@@ -10,4 +10,9 @@ public class SuperGenTest extends CodegenTestCase {
         blackBoxFile("/super/traitproperty.jet");
         System.out.println(generateToText());
     }
+
+    public void testBasicMethod () {
+        blackBoxFile("/super/basicmethod.jet");
+        System.out.println(generateToText());
+    }
 }

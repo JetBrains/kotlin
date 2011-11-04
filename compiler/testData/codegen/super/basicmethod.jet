@@ -1,0 +1,13 @@
+class N() : java.util.ArrayList<String>() {
+    override fun add(el: String)  : Boolean {
+        super.add(el)
+        return super.add(el + el)
+    }
+}
+
+fun box(): String {
+    val n = N()
+    n.add("239")
+    if (n.get(0) == "239" && n.get(1) == "239239") return "OK";
+    return "fail";
+}

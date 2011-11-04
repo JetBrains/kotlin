@@ -186,6 +186,39 @@ public class JetTypeMapper {
         return type;
     }
 
+    public boolean hasTypeInfoField(JetType type) {
+        if(type.getConstructor().getParameters().size() > 0) {
+            if(!(bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getConstructor().getDeclarationDescriptor()) instanceof PsiClass))
+                return true;
+        }
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(hasTypeInfoField(jetType))
+                return true;
+        }
+
+        ClassDescriptor outerClassDescriptor = CodegenUtil.getOuterClassDescriptor(type.getConstructor().getDeclarationDescriptor());
+        if(outerClassDescriptor == null)
+            return false;
+
+        return hasTypeInfoField(outerClassDescriptor.getDefaultType());
+    }
+
+    public boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
+        if(!exceptOwn) {
+            if(!CodegenUtil.isInterface(type))
+                if(hasTypeInfoField(type))
+                    return true;
+        }
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(hasDerivedTypeInfoField(jetType, false))
+                return true;
+        }
+
+        return false;
+    }
+
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
         PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetClass);
         if (declaration instanceof PsiClass) {
@@ -665,9 +698,12 @@ public class JetTypeMapper {
             valueParameterTypes.add(type);
         }
 
-        List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
-        for (int n = typeParameters.size(); n > 0; n--) {
-            parameterTypes.add(TYPE_TYPEINFO);
+        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+        if(!(psiElement instanceof PsiClass)) {
+            List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
+            for (int n = typeParameters.size(); n > 0; n--) {
+                parameterTypes.add(TYPE_TYPEINFO);
+            }
         }
 
         return new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
@@ -678,7 +714,7 @@ public class JetTypeMapper {
         final Method method = mapConstructorSignature(descriptor, valueParameterTypes);
         String owner = jvmName(descriptor.getContainingDeclaration(), kind);
         final CallableMethod result = new CallableMethod(owner, method, Opcodes.INVOKESPECIAL, valueParameterTypes);
-        result.setAcceptsTypeArguments(true);
+        result.setAcceptsTypeArguments(!(bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getContainingDeclaration()) instanceof PsiClass));
         return result;
     }
 

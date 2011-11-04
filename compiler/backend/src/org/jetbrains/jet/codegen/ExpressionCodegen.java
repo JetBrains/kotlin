@@ -2279,7 +2279,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if (jetType.getArguments().size() > 0 || !(descriptor instanceof ClassDescriptor)) {
+        boolean javaClass = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor) instanceof PsiClass;
+        if (!javaClass && (jetType.getArguments().size() > 0 || !(descriptor instanceof ClassDescriptor))) {
             generateTypeInfo(jetType);
             expressionToGen.put(OBJECT_TYPE, v);
             if (leaveExpressionOnStack) {
@@ -2325,7 +2326,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return;
         }
 
-        if(!CodegenUtil.hasTypeInfoField(jetType)) {
+        if(!typeMapper.hasTypeInfoField(jetType) && !(bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetType.getConstructor().getDeclarationDescriptor()) instanceof PsiClass)) {
             // TODO: we need some better checks here
             v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
             return;
@@ -2387,7 +2388,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             ownerType = JetTypeMapper.boxType(ownerType);
             if (containingDeclaration == context.getContextClass()) {
                 if(!CodegenUtil.isInterface(descriptor)) {
-                    if (CodegenUtil.hasTypeInfoField(defaultType)) {
+                    if (typeMapper.hasTypeInfoField(defaultType)) {
                         v.load(0, JetTypeMapper.TYPE_OBJECT);
                         v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
                     }
