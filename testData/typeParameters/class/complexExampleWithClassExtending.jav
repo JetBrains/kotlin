@@ -1,0 +1,1 @@
+interface CommandHandler<T extends Command> {}

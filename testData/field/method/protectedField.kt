@@ -1,0 +1,1 @@
+protected var f : Foo?

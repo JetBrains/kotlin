@@ -1,0 +1,1 @@
+for (Node n : list) {}

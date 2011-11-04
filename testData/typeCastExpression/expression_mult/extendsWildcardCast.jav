@@ -1,0 +1,1 @@
+(List<? extends String>)list

@@ -1,0 +1,1 @@
+new myApp.Foo();

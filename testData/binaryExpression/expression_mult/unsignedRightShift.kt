@@ -1,0 +1,1 @@
+x.cyclicShiftRight(2)

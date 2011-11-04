@@ -1,0 +1,1 @@
+protected open class Test { }
