@@ -62,13 +62,13 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     private void doImplement() {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
-        final Set<CallableMemberDescriptor> descriptors = ImplementMethodsHandler.collectMethodsToImplement(classOrObject);
+        final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
         assertEquals(1, descriptors.size());
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
             protected void run(Result result) throws Throwable {
-                ImplementMethodsHandler.overrideOrImplementMethodsInRightPlace(myFixture.getProject(), myFixture.getEditor(), classOrObject,
-                                                                               ImplementMethodsHandler.membersFromDescriptors(descriptors));
+                ImplementMethodsHandler.generateMethods(myFixture.getProject(), myFixture.getEditor(), classOrObject,
+                                                        ImplementMethodsHandler.membersFromDescriptors(descriptors));
             }
         }.execute();
     }

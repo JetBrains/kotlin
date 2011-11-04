@@ -35,7 +35,7 @@ class JarBuilder(val parent: ModuleBuilder) {
     }
 }
 
-class ModuleBuilder(val name: String): IModuleBuilder {
+open class ModuleBuilder(val name: String): IModuleBuilder {
     val sourceFiles: ArrayList<String?> = ArrayList<String?>()
     val classpathRoots: ArrayList<String?> = ArrayList<String?>()
     var _jarName: String? = null
@@ -67,4 +67,10 @@ class ModuleBuilder(val name: String): IModuleBuilder {
     override fun getJarName(): String? = _jarName
 
 }
+
+class ModuleBuilder2(name: String): ModuleBuilder(name) {
+
+
 }
+}
+

@@ -163,32 +163,7 @@ public class OverrideResolver {
     public static void collectMissingImplementations(MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
         // Everything from supertypes
         Map<CallableMemberDescriptor, CallableMemberDescriptor> implementedWithDelegationBy = Maps.newHashMap();
-        Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
-        for (JetType supertype : classDescriptor.getSupertypes()) {
-            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
-                if (descriptor instanceof CallableMemberDescriptor) {
-                    CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
-                    inheritedFunctions.add(memberDescriptor);
-                }
-            }
-        }
-
-        // Only those actually inherited
-        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOverrides(inheritedFunctions);
-
-        // Group members with "the same" signature
-        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();
-        for (CallableMemberDescriptor one : filteredMembers) {
-            if (factoredMembers.values().contains(one)) continue;
-            for (CallableMemberDescriptor another : filteredMembers) {
-//                if (one == another) continue;
-                factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).isSuccess()
-                        || OverridingUtil.isOverridableBy(another, one).isSuccess()) {
-                    factoredMembers.put(one, another);
-                }
-            }
-        }
+        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = collectSuperMethods(classDescriptor);
 
         for (CallableMemberDescriptor key : factoredMembers.keySet()) {
             Collection<CallableMemberDescriptor> mutuallyOverridable = factoredMembers.get(key);
@@ -217,6 +192,36 @@ public class OverrideResolver {
         // Those to be overridden that are actually not
         abstractNoImpl.removeAll(actuallyOverridden);
         manyImpl.removeAll(actuallyOverridden);
+    }
+
+    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
+        Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
+        for (JetType supertype : classDescriptor.getSupertypes()) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                if (descriptor instanceof CallableMemberDescriptor) {
+                    CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
+                    inheritedFunctions.add(memberDescriptor);
+                }
+            }
+        }
+
+        // Only those actually inherited
+        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOverrides(inheritedFunctions);
+
+        // Group members with "the same" signature
+        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+        for (CallableMemberDescriptor one : filteredMembers) {
+            if (factoredMembers.values().contains(one)) continue;
+            for (CallableMemberDescriptor another : filteredMembers) {
+//                if (one == another) continue;
+                factoredMembers.put(one, one);
+                if (OverridingUtil.isOverridableBy(one, another).isSuccess()
+                        || OverridingUtil.isOverridableBy(another, one).isSuccess()) {
+                    factoredMembers.put(one, another);
+                }
+            }
+        }
+        return factoredMembers;
     }
 
     private void checkOverride(CallableMemberDescriptor declared) {
