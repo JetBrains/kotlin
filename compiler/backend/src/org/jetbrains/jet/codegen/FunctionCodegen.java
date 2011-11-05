@@ -33,8 +33,9 @@ public class FunctionCodegen {
     }
 
     public void gen(JetNamedFunction f) {
-        Method method = state.getTypeMapper().mapToCallableMethod(f, owner.getContextKind()).getSignature();
         final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
+        assert functionDescriptor != null;
+        Method method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
         generateMethod(f, method, functionDescriptor);
     }
 
@@ -105,9 +106,7 @@ public class FunctionCodegen {
                     iv.areturn(jvmSignature.getReturnType());
                 }
                 else {
-                    for (int i = 0; i < paramDescrs.size(); i++) {
-                        ValueParameterDescriptor parameter = paramDescrs.get(i);
-
+                    for (ValueParameterDescriptor parameter : paramDescrs) {
                         Type sharedVarType = codegen.getSharedVarType(parameter);
                         Type localVarType = state.getTypeMapper().mapType(parameter.getOutType());
                         if (sharedVarType != null) {
@@ -253,6 +252,7 @@ public class FunctionCodegen {
                     iv.ifeq(loadArg);
 
                     JetParameter jetParameter = (JetParameter) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, parameterDescriptor);
+                    assert jetParameter != null;
                     codegen.gen(jetParameter.getDefaultValue(), t);
 
                     endArg = new Label();
@@ -270,7 +270,8 @@ public class FunctionCodegen {
             }
 
             for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                iv.load(var++, JetTypeMapper.TYPE_OBJECT);
+                if(typeParameterDescriptor.isReified())
+                    iv.load(var++, JetTypeMapper.TYPE_OBJECT);
             }
 
             if(!isStatic) {

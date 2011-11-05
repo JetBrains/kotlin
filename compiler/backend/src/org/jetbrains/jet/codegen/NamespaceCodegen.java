@@ -196,6 +196,11 @@ public class NamespaceCodegen {
         if (fqName.length() == 0) {
             return "namespace";
         }
-        return fqName.replace('.', '/') + "/namespace";
+
+        String name = fqName.replace('.', '/') + "/namespace";
+        if(name.startsWith("<java_root>")) {
+            name = name.substring("<java_root>".length() + 1, name.length() - ".namespace".length());
+        }
+        return name;
     }
 }

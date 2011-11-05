@@ -1,7 +1,6 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -12,14 +11,13 @@ import java.util.List;
 
 /**
  * @author yole
+ * @author alex.tkacman
  */
 public class CallableMethod implements Callable {
     private String owner;
     private final Method signature;
-    private final int invokeOpcode;
+    private int invokeOpcode;
     private final List<Type> valueParameterTypes;
-    private boolean acceptsTypeArguments = false;
-    private boolean ownerFromCall = false;
     private DeclarationDescriptor thisClass = null;
     private DeclarationDescriptor receiverClass = null;
     private Type generateCalleeType = null;
@@ -35,10 +33,6 @@ public class CallableMethod implements Callable {
         return owner;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     public Method getSignature() {
         return signature;
     }
@@ -51,28 +45,12 @@ public class CallableMethod implements Callable {
         return valueParameterTypes;
     }
 
-    public boolean acceptsTypeArguments() {
-        return acceptsTypeArguments;
-    }
-
-    public void setAcceptsTypeArguments(boolean acceptsTypeArguments) {
-        this.acceptsTypeArguments = acceptsTypeArguments;
-    }
-
     public void setNeedsReceiver(@Nullable DeclarationDescriptor receiverClass) {
         this.receiverClass = receiverClass;
     }
 
     public void setNeedsThis(@Nullable DeclarationDescriptor receiverClass) {
         this.thisClass = receiverClass;
-    }
-
-    public boolean isOwnerFromCall() {
-        return ownerFromCall;
-    }
-
-    public void setOwnerFromCall(boolean ownerFromCall) {
-        this.ownerFromCall = ownerFromCall;
     }
 
     void invoke(InstructionAdapter v) {
@@ -106,5 +84,4 @@ public class CallableMethod implements Callable {
     public DeclarationDescriptor getThisClass() {
         return thisClass;
     }
-
 }

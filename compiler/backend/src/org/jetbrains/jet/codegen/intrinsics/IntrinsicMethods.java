@@ -132,7 +132,7 @@ public class IntrinsicMethods {
                 final PsiMethod[] methods = stringPsiClass.findMethodsByName(stringMember.getName(), false);
                 for (PsiMethod method : methods) {
                     if (method.getParameterList().getParametersCount() == stringMethod.getValueParameters().size()) {
-                        myMethods.put(stringMethod, new PsiMethodCall(method));
+                        myMethods.put(stringMethod, new PsiMethodCall(stringMethod));
                     }
                 }
             }

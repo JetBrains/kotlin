@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -61,7 +62,7 @@ public class ClassContext {
         return new ClassContext(descriptor, OwnerKind.NAMESPACE, null, this, null);
     }
 
-    public ClassContext intoClass(FunctionOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind) {
+    public ClassContext intoClass(@Nullable FunctionOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind) {
         final StackValue thisValue;
         thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
 

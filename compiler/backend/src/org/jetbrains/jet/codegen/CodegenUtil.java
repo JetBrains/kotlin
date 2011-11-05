@@ -3,8 +3,10 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.objectweb.asm.Type;
+
+import java.util.List;
 
 /**
  * @author abreslav
@@ -61,5 +63,39 @@ public class CodegenUtil {
             return true;
 
         return hasOuterTypeInfo(outerClassDescriptor);
+    }
+
+    public static boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
+        if(!exceptOwn) {
+            if(!isInterface(type))
+                if(hasTypeInfoField(type))
+                    return true;
+        }
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(hasDerivedTypeInfoField(jetType, false))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static boolean hasTypeInfoField(JetType type) {
+        List<TypeParameterDescriptor> parameters = type.getConstructor().getParameters();
+        for (TypeParameterDescriptor parameter : parameters) {
+            if(parameter.isReified())
+                return true;
+        }
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(hasTypeInfoField(jetType))
+                return true;
+        }
+
+        ClassDescriptor outerClassDescriptor = getOuterClassDescriptor(type.getConstructor().getDeclarationDescriptor());
+        if(outerClassDescriptor == null)
+            return false;
+
+        return hasTypeInfoField(outerClassDescriptor.getDefaultType());
     }
 }
