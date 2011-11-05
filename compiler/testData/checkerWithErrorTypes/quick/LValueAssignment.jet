@@ -17,7 +17,7 @@ class C() : B() {
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
-    fun foo(c: C) {
+    fun bar(c: C) {
         <!VARIABLE_EXPECTED!>this<!> = c  //should be an error
     }
 }
