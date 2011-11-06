@@ -93,7 +93,7 @@ public class NamespaceCodegen {
                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
                     final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                     codegen.genToJVMStack(initializer);
-                    codegen.intermediateValueForProperty(descriptor, true, false, false).store(new InstructionAdapter(mv));
+                    codegen.intermediateValueForProperty(descriptor, true, null).store(new InstructionAdapter(mv));
                 }
             }
         }

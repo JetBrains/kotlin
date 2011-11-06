@@ -154,9 +154,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateSyntheticParts() {
+    protected void generateSyntheticParts(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
         generateFieldForObjectInstance();
         generateFieldForClassObject();
+        generateAccessors(accessors);
 
         try {
             generatePrimaryConstructor();
@@ -166,6 +167,81 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         generateGetTypeInfo();
+    }
+
+    private void generateAccessors(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+        if(accessors != null) {
+            for (Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry : accessors.entrySet()) {
+                if(entry.getValue() instanceof FunctionDescriptor) {
+                    FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
+                    FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
+
+                    Method method = state.getTypeMapper().mapSignature(bridge.getName(), bridge);
+                    Method originalMethod = state.getTypeMapper().mapSignature(original.getName(), original);
+                    Type[] argTypes = method.getArgumentTypes();
+
+                    MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, bridge.getName(), method.getDescriptor(), null, null);
+                    mv.visitCode();
+
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(reg, argType);
+                        //noinspection AssignmentToForLoopParameter
+                        reg += argType.getSize();
+                    }
+                    iv.invokespecial(state.getTypeMapper().getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+
+                    iv.areturn(method.getReturnType());
+                    mv.visitMaxs(0,0);
+                    mv.visitEnd();
+                }
+                else if(entry.getValue() instanceof PropertyDescriptor) {
+                    PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
+                    PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
+
+                    Method method = state.getTypeMapper().mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION);
+                    Method originalMethod = state.getTypeMapper().mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
+                    MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
+                    mv.visitCode();
+
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    iv.invokespecial(state.getTypeMapper().getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+
+                    iv.areturn(method.getReturnType());
+                    mv.visitMaxs(0,0);
+                    mv.visitEnd();
+
+                    method = state.getTypeMapper().mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION);
+                    originalMethod = state.getTypeMapper().mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
+                    mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
+                    mv.visitCode();
+
+                    iv = new InstructionAdapter(mv);
+
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    Type[] argTypes = method.getArgumentTypes();
+                    for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(reg, argType);
+                        //noinspection AssignmentToForLoopParameter
+                        reg += argType.getSize();
+                    }
+                    iv.invokespecial(state.getTypeMapper().getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+
+                    iv.areturn(method.getReturnType());
+                    mv.visitMaxs(0,0);
+                    mv.visitEnd();
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+        }
     }
 
     private void generateFieldForObjectInstance() {
@@ -654,7 +730,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if(propertyDescriptor.getOutType().isNullable())
                             type = JetTypeMapper.boxType(type);
                         codegen.gen(initializer, type);
-                        codegen.intermediateValueForProperty(propertyDescriptor, false, false, false).store(iv);
+                        codegen.intermediateValueForProperty(propertyDescriptor, false, null).store(iv);
                     }
 
                 }

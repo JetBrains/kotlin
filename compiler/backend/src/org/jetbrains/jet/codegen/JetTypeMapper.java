@@ -6,6 +6,7 @@ import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -18,6 +19,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
 import java.util.*;
+
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * @author yole
@@ -319,14 +322,14 @@ public class JetTypeMapper {
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
             owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
-            invokeOpcode = Opcodes.INVOKESTATIC;
+            invokeOpcode = INVOKESTATIC;
             thisClass = null;
         }
         else if (functionDescriptor instanceof ConstructorDescriptor) {
             assert !superCall;
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
             owner = jvmName(containingClass, OwnerKind.IMPLEMENTATION);
-            invokeOpcode = Opcodes.INVOKESPECIAL;
+            invokeOpcode = INVOKESPECIAL;
             thisClass = null;
         }
         else if (functionParent instanceof ClassDescriptor) {
@@ -486,16 +489,16 @@ public class JetTypeMapper {
         List<Type> valueParameterTypes = new ArrayList<Type>();
         final Method method = mapConstructorSignature(descriptor, valueParameterTypes);
         String owner = jvmName(descriptor.getContainingDeclaration(), kind);
-        return new CallableMethod(owner, method, Opcodes.INVOKESPECIAL, valueParameterTypes);
+        return new CallableMethod(owner, method, INVOKESPECIAL, valueParameterTypes);
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {
         int flags = 0;
         if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-            flags |= Opcodes.ACC_PUBLIC;
+            flags |= ACC_PUBLIC;
         }
         else if (p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-            flags |= Opcodes.ACC_PRIVATE;
+            flags |= ACC_PRIVATE;
         }
         else {
             flags |= defaultFlags;

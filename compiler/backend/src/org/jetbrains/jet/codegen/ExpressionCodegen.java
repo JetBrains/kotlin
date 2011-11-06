@@ -302,7 +302,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 //            if(hND != null)
 //                invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
 //            else
-                intermediateValueForProperty((PropertyDescriptor) hasNextDescriptor, false, false, false).put(Type.BOOLEAN_TYPE, v);
+                intermediateValueForProperty((PropertyDescriptor) hasNextDescriptor, false, null).put(Type.BOOLEAN_TYPE, v);
         }
         v.ifeq(end);
 
@@ -813,9 +813,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     boolean isStatic = container instanceof NamespaceDescriptorImpl;
                     final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
                     JetExpression r = getReceiverForSelector(expression);
-                    final boolean forceInterface = r != null && !(r instanceof JetThisExpression);
                     final boolean isSuper = r instanceof JetSuperExpression;
-                    final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField, forceInterface, isSuper);
+                    final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
                     if (!isStatic) {
                         if (receiver == StackValue.none()) {
                             receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
@@ -913,11 +912,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         StackValue.onStack(typeMapper.mapType(functionDescriptor.getReturnType())).coerce(type, v);
     }
 
-    public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface, boolean isSuper) {
+    public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, @Nullable JetSuperExpression superExpression) {
+        boolean isSuper = superExpression != null;
+
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         propertyDescriptor = propertyDescriptor.getOriginal();
-        boolean isInsideClass = !forceInterface && containingDeclaration == context.getContextClass() && contextKind() != OwnerKind.TRAIT_IMPL;
+        boolean isInsideClass = containingDeclaration == context.getContextClass() && contextKind() != OwnerKind.TRAIT_IMPL;
         Method getter;
         Method setter;
         if (forceField) {
@@ -926,11 +927,33 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             //noinspection ConstantConditions
-            getter = isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault())
-                     ? null : typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+            if (isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault())) {
+                getter = null;
+            }
+            else {
+                if(isSuper) {
+                    PsiElement enclosingElement = bindingContext.get(BindingContext.LABEL_TARGET, superExpression.getTargetLabel());
+                    ClassDescriptor enclosed = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, enclosingElement);
+                    if(!CodegenUtil.isInterface(propertyDescriptor.getContainingDeclaration())) {
+                        if(enclosed != null && enclosed != context.getContextClass()) {
+                            ClassContext c = context;
+                            while(c.getContextDescriptor() != enclosed) {
+                                c = c.getParentContext();
+                            }
+                            propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
+                            isSuper = false;
+                        }
+                    }
+                }
+                getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+            }
             //noinspection ConstantConditions
-            setter = isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())
-                     ? null : typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+            if (isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())) {
+                setter = null;
+            }
+            else {
+                setter = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+            }
         }
 
         String owner;
@@ -973,8 +996,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         boolean superCall = false;
         if (expression.getParent() instanceof JetQualifiedExpression) {
             final JetExpression receiverExpression = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
-            if(receiverExpression instanceof JetSuperExpression) {
+            if (receiverExpression instanceof JetSuperExpression) {
                 superCall = true;
+                JetSuperExpression superExpression = (JetSuperExpression) receiverExpression;
+                PsiElement enclosingElement = bindingContext.get(BindingContext.LABEL_TARGET, superExpression.getTargetLabel());
+                ClassDescriptor enclosed = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, enclosingElement);
+                if(!CodegenUtil.isInterface(fd.getContainingDeclaration())) {
+                    if(enclosed != null && enclosed != context.getContextClass()) {
+                        ClassContext c = context;
+                        while(c.getContextDescriptor() != enclosed) {
+                            c = c.getParentContext();
+                        }
+                        fd = c.getAccessor((FunctionDescriptor) fd);
+                        superCall = false;
+                    }
+                }
             }
         }
 
@@ -2459,7 +2495,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call);
                 if (descriptor instanceof PropertyDescriptor) {
                     v.load(subjectLocal, subjectType);
-                    conditionValue = intermediateValueForProperty((PropertyDescriptor) descriptor, false, false, false);
+                    conditionValue = intermediateValueForProperty((PropertyDescriptor) descriptor, false, null);
                 }
                 else {
                     throw new UnsupportedOperationException("unknown simple name resolve result: " + descriptor);

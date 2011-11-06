@@ -1,7 +1,10 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -11,6 +14,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,12 +41,12 @@ public abstract class ClassBodyCodegen {
         this.v = v;
     }
 
-    public void generate() {
+    public final void generate(@Nullable HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
         generateDeclaration();
 
         generateClassBody();
 
-        generateSyntheticParts();
+        generateSyntheticParts(accessors);
 
         generateStaticInitializer();
 
@@ -51,7 +55,7 @@ public abstract class ClassBodyCodegen {
 
     protected abstract void generateDeclaration();
 
-    protected void generateSyntheticParts() {
+    protected void generateSyntheticParts(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
     }
 
     private void generateClassBody() {

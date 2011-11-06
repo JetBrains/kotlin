@@ -642,12 +642,12 @@ public abstract class StackValue {
                 v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + "$$TImpl", getter.getName(), getter.getDescriptor().replace("(","(L" + owner + ";"));
             }
             else {
-                if (getter == null) {
-                    v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
-                }
-                else {
+            if (getter == null) {
+                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+            }
+            else {
                     v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isSuper ? Opcodes.INVOKESPECIAL : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
-                }
+            }
             }
             coerce(type, v);
         }
@@ -658,10 +658,10 @@ public abstract class StackValue {
                 v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + "$$TImpl", setter.getName(), setter.getDescriptor().replace("(","(L" + owner + ";"));
             }
             else {
-                if (setter == null) {
-                    v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
-                }
-                else {
+            if (setter == null) {
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+            }
+            else {
                     v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isSuper ? Opcodes.INVOKESPECIAL : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
                 }
             }
