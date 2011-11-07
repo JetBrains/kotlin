@@ -236,6 +236,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitSuperExpression(PsiSuperExpression expression) {
     super.visitSuperExpression(expression);
+    myResult = new SuperExpression(typeToNotNullableType(expression.getType()));
   }
 
   @Override
