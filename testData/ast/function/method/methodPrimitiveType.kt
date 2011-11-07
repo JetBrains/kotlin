@@ -1,1 +1,2 @@
-fun main() : Int { }
+fun main() : Int {
+}

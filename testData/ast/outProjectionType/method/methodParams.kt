@@ -1,1 +1,2 @@
-fun pushAll(src : Collection<out E?>?) : Unit { }
+fun pushAll(src : Collection<out E?>?) : Unit {
+}

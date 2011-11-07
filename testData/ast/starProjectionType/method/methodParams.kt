@@ -1,1 +1,2 @@
-fun wtf(w : Collection<*>?) : Unit { }
+fun wtf(w : Collection<*>?) : Unit {
+}

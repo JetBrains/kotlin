@@ -1,1 +1,2 @@
-fun main() : Boolean { }
+fun main() : Boolean {
+}

@@ -43,11 +43,8 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/statement")) actual = statementToSingleLineKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/statement_mult")) actual = statementToKotlin(javaCode);
 
-    else if (javaFile.getParent().endsWith("/method")) actual = methodToSingleLineKotlin(javaCode);
-    else if (javaFile.getParent().endsWith("/method_mult")) actual = methodToKotlin(javaCode);
-
+    else if (javaFile.getParent().endsWith("/method")) actual = methodToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/class")) actual = classToKotlin(javaCode);
-
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
 
     assert !actual.equals("");
