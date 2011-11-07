@@ -67,8 +67,9 @@ public class FunctionCodegen {
             if (isAbstract) flags |= ACC_ABSTRACT;
 
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
+            boolean hasReceiver = functionDescriptor.getReceiverParameter().exists();
             if(kind != OwnerKind.TRAIT_IMPL) {
-                int start = functionDescriptor.getReceiverParameter().exists() ? 1 : 0;
+                int start = hasReceiver ? 1 : 0;
                 for(int i = 0; i != paramDescrs.size(); ++i) {
                     AnnotationVisitor annotationVisitor = mv.visitParameterAnnotation(i + start, "jet/typeinfo/JetParameterName", true);
                     annotationVisitor.visit("value", paramDescrs.get(i).getName());
@@ -77,12 +78,16 @@ public class FunctionCodegen {
             }
             if (!isAbstract) {
                 mv.visitCode();
+                Label methodStart = new Label();
+                mv.visitLabel(methodStart);
+
                 FrameMap frameMap = context.prepareFrame();
 
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
-                int add = functionDescriptor.getReceiverParameter().exists() ? state.getTypeMapper().mapType(functionDescriptor.getReceiverParameter().getType()).getSize() : 0;
+                int receiverSize = !hasReceiver ? 0 : state.getTypeMapper().mapType(functionDescriptor.getReceiverParameter().getType()).getSize();
+                int add = hasReceiver ? 1 : 0;
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     ValueParameterDescriptor parameter = paramDescrs.get(i);
                     frameMap.enter(parameter, argTypes[i+add].getSize());
@@ -123,8 +128,18 @@ public class FunctionCodegen {
 
                     codegen.returnExpression(bodyExpressions);
                 }
+
+                Label methodEnd = new Label();
+                mv.visitLabel(methodEnd);
+                int index = ((flags & ACC_STATIC) != 0 ? 0 : 1) + receiverSize;
+                for (int i = 0; i < paramDescrs.size(); i++) {
+                    ValueParameterDescriptor parameter = paramDescrs.get(i);
+                    mv.visitLocalVariable(parameter.getName(), state.getTypeMapper().mapType(parameter.getOutType()).getDescriptor(), null, methodStart, methodEnd, index);
+                    index +=  argTypes[i+add].getSize();
+                }
+
                 try {
-                mv.visitMaxs(0, 0);
+                    mv.visitMaxs(0, 0);
                 }
                 catch (Throwable t) {
                     System.out.println(t);
