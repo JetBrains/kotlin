@@ -1,1 +1,4 @@
-namespace test { class C { } }
+namespace test {
+class C {
+}
+}

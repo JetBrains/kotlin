@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.apache.commons.io.FileUtils.readFileToString;
+import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.jetbrains.jet.j2k.TestCaseBuilder.getTestDataPathBase;
 
 /**
@@ -48,10 +49,11 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/class")) actual = classToSingleLineKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/class_mult")) actual = classToKotlin(javaCode);
 
-    else if (javaFile.getParent().endsWith("/file")) actual = fileToSingleLineKotlin(javaCode);
-    else if (javaFile.getParent().endsWith("/file_mult")) actual = fileToKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
 
     assert !actual.equals("");
+    if (!expected.equals(actual))
+      writeStringToFile(new File(kotlinPath + ".tmp"), actual);
     Assert.assertEquals(expected, actual);
   }
 
@@ -97,10 +99,6 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   protected String fileToKotlin(String text) throws IOException {
     configureFromText(text);
     return prettify(Converter.fileToFile((PsiJavaFile) myFile).toKotlin());
-  }
-
-  protected String fileToSingleLineKotlin(String text) throws IOException {
-    return toSingleLine(fileToKotlin(text));
   }
 
   @NotNull
