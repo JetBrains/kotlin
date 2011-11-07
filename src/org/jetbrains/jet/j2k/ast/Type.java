@@ -19,7 +19,7 @@ public abstract class Type extends Element {
     myNullable = nullable;
   }
 
-  boolean isNullable() {
+  public boolean isNullable() {
     return myNullable;
   }
 
@@ -35,6 +35,11 @@ public abstract class Type extends Element {
     @Override
     public String toKotlin() {
       return "UNRESOLVED_TYPE";
+    }
+
+    @Override
+    public boolean isNullable() {
+      return false;
     }
   }
 }

@@ -12,6 +12,11 @@ public class PrimitiveType extends Type {
     myType = type;
   }
 
+  @Override
+  public boolean isNullable() {
+    return false;
+  }
+
   @NotNull
   @Override
   public String toKotlin() {

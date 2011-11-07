@@ -165,7 +165,8 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     myResult = // TODO: not resolved
       new MethodCallExpression(
         expressionToExpression(expression.getMethodExpression()),
-        elementToElement(expression.getArgumentList())
+        elementToElement(expression.getArgumentList()),
+        typeToType(expression.getType()).isNullable()
       );
   }
 
@@ -225,11 +226,11 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
-    final IdentifierImpl identifier = expression.getType() != null ? // TODO: if type exists so id is nullable
-      new IdentifierImpl(expression.getReferenceName()) :
-      new IdentifierImpl(expression.getReferenceName(), false);
-
-    myResult = new CallChain(expressionToExpression(expression.getQualifierExpression()), identifier);
+    boolean isNullable = typeToType(expression.getType()).isNullable();
+    myResult = new CallChain(
+      expressionToExpression(expression.getQualifierExpression()),
+      new IdentifierImpl(expression.getReferenceName(), isNullable) // TODO: if type exists so id is nullable
+    );
   }
 
   @Override

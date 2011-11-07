@@ -8,10 +8,17 @@ import org.jetbrains.annotations.NotNull;
 public class MethodCallExpression extends Expression {
   private final Expression myMethodCall;
   private final Element myParamList;
+  private boolean myIsResultNullable;
 
-  public MethodCallExpression(Expression methodCall, Element paramList) {
+  public MethodCallExpression(Expression methodCall, Element paramList, boolean nullable) {
     myMethodCall = methodCall;
     myParamList = paramList;
+    myIsResultNullable = nullable;
+  }
+
+  @Override
+  public boolean isNullable() {
+    return myIsResultNullable;
   }
 
   @NotNull
