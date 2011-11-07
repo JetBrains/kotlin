@@ -1,2 +1,2 @@
-fun getT() : T? {
+open fun getT() : T? {
 }

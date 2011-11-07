@@ -1,5 +1,5 @@
 open class B {
-fun call() : Unit {
+open fun call() : Unit {
 }
 }
 open class A : B {

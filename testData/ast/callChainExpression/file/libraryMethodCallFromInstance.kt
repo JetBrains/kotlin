@@ -1,13 +1,13 @@
 namespace {
 open class Library {
-fun call() : Unit {
+open fun call() : Unit {
 }
-fun getString() : String? {
+open fun getString() : String? {
 return ""
 }
 }
 open class User {
-fun main() : Unit {
+open fun main() : Unit {
 var lib : Library? = Library()
 lib?.call()
 lib?.getString()?.isEmpty()

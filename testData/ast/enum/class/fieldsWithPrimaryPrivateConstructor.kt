@@ -5,10 +5,10 @@ RED(23)
 YELLOW(24)
 BLUE(25)
 private var code : Int
-private (c : Int) {
+open private (c : Int) {
 code = c
 }
-public fun getCode() : Int {
+open public fun getCode() : Int {
 return code
 }
 }

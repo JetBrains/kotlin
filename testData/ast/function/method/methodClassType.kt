@@ -1,2 +1,2 @@
-fun main() : String? {
+open fun main() : String? {
 }

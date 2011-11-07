@@ -1,6 +1,6 @@
 class S {
 class object {
-fun staticF() : Boolean {
+open fun staticF() : Boolean {
 return true
 }
 }

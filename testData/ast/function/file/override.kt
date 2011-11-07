@@ -1,6 +1,6 @@
 namespace {
 open class A {
-fun a() : Unit {
+open fun a() : Unit {
 }
 }
 class B : A {

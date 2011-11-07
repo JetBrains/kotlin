@@ -1,3 +1,3 @@
-fun isTrue() : Boolean {
+open fun isTrue() : Boolean {
 return true
 }

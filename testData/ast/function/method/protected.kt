@@ -1,2 +1,2 @@
-protected fun test() : Unit {
+open protected fun test() : Unit {
 }

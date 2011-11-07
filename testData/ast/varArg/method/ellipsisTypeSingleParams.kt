@@ -1,2 +1,2 @@
-fun pushAll(vararg objs : Any?) : Unit {
+open fun pushAll(vararg objs : Any?) : Unit {
 }

@@ -1,1 +1,1 @@
-fun format(pattern : String?, vararg arguments : Any?) : String?
+open fun format(pattern : String?, vararg arguments : Any?) : String?

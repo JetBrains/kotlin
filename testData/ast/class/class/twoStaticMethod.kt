@@ -1,9 +1,9 @@
 class S {
 class object {
-fun sB() : Boolean {
+open fun sB() : Boolean {
 return true
 }
-fun sI() : Int {
+open fun sI() : Int {
 return 1
 }
 }

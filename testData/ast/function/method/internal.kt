@@ -1,2 +1,2 @@
-fun test() : Unit {
+open fun test() : Unit {
 }

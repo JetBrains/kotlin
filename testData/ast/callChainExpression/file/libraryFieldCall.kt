@@ -5,7 +5,7 @@ val ourOut : PrintStream?
 }
 }
 open class User {
-fun main() : Unit {
+open fun main() : Unit {
 Library.ourOut?.print()
 }
 }

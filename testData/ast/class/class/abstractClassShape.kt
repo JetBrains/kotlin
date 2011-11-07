@@ -1,10 +1,10 @@
 abstract open class Shape {
 public var color : String?
-public fun setColor(c : String?) : Unit {
+open public fun setColor(c : String?) : Unit {
 color = c
 }
-public fun getColor() : String? {
+open public fun getColor() : String? {
 return color
 }
-abstract public fun area() : Double
+abstract open public fun area() : Double
 }

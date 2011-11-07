@@ -1,10 +1,10 @@
 class S {
 class object {
-fun sI() : Int {
+open fun sI() : Int {
 return 1
 }
 }
-fun sB() : Boolean {
+open fun sB() : Boolean {
 return true
 }
 }

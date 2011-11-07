@@ -1,15 +1,15 @@
 namespace {
 open class Library {
 class object {
-fun call() : Unit {
+open fun call() : Unit {
 }
-fun getString() : String? {
+open fun getString() : String? {
 return ""
 }
 }
 }
 open class User {
-fun main() : Unit {
+open fun main() : Unit {
 Library.call()
 Library.getString()?.isEmpty()
 }

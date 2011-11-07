@@ -1,2 +1,2 @@
-private fun test() : Unit {
+open private fun test() : Unit {
 }
