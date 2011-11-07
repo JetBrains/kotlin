@@ -6,6 +6,7 @@ import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -15,10 +16,11 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 import java.util.*;
+
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * @author yole
@@ -57,7 +59,9 @@ public class JetTypeMapper {
     private final Map<JetExpression, String> classNamesForAnonymousClasses = new HashMap<JetExpression, String>();
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
-    private final HashMap<JetType,String> knowTypes = new HashMap<JetType, String>();
+    private final HashMap<JetType,String> knowTypeNames = new HashMap<JetType, String>();
+    private final HashMap<JetType,Type> knowTypes = new HashMap<JetType, Type>();
+
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
     public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
     public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
@@ -75,14 +79,7 @@ public class JetTypeMapper {
         this.standardLibrary = standardLibrary;
         this.bindingContext = bindingContext;
         initKnownTypes();
-    }
-
-    static String jvmName(PsiClass psiClass) {
-        final String qName = psiClass.getQualifiedName();
-        if (qName == null) {
-            throw new UnsupportedOperationException("can't evaluate JVM name for anonymous class " + psiClass);
-        }
-        return qName.replace(".", "/");
+        initKnownTypeNames();
     }
 
     public static boolean isIntPrimitive(Type type) {
@@ -100,68 +97,6 @@ public class JetTypeMapper {
                 || type == Type.LONG_TYPE
                 || type == Type.BOOLEAN_TYPE
                 || type == Type.VOID_TYPE;
-    }
-
-    static Type psiTypeToAsm(PsiType type) {
-        if(type instanceof PsiArrayType) {
-            PsiArrayType psiArrayType = (PsiArrayType) type;
-            return Type.getType("[" + psiTypeToAsm(psiArrayType.getComponentType()).getDescriptor());
-        }
-
-        if (type instanceof PsiPrimitiveType) {
-            if (type == PsiType.VOID) {
-                return Type.VOID_TYPE;
-            }
-            if (type == PsiType.INT) {
-                return Type.INT_TYPE;
-            }
-            if (type == PsiType.LONG) {
-                return Type.LONG_TYPE;
-            }
-            if (type == PsiType.BOOLEAN) {
-                return Type.BOOLEAN_TYPE;
-            }
-            if (type == PsiType.BYTE) {
-                return Type.BYTE_TYPE;
-            }
-            if (type == PsiType.SHORT) {
-                return Type.SHORT_TYPE;
-            }
-            if (type == PsiType.CHAR) {
-                return Type.CHAR_TYPE;
-            }
-            if (type == PsiType.FLOAT) {
-                return Type.FLOAT_TYPE;
-            }
-            if (type == PsiType.DOUBLE) {
-                return Type.DOUBLE_TYPE;
-            }
-        }
-        if (type instanceof PsiClassType) {
-            PsiClass psiClass = ((PsiClassType) type).resolve();
-            if (psiClass instanceof PsiTypeParameter) {
-                final PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
-                if (extendsListTypes.length > 0) {
-                    throw new UnsupportedOperationException("should return common supertype");
-                }
-                return TYPE_OBJECT;
-            }
-            if (psiClass == null) {
-                throw new UnsupportedOperationException("unresolved PsiClassType: " + type);
-            }
-            return psiClassType(psiClass);
-        }
-        throw new UnsupportedOperationException("don't know how to map type " + type + " to ASM");
-    }
-
-    static Method getMethodDescriptor(PsiMethod method) {
-        Type returnType = method.isConstructor() ? Type.VOID_TYPE : psiTypeToAsm(method.getReturnType());
-        PsiParameter[] parameters = method.getParameterList().getParameters();
-        Type[] parameterTypes = new Type[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            parameterTypes[i] = psiTypeToAsm(parameters[i].getType());
-        }
-        return new Method(method.isConstructor() ? "<init>" : method.getName(), Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
     public static Type getBoxedType(final Type type) {
@@ -186,44 +121,8 @@ public class JetTypeMapper {
         return type;
     }
 
-    public boolean hasTypeInfoField(JetType type) {
-        if(type.getConstructor().getParameters().size() > 0) {
-            if(!(bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getConstructor().getDeclarationDescriptor()) instanceof PsiClass))
-                return true;
-        }
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasTypeInfoField(jetType))
-                return true;
-        }
-
-        ClassDescriptor outerClassDescriptor = CodegenUtil.getOuterClassDescriptor(type.getConstructor().getDeclarationDescriptor());
-        if(outerClassDescriptor == null)
-            return false;
-
-        return hasTypeInfoField(outerClassDescriptor.getDefaultType());
-    }
-
-    public boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
-        if(!exceptOwn) {
-            if(!CodegenUtil.isInterface(type))
-                if(hasTypeInfoField(type))
-                    return true;
-        }
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasDerivedTypeInfoField(jetType, false))
-                return true;
-        }
-
-        return false;
-    }
-
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
         PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetClass);
-        if (declaration instanceof PsiClass) {
-            return jvmName((PsiClass) declaration);
-        }
         if (declaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) declaration).isObjectLiteral()) {
             final PsiElement parent = declaration.getParent();
             if (parent instanceof JetClassObject) {
@@ -245,15 +144,15 @@ public class JetTypeMapper {
         return jvmName(descriptor, OwnerKind.IMPLEMENTATION);
     }
 
-    private static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
+    private String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
         if (jetClass.getKind() == ClassKind.OBJECT) {
-            return jvmNameForImplementation(jetClass);
+            return jvmNameForImplementation(jetClass, OwnerKind.IMPLEMENTATION);
         }
         else if (kind == OwnerKind.IMPLEMENTATION) {
-            return jvmNameForImplementation(jetClass);
+            return jvmNameForImplementation(jetClass, OwnerKind.IMPLEMENTATION);
         }
         else if (kind == OwnerKind.TRAIT_IMPL) {
-            return jvmNameForTraitImpl(jetClass);
+            return jvmNameForImplementation(jetClass, OwnerKind.IMPLEMENTATION) + "$$TImpl";
         }
         else {
             assert false : "Unsuitable kind";
@@ -268,16 +167,8 @@ public class JetTypeMapper {
         return Type.getType("L" + jvmName(jetClass, kind) + ";");
     }
 
-    static Type psiClassType(PsiClass psiClass) {
-        return Type.getType("L" + jvmName(psiClass) + ";");
-    }
-
-    static Type jetInterfaceType(ClassDescriptor classDescriptor) {
-        return Type.getType("L" + jvmNameForInterface(classDescriptor) + ";");
-    }
-
-    static Type jetImplementationType(ClassDescriptor classDescriptor) {
-        return Type.getType("L" + jvmNameForImplementation(classDescriptor) + ";");
+    Type jetImplementationType(ClassDescriptor classDescriptor) {
+        return Type.getType("L" + jvmNameForImplementation(classDescriptor, OwnerKind.IMPLEMENTATION) + ";");
     }
 
     public static String jvmName(JetNamespace namespace) {
@@ -288,30 +179,22 @@ public class JetTypeMapper {
         return NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(namespace));
     }
 
-    public static String jvmNameForInterface(ClassDescriptor descriptor) {
-        return DescriptorRenderer.getFQName(descriptor).replace('.', '/');
-    }
-
-    public static String jvmNameForImplementation(ClassDescriptor descriptor) {
-        return jvmNameForInterface(descriptor);
-    }
-
-    private static String jvmNameForTraitImpl(ClassDescriptor descriptor) {
-        return jvmNameForInterface(descriptor) + "$$TImpl";
+    public String jvmNameForImplementation(ClassDescriptor descriptor, OwnerKind kind) {
+        return mapType(descriptor.getDefaultType(), kind).getInternalName();
     }
 
     public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
-        if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl) {
-            owner = jvmName((NamespaceDescriptor) descriptor.getContainingDeclaration());
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            owner = jvmName((NamespaceDescriptor) containingDeclaration);
         }
-        else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
+        else if (containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             if (kind instanceof OwnerKind.DelegateKind) {
                 kind = OwnerKind.IMPLEMENTATION;
             }
             else {
-                assert classDescriptor != null;
                 if (classDescriptor.getKind() == ClassKind.OBJECT) {
                     kind = OwnerKind.IMPLEMENTATION;
                 }
@@ -319,23 +202,19 @@ public class JetTypeMapper {
             owner = jvmName(classDescriptor, kind);
         }
         else {
-            throw new UnsupportedOperationException("don't know how to generate owner for parent " + descriptor.getContainingDeclaration());
+            throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
         }
         return owner;
     }
 
-    @NotNull public Type mapReturnType(@NotNull final JetType jetType, OwnerKind kind) {
+    @NotNull public Type mapReturnType(final JetType jetType) {
         if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             return Type.VOID_TYPE;
         }
         if (jetType.equals(JetStandardClasses.getNullableNothingType())) {
             return TYPE_OBJECT;
         }
-        return mapType(jetType, kind);
-    }
-
-    @NotNull public Type mapReturnType(final JetType jetType) {
-        return mapReturnType(jetType, OwnerKind.IMPLEMENTATION);
+        return mapType(jetType, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull public Type mapType(final JetType jetType) {
@@ -343,85 +222,9 @@ public class JetTypeMapper {
     }
 
     @NotNull public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
-        if (jetType.equals(JetStandardClasses.getNothingType()) || jetType.equals(JetStandardClasses.getNullableNothingType())) {
-            return TYPE_NOTHING;
-        }
-        if (jetType.equals(standardLibrary.getIntType())) {
-            return Type.INT_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableIntType())) {
-            return JL_INTEGER_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getLongType())) {
-            return Type.LONG_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableLongType())) {
-            return JL_LONG_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getShortType())) {
-            return Type.SHORT_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableShortType())) {
-            return JL_SHORT_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getByteType())) {
-            return Type.BYTE_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableByteType())) {
-            return JL_BYTE_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getCharType())) {
-            return Type.CHAR_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableCharType())) {
-            return JL_CHAR_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getFloatType())) {
-            return Type.FLOAT_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableFloatType())) {
-            return JL_FLOAT_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getDoubleType())) {
-            return Type.DOUBLE_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableDoubleType())) {
-            return JL_DOUBLE_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getBooleanType())) {
-            return Type.BOOLEAN_TYPE;
-        }
-        if (jetType.equals(standardLibrary.getNullableBooleanType())) {
-            return JL_BOOLEAN_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getByteArrayType())){
-            return ARRAY_BYTE_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getShortArrayType())){
-            return ARRAY_SHORT_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getIntArrayType())){
-            return ARRAY_INT_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getLongArrayType())){
-            return ARRAY_LONG_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getFloatArrayType())){
-            return ARRAY_FLOAT_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getDoubleArrayType())){
-            return ARRAY_DOUBLE_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getCharArrayType())){
-            return ARRAY_CHAR_TYPE;
-        }
-        if(jetType.equals(standardLibrary.getBooleanArrayType())){
-            return ARRAY_BOOL_TYPE;
-        }
-
-        if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
-            return Type.getType(String.class);
-        }
+        Type known = knowTypes.get(jetType);
+        if(known != null)
+            return known;
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (standardLibrary.getArray().equals(descriptor)) {
@@ -439,7 +242,10 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            return Type.getObjectType(jvmName((ClassDescriptor) descriptor, kind));
+            String name = DescriptorRenderer.getFQName(descriptor).replace('.', '/');
+            if(name.startsWith("<java_root>"))
+                name = name.substring("<java_root>".length()+1);
+            return Type.getObjectType(name + (kind == OwnerKind.TRAIT_IMPL ? "$$TImpl" : ""));
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
@@ -503,6 +309,54 @@ public class JetTypeMapper {
     }
 
 
+    public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
+        if(functionDescriptor == null)
+            return null;
+
+        final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
+        final List<Type> valueParameterTypes = new ArrayList<Type>();
+        Method descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, kind);
+        String owner;
+        int invokeOpcode;
+        ClassDescriptor thisClass;
+        if (functionParent instanceof NamespaceDescriptor) {
+            assert !superCall;
+            owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
+            invokeOpcode = INVOKESTATIC;
+            thisClass = null;
+        }
+        else if (functionDescriptor instanceof ConstructorDescriptor) {
+            assert !superCall;
+            ClassDescriptor containingClass = (ClassDescriptor) functionParent;
+            owner = jvmName(containingClass, OwnerKind.IMPLEMENTATION);
+            invokeOpcode = INVOKESPECIAL;
+            thisClass = null;
+        }
+        else if (functionParent instanceof ClassDescriptor) {
+            ClassDescriptor containingClass = (ClassDescriptor) functionParent;
+            boolean isInterface = CodegenUtil.isInterface(containingClass);
+            owner = jvmName(containingClass, isInterface && superCall ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION);
+            invokeOpcode = isInterface
+                    ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
+                    : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
+            if(isInterface && superCall) {
+                descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, OwnerKind.TRAIT_IMPL);
+            }
+            thisClass = containingClass;
+        }
+        else {
+            throw new UnsupportedOperationException("unknown function parent");
+        }
+
+        final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
+        result.setNeedsThis(thisClass);
+        if(functionDescriptor.getReceiverParameter().exists()) {
+            result.setNeedsReceiver(functionDescriptor.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor());
+        }
+
+        return result;
+    }
+
     private Method mapSignature(FunctionDescriptor f, List<Type> valueParameterTypes, OwnerKind kind) {
         final ReceiverDescriptor receiverTypeRef = f.getReceiverParameter();
         final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
@@ -527,93 +381,13 @@ public class JetTypeMapper {
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
-        for (int n = f.getTypeParameters().size(); n > 0; n--) {
-            parameterTypes.add(TYPE_TYPEINFO);
+        for (TypeParameterDescriptor parameterDescriptor : f.getTypeParameters()) {
+            if(parameterDescriptor.isReified()) {
+                parameterTypes.add(TYPE_TYPEINFO);
+            }
         }
-        Type returnType = mapReturnType(f.getReturnType());
+        Type returnType = f instanceof ConstructorDescriptor ? Type.VOID_TYPE : mapReturnType(f.getReturnType());
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
-    }
-
-    public CallableMethod mapToCallableMethod(PsiNamedElement declaration, OwnerKind kind) {
-        if (declaration instanceof PsiMethod) {
-            return mapToCallableMethod((PsiMethod) declaration);
-        }
-        if (!(declaration instanceof JetNamedFunction)) {
-            throw new UnsupportedOperationException("unknown declaration type " + declaration);
-        }
-        JetNamedFunction f = (JetNamedFunction) declaration;
-        final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
-        assert functionDescriptor != null;
-        return mapToCallableMethod(functionDescriptor, kind);
-    }
-
-    static CallableMethod mapToCallableMethod(PsiMethod method) {
-        final PsiClass containingClass = method.getContainingClass();
-        String owner = jvmName(containingClass);
-        Method signature = getMethodDescriptor(method);
-        List<Type> valueParameterTypes = new ArrayList<Type>();
-        Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
-        int opcode;
-        boolean ownerFromCall = false;
-        DeclarationDescriptor thisClass = null;
-        if (method.isConstructor()) {
-            opcode = Opcodes.INVOKESPECIAL;
-        }
-        else if (method.hasModifierProperty(PsiModifier.STATIC)) {
-            opcode = Opcodes.INVOKESTATIC;
-        }
-        else {
-            assert containingClass != null;
-            if (containingClass.isInterface()) {
-                opcode = Opcodes.INVOKEINTERFACE;
-            }
-            else {
-                opcode = Opcodes.INVOKEVIRTUAL;
-            }
-            ownerFromCall = true;
-            thisClass = JetStandardClasses.getAny(); // todo - this is hack, correct descriptor needed
-        }
-        final CallableMethod result = new CallableMethod(owner, signature, opcode, valueParameterTypes);
-        result.setNeedsThis(thisClass);
-        result.setOwnerFromCall(ownerFromCall);
-        return result;
-    }
-
-    public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
-        if(functionDescriptor == null)
-            return null;
-
-        final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
-        final List<Type> valueParameterTypes = new ArrayList<Type>();
-        Method descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, kind);
-        String owner;
-        int invokeOpcode;
-        ClassDescriptor thisClass;
-        if (functionParent instanceof NamespaceDescriptor) {
-            owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
-            invokeOpcode = Opcodes.INVOKESTATIC;
-            thisClass = null;
-        }
-        else if (functionParent instanceof ClassDescriptor) {
-            ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            owner = jvmName(containingClass, OwnerKind.IMPLEMENTATION);
-            invokeOpcode = CodegenUtil.isInterface(containingClass)
-                    ? Opcodes.INVOKEINTERFACE
-                    : Opcodes.INVOKEVIRTUAL;
-            thisClass = containingClass;
-        }
-        else {
-            throw new UnsupportedOperationException("unknown function parent");
-        }
-
-        final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
-        result.setAcceptsTypeArguments(true);
-        result.setNeedsThis(thisClass);
-        if(functionDescriptor.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(functionDescriptor.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor());
-        }
-
-        return result;
     }
 
     public Method mapSignature(String name, FunctionDescriptor f) {
@@ -666,6 +440,7 @@ public class JetTypeMapper {
             return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[0]);
         else {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+            assert containingDeclaration != null;
             return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[] { mapType(containingDeclaration.getDefaultType()) });
         }
     }
@@ -681,6 +456,7 @@ public class JetTypeMapper {
         }
         else {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+            assert containingDeclaration != null;
             return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { mapType(containingDeclaration.getDefaultType()), paramType });
         }
     }
@@ -713,18 +489,16 @@ public class JetTypeMapper {
         List<Type> valueParameterTypes = new ArrayList<Type>();
         final Method method = mapConstructorSignature(descriptor, valueParameterTypes);
         String owner = jvmName(descriptor.getContainingDeclaration(), kind);
-        final CallableMethod result = new CallableMethod(owner, method, Opcodes.INVOKESPECIAL, valueParameterTypes);
-        result.setAcceptsTypeArguments(!(bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getContainingDeclaration()) instanceof PsiClass));
-        return result;
+        return new CallableMethod(owner, method, INVOKESPECIAL, valueParameterTypes);
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {
         int flags = 0;
         if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-            flags |= Opcodes.ACC_PUBLIC;
+            flags |= ACC_PUBLIC;
         }
         else if (p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-            flags |= Opcodes.ACC_PRIVATE;
+            flags |= ACC_PRIVATE;
         }
         else {
             flags |= defaultFlags;
@@ -746,7 +520,7 @@ public class JetTypeMapper {
         }
         else {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);
-            baseName = jvmNameForInterface(aClass);
+            baseName = jvmNameForImplementation(aClass, OwnerKind.IMPLEMENTATION);
         }
 
         Integer count = anonymousSubclassesCount.get(baseName);
@@ -768,40 +542,90 @@ public class JetTypeMapper {
         return result;
     }
 
-    private void initKnownTypes() {
-        knowTypes.put(standardLibrary.getIntType(), "INT_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableIntType(), "NULLABLE_INT_TYPE_INFO");
-        knowTypes.put(standardLibrary.getLongType(), "LONG_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableLongType(), "NULLABLE_LONG_TYPE_INFO");
-        knowTypes.put(standardLibrary.getShortType(),"SHORT_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableShortType(),"NULLABLE_SHORT_TYPE_INFO");
-        knowTypes.put(standardLibrary.getByteType(),"BYTE_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableByteType(),"NULLABLE_BYTE_TYPE_INFO");
-        knowTypes.put(standardLibrary.getCharType(),"CHAR_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableCharType(),"NULLABLE_CHAR_TYPE_INFO");
-        knowTypes.put(standardLibrary.getFloatType(),"FLOAT_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableFloatType(),"NULLABLE_FLOAT_TYPE_INFO");
-        knowTypes.put(standardLibrary.getDoubleType(),"DOUBLE_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableDoubleType(),"NULLABLE_DOUBLE_TYPE_INFO");
-        knowTypes.put(standardLibrary.getBooleanType(),"BOOLEAN_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableBooleanType(),"NULLABLE_BOOLEAN_TYPE_INFO");
-        knowTypes.put(standardLibrary.getStringType(),"STRING_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableStringType(),"NULLABLE_STRING_TYPE_INFO");
-        knowTypes.put(standardLibrary.getTuple0Type(),"TUPLE0_TYPE_INFO");
-        knowTypes.put(standardLibrary.getNullableTuple0Type(),"NULLABLE_TUPLE0_TYPE_INFO");
+    private void initKnownTypeNames() {
+        knowTypeNames.put(standardLibrary.getIntType(), "INT_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableIntType(), "NULLABLE_INT_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getLongType(), "LONG_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableLongType(), "NULLABLE_LONG_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getShortType(),"SHORT_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableShortType(),"NULLABLE_SHORT_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getByteType(),"BYTE_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableByteType(),"NULLABLE_BYTE_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getCharType(),"CHAR_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableCharType(),"NULLABLE_CHAR_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getFloatType(),"FLOAT_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableFloatType(),"NULLABLE_FLOAT_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getDoubleType(),"DOUBLE_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableDoubleType(),"NULLABLE_DOUBLE_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getBooleanType(),"BOOLEAN_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableBooleanType(),"NULLABLE_BOOLEAN_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getStringType(),"STRING_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableStringType(),"NULLABLE_STRING_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getTuple0Type(),"TUPLE0_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableTuple0Type(),"NULLABLE_TUPLE0_TYPE_INFO");
 
-        knowTypes.put(standardLibrary.getIntArrayType(), "INT_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getLongArrayType(), "LONG_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getShortArrayType(),"SHORT_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getByteArrayType(),"BYTE_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getCharArrayType(),"CHAR_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getFloatArrayType(),"FLOAT_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getDoubleArrayType(),"DOUBLE_ARRAY_TYPE_INFO");
-        knowTypes.put(standardLibrary.getBooleanArrayType(),"BOOLEAN_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getIntArrayType(), "INT_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getLongArrayType(), "LONG_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getShortArrayType(),"SHORT_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getByteArrayType(),"BYTE_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getCharArrayType(),"CHAR_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getFloatArrayType(),"FLOAT_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getDoubleArrayType(),"DOUBLE_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getBooleanArrayType(),"BOOLEAN_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableIntArrayType(), "INT_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableLongArrayType(), "LONG_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableShortArrayType(),"SHORT_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableByteArrayType(),"BYTE_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableCharArrayType(),"CHAR_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableFloatArrayType(),"FLOAT_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableDoubleArrayType(),"DOUBLE_ARRAY_TYPE_INFO");
+        knowTypeNames.put(standardLibrary.getNullableBooleanArrayType(),"BOOLEAN_ARRAY_TYPE_INFO");
+    }
+
+    private void initKnownTypes() {
+        knowTypes.put(JetStandardClasses.getNothingType(), TYPE_NOTHING);
+        knowTypes.put(JetStandardClasses.getNullableNothingType(), TYPE_NOTHING);
+
+        knowTypes.put(standardLibrary.getIntType(), Type.INT_TYPE);
+        knowTypes.put(standardLibrary.getNullableIntType(), JL_INTEGER_TYPE);
+        knowTypes.put(standardLibrary.getLongType(), Type.LONG_TYPE);
+        knowTypes.put(standardLibrary.getNullableLongType(), JL_LONG_TYPE);
+        knowTypes.put(standardLibrary.getShortType(),Type.SHORT_TYPE);
+        knowTypes.put(standardLibrary.getNullableShortType(),JL_SHORT_TYPE);
+        knowTypes.put(standardLibrary.getByteType(),Type.BYTE_TYPE);
+        knowTypes.put(standardLibrary.getNullableByteType(),JL_BYTE_TYPE);
+        knowTypes.put(standardLibrary.getCharType(),Type.CHAR_TYPE);
+        knowTypes.put(standardLibrary.getNullableCharType(),JL_CHAR_TYPE);
+        knowTypes.put(standardLibrary.getFloatType(),Type.FLOAT_TYPE);
+        knowTypes.put(standardLibrary.getNullableFloatType(),JL_FLOAT_TYPE);
+        knowTypes.put(standardLibrary.getDoubleType(),Type.DOUBLE_TYPE);
+        knowTypes.put(standardLibrary.getNullableDoubleType(),JL_DOUBLE_TYPE);
+        knowTypes.put(standardLibrary.getBooleanType(),Type.BOOLEAN_TYPE);
+        knowTypes.put(standardLibrary.getNullableBooleanType(),JL_BOOLEAN_TYPE);
+
+        knowTypes.put(standardLibrary.getStringType(),JL_STRING_TYPE);
+        knowTypes.put(standardLibrary.getNullableStringType(),JL_STRING_TYPE);
+
+        knowTypes.put(standardLibrary.getIntArrayType(), ARRAY_INT_TYPE);
+        knowTypes.put(standardLibrary.getLongArrayType(), ARRAY_LONG_TYPE);
+        knowTypes.put(standardLibrary.getShortArrayType(),ARRAY_SHORT_TYPE);
+        knowTypes.put(standardLibrary.getByteArrayType(),ARRAY_BYTE_TYPE);
+        knowTypes.put(standardLibrary.getCharArrayType(),ARRAY_CHAR_TYPE);
+        knowTypes.put(standardLibrary.getFloatArrayType(),ARRAY_FLOAT_TYPE);
+        knowTypes.put(standardLibrary.getDoubleArrayType(),ARRAY_DOUBLE_TYPE);
+        knowTypes.put(standardLibrary.getBooleanArrayType(),ARRAY_BOOL_TYPE);
+        knowTypes.put(standardLibrary.getNullableIntArrayType(), ARRAY_INT_TYPE);
+        knowTypes.put(standardLibrary.getNullableLongArrayType(), ARRAY_LONG_TYPE);
+        knowTypes.put(standardLibrary.getNullableShortArrayType(),ARRAY_SHORT_TYPE);
+        knowTypes.put(standardLibrary.getNullableByteArrayType(),ARRAY_BYTE_TYPE);
+        knowTypes.put(standardLibrary.getNullableCharArrayType(),ARRAY_CHAR_TYPE);
+        knowTypes.put(standardLibrary.getNullableFloatArrayType(),ARRAY_FLOAT_TYPE);
+        knowTypes.put(standardLibrary.getNullableDoubleArrayType(),ARRAY_DOUBLE_TYPE);
+        knowTypes.put(standardLibrary.getNullableBooleanArrayType(),ARRAY_BOOL_TYPE);
     }
 
     public String isKnownTypeInfo(JetType jetType) {
-        return knowTypes.get(jetType);
+        return knowTypeNames.get(jetType);
     }
 
     public boolean isGenericsArray(JetType type) {

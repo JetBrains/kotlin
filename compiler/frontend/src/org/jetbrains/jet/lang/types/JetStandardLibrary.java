@@ -102,6 +102,15 @@ public class JetStandardLibrary {
     private JetType doubleArrayType;
     private JetType booleanArrayType;
 
+    private JetType nullableByteArrayType;
+    private JetType nullableCharArrayType;
+    private JetType nullableShortArrayType;
+    private JetType nullableIntArrayType;
+    private JetType nullableLongArrayType;
+    private JetType nullableFloatArrayType;
+    private JetType nullableDoubleArrayType;
+    private JetType nullableBooleanArrayType;
+
     public JetType getTuple0Type() {
         return tuple0Type;
     }
@@ -167,8 +176,21 @@ public class JetStandardLibrary {
             this.floatType = new JetTypeImpl(getFloat());
             this.doubleType = new JetTypeImpl(getDouble());
             this.booleanType = new JetTypeImpl(getBoolean());
+
             this.stringType = new JetTypeImpl(getString());
+            this.nullableStringType = TypeUtils.makeNullable(stringType);
+
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
+            this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
+
+            this.nullableByteType = TypeUtils.makeNullable(byteType);
+            this.nullableCharType = TypeUtils.makeNullable(charType);
+            this.nullableShortType = TypeUtils.makeNullable(shortType);
+            this.nullableIntType = TypeUtils.makeNullable(intType);
+            this.nullableLongType = TypeUtils.makeNullable(longType);
+            this.nullableFloatType = TypeUtils.makeNullable(floatType);
+            this.nullableDoubleType = TypeUtils.makeNullable(doubleType);
+            this.nullableBooleanType = TypeUtils.makeNullable(booleanType);
 
             this.byteArrayClass = (ClassDescriptor) libraryScope.getClassifier("ByteArray");
             this.charArrayClass = (ClassDescriptor) libraryScope.getClassifier("CharArray");
@@ -188,16 +210,14 @@ public class JetStandardLibrary {
             this.doubleArrayType = new JetTypeImpl(doubleArrayClass);
             this.booleanArrayType = new JetTypeImpl(booleanArrayClass);
 
-            this.nullableByteType = TypeUtils.makeNullable(byteType);
-            this.nullableCharType = TypeUtils.makeNullable(charType);
-            this.nullableShortType = TypeUtils.makeNullable(shortType);
-            this.nullableIntType = TypeUtils.makeNullable(intType);
-            this.nullableLongType = TypeUtils.makeNullable(longType);
-            this.nullableFloatType = TypeUtils.makeNullable(floatType);
-            this.nullableDoubleType = TypeUtils.makeNullable(doubleType);
-            this.nullableBooleanType = TypeUtils.makeNullable(booleanType);
-            this.nullableStringType = TypeUtils.makeNullable(stringType);
-            this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
+            this.nullableByteArrayType = TypeUtils.makeNullable(byteArrayType);
+            this.nullableCharArrayType = TypeUtils.makeNullable(charArrayType);
+            this.nullableShortArrayType = TypeUtils.makeNullable(shortArrayType);
+            this.nullableIntArrayType = TypeUtils.makeNullable(intArrayType);
+            this.nullableLongArrayType = TypeUtils.makeNullable(longArrayType);
+            this.nullableFloatArrayType = TypeUtils.makeNullable(floatArrayType);
+            this.nullableDoubleArrayType = TypeUtils.makeNullable(doubleArrayType);
+            this.nullableBooleanArrayType = TypeUtils.makeNullable(booleanArrayType);
         }
     }
 
@@ -500,5 +520,37 @@ public class JetStandardLibrary {
     public ClassDescriptor getBooleanArrayClass() {
         initStdClasses();
         return booleanArrayClass;
+    }
+
+    public JetType getNullableByteArrayType() {
+        return nullableByteArrayType;
+    }
+
+    public JetType getNullableCharArrayType() {
+        return nullableCharArrayType;
+    }
+
+    public JetType getNullableShortArrayType() {
+        return nullableShortArrayType;
+    }
+
+    public JetType getNullableIntArrayType() {
+        return nullableIntArrayType;
+    }
+
+    public JetType getNullableLongArrayType() {
+        return nullableLongArrayType;
+    }
+
+    public JetType getNullableFloatArrayType() {
+        return nullableFloatArrayType;
+    }
+
+    public JetType getNullableDoubleArrayType() {
+        return nullableDoubleArrayType;
+    }
+
+    public JetType getNullableBooleanArrayType() {
+        return nullableBooleanArrayType;
     }
 }

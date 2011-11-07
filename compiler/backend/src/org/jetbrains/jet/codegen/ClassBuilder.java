@@ -21,8 +21,8 @@ public class ClassBuilder {
                                  int access,
                                  String name,
                                  String desc,
-                                 String signature,
-                                 Object value) {
+                                 @Nullable String signature,
+                                 @Nullable Object value) {
         return v.visitField(access, name, desc, signature, value);
     }
 
@@ -49,11 +49,11 @@ public class ClassBuilder {
         return v;
     }
 
-    public void defineClass(int version, int access, String name, String signature, String superName, String[] interfaces) {
+    public void defineClass(int version, int access, String name, @Nullable String signature, String superName, String[] interfaces) {
         v.visit(version, access, name, signature, superName, interfaces);
     }
 
-    public void visitSource(String name, String debug) {
+    public void visitSource(String name, @Nullable String debug) {
         v.visitSource(name, debug);
     }
 }

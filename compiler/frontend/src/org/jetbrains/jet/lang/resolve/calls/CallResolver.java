@@ -243,16 +243,8 @@ public class CallResolver {
 //                }
 //                else {
 //                }
-                if (reference instanceof JetFakeReference) {
-                    // This means that the callable being invoked was represented by an expression
-                    // rather than a reference expression
-                    JetFakeReference fakeReference = (JetFakeReference) reference;
-                    trace.record(RESOLVED_CALL, fakeReference.getActualElement(), resolvedCall);
-                }
-                else {
-                    trace.record(RESOLVED_CALL, reference, resolvedCall);
-                    trace.record(REFERENCE_TARGET, reference, descriptor);
-                }
+                trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
+                trace.record(REFERENCE_TARGET, reference, descriptor);
             }
 
             @Override

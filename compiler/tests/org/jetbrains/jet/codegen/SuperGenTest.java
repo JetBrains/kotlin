@@ -15,4 +15,9 @@ public class SuperGenTest extends CodegenTestCase {
         blackBoxFile("/super/basicmethod.jet");
         System.out.println(generateToText());
     }
+
+    public void testEnclosedMethod () {
+        blackBoxFile("/super/enclosed.jet");
+        System.out.println(generateToText());
+    }
 }

@@ -1,15 +1,21 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_GETTER_RETURN_TYPE;
 
 /*
  * @author max
@@ -20,11 +26,12 @@ public class ClassContext {
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
     private final StackValue thisExpression;
-    private final ClassContext parentContext;
+    final ClassContext parentContext;
     public  final FunctionOrClosureCodegen closure;
     private boolean thisWasUsed = false;
     
     HashMap<JetType,Integer> typeInfoConstants;
+    HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
     public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext, FunctionOrClosureCodegen closureCodegen) {
         this.contextType = contextType;
@@ -61,7 +68,7 @@ public class ClassContext {
         return new ClassContext(descriptor, OwnerKind.NAMESPACE, null, this, null);
     }
 
-    public ClassContext intoClass(FunctionOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind) {
+    public ClassContext intoClass(@Nullable FunctionOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind) {
         final StackValue thisValue;
         thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
 
@@ -192,5 +199,60 @@ public class ClassContext {
             typeInfoConstants.put(type, index);
         }
         return index;
+    }
+    
+    DeclarationDescriptor getAccessor(DeclarationDescriptor descriptor) {
+        if(accessors == null) {
+            accessors = new HashMap<DeclarationDescriptor,DeclarationDescriptor>();
+        }
+        descriptor = descriptor.getOriginal();
+        DeclarationDescriptor accessor = accessors.get(descriptor);
+        if(accessor != null)
+            return accessor;
+
+        if(descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptorImpl myAccessor = new FunctionDescriptorImpl(contextType,
+                                                                           Collections.<AnnotationDescriptor>emptyList(),
+                                                                           descriptor.getName() + "$bridge$" + accessors.size());
+            FunctionDescriptor fd = (FunctionDescriptor) descriptor;
+            myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
+                                  fd.getExpectedThisObject(),
+                                  fd.getTypeParameters(),
+                                  fd.getValueParameters(),
+                                  fd.getReturnType(),
+                                  fd.getModality(),
+                                  fd.getVisibility());
+            accessor = myAccessor;
+        }
+        else if(descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor pd = (PropertyDescriptor) descriptor;
+            PropertyDescriptor myAccessor = new PropertyDescriptor(contextType,
+                                                                   Collections.<AnnotationDescriptor>emptyList(),
+                                                                   pd.getModality(),
+                                                                   pd.getVisibility(),
+                                                                   pd.isVar(),
+                                                                   pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null,
+                                                                   pd.getExpectedThisObject(),
+                                                                   pd.getName()  + "$bridge$" + accessors.size(),
+                                                                   pd.getInType(),
+                                                                   pd.getOutType());
+            PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
+                        myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
+                        myAccessor.getVisibility(),
+                        myAccessor.getOutType(), false, false);
+            PropertySetterDescriptor psd = new PropertySetterDescriptor(
+                        myAccessor.getModality(),
+                        myAccessor.getVisibility(),
+                        myAccessor,
+                        Collections.<AnnotationDescriptor>emptyList(),
+                        false, false);
+            myAccessor.initialize(Collections.<TypeParameterDescriptor>emptyList(), pgd, psd);
+            accessor = myAccessor;
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
+        accessors.put(descriptor, accessor);
+        return accessor;
     }
 }
