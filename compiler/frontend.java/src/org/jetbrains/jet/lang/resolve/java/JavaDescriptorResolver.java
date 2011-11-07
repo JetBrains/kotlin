@@ -100,7 +100,7 @@ public class JavaDescriptorResolver {
         classDescriptor.setName(name);
 
         List<JetType> supertypes = new ArrayList<JetType>();
-        List<TypeParameterDescriptor> typeParameters = resolveTypeParameters(classDescriptor, psiClass.getTypeParameters());
+        List<TypeParameterDescriptor> typeParameters = makeUninitializedTypeParameters(classDescriptor, psiClass.getTypeParameters());
         classDescriptor.setTypeConstructor(new TypeConstructorImpl(
                 classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
@@ -117,8 +117,10 @@ public class JavaDescriptorResolver {
         classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), psiClass));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
-//        classDescriptor.setClassObjectMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, true));
+
         // UGLY HACK
+        initializeTypeParameters(psiClass);
+
         supertypes.addAll(getSupertypes(psiClass));
         if (psiClass.isInterface()) {
             classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
@@ -176,25 +178,31 @@ public class JavaDescriptorResolver {
         return resolveNamespace(packageName);
     }
 
-    private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {
+    private List<TypeParameterDescriptor> makeUninitializedTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {
         List<TypeParameterDescriptor> result = Lists.newArrayList();
         for (PsiTypeParameter typeParameter : typeParameters) {
-            TypeParameterDescriptor typeParameterDescriptor = resolveTypeParameter(containingDeclaration, typeParameter);
+            TypeParameterDescriptor typeParameterDescriptor = makeUninitializedTypeParameter(containingDeclaration, typeParameter);
             result.add(typeParameterDescriptor);
         }
         return result;
     }
 
-    private TypeParameterDescriptor createJavaTypeParameterDescriptor(@NotNull DeclarationDescriptor owner, @NotNull PsiTypeParameter typeParameter) {
+    @NotNull
+    private TypeParameterDescriptor makeUninitializedTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
+        assert typeParameterDescriptorCache.get(psiTypeParameter) == null : psiTypeParameter.getText();
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
-                owner,
+                containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false,
                 Variance.INVARIANT,
-                typeParameter.getName(),
-                typeParameter.getIndex()
+                psiTypeParameter.getName(),
+                psiTypeParameter.getIndex()
         );
-        typeParameterDescriptorCache.put(typeParameter, typeParameterDescriptor);
+        typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
+        return typeParameterDescriptor;
+    }
+
+    private void initializeTypeParameter(PsiTypeParameter typeParameter, TypeParameterDescriptor typeParameterDescriptor) {
         PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
         if (referencedTypes.length == 0){
             typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
@@ -207,16 +215,18 @@ public class JavaDescriptorResolver {
                 typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType));
             }
         }
-        return typeParameterDescriptor;
+    }
+
+    private void initializeTypeParameters(PsiTypeParameterListOwner typeParameterListOwner) {
+        for (PsiTypeParameter psiTypeParameter : typeParameterListOwner.getTypeParameters()) {
+            initializeTypeParameter(psiTypeParameter, resolveTypeParameter(psiTypeParameter));
+        }
     }
 
     @NotNull
-    public TypeParameterDescriptor resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
+    private TypeParameterDescriptor resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
         TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
-        if (typeParameterDescriptor == null) {
-            typeParameterDescriptor = createJavaTypeParameterDescriptor(containingDeclaration, psiTypeParameter);
-//            This is done inside the method: typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
-        }
+        assert typeParameterDescriptor != null : psiTypeParameter.getText();
         return typeParameterDescriptor;
     }
 
@@ -413,10 +423,12 @@ public class JavaDescriptorResolver {
                 method.getName()
         );
         methodDescriptorCache.put(method, functionDescriptorImpl);
+        List<TypeParameterDescriptor> typeParameters = makeUninitializedTypeParameters(functionDescriptorImpl, method.getTypeParameters());
+        initializeTypeParameters(method);
         functionDescriptorImpl.initialize(
                 null,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
-                resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
+                typeParameters,
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),
                 Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
