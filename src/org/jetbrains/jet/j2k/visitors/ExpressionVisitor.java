@@ -193,7 +193,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
       myResult = new NewClassExpression(
         elementToElement(expression.getClassOrAnonymousClassReference()),
         elementToElement(expression.getArgumentList()),
-        expression.getAnonymousClass() != null?
+        expression.getAnonymousClass() != null ?
           anonymousClassToAnonymousClass(expression.getAnonymousClass()) :
           null
       );
@@ -239,13 +239,24 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitSuperExpression(PsiSuperExpression expression) {
     super.visitSuperExpression(expression);
+    final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
     myResult = new SuperExpression(
-      expression.getQualifier() != null ? new IdentifierImpl(expression.getQualifier().getQualifiedName()): Identifier.EMPTY_IDENTIFIER);
+      qualifier != null ?
+        new IdentifierImpl(qualifier.getQualifiedName()) :
+        Identifier.EMPTY_IDENTIFIER
+    );
   }
 
   @Override
   public void visitThisExpression(PsiThisExpression expression) {
     super.visitThisExpression(expression);
+    final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
+    myResult = new ThisExpression(
+      qualifier != null ?
+        new IdentifierImpl(qualifier.getQualifiedName()) :
+        Identifier.EMPTY_IDENTIFIER
+    );
+
   }
 
   @Override
