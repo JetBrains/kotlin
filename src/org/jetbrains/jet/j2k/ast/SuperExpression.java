@@ -6,15 +6,17 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class SuperExpression extends Expression {
-  private Type myType;
+  private Identifier myIdentifier;
 
-  public SuperExpression(Type type) {
-    myType = type;
+  public SuperExpression(Identifier identifier) {
+    myIdentifier = identifier;
   }
 
   @NotNull
   @Override
   public String toKotlin() {
-    return "super" + "<" + myType.toKotlin() + ">";
+    if (myIdentifier.isEmpty())
+      return "super";
+    return "super" + AT + myIdentifier.toKotlin();
   }
 }

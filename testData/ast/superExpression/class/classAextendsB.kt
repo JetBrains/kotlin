@@ -4,6 +4,6 @@ fun call() : Unit {
 }
 open class A : B {
 override fun call() : Unit {
-return super<B>.call()
+return super.call()
 }
 }

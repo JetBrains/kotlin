@@ -4,7 +4,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.List;
@@ -240,7 +239,8 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitSuperExpression(PsiSuperExpression expression) {
     super.visitSuperExpression(expression);
-    myResult = new SuperExpression(typeToNotNullableType(expression.getType()));
+    myResult = new SuperExpression(
+      expression.getQualifier() != null ? new IdentifierImpl(expression.getQualifier().getQualifiedName()): Identifier.EMPTY_IDENTIFIER);
   }
 
   @Override

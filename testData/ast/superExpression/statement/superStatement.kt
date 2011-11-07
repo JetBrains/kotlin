@@ -1,1 +1,1 @@
-super<Any>.call()
+super.call()
