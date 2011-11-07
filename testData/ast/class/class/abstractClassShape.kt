@@ -6,5 +6,5 @@ color = c
 public fun getColor() : String? {
 return color
 }
-abstract public fun area() : Double 
+abstract public fun area() : Double
 }

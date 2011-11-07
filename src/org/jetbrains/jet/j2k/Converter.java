@@ -296,13 +296,13 @@ public class Converter {
   public static Set<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {
-      if (modifierList.hasModifierProperty(PsiModifier.ABSTRACT)) modifiersSet.add(Modifier.ABSTRACT);
+      if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT)) modifiersSet.add(Modifier.ABSTRACT);
       if (modifierList.hasModifierProperty(PsiModifier.FINAL)) modifiersSet.add(Modifier.FINAL);
       if (modifierList.hasModifierProperty(PsiModifier.STATIC)) modifiersSet.add(Modifier.STATIC);
-      if (modifierList.hasModifierProperty(PsiModifier.PUBLIC)) modifiersSet.add(Modifier.PUBLIC);
-      if (modifierList.hasModifierProperty(PsiModifier.PROTECTED)) modifiersSet.add(Modifier.PROTECTED);
-      if (modifierList.hasModifierProperty(PsiModifier.PACKAGE_LOCAL)) modifiersSet.add(Modifier.INTERNAL);
-      if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) modifiersSet.add(Modifier.PRIVATE);
+      if (modifierList.hasExplicitModifier(PsiModifier.PUBLIC)) modifiersSet.add(Modifier.PUBLIC);
+      if (modifierList.hasExplicitModifier(PsiModifier.PROTECTED)) modifiersSet.add(Modifier.PROTECTED);
+      if (modifierList.hasExplicitModifier(PsiModifier.PACKAGE_LOCAL)) modifiersSet.add(Modifier.INTERNAL);
+      if (modifierList.hasExplicitModifier(PsiModifier.PRIVATE)) modifiersSet.add(Modifier.PRIVATE);
     }
     return modifiersSet;
   }

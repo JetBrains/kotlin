@@ -99,7 +99,7 @@ public class Class extends Member {
   }
 
   String bodyToKotlin() {
-    return "{" + N + classObjectToKotlin() + N +
+    return SPACE + "{" + N + classObjectToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(myFields), N) + N +
       AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
       AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N +
@@ -142,6 +142,6 @@ public class Class extends Member {
     return modifiersToKotlin() + TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() +
       implementTypesToKotlin() +
       typeParameterWhereToKotlin() +
-      SPACE + bodyToKotlin();
+      bodyToKotlin();
   }
 }

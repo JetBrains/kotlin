@@ -30,6 +30,11 @@ public class Enum extends Class {
     return EMPTY;
   }
 
+  @Override
+  boolean needOpenModifier() {
+    return false;
+  }
+
   @NotNull
   @Override
   public String toKotlin() {

@@ -48,8 +48,11 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
 
     assert !actual.equals("");
+    final File tmp = new File(kotlinPath + ".tmp");
     if (!expected.equals(actual))
-      writeStringToFile(new File(kotlinPath + ".tmp"), actual);
+      writeStringToFile(tmp, actual);
+    if (expected.equals(actual) && tmp.exists())
+      tmp.delete();
     Assert.assertEquals(expected, actual);
   }
 
@@ -138,8 +141,9 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return code
       .trim()
       .replaceAll("\r\n", "\n")
-      .replaceAll("\n+", "\n")
+      .replaceAll(" \n", "\n")
       .replaceAll("\n ", "\n")
+      .replaceAll("\n+", "\n")
       .replaceAll(" +", " ")
       .trim()
       ;

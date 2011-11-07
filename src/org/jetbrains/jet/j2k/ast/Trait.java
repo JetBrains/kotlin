@@ -17,8 +17,4 @@ public class Trait extends Class {
   boolean needOpenModifier() {
     return false;
   }
-
-  boolean needAbstractModifier() {
-    return false;
-  }
 }

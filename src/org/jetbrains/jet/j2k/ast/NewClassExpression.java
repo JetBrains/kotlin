@@ -25,7 +25,7 @@ public class NewClassExpression extends Expression {
   @Override
   public String toKotlin() {
     return myAnonymousClass != null ?
-      myName.toKotlin() + "(" + myArguments.toKotlin() + ")" + SPACE + myAnonymousClass.toKotlin() :
+      myName.toKotlin() + "(" + myArguments.toKotlin() + ")" + myAnonymousClass.toKotlin() :
       myName.toKotlin() + "(" + myArguments.toKotlin() + ")";
   }
 }
