@@ -18,7 +18,7 @@ public class Concat implements IntrinsicMethod {
         codegen.generateStringBuilderConstructor();
         if (receiver == null) {                                    // LHS.plus(RHS)
             v.swap();                                                              // StringBuilder LHS
-            codegen.invokeAppendMethod(codegen.expressionType(arguments.get(0)));  // StringBuilder(LHS)
+            codegen.invokeAppendMethod(expectedType);  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));
         }
         else {                                                     // LHS + RHS

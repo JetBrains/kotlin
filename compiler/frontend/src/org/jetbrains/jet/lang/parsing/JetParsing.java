@@ -419,13 +419,27 @@ public class JetParsing extends AbstractJetParsing {
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
-        if (parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, false)) {
+        PsiBuilder.Marker beforeConstructorModifiers = mark();
+        boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, false);
+
+        // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
+        if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON) ) {
+            beforeConstructorModifiers.rollbackTo();
+            return CLASS;
+        }
+
+        // We are still inside a class declaration
+        beforeConstructorModifiers.drop();
+
+        if (at(LPAR)) {
             parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
         }
-        else {
-            if (at(LPAR)) {
-                parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
-            }
+        else if (hasConstructorModifiers) {
+            // A comprehensive error message for cases like:
+            //    class A private : Foo
+            // or
+            //    class A private {
+            error("Expecting primary constructor parameter list");
         }
 
         if (at(COLON)) {
