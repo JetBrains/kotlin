@@ -1,0 +1,1 @@
+(1 cyclicShiftRight 2 cyclicShiftRight 3)

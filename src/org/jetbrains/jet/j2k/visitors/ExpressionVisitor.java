@@ -47,42 +47,30 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
 
     final IElementType tokenType = expression.getOperationSign().getTokenType();
 
-    if (tokenType == JavaTokenType.GTGTGTEQ) { // because it's transform to the method call
+    String secondOp = "";
+    if (tokenType == JavaTokenType.GTGTEQ) secondOp = "shr";
+    if (tokenType == JavaTokenType.LTLTEQ) secondOp = "shl";
+    if (tokenType == JavaTokenType.XOREQ) secondOp = "xor";
+    if (tokenType == JavaTokenType.ANDEQ) secondOp = "and";
+    if (tokenType == JavaTokenType.OREQ) secondOp = "or";
+    if (tokenType == JavaTokenType.GTGTGTEQ) secondOp = "cyclicShiftRight";
+
+    if (!secondOp.equals("")) // if not Kotlin operators
       myResult = new AssignmentExpression(
         expressionToExpression(expression.getLExpression()),
-        new DummyMethodCallExpression(
+        new BinaryExpression(
           expressionToExpression(expression.getLExpression()),
-          "cyclicShiftRight",
-          expressionToExpression(expression.getRExpression())
+          expressionToExpression(expression.getRExpression()),
+          secondOp
         ),
         "="
       );
-    } else {
-
-      String secondOp = "";
-      if (tokenType == JavaTokenType.GTGTEQ) secondOp = "shr";
-      if (tokenType == JavaTokenType.LTLTEQ) secondOp = "shl";
-      if (tokenType == JavaTokenType.XOREQ) secondOp = "xor";
-      if (tokenType == JavaTokenType.ANDEQ) secondOp = "and";
-      if (tokenType == JavaTokenType.OREQ) secondOp = "or";
-
-      if (!secondOp.equals("")) // if not Kotlin operators
-        myResult = new AssignmentExpression(
-          expressionToExpression(expression.getLExpression()),
-          new BinaryExpression(
-            expressionToExpression(expression.getLExpression()),
-            expressionToExpression(expression.getRExpression()),
-            secondOp
-          ),
-          "="
-        );
-      else
-        myResult = new AssignmentExpression(
-          expressionToExpression(expression.getLExpression()),
-          expressionToExpression(expression.getRExpression()),
-          expression.getOperationSign().getText() // TODO
-        );
-    }
+    else
+      myResult = new AssignmentExpression(
+        expressionToExpression(expression.getLExpression()),
+        expressionToExpression(expression.getRExpression()),
+        expression.getOperationSign().getText() // TODO
+      );
   }
 
   @NotNull
@@ -97,7 +85,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     if (tokenType == JavaTokenType.XOR) return "xor";
     if (tokenType == JavaTokenType.AND) return "and";
     if (tokenType == JavaTokenType.OR) return "or";
-    if (tokenType == JavaTokenType.OR) return "or";
+    if (tokenType == JavaTokenType.GTGTGT) return "cyclicShiftRight";
     if (tokenType == JavaTokenType.GT) return ">";
     if (tokenType == JavaTokenType.LT) return "<";
     if (tokenType == JavaTokenType.GE) return ">=";
@@ -266,13 +254,9 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitPolyadicExpression(PsiPolyadicExpression expression) {
     super.visitPolyadicExpression(expression);
-    if (expression.getOperationTokenType() != JavaTokenType.GTGTGT)
-      myResult = new PolyadicExpression(
-        expressionsToExpressionList(expression.getOperands()),
-        getOperatorString(expression.getOperationTokenType())
-      );
-    else {
-      // TODO: support GTGTGT
-    }
+    myResult = new PolyadicExpression(
+      expressionsToExpressionList(expression.getOperands()),
+      getOperatorString(expression.getOperationTokenType())
+    );
   }
-  }
+}
