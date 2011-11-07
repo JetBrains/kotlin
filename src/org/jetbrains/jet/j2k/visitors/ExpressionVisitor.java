@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.List;
@@ -192,7 +193,10 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     } else {
       myResult = new NewClassExpression(
         elementToElement(expression.getClassOrAnonymousClassReference()),
-        elementToElement(expression.getArgumentList())
+        elementToElement(expression.getArgumentList()),
+        expression.getAnonymousClass() != null?
+          anonymousClassToAnonymousClass(expression.getAnonymousClass()) :
+          null
       );
     }
   }

@@ -39,10 +39,19 @@ public class Converter {
     return result;
   }
 
-  private static Class classToClass(PsiClass psiClass) {
-    final List<Function> methods = methodsToFunctionList(psiClass.getMethods(), true);
+  public static AnonymousClass anonymousClassToAnonymousClass(PsiAnonymousClass anonymousClass) { // TODO: replace by Block,
+                                                                                                  // use class.getChild() method
+    return new AnonymousClass(
+      classesToClassList(anonymousClass.getAllInnerClasses()),
+      methodsToFunctionList(anonymousClass.getMethods(), true),
+      fieldsToFieldList(anonymousClass.getAllFields())
+    );
+  }
+
+  public static Class classToClass(PsiClass psiClass) {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
+    final List<Function> methods = methodsToFunctionList(psiClass.getMethods(), true);
     final List<Field> fields = fieldsToFieldList(psiClass.getAllFields());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
