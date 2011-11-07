@@ -1,1 +1,2 @@
-public enum Test { }
+public enum Test {
+}

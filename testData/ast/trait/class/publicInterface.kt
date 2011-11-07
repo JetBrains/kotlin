@@ -1,1 +1,2 @@
-public trait Test { }
+public trait Test {
+}

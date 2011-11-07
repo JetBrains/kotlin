@@ -1,1 +1,2 @@
-private enum Test { }
+private enum Test {
+}

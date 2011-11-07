@@ -1,1 +1,2 @@
-class A : Base { }
+class A : Base {
+}

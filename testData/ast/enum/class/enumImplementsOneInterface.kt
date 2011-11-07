@@ -1,1 +1,2 @@
-enum A : I { }
+enum A : I {
+}

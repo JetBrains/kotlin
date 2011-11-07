@@ -1,1 +1,4 @@
-class A { class B { } }
+class A {
+class B {
+}
+}

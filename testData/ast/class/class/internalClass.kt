@@ -1,1 +1,2 @@
-open class Test { }
+open class Test {
+}

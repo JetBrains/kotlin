@@ -1,1 +1,2 @@
-trait CommandHandler<T : INode?, String> { }
+trait CommandHandler<T : INode?, String> {
+}

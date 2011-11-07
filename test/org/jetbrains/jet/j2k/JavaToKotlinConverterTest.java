@@ -46,8 +46,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/method")) actual = methodToSingleLineKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/method_mult")) actual = methodToKotlin(javaCode);
 
-    else if (javaFile.getParent().endsWith("/class")) actual = classToSingleLineKotlin(javaCode);
-    else if (javaFile.getParent().endsWith("/class_mult")) actual = classToKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/class")) actual = classToKotlin(javaCode);
 
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
 
@@ -112,11 +111,15 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return prettify(result);
   }
 
-  @NotNull
-  protected String classToSingleLineKotlin(String text) throws IOException {
-    return toSingleLine(classToKotlin(text));
+  protected String methodToSingleLineKotlin(String text) throws IOException {
+    return toSingleLine(methodToKotlin(text));
   }
 
+  protected String statementToSingleLineKotlin(String code) throws Exception {
+    return toSingleLine(statementToKotlin(code));
+  }
+
+  @NotNull
   protected String methodToKotlin(String text) throws IOException {
     String result = classToKotlin("final class C {" + text + "}")
       .replaceAll("class C \\{", "");
@@ -124,10 +127,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return prettify(result);
   }
 
-  protected String methodToSingleLineKotlin(String text) throws IOException {
-    return toSingleLine(methodToKotlin(text));
-  }
-
+  @NotNull
   protected String statementToKotlin(String text) throws Exception {
     String result = methodToKotlin("void main() {" + text + "}");
     int pos = result.lastIndexOf("}");
@@ -135,10 +135,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return prettify(result);
   }
 
-  protected String statementToSingleLineKotlin(String code) throws Exception {
-    return toSingleLine(statementToKotlin(code));
-  }
-
+  @NotNull
   protected String expressionToKotlin(String code) throws Exception {
     String result = statementToKotlin("Object o =" + code + "}");
     result = result.replaceFirst("var o : Any\\? =", "");

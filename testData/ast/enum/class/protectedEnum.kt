@@ -1,1 +1,2 @@
-protected enum Test { }
+protected enum Test {
+}

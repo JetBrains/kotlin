@@ -1,1 +1,2 @@
-trait A { }
+trait A {
+}
