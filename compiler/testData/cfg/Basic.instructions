@@ -1,10 +1,10 @@
 == anonymous_0 ==
 {1}
 ---------------------
-l2:
+l3:
     <START>    NEXT:[r(1)]      PREV:[]
     r(1)       NEXT:[<END>]     PREV:[<START>]
-l3:
+l4:
     <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
     <ERROR>    NEXT:[]          PREV:[]
@@ -42,9 +42,11 @@ l0:
     r(foo)              NEXT:[r(foo(a, 3))]               PREV:[r(3)]
     r(foo(a, 3))        NEXT:[r(genfun)]                  PREV:[r(foo)]
     r(genfun)           NEXT:[r(genfun<Any>())]           PREV:[r(foo(a, 3))]
-    r(genfun<Any>())    NEXT:[df({1})]                    PREV:[r(genfun)]
-    df({1})             NEXT:[<SINK>, r({1})]             PREV:[r(genfun<Any>())]
-    r({1})              NEXT:[r(flfun)]                   PREV:[df({1})]
+    r(genfun<Any>())    NEXT:[jmp?(l2)]                   PREV:[r(genfun)]
+    jmp?(l2)            NEXT:[r({1}), df({1})]            PREV:[r(genfun<Any>())]
+    df({1})             NEXT:[<SINK>]                     PREV:[jmp?(l2)]
+l2:
+    r({1})              NEXT:[r(flfun)]                   PREV:[jmp?(l2)]
     r(flfun)            NEXT:[r(flfun {1})]               PREV:[r({1})]
     r(flfun {1})        NEXT:[r(3)]                       PREV:[r(flfun)]
     r(3)                NEXT:[r(4)]                       PREV:[r(flfun {1})]
@@ -60,26 +62,26 @@ l0:
     r(2)                NEXT:[r(+)]                       PREV:[r(1)]
     r(+)                NEXT:[r(1 + 2)]                   PREV:[r(2)]
     r(1 + 2)            NEXT:[r(a)]                       PREV:[r(+)]
-    r(a)                NEXT:[jf(l4)]                     PREV:[r(1 + 2)]
-    jf(l4)              NEXT:[r(a && true), r(true)]      PREV:[r(a)]
-    r(true)             NEXT:[r(a && true)]               PREV:[jf(l4)]
-l4:
-    r(a && true)        NEXT:[r(a)]                       PREV:[jf(l4), r(true)]
-    r(a)                NEXT:[jt(l5)]                     PREV:[r(a && true)]
-    jt(l5)              NEXT:[r(false), r(a || false)]    PREV:[r(a)]
-    r(false)            NEXT:[r(a || false)]              PREV:[jt(l5)]
+    r(a)                NEXT:[jf(l5)]                     PREV:[r(1 + 2)]
+    jf(l5)              NEXT:[r(a && true), r(true)]      PREV:[r(a)]
+    r(true)             NEXT:[r(a && true)]               PREV:[jf(l5)]
 l5:
-    r(a || false)       NEXT:[<END>]                      PREV:[jt(l5), r(false)]
+    r(a && true)        NEXT:[r(a)]                       PREV:[jf(l5), r(true)]
+    r(a)                NEXT:[jt(l6)]                     PREV:[r(a && true)]
+    jt(l6)              NEXT:[r(false), r(a || false)]    PREV:[r(a)]
+    r(false)            NEXT:[r(a || false)]              PREV:[jt(l6)]
+l6:
+    r(a || false)       NEXT:[<END>]                      PREV:[jt(l6), r(false)]
 l1:
     <END>               NEXT:[<SINK>]                     PREV:[r(a || false)]
 error:
     <ERROR>             NEXT:[]                           PREV:[]
 sink:
     <SINK>              NEXT:[]                           PREV:[df({1}), <END>]
-l2:
+l3:
     <START>    NEXT:[r(1)]      PREV:[]
     r(1)       NEXT:[<END>]     PREV:[<START>]
-l3:
+l4:
     <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
     <ERROR>    NEXT:[]          PREV:[]

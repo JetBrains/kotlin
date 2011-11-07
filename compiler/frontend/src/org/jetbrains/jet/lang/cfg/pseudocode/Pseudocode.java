@@ -178,8 +178,7 @@ public class Pseudocode {
                 @Override
                 public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
                     instruction.getBody().postProcess();
-                    instruction.setSink(getSinkInstruction());
-                    super.visitLocalDeclarationInstruction(instruction);
+                    instruction.setNext(getSinkInstruction());
                 }
 
                 @Override
@@ -224,29 +223,12 @@ public class Pseudocode {
     @NotNull
     private Instruction getJumpTarget(@NotNull Label targetLabel) {
         return ((PseudocodeLabel)targetLabel).resolveToInstruction();
-        //return getTargetInstruction(((PseudocodeLabel) targetLabel).resolve());
     }
-
-//    @NotNull
-//    private Instruction getTargetInstruction(@NotNull List<Instruction> instructions) {
-//        while (true) {
-//            assert instructions != null;
-//            Instruction targetInstruction = instructions.get(0);
-//
-//            //if (false == targetInstruction instanceof UnconditionalJumpInstruction) {
-//                return targetInstruction;
-//            //}
-//
-////            Label label = ((UnconditionalJumpInstruction) targetInstruction).getTargetLabel();
-////            instructions = ((PseudocodeLabel)label).resolve();
-//        }
-//    }
 
     @NotNull
     private Instruction getNextPosition(int currentPosition) {
         int targetPosition = currentPosition + 1;
         assert targetPosition < instructions.size() : currentPosition;
         return instructions.get(targetPosition);
-        //return getTargetInstruction(instructions.subList(targetPosition, instructions.size()));
     }
 }

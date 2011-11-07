@@ -275,7 +275,7 @@ public class JetControlFlowTest extends JetLiteFixture {
 
                 @Override
                 public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
-                    // Nothing
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getResolvedTarget()), null);
                 }
 
                 @Override
@@ -334,9 +334,6 @@ public class JetControlFlowTest extends JetLiteFixture {
 
     public void dumpNodes(List<Instruction> instructions, PrintStream out, int[] count, Map<Instruction, String> nodeToName) {
         for (Instruction node : instructions) {
-            if (node instanceof UnconditionalJumpInstruction) {
-                continue;
-            }
             String name = "n" + count[0]++;
             nodeToName.put(node, name);
             String text = node.toString();
@@ -345,7 +342,7 @@ public class JetControlFlowTest extends JetLiteFixture {
                 text = text.substring(0, newline);
             }
             String shape = "box";
-            if (node instanceof ConditionalJumpInstruction) {
+            if (node instanceof ConditionalJumpInstruction || node instanceof UnconditionalJumpInstruction) {
                 shape = "diamond";
             }
             else if (node instanceof NondeterministicJumpInstruction) {

@@ -1,4 +1,4 @@
-fun t3() {
+fun t1() {
   try {
     1
   } finally {
@@ -6,7 +6,7 @@ fun t3() {
   }
 }
 
-fun t3() {
+fun t2() {
   try {
     1
     if (2 > 3) {
@@ -30,7 +30,7 @@ fun t3() {
   }
 }
 
-fun t3() {
+fun t4() {
   @{ () =>
     try {
       1
@@ -43,7 +43,7 @@ fun t3() {
   }
 }
 
-fun t3() {
+fun t5() {
   @ while(true) {
     try {
       1
@@ -56,7 +56,7 @@ fun t3() {
   }
 }
 
-fun t3() {
+fun t6() {
   try {
     @ while(true) {
         1
@@ -70,7 +70,7 @@ fun t3() {
   }
 }
 
-fun t3() {
+fun t7() {
   try {
     @ while(true) {
         1
@@ -83,7 +83,7 @@ fun t3() {
   }
 }
 
-fun t3(a : Int) {
+fun t8(a : Int) {
   @ for (i in 1..a) {
     try {
       1
@@ -96,7 +96,7 @@ fun t3(a : Int) {
   }
 }
 
-fun t3(a : Int) {
+fun t9(a : Int) {
   try {
     @ for (i in 1..a) {
         1
@@ -110,7 +110,7 @@ fun t3(a : Int) {
   }
 }
 
-fun t3(a : Int) {
+fun t10(a : Int) {
   try {
     @ for (i in 1..a) {
         1
@@ -123,7 +123,7 @@ fun t3(a : Int) {
   }
 }
 
-fun tf() {
+fun t11() {
   try {
     return 1
   }

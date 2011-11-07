@@ -93,7 +93,10 @@ public class JetControlFlowGraphTraverser<D> {
             Collection<D> incomingEdgesData = Sets.newHashSet();
 
             for (Instruction previousInstruction : allPreviousInstructions) {
-                incomingEdgesData.add(dataMap.get(previousInstruction).getSecond());
+                Pair<D, D> previousData = dataMap.get(previousInstruction);
+                if (previousData != null) {
+                    incomingEdgesData.add(previousData.getSecond());
+                }
             }
             Pair<D, D> mergedData = instructionsMergeStrategy.execute(instruction, incomingEdgesData);
             if (!mergedData.equals(previousDataValue)) {

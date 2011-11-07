@@ -22,6 +22,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 /**
 * @author abreslav
+* @author svtk
 */
 public class JetControlFlowProcessor {
 
@@ -547,7 +548,10 @@ public class JetControlFlowProcessor {
         public void visitNamedFunction(JetNamedFunction function) {
             JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
+                Label afterFunctionLabel = builder.createUnboundLabel();
+                builder.nondeterministicJump(afterFunctionLabel);
                 generate(function, bodyExpression);
+                builder.bindLabel(afterFunctionLabel);
             }
         }
 
@@ -557,7 +561,10 @@ public class JetControlFlowProcessor {
             JetBlockExpression bodyExpression = functionLiteral.getBodyExpression();
             if (bodyExpression != null) {
                 List<JetElement> statements = bodyExpression.getStatements();
+                Label afterFunctionLiteralLabel = builder.createUnboundLabel();
+                builder.nondeterministicJump(afterFunctionLiteralLabel);
                 generateSubroutineControlFlow(functionLiteral, statements);
+                builder.bindLabel(afterFunctionLiteralLabel);
             }
             builder.read(expression);
         }
@@ -744,28 +751,9 @@ public class JetControlFlowProcessor {
                     functions.add(localDeclaration);
                 }
             }
-            Queue<Label> declarationLabels = new LinkedList<Label>();
             for (JetDeclaration function : functions) {
-                declarationLabels.add(builder.createUnboundLabel());
+                value(function, inCondition);
             }
-            builder.nondeterministicJump(Lists.newArrayList(declarationLabels));
-
-            for (JetDeclaration function : functions) {
-                if (function instanceof JetNamedDeclaration) {
-                    if (function instanceof JetDeclarationWithBody) {
-                        JetExpression bodyExpression = ((JetDeclarationWithBody) function).getBodyExpression();
-                        generate(function, bodyExpression != null ? bodyExpression : function);
-                    }
-                    else {
-                        generate(function, function);
-                    }
-                }
-                else {
-                    generate(declaration, function);
-                }
-                builder.bindLabel(declarationLabels.remove());
-            }
-
             builder.read(expression);
         }
 

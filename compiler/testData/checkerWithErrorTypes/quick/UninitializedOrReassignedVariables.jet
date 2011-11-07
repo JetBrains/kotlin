@@ -269,17 +269,45 @@ fun foo() {
     val a = object {
         val x : Int
         val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+        val z : Int
         {
             $x = 1
+            $z = 3
         }
-//todo
-/*        fun foo() {
-            <VAL_REASSIGNMENT>y<> = 10
-        }*/
+        fun foo() {
+            <!VAL_REASSIGNMENT!>y<!> = 10
+            <!VAL_REASSIGNMENT!>z<!> = 13
+        }
     }
 }
 
-object O {
+class TestObjectExpression() {
+    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>a<!> : Int
+    fun foo() {
+        val a = object {
+            val x : Int
+            val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+            {
+                if (true)
+                    <!INITIALIZATION_USING_BACKING_FIELD!>x<!> = 12
+                else
+                    $x = 1
+            }
+            fun inner1() {
+                <!VAL_REASSIGNMENT!>y<!> = 101
+                <!VAL_REASSIGNMENT!>a<!> = 231
+            }
+            fun inner2() {
+                <!VAL_REASSIGNMENT!>y<!> = 101
+                <!VAL_REASSIGNMENT!>a<!> = 231
+            }
+        }
+    }
+}
+
+
+
+object TestObjectDeclaration {
     val x : Int
     val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
     {
@@ -296,7 +324,7 @@ object O {
     }
 }
 
-fun foo() {
+fun func() {
     val b = 1
     val a = object {
         val x = b

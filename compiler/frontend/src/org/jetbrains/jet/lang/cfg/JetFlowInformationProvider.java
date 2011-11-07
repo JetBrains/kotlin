@@ -92,9 +92,18 @@ public class JetFlowInformationProvider {
 
                 @Override
                 public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
+                    redirectToPrevInstructions(instruction);
+                }
+
+                private void redirectToPrevInstructions(Instruction instruction) {
                     for (Instruction previousInstruction : instruction.getPreviousInstructions()) {
                         previousInstruction.accept(this);
                     }
+                }
+
+                @Override
+                public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
+                    redirectToPrevInstructions(instruction);
                 }
 
                 @Override
@@ -127,7 +136,7 @@ public class JetFlowInformationProvider {
         final Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
-        JetControlFlowGraphTraverser<Map<VariableDescriptor, InitializationPoints>> traverser = JetControlFlowGraphTraverser.create(pseudocode, true);
+        JetControlFlowGraphTraverser<Map<VariableDescriptor, InitializationPoints>> traverser = JetControlFlowGraphTraverser.create(pseudocode, false);
 
         JetControlFlowGraphTraverser.InstructionsMergeStrategy<Map<VariableDescriptor, InitializationPoints>> instructionsMergeStrategy =
                 new JetControlFlowGraphTraverser.InstructionsMergeStrategy<Map<VariableDescriptor, InitializationPoints>>() {
@@ -218,7 +227,7 @@ public class JetFlowInformationProvider {
                             JetProperty property = psiElement instanceof JetProperty ? (JetProperty) psiElement : null;
                             trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[] { property }));
                         }
-                        if (expression instanceof JetSimpleNameExpression && !analyzeLocalDeclaration && inAnonymousInitializers &&
+                        if (expression instanceof JetSimpleNameExpression && inAnonymousInitializers &&
                             variableDescriptor instanceof PropertyDescriptor && !enterInitializationPoints.isInitialized() && exitInitializationPoints.isInitialized()) {
                             JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                             if (simpleNameExpression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
@@ -236,6 +245,14 @@ public class JetFlowInformationProvider {
             if (variable instanceof PropertyDescriptor && declaredVariables.contains(variable)) {
                 InitializationPoints initializationPoints = entry.getValue();
                 trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, initializationPoints.isInitialized());
+            }
+        }
+        for (Instruction instruction : pseudocode.getInstructions()) {
+            if (instruction instanceof LocalDeclarationInstruction) {
+                JetElement element = ((LocalDeclarationInstruction) instruction).getElement();
+                if (element instanceof JetNamedFunction) {
+                    markUninitializedVariables(element, false, analyzeLocalDeclaration);
+                }
             }
         }
     }
