@@ -2,10 +2,7 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,16 +46,6 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        String kind = "!";
-        if (element instanceof JetFunction) {
-            kind = "f";
-        }
-        else if (element instanceof JetClass) {
-            kind = "c";
-        }
-        else if (element instanceof JetObjectDeclaration) {
-            kind = "o";
-        }
-        return "d" + kind + "(" + element.getText() + ")";
+        return "d" + "(" + element.getText() + ")";
     }
 }

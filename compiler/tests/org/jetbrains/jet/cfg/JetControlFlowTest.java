@@ -100,7 +100,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         for (Pseudocode pseudocode : pseudocodes) {
             JetElement correspondingElement = pseudocode.getCorrespondingElement();
             String label = "";
-            assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetConstructor) :
+            assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetConstructor || correspondingElement instanceof JetPropertyAccessor) :
                     "Unexpected element class is pseudocode: " + correspondingElement.getClass();
             if (correspondingElement instanceof JetFunctionLiteral) {
                 label = "anonymous_" + i++;
@@ -109,7 +109,11 @@ public class JetControlFlowTest extends JetLiteFixture {
                 JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
                 label = namedDeclaration.getName();
             }
-            else {
+            else if (correspondingElement instanceof JetPropertyAccessor) {
+                String propertyName = ((JetProperty) correspondingElement.getParent()).getName();
+                label = (((JetPropertyAccessor) correspondingElement).isGetter() ? "get" : "set") + "_" + propertyName;
+            }
+            else if (correspondingElement instanceof JetConstructor) {
                 label = "this";
             }
 

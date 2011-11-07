@@ -1,4 +1,4 @@
-// KT-439 Support labeled function lliterals in call arguments
+// KT-439 Support labeled function literals in call arguments
 
 inline fun run1<T>(body : fun() : T) : T = body()
 

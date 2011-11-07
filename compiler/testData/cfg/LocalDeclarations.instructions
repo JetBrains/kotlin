@@ -166,25 +166,25 @@ fun test3() {
 }
 ---------------------
 l0:
-    <START>                      NEXT:[jmp?(l2)]                                                            PREV:[]
-    jmp?(l2)                     NEXT:[r(object { val y : Int fun i..), df(fun inner_bar() { y = 10 ..)]    PREV:[<START>]
-    df(fun inner_bar() {     
+    <START>                      NEXT:[jmp?(l2)]                                                           PREV:[]
+    jmp?(l2)                     NEXT:[r(object { val y : Int fun i..), d(fun inner_bar() { y = 10 }) ]    PREV:[<START>]
+    d(fun inner_bar() {      
                 y = 10       
-            })                   NEXT:[<SINK>]                                                              PREV:[jmp?(l2)]
+            })                   NEXT:[<SINK>]                                                             PREV:[jmp?(l2)]
 l2:
     r(object {               
             val y : Int      
             fun inner_bar() {
                 y = 10       
             }                
-        })                       NEXT:[w(a)]                                                                PREV:[jmp?(l2)]
-    w(a)                         NEXT:[<END>]                                                               PREV:[r(object { val y : Int fun i..)]
+        })                       NEXT:[w(a)]                                                               PREV:[jmp?(l2)]
+    w(a)                         NEXT:[<END>]                                                              PREV:[r(object { val y : Int fun i..)]
 l1:
-    <END>                        NEXT:[<SINK>]                                                              PREV:[w(a)]
+    <END>                        NEXT:[<SINK>]                                                             PREV:[w(a)]
 error:
-    <ERROR>                      NEXT:[]                                                                    PREV:[]
+    <ERROR>                      NEXT:[]                                                                   PREV:[]
 sink:
-    <SINK>                       NEXT:[]                                                                    PREV:[df(fun inner_bar() { y = 10 ..), <END>]
+    <SINK>                       NEXT:[]                                                                   PREV:[d(fun inner_bar() { y = 10 }) , <END>]
 l3:
     <START>    NEXT:[r(10)]     PREV:[]
     r(10)      NEXT:[w(y)]      PREV:[<START>]
@@ -227,13 +227,13 @@ fun test4() {
 }
 ---------------------
 l0:
-    <START>                NEXT:[r(1)]                                                          PREV:[]
-    r(1)                   NEXT:[w($x)]                                                         PREV:[<START>]
-    w($x)                  NEXT:[jmp?(l2)]                                                      PREV:[r(1)]
-    jmp?(l2)               NEXT:[r(object { val x : Int val y..), df(fun ggg() { y = 10 }) ]    PREV:[w($x)]
-    df(fun ggg() {     
+    <START>                NEXT:[r(1)]                                                         PREV:[]
+    r(1)                   NEXT:[w($x)]                                                        PREV:[<START>]
+    w($x)                  NEXT:[jmp?(l2)]                                                     PREV:[r(1)]
+    jmp?(l2)               NEXT:[r(object { val x : Int val y..), d(fun ggg() { y = 10 }) ]    PREV:[w($x)]
+    d(fun ggg() {      
                 y = 10 
-            })             NEXT:[<SINK>]                                                        PREV:[jmp?(l2)]
+            })             NEXT:[<SINK>]                                                       PREV:[jmp?(l2)]
 l2:
     r(object {         
             val x : Int
@@ -244,14 +244,14 @@ l2:
             fun ggg() {
                 y = 10 
             }          
-        })                 NEXT:[w(a)]                                                          PREV:[jmp?(l2)]
-    w(a)                   NEXT:[<END>]                                                         PREV:[r(object { val x : Int val y..)]
+        })                 NEXT:[w(a)]                                                         PREV:[jmp?(l2)]
+    w(a)                   NEXT:[<END>]                                                        PREV:[r(object { val x : Int val y..)]
 l1:
-    <END>                  NEXT:[<SINK>]                                                        PREV:[w(a)]
+    <END>                  NEXT:[<SINK>]                                                       PREV:[w(a)]
 error:
-    <ERROR>                NEXT:[]                                                              PREV:[]
+    <ERROR>                NEXT:[]                                                             PREV:[]
 sink:
-    <SINK>                 NEXT:[]                                                              PREV:[df(fun ggg() { y = 10 }) , <END>]
+    <SINK>                 NEXT:[]                                                             PREV:[d(fun ggg() { y = 10 }) , <END>]
 l3:
     <START>    NEXT:[r(10)]     PREV:[]
     r(10)      NEXT:[w(y)]      PREV:[<START>]
@@ -312,20 +312,20 @@ fun test5() {
 }
 ---------------------
 l0:
-    <START>                NEXT:[r(1)]                                                         PREV:[]
-    r(1)                   NEXT:[w(x)]                                                         PREV:[<START>]
-    w(x)                   NEXT:[r(2)]                                                         PREV:[r(1)]
-    r(2)                   NEXT:[w($x)]                                                        PREV:[w(x)]
-    w($x)                  NEXT:[jmp?(l2)]                                                     PREV:[r(2)]
-    jmp?(l2)               NEXT:[jmp?(l5), df(fun foo() { x = 3 }) ]                           PREV:[w($x)]
-    df(fun foo() {     
+    <START>                NEXT:[r(1)]                                                        PREV:[]
+    r(1)                   NEXT:[w(x)]                                                        PREV:[<START>]
+    w(x)                   NEXT:[r(2)]                                                        PREV:[r(1)]
+    r(2)                   NEXT:[w($x)]                                                       PREV:[w(x)]
+    w($x)                  NEXT:[jmp?(l2)]                                                    PREV:[r(2)]
+    jmp?(l2)               NEXT:[jmp?(l5), d(fun foo() { x = 3 }) ]                           PREV:[w($x)]
+    d(fun foo() {      
                 x = 3  
-            })             NEXT:[<SINK>]                                                       PREV:[jmp?(l2)]
+            })             NEXT:[<SINK>]                                                      PREV:[jmp?(l2)]
 l2:
-    jmp?(l5)               NEXT:[r(object { var x = 1 { $x = ..), df(fun bar() { x = 4 }) ]    PREV:[jmp?(l2)]
-    df(fun bar() {     
+    jmp?(l5)               NEXT:[r(object { var x = 1 { $x = ..), d(fun bar() { x = 4 }) ]    PREV:[jmp?(l2)]
+    d(fun bar() {      
                 x = 4  
-            })             NEXT:[<SINK>]                                                       PREV:[jmp?(l5)]
+            })             NEXT:[<SINK>]                                                      PREV:[jmp?(l5)]
 l5:
     r(object {         
             var x = 1  
@@ -338,14 +338,14 @@ l5:
             fun bar() {
                 x = 4  
             }          
-        })                 NEXT:[w(a)]                                                         PREV:[jmp?(l5)]
-    w(a)                   NEXT:[<END>]                                                        PREV:[r(object { var x = 1 { $x = ..)]
+        })                 NEXT:[w(a)]                                                        PREV:[jmp?(l5)]
+    w(a)                   NEXT:[<END>]                                                       PREV:[r(object { var x = 1 { $x = ..)]
 l1:
-    <END>                  NEXT:[<SINK>]                                                       PREV:[w(a)]
+    <END>                  NEXT:[<SINK>]                                                      PREV:[w(a)]
 error:
-    <ERROR>                NEXT:[]                                                             PREV:[]
+    <ERROR>                NEXT:[]                                                            PREV:[]
 sink:
-    <SINK>                 NEXT:[]                                                             PREV:[df(fun foo() { x = 3 }) , df(fun bar() { x = 4 }) , <END>]
+    <SINK>                 NEXT:[]                                                            PREV:[d(fun foo() { x = 3 }) , d(fun bar() { x = 4 }) , <END>]
 l3:
     <START>    NEXT:[r(3)]      PREV:[]
     r(3)       NEXT:[w(x)]      PREV:[<START>]

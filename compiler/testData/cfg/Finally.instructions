@@ -100,8 +100,8 @@ l0:
     <START>                 NEXT:[jmp?(l2)]                                                            PREV:[]
     jmp?(l2)                NEXT:[r(2), r(1)]                                                          PREV:[<START>]
     r(1)                    NEXT:[jmp?(l3)]                                                            PREV:[jmp?(l2)]
-    jmp?(l3)                NEXT:[r({ () => if (2 > 3) { retur..), df({ () => if (2 > 3) { retu..)]    PREV:[r(1)]
-    df({ () =>          
+    jmp?(l3)                NEXT:[r({ () => if (2 > 3) { retur..), d({ () => if (2 > 3) { retur..)]    PREV:[r(1)]
+    d({ () =>           
             if (2 > 3) {
               return@   
             }           
@@ -119,7 +119,7 @@ l1:
 error:
     <ERROR>                 NEXT:[]                                                                    PREV:[]
 sink:
-    <SINK>                  NEXT:[]                                                                    PREV:[df({ () => if (2 > 3) { retu..), <END>]
+    <SINK>                  NEXT:[]                                                                    PREV:[d({ () => if (2 > 3) { retur..), <END>]
 l4:
     <START>        NEXT:[r(2)]                   PREV:[]
     r(2)           NEXT:[r(3)]                   PREV:[<START>]
@@ -191,8 +191,8 @@ fun t4() {
 ---------------------
 l0:
     <START>               NEXT:[jmp?(l2)]                                                            PREV:[]
-    jmp?(l2)              NEXT:[r({ () => try { 1 if (2 > 3)..), df({ () => try { 1 if (2 > 3..)]    PREV:[<START>]
-    df({ () =>        
+    jmp?(l2)              NEXT:[r({ () => try { 1 if (2 > 3)..), d({ () => try { 1 if (2 > 3)..)]    PREV:[<START>]
+    d({ () =>         
         try {         
           1           
           if (2 > 3) {
@@ -218,7 +218,7 @@ l1:
 error:
     <ERROR>               NEXT:[]                                                                    PREV:[]
 sink:
-    <SINK>                NEXT:[]                                                                    PREV:[df({ () => try { 1 if (2 > 3..), <END>]
+    <SINK>                NEXT:[]                                                                    PREV:[d({ () => try { 1 if (2 > 3)..), <END>]
 l3:
     <START>        NEXT:[jmp?(l5)]             PREV:[]
     jmp?(l5)       NEXT:[r(2), r(1)]           PREV:[<START>]

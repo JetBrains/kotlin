@@ -250,9 +250,7 @@ public class JetFlowInformationProvider {
         for (Instruction instruction : pseudocode.getInstructions()) {
             if (instruction instanceof LocalDeclarationInstruction) {
                 JetElement element = ((LocalDeclarationInstruction) instruction).getElement();
-                if (element instanceof JetNamedFunction) {
-                    markUninitializedVariables(element, false, analyzeLocalDeclaration);
-                }
+                markUninitializedVariables(element, false, analyzeLocalDeclaration);
             }
         }
     }

@@ -43,8 +43,8 @@ l0:
     r(foo(a, 3))        NEXT:[r(genfun)]                  PREV:[r(foo)]
     r(genfun)           NEXT:[r(genfun<Any>())]           PREV:[r(foo(a, 3))]
     r(genfun<Any>())    NEXT:[jmp?(l2)]                   PREV:[r(genfun)]
-    jmp?(l2)            NEXT:[r({1}), df({1})]            PREV:[r(genfun<Any>())]
-    df({1})             NEXT:[<SINK>]                     PREV:[jmp?(l2)]
+    jmp?(l2)            NEXT:[r({1}), d({1})]             PREV:[r(genfun<Any>())]
+    d({1})              NEXT:[<SINK>]                     PREV:[jmp?(l2)]
 l2:
     r({1})              NEXT:[r(flfun)]                   PREV:[jmp?(l2)]
     r(flfun)            NEXT:[r(flfun {1})]               PREV:[r({1})]
@@ -77,7 +77,7 @@ l1:
 error:
     <ERROR>             NEXT:[]                           PREV:[]
 sink:
-    <SINK>              NEXT:[]                           PREV:[df({1}), <END>]
+    <SINK>              NEXT:[]                           PREV:[d({1}), <END>]
 l3:
     <START>    NEXT:[r(1)]      PREV:[]
     r(1)       NEXT:[<END>]     PREV:[<START>]
