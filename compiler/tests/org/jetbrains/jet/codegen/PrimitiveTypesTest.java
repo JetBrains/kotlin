@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class PrimitiveTypesTest extends CodegenTestCase {
     public void testPlus() throws Exception {
@@ -273,5 +274,9 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt248 () throws Exception {
         blackBoxFile("regressions/kt248.jet");
+    }
+
+    public void testKt446 () throws Exception {
+        blackBoxFile("regressions/kt446.jet");
     }
 }
