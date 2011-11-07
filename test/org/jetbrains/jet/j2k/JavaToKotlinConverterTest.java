@@ -9,11 +9,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
+import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.jetbrains.jet.j2k.TestCaseBuilder.getTestDataPathBase;
 
 /**
@@ -28,43 +27,29 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     myName = name;
   }
 
-  private static String readFileAsString(String filePath)
-    throws java.io.IOException {
-    StringBuffer fileData = new StringBuffer(1000);
-    BufferedReader reader = new BufferedReader(
-      new FileReader(filePath));
-    char[] buf = new char[1024];
-    int numRead = 0;
-    while ((numRead = reader.read(buf)) != -1) {
-      String readData = String.valueOf(buf, 0, numRead);
-      fileData.append(readData);
-      buf = new char[1024];
-    }
-    reader.close();
-    return fileData.toString();
-  }
-
   @Override
   protected void runTest() throws Throwable {
     String javaPath = getTestDataPath() + File.separator + getTestFilePath();
     String kotlinPath = javaPath.replace(".jav", ".kt");
 
-    String expected = readFileAsString(kotlinPath);
+    final String expected = readFileToString(new File(kotlinPath));
+    final File javaFile = new File(javaPath);
+    final String javaCode = readFileToString(javaFile);
 
     String actual = "";
-    if (javaPath.contains("/expression_mult/")) actual = expressionToKotlin(readFileAsString(javaPath));
-    else if (javaPath.contains("/expression/")) actual = expressionToKotlin(readFileAsString(javaPath));
-    else if (javaPath.contains("/statement/")) actual = statementToSingleLineKotlin(readFileAsString(javaPath));
-    else if (javaPath.contains("/statement_mult/")) actual = statementToKotlin(readFileAsString(javaPath));
+    if (javaFile.getParent().endsWith("/expression")) actual = expressionToKotlin(javaCode);
 
-    else if (javaPath.contains("/method/")) actual = methodToSingleLineKotlin(readFileAsString(javaPath));
-    else if (javaPath.contains("/method_mult/")) actual = methodToKotlin(readFileAsString(javaPath));
+    else if (javaFile.getParent().endsWith("/statement")) actual = statementToSingleLineKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/statement_mult")) actual = statementToKotlin(javaCode);
 
-    else if (javaPath.contains("/class/")) actual = classToSingleLineKotlin(readFileAsString(javaPath));
-    else if (javaPath.contains("/class_mult/")) actual = classToKotlin(readFileAsString(javaPath));
+    else if (javaFile.getParent().endsWith("/method")) actual = methodToSingleLineKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/method_mult")) actual = methodToKotlin(javaCode);
 
-    else if (javaPath.contains("/file/")) actual = fileToSingleLineKotlin(readFileAsString(javaPath));
-    else if (javaPath.contains("/file_mult/")) actual = fileToKotlin(readFileAsString(javaPath));
+    else if (javaFile.getParent().endsWith("/class")) actual = classToSingleLineKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/class_mult")) actual = classToKotlin(javaCode);
+
+    else if (javaFile.getParent().endsWith("/file")) actual = fileToSingleLineKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/file_mult")) actual = fileToKotlin(javaCode);
 
     assert !actual.equals("");
     Assert.assertEquals(expected, actual);
@@ -160,10 +145,6 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     String result = statementToKotlin("Object o =" + code + "}");
     result = result.replaceFirst("var o : Any\\? =", "");
     return prettify(result);
-  }
-
-  protected String expressionToSingleLineKotlin(String code) throws Exception {
-    return toSingleLine(expressionToKotlin(code));
   }
 
   @NotNull
