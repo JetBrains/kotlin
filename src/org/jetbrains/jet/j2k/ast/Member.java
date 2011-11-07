@@ -16,6 +16,11 @@ public abstract class Member extends Node implements IMember {
   }
 
   @Override
+  public boolean isAbstract() {
+    return myModifiers.contains(Modifier.ABSTRACT);
+  }
+
+  @Override
   public boolean isStatic() {
     return myModifiers.contains(Modifier.STATIC);
   }

@@ -25,6 +25,9 @@ public class Field extends Member {
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
+    if (isAbstract())
+      modifierList.add(Modifier.ABSTRACT);
+
     modifierList.add(accessModifier());
 
     modifierList.add(myModifiers.contains(Modifier.FINAL) ? "val" : "var");

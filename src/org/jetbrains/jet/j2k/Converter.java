@@ -126,6 +126,8 @@ public class Converter {
     final Set<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
     if (method.getHierarchicalMethodSignature().getSuperSignatures().size() > 0)
       modifiers.add(Modifier.OVERRIDE);
+    if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
+      modifiers.remove(Modifier.ABSTRACT);
 
     if (method.isConstructor())
       return new Constructor(
@@ -288,6 +290,7 @@ public class Converter {
   public static Set<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {
+      if (modifierList.hasModifierProperty(PsiModifier.ABSTRACT)) modifiersSet.add(Modifier.ABSTRACT);
       if (modifierList.hasModifierProperty(PsiModifier.FINAL)) modifiersSet.add(Modifier.FINAL);
       if (modifierList.hasModifierProperty(PsiModifier.STATIC)) modifiersSet.add(Modifier.STATIC);
       if (modifierList.hasModifierProperty(PsiModifier.PUBLIC)) modifiersSet.add(Modifier.PUBLIC);

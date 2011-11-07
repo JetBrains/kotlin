@@ -76,6 +76,9 @@ public class Class extends Member {
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
+    if (needAbstractModifier())
+      modifierList.add(Modifier.ABSTRACT);
+
     modifierList.add(accessModifier());
 
     if (needOpenModifier())
@@ -89,6 +92,10 @@ public class Class extends Member {
 
   boolean needOpenModifier() {
     return !myModifiers.contains(Modifier.FINAL);
+  }
+
+  boolean needAbstractModifier() {
+    return isAbstract();
   }
 
   String bodyToKotlin() {

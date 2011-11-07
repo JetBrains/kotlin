@@ -5,4 +5,6 @@ package org.jetbrains.jet.j2k.ast;
  */
 public interface IMember extends INode {
   public boolean isStatic();
+
+  boolean isAbstract();
 }

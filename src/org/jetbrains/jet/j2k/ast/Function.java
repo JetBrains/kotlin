@@ -51,6 +51,9 @@ public class Function extends Member {
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
+    if (isAbstract())
+      modifierList.add(Modifier.ABSTRACT);
+
     if (myModifiers.contains(Modifier.OVERRIDE))
       modifierList.add(Modifier.OVERRIDE);
 

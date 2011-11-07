@@ -33,7 +33,10 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     String javaPath = getTestDataPath() + File.separator + getTestFilePath();
     String kotlinPath = javaPath.replace(".jav", ".kt");
 
-    final String expected = readFileToString(new File(kotlinPath));
+    final File kotlinFile = new File(kotlinPath);
+    if (!kotlinFile.exists())
+      writeStringToFile(kotlinFile, "");
+    final String expected = readFileToString(kotlinFile);
     final File javaFile = new File(javaPath);
     final String javaCode = readFileToString(javaFile);
 
