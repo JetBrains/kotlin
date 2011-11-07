@@ -102,6 +102,20 @@ public class JetCompiler implements TranslatingCompiler {
                 
                 if (!errors) {
                     generationState.compileCorrectNamespaces(bindingContext, namespaces);
+///////////
+//                    GenerationState generationState2 = new GenerationState(compileContext.getProject(), ClassBuilderFactory.TEXT);
+//                    generationState2.compileCorrectNamespaces(bindingContext, namespaces);
+//                    StringBuilder answer = new StringBuilder();
+//
+//                    final ClassFileFactory factory2 = generationState2.getFactory();
+//                    List<String> files2 = factory2.files();
+//                    for (String file : files2) {
+//                        answer.append("@").append(file).append('\n');
+//                        answer.append(factory2.asText(file));
+//                    }
+//                    System.out.println(answer.toString());
+///////////
+
 
                     final ClassFileFactory factory = generationState.getFactory();
                     List<String> files = factory.files();
