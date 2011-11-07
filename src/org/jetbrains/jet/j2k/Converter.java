@@ -46,17 +46,14 @@ public class Converter {
     final List<Field> fields = fieldsToFieldList(psiClass.getAllFields());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
-    final List<PsiClassType> extendsListTypes = new LinkedList<PsiClassType>();
-    for (PsiClassType e : psiClass.getExtendsListTypes())
-      if (!e.getCanonicalText().equals("java.lang.Enum"))
-        extendsListTypes.add(e);
-    final List<Type> extendsTypes = typesToNotNullableTypeList(extendsListTypes.toArray(new PsiType[extendsListTypes.size()]));
+    final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
 
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
     if (psiClass.isInterface())
       return new Trait(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
     if (psiClass.isEnum())
-      return new Enum(name, modifiers, typeParameters, new LinkedList<Type>(), implementsTypes, innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
+      return new Enum(name, modifiers, typeParameters, new LinkedList<Type>(), implementsTypes,
+        innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
     return new Class(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
   }
 
@@ -258,7 +255,7 @@ public class Converter {
 
   @NotNull
   private static Import importToImport(PsiImportStatementBase t) {
-    if (t.getImportReference() != null)
+    if (t != null && t.getImportReference() != null)
       return new Import(t.getImportReference().getQualifiedName()); // TODO: use identifier
     return new Import("");
   }
