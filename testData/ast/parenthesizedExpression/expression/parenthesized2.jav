@@ -1,1 +1,1 @@
-(o.toString() + "abc")
+(str.toString() + "abc")

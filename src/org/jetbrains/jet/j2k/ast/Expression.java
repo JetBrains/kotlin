@@ -17,5 +17,18 @@ public abstract class Expression extends Statement {
     public String toKotlin() {
       return EMPTY;
     }
+
+    @Override
+    public boolean isEmpty() {
+      return true;
+    }
+  }
+
+  public boolean isNullable() {
+    return false;
+  }
+
+  public boolean isEmpty() {
+    return false;
   }
 }

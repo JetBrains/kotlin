@@ -7,9 +7,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IdentifierImpl extends Expression implements Identifier {
   private final String myName;
+  private boolean myNullable = true;
 
   public IdentifierImpl(String name) {
     myName = name;
+  }
+
+  public IdentifierImpl(String name, boolean nullable) {
+    myName = name;
+    myNullable = nullable;
   }
 
   @Override
@@ -24,6 +30,11 @@ public class IdentifierImpl extends Expression implements Identifier {
 
   private String quote(String str) {
     return BACKTICK + str + BACKTICK;
+  }
+
+  @Override
+  public boolean isNullable() {
+    return myNullable;
   }
 
   @NotNull

@@ -225,7 +225,11 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
-    myResult = new IdentifierImpl(expression.getQualifiedName()); // TODO
+    final IdentifierImpl identifier = expression.getType() != null ? // TODO: if type exists so id is nullable
+      new IdentifierImpl(expression.getReferenceName()) :
+      new IdentifierImpl(expression.getReferenceName(), false);
+
+    myResult = new CallChain(expressionToExpression(expression.getQualifierExpression()), identifier);
   }
 
   @Override
