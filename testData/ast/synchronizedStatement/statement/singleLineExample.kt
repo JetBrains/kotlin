@@ -1,1 +1,3 @@
-synchronized (s) { doSomething(s) }
+synchronized (s) {
+doSomething(s)
+}

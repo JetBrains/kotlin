@@ -39,10 +39,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
 
     String actual = "";
     if (javaFile.getParent().endsWith("/expression")) actual = expressionToKotlin(javaCode);
-
-    else if (javaFile.getParent().endsWith("/statement")) actual = statementToSingleLineKotlin(javaCode);
-    else if (javaFile.getParent().endsWith("/statement_mult")) actual = statementToKotlin(javaCode);
-
+    else if (javaFile.getParent().endsWith("/statement")) actual = statementToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/method")) actual = methodToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/class")) actual = classToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
@@ -108,14 +105,6 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return prettify(result);
   }
 
-  protected String methodToSingleLineKotlin(String text) throws IOException {
-    return toSingleLine(methodToKotlin(text));
-  }
-
-  protected String statementToSingleLineKotlin(String code) throws Exception {
-    return toSingleLine(statementToKotlin(code));
-  }
-
   @NotNull
   protected String methodToKotlin(String text) throws IOException {
     String result = classToKotlin("final class C {" + text + "}")
@@ -151,10 +140,5 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
       .replaceAll(" +", " ")
       .trim()
       ;
-  }
-
-  @NotNull
-  public static String toSingleLine(String string) {
-    return prettify(string.replaceAll("\n", " "));
   }
 }
