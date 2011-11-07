@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author ignatov
  */
-public class CallChain extends Expression {
+public class CallChainExpression extends Expression {
   private Expression myExpression;
   private IdentifierImpl myIdentifier;
 
-  public CallChain(Expression expression, IdentifierImpl identifier) {
+  public CallChainExpression(Expression expression, IdentifierImpl identifier) {
     myExpression = expression;
     myIdentifier = identifier;
   }

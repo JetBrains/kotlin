@@ -227,7 +227,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
     boolean isNullable = typeToType(expression.getType()).isNullable();
-    myResult = new CallChain(
+    myResult = new CallChainExpression(
       expressionToExpression(expression.getQualifierExpression()),
       new IdentifierImpl(expression.getReferenceName(), isNullable) // TODO: if type exists so id is nullable
     );
