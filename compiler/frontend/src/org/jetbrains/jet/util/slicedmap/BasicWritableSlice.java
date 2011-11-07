@@ -1,15 +1,33 @@
 package org.jetbrains.jet.util.slicedmap;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 /**
 * @author abreslav
 */
 public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
 
-    private final String debugName;
+    public static Void initSliceDebugNames(Class<?> declarationOwner) {
+        for (Field field : declarationOwner.getFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) continue;
+            try {
+                Object value = field.get(null);
+                if (value instanceof BasicWritableSlice) {
+                    BasicWritableSlice slice = (BasicWritableSlice) value;
+                    slice.debugName = field.getName();
+                }
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        return null;
+    }
+    
+    private String debugName;
     private final RewritePolicy rewritePolicy;
 
-    public BasicWritableSlice(String debugName, RewritePolicy rewritePolicy) {
-        this.debugName = debugName;
+    public BasicWritableSlice(RewritePolicy rewritePolicy) {
         this.rewritePolicy = rewritePolicy;
     }
 

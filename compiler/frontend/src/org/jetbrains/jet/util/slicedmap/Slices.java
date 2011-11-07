@@ -34,19 +34,19 @@ public class Slices {
 
     }
 
-    public static <K, V> SliceBuilder<K, V> sliceBuilder(String debugName) {
-        return new SliceBuilder<K, V>(debugName, ONLY_REWRITE_TO_EQUAL);
+    public static <K, V> SliceBuilder<K, V> sliceBuilder() {
+        return new SliceBuilder<K, V>(ONLY_REWRITE_TO_EQUAL);
     }
 
-    public static <K, V> WritableSlice<K, V> createSimpleSlice(String debugName) {
-        return new BasicWritableSlice<K, V>(debugName, ONLY_REWRITE_TO_EQUAL);
+    public static <K, V> WritableSlice<K, V> createSimpleSlice() {
+        return new BasicWritableSlice<K, V>(ONLY_REWRITE_TO_EQUAL);
     }
 
-    public static <K> WritableSlice<K, Boolean> createSimpleSetSlice(String debugName) {
-        return createRemovableSetSlice(debugName);
+    public static <K> WritableSlice<K, Boolean> createSimpleSetSlice() {
+        return createRemovableSetSlice();
     }
-    public static <K> RemovableSlice<K, Boolean> createRemovableSetSlice(String debugName) {
-        return new SetSlice<K>(debugName, RewritePolicy.DO_NOTHING);
+    public static <K> RemovableSlice<K, Boolean> createRemovableSetSlice() {
+        return new SetSlice<K>(RewritePolicy.DO_NOTHING);
     }
 
     public static class SliceBuilder<K, V> {
@@ -57,11 +57,8 @@ public class Slices {
 
         private RewritePolicy rewritePolicy;
 
-        private String debugName;
-
-        private SliceBuilder(String debugName, RewritePolicy rewritePolicy) {
+        private SliceBuilder(RewritePolicy rewritePolicy) {
             this.rewritePolicy = rewritePolicy;
-            this.debugName = debugName;
         }
 
         public SliceBuilder<K, V> setDefaultValue(V defaultValue) {
@@ -86,7 +83,7 @@ public class Slices {
 
         public RemovableSlice<K, V>  build() {
             if (defaultValue != null) {
-                return new SliceWithOpposite<K, V>(debugName, rewritePolicy, opposite, keyNormalizer) {
+                return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer) {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) return defaultValue;
@@ -95,7 +92,7 @@ public class Slices {
                 };
             }
             if (furtherLookupSlices != null) {
-                return new SliceWithOpposite<K, V>(debugName, rewritePolicy, opposite, keyNormalizer) {
+                return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer) {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) {
@@ -110,14 +107,14 @@ public class Slices {
                     }
                 };
             }
-            return new SliceWithOpposite<K, V>(debugName, rewritePolicy, opposite, keyNormalizer);
+            return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer);
         }
 
     }
 
     public static class BasicRemovableSlice<K, V> extends BasicWritableSlice<K, V> implements RemovableSlice<K, V> {
-        protected BasicRemovableSlice(String debugName, RewritePolicy rewritePolicy) {
-            super(debugName, rewritePolicy);
+        protected BasicRemovableSlice(RewritePolicy rewritePolicy) {
+            super(rewritePolicy);
         }
 
     }
@@ -133,11 +130,11 @@ public class Slices {
         }
 
         public SliceWithOpposite(String debugName, RewritePolicy rewritePolicy, KeyNormalizer<K> keyNormalizer) {
-            this(debugName, rewritePolicy, null, keyNormalizer);
+            this(rewritePolicy, null, keyNormalizer);
         }
 
-        public SliceWithOpposite(String debugName, RewritePolicy rewritePolicy, WritableSlice<? super V, ? super K> opposite, KeyNormalizer<K> keyNormalizer) {
-            super(debugName, rewritePolicy);
+        public SliceWithOpposite(RewritePolicy rewritePolicy, WritableSlice<? super V, ? super K> opposite, KeyNormalizer<K> keyNormalizer) {
+            super(rewritePolicy);
             this.opposite = opposite;
             this.keyNormalizer = keyNormalizer;
         }
@@ -160,8 +157,8 @@ public class Slices {
 
     public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {
 
-        protected SetSlice(String debugName, RewritePolicy rewritePolicy) {
-            super(debugName, rewritePolicy);
+        protected SetSlice(RewritePolicy rewritePolicy) {
+            super(rewritePolicy);
         }
 
         @Override
