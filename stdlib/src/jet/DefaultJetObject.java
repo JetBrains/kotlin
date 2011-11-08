@@ -13,7 +13,7 @@ public class DefaultJetObject implements JetObject {
     }
 
     @Override
-    public TypeInfo<?> getTypeInfo() {
+    public final TypeInfo<?> getTypeInfo() {
         return typeInfo;
     }
 }

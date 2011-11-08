@@ -1,15 +1,17 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -123,5 +125,21 @@ public class CodegenUtil {
             return getFQName(((JetClass) parent)) + "." + jetClass.getName();
         }
         return jetClass.getName();
+    }
+
+    public static FunctionDescriptor createInvoke(ExpressionAsFunctionDescriptor fd) {
+        int arity = fd.getValueParameters().size();
+        FunctionDescriptorImpl invokeDescriptor = new FunctionDescriptorImpl(
+                fd.getExpectedThisObject().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity),
+                Collections.<AnnotationDescriptor>emptyList(),
+                "invoke");
+
+        invokeDescriptor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
+                                   fd.getExpectedThisObject(),
+                                   Collections.<TypeParameterDescriptor>emptyList(),
+                                   fd.getValueParameters(),
+                                   fd.getReturnType(),
+                                   Modality.FINAL, Visibility.PUBLIC);
+        return invokeDescriptor;
     }
 }

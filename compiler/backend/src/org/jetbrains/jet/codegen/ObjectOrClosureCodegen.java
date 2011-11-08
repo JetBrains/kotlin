@@ -1,8 +1,6 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -16,6 +14,7 @@ import java.util.Map;
  */
 public class ObjectOrClosureCodegen {
     protected boolean captureThis;
+    protected Type captureReceiver;
 
     public final GenerationState state;
     protected final ExpressionCodegen exprContext;
@@ -30,12 +29,15 @@ public class ObjectOrClosureCodegen {
         this.state = state;
     }
 
-    public StackValue lookupInContext(DeclarationDescriptor d) {
+    public StackValue lookupInContext(DeclarationDescriptor d, StackValue result) {
+        EnclosedValueDescriptor answer = closure.get(d);
+        if (answer != null) {
+            StackValue innerValue = answer.getInnerValue();
+            return result != null ? innerValue : StackValue.composed(result, innerValue);
+        }
+
         if (d instanceof VariableDescriptor) {
             VariableDescriptor vd = (VariableDescriptor) d;
-
-            EnclosedValueDescriptor answer = closure.get(vd);
-            if (answer != null) return answer.getInnerValue();
 
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
@@ -56,14 +58,36 @@ public class ObjectOrClosureCodegen {
             return innerValue;
         }
 
+        if(d instanceof FunctionDescriptor) {
+            // we are looking for receiver
+            FunctionDescriptor fd = (FunctionDescriptor) d;
+
+            // we generate method
+            assert context instanceof CodegenContext.FunctionContext;
+
+            CodegenContext.FunctionContext fcontext = (CodegenContext.FunctionContext) context;
+
+            if(fcontext.getReceiverDescriptor() != fd)
+                return null;
+
+            Type type = state.getTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType());
+            boolean isStatic = fcontext.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor;
+            StackValue outerValue = StackValue.local(isStatic ? 0 : 1, type);
+            final String fieldName = "receiver$0";
+            StackValue innerValue = StackValue.field(type, name, fieldName, false);
+
+            cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
+
+            answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
+            closure.put(d, answer);
+
+            return innerValue;
+        }
+
         return null;
     }
 
-    public boolean isCaptureThis() {
-        return captureThis;
-    }
-
     public boolean isConst () {
-        return !captureThis && closure.isEmpty();
+        return !captureThis && captureReceiver != null && closure.isEmpty();
     }
 }

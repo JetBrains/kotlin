@@ -85,7 +85,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         final Type enclosingType = thisDescriptor == null ? null : Type.getObjectType(thisDescriptor.getName());
         if (enclosingType == null) captureThis = false;
 
-        final Method constructor = generateConstructor(funClass, captureThis, fun, funDescriptor.getReturnType());
+        final Method constructor = generateConstructor(funClass, fun);
 
         if (captureThis) {
             cv.newField(fun, 0, "this$0", enclosingType.getDescriptor(), null, null);
@@ -97,10 +97,12 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         cv.done();
 
-        final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor, captureThis);
+        final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor, captureThis, captureReceiver);
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
-            answer.addArg(valueDescriptor.getOuterValue());
+            if(descriptor instanceof VariableDescriptor) {
+                final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
+                answer.addArg(valueDescriptor.getOuterValue());
+            }
         }
         return answer;
     }
@@ -144,7 +146,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
-        return closureContext.isOuterWasUsed();
+        return closureContext.outerWasUsed;
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, JetFunctionLiteralExpression fun, ClassBuilder cv) {
@@ -185,26 +187,36 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         mv.visitEnd();
     }
 
-    private Method generateConstructor(String funClass, boolean captureThis, JetFunctionLiteralExpression fun, JetType returnType) {
-        int argCount = closure.size();
+    private Method generateConstructor(String funClass, JetFunctionLiteralExpression fun) {
+        int argCount = captureThis ? 1 : 0;
 
-        if (captureThis) {
-            argCount++;
+        for (DeclarationDescriptor descriptor : closure.keySet()) {
+            if(descriptor instanceof VariableDescriptor) {
+                argCount++;
+            }
+            else if(descriptor instanceof FunctionDescriptor) {
+                captureReceiver = state.getTypeMapper().mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType());
+                argCount++;
+            }
         }
 
         Type[] argTypes = new Type[argCount];
 
-
         int i = 0;
         if (captureThis) {
-            i = 1;
-            argTypes[0] = Type.getObjectType(context.getThisDescriptor().getName());
+            argTypes[i++] = Type.getObjectType(context.getThisDescriptor().getName());
+        }
+
+        if (captureReceiver != null) {
+            argTypes[i++] = captureReceiver;
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            final Type sharedVarType = exprContext.getSharedVarType(descriptor);
-            final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
-            argTypes[i++] = type;
+            if(descriptor instanceof VariableDescriptor) {
+                final Type sharedVarType = exprContext.getSharedVarType(descriptor);
+                final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+                argTypes[i++] = type;
+            }
         }
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
@@ -225,11 +237,15 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             final String fieldName;
             if (captureThis && i == 1) {
                 fieldName = "this$0";
-                captureThis = false;
             }
             else {
-                fieldName = "$" + (i);
-                i++;
+                if (captureReceiver != null && (captureThis && i == 2 || !captureThis && i == 1)) {
+                    fieldName = "receiver$0";
+                }
+                else {
+                    fieldName = "$" + (i);
+                    i++;
+                }
             }
 
             StackValue.field(type, name, fieldName, false).store(iv);
