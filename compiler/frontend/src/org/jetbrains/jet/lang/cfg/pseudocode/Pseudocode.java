@@ -44,18 +44,20 @@ public class Pseudocode {
         @Nullable
         private List<Instruction> resolve() {
             assert targetInstructionIndex != null;
-            return instructions.subList(getTargetInstructionIndex(), instructions.size());
+            return mutableInstructionList.subList(getTargetInstructionIndex(), mutableInstructionList.size());
         }
 
         public Instruction resolveToInstruction() {
             assert targetInstructionIndex != null;
-            return instructions.get(targetInstructionIndex);
+            return mutableInstructionList.get(targetInstructionIndex);
         }
 
     }
 
+    private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
+    private final List<PseudocodeLabel> allowedDeadLabels = new ArrayList<PseudocodeLabel>();
 
     private final JetElement correspondingElement;
     private SubroutineExitInstruction exitInstruction;
@@ -75,10 +77,20 @@ public class Pseudocode {
         labels.add(label);
         return label;
     }
+    
+    public void allowDead(Label label) {
+        allowedDeadLabels.add((PseudocodeLabel) label);
+    }
 
     @NotNull
     public List<Instruction> getInstructions() {
         return instructions;
+    }
+
+    @Deprecated //for tests only
+    @NotNull
+    public List<Instruction> getMutableInstructionList() {
+        return mutableInstructionList;
     }
     
     @NotNull
@@ -93,6 +105,7 @@ public class Pseudocode {
     }
 
     @Deprecated //for tests only
+    @NotNull
     public List<PseudocodeLabel> getLabels() {
         return labels;
     }
@@ -110,7 +123,7 @@ public class Pseudocode {
     }
 
     public void addInstruction(Instruction instruction) {
-        instructions.add(instruction);
+        mutableInstructionList.add(instruction);
         instruction.setOwner(this);
     }
 
@@ -127,18 +140,18 @@ public class Pseudocode {
 
     @NotNull
     public SubroutineEnterInstruction getEnterInstruction() {
-        return (SubroutineEnterInstruction) instructions.get(0);
+        return (SubroutineEnterInstruction) mutableInstructionList.get(0);
     }
 
     public void bindLabel(Label label) {
-        ((PseudocodeLabel) label).setTargetInstructionIndex(instructions.size());
+        ((PseudocodeLabel) label).setTargetInstructionIndex(mutableInstructionList.size());
     }
 
     public void postProcess() {
         if (postPrecessed) return;
         postPrecessed = true;
-        for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
-            Instruction instruction = instructions.get(i);
+        for (int i = 0, instructionsSize = mutableInstructionList.size(); i < instructionsSize; i++) {
+            Instruction instruction = mutableInstructionList.get(i);
             final int currentPosition = i;
             instruction.accept(new InstructionVisitor() {
                 @Override
@@ -198,15 +211,20 @@ public class Pseudocode {
             });
         }
         getExitInstruction().setSink(getSinkInstruction());
-        removeDeadInstructions();
+        Set<Instruction> allowedDeadStartInstructions = prepareAllowedDeadInstructions();
+        markDeadInstructions();
+        Collection<Instruction> allowedDeadInstructions = collectAllowedDeadInstructions(allowedDeadStartInstructions);
+        instructions.addAll(mutableInstructionList);
+        instructions.removeAll(allowedDeadInstructions);
+
     }
 
-    private void removeDeadInstructions() {
+    private void markDeadInstructions() {
         boolean hasRemovedInstruction = true;
         Collection<Instruction> processedInstructions = Sets.newHashSet();
         while (hasRemovedInstruction) {
             hasRemovedInstruction = false;
-            for (Instruction instruction : instructions) {
+            for (Instruction instruction : mutableInstructionList) {
                 if (!(instruction instanceof SubroutineEnterInstruction || instruction instanceof SubroutineExitInstruction || instruction instanceof SubroutineSinkInstruction) &&
                     instruction.getPreviousInstructions().isEmpty() && !processedInstructions.contains(instruction)) {
                     hasRemovedInstruction = true;
@@ -221,6 +239,36 @@ public class Pseudocode {
     }
 
     @NotNull
+    private Set<Instruction> prepareAllowedDeadInstructions() {
+        Set<Instruction> allowedDeadStartInstructions = Sets.newHashSet();
+        for (PseudocodeLabel allowedDeadLabel : allowedDeadLabels) {
+            Instruction allowedDeadInstruction = getJumpTarget(allowedDeadLabel);
+            if (allowedDeadInstruction.getPreviousInstructions().isEmpty()) {
+                allowedDeadStartInstructions.add(allowedDeadInstruction);
+            }
+        }
+        return allowedDeadStartInstructions;
+    }
+
+    @NotNull
+    private Collection<Instruction> collectAllowedDeadInstructions(@NotNull Set<Instruction> allowedDeadStartInstructions) {
+        Set<Instruction> allowedDeadInstructions = Sets.newHashSet();
+        for (Instruction allowedDeadStartInstruction : allowedDeadStartInstructions) {
+            collectAllowedDeadInstructions(allowedDeadStartInstruction, allowedDeadInstructions);
+        }
+        return allowedDeadInstructions;
+    }
+    
+    private void collectAllowedDeadInstructions(Instruction allowedDeadInstruction, Set<Instruction> instructionSet) {
+        if (allowedDeadInstruction.isDead()) {
+            instructionSet.add(allowedDeadInstruction);
+            for (Instruction instruction : allowedDeadInstruction.getNextInstructions()) {
+                collectAllowedDeadInstructions(instruction, instructionSet);
+            }
+        }
+    }
+
+    @NotNull
     private Instruction getJumpTarget(@NotNull Label targetLabel) {
         return ((PseudocodeLabel)targetLabel).resolveToInstruction();
     }
@@ -228,7 +276,7 @@ public class Pseudocode {
     @NotNull
     private Instruction getNextPosition(int currentPosition) {
         int targetPosition = currentPosition + 1;
-        assert targetPosition < instructions.size() : currentPosition;
-        return instructions.get(targetPosition);
+        assert targetPosition < mutableInstructionList.size() : currentPosition;
+        return mutableInstructionList.get(targetPosition);
     }
 }

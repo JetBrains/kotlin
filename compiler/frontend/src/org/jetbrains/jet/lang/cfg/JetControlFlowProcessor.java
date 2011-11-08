@@ -5,18 +5,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
@@ -356,18 +357,35 @@ public class JetControlFlowProcessor {
                 });
             }
 
-            Label onException = builder.createUnboundLabel();
-            builder.nondeterministicJump(onException);
+            List<JetCatchClause> catchClauses = expression.getCatchClauses();
+            final boolean hasCatches = !catchClauses.isEmpty();
+            Label onException = null;
+            if (hasCatches) {
+                onException = builder.createUnboundLabel();
+                builder.nondeterministicJump(onException);
+            }
             value(expression.getTryBlock(), inCondition);
 
-            List<JetCatchClause> catchClauses = expression.getCatchClauses();
-            if (!catchClauses.isEmpty()) {
+            if (hasCatches) {
+                builder.allowDead();
                 Label afterCatches = builder.createUnboundLabel();
                 builder.jump(afterCatches);
 
                 builder.bindLabel(onException);
-                for (Iterator<JetCatchClause> iterator = catchClauses.iterator(); iterator.hasNext(); ) {
-                    JetCatchClause catchClause = iterator.next();
+                LinkedList<Label> catchLabels = Lists.newLinkedList();
+                int catchClausesSize = catchClauses.size();
+                for (int i = 0; i < catchClausesSize - 1; i++) {
+                    catchLabels.add(builder.createUnboundLabel());
+                }
+                builder.nondeterministicJump(catchLabels);
+                boolean isFirst = true;
+                for (JetCatchClause catchClause : catchClauses) {
+                    if (!isFirst) {
+                        builder.bindLabel(catchLabels.remove());
+                    }
+                    else {
+                        isFirst = false;
+                    }
                     JetParameter catchParameter = catchClause.getCatchParameter();
                     if (catchParameter != null) {
                         builder.write(catchParameter, catchParameter);
@@ -376,14 +394,14 @@ public class JetControlFlowProcessor {
                     if (catchBody != null) {
                         value(catchBody, false);
                     }
-                    if (iterator.hasNext()) {
-                        builder.nondeterministicJump(afterCatches);
-                    }
+                    builder.allowDead();
+                    builder.jump(afterCatches);
                 }
 
                 builder.bindLabel(afterCatches);
-            } else {
-                builder.bindLabel(onException);
+            }
+            else {
+                builder.allowDead();
             }
 
             if (finallyBlock != null) {

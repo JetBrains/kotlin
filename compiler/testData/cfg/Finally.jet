@@ -131,3 +131,61 @@ fun t11() {
     return 2
   }
 }
+
+fun t12() : Int {
+    try {
+        return 1
+    }
+    finally {
+        doSmth(3)
+    }
+}
+
+fun t13() : Int {
+    try {
+        return 1
+    }
+    catch (e: UnsupportedOperationException) {
+        doSmth(2)
+    }
+    finally {
+        doSmth(3)
+    }
+}
+
+fun t14() : Int {
+    try {
+        return 1
+    }
+    catch (e: UnsupportedOperationException) {
+        doSmth(2)
+    }
+}
+
+
+fun t15() : Int {
+    try {
+        return 1
+    }
+    catch (e: UnsupportedOperationException) {
+        return 2
+    }
+    finally {
+        doSmth(3)
+    }
+}
+
+fun t16() : Int {
+    try {
+        doSmth(1)
+    }
+    catch (e: UnsupportedOperationException) {
+        return 2
+    }
+    finally {
+        doSmth(3)
+    }
+}
+
+fun doSmth(i: Int) {
+}

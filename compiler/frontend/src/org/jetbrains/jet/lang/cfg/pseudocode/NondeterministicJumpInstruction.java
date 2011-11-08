@@ -17,7 +17,7 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     private final Map<Label, Instruction> resolvedTargets;
 
     public NondeterministicJumpInstruction(List<Label> targetLabels) {
-        this.targetLabels = targetLabels;
+        this.targetLabels = Lists.newArrayList(targetLabels);
         resolvedTargets = Maps.newLinkedHashMap();
     }
 

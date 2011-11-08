@@ -12,7 +12,7 @@ import org.objectweb.asm.Opcodes;
 import java.util.List;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
-    public TraitImplBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
+    public TraitImplBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
     }
 

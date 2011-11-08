@@ -3,6 +3,7 @@
  */
 package org.jetbrains.jet.cfg;
 
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.Test;
@@ -125,7 +126,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             instructionDump.append("=====================\n");
             
             //check edges directions
-            Collection<Instruction> instructions = pseudocode.getInstructions();
+            Collection<Instruction> instructions = pseudocode.getMutableInstructionList();
             for (Instruction instruction : instructions) {
                 if (!instruction.isDead()) {
                     for (Instruction nextInstruction : instruction.getNextInstructions()) {
@@ -157,7 +158,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     }
 
     public void dfsDump(Pseudocode pseudocode, StringBuilder nodes, StringBuilder edges, Map<Instruction, String> nodeNames) {
-        dfsDump(nodes, edges, pseudocode.getInstructions().get(0), nodeNames);
+        dfsDump(nodes, edges, pseudocode.getMutableInstructionList().get(0), nodeNames);
     }
 
     private void dfsDump(StringBuilder nodes, StringBuilder edges, Instruction instruction, Map<Instruction, String> nodeNames) {
@@ -172,9 +173,10 @@ public class JetControlFlowTest extends JetLiteFixture {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    private static String formatInstruction(Instruction instruction, int maxLength) {
+    private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
         String[] parts = instruction.toString().split("\n");
-        String prefix = instruction.isDead() ? "*   " : "    ";
+        boolean isRemovedThroughPostProcess = !remainedAfterPostProcessInstructions.contains(instruction);
+        String prefix = isRemovedThroughPostProcess ? "R   " : instruction.isDead() ? "*   " : "    ";
         if (parts.length == 1) {
             return prefix + String.format("%1$-" + maxLength + "s", instruction);
         }
@@ -218,7 +220,8 @@ public class JetControlFlowTest extends JetLiteFixture {
     }
 
     public void dumpInstructions(Pseudocode pseudocode, @NotNull StringBuilder out) {
-        List<Instruction> instructions = pseudocode.getInstructions();
+        List<Instruction> instructions = pseudocode.getMutableInstructionList();
+        Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
         List<Pseudocode.PseudocodeLabel> labels = pseudocode.getLabels();
         List<Pseudocode> locals = new ArrayList<Pseudocode>();
         int maxLength = 0;
@@ -257,7 +260,7 @@ public class JetControlFlowTest extends JetLiteFixture {
                 }
             }
 
-            out.append(formatInstruction(instruction, maxLength)).
+            out.append(formatInstruction(instruction, maxLength, remainedAfterPostProcessInstructions)).
                     append("    NEXT:").append(String.format("%1$-" + maxNextLength + "s", formatInstructionList(instruction.getNextInstructions()))).
                     append("    PREV:").append(formatInstructionList(instruction.getPreviousInstructions())).append("\n");
         }
@@ -273,7 +276,7 @@ public class JetControlFlowTest extends JetLiteFixture {
                 public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
-                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().getInstructions().get(0)), null);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().getMutableInstructionList().get(0)), null);
                     visitInstructionWithNext(instruction);
                 }
 
@@ -336,7 +339,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         }
     }
 
-    public void dumpNodes(List<Instruction> instructions, PrintStream out, int[] count, Map<Instruction, String> nodeToName) {
+    public void dumpNodes(List<Instruction> instructions, PrintStream out, int[] count, Map<Instruction, String> nodeToName, Set<Instruction> remainedAfterPostProcessInstructions) {
         for (Instruction node : instructions) {
             String name = "n" + count[0]++;
             nodeToName.put(node, name);
@@ -360,6 +363,9 @@ public class JetControlFlowTest extends JetLiteFixture {
             }
             else if (node instanceof SubroutineEnterInstruction || node instanceof SubroutineExitInstruction) {
                 shape = "roundrect, style=rounded";
+            }
+            if (!remainedAfterPostProcessInstructions.contains(node)) {
+                shape += "box, fillcolor=grey, style=filled";
             }
             out.println(name + "[label=\"" + text + "\", shape=" + shape + "];");
         }
@@ -385,7 +391,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         int[] count = new int[1];
         Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
         for (Pseudocode pseudocode : pseudocodes) {
-            dumpNodes(pseudocode.getInstructions(), out, count, nodeToName);
+            dumpNodes(pseudocode.getMutableInstructionList(), out, count, nodeToName, Sets.newHashSet(pseudocode.getInstructions()));
         }
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
@@ -401,7 +407,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             out.println("subgraph cluster_" + i + " {\n" +
                         "label=\"" + label + "\";\n" +
                         "color=blue;\n");
-            dumpEdges(pseudocode.getInstructions(), out, count, nodeToName);
+            dumpEdges(pseudocode.getMutableInstructionList(), out, count, nodeToName);
             out.println("}");
             i++;
         }

@@ -29,7 +29,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JetDelegationSpecifier superCall;
     private String superClass = "java/lang/Object";
 
-    public ImplementationBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
+    public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
     }
 
@@ -290,6 +290,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, myClass);
 
+        CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+
         Method method;
         CallableMethod callableMethod;
         if (constructorDescriptor == null) {
@@ -337,7 +339,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ConstructorFrameMap frameMap = new ConstructorFrameMap(callableMethod, constructorDescriptor, descriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, constructorContext, state);
 
         for(int slot = 0; slot != frameMap.getTypeParameterCount(); ++slot) {
             if(constructorDescriptor != null)
@@ -405,7 +407,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.putfield(classname, delegateField, fieldDesc);
 
                 JetClass superClass = (JetClass) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
-                final ClassContext delegateContext = context.intoClass(null, superClassDescriptor,
+                final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
                                                    state.getTypeMapper().jvmNameForImplementation(superClassDescriptor, OwnerKind.IMPLEMENTATION)));
                 generateDelegates(superClass, delegateContext, overridden);
@@ -441,10 +443,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        generateInitializers(codegen, iv);
-
-        generateTraitMethods(codegen);
-
         int curParam = 0;
         List<JetParameter> constructorParameters = getPrimaryConstructorParameters();
         for (JetParameter parameter : constructorParameters) {
@@ -457,6 +455,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             curParam++;
         }
+
+        generateInitializers(codegen, iv);
+
+        generateTraitMethods(codegen);
 
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
@@ -741,7 +743,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generateDelegates(JetClass toClass, ClassContext delegateContext, Set<FunctionDescriptor> overriden) {
+    protected void generateDelegates(JetClass toClass, CodegenContext delegateContext, Set<FunctionDescriptor> overriden) {
         final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
 

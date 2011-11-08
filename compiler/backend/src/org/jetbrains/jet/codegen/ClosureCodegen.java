@@ -5,14 +5,14 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -22,13 +22,14 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class ClosureCodegen extends FunctionOrClosureCodegen {
+public class ClosureCodegen extends ObjectOrClosureCodegen {
 
-    public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, ClassContext context) {
+    public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, CodegenContext context) {
         super(exprContext, context, state);
     }
 
@@ -80,7 +81,8 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
 
         generateBridge(name, funDescriptor, fun, cv);
         captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
-        final Type enclosingType = context.enclosingClassType(state.getTypeMapper());
+        ClassDescriptor thisDescriptor = context.getThisDescriptor();
+        final Type enclosingType = thisDescriptor == null ? null : Type.getObjectType(thisDescriptor.getName());
         if (enclosingType == null) captureThis = false;
 
         final Method constructor = generateConstructor(funClass, captureThis, fun, funDescriptor.getReturnType());
@@ -128,10 +130,21 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
     }
 
     private boolean generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetFunctionLiteral body) {
-        final ClassContext closureContext = context.intoClosure(name, this);
+        int arity = funDescriptor.getValueParameters().size();
+
+        ClassDescriptorImpl function = new ClassDescriptorImpl(
+                funDescriptor,
+                Collections.<AnnotationDescriptor>emptyList(),
+                name);
+        function = function.initialize(
+                false,
+                Collections.<TypeParameterDescriptor>emptyList(),
+                Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<FunctionDescriptor>emptySet(), null);
+
+        final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
-        return closureContext.isThisWasUsed();
+        return closureContext.isOuterWasUsed();
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, JetFunctionLiteralExpression fun, ClassBuilder cv) {
@@ -185,7 +198,7 @@ public class ClosureCodegen extends FunctionOrClosureCodegen {
         int i = 0;
         if (captureThis) {
             i = 1;
-            argTypes[0] = context.enclosingClassType(state.getTypeMapper());
+            argTypes[0] = Type.getObjectType(context.getThisDescriptor().getName());
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {

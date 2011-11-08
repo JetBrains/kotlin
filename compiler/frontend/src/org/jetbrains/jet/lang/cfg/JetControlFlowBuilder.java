@@ -18,6 +18,7 @@ public interface JetControlFlowBuilder {
     Label createUnboundLabel();
 
     void bindLabel(@NotNull Label label);
+    void allowDead();
 
     // Jumps
     void jump(@NotNull Label label);

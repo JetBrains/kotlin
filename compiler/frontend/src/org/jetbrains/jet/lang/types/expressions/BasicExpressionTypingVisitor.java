@@ -441,7 +441,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         //TODO move further
         if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
             if (selectorReturnType != null && !selectorReturnType.isNullable() && !JetStandardClasses.isUnit(selectorReturnType)) {
-                selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
+                if (receiverType.isNullable()) {
+                    selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
+                }
             }
         }
 

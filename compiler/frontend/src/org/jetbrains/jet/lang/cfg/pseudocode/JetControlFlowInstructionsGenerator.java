@@ -244,6 +244,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
+        public void allowDead() {
+            Label allowedDeadLabel = createUnboundLabel();
+            bindLabel(allowedDeadLabel);
+            pseudocode.allowDead(allowedDeadLabel);
+        }
+
+        @Override
         public void nondeterministicJump(Label label) {
             handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(label));

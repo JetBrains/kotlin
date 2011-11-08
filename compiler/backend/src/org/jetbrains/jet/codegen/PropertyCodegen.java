@@ -24,7 +24,7 @@ public class PropertyCodegen {
     private final ClassBuilder v;
     private final OwnerKind kind;
 
-    public PropertyCodegen(ClassContext context, ClassBuilder v, FunctionCodegen functionCodegen, GenerationState state) {
+    public PropertyCodegen(CodegenContext context, ClassBuilder v, FunctionCodegen functionCodegen, GenerationState state) {
         this.v = v;
         this.functionCodegen = functionCodegen;
         this.state = state;
