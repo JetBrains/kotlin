@@ -22,11 +22,11 @@ import static org.objectweb.asm.Opcodes.*;
  * @author alex.tkachman
  */
 public class FunctionCodegen {
-    private final ClassContext owner;
+    private final CodegenContext owner;
     private final ClassBuilder v;
     private final GenerationState state;
 
-    public FunctionCodegen(ClassContext owner, ClassBuilder v, GenerationState state) {
+    public FunctionCodegen(CodegenContext owner, ClassBuilder v, GenerationState state) {
         this.owner = owner;
         this.v = v;
         this.state = state;
@@ -40,7 +40,7 @@ public class FunctionCodegen {
     }
 
     public void generateMethod(JetDeclarationWithBody f, Method jvmMethod, FunctionDescriptor functionDescriptor) {
-        ClassContext funContext = owner.intoFunction(functionDescriptor);
+        CodegenContext.MethodContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
         generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor, f);
@@ -48,7 +48,7 @@ public class FunctionCodegen {
 
     private void generatedMethod(JetExpression bodyExpressions,
                                  Method jvmSignature,
-                                 ClassContext context,
+                                 CodegenContext.MethodContext context,
                                  FunctionDescriptor functionDescriptor, JetDeclarationWithBody fun)
     {
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
@@ -67,9 +67,8 @@ public class FunctionCodegen {
             if (isAbstract) flags |= ACC_ABSTRACT;
 
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
-            boolean hasReceiver = functionDescriptor.getReceiverParameter().exists();
             if(kind != OwnerKind.TRAIT_IMPL) {
-                int start = hasReceiver ? 1 : 0;
+                int start = functionDescriptor.getReceiverParameter().exists() ? 1 : 0;
                 for(int i = 0; i != paramDescrs.size(); ++i) {
                     AnnotationVisitor annotationVisitor = mv.visitParameterAnnotation(i + start, "jet/typeinfo/JetParameterName", true);
                     annotationVisitor.visit("value", paramDescrs.get(i).getName());
@@ -78,16 +77,12 @@ public class FunctionCodegen {
             }
             if (!isAbstract) {
                 mv.visitCode();
-                Label methodStart = new Label();
-                mv.visitLabel(methodStart);
-
                 FrameMap frameMap = context.prepareFrame();
 
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
-                int receiverSize = !hasReceiver ? 0 : state.getTypeMapper().mapType(functionDescriptor.getReceiverParameter().getType()).getSize();
-                int add = hasReceiver ? 1 : 0;
+                int add = functionDescriptor.getReceiverParameter().exists() ? state.getTypeMapper().mapType(functionDescriptor.getReceiverParameter().getType()).getSize() : 0;
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     ValueParameterDescriptor parameter = paramDescrs.get(i);
                     frameMap.enter(parameter, argTypes[i+add].getSize());
@@ -128,18 +123,8 @@ public class FunctionCodegen {
 
                     codegen.returnExpression(bodyExpressions);
                 }
-
-                Label methodEnd = new Label();
-                mv.visitLabel(methodEnd);
-                int index = ((flags & ACC_STATIC) != 0 ? 0 : 1) + receiverSize;
-                for (int i = 0; i < paramDescrs.size(); i++) {
-                    ValueParameterDescriptor parameter = paramDescrs.get(i);
-                    mv.visitLocalVariable(parameter.getName(), state.getTypeMapper().mapType(parameter.getOutType()).getDescriptor(), null, methodStart, methodEnd, index);
-                    index +=  argTypes[i+add].getSize();
-                }
-
                 try {
-                    mv.visitMaxs(0, 0);
+                mv.visitMaxs(0, 0);
                 }
                 catch (Throwable t) {
                     System.out.println(t);
@@ -153,7 +138,7 @@ public class FunctionCodegen {
         generateDefaultIfNeeded(context, state, v, jvmSignature, functionDescriptor, kind);
     }
 
-    static void generateBridgeIfNeeded(ClassContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    static void generateBridgeIfNeeded(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
         Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
         if(kind != OwnerKind.TRAIT_IMPL) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
@@ -164,8 +149,8 @@ public class FunctionCodegen {
         }
     }
 
-    static void generateDefaultIfNeeded(ClassContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
-        DeclarationDescriptor contextClass = owner.getContextClass();
+    static void generateDefaultIfNeeded(CodegenContext.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        DeclarationDescriptor contextClass = ((FunctionDescriptor)owner.getContextDescriptor()).getContainingDeclaration();
 
         if(kind != OwnerKind.TRAIT_IMPL) {
             // we don't generate defaults for traits but do for traitImpl
@@ -307,7 +292,7 @@ public class FunctionCodegen {
         }
     }
 
-    private static void checkOverride(ClassContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
+    private static void checkOverride(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
         Type type1 = state.getTypeMapper().mapType(overriddenFunction.getOriginal().getReturnType());
         Type type2 = state.getTypeMapper().mapType(functionDescriptor.getReturnType());
         if(!type1.equals(type2)) {

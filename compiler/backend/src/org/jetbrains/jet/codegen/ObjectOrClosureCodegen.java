@@ -1,27 +1,30 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.descriptors.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author alex.tkachman
  */
-public class FunctionOrClosureCodegen {
+public class ObjectOrClosureCodegen {
     protected boolean captureThis;
 
     public final GenerationState state;
     protected final ExpressionCodegen exprContext;
-    protected final ClassContext context;
+    protected final CodegenContext context;
     protected ClassBuilder cv = null;
     public String name = null;
     protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
 
-    public FunctionOrClosureCodegen(ExpressionCodegen exprContext, ClassContext context, GenerationState state) {
+    public ObjectOrClosureCodegen(ExpressionCodegen exprContext, CodegenContext context, GenerationState state) {
         this.exprContext = exprContext;
         this.context = context;
         this.state = state;

@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class ExtensionFunctionsTest extends CodegenTestCase {
     @Override
@@ -26,5 +27,9 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
 
     public void testGeneric() throws Exception {
         blackBoxFile("extensionFunctions/generic.jet");
+    }
+
+    public void testVirtual() throws Exception {
+        blackBoxFile("extensionFunctions/virtual.jet");
     }
 }

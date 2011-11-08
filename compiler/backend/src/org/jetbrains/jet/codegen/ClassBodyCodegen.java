@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -28,11 +27,11 @@ public abstract class ClassBodyCodegen {
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
     protected final ClassBuilder v;
-    protected final ClassContext context;
+    protected final CodegenContext context;
 
     protected final List<CodeChunk> staticInitializerChunks = new ArrayList<CodeChunk>();
 
-    public ClassBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
+    public ClassBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         this.state = state;
         descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;

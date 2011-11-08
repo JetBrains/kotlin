@@ -235,6 +235,10 @@ public abstract class StackValue {
         return new FieldForSharedVar(type, name, fieldName);
     }
 
+    public static StackValue composed(StackValue prefix, StackValue suffix) {
+        return new Composed(prefix, suffix);
+    }
+
     private static class None extends StackValue {
         public static None INSTANCE = new None();
         private None() {
@@ -788,6 +792,23 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             v.visitFieldInsn(Opcodes.PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
+        }
+    }
+
+    private static class Composed extends StackValue {
+        private StackValue prefix;
+        private StackValue suffix;
+
+        public Composed(StackValue prefix, StackValue suffix) {
+            super(suffix.type);
+            this.prefix = prefix;
+            this.suffix = suffix;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            prefix.put(prefix.type, v);
+            suffix.put(type, v);
         }
     }
 }

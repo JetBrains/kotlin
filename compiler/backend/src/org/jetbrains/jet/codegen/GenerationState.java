@@ -114,13 +114,13 @@ public class GenerationState {
         }
     }
 
-    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, FunctionOrClosureCodegen closure) {
+    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ObjectOrClosureCodegen closure) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
         Pair<String, ClassBuilder> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
-        final ClassContext objectContext = closure.context.intoClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION);
+        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION);
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate(null);
 

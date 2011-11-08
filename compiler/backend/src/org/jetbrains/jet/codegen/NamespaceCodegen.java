@@ -44,7 +44,7 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        final ClassContext context = ClassContext.STATIC.intoNamespace(state.getBindingContext().get(BindingContext.NAMESPACE, namespace));
+        final CodegenContext context = CodegenContext.STATIC.intoNamespace(state.getBindingContext().get(BindingContext.NAMESPACE, namespace));
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
@@ -85,7 +85,7 @@ public class NamespaceCodegen {
         mv.visitCode();
 
         FrameMap frameMap = new FrameMap();
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, ClassContext.STATIC, state);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
@@ -103,7 +103,7 @@ public class NamespaceCodegen {
         mv.visitEnd();
     }
 
-    private void generateTypeInfoFields(JetNamespace namespace, ClassContext context) {
+    private void generateTypeInfoFields(JetNamespace namespace, CodegenContext context) {
         if(context.typeInfoConstants != null) {
             String jvmClassName = getJVMClassName(namespace.getName());
             for(Map.Entry<JetType,Integer> e : (context.typeInfoConstants != null ? context.typeInfoConstants : Collections.<JetType,Integer>emptyMap()).entrySet()) {
@@ -130,7 +130,7 @@ public class NamespaceCodegen {
         }
     }
 
-    private static void generateTypeInfo(ClassContext context, InstructionAdapter v, JetType jetType, JetTypeMapper typeMapper, JetType root) {
+    private static void generateTypeInfo(CodegenContext context, InstructionAdapter v, JetType jetType, JetTypeMapper typeMapper, JetType root) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
             v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
