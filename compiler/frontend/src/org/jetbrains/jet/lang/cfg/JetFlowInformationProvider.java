@@ -182,6 +182,8 @@ public class JetFlowInformationProvider {
                                                          initialMapForStartInstruction,
                                                          true);
 
+        final Collection<VariableDescriptor> varWithUninitializedErrorGenerated = Sets.newHashSet();
+        final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         traverser.traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Map<VariableDescriptor, InitializationPoints>>() {
             @Override
             public void execute(Instruction instruction, @Nullable Map<VariableDescriptor, InitializationPoints> enterData, @Nullable Map<VariableDescriptor, InitializationPoints> exitData) {
@@ -200,7 +202,8 @@ public class JetFlowInformationProvider {
                                 isInitialized = true;
                             }
                         }
-                        if (!analyzeLocalDeclaration && !isInitialized) {
+                        if (!analyzeLocalDeclaration && !isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
+                            varWithUninitializedErrorGenerated.add(variableDescriptor);
                             trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
                         }
                     }
@@ -222,9 +225,10 @@ public class JetFlowInformationProvider {
                             }
                         }
                         JetExpression expression = (JetExpression) element;
-                        if (!analyzeLocalDeclaration && hasInitializer && !variableDescriptor.isVar()) {
+                        if (!analyzeLocalDeclaration && hasInitializer && !variableDescriptor.isVar() && !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
                             PsiElement psiElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
                             JetProperty property = psiElement instanceof JetProperty ? (JetProperty) psiElement : null;
+                            varWithValReassignErrorGenerated.add(variableDescriptor);
                             trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[] { property }));
                         }
                         if (expression instanceof JetSimpleNameExpression && inAnonymousInitializers &&

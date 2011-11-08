@@ -12,9 +12,13 @@ class C() : B() {
         this.b = 123
         super.b = 23
         <!VAL_REASSIGNMENT!>this.c<!> = 34
-        <!VAL_REASSIGNMENT!>super.c<!> = 3535
+        super.c = 3535 //repeat for 'c'
 
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
+    }
+
+    fun foo1(c: C) {
+        <!VAL_REASSIGNMENT!>super.c<!> = 34
     }
 
     fun bar(c: C) {
@@ -47,10 +51,14 @@ fun canBe(var i: Int, val j: Int) {
     (@label i) = 34
 
     (<!VAL_REASSIGNMENT!>j<!>: Int) = 36
-    (@label <!VAL_REASSIGNMENT!>j<!>) = 34
+    (@label j) = 34 //repeat for j
 
     val a = A()
     (@ a.a) = 3894
+}
+
+fun canBe2(val j: Int) {
+    (@label <!VAL_REASSIGNMENT!>j<!>) = 34
 }
 
 class A() {
@@ -92,14 +100,20 @@ class Test() {
         (a : Int) += 34
 
         <!VAL_REASSIGNMENT!>b<!> += 34
-        (@l <!VAL_REASSIGNMENT!>b<!>) += 34
-        (<!VAL_REASSIGNMENT!>b<!> : Int) += 34
-        (<!VAL_REASSIGNMENT!>b<!>) += 3
 
         a++
         (@ a)++
         (a : Int)++
         (a)++
+    }
+
+    fun testVariables1() {
+        val b: Int = 34
+
+        (@l <!VAL_REASSIGNMENT!>b<!>) += 34
+        //repeat for b
+        (b : Int) += 34
+        (b) += 3
     }
 
     fun testArrays(a: Array<Int>, ab: Ab) {

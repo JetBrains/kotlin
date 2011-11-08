@@ -30,7 +30,7 @@ fun t1(b : Boolean) {
         doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
     else
         t = "ss"
-    doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
+    doSmth(t) //repeat for t
 
     val i = 3
     doSmth(i)
@@ -82,13 +82,13 @@ abstract enum class ProtocolState {
   abstract fun signal() : ProtocolState
 }
 
-fun t2() {
+fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
    <!VAL_REASSIGNMENT!>x<!> = x.signal()
-   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+   x = x.signal() //repeat for x
 }
 
-fun t3() {
+fun t4() {
     val x = 1
     <!VAL_REASSIGNMENT!>x<!> += 2
     val y = 3
@@ -97,7 +97,7 @@ fun t3() {
     z -= y
 }
 
-fun t4() {
+fun t5() {
     for (i in 0..2) {
         <!VAL_REASSIGNMENT!>i<!> += 1
         fun t5() {
@@ -119,7 +119,7 @@ class AnonymousInitializers(var a: String, val b: String) {
         a = "s"
 
         <!VAL_REASSIGNMENT!>$b<!> = "3"
-        <!VAL_REASSIGNMENT!>b<!> = "tt"
+        b = "tt" //repeat for b
     }
 
     val i: Int
@@ -345,6 +345,9 @@ class M() {
 fun test(m : M) {
     <!VAL_REASSIGNMENT!>m.x<!> = 23
     m.y = 23
+}
+
+fun test1(m : M) {
     <!VAL_REASSIGNMENT!>m.x<!>++
     m.y--
 }
