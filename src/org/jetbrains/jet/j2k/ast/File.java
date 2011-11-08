@@ -22,9 +22,11 @@ public class File extends Node {
   @NotNull
   @Override
   public String toKotlin() {
+    final String common = AstUtil.joinNodes(myImports, N) + N2 + AstUtil.joinNodes(myClasses, N) + N;
+    if (myPackageName.isEmpty())
+      return common;
     return "namespace" + SPACE + myPackageName + SPACE + "{" + N +
-      AstUtil.joinNodes(myImports, N) + N2 +
-      AstUtil.joinNodes(myClasses, N) + N +
+      common +
       "}";
   }
 }

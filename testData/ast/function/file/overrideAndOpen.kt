@@ -1,4 +1,3 @@
-namespace {
 open class A() {
 open fun foo() : Unit {
 }
@@ -9,6 +8,5 @@ override fun foo() : Unit {
 }
 open class C() : B {
 override fun foo() : Unit {
-}
 }
 }

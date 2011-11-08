@@ -1,4 +1,3 @@
-namespace {
 open class Library() {
 open fun call() : Unit {
 }
@@ -13,6 +12,5 @@ lib?.call()
 lib?.getString()?.isEmpty()
 Library().call()
 Library().getString()?.isEmpty()
-}
 }
 }
