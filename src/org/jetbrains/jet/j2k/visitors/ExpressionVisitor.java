@@ -230,7 +230,19 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
 
-    boolean hasDollar = false;
+    boolean hasDollar = isFinalFieldReference(expression) && isInsideConstructor(expression);
+    boolean isNullable = typeToType(expression.getType()).isNullable();
+
+    final IdentifierImpl identifier = hasDollar ?
+      new IdentifierImpl("$" + expression.getReferenceName(), isNullable) :
+      new IdentifierImpl(expression.getReferenceName(), isNullable);
+    myResult = new CallChainExpression(
+      expressionToExpression(expression.getQualifierExpression()),
+      identifier // TODO: if type exists so identifier is nullable
+    );
+  }
+
+  private boolean isFinalFieldReference(PsiReferenceExpression expression) {
     final PsiReference reference = expression.getReference();
     if (reference != null) {
       final PsiElement resolvedReference = reference.resolve();
@@ -238,25 +250,22 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
         if (resolvedReference instanceof PsiField) {
           final PsiModifierList modifierList = ((PsiField) resolvedReference).getModifierList();
           if (modifierList != null && modifierList.hasExplicitModifier(PsiModifier.FINAL)) {
-            PsiElement context = expression.getContext();
-            while (context != null) {
-              if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
-                hasDollar = true;
-                break;
-              }
-              context = context.getContext();
-            }
+            return true;
           }
         }
       }
     }
+    return false;
+  }
 
-    boolean isNullable = typeToType(expression.getType()).isNullable();
-    final IdentifierImpl identifier = hasDollar ? new IdentifierImpl("$" + expression.getReferenceName(), isNullable) : new IdentifierImpl(expression.getReferenceName(), isNullable);
-    myResult = new CallChainExpression(
-      expressionToExpression(expression.getQualifierExpression()),
-      identifier // TODO: if type exists so id is nullable
-    );
+  private boolean isInsideConstructor(PsiReferenceExpression expression) {
+    PsiElement context = expression.getContext();
+    while (context != null) {
+      if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
+        return true;
+      context = context.getContext();
+    }
+    return false;
   }
 
   @Override
