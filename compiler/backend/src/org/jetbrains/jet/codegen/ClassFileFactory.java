@@ -31,7 +31,7 @@ public class ClassFileFactory {
 
     NamespaceCodegen forNamespace(JetNamespace namespace) {
         assert !isDone : "Already done!";
-        String fqName = namespace.getFQName();
+        String fqName = CodegenUtil.getFQName(namespace);
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
             final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class");

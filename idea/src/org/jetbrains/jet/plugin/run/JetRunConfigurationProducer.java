@@ -8,10 +8,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
@@ -25,17 +24,6 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         super(JetRunConfigurationType.getInstance());
     }
 
-    private static String getFQName(JetClass jetClass) {
-        JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(jetClass, JetNamespace.class, JetClass.class);
-        if (parent instanceof JetNamespace) {
-            return ((JetNamespace) parent).getFQName() + "." + jetClass.getName();
-        }
-        if (parent instanceof JetClass) {
-            return getFQName(((JetClass) parent)) + "." + jetClass.getName();
-        }
-        return jetClass.getName();
-    }
-
     @Override
     public PsiElement getSourceElement() {
         return mySourceElement;
@@ -46,14 +34,16 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         JetClass containingClass = (JetClass) location.getParentElement(JetClass.class);
         if (containingClass != null && JetMainDetector.hasMain(containingClass.getDeclarations())) {
             mySourceElement = containingClass;
-            return createConfigurationByQName(location.getModule(), configurationContext, getFQName(containingClass));
+            return createConfigurationByQName(location.getModule(), configurationContext, CodegenUtil.getFQName(containingClass));
         }
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
             if (JetMainDetector.hasMain(namespace.getDeclarations())) {
                 mySourceElement = namespace;
-                return createConfigurationByQName(location.getModule(), configurationContext, namespace.getFQName() + ".namespace");
+                String fqName = CodegenUtil.getFQName(namespace);
+                String className = fqName.length() == 0 ? "namespace" : fqName + ".namespace";
+                return createConfigurationByQName(location.getModule(), configurationContext, className);
             }
         }
         return null;

@@ -1,9 +1,13 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
@@ -97,5 +101,27 @@ public class CodegenUtil {
             return false;
 
         return hasTypeInfoField(outerClassDescriptor.getDefaultType());
+    }
+
+    public static String getFQName(JetNamespace jetNamespace) {
+        JetNamespace parent = PsiTreeUtil.getParentOfType(jetNamespace, JetNamespace.class);
+        if (parent != null) {
+            String parentFQName = getFQName(parent);
+            if (parentFQName.length() > 0) {
+                return parentFQName + "." + jetNamespace.getName();
+            }
+        }
+        return jetNamespace.getName(); // TODO: Must include module root namespace
+    }
+
+    public static String getFQName(JetClass jetClass) {
+        JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(jetClass, JetNamespace.class, JetClass.class);
+        if (parent instanceof JetNamespace) {
+            return getFQName(((JetNamespace) parent)) + "." + jetClass.getName();
+        }
+        if (parent instanceof JetClass) {
+            return getFQName(((JetClass) parent)) + "." + jetClass.getName();
+        }
+        return jetClass.getName();
     }
 }

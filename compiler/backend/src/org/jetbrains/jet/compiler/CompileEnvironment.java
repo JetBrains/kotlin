@@ -13,6 +13,7 @@ import jet.modules.IModuleSetBuilder;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -322,7 +323,7 @@ public class CompileEnvironment {
         String mainClass = null;
         for (JetNamespace namespace : session.getSourceFileNamespaces()) {
             if (JetMainDetector.hasMain(namespace.getDeclarations())) {
-                mainClass = namespace.getFQName() + ".namespace";
+                mainClass = CodegenUtil.getFQName(namespace) + ".namespace";
                 break;
             }
         }

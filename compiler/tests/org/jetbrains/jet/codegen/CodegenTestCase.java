@@ -91,7 +91,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         GeneratedClassLoader loader = new GeneratedClassLoader(codegens);
 
         final JetNamespace namespace = myFile.getRootNamespace();
-        String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
+        String fqName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)).replace("/", ".");
         Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box");
             return (String) method.invoke(null);
@@ -121,7 +121,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
     protected Class loadRootNamespaceClass(ClassFileFactory state) {
         final JetNamespace namespace = myFile.getRootNamespace();
-        String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
+        String fqName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)).replace("/", ".");
         Map<String, Class> classMap = loadAllClasses(state);
         return classMap.get(fqName);
     }

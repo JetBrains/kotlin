@@ -6,7 +6,6 @@ import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -172,7 +171,7 @@ public class JetTypeMapper {
     }
 
     public static String jvmName(JetNamespace namespace) {
-        return NamespaceCodegen.getJVMClassName(namespace.getFQName());
+        return NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace));
     }
 
     static String jvmName(NamespaceDescriptor namespace) {
@@ -516,7 +515,7 @@ public class JetTypeMapper {
 
         String baseName;
         if (container instanceof JetNamespace) {
-            baseName = NamespaceCodegen.getJVMClassName(((JetNamespace) container).getFQName());
+            baseName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(((JetNamespace) container)));
         }
         else {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);
