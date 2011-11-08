@@ -234,7 +234,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     boolean isNullable = typeToType(expression.getType()).isNullable();
 
     final IdentifierImpl identifier = hasDollar ?
-      new IdentifierImpl("$" + expression.getReferenceName(), isNullable) :
+      new IdentifierImpl(expression.getReferenceName(), hasDollar, isNullable) :
       new IdentifierImpl(expression.getReferenceName(), isNullable);
     myResult = new CallChainExpression(
       expressionToExpression(expression.getQualifierExpression()),

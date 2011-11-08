@@ -37,6 +37,7 @@ public abstract class Node implements INode {
   static final String COLON = ":";
   static final String IN = "in";
   static final String AT = "@";
+  static final String DOLLAR = "$";
   static final String BACKTICK = "`";
   static final String QUEST = "?";
   static final String COMMA_WITH_SPACE = "," + SPACE;

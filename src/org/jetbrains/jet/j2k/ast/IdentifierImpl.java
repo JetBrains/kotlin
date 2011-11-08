@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IdentifierImpl extends Expression implements Identifier {
   private final String myName;
+  private boolean myHasDollar;
   private boolean myNullable = true;
 
   public IdentifierImpl(String name) {
@@ -15,6 +16,12 @@ public class IdentifierImpl extends Expression implements Identifier {
 
   public IdentifierImpl(String name, boolean nullable) {
     myName = name;
+    myNullable = nullable;
+  }
+
+  public IdentifierImpl(String name, boolean hasDollar, boolean nullable) {
+    myName = name;
+    myHasDollar = hasDollar;
     myNullable = nullable;
   }
 
@@ -37,11 +44,17 @@ public class IdentifierImpl extends Expression implements Identifier {
     return myNullable;
   }
 
+  private String ifNeedQuote(String name) {
+    if (ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$"))
+      return quote(name);
+    return name;
+  }
+
   @NotNull
   @Override
   public String toKotlin() {
-    if (ONLY_KOTLIN_KEYWORDS.contains(myName))
-      return quote(myName);
-    return myName;
+    if (myHasDollar)
+      return DOLLAR + ifNeedQuote(myName);
+    return ifNeedQuote(myName);
   }
 }
