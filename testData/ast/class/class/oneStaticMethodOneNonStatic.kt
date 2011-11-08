@@ -1,4 +1,4 @@
-class S {
+class S() {
 class object {
 open fun sI() : Int {
 return 1

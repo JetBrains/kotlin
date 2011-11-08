@@ -47,13 +47,18 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/class")) actual = classToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
 
-    assert !actual.equals("");
+    assert !actual.equals("") : "Specify what is it: file, class, method, statement or expression";
+
     final File tmp = new File(kotlinPath + ".tmp");
-    if (!expected.equals(actual))
-      writeStringToFile(tmp, actual);
-    if (expected.equals(actual) && tmp.exists())
-      tmp.delete();
+    if (!expected.equals(actual)) writeStringToFile(tmp, actual);
+    if (expected.equals(actual) && tmp.exists()) tmp.delete();
+
     Assert.assertEquals(expected, actual);
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
   }
 
   @NotNull
@@ -114,7 +119,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   @NotNull
   protected String methodToKotlin(String text) throws IOException {
     String result = classToKotlin("final class C {" + text + "}")
-      .replaceAll("class C \\{", "");
+      .replaceAll("class C\\(\\) \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));
     return prettify(result);
   }

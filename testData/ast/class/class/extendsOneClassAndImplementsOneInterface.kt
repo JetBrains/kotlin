@@ -1,2 +1,2 @@
-class A : Base, I {
+class A() : Base, I {
 }

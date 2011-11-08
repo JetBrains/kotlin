@@ -14,6 +14,11 @@ public class Trait extends Class {
     TYPE = "trait";
   }
 
+  @Override
+  String primaryConstructorSignatureToKotlin() {
+    return EMPTY;
+  }
+
   boolean needOpenModifier() {
     return false;
   }

@@ -1,4 +1,4 @@
-class T {
+class T() {
 open fun main() : Unit {
 }
 open fun i() : Int {

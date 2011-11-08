@@ -1,6 +1,6 @@
-class S {
+class S() {
 class object {
-open class Inner {
+open class Inner() {
 }
 }
 }

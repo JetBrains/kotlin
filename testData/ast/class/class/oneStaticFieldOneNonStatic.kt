@@ -1,4 +1,4 @@
-class S {
+class S() {
 class object {
 var myI : Int = 10
 }

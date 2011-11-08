@@ -1,5 +1,5 @@
 namespace {
-open class Library {
+open class Library() {
 class object {
 open fun call() : Unit {
 }
@@ -8,7 +8,7 @@ return ""
 }
 }
 }
-open class User {
+open class User() {
 open fun main() : Unit {
 Library.call()
 Library.getString()?.isEmpty()

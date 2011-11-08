@@ -26,7 +26,7 @@ public class Enum extends Class {
   private String primaryConstructorToKotlin() {
     Constructor maybeConstructor = getPrimaryConstructor();
     if (maybeConstructor != null)
-      return maybeConstructor.primary();
+      return maybeConstructor.privatePrimaryToKotlin();
     return EMPTY;
   }
 

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.LinkedList;
@@ -30,6 +31,29 @@ public class Class extends Member {
     myInnerClasses = innerClasses;
     myMethods = methods;
     myFields = fields;
+  }
+
+  @Nullable
+  private Constructor getPrimaryConstructor() {
+    for (Function m : myMethods)
+      if (m.getKind() == Kind.CONSTRUCTOR)
+        if (((Constructor) m).isPrimary())
+          return (Constructor) m;
+    return null;
+  }
+
+  String primaryConstructorSignatureToKotlin() {
+    Constructor maybeConstructor = getPrimaryConstructor();
+    if (maybeConstructor != null)
+      return maybeConstructor.primarySignatureToKotlin();
+    return "(" + ")";
+  }
+
+  String primaryConstructorBodyToKotlin() {
+    Constructor maybeConstructor = getPrimaryConstructor();
+    if (maybeConstructor != null)
+      return maybeConstructor.primaryBodyToKotlin();
+    return EMPTY;
   }
 
   private boolean hasWhere() {
@@ -99,8 +123,10 @@ public class Class extends Member {
   }
 
   String bodyToKotlin() {
-    return SPACE + "{" + N + classObjectToKotlin() + N +
+    return SPACE + "{" + N +
+      classObjectToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(myFields), N) + N +
+      primaryConstructorBodyToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
       AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N +
       "}";
@@ -139,7 +165,7 @@ public class Class extends Member {
   @NotNull
   @Override
   public String toKotlin() {
-    return modifiersToKotlin() + TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() +
+    return modifiersToKotlin() + TYPE + SPACE + myName.toKotlin() + typeParametersToKotlin() + primaryConstructorSignatureToKotlin() +
       implementTypesToKotlin() +
       typeParameterWhereToKotlin() +
       bodyToKotlin();

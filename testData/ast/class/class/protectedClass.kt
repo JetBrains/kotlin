@@ -1,2 +1,2 @@
-protected open class Test {
+protected open class Test() {
 }

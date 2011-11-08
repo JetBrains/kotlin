@@ -229,10 +229,33 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
+
+    boolean hasDollar = false;
+    final PsiReference reference = expression.getReference();
+    if (reference != null) {
+      final PsiElement resolvedReference = reference.resolve();
+      if (resolvedReference != null) {
+        if (resolvedReference instanceof PsiField) {
+          final PsiModifierList modifierList = ((PsiField) resolvedReference).getModifierList();
+          if (modifierList != null && modifierList.hasExplicitModifier(PsiModifier.FINAL)) {
+            PsiElement context = expression.getContext();
+            while (context != null) {
+              if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
+                hasDollar = true;
+                break;
+              }
+              context = context.getContext();
+            }
+          }
+        }
+      }
+    }
+
     boolean isNullable = typeToType(expression.getType()).isNullable();
+    final IdentifierImpl identifier = hasDollar ? new IdentifierImpl("$" + expression.getReferenceName(), isNullable) : new IdentifierImpl(expression.getReferenceName(), isNullable);
     myResult = new CallChainExpression(
       expressionToExpression(expression.getQualifierExpression()),
-      new IdentifierImpl(expression.getReferenceName(), isNullable) // TODO: if type exists so id is nullable
+      identifier // TODO: if type exists so id is nullable
     );
   }
 

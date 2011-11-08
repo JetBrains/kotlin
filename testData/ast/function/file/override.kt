@@ -1,9 +1,9 @@
 namespace {
-open class A {
+open class A() {
 open fun a() : Unit {
 }
 }
-class B : A {
+class B() : A {
 override fun a() : Unit {
 }
 }

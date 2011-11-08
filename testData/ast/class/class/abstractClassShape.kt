@@ -1,5 +1,7 @@
-abstract open class Shape {
+abstract open class Shape() {
 public var color : String?
+{
+}
 open public fun setColor(c : String?) : Unit {
 color = c
 }

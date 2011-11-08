@@ -8,4 +8,4 @@ disable-sandbox:
 	cd ~/.IdeaIC11/system/ &&	mv plugins-sandbox plugins-sandbox.tmp
 
 enable-sandbox:
-	cd ~/.IdeaIC11/system/ && mv plugins-sandbox.tmp ./plugins-sandbox
+	cd ~/.IdeaIC11/system/ && rm -rf plugins-sandbox && mv plugins-sandbox.tmp ./plugins-sandbox

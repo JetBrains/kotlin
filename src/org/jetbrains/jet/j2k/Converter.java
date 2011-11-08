@@ -135,15 +135,22 @@ public class Converter {
     if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
       modifiers.remove(Modifier.ABSTRACT);
 
-    if (method.isConstructor())
+
+    if (method.isConstructor()) {
+      boolean isPrimary = false;
+      if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).getConstructors().length == 1)
+        isPrimary = true;
+
       return new Constructor(
         identifier,
         modifiers,
         type,
         typeParameters,
         params,
-        body
+        body,
+        isPrimary
       );
+    }
     return new Function(
       identifier,
       modifiers,
