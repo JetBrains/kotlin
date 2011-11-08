@@ -15,8 +15,8 @@ import java.io.File;
  */
 public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
     private boolean checkInfos = false;
-    private String myDataPath;
-    private String myName;
+    private final String myDataPath;
+    private final String myName;
 
     public JetPsiCheckerTest(String dataPath, String name) {
         myDataPath = dataPath;
