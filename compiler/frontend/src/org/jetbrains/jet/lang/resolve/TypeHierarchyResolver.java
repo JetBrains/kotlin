@@ -37,7 +37,7 @@ public class TypeHierarchyResolver {
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends JetDeclaration> declarations) {
-        collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
+        collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
         processTypeImports();
 
@@ -62,6 +62,7 @@ public class TypeHierarchyResolver {
 
     private void collectNamespacesAndClassifiers(
             @NotNull final JetScope outerScope,
+            @NotNull final JetScope outerScopeForStatic,
             @NotNull final NamespaceLike owner,
             @NotNull Collection<? extends JetDeclaration> declarations) {
         for (JetDeclaration declaration : declarations) {
@@ -89,7 +90,7 @@ public class TypeHierarchyResolver {
 
 //                    processImports(namespace, namespaceScope, outerScope);
 
-                    collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations());
+                    collectNamespacesAndClassifiers(namespaceScope, namespaceScope, namespaceDescriptor, namespace.getDeclarations());
                 }
 
                 @Override
@@ -116,7 +117,7 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    createClassDescriptorForObject(declaration, owner);
+                    createClassDescriptorForObject(declaration, owner, outerScope);
                 }
 
                 @Override
@@ -124,7 +125,7 @@ public class TypeHierarchyResolver {
                     MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) owner).getClassObjectDescriptor();
                     assert classObjectDescriptor != null : enumEntry.getParent().getText();
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                        MutableClassDescriptor classDescriptor = createClassDescriptorForObject(enumEntry, classObjectDescriptor);
+                        MutableClassDescriptor classDescriptor = createClassDescriptorForObject(enumEntry, classObjectDescriptor, outerScopeForStatic);
                         context.getObjects().remove(enumEntry);
                         context.getClasses().put(enumEntry, classDescriptor);
                     }
@@ -140,14 +141,14 @@ public class TypeHierarchyResolver {
                     }
                 }
 
-                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, outerScope, ClassKind.OBJECT) {
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, ClassKind.OBJECT) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
                         }
                     };
-                    visitClassOrObject(declaration, (Map) context.getObjects(), owner, outerScope, mutableClassDescriptor);
+                    visitClassOrObject(declaration, (Map) context.getObjects(), owner, scope, mutableClassDescriptor);
                     createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
                     context.getTrace().record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
@@ -171,7 +172,7 @@ public class TypeHierarchyResolver {
 //                    declaringScopes.put((JetDeclaration) declaration, outerScope);
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-                    collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, declaration.getDeclarations());
+                    collectNamespacesAndClassifiers(classScope, outerScopeForStatic, mutableClassDescriptor, declaration.getDeclarations());
                 }
 
                 @Override
@@ -184,7 +185,7 @@ public class TypeHierarchyResolver {
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {
-                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner));
+                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic));
                         switch (status) {
                             case DUPLICATE:
 //                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "Only one class object is allowed per class");
