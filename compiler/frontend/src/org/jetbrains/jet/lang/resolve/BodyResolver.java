@@ -281,11 +281,11 @@ public class BodyResolver {
     }
 
     private void resolveSecondaryConstructorBodies() {
-        for (Map.Entry<JetDeclaration, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
-            JetDeclaration declaration = entry.getKey();
+        for (Map.Entry<JetConstructor, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
+            JetConstructor constructor = entry.getKey();
             ConstructorDescriptor descriptor = entry.getValue();
 
-            resolveSecondaryConstructorBody((JetConstructor) declaration, descriptor, ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getScopeForMemberResolution());
+            resolveSecondaryConstructorBody(constructor, descriptor, ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getScopeForMemberResolution());
 
             assert descriptor.getReturnType() != null;
         }

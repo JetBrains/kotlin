@@ -143,7 +143,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             if (functionTypeExpected) {
                 returnType = JetStandardClasses.getReturnType(expectedType);
             }
-            returnType = context.getServices().getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT, context.replaceExpectedType(returnType));
+            returnType = context.getServices().getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT, context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType));
         }
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
         functionDescriptor.setReturnType(safeReturnType);

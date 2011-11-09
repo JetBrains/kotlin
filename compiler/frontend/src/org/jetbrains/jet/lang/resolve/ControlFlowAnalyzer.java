@@ -1,22 +1,16 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
@@ -24,130 +18,70 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
-    private ExpressionTypingServices typeInferrerServices;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
-    private final boolean analyzeLocalDeclaration;
+    private final boolean inLocalDeclaration;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean analyzeLocalDeclaration) {
+    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean inLocalDeclaration) {
         this.context = context;
         this.flowDataTraceFactory = flowDataTraceFactory;
-        this.analyzeLocalDeclaration = analyzeLocalDeclaration;
-        this.typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
+        this.inLocalDeclaration = inLocalDeclaration;
     }
 
     public void process() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass aClass = entry.getKey();
-            MutableClassDescriptor classDescriptor = entry.getValue();
-
+        for (JetClass aClass : context.getClasses().keySet()) {
             if (!context.completeAnalysisNeeded(aClass)) continue;
-
-            checkClassOrObject(aClass, classDescriptor);
+            checkClassOrObject(aClass);
         }
-
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            JetObjectDeclaration objectDeclaration = entry.getKey();
-            MutableClassDescriptor objectDescriptor = entry.getValue();
-
+        for (JetObjectDeclaration objectDeclaration : context.getObjects().keySet()) {
             if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
-
-            checkClassOrObject(objectDeclaration, objectDescriptor);
+            checkClassOrObject(objectDeclaration);
         }
-
         for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : context.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             FunctionDescriptorImpl functionDescriptor = entry.getValue();
-
             if (!context.completeAnalysisNeeded(function)) continue;
-
             final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
-            checkFunction(function, functionDescriptor, expectedReturnType);
+            checkFunction(function, expectedReturnType);
         }
-
-        for (Map.Entry<JetDeclaration, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
-            JetDeclaration declaration = entry.getKey();
-            assert declaration instanceof JetConstructor;
-            JetConstructor constructor = (JetConstructor) declaration;
-            ConstructorDescriptor descriptor = entry.getValue();
-
+        for (JetConstructor constructor : this.context.getConstructors().keySet()) {
             if (!context.completeAnalysisNeeded(constructor)) continue;
-            checkFunction(constructor, descriptor, JetStandardClasses.getUnitType());
-        }
-
-        for (JetProperty property : context.getProperties().keySet()) {
-            if (!context.completeAnalysisNeeded(property)) continue;
-            checkProperty(property);
+            checkFunction(constructor, JetStandardClasses.getUnitType());
         }
     }
     
-    private void checkClassOrObject(JetClassOrObject klass, MutableClassDescriptor classDescriptor) {
+    private void checkClassOrObject(JetClassOrObject klass) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, true, analyzeLocalDeclaration);
+        flowInformationProvider.markUninitializedVariables((JetElement) klass, true, inLocalDeclaration);
+
+        List<JetDeclaration> declarations = klass.getDeclarations();
+        for (JetDeclaration declaration : declarations) {
+            if (declaration instanceof JetProperty) {
+                JetProperty property = (JetProperty) declaration;
+                DeclarationDescriptor descriptor = context.getTrace().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
+                assert descriptor instanceof PropertyDescriptor;
+                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                for (JetPropertyAccessor accessor : property.getAccessors()) {
+                    PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
+                                                                    ? propertyDescriptor.getGetter()
+                                                                    : propertyDescriptor.getSetter();
+                    assert accessorDescriptor != null;
+                    flowInformationProvider.checkDefiniteReturn(accessor, accessorDescriptor.getReturnType());
+                }
+            }
+        }
     }
 
-    private void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, final @NotNull JetType expectedReturnType) {
+    private void checkFunction(JetDeclarationWithBody function, final @NotNull JetType expectedReturnType) {
         assert function instanceof JetDeclaration;
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, bodyExpression, flowDataTraceFactory, context.getTrace());
 
-        final boolean blockBody = function.hasBlockBody();
-        List<JetElement> unreachableElements = Lists.newArrayList();
-        flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
+        flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
 
-        // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-        final Set<JetElement> rootUnreachableElements = JetPsiUtil.findRootExpressions(unreachableElements);
-
-        for (JetElement element : rootUnreachableElements) {
-            context.getTrace().report(UNREACHABLE_CODE.on(element));
-        }
-
-        List<JetExpression> returnedExpressions = Lists.newArrayList();
-        flowInformationProvider.collectReturnExpressions(function.asElement(), returnedExpressions);
-
-        boolean nothingReturned = returnedExpressions.isEmpty();
-
-        returnedExpressions.remove(function); // This will be the only "expression" if the body is empty
-
-        final JetScope scope = this.context.getDeclaringScopes().get(function);
-
-        if (expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && returnedExpressions.isEmpty() && !nothingReturned) {
-            context.getTrace().report(RETURN_TYPE_MISMATCH.on(bodyExpression, expectedReturnType));
-        }
-
-        for (JetExpression returnedExpression : returnedExpressions) {
-            returnedExpression.accept(new JetVisitorVoid() {
-                @Override
-                public void visitReturnExpression(JetReturnExpression expression) {
-                    if (!blockBody) {
-                        context.getTrace().report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression));
-                    }
-                }
-
-                @Override
-                public void visitExpression(JetExpression expression) {
-                    if (blockBody && expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
-                        JetType type = typeInferrerServices.getType(scope, expression, expectedReturnType);
-                        if (type == null || !JetStandardClasses.isNothing(type)) {
-                            context.getTrace().report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(expression));
-                        }
-                    }
-                }
-            });
-        }
-        flowInformationProvider.markUninitializedVariables(function.asElement(), false, analyzeLocalDeclaration);
-        if (((JetDeclaration) function).hasModifier(JetTokens.INLINE_KEYWORD)) {
-            //inline functions after M1
-//                flowInformationProvider.markNotOnlyInvokedFunctionVariables(function.asElement(), functionDescriptor.getValueParameters());
-        }
-    }
-
-    private void checkProperty(JetProperty property) {
-        JetExpression initializer = property.getInitializer();
-        if (initializer == null) return;
-        new JetFlowInformationProvider(property, initializer, flowDataTraceFactory, context.getTrace());
+        flowInformationProvider.markUninitializedVariables(function.asElement(), false, inLocalDeclaration);
     }
 }

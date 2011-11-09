@@ -16,9 +16,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
  * @author svtk
@@ -67,7 +71,7 @@ public class JetFlowInformationProvider {
         wrappedTrace.close();
     }
 
-    public void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull final Collection<JetExpression> returnedExpressions) {
+    private void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull final Collection<JetExpression> returnedExpressions) {
         Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
@@ -119,20 +123,65 @@ public class JetFlowInformationProvider {
             });
         }
     }
+    
+    public void checkDefiniteReturn(@NotNull JetDeclarationWithBody function, final @NotNull JetType expectedReturnType) {
+        assert function instanceof JetDeclaration;
 
-    public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
+        JetExpression bodyExpression = function.getBodyExpression();
+        if (bodyExpression == null) return;
+        
+        List<JetExpression> returnedExpressions = Lists.newArrayList();
+        collectReturnExpressions(function.asElement(), returnedExpressions);
+
+        boolean nothingReturned = returnedExpressions.isEmpty();
+
+        returnedExpressions.remove(function); // This will be the only "expression" if the body is empty
+
+        if (expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && returnedExpressions.isEmpty() && !nothingReturned) {
+            trace.report(RETURN_TYPE_MISMATCH.on(bodyExpression, expectedReturnType));
+        }
+        final boolean blockBody = function.hasBlockBody();
+        
+        final Set<JetElement> rootUnreachableElements = collectUnreachableCode(function.asElement());
+        for (JetElement element : rootUnreachableElements) {
+            trace.report(UNREACHABLE_CODE.on(element));
+        }
+
+        for (JetExpression returnedExpression : returnedExpressions) {
+            returnedExpression.accept(new JetVisitorVoid() {
+                @Override
+                public void visitReturnExpression(JetReturnExpression expression) {
+                    if (!blockBody) {
+                        trace.report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression));
+                    }
+                }
+
+                @Override
+                public void visitExpression(JetExpression expression) {
+                    if (blockBody && expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
+                        trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(expression));
+                    }
+                }
+            });
+        }
+    }
+
+    private Set<JetElement> collectUnreachableCode(@NotNull JetElement subroutine) {
         Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
+        Collection<JetElement> unreachableElements = Lists.newArrayList();
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
             if (deadInstruction instanceof JetElementInstruction &&
                 !(deadInstruction instanceof ReadUnitValueInstruction)) {
                 unreachableElements.add(((JetElementInstruction) deadInstruction).getElement());
             }
         }
+        // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
+        return JetPsiUtil.findRootExpressions(unreachableElements);
     }
 
-    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean inAnonymousInitializers, final boolean analyzeLocalDeclaration) {
+    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean inAnonymousInitializers, final boolean inLocalDeclaration) {
         final Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
@@ -202,7 +251,7 @@ public class JetFlowInformationProvider {
                                 isInitialized = true;
                             }
                         }
-                        if (!analyzeLocalDeclaration && !isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
+                        if (!inLocalDeclaration && !isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
                             varWithUninitializedErrorGenerated.add(variableDescriptor);
                             trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
                         }
@@ -225,7 +274,7 @@ public class JetFlowInformationProvider {
                             }
                         }
                         JetExpression expression = (JetExpression) element;
-                        if (!analyzeLocalDeclaration && hasInitializer && !variableDescriptor.isVar() && !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
+                        if (!inLocalDeclaration && hasInitializer && !variableDescriptor.isVar() && !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
                             PsiElement psiElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
                             JetProperty property = psiElement instanceof JetProperty ? (JetProperty) psiElement : null;
                             varWithValReassignErrorGenerated.add(variableDescriptor);
@@ -254,7 +303,7 @@ public class JetFlowInformationProvider {
         for (Instruction instruction : pseudocode.getInstructions()) {
             if (instruction instanceof LocalDeclarationInstruction) {
                 JetElement element = ((LocalDeclarationInstruction) instruction).getElement();
-                markUninitializedVariables(element, false, analyzeLocalDeclaration);
+                markUninitializedVariables(element, false, inLocalDeclaration);
             }
         }
     }

@@ -55,16 +55,3 @@ error:
 sink:
     <SINK>     NEXT:[]          PREV:[<END>]
 =====================
-== k ==
-val k = 34
----------------------
-l0:
-    <START>    NEXT:[r(34)]     PREV:[]
-    r(34)      NEXT:[<END>]     PREV:[<START>]
-l1:
-    <END>      NEXT:[<SINK>]    PREV:[r(34)]
-error:
-    <ERROR>    NEXT:[]          PREV:[]
-sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
-=====================

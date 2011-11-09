@@ -45,12 +45,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
     @Override
     public void enterSubroutine(@NotNull JetDeclaration subroutine) {
-        if (builder != null) {
-            pushBuilder(subroutine, builder.getCurrentSubroutine());
-        }
-        else {
-            pushBuilder(subroutine, subroutine);
-        }
+        pushBuilder(subroutine, subroutine);
         assert builder != null;
         builder.enterSubroutine(subroutine);
     }

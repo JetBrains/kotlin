@@ -548,7 +548,7 @@ public class JetControlFlowProcessor {
             if (subroutine instanceof JetFunctionLiteralExpression) {
                 subroutine = ((JetFunctionLiteralExpression) subroutine).getFunctionLiteral();
             }
-            if (subroutine instanceof JetFunction) {
+            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetConstructor) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }
@@ -559,6 +559,9 @@ public class JetControlFlowProcessor {
             else {
                 if (labelElement != null) {
                     trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
+                }
+                else {
+                    trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }
             }
         }

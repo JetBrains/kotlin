@@ -1,0 +1,30 @@
+//KT-456 No check for obligatory return in getters
+
+namespace kt456
+
+class A() {
+    val i: Int
+    get() : Int <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{  //no error
+    }<!>
+}
+
+//more tests
+class B() {
+    val i: Int
+    get() <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{  //no error
+    }<!>
+}
+
+class C() {
+    val i : Int
+    get() : Int {
+        try {
+            doSmth()
+        }
+        finally {
+            <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>doSmth()<!>
+        }
+    }
+}
+
+fun doSmth() {}
