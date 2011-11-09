@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class SubtypingOnlyConstraintSystem implements ConstraintSystem {
+public class ConstraintSystemImpl implements ConstraintSystem {
 
     private static class LoopInTypeVariableConstraintsException extends RuntimeException {
         private LoopInTypeVariableConstraintsException() {
@@ -158,6 +158,39 @@ public class SubtypingOnlyConstraintSystem implements ConstraintSystem {
     private final Map<TypeParameterDescriptor, UnknownType> unknownTypes = Maps.newHashMap();
     private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
 
+    private final JetTypeChecker.TypeCheckingProcedure constraintExpander = new JetTypeChecker.TypeCheckingProcedure(new JetTypeChecker.TypingConstraintBuilder() {
+        @Override
+        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b) {
+            return TypeUtils.equalTypes(a, b);
+        }
+
+        @Override
+        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype) {
+            TypeValue subtypeValue = getTypeValueFor(subtype);
+            TypeValue supertypeValue = getTypeValueFor(supertype);
+
+            if (someUnknown(subtypeValue, supertypeValue)) {
+                addSubtypingConstraintOnTypeValues(subtypeValue, supertypeValue);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
+            // If some of the types is an unknown, the constraint is already generated, and we should carry on
+            // otherwise there can be no solution, and we should fail
+            return someUnknown(getTypeValueFor(subtype), getTypeValueFor(supertype));
+        }
+
+        private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {
+            return subtypeValue instanceof UnknownType || supertypeValue instanceof UnknownType;
+        }
+
+    });
+
+    public ConstraintSystemImpl() {
+    }
+
     @NotNull
     private TypeValue getTypeValueFor(@NotNull JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
@@ -217,7 +250,7 @@ public class SubtypingOnlyConstraintSystem implements ConstraintSystem {
             for (TypeValue upperBound : typeValue.getUpperBounds()) {
                 if (upperBound instanceof KnownType) {
                     KnownType knownBoundType = (KnownType) upperBound;
-                    boolean ok = new SubtypingConstraintExpander().run(jetType, knownBoundType.getType());
+                    boolean ok = constraintExpander.run(jetType, knownBoundType.getType());
                     if (!ok) {
                         return new Solution(true);
                     }
@@ -344,72 +377,7 @@ public class SubtypingOnlyConstraintSystem implements ConstraintSystem {
 
     }
 
-//    private class EqualityConstraintExpander extends JetTypeChecker.AbstractTypeCheckingProcedure<Boolean> {
-//
-//    }
-
-    private class SubtypingConstraintExpander extends JetTypeChecker.AbstractTypeCheckingProcedure<Boolean> {
-        
-        private boolean error = false;
-
-        private StatusAction fail() {
-            error = true;
-            return StatusAction.ABORT_ALL;
-        }
-
-        @Override
-        protected StatusAction startForPairOfTypes(@NotNull JetType subtype, @NotNull JetType supertype) {
-            return tryToAddConstraint(subtype, supertype);
-        }
-
-        private StatusAction tryToAddConstraint(@NotNull JetType subtype, @NotNull JetType supertype) {
-            TypeValue subtypeValue = getTypeValueFor(subtype);
-            TypeValue supertypeValue = getTypeValueFor(supertype);
-
-            if (someUnknown(subtypeValue, supertypeValue)) {
-                addSubtypingConstraintOnTypeValues(subtypeValue, supertypeValue);
-            }
-            return StatusAction.PROCEED;
-        }
-
-        private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {
-            return subtypeValue instanceof UnknownType || supertypeValue instanceof UnknownType;
-        }
-
-        @Override
-        protected StatusAction noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-            if (someUnknown(getTypeValueFor(subtype), getTypeValueFor(supertype))) {
-                return StatusAction.PROCEED;
-            }
-            return fail();
-        }
-
-        @Override
-        protected StatusAction equalTypesRequired(@NotNull JetType subArgumentType, @NotNull JetType superArgumentType) {
-            if (!subArgumentType.equals(superArgumentType)) {
-                return fail();
-            }
-            return StatusAction.PROCEED;
-        }
-
-        @Override
-        protected StatusAction varianceConflictFound(@NotNull TypeProjection subArgument, @NotNull TypeProjection superArgument) {
-            return fail();
-        }
-
-        @Override
-        protected StatusAction doneForPairOfTypes(@NotNull JetType subtype, @NotNull JetType supertype) {
-            return StatusAction.PROCEED;
-        }
-
-        @Override
-        protected Boolean result() {
-            return !error;
-        }
-    }
-
     private static void println(String message) {
 //        System.out.println(message);
     }
-
 }

@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystemSolution;
-import org.jetbrains.jet.lang.types.inference.SubtypingOnlyConstraintSystem;
+import org.jetbrains.jet.lang.types.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -414,7 +414,7 @@ public class CallResolver {
                 if (!candidate.getTypeParameters().isEmpty()) {
                     // Type argument inference
 
-                    ConstraintSystem constraintSystem = new SubtypingOnlyConstraintSystem();
+                    ConstraintSystem constraintSystem = new ConstraintSystemImpl();
                     for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
                         constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
                     }
