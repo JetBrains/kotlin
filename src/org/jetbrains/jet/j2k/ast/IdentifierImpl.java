@@ -7,22 +7,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IdentifierImpl extends Expression implements Identifier {
   private final String myName;
-  private boolean myHasDollar;
-  private boolean myNullable = true;
+  private boolean myHasDollar = false;
+  private boolean myIsNullable = true;
 
   public IdentifierImpl(String name) {
     myName = name;
   }
 
-  public IdentifierImpl(String name, boolean nullable) {
+  public IdentifierImpl(String name, boolean isNullable) {
     myName = name;
-    myNullable = nullable;
+    myIsNullable = isNullable;
   }
 
-  public IdentifierImpl(String name, boolean hasDollar, boolean nullable) {
+  public IdentifierImpl(String name, boolean hasDollar, boolean isNullable) {
     myName = name;
     myHasDollar = hasDollar;
-    myNullable = nullable;
+    myIsNullable = isNullable;
   }
 
   @Override
@@ -41,7 +41,7 @@ public class IdentifierImpl extends Expression implements Identifier {
 
   @Override
   public boolean isNullable() {
-    return myNullable;
+    return myIsNullable;
   }
 
   private String ifNeedQuote(String name) {
