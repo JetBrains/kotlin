@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 
@@ -165,10 +167,48 @@ public class K2JSTranslator {
     }
 
     private static File initJdk() {
-        // TODO detect jar
-        File rtJar = new File("C:\\Program Files\\Java\\jdk1.6.0_29\\jre\\lib\\rt.jar");
-        assert rtJar != null;
+        String javaHome = System.getenv("JAVA_HOME");
+        File rtJar = null;
+        if (javaHome == null) {
+            ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+            if(systemClassLoader instanceof URLClassLoader) {
+                URLClassLoader loader = (URLClassLoader) systemClassLoader;
+                for(URL url: loader.getURLs()) {
+                    if("file".equals(url.getProtocol())) {
+                        if(url.getFile().endsWith("/lib/rt.jar")) {
+                            rtJar = new File(url.getFile());
+                            break;
+                        }
+                        if(url.getFile().endsWith("/Classes/classes.jar")) {
+                            rtJar = new File(url.getFile()).getAbsoluteFile();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(rtJar == null) {
+                System.out.println("JAVA_HOME environment variable needs to be defined");
+                return null;
+            }
+        }
+        else {
+            rtJar = findRtJar(javaHome);
+        }
+
+        if (rtJar == null || !rtJar.exists()) {
+            System.out.print("No rt.jar found under JAVA_HOME=" + javaHome);
+            return null;
+        }
         return rtJar;
+    }
+
+    private static File findRtJar(String javaHome) {
+        File rtJar = new File(javaHome, "jre/lib/rt.jar");
+        if (rtJar.exists()) {
+            return rtJar;
+        }
+        return null;
     }
 
 }
