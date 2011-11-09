@@ -89,7 +89,7 @@ public class FunctionDescriptorUtil {
                                       ReceiverDescriptor.NO_RECEIVER,
                                       Collections.<TypeParameterDescriptor>emptyList(),
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
-                                      JetStandardClasses.getReturnType(functionType),
+                                      JetStandardClasses.obtainReturnTypeFromFunctionType(functionType),
                                       Modality.FINAL, Visibility.LOCAL);
     }
 }

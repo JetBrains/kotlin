@@ -122,7 +122,9 @@ public class ExpressionTypingServices {
 
         if (function instanceof JetFunctionLiteralExpression) {
             JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) function;
-            getBlockReturnedType(newContext.scope, functionLiteralExpression.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT, newContext);
+            JetBlockExpression blockExpression = functionLiteralExpression.getBodyExpression();
+            assert blockExpression != null;
+            getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context);
         }
         else {
             expressionTypingFacade.getType(bodyExpression, newContext);
