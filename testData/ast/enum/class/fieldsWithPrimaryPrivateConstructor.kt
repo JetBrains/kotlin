@@ -6,7 +6,7 @@ YELLOW(24)
 BLUE(25)
 private var code : Int
 open private (c : Int) {
-code = c
+$code = c
 }
 open public fun getCode() : Int {
 return code

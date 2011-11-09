@@ -26,6 +26,18 @@ public class Function extends Member {
     myBlock = block;
   }
 
+  public List<Element> getTypeParameters() {
+    return myTypeParameters;
+  }
+
+  public Element getParams() {
+    return myParams;
+  }
+
+  public Block getBlock() {
+    return myBlock;
+  }
+
   private String typeParametersToKotlin() {
     return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
   }

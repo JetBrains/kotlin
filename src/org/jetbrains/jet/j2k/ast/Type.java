@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class Type extends Element {
   public static final Type EMPTY_TYPE = new EmptyType();
-  private boolean myNullable = true;
+  boolean myNullable = true;
 
   @NotNull
   @Override

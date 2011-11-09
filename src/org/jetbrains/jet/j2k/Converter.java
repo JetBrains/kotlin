@@ -7,10 +7,7 @@ import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
 import org.jetbrains.jet.j2k.ast.Modifier;
-import org.jetbrains.jet.j2k.visitors.ElementVisitor;
-import org.jetbrains.jet.j2k.visitors.ExpressionVisitor;
-import org.jetbrains.jet.j2k.visitors.StatementVisitor;
-import org.jetbrains.jet.j2k.visitors.TypeVisitor;
+import org.jetbrains.jet.j2k.visitors.*;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,7 +37,7 @@ public class Converter {
   }
 
   public static AnonymousClass anonymousClassToAnonymousClass(PsiAnonymousClass anonymousClass) { // TODO: replace by Block,
-                                                                                                  // use class.getChild() method
+    // use class.getChild() method
     return new AnonymousClass(
       classesToClassList(anonymousClass.getAllInnerClasses()),
       methodsToFunctionList(anonymousClass.getMethods(), true),
@@ -121,6 +118,29 @@ public class Converter {
     return result;
   }
 
+  @Nullable
+  public static PsiMethod getPrimaryConstructor(PsiClass psiClass) {
+    ThisVisitor tv = new ThisVisitor();
+    psiClass.accept(tv);
+    return tv.getPrimaryConstructor();
+  }
+
+  public static boolean isConstructorPrimary(@Nullable PsiMethod constructor) {
+    if (constructor == null)
+      return false;
+    if (constructor.getParent() instanceof PsiClass) {
+      final PsiClass parent = (PsiClass) constructor.getParent();
+      if (parent.getConstructors().length == 1)
+        return true;
+      else {
+        PsiMethod c = getPrimaryConstructor(parent); // TODO: move up to classToClass() method
+        if (c != null && c.hashCode() == constructor.hashCode())
+          return true;
+      }
+    }
+    return false;
+  }
+
   @NotNull
   private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
@@ -135,11 +155,8 @@ public class Converter {
     if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
       modifiers.remove(Modifier.ABSTRACT);
 
-
-    if (method.isConstructor()) {
-      boolean isPrimary = false;
-      if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).getConstructors().length == 1)
-        isPrimary = true;
+    if (method.isConstructor()) { // TODO: simplify
+      boolean isPrimary = isConstructorPrimary(method);
 
       return new Constructor(
         identifier,

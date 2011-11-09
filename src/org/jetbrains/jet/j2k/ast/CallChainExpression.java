@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CallChainExpression extends Expression {
   private Expression myExpression;
-  private IdentifierImpl myIdentifier;
+  private Expression myIdentifier;
 
-  public CallChainExpression(Expression expression, IdentifierImpl identifier) {
+  public CallChainExpression(Expression expression, Expression identifier) {
     myExpression = expression;
     myIdentifier = identifier;
   }

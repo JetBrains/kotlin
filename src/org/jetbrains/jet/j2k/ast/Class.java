@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -83,6 +84,30 @@ public class Class extends Member {
     return result;
   }
 
+  @NotNull
+  List<Function> secondaryConstructorsAsStaticInitFunction() {
+    final LinkedList<Function> result = new LinkedList<Function>();
+    for (Function m : myMethods)
+      if (m.getKind() == Kind.CONSTRUCTOR && !((Constructor) m).isPrimary()) {
+        Set<String> modifiers = new HashSet<String>(m.myModifiers);
+        modifiers.add(Modifier.STATIC);
+
+        final List<Statement> statements = m.getBlock().getStatements();
+        statements.add(new ReturnStatement(new IdentifierImpl("__"))); // TODO: move to one place, find other __ usages
+        final Block block = new Block(statements);
+
+        result.add(new Function(
+          new IdentifierImpl("init"),
+          modifiers,
+          new ClassType(myName, false),
+          m.getTypeParameters(),
+          m.getParams(),
+          block
+        ));
+      }
+    return result;
+  }
+
   String typeParametersToKotlin() {
     return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
   }
@@ -124,9 +149,9 @@ public class Class extends Member {
 
   String bodyToKotlin() {
     return SPACE + "{" + N +
-      classObjectToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(myFields), N) + N +
       primaryConstructorBodyToKotlin() + N +
+      classObjectToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
       AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N +
       "}";
@@ -149,8 +174,9 @@ public class Class extends Member {
   }
 
   private String classObjectToKotlin() {
+    final List<Member> staticMethods = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
+    staticMethods.addAll(getStatic(methodsExceptConstructors()));
     final List<Member> staticFields = getStatic(myFields);
-    final List<Member> staticMethods = getStatic(methodsExceptConstructors());
     final List<Member> staticInnerClasses = getStatic(myInnerClasses);
     if (staticFields.size() + staticMethods.size() + staticInnerClasses.size() > 0) {
       return "class" + SPACE + "object" + SPACE + "{" + N +

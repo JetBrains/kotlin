@@ -11,6 +11,11 @@ import java.util.List;
  */
 public class Block extends Statement {
   public final static Block EMPTY_BLOCK = new Block();
+
+  public List<Statement> getStatements() {
+    return myStatements;
+  }
+
   private List<Statement> myStatements = new LinkedList<Statement>();
   private boolean myNotEmpty = false;
 
