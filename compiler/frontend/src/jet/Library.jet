@@ -1,13 +1,13 @@
 namespace jet
 
 namespace typeinfo {
-    class TypeInfo<T> {
+    class TypeInfo<out T> {
       fun isSubtypeOf(other : TypeInfo<*>) : Boolean
       fun isInstance(obj : Any?) : Boolean
     }
 
     fun typeinfo<T>() : TypeInfo<T>
-    fun typeinfo<T>(expression : T) : TypeInfo<out T>
+    fun typeinfo<T>(expression : T) : TypeInfo<T>
 }
 
 namespace io {
