@@ -28,7 +28,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
         JsExpression result = null;
         Object value;
-        CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+        CompileTimeConstant<?> compileTimeValue =
+                context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
         assert compileTimeValue != null;
         value = compileTimeValue.getValue();
         if (value instanceof Integer) {
@@ -194,7 +195,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @NotNull
-    private JsStatement translateNullableExpressionToNotNullStatement(@NotNull JetExpression expression,
+    private JsStatement translateNullableExpressionToNotNullStatement(@Nullable JetExpression expression,
                                                                       @NotNull TranslationContext context) {
         return AstUtil.convertToStatement(translateNullableExpression(expression, context));
     }
@@ -235,6 +236,30 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return result;
     }
 
+    @Override
+    @NotNull
+    public JsNode visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression,
+                                      @NotNull TranslationContext context) {
+        JsStringLiteral stringLiteral = resolveAsStringConstant(expression, context);
+        if (stringLiteral != null) {
+            return stringLiteral;
+        }
+        throw new AssertionError("String templates not supported!");
+    }
+
+    @Nullable
+    private JsStringLiteral resolveAsStringConstant(@NotNull JetStringTemplateExpression expression,
+                                           @NotNull TranslationContext context) {
+        CompileTimeConstant<?> compileTimeValue =
+                context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (compileTimeValue != null) {
+            Object value = compileTimeValue.getValue();
+            assert value instanceof String : "Compile time constant template should be a String constant";
+            String constantString = (String)value;
+            return context.program().getStringLiteral(constantString);
+        }
+        return null;
+    }
 
 
 }

@@ -4,6 +4,9 @@ import org.junit.Test;
 
 /**
  * @author Talanov Pavel
+ *
+ * This class tests basic language features and constructs such as constants, local variables, simple loops,
+ * conditional clauses etc.
  */
 public final class FunctionTest extends TranslationTest {
 
@@ -57,6 +60,13 @@ public final class FunctionTest extends TranslationTest {
         testFooBoxIsTrue("while2.kt");
     }
 
+    @Test
+    public void stringConstant() throws Exception {
+        testFooBoxIsTrue("stringConstant.kt");
+    }
 
-
+    @Test
+    public void stringAssignment() throws Exception {
+        testFooBoxIsTrue("stringAssignment.kt");
+    }
 }
