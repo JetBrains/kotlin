@@ -6,13 +6,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test_files/test_cases/elseif.kt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test_files/test_cases/if.kt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test_files/test_cases/doWhile.kt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test_files/test_cases/doWhile2.kt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test_files/test_cases/while.kt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test_files/test_cases/while2.kt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsScope.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsScope.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -105,7 +105,7 @@
           <file leaf-file-name="JetIfExpression.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetIfExpression.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="8" column="33" selection-start="214" selection-end="214" vertical-scroll-proportion="0.1724138">
+                <state line="8" column="14" selection-start="214" selection-end="214" vertical-scroll-proportion="-0.31034482">
                   <folding />
                 </state>
               </provider>
@@ -196,7 +196,7 @@
           <file leaf-file-name="ExpressionVisitor.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="205" column="24" selection-start="9011" selection-end="9011" vertical-scroll-proportion="0.0">
+                <state line="228" column="53" selection-start="9973" selection-end="9973" vertical-scroll-proportion="0.0">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -204,10 +204,46 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="JsScope.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsScope.java">
+          <file leaf-file-name="doWhile.kt" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/doWhile.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="304" column="23" selection-start="10477" selection-end="10477" vertical-scroll-proportion="0.0">
+                <state line="17" column="30" selection-start="219" selection-end="219" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="JetDoWhileExpression.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetDoWhileExpression.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="10" column="50" selection-start="269" selection-end="269" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="JetLoopExpression.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetLoopExpression.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="10" column="31" selection-start="255" selection-end="255" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="while.kt" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/while.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="0" column="0" selection-start="0" selection-end="216" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="test.kt" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/test.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="0" column="0" selection-start="0" selection-end="104" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -216,70 +252,25 @@
           <file leaf-file-name="FunctionTest.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="36" column="25" selection-start="809" selection-end="809" vertical-scroll-proportion="0.0">
+                <state line="55" column="42" selection-start="1228" selection-end="1228" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="TranslationTest.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
+          <file leaf-file-name="while2.kt" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/while2.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="39" column="57" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.0">
+                <state line="0" column="0" selection-start="0" selection-end="105" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="if.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/if.js">
+          <file leaf-file-name="doWhile2.kt" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/doWhile2.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="11" column="22" selection-start="172" selection-end="172" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="if.kt" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/if.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="3" column="0" selection-start="33" selection-end="77" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="elseif.kt" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/elseif.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="5" column="14" selection-start="77" selection-end="77" vertical-scroll-proportion="0.15567766">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="kotlin_lib.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/kotlin_lib.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="comparison.kt" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/comparison.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="104" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Namer.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Namer.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="62" column="28" selection-start="1955" selection-end="1955" vertical-scroll-proportion="0.0">
+                <state line="13" column="8" selection-start="161" selection-end="161" vertical-scroll-proportion="0.4047619">
                   <folding />
                 </state>
               </provider>
@@ -301,11 +292,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/src/k2js/translate/ClassTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/k2js/translate/ExpressionTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/GenerationState.java" />
         <option value="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java" />
         <option value="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
@@ -314,9 +300,14 @@
         <option value="$PROJECT_DIR$/translator/test_files/test_cases/if.kt" />
         <option value="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsScope.java" />
         <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
-        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" />
         <option value="$PROJECT_DIR$/translator/test_files/test_cases/elseif.kt" />
+        <option value="$PROJECT_DIR$/translator/test_files/test_cases/while.kt" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/test_files/test_cases/doWhile.kt" />
+        <option value="$PROJECT_DIR$/translator/test_files/test_cases/whileDoesntExecute.kt" />
+        <option value="$PROJECT_DIR$/translator/test_files/test_cases/doWhileExecutes.kt" />
+        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" />
+        <option value="$PROJECT_DIR$/translator/test_files/test_cases/doWhile2.kt" />
       </list>
     </option>
   </component>
@@ -555,28 +546,6 @@
     </key>
   </component>
   <component name="RunManager" selected="JUnit.FunctionTest">
-    <configuration default="false" name="ClassTest" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="k2js" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
-      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.ClassTest" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="false" name="ClassTest.kotlinJsLibRunsWithRhino" type="JUnit" factoryName="JUnit" temporary="true">
       <module name="k2js" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -665,6 +634,28 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
+    <configuration default="false" name="FunctionTest.doWhileExecutes" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="translator" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
+      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.FunctionTest" />
+      <option name="METHOD_NAME" value="doWhileExecutes" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -740,11 +731,11 @@
       </method>
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.ClassTest" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.ClassTest.kotlinJsLibRunsWithRhino" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.org.jetbrains.k2js.test in k2js" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.FunctionTest" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.All in translator" />
+      <item index="0" class="java.lang.String" itemvalue="JUnit.ClassTest.kotlinJsLibRunsWithRhino" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.org.jetbrains.k2js.test in k2js" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.FunctionTest" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.All in translator" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.FunctionTest.doWhileExecutes" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -780,7 +771,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907662" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -796,7 +787,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16149732" sideWeight="0.5699234" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.43007663" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.43007663" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -834,7 +825,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed JDK hack" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added if else support" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -851,6 +842,7 @@
     <MESSAGE value="split code into modules and lots of other code changes" />
     <MESSAGE value="Finished reorganising project structure." />
     <MESSAGE value="Fixed JDK hack" />
+    <MESSAGE value="Added if else support" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -860,101 +852,9 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Namer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="28" selection-start="1955" selection-end="1955" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/comparison.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="104" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="55" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsScope.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="304" column="23" selection-start="10477" selection-end="10477" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/FunctionTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="22" selection-start="871" selection-end="871" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="57" selection-start="1507" selection-end="1507" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetCallExpression.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="286" selection-end="286" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="205" column="24" selection-start="9011" selection-end="9011" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetIfExpression.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="33" selection-start="214" selection-end="214" vertical-scroll-proportion="0.1724138">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetBinaryExpression.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="13" selection-start="311" selection-end="311" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/AbstractTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="22" selection-start="305" selection-end="305" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/kotlin_lib.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="25" selection-start="809" selection-end="809" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -975,7 +875,88 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/elseif.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="14" selection-start="77" selection-end="77" vertical-scroll-proportion="0.15567766">
+        <state line="5" column="14" selection-start="77" selection-end="77" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="55" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/testKotlinLib.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/test.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="104" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetDoWhileExpression.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="50" selection-start="269" selection-end="269" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetLoopExpression.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="31" selection-start="255" selection-end="255" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="228" column="53" selection-start="9973" selection-end="9973" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/doWhile.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="30" selection-start="219" selection-end="219" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="42" selection-start="1228" selection-end="1228" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/while.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="216" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/while2.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="105" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test_files/test_cases/doWhile2.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="8" selection-start="161" selection-end="161" vertical-scroll-proportion="0.4047619">
           <folding />
         </state>
       </provider>

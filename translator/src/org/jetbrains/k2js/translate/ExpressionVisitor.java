@@ -177,26 +177,26 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitIfExpression(@NotNull JetIfExpression expression, @NotNull TranslationContext context) {
         JsIf result = new JsIf();
-        result.setIfExpr(translateIfExpression(expression, context));
-        result.setThenStmt(translateThenStatement(expression, context));
+        result.setIfExpr(translateConditionExpression(expression.getCondition(), context));
+        result.setThenStmt(translateNullableExpressionToNotNullStatement(expression.getThen(), context));
         result.setElseStmt(translateElseStatement(expression, context));
         return result;
     }
 
     @NotNull
-    private JsExpression translateIfExpression(@NotNull JetIfExpression expression,
-                                               @NotNull TranslationContext context) {
-        JsNode jsCondition = translateNullableExpression(expression.getCondition(), context);
+    private JsExpression translateConditionExpression(@Nullable JetExpression expression,
+                                                      @NotNull TranslationContext context) {
+        JsNode jsCondition = translateNullableExpression(expression, context);
         if (jsCondition == context.program().getEmptyStmt()) {
-            throw new AssertionError("Empty condition in if clause!");
+            throw new AssertionError("Empty condition clause!");
         }
         return AstUtil.convertToExpression(jsCondition);
     }
 
     @NotNull
-    private JsStatement translateThenStatement(@NotNull JetIfExpression expression,
-                                               @NotNull TranslationContext context) {
-        return AstUtil.convertToStatement(translateNullableExpression(expression.getThen(), context));
+    private JsStatement translateNullableExpressionToNotNullStatement(@NotNull JetExpression expression,
+                                                                      @NotNull TranslationContext context) {
+        return AstUtil.convertToStatement(translateNullableExpression(expression, context));
     }
 
     @Nullable
@@ -216,5 +216,25 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         return expression.accept(this, context);
     }
+
+    @Override
+    @NotNull
+    public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {
+        JsWhile result = new JsWhile();
+        result.setCondition(translateConditionExpression(expression.getCondition(), context));
+        result.setBody(translateNullableExpressionToNotNullStatement(expression.getBody(), context));
+        return result;
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitDoWhileExpression(@NotNull JetDoWhileExpression expression, @NotNull TranslationContext context) {
+        JsDoWhile result = new JsDoWhile();
+        result.setCondition(translateConditionExpression(expression.getCondition(), context));
+        result.setBody(translateNullableExpressionToNotNullStatement(expression.getBody(), context));
+        return result;
+    }
+
+
 
 }
