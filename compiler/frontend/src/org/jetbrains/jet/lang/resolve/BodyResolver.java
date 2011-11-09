@@ -76,8 +76,8 @@ public class BodyResolver {
         resolveDelegationSpecifierLists();
         resolveClassAnnotations();
 
-        resolveAnonymousInitializers();
         resolvePropertyDeclarationBodies();
+        resolveAnonymousInitializers();
 
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
