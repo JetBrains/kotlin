@@ -7,8 +7,6 @@ package com.google.dart.compiler.util;
 import com.google.dart.compiler.InternalCompilerException;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.common.SourceInfo;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
 /**
@@ -170,7 +168,7 @@ public class AstUtil {
     }
 
     public static JsFunction newFunction(
-            JsScope scope, @Nullable JsName name, List<JsParameter> params, JsBlock body) {
+            JsScope scope, JsName name, List<JsParameter> params, JsBlock body) {
         JsFunction fn = new JsFunction(scope);
         if (name != null) {
             fn.setName(name);

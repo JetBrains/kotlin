@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/translator/lib/js.jar!/" />
+      <root url="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/translator/lib/guava-10.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

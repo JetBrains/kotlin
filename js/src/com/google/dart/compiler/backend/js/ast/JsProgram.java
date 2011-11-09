@@ -4,8 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,7 +156,7 @@ public final class JsProgram extends JsNode {
   }
 
   @Override
-  public void traverse(JsVisitor v, @Nullable JsContext ctx) {
+  public void traverse(JsVisitor v, JsContext ctx) {
     if (v.visit(this, ctx)) {
       for (JsProgramFragment fragment : fragments) {
         v.accept(fragment);

@@ -5,861 +5,19 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="split code into modules and lots of other code changes">
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\AnalyzerFacade$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\AnalyzerFacade$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\AnalyzerFacade.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaClassDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaClassMembersScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaDefaultImports$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaDefaultImports.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaDescriptorResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaDescriptorResolver$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaDescriptorResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaNamespaceDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaPackageScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaSemanticServices.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaTypeTransformer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaTypeTransformer$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend.java\org\jetbrains\jet\lang\resolve\java\JavaTypeTransformer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\jet\Library.jet" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\JetCoreEnvironment.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\JetNodeType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\JetNodeTypes.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\checkers\CheckerTestUtil$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\checkers\CheckerTestUtil$DiagnosedRange.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\checkers\CheckerTestUtil$DiagnosticDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\checkers\CheckerTestUtil$DiagnosticDiffCallbacks.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\checkers\CheckerTestUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\JetSemanticServices.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\BlockInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\BreakableBlockInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\GenerationTrigger.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowBuilder.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowBuilderAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowGraphTraverser$InstructionDataAnalyzeStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowGraphTraverser$InstructionsMergeStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowGraphTraverser.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowProcessor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowProcessor$CFPVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowProcessor$CFPVisitor$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowProcessor$CFPVisitor$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowProcessor$CFPVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetControlFlowProcessor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$4.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$5.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$6.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$7.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider$InitializationPoints.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\JetFlowInformationProvider.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\Label.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\LoopInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\AbstractJumpInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\ConditionalJumpInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\Instruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\InstructionImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\InstructionVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\InstructionWithNext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetControlFlowDataTraceFactory$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetControlFlowDataTraceFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetControlFlowInstructionsGenerator$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetControlFlowInstructionsGenerator$JetControlFlowInstructionsGeneratorWorker.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetControlFlowInstructionsGenerator$TryFinallyBlockInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetControlFlowInstructionsGenerator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetElementInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetElementInstructionImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetPseudocodeTrace$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\JetPseudocodeTrace.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\LocalDeclarationInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\NondeterministicJumpInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\Pseudocode$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\Pseudocode$PseudocodeLabel.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\Pseudocode.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\ReadUnitValueInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\ReadValueInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\ReturnNoValueInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\ReturnValueInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\SubroutineEnterInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\SubroutineExitInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\UnconditionalJumpInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\UnsupportedElementInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\cfg\pseudocode\WriteValueInstruction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\AbstractNamespaceDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\Annotation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\CallableDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\CallableMemberDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ClassDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ClassDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ClassKind.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ClassifierDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ConstructorDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ConstructorDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\DeclarationDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\DeclarationDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\DeclarationDescriptorVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\DeclarationDescriptorWithVisibility.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ExtensionDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\FunctionDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\FunctionDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\FunctionDescriptorUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\LazySubstitutingClassDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\LocalVariableDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\MemberDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\Modality.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ModuleDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\MutableClassDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\MutableDeclarationDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\MutableValueParameterDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\Named.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\NamespaceDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\NamespaceDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\NamespaceLike$Adapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\NamespaceLike$ClassObjectStatus.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\NamespaceLike.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\PropertyAccessorDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\PropertyDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\PropertyGetterDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\PropertySetterDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\TypeParameterDescriptor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\TypeParameterDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ValueParameterDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\ValueParameterDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\VariableAsFunctionDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\VariableDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\VariableDescriptorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\Visibility.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\annotations\Annotated.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\annotations\AnnotatedImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\annotations\AnnotationArgumentVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\descriptors\annotations\AnnotationDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\AbstractDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\AmbiguousDescriptorDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Diagnostic.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticFactoryWithMessageFormat.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticFactoryWithPsiElement1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticFactoryWithPsiElement2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticFactoryWithPsiElement3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticFactoryWithSeverity.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticHolder$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticHolder$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticHolder.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticParameter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticParameterImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticParameters.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticWithParameterFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticWithParameters.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticWithPsiElement.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticWithPsiElementImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\DiagnosticWithTextRange.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$10.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$11.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$12.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$13.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$14.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$15.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$4.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$5.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$6.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$7.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$8.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$9.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors$Initializer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Errors.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\GenericDiagnostic.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\ParameterizedDiagnosticFactory1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\ParameterizedDiagnosticFactory2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\ParameterizedDiagnosticFactory3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\PsiElementOnlyDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\PsiElementOnlyDiagnosticFactory1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\PsiElementOnlyDiagnosticFactory2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\PsiElementOnlyDiagnosticFactory3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\RedeclarationDiagnostic$RedeclarationDiagnosticWithDeferredResolution.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\RedeclarationDiagnostic$SimpleRedeclarationDiagnostic.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\RedeclarationDiagnostic.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\RedeclarationDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Renderer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Renderer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\Severity.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\SimpleDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\SimpleDiagnosticFactoryWithPsiElement.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\SimplePsiElementOnlyDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\UnresolvedReferenceDiagnostic.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\diagnostics\UnresolvedReferenceDiagnosticFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractJetParsing$At.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractJetParsing$AtFirstTokenOfTokens.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractJetParsing$AtOffset.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractJetParsing$AtSet.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractJetParsing.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractTokenStreamPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractTokenStreamPredicate$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\AbstractTokenStreamPredicate.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\Consumer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\FirstBefore.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing$Precedence$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing$Precedence$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing$Precedence$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing$Precedence.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetExpressionParsing.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetParser.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetParserDefinition.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetParsing$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetParsing$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetParsing$TokenDetector.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\JetParsing.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\LastBefore.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\MarkerAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\SemanticWhitespaceAwarePsiBuilder.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\SemanticWhitespaceAwarePsiBuilderAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\SemanticWhitespaceAwarePsiBuilderForByClause.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\SemanticWhitespaceAwarePsiBuilderImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\TokenStreamPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\TokenStreamPredicate.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\parsing\TruncatedSemanticWhitespaceAwarePsiBuilder.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\Call.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetAnnotatedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetAnnotation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetAnnotationEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetArrayAccessExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetBinaryExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetBinaryExpressionWithTypeRHS.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetBindingPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetBlockExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetBlockStringTemplateEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetBreakExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetCallElement.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetCallExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetCatchClause.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetClass.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetClassBody.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetClassInitializer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetClassObject.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetClassOrObject.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetConstantExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetConstructor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetConstructorCalleeExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetContainerNode.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetContinueExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDeclaration.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDeclarationWithBody.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDecomposerPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDelegationSpecifier.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDelegationSpecifierList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDelegatorByExpressionSpecifier.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDelegatorToSuperCall.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDelegatorToSuperClass.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDelegatorToThisCall.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDoWhileExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetDotQualifiedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetElement$IfNotParsed.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetElement.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetEnumEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetEscapeStringTemplateEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetExpressionPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetFile.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetFinallySection.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetForExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetFunctionLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetFunctionLiteralExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetFunctionType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetHashQualifiedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetIfExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetImportDirective.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetInitializerList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetIsExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetLabelQualifiedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetLabelQualifiedInstanceExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetLiteralStringTemplateEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetLoopExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetModifierList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetModifierListOwner.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetNamedArgumentImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetNamedDeclaration.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetNamedFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetNamespace.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetNamespaceBody.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetNullableType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetObjectDeclaration.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetObjectDeclarationName.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetObjectLiteralExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetParameter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetParameterList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetParenthesizedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPostfixExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPredicateExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPrefixExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetProjectionKind.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetProperty.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPropertyAccessor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPsiFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPsiUtil$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetPsiUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetQualifiedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetReferenceExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetReturnExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetRootNamespaceExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetSafeQualifiedExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetSelfType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetSimpleNameExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetSimpleNameStringTemplateEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetStringTemplateEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetStringTemplateEntryWithExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetStringTemplateExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetSuperExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetThisExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetThisReferenceExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetThrowExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTreeVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTryExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTupleExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTuplePattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTuplePatternEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTupleType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeArgumentList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeConstraint.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeConstraintList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeElement.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeParameter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeParameterList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeParameterListOwner.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypePattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeProjection.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypeReference.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetTypedef.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetUnaryExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetUserType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetValueArgumentList.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetValueArgumentName.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetVisitorVoid.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhenCondition.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhenConditionCall.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhenConditionInRange.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhenConditionIsPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhenEntry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhenExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWhileExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\JetWildcardPattern.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\psi\ValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\AbstractScopeAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\AnalyzingUtils$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\AnalyzingUtils$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\AnalyzingUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\AnnotationResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingContext$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingContext$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingContext$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingContext$DeferredTypeKey.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingContextUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingTrace.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingTraceContext$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BindingTraceContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver$4.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver$5.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver$6.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\BodyResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ClassDescriptorResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ClassDescriptorResolver$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ClassDescriptorResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ControlFlowAnalyzer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ControlFlowAnalyzer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DeclarationResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DeclarationResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DeclarationsChecker.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DelegatingBindingTrace$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DelegatingBindingTrace.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DelegationResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DescriptorUtils$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DescriptorUtils$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DescriptorUtils$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\DescriptorUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ImportingStrategy$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ImportingStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\JetModuleUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ObservableBindingTrace$RecordHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\ObservableBindingTrace.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\OverrideResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\OverridingUtil$OverrideCompatibilityInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\OverridingUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TemporaryBindingTrace.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TopDownAnalysisContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TopDownAnalyzer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TopDownAnalyzer$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TopDownAnalyzer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TraceBasedRedeclarationHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver$1$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver$Filter$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver$Filter$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver$Filter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeHierarchyResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeResolver$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeResolver$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\TypeResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\AutoCastReceiver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallMaker$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallMaker$CallImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallMaker$ExpressionValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallMaker.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallResolver$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\CallResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\DefaultValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ExpressionValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\OverloadResolutionResults$Code.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\OverloadResolutionResults.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\OverloadingConflictResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\OverloadingConflictResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolutionStatus.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolutionTask$DescriptorCheckStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolutionTask.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolvedCall.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolvedCallImpl$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolvedCallImpl$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolvedCallImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ResolvedValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\TaskPrioritizer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\TaskPrioritizers$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\TaskPrioritizers$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\TaskPrioritizers.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\TracingStrategy$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\TracingStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\ValueArgumentsToParametersMapper.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\VarargValueArgument.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\AutoCastService$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\AutoCastService.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\AutoCastServiceImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\AutoCastUtils$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\AutoCastUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\DataFlowInfo$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\DataFlowInfo$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\DataFlowInfo$CompositionOperator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\DataFlowInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\DataFlowValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\DataFlowValueFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\Nullability$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\calls\autocasts\Nullability.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\BooleanValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\ByteValue$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\ByteValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\CharValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\CompileTimeConstant.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\CompileTimeConstantResolver$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\CompileTimeConstantResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\DoubleValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\ErrorValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\FloatValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\IntValue$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\IntValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\LongValue$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\LongValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\NullValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\ShortValue$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\ShortValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\constants\StringValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\ChainedScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\JetScope$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\JetScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\JetScopeAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\JetScopeImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\LazyScopeAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\RedeclarationHandler$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\RedeclarationHandler$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\RedeclarationHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\SubstitutingScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\WritableScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\WritableScopeImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\WritableScopeWithImports.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\WriteThroughScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\AbstractReceiverDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ClassReceiver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ExpressionReceiver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ExtensionReceiver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ReceiverDescriptor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ReceiverDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ReceiverDescriptorVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\ThisReceiverDescriptor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\resolve\scopes\receivers\TransientReceiver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\CompositeTypeSubstitution.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\DeferredType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\DescriptorSubstitutor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\DescriptorSubstitutor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\ErrorUtils$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\ErrorUtils$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\ErrorUtils$ErrorTypeImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\ErrorUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetStandardClasses$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetStandardClasses$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetStandardClasses.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetStandardLibrary.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$AbstractTypeCheckingProcedure$StatusAction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$AbstractTypeCheckingProcedure.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$DfsNodeHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$OldProcedure.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker$TypeCheckingProcedure.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeChecker.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\JetTypeImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\NamespaceType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeConstructor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeConstructorImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeProjection.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeSubstitutor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeSubstitutor$MapToTypeSubstitutionAdapter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeSubstitutor$SubstitutionException.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeSubstitutor$TypeSubstitution$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeSubstitutor$TypeSubstitution.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeSubstitutor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeUtils$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeUtils$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeUtils$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\TypeUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\Variance$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\Variance.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\BasicExpressionTypingVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\BasicExpressionTypingVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ClosureExpressionsTypingVisitor$1$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ClosureExpressionsTypingVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ClosureExpressionsTypingVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\CoercionStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ControlStructureTypingVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ControlStructureTypingVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\DataFlowUtils$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\DataFlowUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingFacade.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingInternals.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingServices$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingServices$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingServices.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingVisitorDispatcher$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingVisitorDispatcher$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingVisitorDispatcher.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\ExpressionTypingVisitorForStatements.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\LabelResolver.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\OperatorConventions.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\PatternMatchingTypingVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\PatternMatchingTypingVisitor$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\expressions\PatternMatchingTypingVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$KnownType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$LoopInTypeVariableConstraintsException.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$Solution$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$Solution.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$TypeConstraintExpander.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$TypeValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem$UnknownType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lang\types\inference\ConstraintSystem.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lexer\JetKeywordToken.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lexer\JetLexer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lexer\JetToken.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lexer\JetTokens.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lexer\_JetLexer$State.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\lexer\_JetLexer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\plugin\JetFileType$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\plugin\JetFileType.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\plugin\JetLanguage.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\plugin\JetMainDetector.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\resolve\DescriptorRenderer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\resolve\DescriptorRenderer$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\resolve\DescriptorRenderer$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\resolve\DescriptorRenderer$RenderDeclarationDescriptorVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\resolve\DescriptorRenderer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\CommonSuppliers$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\CommonSuppliers$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\CommonSuppliers.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\lazy\LazyValue$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\lazy\LazyValue$State.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\lazy\LazyValue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\lazy\LazyValueWithDefault.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\lazy\ReenteringLazyValueComputationException.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\BasicWritableSlice$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\BasicWritableSlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\CollectionSliceWrapper.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\DelegatingSlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\MapSupplier$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\MapSupplier$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\MapSupplier.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\MutableSlicedMap.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\ReadOnlySlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\RemovableSlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\RewritePolicy$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\RewritePolicy.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\SlicedMap.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\SlicedMapImpl.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\SlicedMapKey.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$BasicRemovableSlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$KeyNormalizer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$KeyNormalizer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$SetSlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$SliceBuilder$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$SliceBuilder$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$SliceBuilder.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices$SliceWithOpposite.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\Slices.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\frontend\org\jetbrains\jet\util\slicedmap\WritableSlice.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\InternalCompilerException.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\Source.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\Cloner.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsConstructExpressionVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsFirstExpressionVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsNamer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsNormalizer$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsNormalizer$JsNormalizing.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsNormalizer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsParserException$SourceDetail.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsParserException.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsPrecedenceVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsPrettyNamer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsRequiresSemiVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsReservedIdentifiers.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsSourceGenerationVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\JsToStringGenerationVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\UncheckedJsParserException.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\CanBooleanEval.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\HasArguments.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\HasCondition.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\HasName.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsArrayAccess.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsArrayLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsBinaryOperation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsBinaryOperator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsBlock.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsBooleanLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsBreak.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsCase.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsCatch.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsCatchScope$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsCatchScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsConditional.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsContinue.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsDebugger.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsDefault.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsDoWhile.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsEmpty.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsExprStmt.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsExpression.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsFor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsForIn.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsGlobalBlock.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsIf.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsInvocation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsLabel.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsModVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsModVisitor$ListContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsModVisitor$LvalueContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsModVisitor$NodeContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsModVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsName.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsNameRef.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsNew.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsNode.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsNullLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsNumberLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsObjectLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsOperator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsParameter.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsPostfixOperation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsPrefixOperation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsProgram.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsProgramFragment.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsPropertyInitializer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsRegExp.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsReturn.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsRootScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsScope.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsStatement.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsStringLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsSwitch.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsSwitchMember.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsThisRef.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsThrow.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsTry.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsUnaryOperation.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsUnaryOperator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsValueLiteral.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsVars$JsVar.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsVars.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsVisitable.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsVisitor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsVisitor$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsVisitor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\JsWhile.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\backend\js\ast\NodeKind.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\AbstractNode.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\HasSourceInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\Name.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\NameFactory$FakeKey.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\NameFactory$RealKey.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\NameFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\common\SourceInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\AbstractTextOutput.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\AstUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\DefaultTextOutput.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\Hack.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\Lists.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\Maps.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\Paths.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\com\google\dart\compiler\util\TextOutput.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\generate\CodeGenerator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\AbstractTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\DeclarationTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\ExpressionTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\FunctionTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\GenerationState.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\NamespaceTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\OperationTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\out\production\k2js\org\jetbrains\k2js\translate\TranslationContext.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test\org\jetbrains\k2js\test\ClassTest.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test\org\jetbrains\k2js\test\FunctionTest.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test\org\jetbrains\k2js\test\TranslationTest.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\assign.jet" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\classInstantiation.kt" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\comparison.kt" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\incrementProperty.jet" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\kotlin_lib.js" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\localProperty.jet" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\prototype.js" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\test.kt" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\test_files\test_cases\testKotlinLib.js" afterPath="" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\InternalCompilerException.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/InternalCompilerException.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\Source.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/Source.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\Cloner.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/Cloner.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsConstructExpressionVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsConstructExpressionVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsFirstExpressionVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsFirstExpressionVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsNamer.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsNamer.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsNormalizer.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsNormalizer.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsParserException.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsParserException.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsPrecedenceVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsPrecedenceVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsPrettyNamer.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsPrettyNamer.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsRequiresSemiVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsRequiresSemiVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsReservedIdentifiers.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsReservedIdentifiers.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsSourceGenerationVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsSourceGenerationVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\JsToStringGenerationVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsToStringGenerationVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\UncheckedJsParserException.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/UncheckedJsParserException.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\CanBooleanEval.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/CanBooleanEval.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\HasArguments.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/HasArguments.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\HasCondition.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/HasCondition.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\HasName.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/HasName.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsArrayAccess.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsArrayAccess.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsArrayLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsArrayLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsBinaryOperation.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsBinaryOperation.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsBinaryOperator.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsBinaryOperator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsBlock.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsBlock.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsBooleanLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsBooleanLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsBreak.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsBreak.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsCase.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsCase.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsCatch.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsCatch.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsCatchScope.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsCatchScope.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsConditional.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsConditional.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsContext.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsContext.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsContinue.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsContinue.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsDebugger.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsDebugger.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsDefault.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsDefault.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsDoWhile.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsDoWhile.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsEmpty.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsEmpty.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsExprStmt.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsExprStmt.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsExpression.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsExpression.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsFor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsFor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsForIn.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsForIn.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsFunction.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsFunction.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsGlobalBlock.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsGlobalBlock.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsIf.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsIf.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsInvocation.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsInvocation.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsLabel.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsLabel.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsModVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsModVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsName.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsName.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsNameRef.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsNameRef.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsNew.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsNew.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsNode.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsNode.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsNullLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsNullLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsNumberLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsNumberLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsObjectLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsObjectLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsOperator.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsOperator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsParameter.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsParameter.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsPostfixOperation.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsPostfixOperation.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsPrefixOperation.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsPrefixOperation.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsProgram.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsProgramFragment.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgramFragment.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsPropertyInitializer.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsPropertyInitializer.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsRegExp.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsRegExp.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsReturn.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsReturn.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsRootScope.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsRootScope.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsScope.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsScope.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsStatement.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsStatement.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsStringLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsStringLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsSwitch.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsSwitch.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsSwitchMember.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsSwitchMember.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsThisRef.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsThisRef.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsThrow.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsThrow.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsTry.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsTry.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsUnaryOperation.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsUnaryOperation.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsUnaryOperator.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsUnaryOperator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsValueLiteral.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsValueLiteral.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsVars.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsVars.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsVisitable.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsVisitable.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsVisitor.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\JsWhile.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsWhile.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\backend\js\ast\NodeKind.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/NodeKind.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\common\AbstractNode.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/common/AbstractNode.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\common\HasSourceInfo.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/common/HasSourceInfo.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\common\Name.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/common/Name.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\common\NameFactory.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/common/NameFactory.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\common\SourceInfo.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/common/SourceInfo.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\AbstractTextOutput.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AbstractTextOutput.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\AstUtil.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\DefaultTextOutput.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/DefaultTextOutput.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\Hack.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/Hack.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\Lists.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/Lists.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\Maps.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/Maps.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\Paths.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/Paths.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\js\src\compiler\util\TextOutput.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/TextOutput.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\K2JSTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\generate\CodeGenerator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/generate/CodeGenerator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\AbstractTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/AbstractTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\ClassBodyVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassBodyVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\ClassTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\DeclarationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\DeclarationVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\ExpressionTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\ExpressionVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\FunctionTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/FunctionTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\GenerationState.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/GenerationState.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\Namer.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Namer.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\NamespaceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\OperationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/OperationTranslator.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\TranslationContext.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" />
-      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\k2js\translate\TranslatorVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/libs.xml" />
+      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\.idea\libraries\guava_10_0_1.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\.idea\libraries\junit.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\lib\guava-10.0.1.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\lib\js.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\lib\junit-4.10.jar" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/js.iml" afterPath="$PROJECT_DIR$/js/js.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java" afterPath="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/translator.iml" afterPath="$PROJECT_DIR$/translator/translator.iml" />
     </list>
     <ignored path="k2js.iws" />
@@ -941,33 +99,60 @@
     <splitter split-orientation="horizontal" split-proportion="0.5082908">
       <split-first>
         <leaf>
-          <file leaf-file-name="GenerationState.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/GenerationState.java">
+          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="24" column="24" selection-start="714" selection-end="714" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="CodeGenerator.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/generate/CodeGenerator.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="14" column="19" selection-start="401" selection-end="401" vertical-scroll-proportion="0.0">
+                <state line="91" column="27" selection-start="3396" selection-end="3396" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ClassBodyVisitor.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassBodyVisitor.java">
+          <file leaf-file-name="ClassTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ClassTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="70" column="16" selection-start="3002" selection-end="3002" vertical-scroll-proportion="-45.76923">
+                <state line="38" column="53" selection-start="1375" selection-end="1375" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="JsProgram.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="158" column="36" selection-start="4292" selection-end="4292" vertical-scroll-proportion="0.0">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="NameFactory.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/common/NameFactory.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="6" column="36" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="AstUtil.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="170" column="27" selection-start="5517" selection-end="5517" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="NamespaceTranslator.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="2" column="48" selection-start="87" selection-end="87" vertical-scroll-proportion="0.0">
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -975,52 +160,36 @@
           <file leaf-file-name="ClassTranslator.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="35" column="23" selection-start="1443" selection-end="1443" vertical-scroll-proportion="0.0">
+                <state line="46" column="13" selection-start="2102" selection-end="2102" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Reader.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="jar://C:/Program Files/Java/jdk1.7.0_01/src.zip!/java/io/Reader.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="77" column="0" selection-start="1684" selection-end="1684" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="DeclarationTranslator.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationTranslator.java">
+          <file leaf-file-name="JetStandardLibrary.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/types/JetStandardLibrary.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="9" column="19" selection-start="244" selection-end="244" vertical-scroll-proportion="0.0">
+                <state line="43" column="22" selection-start="1729" selection-end="1729" vertical-scroll-proportion="0.50718683">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="DeclarationVisitor.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationVisitor.java">
+          <file leaf-file-name="FunctionTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="36" column="6" selection-start="1434" selection-end="1434" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="73" column="62" selection-start="2671" selection-end="2671" vertical-scroll-proportion="0.33240998">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="TranslatorVisitor.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="20" column="4" selection-start="647" selection-end="647" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="TranslationContext.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="2" column="48" selection-start="87" selection-end="87" vertical-scroll-proportion="0.0">
+                <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -1081,10 +250,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Namer.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="Namer.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Namer.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="62" column="28" selection-start="1955" selection-end="1955" vertical-scroll-proportion="0.594702">
+                <state line="62" column="28" selection-start="1955" selection-end="1955" vertical-scroll-proportion="1.378">
                   <folding />
                 </state>
               </provider>
@@ -1117,10 +286,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/TranslatorVisitor.java" />
-        <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
-        <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/DeclarationVisitor.java" />
-        <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/ExpressionTranslator.java" />
         <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/FunctionTranslator.java" />
         <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
         <option value="$PROJECT_DIR$/src/org/jetbrains/k2js/translate/GenerationState.java" />
@@ -1133,6 +298,10 @@
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/GenerationState.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
+        <option value="$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java" />
+        <option value="$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" />
       </list>
     </option>
   </component>
@@ -1199,7 +368,107 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="generate" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frontend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frontend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frontend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jet" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1252,18 +521,18 @@
       <recent name="C:\Dev\Projects\k2js\src\org\jetbrains\k2js\translate" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.FunctionTest">
+  <component name="RunManager" selected="JUnit.All in k2js">
     <configuration default="false" name="All in k2js" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="k2js" />
+      <module name="translator" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="package" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/translator" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="TEST_SEARCH_SCOPE">
@@ -1347,17 +616,17 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="FunctionTest" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="k2js" />
+    <configuration default="false" name="org.jetbrains.k2js.test in k2js" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="translator" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
-      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.FunctionTest" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/translator" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="TEST_SEARCH_SCOPE">
@@ -1448,7 +717,7 @@
       <item index="1" class="java.lang.String" itemvalue="JUnit.ClassTest.classInstantiation" />
       <item index="2" class="java.lang.String" itemvalue="JUnit.ClassTest" />
       <item index="3" class="java.lang.String" itemvalue="JUnit.ClassTest.kotlinJsLibRunsWithRhino" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.FunctionTest" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.org.jetbrains.k2js.test in k2js" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -1484,7 +753,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907662" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1498,9 +767,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16149732" sideWeight="0.77011496" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16149732" sideWeight="0.5258621" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22988506" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.47413793" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -1562,54 +831,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="55" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="19" selection-start="765" selection-end="765" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationVisitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="6" selection-start="1434" selection-end="1434" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/FunctionTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="22" selection-start="871" selection-end="871" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/generate/CodeGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="19" selection-start="401" selection-end="401" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="10" selection-start="635" selection-end="635" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="4" selection-start="647" selection-end="647" vertical-scroll-proportion="0.0">
@@ -1633,16 +854,101 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Namer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="62" selection-start="2671" selection-end="2671" vertical-scroll-proportion="0.33240998">
+        <state line="62" column="28" selection-start="1955" selection-end="1955" vertical-scroll-proportion="1.378">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Namer.java">
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="28" selection-start="1955" selection-end="1955" vertical-scroll-proportion="0.594702">
+        <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="27" selection-start="3396" selection-end="3396" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassBodyVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="16" selection-start="3002" selection-end="3002" vertical-scroll-proportion="-45.76923">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ClassTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="53" selection-start="1375" selection-end="1375" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsProgram.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="158" column="36" selection-start="4292" selection-end="4292" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="19" selection-start="244" selection-end="244" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/common/NameFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="36" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/util/AstUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="170" column="27" selection-start="5517" selection-end="5517" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="48" selection-start="87" selection-end="87" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="13" selection-start="2102" selection-end="2102" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.7.0_01/src.zip!/java/io/Reader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="77" column="0" selection-start="1684" selection-end="1684" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/types/JetStandardLibrary.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="22" selection-start="1729" selection-end="1729" vertical-scroll-proportion="0.50718683">
           <folding />
         </state>
       </provider>
@@ -1688,7 +994,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>IDEA IC-110.283</last-edited>
+          <last-edited>1.6</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1724,7 +1030,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>junit</last-edited>
+          <last-edited>libs</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
