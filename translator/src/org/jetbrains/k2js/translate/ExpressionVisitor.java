@@ -94,25 +94,19 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return new JsBinaryOperation(OperationTranslator.getBinaryOperator(jetOperationToken), left, right);
     }
 
-    //TODO think about recursive/non-recursive name look-up
     //TODO correct look-up logic
     @Override
     @NotNull
     public JsNode visitSimpleNameExpression(JetSimpleNameExpression expression, TranslationContext context) {
         String referencedName = expression.getReferencedName();
-        JsName jsName = context.enclosingScope().findExistingNameNoRecurse(referencedName);
-        if (jsName != null) {
-            return jsName.makeRef();
+        JsName jsName = context.enclosingScope().findExistingName(referencedName);
+        if (jsName == null) {
+            throw new AssertionError("Unindentified name " + expression.getReferencedName());
         }
-        jsName = context.classScope().findExistingNameNoRecurse(referencedName);
-        if (jsName != null) {
+        if (context.namespaceScope().ownsName(jsName)) {
             return context.getNamespaceQualifiedReference(jsName);
         }
-        jsName = context.namespaceScope().findExistingNameNoRecurse(referencedName);
-        if (jsName != null) {
-            return context.getNamespaceQualifiedReference(jsName);
-        }
-        throw new AssertionError("Unindentified name " + expression.getReferencedName());
+        return jsName.makeRef();
     }
 
     @Override
@@ -170,12 +164,57 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return jsArguments;
     }
 
+    @NotNull
     private JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
         JetExpression jetExpression = argument.getArgumentExpression();
         if (jetExpression == null) {
             throw new AssertionError("Argument with no expression encountered!");
         }
         return AstUtil.convertToExpression(jetExpression.accept(this, context));
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitIfExpression(@NotNull JetIfExpression expression, @NotNull TranslationContext context) {
+        JsIf result = new JsIf();
+        result.setIfExpr(translateIfExpression(expression, context));
+        result.setThenStmt(translateThenStatement(expression, context));
+        result.setElseStmt(translateElseStatement(expression, context));
+        return result;
+    }
+
+    @NotNull
+    private JsExpression translateIfExpression(@NotNull JetIfExpression expression,
+                                               @NotNull TranslationContext context) {
+        JsNode jsCondition = translateNullableExpression(expression.getCondition(), context);
+        if (jsCondition == context.program().getEmptyStmt()) {
+            throw new AssertionError("Empty condition in if clause!");
+        }
+        return AstUtil.convertToExpression(jsCondition);
+    }
+
+    @NotNull
+    private JsStatement translateThenStatement(@NotNull JetIfExpression expression,
+                                               @NotNull TranslationContext context) {
+        return AstUtil.convertToStatement(translateNullableExpression(expression.getThen(), context));
+    }
+
+    @Nullable
+    private JsStatement translateElseStatement(@NotNull JetIfExpression expression,
+                                               @NotNull TranslationContext context) {
+        if (expression.getElse() == null) {
+            return null;
+        }
+        return AstUtil.convertToStatement(translateNullableExpression(expression.getElse(), context));
+    }
+
+    @NotNull
+    private JsNode translateNullableExpression(@Nullable JetExpression expression,
+                                               @NotNull TranslationContext context) {
+        if (expression == null) {
+            return context.program().getEmptyStmt();
+        }
+        return expression.accept(this, context);
     }
 
 }

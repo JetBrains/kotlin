@@ -297,4 +297,12 @@ public class JsScope implements Serializable {
     public JsName findExistingNameNoRecurse(String ident) {
         return names.get(ident);
     }
+
+    /**
+     *
+     * Checks whether this scope owns this name.
+     */
+    public boolean ownsName(JsName name) {
+        return names.containsValue(name);
+    }
 }

@@ -27,4 +27,14 @@ public final class FunctionTest extends TranslationTest {
         testFooBoxIsTrue("comparison.kt");
     }
 
+    @Test
+    public void ifElseTest() throws Exception {
+        performTest("if.kt", "foo", "box", 5);
+    }
+
+    @Test
+    public void ifElseIfTest() throws Exception {
+        performTest("elseif.kt", "foo", "box", 5);
+    }
+
 }

@@ -38,7 +38,7 @@ public class TranslationTest {
             Scriptable scope = cx.initStandardObjects();
             cx.evaluateReader(scope, reader, "test case", 1, null);
             Object result = extractAndCallFunctionObject(namespaceName, functionName, cx, scope);
-            assertTrue(result.equals(expectedResult));
+            assertTrue("Result is not what expected!", result.equals(expectedResult));
             String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
             System.out.println(report);
 
