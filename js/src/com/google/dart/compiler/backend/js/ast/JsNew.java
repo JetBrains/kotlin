@@ -12,50 +12,55 @@ import java.util.List;
  */
 public final class JsNew extends JsExpression implements HasArguments {
 
-  private final List<JsExpression> args = new ArrayList<JsExpression>();
-  private JsExpression ctorExpr;
+    private final List<JsExpression> args = new ArrayList<JsExpression>();
+    private JsExpression ctorExpr;
 
-  public JsNew(JsExpression ctorExpr) {
-    this.ctorExpr = ctorExpr;
-  }
-
-  @Override
-  public List<JsExpression> getArguments() {
-    return args;
-  }
-
-  public JsExpression getConstructorExpression() {
-    return ctorExpr;
-  }
-
-  @Override
-  public boolean hasSideEffects() {
-    return true;
-  }
-
-  @Override
-  public boolean isDefinitelyNotNull() {
-    // Sadly, in JS it can be!
-    // TODO: analysis could probably determine most instances cannot be null.
-    return false;
-  }
-
-  @Override
-  public boolean isDefinitelyNull() {
-    return false;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
-      ctorExpr = v.accept(ctorExpr);
-      v.acceptList(args);
+    public JsNew(JsExpression ctorExpr) {
+        this.ctorExpr = ctorExpr;
     }
-    v.endVisit(this, ctx);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.NEW;
-  }
+    @Override
+    public List<JsExpression> getArguments() {
+        return args;
+    }
+
+    public void setArguments(List<JsExpression> arguments) {
+        args.clear();
+        args.addAll(arguments);
+    }
+
+    public JsExpression getConstructorExpression() {
+        return ctorExpr;
+    }
+
+    @Override
+    public boolean hasSideEffects() {
+        return true;
+    }
+
+    @Override
+    public boolean isDefinitelyNotNull() {
+        // Sadly, in JS it can be!
+        // TODO: analysis could probably determine most instances cannot be null.
+        return false;
+    }
+
+    @Override
+    public boolean isDefinitelyNull() {
+        return false;
+    }
+
+    @Override
+    public void traverse(JsVisitor v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            ctorExpr = v.accept(ctorExpr);
+            v.acceptList(args);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.NEW;
+    }
 }

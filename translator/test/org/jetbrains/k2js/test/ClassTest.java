@@ -47,4 +47,9 @@ public final class ClassTest extends TranslationTest {
         testFooBoxIsTrue("classInstantiation.kt");
     }
 
+    @Test
+    public void methodDeclarationAndCall() throws Exception {
+        testFooBoxIsTrue("methodDeclarationAndCall.kt");
+    }
+
 }

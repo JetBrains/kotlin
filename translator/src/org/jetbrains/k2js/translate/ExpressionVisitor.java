@@ -5,11 +5,14 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsReturn;
 import com.google.dart.compiler.util.AstUtil;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetToken;
 
@@ -135,14 +138,26 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
-        ConstructorDescriptor constructorDescriptor = (context.bindingContext().get(BindingContext.CONSTRUCTOR, expression.getCalleeExpression()));
-        JetExpression calleeExpression = expression.getCalleeExpression();
-        if (constructorDescriptor == null) {
-            JsExpression callee = getCallee(expression, context);
-            List<JsExpression> arguments = generateArgumentList(expression.getValueArguments(), context);
-            return AstUtil.newInvocation(callee, arguments);
+        JsExpression callee = getCallee(expression, context);
+        List<JsExpression> arguments = generateArgumentList(expression.getValueArguments(), context);
+
+        if (isConstructorInvocation(expression, context)) {
+            JsNew constructorCall = new JsNew(callee);
+            constructorCall.setArguments(arguments);
+            return constructorCall;
         }
-        throw new AssertionError("Should generate constructor invocation");
+        return AstUtil.newInvocation(callee, arguments);
+    }
+
+    private boolean isConstructorInvocation(@NotNull JetCallExpression expression,
+                                            @NotNull TranslationContext context) {
+        ResolvedCall<?> resolvedCall =
+                (context.bindingContext().get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression()));
+        if (resolvedCall == null) {
+            return false;
+        }
+        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+        return (descriptor instanceof ConstructorDescriptor);
     }
 
     @NotNull

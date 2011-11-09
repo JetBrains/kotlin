@@ -4,7 +4,7 @@ foo = {};
   }
   });
   foo.box = function(){
-    var test = foo.Test();
+    var test = new foo.Test;
     return true;
   }
   ;
