@@ -8,5 +8,5 @@ class Test() {
 
 fun box() : Boolean {
     var test = Test()
-    return test.method
+    return test.method()
 }

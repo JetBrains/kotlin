@@ -58,16 +58,23 @@ public final class TranslationContext {
     @NotNull
     public TranslationContext newBlock() {
         Scopes newScopes = new Scopes(new JsScope
-                (scopes.enclosingScope, "dummy enclosingScope for a block"), scopes.classScope, scopes.namespaceScope);
+                (scopes.enclosingScope, "Scope for a block"), scopes.classScope, scopes.namespaceScope);
         return new TranslationContext(currentNamespace, program,
                 bindingContext, newScopes);
     }
 
-    //TODO new Class?
+    @NotNull
+    public TranslationContext newClass() {
+        JsScope classDummyScope = new JsScope(namespaceScope(), "Scope for a class");
+        Scopes newScopes = new Scopes(classDummyScope, classDummyScope, scopes.namespaceScope);
+        return new TranslationContext(currentNamespace, program,
+                bindingContext, newScopes);
+    }
+
     @NotNull
     public TranslationContext newFunction(@NotNull JsFunction function) {
         JsScope functionScope = function.getScope();
-        Scopes newScopes = new Scopes(functionScope, functionScope, scopes.namespaceScope);
+        Scopes newScopes = new Scopes(functionScope, scopes.classScope, scopes.namespaceScope);
         return new TranslationContext(currentNamespace, program,
                 bindingContext, newScopes);
     }

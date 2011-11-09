@@ -27,6 +27,12 @@ public final class FunctionTranslator extends AbstractTranslator {
                 (translationContext().getNamespaceQualifiedReference(functionName), function));
     }
 
+    @NotNull JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction jetFunction) {
+        JsName functionName = translationContext().namespaceScope().declareFreshName(jetFunction.getName());
+        JsFunction function = generateFunctionObject(jetFunction);
+        return new JsPropertyInitializer(functionName.makeRef(), function);
+    }
+
     @NotNull
     private JsFunction generateFunctionObject(@NotNull JetNamedFunction jetFunction) {
         JetExpression jetBodyExpression = jetFunction.getBodyExpression();

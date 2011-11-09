@@ -52,4 +52,9 @@ public final class ClassTest extends TranslationTest {
         testFooBoxIsTrue("methodDeclarationAndCall.kt");
     }
 
+    @Test
+    public void accessToInstanceProperty() throws Exception {
+        testFooBoxIsTrue("accessToInstanceProperty.kt");
+    }
+
 }

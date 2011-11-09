@@ -269,12 +269,36 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                 context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
         if (compileTimeValue != null) {
             Object value = compileTimeValue.getValue();
-            assert value instanceof String : "Compile time constant template should be a String constant";
+            assert value instanceof String : "Compile time constant template should be a String constant.";
             String constantString = (String)value;
             return context.program().getStringLiteral(constantString);
         }
         return null;
     }
+
+    @Override
+    @NotNull
+    public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
+                                      @NotNull TranslationContext context) {
+        JsExpression receiver = AstUtil.convertToExpression(expression.getReceiverExpression().accept(this, context));
+        JetExpression jetSelector = expression.getSelectorExpression();
+        assert jetSelector != null : "Selector should not be null in dot qualified expression.";
+        JsExpression selector = AstUtil.convertToExpression(jetSelector.accept(this, context));
+        assert (selector instanceof JsNameRef || selector instanceof JsInvocation)
+                : "Selector should be a name reference or a method invocation in dot qualified expression.";
+        if (selector instanceof JsInvocation) {
+            JsInvocation result = (JsInvocation)selector;
+            JsExpression qualifier = result.getQualifier();
+            JsNameRef nameRef = (JsNameRef)qualifier;
+            nameRef.setQualifier(receiver);
+            return result;
+        } else {
+            JsNameRef result = (JsNameRef)selector;
+            result.setQualifier(receiver);
+            return result;
+        }
+    }
+
 
 
 }

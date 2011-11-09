@@ -46,7 +46,7 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsObjectLiteral translateClassDeclarations(JetClass classDeclaration) {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         propertyList.add(generateInitializeMethod(classDeclaration));
-        propertyList.addAll(classDeclaration.accept(classBodyVisitor, translationContext()));
+        propertyList.addAll(classDeclaration.accept(classBodyVisitor, translationContext().newClass()));
         return new JsObjectLiteral(propertyList);
     }
 

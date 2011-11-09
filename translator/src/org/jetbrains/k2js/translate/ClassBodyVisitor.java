@@ -2,11 +2,9 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +22,15 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         for (JetDeclaration declaration : expression.getDeclarations()) {
             properties.addAll(declaration.accept(this, context));
         }
+        return properties;
+    }
+
+    @Override
+    @NotNull
+    // method declaration
+    public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
+        List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
+        properties.add((new FunctionTranslator(context)).translateAsMethod(expression));
         return properties;
     }
 
@@ -83,7 +90,6 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         return jsBackingFieldName;
     }
 
-
     @NotNull
     private JsPropertyInitializer generateDefaultSetter(@NotNull JetProperty expression,
                                                         @NotNull TranslationContext context) {
@@ -112,6 +118,8 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         assignExpression.setArg2(defaultParameter.getName().makeRef());
         return assignExpression;
     }
+
+
 
 //    @Override
 //    @NotNull
