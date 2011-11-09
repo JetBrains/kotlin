@@ -7,6 +7,9 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.types.Variance.IN_VARIANCE;
+import static org.jetbrains.jet.lang.types.Variance.OUT_VARIANCE;
+
 /**
  * @author abreslav
  */
@@ -76,17 +79,20 @@ public class JetTypeChecker {
     public JetType commonSupertype(@NotNull Collection<JetType> types) {
         Collection<JetType> typeSet = new HashSet<JetType>(types);
         assert !typeSet.isEmpty();
+
+        // If any of the types is nullable, the result must be nullable
+        // This also removed Nothing and Nothing? because they are subtypes of everything else
         boolean nullable = false;
         for (Iterator<JetType> iterator = typeSet.iterator(); iterator.hasNext();) {
             JetType type = iterator.next();
             assert type != null;
-            // TODO : This admits 'Nothing?'. Review
             if (JetStandardClasses.isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
             nullable |= type.isNullable();
         }
 
+        // Everything deleted => it's Nothing or Nothing?
         if (typeSet.isEmpty()) {
             // TODO : attributes
             return nullable ? JetStandardClasses.getNullableNothingType() : JetStandardClasses.getNothingType();
@@ -96,6 +102,7 @@ public class JetTypeChecker {
             return TypeUtils.makeNullableIfNeeded(typeSet.iterator().next(), nullable);
         }
 
+        // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map<TypeConstructor, Set<JetType>> commonSupertypes = computeCommonRawSupertypes(typeSet);
         while (commonSupertypes.size() > 1) {
             Set<JetType> merge = new HashSet<JetType>();
@@ -105,12 +112,81 @@ public class JetTypeChecker {
             commonSupertypes = computeCommonRawSupertypes(merge);
         }
         assert !commonSupertypes.isEmpty() : commonSupertypes + " <- " + types;
-        Map.Entry<TypeConstructor, Set<JetType>> entry = commonSupertypes.entrySet().iterator().next();
-        JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue());
 
+        // constructor of the supertype -> all of its instantiations occurring as supertypes
+        Map.Entry<TypeConstructor, Set<JetType>> entry = commonSupertypes.entrySet().iterator().next();
+
+        // Reconstructing type arguments if possible
+        JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue());
         return TypeUtils.makeNullableIfNeeded(result, nullable);
     }
 
+    // Raw supertypes are superclasses w/o type arguments
+    // @return TypeConstructor -> all instantiations of this constructor occurring as supertypes
+    @NotNull
+    private Map<TypeConstructor, Set<JetType>> computeCommonRawSupertypes(@NotNull Collection<JetType> types) {
+        assert !types.isEmpty();
+
+        final Map<TypeConstructor, Set<JetType>> constructorToAllInstances = new HashMap<TypeConstructor, Set<JetType>>();
+        Set<TypeConstructor> commonSuperclasses = null;
+
+        List<TypeConstructor> order = null;
+        for (JetType type : types) {
+            Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
+
+            order = dfs(type, visited, new DfsNodeHandler<List<TypeConstructor>>() {
+                public LinkedList<TypeConstructor> list = new LinkedList<TypeConstructor>();
+
+                @Override
+                public void beforeChildren(JetType current) {
+                    TypeConstructor constructor = current.getConstructor();
+
+                    Set<JetType> instances = constructorToAllInstances.get(constructor);
+                    if (instances == null) {
+                        instances = new HashSet<JetType>();
+                        constructorToAllInstances.put(constructor, instances);
+                    }
+                    instances.add(current);
+                }
+
+                @Override
+                public void afterChildren(JetType current) {
+                    list.addFirst(current.getConstructor());
+                }
+
+                @Override
+                public List<TypeConstructor> result() {
+                    return list;
+                }
+            });
+
+            if (commonSuperclasses == null) {
+                commonSuperclasses = visited;
+            }
+            else {
+                commonSuperclasses.retainAll(visited);
+            }
+        }
+        assert order != null;
+
+        Set<TypeConstructor> notSource = new HashSet<TypeConstructor>();
+        Map<TypeConstructor, Set<JetType>> result = new HashMap<TypeConstructor, Set<JetType>>();
+        for (TypeConstructor superConstructor : order) {
+            if (!commonSuperclasses.contains(superConstructor)) {
+                continue;
+            }
+
+            if (!notSource.contains(superConstructor)) {
+                result.put(superConstructor, constructorToAllInstances.get(superConstructor));
+                markAll(superConstructor, notSource);
+            }
+        }
+
+        return result;
+    }
+
+    // constructor - type constructor of a supertype to be instantiated
+    // types - instantiations of constructor occurring as supertypes of classes we are trying to intersect
     @NotNull
     private JetType computeSupertypeProjections(@NotNull TypeConstructor constructor, @NotNull Set<JetType> types) {
         // we assume that all the given types are applications of the same type constructor
@@ -186,81 +262,19 @@ public class JetTypeChecker {
             JetType intersection = TypeUtils.intersect(this, ins);
             if (intersection == null) {
                 if (outs != null) {
-                    return new TypeProjection(Variance.OUT_VARIANCE, commonSupertype(outs));
+                    return new TypeProjection(OUT_VARIANCE, commonSupertype(outs));
                 }
-                return new TypeProjection(Variance.OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
+                return new TypeProjection(OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
             }
-            Variance projectionKind = variance == Variance.IN_VARIANCE ? Variance.INVARIANT : Variance.IN_VARIANCE;
+            Variance projectionKind = variance == IN_VARIANCE ? Variance.INVARIANT : IN_VARIANCE;
             return new TypeProjection(projectionKind, intersection);
         } else if (outs != null) {
-            Variance projectionKind = variance == Variance.OUT_VARIANCE ? Variance.INVARIANT : Variance.OUT_VARIANCE;
+            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
             return new TypeProjection(projectionKind, commonSupertype(outs));
         } else {
-            Variance projectionKind = variance == Variance.OUT_VARIANCE ? Variance.INVARIANT : Variance.OUT_VARIANCE;
+            Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
             return new TypeProjection(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
         }
-    }
-
-    @NotNull
-    private Map<TypeConstructor, Set<JetType>> computeCommonRawSupertypes(@NotNull Collection<JetType> types) {
-        assert !types.isEmpty();
-
-        final Map<TypeConstructor, Set<JetType>> constructorToAllInstances = new HashMap<TypeConstructor, Set<JetType>>();
-        Set<TypeConstructor> commonSuperclasses = null;
-
-        List<TypeConstructor> order = null;
-        for (JetType type : types) {
-            Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
-
-            order = dfs(type, visited, new DfsNodeHandler<List<TypeConstructor>>() {
-                public LinkedList<TypeConstructor> list = new LinkedList<TypeConstructor>();
-
-                @Override
-                public void beforeChildren(JetType current) {
-                    TypeConstructor constructor = current.getConstructor();
-
-                    Set<JetType> instances = constructorToAllInstances.get(constructor);
-                    if (instances == null) {
-                        instances = new HashSet<JetType>();
-                        constructorToAllInstances.put(constructor, instances);
-                    }
-                    instances.add(current);
-                }
-
-                @Override
-                public void afterChildren(JetType current) {
-                    list.addFirst(current.getConstructor());
-                }
-
-                @Override
-                public List<TypeConstructor> result() {
-                    return list;
-                }
-            });
-
-            if (commonSuperclasses == null) {
-                commonSuperclasses = visited;
-            }
-            else {
-                commonSuperclasses.retainAll(visited);
-            }
-        }
-        assert order != null;
-
-        Set<TypeConstructor> notSource = new HashSet<TypeConstructor>();
-        Map<TypeConstructor, Set<JetType>> result = new HashMap<TypeConstructor, Set<JetType>>();
-        for (TypeConstructor superConstructor : order) {
-            if (!commonSuperclasses.contains(superConstructor)) {
-                continue;
-            }
-
-            if (!notSource.contains(superConstructor)) {
-                result.put(superConstructor, constructorToAllInstances.get(superConstructor));
-                markAll(superConstructor, notSource);
-            }
-        }
-
-        return result;
     }
 
     private void markAll(@NotNull TypeConstructor typeConstructor, @NotNull Set<TypeConstructor> markerSet) {
@@ -331,22 +345,28 @@ public class JetTypeChecker {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        return new TypeCheckingProcedure().run(subtype, supertype);
+//        return new TypeCheckingProcedure().run(subtype, supertype);
+        return new ExplicitInOutTypeCheckingProcedure().run(subtype, supertype);
     }
 
     public boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
         return isSubtypeOf(a, b) && isSubtypeOf(b, a);
     }
 
-    private static class OldProcedure {
-        public static boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
+    private static class ExplicitInOutTypeCheckingProcedure {
+
+        public boolean run(@NotNull JetType subtype, @NotNull JetType supertype) {
+            return isSubtypeOf(subtype, supertype);
+        }
+
+        public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
             if (ErrorUtils.isErrorType(subtype) || ErrorUtils.isErrorType(supertype)) {
                 return true;
             }
             if (!supertype.isNullable() && subtype.isNullable()) {
                 return false;
             }
-            if (JetStandardClasses.isNothing(subtype)) {
+            if (JetStandardClasses.isNothingOrNullableNothing(subtype)) {
                 return true;
             }
             @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype);
@@ -357,69 +377,40 @@ public class JetTypeChecker {
             return checkSubtypeForTheSameConstructor(closestSupertype, supertype);
         }
 
-        private static boolean checkSubtypeForTheSameConstructor(@NotNull JetType subtype, @NotNull JetType supertype) {
+        private boolean checkSubtypeForTheSameConstructor(@NotNull JetType subtype, @NotNull JetType supertype) {
             TypeConstructor constructor = subtype.getConstructor();
             assert constructor.equals(supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
 
             List<TypeProjection> subArguments = subtype.getArguments();
             List<TypeProjection> superArguments = supertype.getArguments();
             List<TypeParameterDescriptor> parameters = constructor.getParameters();
-            boolean status = true;
             for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
                 TypeParameterDescriptor parameter = parameters.get(i);
                 TypeProjection subArgument = subArguments.get(i);
+                
+                JetType subIn = getInType(parameter, subArgument);
+                JetType subOut = getOutType(parameter, subArgument);
+
                 TypeProjection superArgument = superArguments.get(i);
 
-                JetType subArgumentType = subArgument.getType();
-                JetType superArgumentType = superArgument.getType();
-                switch (parameter.getVariance()) {
-                    case INVARIANT:
-                        switch (superArgument.getProjectionKind()) {
-                            case INVARIANT:
-                                status = subArgumentType.equals(superArgumentType);
-                                break;
-                            case OUT_VARIANCE:
-                                if (!subArgument.getProjectionKind().allowsOutPosition()) {
-                                    status = false;
-                                } else {
-                                    status = !isSubtypeOf(subArgumentType, superArgumentType);
-                                }
-                                break;
-                            case IN_VARIANCE:
-                                if (!subArgument.getProjectionKind().allowsInPosition()) {
-                                    status = false;
-                                } else {
-                                    status = isSubtypeOf(superArgumentType, subArgumentType);
-                                }
-                                break;
-                        }
-                        break;
-                    case IN_VARIANCE:
-                        switch (superArgument.getProjectionKind()) {
-                            case INVARIANT:
-                            case IN_VARIANCE:
-                                status = isSubtypeOf(superArgumentType, subArgumentType);
-                                break;
-                            case OUT_VARIANCE:
-                                status = isSubtypeOf(subArgumentType, superArgumentType);
-                                break;
-                        }
-                        break;
-                    case OUT_VARIANCE:
-                        switch (superArgument.getProjectionKind()) {
-                            case INVARIANT:
-                            case OUT_VARIANCE:
-                            case IN_VARIANCE:
-                                status = isSubtypeOf(subArgumentType, superArgumentType);
-                                break;
-                        }
-                        break;
-                }
-                if (!status) {
+                JetType superIn = getInType(parameter, superArgument);
+                JetType superOut = getOutType(parameter, superArgument);
+
+                if (!isSubtypeOf(subOut, superOut) || !isSubtypeOf(superIn, subIn)) {
                     return false;
                 }
             }
             return true;
+        }
+
+        private JetType getOutType(TypeParameterDescriptor parameter, TypeProjection subArgument) {
+            boolean isOutProjected = subArgument.getProjectionKind() == IN_VARIANCE || parameter.getVariance() == IN_VARIANCE;
+            return isOutProjected ? parameter.getBoundsAsType() : subArgument.getType();
+        }
+
+        private JetType getInType(TypeParameterDescriptor parameter, TypeProjection subArgument) {
+            boolean isOutProjected = subArgument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
+            return isOutProjected ? JetStandardClasses.getNothingType() : subArgument.getType();
         }
     }
 
