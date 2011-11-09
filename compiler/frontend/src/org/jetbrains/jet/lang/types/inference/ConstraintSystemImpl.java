@@ -115,6 +115,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return value;
         }
 
+        public boolean setValue(@NotNull KnownType value) {
+            if (this.value != null) {
+                // If we have already assigned a value to this unknown,
+                // it is a conflict to assign another one, unless this new one is equal to the previous
+                return TypeUtils.equalTypes(this.value.getType(), value.getType());
+            }
+            this.value = value;
+            return true;
+        }
+
         private Set<JetType> getTypes(Set<TypeValue> lowerBounds) {
             Set<JetType> types = Sets.newHashSet();
             for (TypeValue lowerBound : lowerBounds) {
@@ -161,7 +171,28 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private final JetTypeChecker.TypeCheckingProcedure constraintExpander = new JetTypeChecker.TypeCheckingProcedure(new JetTypeChecker.TypingConstraintBuilder() {
         @Override
         public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b) {
-            return TypeUtils.equalTypes(a, b);
+            TypeValue aValue = getTypeValueFor(a);
+            TypeValue bValue = getTypeValueFor(b);
+
+            if (aValue instanceof UnknownType) {
+                UnknownType aUnknown = (UnknownType) aValue;
+                if (bValue instanceof UnknownType) {
+                    UnknownType bUnknown = (UnknownType) bValue;
+                    mergeUnknowns(aUnknown, bUnknown);
+                }
+                else {
+                    if (!aUnknown.setValue((KnownType) bValue)) return false;
+                }
+            }
+            else if (bValue instanceof UnknownType) {
+                UnknownType bUnknown = (UnknownType) bValue;
+                if (!bUnknown.setValue((KnownType) aValue)) return false;
+            }
+            else {
+              return TypeUtils.equalTypes(a, b);
+            }
+
+            return true;
         }
 
         @Override
@@ -188,8 +219,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     });
 
-    public ConstraintSystemImpl() {
-    }
+    public ConstraintSystemImpl() {}
 
     @NotNull
     private TypeValue getTypeValueFor(@NotNull JetType type) {
@@ -224,6 +254,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             throw new IllegalArgumentException("This type parameter is not an unknown in this constraint system: " + typeParameterDescriptor);
         }
         return unknownType;
+    }
+
+    private void mergeUnknowns(@NotNull UnknownType a, @NotNull UnknownType b) {
+
     }
 
     @Override
@@ -288,6 +322,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         for (KnownType knownType : knownTypes.values()) {
             check(knownType, solution);
         }
+
+        // TODO : check that all bounds are respected by solutions:
+        //  we have set some of them from equality constraints with known types
+        //  and thus the bounds may be violated if some of the constraints conflict
 
         return solution;
     }

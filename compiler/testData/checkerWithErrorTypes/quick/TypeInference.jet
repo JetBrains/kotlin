@@ -1,0 +1,18 @@
+class C<T>() {
+  fun foo() : T <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!>
+}
+
+fun foo(c: C<Int>) {}
+fun bar<T>() : C<T> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!>
+
+fun main(args : Array<String>) {
+  val a : C<Int> = C();
+  val x : C<in String> = C()
+  val y : C<out String> = C()
+  val z : C<*> = C()
+
+  val ba : C<Int> = bar();
+  val bx : C<in String> = bar()
+  val by : C<out String> = bar()
+  val bz : C<*> = bar()
+}
