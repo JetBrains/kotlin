@@ -468,7 +468,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression receiverExpression = expression.getReceiverExpression();
         CompileTimeConstant<?> receiverValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
         CompileTimeConstant<?> wholeExpressionValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
-        if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number) {
+        DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, selectorExpression);
+        if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number
+            && context.semanticServices.getStandardLibrary().getNumber() == declarationDescriptor) {
             Number value = (Number) receiverValue.getValue();
             String referencedName = selectorExpression.getReferencedName();
             if (OperatorConventions.NUMBER_CONVERSIONS.contains(referencedName)) {
