@@ -57,7 +57,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            return getSelectorReturnType(NO_RECEIVER, null, expression, context); // TODO : Extensions to this
+            return DataFlowUtils.checkType(getSelectorReturnType(NO_RECEIVER, null, expression, context), expression, context); // TODO : Extensions to this
         }
         return null;
     }
@@ -419,14 +419,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetType visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+    public JetType visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
+        ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
         JetType receiverType = facade.getType(receiverExpression,
-                                              context
-                                                      .replaceExpectedType(NO_EXPECTED_TYPE)
+                                              contextWithNoExpectedType
                                                       .replaceExpectedReturnType(NO_EXPECTED_TYPE)
                                                       .replaceNamespacesAllowed(true));
         if (selectorExpression == null) return null;
@@ -462,7 +461,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (result != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, result);
         }
-        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(result, expression, context);
     }
 
     private void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
@@ -508,14 +507,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             VariableDescriptor variableDescriptor = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
             if (variableDescriptor != null) {
                 temporaryTrace.commit();
-                return DataFlowUtils.checkType(variableDescriptor.getOutType(), nameExpression, context);
+                return variableDescriptor.getOutType();
             }
             ExpressionTypingContext newContext = receiver.exists() ? context.replaceScope(receiver.getType().getMemberScope()) : context;
             JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedName(), newContext);
             if (jetType == null) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(nameExpression));
             }
-            return DataFlowUtils.checkType(jetType, nameExpression, context);
+            return jetType;
         }
         else if (selectorExpression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;

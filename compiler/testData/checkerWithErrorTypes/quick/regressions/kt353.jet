@@ -1,0 +1,32 @@
+// KT-353 Generic type argument inference sometimes doesn't work
+
+trait A {
+    fun <T> gen() : T
+}
+
+fun foo(a: A) {
+    val g : fun() : Unit = {
+        a.gen()  //it works: Unit is derived
+    }
+
+    val u: Unit = a.gen() //type mismatch, but Unit can be derived
+
+    if (true) {
+        a.gen() //it works: Unit is derived
+    }
+
+    val b : fun() : Unit = {
+        if (true) {
+            a.gen()  //type mismatch, but Unit can be derived
+        }
+        else {
+            ()
+        }
+    }
+
+    val f : fun() : Int = { () : Int =>
+        a.gen()  //type mismatch, but Int can be derived
+    }
+
+    a.gen() //it works: Unit is derived
+}
