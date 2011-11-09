@@ -43,7 +43,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     private final int index;
     private final Variance variance;
     private final Set<JetType> upperBounds;
-    private JetType boundsAsType;
+    private JetType upperBoundsAsType;
     private final TypeConstructor typeConstructor;
     private JetType defaultType;
     private final Set<JetType> classObjectUpperBounds = Sets.newLinkedHashSet();
@@ -85,10 +85,35 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
         upperBounds.add(bound); // TODO : Duplicates?
     }
 
+    @NotNull
     public Set<JetType> getUpperBounds() {
         return upperBounds;
     }
 
+    @NotNull
+    public JetType getUpperBoundsAsType() {
+        if (upperBoundsAsType == null) {
+            assert upperBounds != null : "Upper bound list is null in " + getName();
+            assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
+            upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+            if (upperBoundsAsType == null) {
+                upperBoundsAsType = JetStandardClasses.getNothingType();
+            }
+        }
+        return upperBoundsAsType;
+    }
+
+    @NotNull
+    public Set<JetType> getLowerBounds() {
+        return Collections.singleton(JetStandardClasses.getNothingType());
+    }
+
+    @NotNull
+    public JetType getLowerBoundsAsType() {
+        return JetStandardClasses.getNothingType();
+    }
+    
+    
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
@@ -98,19 +123,6 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @Override
     public String toString() {
         return DescriptorRenderer.TEXT.render(this);
-    }
-
-    @NotNull
-    public JetType getBoundsAsType() {
-        if (boundsAsType == null) {
-            assert upperBounds != null : "Upper bound list is null in " + getName();
-            assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
-            boundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
-            if (boundsAsType == null) {
-                boundsAsType = JetStandardClasses.getNothingType();
-            }
-        }
-        return boundsAsType;
     }
 
     @NotNull
@@ -137,7 +149,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                             new LazyScopeAdapter(new LazyValue<JetScope>() {
                                 @Override
                                 protected JetScope compute() {
-                                    return getBoundsAsType().getMemberScope();
+                                    return getUpperBoundsAsType().getMemberScope();
                                 }
                             }));
         }

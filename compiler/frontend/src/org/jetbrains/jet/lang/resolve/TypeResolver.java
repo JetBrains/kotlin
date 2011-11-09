@@ -181,13 +181,13 @@ public class TypeResolver {
 
     private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor) {
         if (checkBounds) {
-            return typeParameterDescriptor.getBoundsAsType().getMemberScope();
+            return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
             return new LazyScopeAdapter(new LazyValue<JetScope>() {
                 @Override
                 protected JetScope compute() {
-                    return typeParameterDescriptor.getBoundsAsType().getMemberScope();
+                    return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
                 }
             });
         }

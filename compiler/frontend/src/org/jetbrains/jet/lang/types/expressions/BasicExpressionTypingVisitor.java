@@ -712,7 +712,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
                 if (rightType != null) {
                     DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
-                    return TypeUtils.makeNullableAsSpecified(context.semanticServices.getTypeChecker().commonSupertype(leftType, rightType), rightType.isNullable());
+                    return TypeUtils.makeNullableAsSpecified(CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable());
                 }
             }
         }

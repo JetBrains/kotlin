@@ -471,7 +471,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         for (String type : types) {
             subtypes.add(makeType(type));
         }
-        JetType result = semanticServices.getTypeChecker().commonSupertype(subtypes);
+        JetType result = CommonSupertypes.commonSupertype(subtypes);
         assertTrue(result + " != " + expected, result.equals(makeType(expected)));
     }
 

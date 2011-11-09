@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
@@ -21,6 +20,8 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.types.inference.ConstraintSystemSolution;
+import org.jetbrains.jet.lang.types.inference.SubtypingOnlyConstraintSystem;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -413,7 +414,7 @@ public class CallResolver {
                 if (!candidate.getTypeParameters().isEmpty()) {
                     // Type argument inference
 
-                    ConstraintSystem constraintSystem = new ConstraintSystem();
+                    ConstraintSystem constraintSystem = new SubtypingOnlyConstraintSystem();
                     for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
                         constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
                     }
@@ -451,7 +452,7 @@ public class CallResolver {
                         constraintSystem.addSubtypingConstraint(candidate.getReturnType(), expectedType);
                     }
 
-                    ConstraintSystem.Solution solution = constraintSystem.solve();
+                    ConstraintSystemSolution solution = constraintSystem.solve();
 //                    solutions.put(candidate, solution);
                     if (solution.isSuccessful()) {
                         D substitute = (D) candidate.substitute(solution.getSubstitutor());
@@ -884,7 +885,7 @@ public class CallResolver {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameter = valueParameters.get(i);
             JetType expectedType = parameterTypes.get(i);
-            if (!semanticServices.getTypeChecker().equalTypes(expectedType, valueParameter.getOutType())) return false;
+            if (!TypeUtils.equalTypes(expectedType, valueParameter.getOutType())) return false;
         }
         return true;
     }

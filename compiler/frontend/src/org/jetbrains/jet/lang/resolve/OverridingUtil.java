@@ -127,7 +127,7 @@ public class OverridingUtil {
             TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
 
-            if (!JetTypeImpl.equalTypes(superTypeParameter.getBoundsAsType(), subTypeParameter.getBoundsAsType(), axioms)) {
+            if (!JetTypeImpl.equalTypes(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), axioms)) {
                 return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
             }
         }

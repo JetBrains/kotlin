@@ -248,7 +248,7 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
-            return mapType(((TypeParameterDescriptor) descriptor).getBoundsAsType(), kind);
+            return mapType(((TypeParameterDescriptor) descriptor).getUpperBoundsAsType(), kind);
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);

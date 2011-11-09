@@ -25,7 +25,7 @@ public class JetSemanticServices {
 
     private JetSemanticServices(JetStandardLibrary standardLibrary) {
         this.standardLibrary = standardLibrary;
-        this.typeChecker = new JetTypeChecker(standardLibrary);
+        this.typeChecker = JetTypeChecker.INSTANCE;
     }
 
     @NotNull
