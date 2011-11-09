@@ -1,0 +1,670 @@
+namespace jet
+
+namespace typeinfo {
+    class TypeInfo<T> {
+      fun isSubtypeOf(other : TypeInfo<*>) : Boolean
+      fun isInstance(obj : Any?) : Boolean
+    }
+
+    fun typeinfo<T>() : TypeInfo<T>
+    fun typeinfo<T>(expression : T) : TypeInfo<out T>
+}
+
+namespace io {
+  fun print(message : Any?)
+  fun print(message : Int)
+  fun print(message : Long)
+  fun print(message : Byte)
+  fun print(message : Short)
+  fun print(message : Char)
+  fun print(message : Boolean)
+  fun print(message : Float)
+  fun print(message : Double)
+
+  fun println(message : Any?)
+  fun println(message : Int)
+  fun println(message : Long)
+  fun println(message : Byte)
+  fun println(message : Short)
+  fun println(message : Char)
+  fun println(message : Boolean)
+  fun println(message : Float)
+  fun println(message : Double)
+
+  fun readLine() : String?
+}
+
+// Can't write a body due to a bootstrapping problem (see JET-74)
+fun Any?.equals(other : Any?) : Boolean// = this === other
+
+// Returns "null" for null
+fun Any?.toString() : String// = this === other
+
+fun String?.plus(other: Any?) : String
+
+trait Iterator<out T> {
+  fun next()  : T
+  val hasNext : Boolean
+}
+
+trait Iterable<out T> {
+  fun iterator() : Iterator<T>
+}
+
+class Array<T>(val size : Int, init : fun(Int) : T = null ) {
+  fun get(index : Int) : T
+  fun set(index : Int, value : T) : Unit
+
+  fun iterator() : Iterator<T>
+
+  val indices : IntRange
+}
+
+class ByteArray(val size : Int) {
+  fun get(index : Int) : Byte
+  fun set(index : Int, value : Byte) : Unit
+
+  fun iterator() : Iterator<Byte>
+
+  val indices : IntRange
+}
+
+class ShortArray(val size : Int) {
+  fun get(index : Int) : Short
+  fun set(index : Int, value : Short) : Unit
+
+  fun iterator() : Iterator<Short>
+
+  val indices : IntRange
+}
+
+class IntArray(val size : Int) {
+  fun get(index : Int) : Int
+  fun set(index : Int, value : Int) : Unit
+
+  fun iterator() : Iterator<Int>
+
+  val indices : IntRange
+}
+
+class LongArray(val size : Int) {
+  fun get(index : Int) : Long
+  fun set(index : Int, value : Long) : Unit
+
+  fun iterator() : Iterator<Long>
+
+  val indices : IntRange
+}
+
+class FloatArray(val size : Int) {
+  fun get(index : Int) : Float
+  fun set(index : Int, value : Float) : Unit
+
+  fun iterator() : Iterator<Float>
+
+  val indices : IntRange
+}
+
+class DoubleArray(val size : Int) {
+  fun get(index : Int) : Double
+  fun set(index : Int, value : Double) : Unit
+
+  fun iterator() : Iterator<Double>
+
+  val indices : IntRange
+}
+
+class CharArray(val size : Int) {
+  fun get(index : Int) : Char
+  fun set(index : Int, value : Char) : Unit
+
+  fun iterator() : Iterator<Char>
+
+  val indices : IntRange
+}
+
+class BooleanArray(val size : Int) {
+  fun get(index : Int) : Boolean
+  fun set(index : Int, value : Boolean) : Unit
+
+  fun iterator() : Iterator<Boolean>
+
+  val indices : IntRange
+}
+
+trait Comparable<in T> {
+  fun compareTo(other : T) : Int
+}
+
+trait Hashable {
+  fun hashCode() : Int
+  fun equals(other : Any?) : Boolean
+}
+
+class Boolean : Comparable<Boolean> {
+  fun not() : Boolean
+
+  fun xor(other : Boolean) : Boolean
+
+  fun equals(other : Any?) : Boolean
+}
+
+class String() : Comparable<String> {
+  fun get(index : Int) : Char
+  val length : Int
+
+  fun plus(other : Any?) : String
+
+  fun equals(other : Any?) : Boolean
+  fun equalsIgnoreCase(other: String?) : Boolean
+
+  fun substring(start: Int): String
+  fun substring(start: Int, end: Int): String
+
+  fun startsWith(prefix: String, toffset: Int): Boolean
+  fun startsWith(prefix: String): Boolean
+  fun endsWith(suffix: String): Boolean
+
+  fun trim(): String
+}
+
+trait Range<in T : Comparable<T>> {
+  fun contains(item : T) : Boolean
+}
+
+class IntRange(val start : Int, size : Int, reversed : Boolean = false) : Range<Int>, Iterable<Int> {
+    fun iterator () : Iterator<Int>
+
+    fun contains (elem: Int) : Boolean
+
+    val size : Int
+
+    val end : Int
+
+    val reversed : Boolean
+}
+
+class LongRange(val start : Long, size : Long, reversed : Boolean = false) : Range<Long>, Iterable<Long> {
+    fun iterator () : Iterator<Long>
+
+    fun contains (elem: Long) : Boolean
+
+    val size : Long
+
+    val end : Long
+
+    val reversed : Boolean
+}
+
+abstract class Number : Hashable {
+  abstract val dbl : Double
+  abstract val flt : Float
+  abstract val lng : Long
+  abstract val int : Int
+  abstract val chr : Char
+  abstract val sht : Short
+  abstract val byt : Byte
+//  fun equals(other : Double) : Boolean
+//  fun equals(other : Float) : Boolean
+//  fun equals(other : Long) : Boolean
+//  fun equals(other : Byte) : Boolean
+//  fun equals(other : Int) : Boolean
+//  fun equals(other : Short) : Boolean
+//  fun equals(other : Char) : Boolean
+}
+
+class Double : Number, Comparable<Double>  {
+  override fun compareTo(other : Double)  : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)   : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Double
+  fun plus(other : Long)   : Double
+  fun plus(other : Int)    : Double
+  fun plus(other : Short)  : Double
+  fun plus(other : Byte)   : Double
+  fun plus(other : Char)   : Double
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Double
+  fun minus(other : Long)   : Double
+  fun minus(other : Int)    : Double
+  fun minus(other : Short)  : Double
+  fun minus(other : Byte)   : Double
+  fun minus(other : Char)   : Double
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Double
+  fun times(other : Long)   : Double
+  fun times(other : Int)    : Double
+  fun times(other : Short)  : Double
+  fun times(other : Byte)   : Double
+  fun times(other : Char)   : Double
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Double
+  fun div(other : Long)   : Double
+  fun div(other : Int)    : Double
+  fun div(other : Short)  : Double
+  fun div(other : Byte)   : Double
+  fun div(other : Char)   : Double
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Double
+  fun mod(other : Long)   : Double
+  fun mod(other : Int)    : Double
+  fun mod(other : Short)  : Double
+  fun mod(other : Byte)   : Double
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Double>
+  fun rangeTo(other : Long)   : Range<Double>
+  fun rangeTo(other : Int)    : Range<Double>
+  fun rangeTo(other : Short)  : Range<Double>
+  fun rangeTo(other : Byte)   : Range<Double>
+  fun rangeTo(other : Char)   : Range<Double>
+
+  fun inc() : Double
+  fun dec() : Double
+  fun plus() : Double
+  fun minus() : Double
+}
+
+class Float : Number, Comparable<Float>  {
+  fun compareTo(other : Double) : Int
+  override fun compareTo(other : Float) : Int
+  fun compareTo(other : Long)   : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Float
+  fun plus(other : Int)    : Float
+  fun plus(other : Short)  : Float
+  fun plus(other : Byte)   : Float
+  fun plus(other : Char)   : Float
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Float
+  fun minus(other : Int)    : Float
+  fun minus(other : Short)  : Float
+  fun minus(other : Byte)   : Float
+  fun minus(other : Char)   : Float
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Float
+  fun times(other : Int)    : Float
+  fun times(other : Short)  : Float
+  fun times(other : Byte)   : Float
+  fun times(other : Char)   : Float
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Float
+  fun div(other : Int)    : Float
+  fun div(other : Short)  : Float
+  fun div(other : Byte)   : Float
+  fun div(other : Char)   : Float
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Float
+  fun mod(other : Int)    : Float
+  fun mod(other : Short)  : Float
+  fun mod(other : Byte)   : Float
+  fun mod(other : Char)   : Float
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Double>
+  fun rangeTo(other : Int)    : Range<Double>
+  fun rangeTo(other : Short)  : Range<Float>
+  fun rangeTo(other : Byte)   : Range<Float>
+  fun rangeTo(other : Char)   : Range<Float>
+
+  fun inc() : Float
+  fun dec() : Float
+  fun plus() : Float
+  fun minus() : Float
+}
+
+class Long : Number, Comparable<Long> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float)  : Int
+  override fun compareTo(other : Long)   : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Long
+  fun plus(other : Short)  : Long
+  fun plus(other : Byte)   : Long
+  fun plus(other : Char)   : Long
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Long
+  fun minus(other : Short)  : Long
+  fun minus(other : Byte)   : Long
+  fun minus(other : Char)   : Long
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Long
+  fun times(other : Short)  : Long
+  fun times(other : Byte)   : Long
+  fun times(other : Char)   : Long
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Long
+  fun div(other : Short)  : Long
+  fun div(other : Byte)   : Long
+  fun div(other : Char)   : Long
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Long
+  fun mod(other : Short)  : Long
+  fun mod(other : Byte)   : Long
+  fun mod(other : Char)   : Long
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Double>
+  fun rangeTo(other : Long)   : LongRange
+  fun rangeTo(other : Int)    : LongRange
+  fun rangeTo(other : Short)  : LongRange
+  fun rangeTo(other : Byte)   : LongRange
+  fun rangeTo(other : Char)   : LongRange
+
+  fun inc() : Long
+  fun dec() : Long
+  fun plus() : Long
+  fun minus() : Long
+
+  fun shl(bits : Int) : Long
+  fun shr(bits : Int) : Long
+  fun ushr(bits : Int) : Long
+  fun and(other : Long) : Long
+  fun or(other : Long) : Long
+  fun xor(other : Long) : Long
+  fun inv() : Long
+}
+
+class Int : Number, Comparable<Int> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)   : Int
+  override fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Double>
+  fun rangeTo(other : Long)   : LongRange
+  fun rangeTo(other : Int)    : IntRange
+  fun rangeTo(other : Short)  : IntRange
+  fun rangeTo(other : Byte)   : IntRange
+  fun rangeTo(other : Char)   : IntRange
+
+  fun inc() : Int
+  fun dec() : Int
+  fun plus() : Int
+  fun minus() : Int
+
+  fun shl(bits : Int) : Int
+  fun shr(bits : Int) : Int
+  fun ushr(bits : Int) : Int
+  fun and(other : Int) : Int
+  fun or(other : Int) : Int
+  fun xor(other : Int) : Int
+  fun inv() : Int
+}
+
+class Char : Number, Comparable<Char> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)    : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  override fun compareTo(other : Char)  : Int
+  fun compareTo(other : Byte)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : LongRange
+  fun rangeTo(other : Int)    : IntRange
+  fun rangeTo(other : Short)  : IntRange
+  fun rangeTo(other : Byte)   : IntRange
+  fun rangeTo(other : Char)   : IntRange
+
+  fun inc() : Char
+  fun dec() : Char
+  fun plus() : Int
+  fun minus() : Int
+}
+
+class Short : Number, Comparable<Short> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)    : Int
+  fun compareTo(other : Int)    : Int
+  override fun compareTo(other : Short)    : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : LongRange
+  fun rangeTo(other : Int)    : IntRange
+  fun rangeTo(other : Short)  : IntRange
+  fun rangeTo(other : Byte)   : IntRange
+  fun rangeTo(other : Char)   : IntRange
+
+  fun inc() : Short
+  fun dec() : Short
+  fun plus() : Int
+  fun minus() : Int
+}
+
+class Byte : Number, Comparable<Byte> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)    : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Char)   : Int
+  override fun compareTo(other : Byte)   : Int
+
+  fun plus(other : Double) : Double
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
+
+  fun times(other : Double) : Double
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
+
+  fun div(other : Double) : Double
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : LongRange
+  fun rangeTo(other : Int)    : IntRange
+  fun rangeTo(other : Short)  : IntRange
+  fun rangeTo(other : Byte)   : IntRange
+  fun rangeTo(other : Char)   : IntRange
+
+  fun inc() : Byte
+  fun dec() : Byte
+  fun plus() : Int
+  fun minus() : Int
+}
