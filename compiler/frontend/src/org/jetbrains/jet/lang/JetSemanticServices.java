@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -14,17 +13,17 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
  */
 public class JetSemanticServices {
     public static JetSemanticServices createSemanticServices(JetStandardLibrary standardLibrary) {
-        return new JetSemanticServices(standardLibrary, JetControlFlowDataTraceFactory.EMPTY);
+        return new JetSemanticServices(standardLibrary);
     }
 
     public static JetSemanticServices createSemanticServices(Project project) {
-        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project), JetControlFlowDataTraceFactory.EMPTY);
+        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project));
     }
 
     private final JetStandardLibrary standardLibrary;
     private final JetTypeChecker typeChecker;
 
-    private JetSemanticServices(JetStandardLibrary standardLibrary, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    private JetSemanticServices(JetStandardLibrary standardLibrary) {
         this.standardLibrary = standardLibrary;
         this.typeChecker = new JetTypeChecker(standardLibrary);
     }
