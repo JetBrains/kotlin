@@ -795,9 +795,9 @@ public abstract class StackValue {
         }
     }
 
-    private static class Composed extends StackValue {
-        private StackValue prefix;
-        private StackValue suffix;
+    public static class Composed extends StackValue {
+        public final StackValue prefix;
+        public final StackValue suffix;
 
         public Composed(StackValue prefix, StackValue suffix) {
             super(suffix.type);
@@ -809,6 +809,12 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             prefix.put(prefix.type, v);
             suffix.put(type, v);
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            prefix.put(JetTypeMapper.TYPE_OBJECT, v);
+            suffix.store(v);
         }
     }
 }

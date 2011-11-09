@@ -36,14 +36,9 @@ public abstract class CodegenContext {
     HashMap<JetType,Integer> typeInfoConstants;
     HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
-    protected DeclarationDescriptor outerDescriptor;
-    protected DeclarationDescriptor outerReceiverDescriptor;
-
     protected StackValue outerExpression;
 
-    protected StackValue outerReceiverExpression;
-
-    protected boolean outerWasUsed = false;
+    protected boolean outerWasUsed ;
 
     public CodegenContext(DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
         this.contextType = contextType;
@@ -54,7 +49,7 @@ public abstract class CodegenContext {
 
     protected abstract ClassDescriptor getThisDescriptor ();
 
-    protected DeclarationDescriptor getReceiverDescriptor() {
+    protected FunctionDescriptor getReceiverDescriptor() {
         return null;
     }
 
@@ -139,16 +134,18 @@ public abstract class CodegenContext {
         }
     }
 
-    public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v) {
+    public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v, StackValue result) {
         final ObjectOrClosureCodegen top = closure;
         if (top != null) {
-            final StackValue answer = top.lookupInContext(d);
-            if (answer != null) return answer;
+            final StackValue answer = top.lookupInContext(d, result);
+            if (answer != null)
+                return result == null ? answer : StackValue.composed(result, answer);
 
-            getOuterExpression(null).put(JetTypeMapper.TYPE_OBJECT, v);
+            StackValue outer = getOuterExpression(null);
+            result = result == null ? outer : StackValue.composed(result, outer);
         }
 
-        return parentContext != null ? parentContext.lookupInContext(d, v) : null;
+        return parentContext != null ? parentContext.lookupInContext(d, v, result) : null;
     }
 
     public Type enclosingClassType() {
@@ -229,31 +226,33 @@ public abstract class CodegenContext {
         return accessor;
     }
 
-    public boolean isOuterWasUsed() {
-        return outerWasUsed;
-    }
-
-    public StackValue getReceiverExpression() {
+    public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getReceiverDescriptor() != null;
-        return getThisDescriptor() != null ? local1 : local0;
-    }
-
-    public StackValue getThisExpression() {
-        assert getThisDescriptor() != null;
-        return local0;
+        Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType());
+        return getThisDescriptor() != null ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 
     public abstract static class FunctionContext extends CodegenContext {
-        final DeclarationDescriptor receiverDescriptor;
+        final FunctionDescriptor receiverDescriptor;
 
         public FunctionContext(FunctionDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
             super(contextType, contextKind, parentContext, closureCodegen);
-            receiverDescriptor = contextType.getReceiverParameter().exists() ? contextType.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor() : null;
+            receiverDescriptor = contextType.getReceiverParameter().exists() ? contextType : null;
         }
 
         @Override
-        protected DeclarationDescriptor getReceiverDescriptor() {
+        protected FunctionDescriptor getReceiverDescriptor() {
             return receiverDescriptor;
+        }
+
+        public FunctionContext getOuterFunction() {
+            CodegenContext c = getParentContext();
+            while(c != null) {
+                if(c instanceof FunctionContext)
+                    return (FunctionContext) c;
+                c = c.getParentContext();
+            }
+            return null;
         }
     }
 
@@ -267,8 +266,8 @@ public abstract class CodegenContext {
             return getParentContext().getThisDescriptor();
         }
 
-        public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v) {
-            return getParentContext().lookupInContext(d, v);
+        public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v, StackValue result) {
+            return getParentContext().lookupInContext(d, v, result);
         }
 
         public Type enclosingClassType() {
