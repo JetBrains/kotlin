@@ -6,7 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/js/js.iml" filepath="$PROJECT_DIR$/js/js.iml" />
       <module fileurl="file://$PROJECT_DIR$/k2js.iml" filepath="$PROJECT_DIR$/k2js.iml" />
+      <module fileurl="file://$PROJECT_DIR$/translator/translator.iml" filepath="$PROJECT_DIR$/translator/translator.iml" />
     </modules>
   </component>
 </project>

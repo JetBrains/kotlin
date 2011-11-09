@@ -9,7 +9,7 @@ fun f(a:Int) : Int {
    return y
 }
 
-fun box() : Boolean
+fun box() : Int
 {
-    return (f(3) == 50)
+    return f(y)
 }

@@ -1,0 +1,14 @@
+class Slot() {
+  var vitality: Int = 10000
+
+  fun increaseVitality(delta: Int) {
+    vitality += delta
+    if (vitality > 65535) vitality = 65535;
+  }
+}
+
+fun box(): Boolean {
+  val s = Slot()
+  s.increaseVitality(1000)
+  return (s.vitality == 11000)
+}
