@@ -91,6 +91,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     if (tokenType == JavaTokenType.LT) return "<";
     if (tokenType == JavaTokenType.GE) return ">=";
     if (tokenType == JavaTokenType.LE) return "<=";
+    if (tokenType == JavaTokenType.EQEQ) return "==";
     if (tokenType == JavaTokenType.NE) return "!=";
     if (tokenType == JavaTokenType.ANDAND) return "&&";
     if (tokenType == JavaTokenType.OROR) return "||";
