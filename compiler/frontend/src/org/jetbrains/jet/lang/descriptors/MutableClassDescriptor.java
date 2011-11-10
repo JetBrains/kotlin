@@ -61,12 +61,23 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
         if (this.classObjectDescriptor != null) return ClassObjectStatus.DUPLICATE;
-        if (!(this.getContainingDeclaration() instanceof NamespaceDescriptor)) {
+        if (!isStatic(this.getContainingDeclaration())) {
             return ClassObjectStatus.NOT_ALLOWED;
         }
         assert classObjectDescriptor.getKind() == ClassKind.OBJECT;
         this.classObjectDescriptor = classObjectDescriptor;
         return ClassObjectStatus.OK;
+    }
+
+    private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {
+        if (declarationDescriptor instanceof NamespaceDescriptor) {
+            return true;
+        } else if (declarationDescriptor instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+            return classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+        } else {
+            return false;
+        }
     }
 
     @Nullable
