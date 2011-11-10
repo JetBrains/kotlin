@@ -10,7 +10,7 @@ fun test2() : Any = @a {return@a 1}
 fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
 fun test4(): fun(): Unit = { <!RETURN_TYPE_MISMATCH, RETURN_NOT_ALLOWED!>return@test4<!> }
 fun test5(): Any = @{ return@ }
-fun test5(): Any = {<!RETURN_NOT_ALLOWED!>return 1<!>}
+fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return 1<!>}
 
 fun bbb() {
   return <!TYPE_MISMATCH!>1<!>
@@ -34,7 +34,7 @@ fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
 fun intBlock() : Int {return 1}
-fun intBlock() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1<!>}
+fun intBlock1() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1<!>}
 
 fun intString(): Int = <!TYPE_MISMATCH!>"s"<!>
 fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
@@ -47,70 +47,70 @@ fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>()<!>}
 fun blockAndAndMismatch() : Int {
   <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>true && false<!>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch1() : Int {
   return <!TYPE_MISMATCH!>true && false<!>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch2() : Int {
   <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) && (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
 }
 
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch3() : Int {
   <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>true || false<!>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch4() : Int {
   return <!TYPE_MISMATCH!>true || false<!>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch5() : Int {
   <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) || (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch1() : Int {
   return if (1 > 2) <!ERROR_COMPILE_TIME_VALUE!>1.0<!> else <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch2() : Int {
   return <!TYPE_MISMATCH!>if (1 > 2) 1<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch3() : Int {
   return <!TYPE_MISMATCH!>if (1 > 2) else 1<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch4() : Int {
   if (1 > 2)
     return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
   else return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch5() : Int {
   if (1 > 2)
     return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
   return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch6() : Int {
   if (1 > 2)
     else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
   return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch7() : Int {
   if (1 > 2)
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1.0<!>
   else <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>2.0<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch8() : Int {
   if (1 > 2)
     1.0
   else 2.0
   return 1
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch9() : Int {
   <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>if (1 > 2)
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1.0<!><!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch10() : Int {
   return <!TYPE_MISMATCH!>if (1 > 2)
     1<!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch11() : Int {
   <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>if (1 > 2)
   else <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1.0<!><!>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch12() : Int {
   if (1 > 2)
     return 1
   else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
@@ -166,9 +166,9 @@ fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
 }
 
-fun f(): Int = if (1 < 2) 1 else returnNothing()
+fun f1(): Int = if (1 < 2) 1 else returnNothing()
 
-public fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f<!>() = 1
+public fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f2<!>() = 1
 class B() {
    protected fun <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>f<!>() = "ss"
 }

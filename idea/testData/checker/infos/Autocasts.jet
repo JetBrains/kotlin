@@ -44,7 +44,7 @@ class C() : A() {
   }
 }
 
-fun f10(a : A?) {
+fun f101(a : A?) {
     if (a is C) {
       <info descr="Automatically cast to C">a</info>.bar();
     }

@@ -31,7 +31,7 @@ fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
 fun intBlock() : Int {return 1}
-fun intBlock() : Int {<error>1</error>}
+fun intBlock1() : Int {<error>1</error>}
 
 fun intString(): Int = <error>"s"</error>
 fun intFunctionLiteral(): Int = <error>{ 10 }</error>
@@ -44,70 +44,70 @@ fun blockReturnValueTypeMismatchUnit() : Int {return <error>()</error>}
 fun blockAndAndMismatch() : Int {
   <error>true && false</error>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch1() : Int {
   return <error>true && false</error>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch2() : Int {
   <error>(return <error>true</error>) && (return <error>false</error>)</error>
 }
 
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch3() : Int {
   <error>true || false</error>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch4() : Int {
   return <error>true || false</error>
 }
-fun blockAndAndMismatch() : Int {
+fun blockAndAndMismatch5() : Int {
   <error>(return <error>true</error>) || (return <error>false</error>)</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch1() : Int {
   return if (1 > 2) <error>1.0</error> else <error>2.0</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch2() : Int {
   return <error>if (1 > 2) 1</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch3() : Int {
   return <error>if (1 > 2) else 1</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch4() : Int {
   if (1 > 2)
     return <error>1.0</error>
   else return <error>2.0</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch5() : Int {
   if (1 > 2)
     return <error>1.0</error>
   return <error>2.0</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch6() : Int {
   if (1 > 2)
     else return <error>1.0</error>
   return <error>2.0</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch7() : Int {
   if (1 > 2)
     <error>1.0</error>
   else <error>2.0</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch8() : Int {
   if (1 > 2)
     1.0
   else 2.0
   return 1
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch9() : Int {
   <error>if (1 > 2)
     <error>1.0</error></error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch10() : Int {
   return <error>if (1 > 2)
     1</error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch11() : Int {
   <error>if (1 > 2)
   else <error>1.0</error></error>
 }
-fun blockReturnValueTypeMatch() : Int {
+fun blockReturnValueTypeMatch12() : Int {
   if (1 > 2)
     return 1
   else return <error>1.0</error>
@@ -163,4 +163,4 @@ fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
 }
 
-fun f(): Int = if (1 < 2) 1 else returnNothing()
+fun f1(): Int = if (1 < 2) 1 else returnNothing()
