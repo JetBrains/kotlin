@@ -1,4 +1,3 @@
-/* It's an automatically generated code. Do not modify it. */
 package org.jetbrains.jet.lexer;
 
 import java.util.*;
