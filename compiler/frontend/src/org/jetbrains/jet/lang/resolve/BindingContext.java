@@ -65,7 +65,7 @@ public interface BindingContext {
             if (declarationPsiElement instanceof JetParameter) {
                 JetParameter jetParameter = (JetParameter) declarationPsiElement;
                 return jetParameter.getValOrVarNode() != null ||
-                       backingFieldRequired;
+                       backingFieldRequired; // this part is unused because we do not allow access to constructor parameters in member bodies
             }
             if (propertyDescriptor.getModality() == Modality.ABSTRACT) return false;
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
