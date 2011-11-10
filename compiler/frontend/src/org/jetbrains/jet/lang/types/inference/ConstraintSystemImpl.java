@@ -376,6 +376,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
                 if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
+                    if (!unknownTypes.containsKey(descriptor)) return null;
                     println(descriptor + " |-> " + getValue(descriptor));
                     return new TypeProjection(getValue(descriptor));
                 }
