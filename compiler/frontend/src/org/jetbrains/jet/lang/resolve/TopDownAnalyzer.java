@@ -52,6 +52,7 @@ public class TopDownAnalyzer {
         new DeclarationResolver(context).process();
         new DelegationResolver(context).process();
         new OverrideResolver(context).process();
+        new OverloadResolver(context).process();
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
         new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
         new DeclarationsChecker(context).process();        

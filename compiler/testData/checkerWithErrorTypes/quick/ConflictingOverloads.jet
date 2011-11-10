@@ -1,0 +1,12 @@
+// http://youtrack.jetbrains.net/issue/KT-424
+
+class A {
+    // XXX: error should be reported on the whole method signature
+    // not only on method name
+    fun <!CONFLICTING_OVERLOADS!>a<!>() {
+    }
+
+    fun <!CONFLICTING_OVERLOADS!>a<!>() {
+    }
+}
+

@@ -375,6 +375,19 @@ public interface Errors {
         }
     };
 
+    ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> CONFLICTING_OVERLOADS = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "{1} is already defined in ''{0}''") {
+        @Override
+        protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
+            return jetClassOrObject.getName();
+        }
+
+        @Override
+        protected String makeMessageForB(@NotNull CallableMemberDescriptor memberDescriptor) {
+            return DescriptorRenderer.TEXT.render(memberDescriptor);
+        }
+    };
+
+
     ParameterizedDiagnosticFactory3<String, JetType, JetType> RESULT_TYPE_MISMATCH = ParameterizedDiagnosticFactory3.create(ERROR, "{0} must return {1} but returns {2}");
     ParameterizedDiagnosticFactory3<String, String, String> UNSAFE_INFIX_CALL = ParameterizedDiagnosticFactory3.create(ERROR, "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. Use '?.'-qualified call instead");
 
