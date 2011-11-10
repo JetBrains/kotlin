@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -61,5 +62,15 @@ public class JetPsiUtil {
             rootElements.add(element);
         }
         return rootElements;
+    }
+
+    @Nullable
+    public static JetNamedFunction getSurroundingFunction(@Nullable PsiElement element) {
+        while (element != null) {
+            if (element instanceof JetNamedFunction) return (JetNamedFunction) element;
+            if (element instanceof JetClassOrObject || element instanceof JetNamespace) return null;
+            element = element.getParent();
+        }
+        return null;
     }
 }

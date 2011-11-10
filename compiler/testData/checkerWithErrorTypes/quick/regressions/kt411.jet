@@ -23,7 +23,7 @@ fun t2() : String {
         if (true) {
             return@ 1
         }
-        <!RETURN_NOT_ALLOWED!>return <!TYPE_MISMATCH!>"s"<!><!>
+        <!RETURN_NOT_ALLOWED!>return "s"<!>
     }
     return "s"
 }
@@ -32,10 +32,10 @@ fun t3() : String {
     invoker(
     @{
         if (true) {
-            <!RETURN_NOT_ALLOWED!>return@t3 <!TYPE_MISMATCH!>"1"<!><!>
+            <!RETURN_NOT_ALLOWED!>return@t3 "1"<!>
         }
         else {
-            <!RETURN_NOT_ALLOWED!>return <!TYPE_MISMATCH!>"2"<!><!>
+            <!RETURN_NOT_ALLOWED!>return <!ERROR_COMPILE_TIME_VALUE!>2<!><!>
         }
         return@ 0
     }
@@ -47,7 +47,7 @@ fun t3() : String {
     )
     invoker(
     {
-        <!RETURN_NOT_ALLOWED!>return <!TYPE_MISMATCH!>"0"<!><!>
+        <!RETURN_NOT_ALLOWED!>return "0"<!>
     }
     )
     return "2"

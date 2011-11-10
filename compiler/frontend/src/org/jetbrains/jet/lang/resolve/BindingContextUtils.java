@@ -4,8 +4,12 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.JetType;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 /**
  * @author abreslav
@@ -39,5 +43,13 @@ public class BindingContextUtils {
             return (VariableDescriptor) descriptor;
         }
         return null;
+    }
+
+    @Nullable
+    public static JetType getFunctionReturnType(@NotNull BindingContext bindingContext, @NotNull JetFunction function) {
+        DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
+        assert descriptor instanceof FunctionDescriptor;
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+        return functionDescriptor.getReturnType();
     }
 }
