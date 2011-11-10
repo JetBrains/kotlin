@@ -269,8 +269,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     private void addSubtypingConstraintOnTypeValues(TypeValue typeValueForLower, TypeValue typeValueForUpper) {
         println(typeValueForLower + " :< " + typeValueForUpper);
-        typeValueForLower.getUpperBounds().add(typeValueForUpper);
-        typeValueForUpper.getLowerBounds().add(typeValueForLower);
+        if (typeValueForLower != typeValueForUpper) {
+            typeValueForLower.getUpperBounds().add(typeValueForUpper);
+            typeValueForUpper.getLowerBounds().add(typeValueForLower);
+        }
     }
 
     @Override
@@ -286,7 +288,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                     KnownType knownBoundType = (KnownType) upperBound;
                     boolean ok = constraintExpander.run(jetType, knownBoundType.getType());
                     if (!ok) {
-                        return new Solution(true);
+                        return new Solution().registerError("Mismatch while expanding constraints");
                     }
                 }
             }
@@ -314,7 +316,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         // Find inconsistencies
-        Solution solution = new Solution(false);
+        Solution solution = new Solution();
 
         for (UnknownType unknownType : unknownTypes.values()) {
             check(unknownType, solution);
@@ -337,20 +339,33 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             for (TypeValue upperBound : typeValue.getUpperBounds()) {
                 JetType boundingType = solution.getSubstitutor().substitute(upperBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(type, boundingType)) { // TODO
-                    solution.registerError();
+                    solution.registerError("Constraint violation: " + type + " is not a subtype of " + boundingType);
                     println("Constraint violation: " + type + " :< " + boundingType);
                 }
             }
             for (TypeValue lowerBound : typeValue.getLowerBounds()) {
                 JetType boundingType = solution.getSubstitutor().substitute(lowerBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(boundingType, type)) {
-                    solution.registerError();
+                    solution.registerError("Constraint violation: " + boundingType + " is not a subtype of " + type);
                     println("Constraint violation: " + boundingType + " :< " + type);
                 }
             }
         }
         catch (LoopInTypeVariableConstraintsException e) {
-            solution.registerError();
+            println("-------------------------------------------------------------------");
+            for (Map.Entry<TypeParameterDescriptor, UnknownType> entry : unknownTypes.entrySet()) {
+                println("Unknown: " + entry.getKey());
+                UnknownType unknownType = entry.getValue();
+                println("Lower bounds: ");
+                for (TypeValue lowerBound : unknownType.getLowerBounds()) {
+                    println("  " + lowerBound);
+                }
+                println("Upper bounds: ");
+                for (TypeValue lowerBound : unknownType.getUpperBounds()) {
+                    println("  " + lowerBound);
+                }
+            }
+            solution.registerError("[TODO] Loop in constraints");
             e.printStackTrace();
         }
     }
@@ -366,6 +381,25 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             for (TypeValue transitiveBound : upperBounds) {
                 addSubtypingConstraintOnTypeValues(current, transitiveBound);
             }
+        }
+    }
+
+    private static class Error implements SolutionStatus {
+
+        private final String message;
+
+        private Error(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public boolean isSuccessful() {
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return message;
         }
     }
 
@@ -388,19 +422,22 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 return false;
             }
         });
-        private boolean failed;
 
-        public Solution(boolean failed) {
-            this.failed = failed;
+        private SolutionStatus status;
+
+        public Solution() {
+            this.status = SolutionStatus.SUCCESS;
         }
 
-        private void registerError() {
-            failed = true;
+        private Solution registerError(String message) {
+            status = new Error(message);
+            return this;
         }
 
+        @NotNull
         @Override
-        public boolean isSuccessful() {
-            return !failed;
+        public SolutionStatus getStatus() {
+            return status;
         }
 
         @Override
@@ -409,6 +446,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return value == null ? null : value.getType();
         }
 
+        @NotNull
         @Override
         public TypeSubstitutor getSubstitutor() {
             return typeSubstitutor;
