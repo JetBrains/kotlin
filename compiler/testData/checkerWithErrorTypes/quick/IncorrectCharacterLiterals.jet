@@ -1,0 +1,6 @@
+// http://youtrack.jetbrains.net/issue/KT-451
+
+fun ff() {
+    val b = <!ERROR_COMPILE_TIME_VALUE!>''<!>
+    val c = <!ERROR_COMPILE_TIME_VALUE!>'23'<!>
+}
