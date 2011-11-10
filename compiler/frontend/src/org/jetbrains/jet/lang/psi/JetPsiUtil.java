@@ -73,4 +73,30 @@ public class JetPsiUtil {
         }
         return null;
     }
+
+    @NotNull
+    public static String unquoteIdentifier(@NotNull String quoted) {
+        if (quoted.indexOf('`') < 0) {
+            return quoted;
+        }
+
+        if (quoted.startsWith("`") && quoted.endsWith("`") && quoted.length() >= 2) {
+            return quoted.substring(1, quoted.length() - 1);
+        } else {
+            return quoted;
+        }
+    }
+    
+    @NotNull
+    public static String unquoteIdentifierOrFieldReference(@NotNull String quoted) {
+        if (quoted.indexOf('`') < 0) {
+            return quoted;
+        }
+
+        if (quoted.startsWith("$")) {
+            return "$" + unquoteIdentifier(quoted.substring(1));
+        } else {
+            return unquoteIdentifier(quoted);
+        }
+    }
 }

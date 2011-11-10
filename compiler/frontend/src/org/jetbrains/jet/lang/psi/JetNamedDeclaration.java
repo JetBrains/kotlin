@@ -19,7 +19,12 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
     @Override
     public String getName() {
         PsiElement identifier = getNameIdentifier();
-        return identifier != null ? identifier.getText() : null;
+        if (identifier != null) {
+            String text = identifier.getText();
+            return text != null ? JetPsiUtil.unquoteIdentifier(text) : null;
+        } else {
+            return null;
+        }
     }
 
     @Override
