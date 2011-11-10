@@ -152,4 +152,9 @@ public final class TranslationContext {
         assert descriptor != null : "Element should have a descriptor";
         return getScopeForDescriptor(descriptor);
     }
+
+    @NotNull
+    public DeclarationExtractor declarations() {
+        return extractor;
+    }
 }

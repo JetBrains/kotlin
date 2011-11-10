@@ -57,4 +57,19 @@ public final class ClassTest extends TranslationTest {
         testFooBoxIsTrue("accessToInstanceProperty.kt");
     }
 
+    @Test
+    public void twoClassesWithProperties() throws Exception {
+        testFooBoxIsTrue("twoClassesWithProperties.kt");
+    }
+
+    @Test
+    public void setter() throws Exception {
+        performTest("setter.kt", "foo", "f", 99.0);
+    }
+
+    @Test
+    public void constructorWithParameter() throws Exception {
+        testFooBoxIsTrue("constructorWithParameter.kt");
+    }
+
 }

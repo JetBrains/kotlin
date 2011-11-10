@@ -27,6 +27,7 @@ public final class OperationTranslator {
         map.put(JetTokens.LT, JsBinaryOperator.LT);
         map.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
         map.put(JetTokens.EQEQ, JsBinaryOperator.EQ);
+        map.put(JetTokens.ANDAND, JsBinaryOperator.AND);
     }
 
     public static JsBinaryOperator getBinaryOperator(JetToken token) {
@@ -38,5 +39,8 @@ public final class OperationTranslator {
         throw new AssertionError("Invalid map: should contain token: " + token.toString());
     }
 
+    public static boolean isAssignment(JetToken token) {
+        return (token == JetTokens.EQ);
+    }
 
 }

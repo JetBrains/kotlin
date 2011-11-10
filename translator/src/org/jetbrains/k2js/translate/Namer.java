@@ -20,9 +20,9 @@ public final class Namer {
     public static final String INITIALIZE_METHOD_NAME = "initialize";
     private static final String CLASS_OBJECT_NAME = "Class";
     //private static final String CLASS_CREATE_METHOD_NAME = "create";
-    private static final String SETTER_PREFIX = "_set_";
-    private static final String GETTER_PREFIX = "_get_";
-    private static final String BACKING_FIELD_PREFIX = "_$_";
+    private static final String SETTER_PREFIX = "set_";
+    private static final String GETTER_PREFIX = "get_";
+    private static final String BACKING_FIELD_PREFIX = "_";
    // public static final String DEFAULT_SETTER_PARAM_NAME = "val";
 
     public static String getClassObjectName() {

@@ -75,11 +75,13 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     private JsFunction generateDefaultGetterFunction(@NotNull JetProperty expression,
                                                      @NotNull TranslationContext context) {
         JsNameRef backingFieldRef = declareOrGetBackingFieldName(getPropertyName(expression), context).makeRef();
+        backingFieldRef.setQualifier(new JsThisRef());
         JsReturn returnExpression = new JsReturn(backingFieldRef);
         return AstUtil.newFunction
             (context.enclosingScope(), null, new ArrayList<JsParameter>(), AstUtil.convertToBlock(returnExpression));
     }
 
+    //TODO rewrite
     @NotNull
     private JsName declareOrGetBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
         String backingFieldName = Namer.getBackingFieldNameForProperty(propertyName);
@@ -113,6 +115,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     private JsBinaryOperation assignmentToBackingFieldFromDefaultParameter
         (@NotNull JetProperty expression, @NotNull TranslationContext context, @NotNull JsParameter defaultParameter) {
         JsNameRef backingFieldRef = declareOrGetBackingFieldName(getPropertyName(expression), context).makeRef();
+        backingFieldRef.setQualifier(new JsThisRef());
         JsBinaryOperation assignExpression = new JsBinaryOperation(JsBinaryOperator.ASG);
         assignExpression.setArg1(backingFieldRef);
         assignExpression.setArg2(defaultParameter.getName().makeRef());

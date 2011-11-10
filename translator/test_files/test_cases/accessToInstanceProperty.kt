@@ -1,10 +1,11 @@
 namespace foo
 
 class Test() {
-    val a : Int = 1
+    var a : Int = 100
 }
 
 fun box() : Boolean {
     var test = Test()
-    return (test.a == 1)
+    test.a = 1
+    return (1 == test.a)
 }

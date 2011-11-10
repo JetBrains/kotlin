@@ -1,8 +1,6 @@
 package org.jetbrains.k2js.declarations;
 
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
-import com.intellij.codeInspection.ex.Descriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.k2js.translate.Namer;
@@ -20,11 +18,11 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
 
 
     @Override
-    public Void visitClassDescriptor(ClassDescriptor descriptor, JsScope enclosingScope) {
+    public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @NotNull JsScope enclosingScope) {
         String className = descriptor.getName();
-        enclosingScope.declareName(className);
-        JsScope classScope = new JsScope(enclosingScope, "Scope for class " + className);
-        extractor.put(descriptor, classScope);
+        extractor.putName(descriptor, enclosingScope.declareName(className));
+        JsScope classScope = new JsScope(enclosingScope, "class " + className);
+        extractor.putScope(descriptor, classScope);
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             memberDescriptor.accept(this, classScope);
@@ -33,28 +31,50 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
     }
 
     @Override
-    public Void visitFunctionDescriptor(FunctionDescriptor descriptor, JsScope enclosingScope) {
+    public Void visitFunctionDescriptor(@NotNull FunctionDescriptor descriptor, @NotNull JsScope enclosingScope) {
         String functionName = descriptor.getName();
-        enclosingScope.declareName(functionName);
-        JsScope functionScope = new JsScope(enclosingScope, "Scope for function " + functionName);
-        extractor.put(descriptor, functionScope);
+        extractor.putName(descriptor, enclosingScope.declareName(functionName));
+        JsScope functionScope = new JsScope(enclosingScope, "function " + functionName);
+        extractor.putScope(descriptor, functionScope);
         return null;
     }
 
     @Override
-    public Void visitPropertyDescriptor(PropertyDescriptor descriptor, JsScope enclosingScope) {
-        String propertyName = descriptor.getName();
-        enclosingScope.declareName(Namer.getNameForSetter(propertyName));
-        enclosingScope.declareName(Namer.getNameForGetter(propertyName));
+    public Void visitPropertyDescriptor(@NotNull PropertyDescriptor descriptor, @NotNull JsScope enclosingScope) {
+        PropertySetterDescriptor setter = descriptor.getSetter();
+        if (setter != null) {
+            setter.accept(this, enclosingScope);
+        }
+        PropertyGetterDescriptor getter = descriptor.getGetter();
+        if (getter != null) {
+            getter.accept(this, enclosingScope);
+        }
+        // We do not put this name into extractor because it can't be referenced from outside
+        // thus it doesn't have a descriptor.
+        enclosingScope.declareName(Namer.getBackingFieldNameForProperty(descriptor.getName()));
+        return null;
+    }
+
+    @Override
+    public Void visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, JsScope enclosingScope) {
+        String getterName = Namer.getNameForGetter(descriptor.getCorrespondingProperty().getName());
+        extractor.putName(descriptor, enclosingScope.declareName(getterName));
+        return null;
+    }
+
+    @Override
+    public Void visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, JsScope enclosingScope) {
+        String setterName = Namer.getNameForSetter(descriptor.getCorrespondingProperty().getName());
+        extractor.putName(descriptor, enclosingScope.declareName(setterName));
         return null;
     }
 
     @Override
     public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, JsScope enclosingScope) {
         String namespaceName = descriptor.getName();
-        enclosingScope.declareName(namespaceName);
-        JsScope namespaceScope = new JsScope(enclosingScope, "Scope for namespace " + namespaceName);
-        extractor.put(descriptor, namespaceScope);
+        extractor.putName(descriptor, enclosingScope.declareName(namespaceName));
+        JsScope namespaceScope = new JsScope(enclosingScope, "namespace " + namespaceName);
+        extractor.putScope(descriptor, namespaceScope);
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getMemberScope().getAllDescriptors()) {
             memberDescriptor.accept(this, namespaceScope);

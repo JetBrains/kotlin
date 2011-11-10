@@ -12,38 +12,44 @@ import java.util.List;
  */
 public class JsBlock extends JsStatement {
 
-  private final List<JsStatement> stmts = new ArrayList<JsStatement>();
+    private final List<JsStatement> stmts = new ArrayList<JsStatement>();
 
-  public JsBlock() {
-  }
-
-  public JsBlock(JsStatement stmt) {
-    stmts.add(stmt);
-  }
-
-  public List<JsStatement> getStatements() {
-    return stmts;
-  }
-
-  public void addStatement(JsStatement statement) {
-      assert statement != null;
-      stmts.add(statement);
-  }
-
-  public boolean isGlobalBlock() {
-    return false;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
-      v.acceptWithInsertRemove(stmts);
+    public JsBlock() {
     }
-    v.endVisit(this, ctx);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.BLOCK;
-  }
+    public JsBlock(JsStatement stmt) {
+        stmts.add(stmt);
+    }
+
+    public List<JsStatement> getStatements() {
+        return stmts;
+    }
+
+    public void addStatement(JsStatement statement) {
+        assert statement != null;
+        stmts.add(statement);
+    }
+
+    public boolean isGlobalBlock() {
+        return false;
+    }
+
+    @Override
+    public void traverse(JsVisitor v, JsContext ctx) {
+        if (v.visit(this, ctx)) {
+            v.acceptWithInsertRemove(stmts);
+        }
+        v.endVisit(this, ctx);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.BLOCK;
+    }
+
+    public void setStatements(List<JsStatement> statements) {
+        assert this.stmts.isEmpty() : "Already contains statements.";
+        this.stmts.addAll(statements);
+    }
+
 }

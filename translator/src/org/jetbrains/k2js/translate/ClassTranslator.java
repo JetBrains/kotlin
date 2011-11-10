@@ -2,12 +2,16 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
+import org.apache.velocity.runtime.directive.Block;
+import org.eclipse.jdt.core.dom.Initializer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import sun.org.mozilla.javascript.internal.Function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +63,16 @@ public final class ClassTranslator extends AbstractTranslator {
         return initializer;
     }
 
-    private JsFunction generateInitializeMethodBody(JetClass classDeclaration) {
-        return AstUtil.newFunction(scope(), null, null, new JsBlock());
+    // Note: we explicitly create JsFunction here because initialize function itself has no descriptor and
+    // is never referenced explicitly.
+    @NotNull
+    private JsFunction generateInitializeMethodBody(@NotNull JetClass classDeclaration) {
+        InitializerVisitor initializerVisitor = new InitializerVisitor();
+        List<JsStatement> initializerStatements = classDeclaration.accept(initializerVisitor,
+                translationContext().newClass(classDeclaration));
+        JsBlock block = new JsBlock();
+        block.setStatements(initializerStatements);
+        return AstUtil.newFunction(translationContext().enclosingScope(), null, null, block);
     }
 
 

@@ -59,4 +59,10 @@ public final class JsInvocation extends JsExpression implements HasArguments {
     public NodeKind getKind() {
         return NodeKind.INVOKE;
     }
+
+    // Pavel Talanov
+    public void setArguments(List<JsExpression> arguments) {
+        assert this.args.isEmpty() : "Arguments already set.";
+        this.args.addAll(arguments);
+    }
 }
