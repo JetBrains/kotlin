@@ -185,7 +185,7 @@ fun testFunctionLiterals() {
 
     val endsWithReAssignment = { () : Int =>
         var x = 1
-        <!EXPECTED_TYPE_MISMATCH!>x += 333<!>
+        <!ASSIGNMENT_TYPE_MISMATCH!>x += 333<!>
     }
 
     val endsWithFunDeclaration : fun() : String = {

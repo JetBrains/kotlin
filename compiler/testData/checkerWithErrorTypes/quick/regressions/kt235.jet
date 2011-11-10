@@ -1,0 +1,49 @@
+//KT-235 Illegal assignment return type
+
+namespace kt235
+
+fun main(args: Array<String>) {
+    val array = MyArray()
+    val f = { (): String =>
+       <!EXPECTED_TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected
+    }
+    val g = {(): String =>
+       var x = 1
+       <!EXPECTED_TYPE_MISMATCH!>x += 2<!>  //no error, but it should be here
+    }
+    val h = {(): String =>
+       var x = 1
+       <!EXPECTED_TYPE_MISMATCH!>x = 2<!>  //the same
+    }
+    val array1 = MyArray1()
+    val x = { (): String =>
+       <!EXPECTED_TYPE_MISMATCH!>array1[2] = 23<!>
+    }
+
+    val fi = { (): Int =>
+       <!ASSIGNMENT_TYPE_MISMATCH!>array[2] = 23<!>
+    }
+    val gi = {(): Int =>
+       var x = 1
+       <!ASSIGNMENT_TYPE_MISMATCH!>x += 21<!>
+    }
+
+    var m: MyNumber = MyNumber()
+    val a = { (): MyNumber =>
+        m++
+    }
+}
+
+class MyArray() {
+    fun get(i: Int): Int = 1
+    fun set(i: Int, value: Int): Int = 1
+}
+
+class MyArray1() {
+    fun get(i: Int): Int = 1
+    fun set(i: Int, value: Int) {}
+}
+
+class MyNumber() {
+    fun inc(): MyNumber = MyNumber()
+}

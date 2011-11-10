@@ -215,6 +215,7 @@ public interface Errors {
     SimpleDiagnosticFactory NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = SimpleDiagnosticFactory.create(ERROR, "A 'return' expression required in a function with a block body ('{...}')");
     ParameterizedDiagnosticFactory1<JetType> RETURN_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "This function must return a value of type {0}");
     ParameterizedDiagnosticFactory1<JetType> EXPECTED_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "Expected a value of type {0}");
+    ParameterizedDiagnosticFactory1<JetType> ASSIGNMENT_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "Expected a value of type {0}. Assignment operation is not an expression, so it does not return any value");
 
     ParameterizedDiagnosticFactory1<JetType> UPPER_BOUND_VIOLATED = ParameterizedDiagnosticFactory1.create(ERROR, "An upper bound {0} is violated"); // TODO : Message
     ParameterizedDiagnosticFactory1<JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = ParameterizedDiagnosticFactory1.create(ERROR, "{0} is a final type, and thus a class object cannot extend it");
