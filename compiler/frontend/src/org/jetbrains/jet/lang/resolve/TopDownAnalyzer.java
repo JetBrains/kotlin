@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -45,6 +44,16 @@ public class TopDownAnalyzer {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             boolean declaredLocally) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, analyzeCompletely);
+        doProcess(context, outerScope, owner, declarations, flowDataTraceFactory, declaredLocally);
+
+    }
+
+    private static void doProcess(
+            TopDownAnalysisContext context, JetScope outerScope,
+            NamespaceLike owner,
+            Collection<? extends JetDeclaration> declarations,
+            JetControlFlowDataTraceFactory flowDataTraceFactory,
+            boolean declaredLocally) {
 //        context.enableDebugOutput();
         context.debug("Enter");
 
@@ -53,9 +62,11 @@ public class TopDownAnalyzer {
         new DelegationResolver(context).process();
         new OverrideResolver(context).process();
         new OverloadResolver(context).process();
-        new BodyResolver(context).resolveBehaviorDeclarationBodies();
-        new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
-        new DeclarationsChecker(context).process();        
+        if (!context.analyzingBootstrapLibrary()) {
+            new BodyResolver(context).resolveBehaviorDeclarationBodies();
+            new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
+            new DeclarationsChecker(context).process();
+        }
 
         context.debug("Exit");
         context.printDebugOutput(System.out);
@@ -69,17 +80,9 @@ public class TopDownAnalyzer {
         context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
         context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
         context.getDeclaringScopes().put(namespace, outerScope);
+        context.setAnalyzingBootstrapLibrary(true);
 
-        new TypeHierarchyResolver(context).process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
-        new DeclarationResolver(context).process();
-        new DelegationResolver(context).process();
-        OverrideResolver overrideResolver = new OverrideResolver(context) {
-            @Override
-            protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
-            }
-        };
-        overrideResolver.process();
-        new BodyResolver(context).resolveBehaviorDeclarationBodies();
+        doProcess(context, outerScope, standardLibraryNamespace, namespace.getDeclarations(), JetControlFlowDataTraceFactory.EMPTY, false);
     }
 
     public static void processObject(

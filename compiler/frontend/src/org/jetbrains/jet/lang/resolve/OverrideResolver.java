@@ -97,6 +97,8 @@ public class OverrideResolver {
     }
 
     protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
+        if (context.analyzingBootstrapLibrary()) return;
+
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
             checkOverride(member);
