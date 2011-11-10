@@ -24,7 +24,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsStatement translateFunction(@NotNull JetNamedFunction jetFunction) {
+    public JsStatement translateAsFunction(@NotNull JetNamedFunction jetFunction) {
         JsName functionName = translationContext().namespaceScope().declareFreshName(jetFunction.getName());
         JsFunction function = generateFunctionObject(jetFunction);
         return AstUtil.convertToStatement(AstUtil.newAssignment

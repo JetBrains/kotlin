@@ -57,7 +57,7 @@ public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
     @Override
     public JsStatement visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
         FunctionTranslator functionTranslator = new FunctionTranslator(context);
-        return AstUtil.convertToStatement(functionTranslator.translateFunction(expression));
+        return AstUtil.convertToStatement(functionTranslator.translateAsFunction(expression));
     }
 
 }

@@ -69,4 +69,9 @@ public final class FunctionTest extends TranslationTest {
     public void stringAssignment() throws Exception {
         testFooBoxIsTrue("stringAssignment.kt");
     }
+
+    @Test
+    public void functionUsedBeforeDeclaration() throws Exception {
+        testFooBoxIsTrue("functionUsedBeforeDeclaration.kt");
+    }
 }
