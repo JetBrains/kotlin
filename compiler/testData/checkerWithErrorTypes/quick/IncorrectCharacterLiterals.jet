@@ -4,6 +4,9 @@
 fun ff() {
     val b = <!ERROR_COMPILE_TIME_VALUE!>''<!>
     val c = <!ERROR_COMPILE_TIME_VALUE!>'23'<!>
+    val d = <!ERROR_COMPILE_TIME_VALUE!>'a<!>
+    val e = <!ERROR_COMPILE_TIME_VALUE!>'ab<!>
+    val f = <!ERROR_COMPILE_TIME_VALUE!>'\'<!>
 }
 
 fun test() {
