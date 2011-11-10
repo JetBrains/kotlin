@@ -30,10 +30,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             return null;
         }
         String text = referencedNameElement.getNode().getText();
-        if (text.startsWith("`") && text.endsWith("`") && text.length() >= 2) {
-            return text.substring(1, text.length()-1);
-        }
-        return text;
+        return text != null ? JetPsiUtil.unquoteIdentifierOrFieldReference(text) : null;
     }
 
     @Nullable @IfNotParsed

@@ -442,7 +442,7 @@ public class CallResolver {
                     }
 
                     ConstraintSystemSolution solution = constraintSystem.solve();
-                    if (solution.isSuccessful()) {
+                    if (solution.getStatus().isSuccessful()) {
                         D substitute = (D) candidate.substitute(solution.getSubstitutor());
                         assert substitute != null;
                         replaceValueParametersWithSubstitutedOnes(candidateCall, substitute);

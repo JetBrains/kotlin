@@ -1,0 +1,26 @@
+// http://youtrack.jetbrains.net/issue/KT-451
+// KT-451 Incorrect character literals cause assertion failures
+
+fun ff() {
+    val b = <!ERROR_COMPILE_TIME_VALUE!>''<!>
+    val c = <!ERROR_COMPILE_TIME_VALUE!>'23'<!>
+    val d = <!ERROR_COMPILE_TIME_VALUE!>'a<!>
+    val e = <!ERROR_COMPILE_TIME_VALUE!>'ab<!>
+    val f = <!ERROR_COMPILE_TIME_VALUE!>'\'<!>
+}
+
+fun test() {
+    'a'
+    '\n'
+    '\t'
+    '\b'
+    '\r'
+    '\"'
+    '\''
+    '\\'
+    '\$'
+    <!ERROR_COMPILE_TIME_VALUE!>'\x'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\123'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\ra'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\000'<!>
+}

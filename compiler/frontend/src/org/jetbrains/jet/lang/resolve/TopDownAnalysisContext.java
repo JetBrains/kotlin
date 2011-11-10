@@ -41,6 +41,8 @@ import java.util.Set;
     
     private StringBuilder debugOutput;
 
+    private boolean analyzingBootstrapLibrary = false;
+
     public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely) {
         this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
@@ -64,6 +66,14 @@ import java.util.Set;
         if (debugOutput != null) {
             out.print(debugOutput);
         }
+    }
+
+    public boolean analyzingBootstrapLibrary() {
+        return analyzingBootstrapLibrary;
+    }
+
+    public void setAnalyzingBootstrapLibrary(boolean analyzingBootstrapLibrary) {
+        this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
     }
 
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {

@@ -9,13 +9,13 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverloadUtil;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 /**
- * @author abreslav
+ * @author Stepan Koltsov
  */
-public class JetOverridingTest extends JetLiteFixture {
+public class JetOverloadTest extends JetLiteFixture {
 
     private ModuleDescriptor root = new ModuleDescriptor("test_root");
     private JetStandardLibrary library;
@@ -36,115 +36,123 @@ public class JetOverridingTest extends JetLiteFixture {
     }
 
     public void testBasic() throws Exception {
-        assertOverridable(
+
+        assertNotOverloadable(
                 "fun a() : Int",
                 "fun a() : Int");
 
-        assertOverridable(
+        assertNotOverloadable(
+                "fun a() : Int",
+                "fun a() : Any");
+
+        assertNotOverloadable(
                 "fun a<T1>() : T1",
                 "fun a<T>() : T");
 
-        assertOverridable(
+        assertNotOverloadable(
                 "fun a<T1>(a : T1) : T1",
                 "fun a<T>(a : T) : T");
 
-        assertOverridable(
+        assertNotOverloadable(
                 "fun a<T1, X : T1>(a : T1) : T1",
                 "fun a<T, Y : T>(a : T) : T");
 
-        assertOverridable(
+        assertNotOverloadable(
                 "fun a<T1, X : T1>(a : T1) : T1",
                 "fun a<T, Y : T>(a : T) : Y");
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun ab() : Int",
                 "fun a() : Int");
 
-        assertOverridable(
+        assertNotOverloadable(
                 "fun a() : Int",
                 "fun a() : Any");
 
-        // return types are not cheked in the utility
-        /*
-        assertNotOverridable(
-                "fun a() : Any",
-                "fun a() : Int");
-        */
-
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a(a : Int) : Int",
                 "fun a() : Int");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a() : Int",
                 "fun a(a : Int) : Int");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a(a : Int?) : Int",
                 "fun a(a : Int) : Int");
 
-        assertNotOverridable(
+        // XXX: different from overridable
+        /*
+        assertNotOverloadable(
                 "fun a<T>(a : Int) : Int",
                 "fun a(a : Int) : Int");
+        */
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : T1>(a : T1) : T1",
                 "fun a<T, Y>(a : T) : T");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : T1>(a : T1) : T1",
                 "fun a<T, Y : T>(a : Y) : T");
 
-        assertOverridable(
+        assertNotOverloadable(
                 "fun a<T1, X : T1>(a : T1) : X",
                 "fun a<T, Y : T>(a : T) : T");
 
-        assertOverridable(
+        assertNotOverloadable(
                 "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
                 "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : Array<T1>>(a : Array<in T1>) : T1",
                 "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
                 "fun a<T, Y : Array<in T>>(a : Array<in T>) : T");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
                 "fun a<T, Y : Array<*>>(a : Array<in T>) : T");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
                 "fun a<T, Y : Array<out T>>(a : Array<out T>) : T");
 
-        assertNotOverridable(
+        assertOverloadable(
                 "fun a<T1, X : Array<out T1>>(a : Array<*>) : T1",
                 "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
 
     }
 
-    private void assertOverridable(String superFun, String subFun) {
-        assertOverridabilityRelation(superFun, subFun, false);
+    private void assertNotOverloadable(String funA, String funB) {
+        assertOverloadabilityRelation(funA, funB, true);
     }
 
-    private void assertNotOverridable(String superFun, String subFun) {
-        assertOverridabilityRelation(superFun, subFun, true);
+    private void assertOverloadable(String funA, String funB) {
+        assertOverloadabilityRelation(funA, funB, false);
     }
 
-    private void assertOverridabilityRelation(String superFun, String subFun, boolean expectedIsError) {
-        FunctionDescriptor a = makeFunction(superFun);
-        FunctionDescriptor b = makeFunction(subFun);
-        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(a, b);
-        assertEquals(overridableWith.getMessage(), expectedIsError, !overridableWith.isSuccess());
+    private void assertOverloadabilityRelation(String funA, String funB, boolean expectedIsError) {
+        FunctionDescriptor a = makeFunction(funA);
+        FunctionDescriptor b = makeFunction(funB);
+        {
+            OverloadUtil.OverloadCompatibilityInfo overloadableWith = OverloadUtil.isOverloadble(a, b);
+            assertEquals(overloadableWith.getMessage(), expectedIsError, !overloadableWith.isSuccess());
+        }
+        {
+            OverloadUtil.OverloadCompatibilityInfo overloadableWith = OverloadUtil.isOverloadble(b, a);
+            assertEquals(overloadableWith.getMessage(), expectedIsError, !overloadableWith.isSuccess());
+        }
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
         return classDescriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function);
     }
+
 }

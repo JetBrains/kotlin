@@ -30,3 +30,31 @@ JetFile: QuotedIdentifiers.jet
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('`$`')
+      PsiWhiteSpace('\n')
+      TYPE_PARAMETER_LIST
+        <empty list>
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('`$$`')
+      PsiWhiteSpace('\n')
+      TYPE_PARAMETER_LIST
+        <empty list>
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('` `')
+      PsiWhiteSpace('\n')
+      TYPE_PARAMETER_LIST
+        <empty list>
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('`1`')
+      TYPE_PARAMETER_LIST
+        <empty list>

@@ -93,6 +93,13 @@ public class OverridingUtil {
 
     @NotNull
     public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        return isOverridableByImpl(superDescriptor, subDescriptor, true);
+    }
+
+    /**
+     * @param forOverride true for override, false for overload
+     */
+    static OverrideCompatibilityInfo isOverridableByImpl(CallableDescriptor superDescriptor, CallableDescriptor subDescriptor, boolean forOverride) {
         if (superDescriptor instanceof FunctionDescriptor) {
             if (subDescriptor instanceof PropertyDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
         }

@@ -18,7 +18,3 @@ fun test(a : java.util.ArrayList<Int>) {
 fun test(a : java.lang.Class<Int>) {
 
 }
-
-fun test(a : java.lang.Class<Int>) {
-
-}

@@ -1,5 +1,6 @@
 trait A {
     fun foo() : Int = 1
+    fun foo2() : Int = 1
     fun foo1() : Int = 1
     val a : Int
     val a1 : Int
@@ -12,7 +13,7 @@ trait A {
 abstract class B() : A {
     override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>foo<!>() {
     }
-    override fun foo() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Unit<!> {
+    override fun foo2() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Unit<!> {
     }
 
     override val a : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 1.dbl

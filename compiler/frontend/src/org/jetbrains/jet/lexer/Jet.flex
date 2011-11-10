@@ -1,4 +1,3 @@
-/* It's an automatically generated code. Do not modify it. */
 package org.jetbrains.jet.lexer;
 
 import java.util.*;
@@ -59,7 +58,7 @@ IDENTIFIER_PART=[:digit:]|{LETTER}
 PLAIN_IDENTIFIER={LETTER} {IDENTIFIER_PART}*
 // TODO: this one MUST allow everything accepted by the runtime
 // TODO: Replace backticks by one backslash in the begining
-ESCAPED_IDENTIFIER = `{PLAIN_IDENTIFIER}`
+ESCAPED_IDENTIFIER = `[^`\n]+`
 IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}
 LABEL_IDENTIFIER = \@{IDENTIFIER}

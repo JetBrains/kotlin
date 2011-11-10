@@ -57,6 +57,7 @@ public class BodyResolver {
         });
 
         // This tracks access to properties in order to register primary constructor parameters that yield real fields (JET-9)
+        // NOTE!!! This code is not used, because we do not allow constructor parameter access in member bodies
         this.traceForMembers = new ObservableBindingTrace(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {

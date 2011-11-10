@@ -164,22 +164,30 @@ public class CompileTimeConstantResolver {
         if (error != null) {
             return error;
         }
-        assert text.charAt(0) == '\'' && text.charAt(text.length() - 1) == '\'';
+
+        if (text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
+            return new ErrorValue("Incorret character constant");
+        }
 
         text = text.substring(1, text.length() - 1);
-        assert text.length() < 3 && text.length() > 0;
 
-        if (text.length() == 2) {
-            assert text.charAt(0) == '\\';
+        if (text.length() == 0) {
+            return new ErrorValue("Empty character literal");
+        } else if (text.length() == 1) {
+            if (text.charAt(0) == '\\') {
+                return new ErrorValue("Illegal escape: " + text);
+            } else {
+                return new CharValue(text.charAt(0));
+            }
+        } else if (text.length() == 2 && text.charAt(0) == '\\') {
             Character escaped = translateEscape(text.charAt(1));
             if (escaped == null) {
                 return new ErrorValue("Illegal escape: " + text);
             }
             return new CharValue(escaped);
+        } else {
+            return new ErrorValue("Too many characters in character literal");
         }
-
-        assert text.length() == 1;
-        return new CharValue(text.charAt(0));
     }
 
     @Nullable

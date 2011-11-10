@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types.inference;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -9,8 +10,10 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
  * @author abreslav
  */
 public interface ConstraintSystemSolution {
-    boolean isSuccessful();
+    @NotNull
+    SolutionStatus getStatus();
 
+    @NotNull
     TypeSubstitutor getSubstitutor();
 
     @Nullable
