@@ -61,6 +61,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetType visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+        if (functionLiteral.getBodyExpression() == null) return null;
 
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
         final JetType receiverType;
@@ -137,19 +138,22 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
         if (returnTypeRef != null) {
             returnType = context.getTypeResolver().resolveType(context.scope, returnTypeRef);
-            context.getServices().checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).replaceExpectedReturnType(returnType).replaceDataFlowInfo(context.dataFlowInfo));
+            context.getServices().checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).
+                    replaceExpectedType(returnType).replaceExpectedReturnType(returnType).replaceDataFlowInfo(context.dataFlowInfo));
         }
         else {
             if (functionTypeExpected) {
-                returnType = JetStandardClasses.getReturnType(expectedType);
+                returnType = JetStandardClasses.obtainReturnTypeFromFunctionType(expectedType);
             }
-            returnType = context.getServices().getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT, context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType));
+//        }
+            returnType = context.getServices().getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT,
+                                                                    context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType));
         }
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
         functionDescriptor.setReturnType(safeReturnType);
 
         if (functionTypeExpected) {
-            JetType expectedReturnType = JetStandardClasses.getReturnType(expectedType);
+            JetType expectedReturnType = JetStandardClasses.obtainReturnTypeFromFunctionType(expectedType);
             if (JetStandardClasses.isUnit(expectedReturnType)) {
                 functionDescriptor.setReturnType(expectedReturnType);
                 return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, expectedReturnType), expression, context);

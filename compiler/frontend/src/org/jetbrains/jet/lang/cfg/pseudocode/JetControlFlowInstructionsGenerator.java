@@ -45,7 +45,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
     @Override
     public void enterSubroutine(@NotNull JetDeclaration subroutine) {
-        pushBuilder(subroutine, subroutine);
+        if (builder != null && subroutine instanceof JetFunctionLiteral) {
+            pushBuilder(subroutine, builder.getReturnSubroutine());
+        }
+        else {
+            pushBuilder(subroutine, subroutine);
+        }
         assert builder != null;
         builder.enterSubroutine(subroutine);
     }
@@ -66,13 +71,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         private final Pseudocode pseudocode;
         private final Label error;
         private final Label sink;
-        private final JetElement currentSubroutine;
+        private final JetElement returnSubroutine;
 
-        private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement currentSubroutine) {
+        private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement returnSubroutine) {
             this.pseudocode = new Pseudocode(scopingElement);
             this.error = pseudocode.createLabel("error");
             this.sink = pseudocode.createLabel("sink");
-            this.currentSubroutine = currentSubroutine;
+            this.returnSubroutine = returnSubroutine;
         }
 
         public Pseudocode getPseudocode() {
@@ -134,9 +139,15 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             add(new SubroutineEnterInstruction(subroutine));
         }
 
+        @NotNull
         @Override
         public JetElement getCurrentSubroutine() {
-            return currentSubroutine;// subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
+            return pseudocode.getCorrespondingElement();
+        }
+
+        @Override
+        public JetElement getReturnSubroutine() {
+            return returnSubroutine;// subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
         }
 
         @Override

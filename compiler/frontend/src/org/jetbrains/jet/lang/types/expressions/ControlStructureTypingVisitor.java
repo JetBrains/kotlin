@@ -1,12 +1,14 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -40,7 +42,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType conditionType = facade.getType(condition, context.replaceScope(scope));
 
             if (conditionType != null && !isBoolean(context.semanticServices, conditionType)) {
-//                    context.trace.getErrorHandler().genericError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(condition, conditionType));
             }
         }
@@ -201,7 +202,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (expectedParameterType != null &&
                         actualParameterType != null &&
                         !context.semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
-//                        context.trace.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
                     context.trace.report(TYPE_MISMATCH_IN_FOR_LOOP.on(typeReference, expectedParameterType, actualParameterType));
                 }
             }
@@ -238,11 +238,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             boolean hasNextPropertySupported = hasNextProperty != null;
             if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
                 // TODO : overload resolution rules impose priorities here???
-//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");
                 context.trace.report(HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY.on(loopRangeExpression));
             }
             else if (!hasNextFunctionSupported && !hasNextPropertySupported) {
-//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
                 context.trace.report(HAS_NEXT_MISSING.on(loopRangeExpression));
             }
             else {
@@ -251,10 +249,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
             OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
             if (nextResolutionResults.isAmbiguity()) {
-//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
                 context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
             } else if (nextResolutionResults.isNothing()) {
-//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
                 context.trace.report(NEXT_MISSING.on(loopRangeExpression));
             } else {
                 FunctionDescriptor nextFunction = nextResolutionResults.getResult().getResultingDescriptor();
@@ -272,7 +268,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResults()));
             }
             else {
-//                    context.trace.getErrorHandler().genericError(reportErrorsOn, errorMessage);
                 context.trace.report(ITERATOR_MISSING.on(loopRangeExpression));
             }
         }
@@ -283,7 +278,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
         OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
-//                context.trace.getErrorHandler().genericError(loopRange.getNode(), "Method 'iterator().hasNext()' is ambiguous for this expression");
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
         } else if (hasNextResolutionResults.isNothing()) {
             return null;
@@ -291,7 +285,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             assert hasNextResolutionResults.isSuccess();
             JetType hasNextReturnType = hasNextResolutionResults.getResult().getResultingDescriptor().getReturnType();
             if (!isBoolean(context.semanticServices, hasNextReturnType)) {
-//                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
             }
         }
@@ -308,11 +301,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType hasNextReturnType = hasNextProperty.getOutType();
             if (hasNextReturnType == null) {
                 // TODO : accessibility
-//                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must be readable");
                 context.trace.report(HAS_NEXT_MUST_BE_READABLE.on(loopRange));
             }
             else if (!isBoolean(context.semanticServices, hasNextReturnType)) {
-//                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must return Boolean, but returns " + hasNextReturnType);
                 context.trace.report(HAS_NEXT_PROPERTY_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
             }
         }
@@ -373,20 +364,33 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext context) {
         context.labelResolver.recordLabel(expression, context);
         if (context.expectedReturnType == TypeUtils.FORBIDDEN) {
-//                context.trace.getErrorHandler().genericError(expression.getNode(), "'return' is not allowed here");
             context.trace.report(RETURN_NOT_ALLOWED.on(expression));
             return null;
         }
         JetExpression returnedExpression = expression.getReturnedExpression();
 
-        JetType returnedType = JetStandardClasses.getUnitType();
-        if (returnedExpression != null) {
-            facade.getType(returnedExpression, context.replaceExpectedType(context.expectedReturnType).replaceScope(context.scope));
+        JetType expectedType = context.expectedReturnType;
+        if (expression.getTargetLabel() == null) {
+            if (PsiTreeUtil.getParentOfType(expression, JetFunctionLiteral.class) ==
+                PsiTreeUtil.getParentOfType(expression, JetDeclaration.class)) {  // expression is located in function literal
+                JetNamedFunction function = JetPsiUtil.getSurroundingFunction(expression);
+                if (function != null && function.getReturnTypeRef() != null) {
+                    expectedType = BindingContextUtils.getFunctionReturnType(context.trace.getBindingContext(), function);
+                }
+            }
         }
         else {
-            if (context.expectedReturnType != TypeUtils.NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedReturnType)) {
-//                    context.trace.getErrorHandler().genericError(expression.getNode(), "This function must return a value of type " + context.expectedReturnType);
-                context.trace.report(RETURN_TYPE_MISMATCH.on(expression, context.expectedReturnType));
+            PsiElement element = context.trace.get(LABEL_TARGET, expression.getTargetLabel());
+            if (element instanceof JetFunction && ((JetFunction) element).getReturnTypeRef() != null) {
+                expectedType = BindingContextUtils.getFunctionReturnType(context.trace.getBindingContext(), (JetFunction) element);
+            }
+        }
+        if (returnedExpression != null) {
+            facade.getType(returnedExpression, context.replaceExpectedType(expectedType).replaceScope(context.scope));
+        }
+        else {
+            if (expectedType != TypeUtils.NO_EXPECTED_TYPE && expectedType != null && !JetStandardClasses.isUnit(expectedType)) {
+                context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }
         return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);

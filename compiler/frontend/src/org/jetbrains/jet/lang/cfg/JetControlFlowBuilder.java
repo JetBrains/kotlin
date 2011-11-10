@@ -49,8 +49,10 @@ public interface JetControlFlowBuilder {
 
     void exitSubroutine(@NotNull JetDeclaration subroutine);
 
-    @Nullable
+    @NotNull
     JetElement getCurrentSubroutine();
+    @Nullable
+    JetElement getReturnSubroutine();
     void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine);
 
     void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);

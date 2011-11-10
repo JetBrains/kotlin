@@ -1,0 +1,69 @@
+//kt-411 Wrong type expected when returning from a function literal
+
+namespace kt411
+
+fun f() {
+    invoker(
+    @{
+        return@ 11 // expects Function, but should expect Int
+    }
+    )
+}
+fun invoker(gen : fun() : Int) : Int  = 0
+
+//more tests
+fun t1() {
+    val v = @{ () : Int =>
+        return@ 111
+    }
+}
+
+fun t2() : String {
+    val g : fun(): Int = @{
+        if (true) {
+            return@ 1
+        }
+        <!RETURN_NOT_ALLOWED!>return "s"<!>
+    }
+    return "s"
+}
+
+fun t3() : String {
+    invoker(
+    @{
+        if (true) {
+            <!RETURN_NOT_ALLOWED!>return@t3 "1"<!>
+        }
+        else {
+            <!RETURN_NOT_ALLOWED!>return <!ERROR_COMPILE_TIME_VALUE!>2<!><!>
+        }
+        return@ 0
+    }
+    )
+    invoker(
+    @{ (): Int =>
+        return@ 1
+    }
+    )
+    invoker(
+    {
+        <!RETURN_NOT_ALLOWED!>return "0"<!>
+    }
+    )
+    return "2"
+}
+
+fun t4() : Int {
+    val h : fun (): String = @l{
+        return@l "a"
+    }
+    val g : fun (): String = @{ () : String =>
+        return@ "a"
+    }
+
+    fun inner(): String {
+        return "2"
+    }
+
+    return 12
+}

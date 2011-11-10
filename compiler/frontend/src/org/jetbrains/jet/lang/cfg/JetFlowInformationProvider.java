@@ -75,17 +75,22 @@ public class JetFlowInformationProvider {
         Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
+        final Set<Instruction> instructions = Sets.newHashSet(pseudocode.getInstructions());
         SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
         for (Instruction previousInstruction : exitInstruction.getPreviousInstructions()) {
             previousInstruction.accept(new InstructionVisitor() {
                 @Override
                 public void visitReturnValue(ReturnValueInstruction instruction) {
-                    returnedExpressions.add((JetExpression) instruction.getElement());
+                    if (instructions.contains(instruction)) { //exclude non-local return expressions
+                        returnedExpressions.add((JetExpression) instruction.getElement());
+                    }
                 }
 
                 @Override
                 public void visitReturnNoValue(ReturnNoValueInstruction instruction) {
-                    returnedExpressions.add((JetExpression) instruction.getElement());
+                    if (instructions.contains(instruction)) {
+                        returnedExpressions.add((JetExpression) instruction.getElement());
+                    }
                 }
 
 

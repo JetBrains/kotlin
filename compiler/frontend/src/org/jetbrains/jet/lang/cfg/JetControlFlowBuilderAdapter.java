@@ -140,11 +140,18 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         builder.exitSubroutine(subroutine);
     }
 
+    @NotNull
     @Override
-    @Nullable
     public JetElement getCurrentSubroutine() {
         assert builder != null;
         return builder.getCurrentSubroutine();
+    }
+
+    @Override
+    @Nullable
+    public JetElement getReturnSubroutine() {
+        assert builder != null;
+        return builder.getReturnSubroutine();
     }
 
     @Override

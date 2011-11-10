@@ -528,8 +528,8 @@ public class JetControlFlowProcessor {
             }
             JetSimpleNameExpression labelElement = expression.getTargetLabel();
             JetElement subroutine;
+            String labelName = expression.getLabelName();
             if (labelElement != null) {
-                String labelName = expression.getLabelName();
                 assert labelName != null;
                 PsiElement labeledElement = BindingContextUtils.resolveToDeclarationPsiElement(trace.getBindingContext(), labelElement);
                 if (labeledElement != null) {
@@ -541,12 +541,17 @@ public class JetControlFlowProcessor {
                 }
             }
             else {
-                subroutine = builder.getCurrentSubroutine();
+                subroutine = builder.getReturnSubroutine();
                 // TODO : a context check
             }
             //todo cache JetFunctionLiteral instead
             if (subroutine instanceof JetFunctionLiteralExpression) {
                 subroutine = ((JetFunctionLiteralExpression) subroutine).getFunctionLiteral();
+            }
+            boolean error = false;
+            if (builder.getCurrentSubroutine() != subroutine) {
+                trace.report(RETURN_NOT_ALLOWED.on(expression));
+                error = true;
             }
             if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetConstructor) {
                 if (returnedExpression == null) {
@@ -556,9 +561,9 @@ public class JetControlFlowProcessor {
                     builder.returnValue(expression, subroutine);
                 }
             }
-            else {
+            else if (!error) {
                 if (labelElement != null) {
-                    trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
+                    trace.report(NOT_A_RETURN_LABEL.on(expression, labelName));
                 }
                 else {
                     trace.report(RETURN_NOT_ALLOWED.on(expression));
