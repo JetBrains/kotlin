@@ -83,5 +83,7 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
 
         flowInformationProvider.markUninitializedVariables(function.asElement(), false, inLocalDeclaration);
+
+//        flowInformationProvider.markUnusedVariables(function.asElement());
     }
 }

@@ -356,6 +356,33 @@ public class JetFlowInformationProvider {
             }
         });
     }
+    
+    public void markUnusedVariables(@NotNull JetElement subroutine) {
+        Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+        assert pseudocode != null;
+        
+        final Set<VariableDescriptor> usedVariables = Sets.newHashSet();
+        JetControlFlowGraphTraverser.<Void>create(pseudocode, true).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
+            @Override
+            public void execute(Instruction instruction, @Nullable Void enterData, @Nullable Void exitData) {
+                if (instruction instanceof ReadValueInstruction) {
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, false);
+                    usedVariables.add(variableDescriptor);
+                }
+            }
+        });
+        Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);
+        for (VariableDescriptor declaredVariable : declaredVariables) {
+            if (!usedVariables.contains(declaredVariable)) {
+                PsiElement element = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredVariable);
+                if (element instanceof JetProperty) {
+                    PsiElement nameIdentifier = ((JetProperty) element).getNameIdentifier();
+                    PsiElement elementToMark = nameIdentifier != null ? nameIdentifier : element;
+                    trace.report(Errors.UNUSED_VARIABLE.on((JetProperty)element, elementToMark, declaredVariable));
+                }
+            }
+        }
+    }
 
     @Nullable
     private VariableDescriptor extractVariableDescriptorIfAny(Instruction instruction, boolean onlyReference) {

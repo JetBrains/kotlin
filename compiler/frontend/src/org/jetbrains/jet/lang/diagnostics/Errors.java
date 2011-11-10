@@ -143,6 +143,7 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetProperty, DeclarationDescriptor> UNUSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is never used", NAME);
     PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]> VAL_REASSIGNMENT = new PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]>(ERROR, "Val can not be reassigned", NAME) {
         @NotNull
         @Override
