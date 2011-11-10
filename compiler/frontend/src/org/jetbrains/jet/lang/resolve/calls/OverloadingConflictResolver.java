@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -123,13 +124,13 @@ public class OverloadingConflictResolver {
         JetType _byte = standardLibrary.getByteType();
         JetType _short = standardLibrary.getShortType();
 
-        if (semanticServices.getTypeChecker().equalTypes(specific, _double) && semanticServices.getTypeChecker().equalTypes(general, _float)) return true;
-        if (semanticServices.getTypeChecker().equalTypes(specific, _int)) {
-            if (semanticServices.getTypeChecker().equalTypes(general, _long)) return true;
-            if (semanticServices.getTypeChecker().equalTypes(general, _byte)) return true;
-            if (semanticServices.getTypeChecker().equalTypes(general, _short)) return true;
+        if (TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float)) return true;
+        if (TypeUtils.equalTypes(specific, _int)) {
+            if (TypeUtils.equalTypes(general, _long)) return true;
+            if (TypeUtils.equalTypes(general, _byte)) return true;
+            if (TypeUtils.equalTypes(general, _short)) return true;
         }
-        if (semanticServices.getTypeChecker().equalTypes(specific, _short) && semanticServices.getTypeChecker().equalTypes(general, _byte)) return true;
+        if (TypeUtils.equalTypes(specific, _short) && TypeUtils.equalTypes(general, _byte)) return true;
         return false;
     }
 

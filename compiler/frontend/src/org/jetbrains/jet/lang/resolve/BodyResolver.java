@@ -76,8 +76,8 @@ public class BodyResolver {
         resolveDelegationSpecifierLists();
         resolveClassAnnotations();
 
-        resolveAnonymousInitializers();
         resolvePropertyDeclarationBodies();
+        resolveAnonymousInitializers();
 
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
@@ -484,16 +484,17 @@ public class BodyResolver {
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
-        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, NO_EXPECTED_TYPE);
-
-        JetType expectedType = propertyDescriptor.getInType();
-        if (expectedType == null) {
-            expectedType = propertyDescriptor.getOutType();
-        }
-        if (type != null && expectedType != null
-            && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, expectedType)) {
-            context.getTrace().report(TYPE_MISMATCH.on(initializer, expectedType, type));
-        }
+        JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getOutType() : NO_EXPECTED_TYPE;
+        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, expectedTypeForInitializer);
+//
+//        JetType expectedType = propertyDescriptor.getInType();
+//        if (expectedType == null) {
+//            expectedType = propertyDescriptor.getOutType();
+//        }
+//        if (type != null && expectedType != null
+//            && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, expectedType)) {
+////            context.getTrace().report(TYPE_MISMATCH.on(initializer, expectedType, type));
+//        }
     }
 
     private void resolveFunctionBodies() {

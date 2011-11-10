@@ -379,7 +379,7 @@ public class ClassDescriptorResolver {
                 parameter.addUpperBound(JetStandardClasses.getDefaultBound());
             }
 
-            if (JetStandardClasses.isNothing(parameter.getBoundsAsType())) {
+            if (JetStandardClasses.isNothing(parameter.getUpperBoundsAsType())) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
 //                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
@@ -666,7 +666,7 @@ public class ClassDescriptorResolver {
                     type = typeResolver.resolveType(scope, typeReference);
                     JetType inType = propertyDescriptor.getInType();
                     if (inType != null) {
-                        if (!semanticServices.getTypeChecker().equalTypes(type, inType)) {
+                        if (!TypeUtils.equalTypes(type, inType)) {
 //                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
                             trace.report(WRONG_SETTER_PARAMETER_TYPE.on(setter, typeReference, inType));
                         }
@@ -709,7 +709,7 @@ public class ClassDescriptorResolver {
             JetTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
-                if (outType != null && !semanticServices.getTypeChecker().equalTypes(returnType, outType)) {
+                if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
 //                    trace.getErrorHandler().genericError(returnTypeReference.getNode(), "Getter return type must be equal to the type of the property, i.e. " + propertyDescriptor.getReturnType());
                     trace.report(WRONG_GETTER_RETURN_TYPE.on(getter, returnTypeReference, propertyDescriptor.getReturnType()));
                 }

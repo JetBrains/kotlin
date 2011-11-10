@@ -86,7 +86,7 @@ public class ExpressionTypingServices {
         Collection<JetType> types = typeMap.values();
         return types.isEmpty()
                ? JetStandardClasses.getNothingType()
-               : semanticServices.getTypeChecker().commonSupertype(types);
+               : CommonSupertypes.commonSupertype(types);
     }
 
     public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType) {

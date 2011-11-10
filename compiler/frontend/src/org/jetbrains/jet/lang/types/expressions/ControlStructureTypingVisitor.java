@@ -16,15 +16,9 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -99,7 +93,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             result = thenType;
         }
         else {
-            result = context.semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
+            result = CommonSupertypes.commonSupertype(Arrays.asList(thenType, elseType));
         }
 
         boolean jumpInThen = thenType != null && JetStandardClasses.isNothing(thenType);
@@ -352,7 +346,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return null;
         }
         else {
-            return context.semanticServices.getTypeChecker().commonSupertype(types);
+            return CommonSupertypes.commonSupertype(types);
         }
     }
 

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
@@ -21,6 +20,8 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.types.inference.ConstraintSystemSolution;
+import org.jetbrains.jet.lang.types.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -51,11 +52,8 @@ public class CallResolver {
     public VariableDescriptor resolveSimpleProperty(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
-//            @NotNull ReceiverDescriptor receiver,
-//            @NotNull final JetSimpleNameExpression nameExpression,
-            @NotNull Call call,            
+            @NotNull Call call,
             @NotNull JetType expectedType) {
-//        Call call = CallMaker.makePropertyCall(receiver, null, nameExpression);
         JetExpression calleeExpression = call.getCalleeExpression();
         assert calleeExpression instanceof JetSimpleNameExpression;
         JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
@@ -115,7 +113,6 @@ public class CallResolver {
                     if (descriptor instanceof ConstructorDescriptor) {
                         Modality modality = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getModality();
                         if (modality == Modality.ABSTRACT) {
-//                            tracing.reportOverallResolutionError(trace, "Can not create an instance of an abstract class");
                             tracing.instantiationOfAbstractClass(trace);
                             return false;
                         }
@@ -148,14 +145,12 @@ public class CallResolver {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                     Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
                     if (constructors.isEmpty()) {
-//                        trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
                         trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(trace, scope, call);
                     }
                     prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(TaskPrioritizer.convertWithImpliedThis(scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors), call, DataFlowInfo.EMPTY));
                 }
                 else {
-//                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
                     trace.report(NOT_A_CLASS.on(calleeExpression));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
@@ -168,7 +163,6 @@ public class CallResolver {
 
                 Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
                 if (constructors.isEmpty()) {
-//                    trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
                     trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
@@ -295,11 +289,9 @@ public class CallResolver {
             public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {
                 JetTypeArgumentList typeArgumentList = call.getTypeArgumentList();
                 if (typeArgumentList != null) {
-//                    trace.getErrorHandler().genericError(typeArgumentList.getNode(), message);
                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeArgumentList, expectedTypeArgumentCount));
                 }
                 else {
-//                    reportOverallResolutionError(trace, message);
                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(reference, expectedTypeArgumentCount));
                 }
             }
@@ -413,7 +405,7 @@ public class CallResolver {
                 if (!candidate.getTypeParameters().isEmpty()) {
                     // Type argument inference
 
-                    ConstraintSystem constraintSystem = new ConstraintSystem();
+                    ConstraintSystem constraintSystem = new ConstraintSystemImpl();
                     for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
                         constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
                     }
@@ -438,8 +430,6 @@ public class CallResolver {
                         }
                     }
 
-//                    checkReceiverAbsence(candidateCall, tracing, candidate);
-
                     // Error is already reported if something is missing
                     ReceiverDescriptor receiverParameter = candidateCall.getReceiverArgument();
                     ReceiverDescriptor candidateReceiver = candidate.getReceiverParameter();
@@ -451,8 +441,7 @@ public class CallResolver {
                         constraintSystem.addSubtypingConstraint(candidate.getReturnType(), expectedType);
                     }
 
-                    ConstraintSystem.Solution solution = constraintSystem.solve();
-//                    solutions.put(candidate, solution);
+                    ConstraintSystemSolution solution = constraintSystem.solve();
                     if (solution.isSuccessful()) {
                         D substitute = (D) candidate.substitute(solution.getSubstitutor());
                         assert substitute != null;
@@ -505,7 +494,6 @@ public class CallResolver {
                 }
                 else {
                     candidateCall.setStatus(OTHER_ERROR);
-//                    tracing.reportWrongTypeArguments(temporaryTrace, "Number of type arguments does not match " + DescriptorRenderer.TEXT.render(candidate));
                     tracing.wrongNumberOfTypeArguments(temporaryTrace, expectedTypeArgumentCount);
                 }
             }
@@ -884,7 +872,7 @@ public class CallResolver {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameter = valueParameters.get(i);
             JetType expectedType = parameterTypes.get(i);
-            if (!semanticServices.getTypeChecker().equalTypes(expectedType, valueParameter.getOutType())) return false;
+            if (!TypeUtils.equalTypes(expectedType, valueParameter.getOutType())) return false;
         }
         return true;
     }

@@ -352,7 +352,7 @@ public class TypeUtils {
 
     @NotNull
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
-        return new TypeProjection(Variance.OUT_VARIANCE, parameterDescriptor.getBoundsAsType());
+        return new TypeProjection(Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
     }
 
     private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
@@ -424,4 +424,7 @@ public class TypeUtils {
         return false;
     }
 
+    public static boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
+        return JetTypeChecker.INSTANCE.isSubtypeOf(a, b) && JetTypeChecker.INSTANCE.isSubtypeOf(b, a);
+    }
 }

@@ -49,6 +49,7 @@ public class JetStandardLibrary {
 
     private JetScope libraryScope;
 
+    private ClassDescriptor numberClass;
     private ClassDescriptor byteClass;
     private ClassDescriptor charClass;
     private ClassDescriptor shortClass;
@@ -152,6 +153,7 @@ public class JetStandardLibrary {
     private void initStdClasses() {
         if(libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
+            this.numberClass = (ClassDescriptor) libraryScope.getClassifier("Number");
             this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
             this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");
             this.shortClass = (ClassDescriptor) libraryScope.getClassifier("Short");
@@ -219,6 +221,12 @@ public class JetStandardLibrary {
             this.nullableDoubleArrayType = TypeUtils.makeNullable(doubleArrayType);
             this.nullableBooleanArrayType = TypeUtils.makeNullable(booleanArrayType);
         }
+    }
+
+    @NotNull
+    public ClassDescriptor getNumber() {
+        initStdClasses();
+        return numberClass;
     }
 
     @NotNull

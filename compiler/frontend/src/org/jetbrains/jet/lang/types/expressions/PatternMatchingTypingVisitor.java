@@ -100,7 +100,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (!expressionTypes.isEmpty()) {
-            return context.semanticServices.getTypeChecker().commonSupertype(expressionTypes);
+            return CommonSupertypes.commonSupertype(expressionTypes);
         }
         else if (expression.getEntries().isEmpty()) {
 //                context.trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression");

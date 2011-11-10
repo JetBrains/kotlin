@@ -13,7 +13,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -47,7 +46,7 @@ public class ExpressionTypingUtils {
     }
 
     public static boolean isBoolean(@NotNull JetSemanticServices semanticServices, @NotNull JetType type) {
-        return semanticServices.getTypeChecker().isConvertibleTo(type, semanticServices.getStandardLibrary().getBooleanType());
+        return semanticServices.getTypeChecker().isSubtypeOf(type, semanticServices.getStandardLibrary().getBooleanType());
     }
 
     public static boolean ensureBooleanResult(JetExpression operationSign, String name, JetType resultType, ExpressionTypingContext context) {

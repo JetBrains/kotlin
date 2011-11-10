@@ -216,7 +216,7 @@ public class TypeSubstitutor {
             case OUT_VARIANCE:
                 if (projectionKindValue == Variance.IN_VARIANCE) {
                     effectiveProjectionKindValue = Variance.INVARIANT;
-                    effectiveTypeValue = correspondingTypeParameter.getBoundsAsType();
+                    effectiveTypeValue = correspondingTypeParameter.getUpperBoundsAsType();
                 }
                 else {
                     effectiveTypeValue = typeValue;
