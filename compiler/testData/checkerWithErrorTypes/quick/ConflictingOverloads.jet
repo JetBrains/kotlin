@@ -12,3 +12,31 @@ class A {
     <!CONFLICTING_OVERLOADS!>fun b()<!> {
     }
 }
+
+namespace deepSpace {
+    <!CONFLICTING_OVERLOADS!>fun c(s: String)<!> {
+    }
+
+    <!CONFLICTING_OVERLOADS!>fun c(s: String)<!> {
+    }
+
+    class B {
+        <!CONFLICTING_OVERLOADS!>fun d(s: String)<!> {
+        }
+
+        <!CONFLICTING_OVERLOADS!>fun d(s: String)<!> {
+        }
+    }
+}
+
+
+// check no error in overload in different namespaces
+
+namespace ns1 {
+    fun e() = 1
+}
+
+namespace ns2 {
+    fun e() = 1
+}
+

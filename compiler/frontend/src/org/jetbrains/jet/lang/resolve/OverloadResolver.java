@@ -1,10 +1,11 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -36,6 +37,37 @@ public class OverloadResolver {
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey());
         }
+        checkOverloadsInANamespace();
+    }
+
+    private void checkOverloadsInANamespace() {
+        class Key extends Pair<String, String> {
+            Key(String namespace, String name) {
+                super(namespace, name);
+            }
+            
+            public String getNamespace() {
+                return first;
+            }
+            
+            public String getFunctionName() {
+                return second;
+            }
+        }
+
+        MultiMap<Key, FunctionDescriptor> functionsByName = MultiMap.create();
+
+        for (FunctionDescriptorImpl function : context.getFunctions().values()) {
+            DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
+            if (containingDeclaration instanceof NamespaceDescriptor) {
+                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
+                functionsByName.putValue(new Key(namespaceDescriptor.getName(), function.getName()), function);
+            }
+        }
+
+        for (Map.Entry<Key, Collection<FunctionDescriptor>> e : functionsByName.entrySet()) {
+            checkOverloadsWithSameName(e.getKey().getFunctionName(), e.getValue(), e.getKey().getNamespace());
+        }
     }
 
     private void checkOverloadsInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
@@ -46,7 +78,7 @@ public class OverloadResolver {
         }
         
         for (Map.Entry<String, Collection<FunctionDescriptor>> e : functionsByName.entrySet()) {
-            checkOverloadsWithSameName(e.getKey(), e.getValue(), klass);
+            checkOverloadsWithSameName(e.getKey(), e.getValue(), klass.getName());
         }
 
         // properties are checked elsewhere
@@ -55,7 +87,7 @@ public class OverloadResolver {
 
     }
     
-    private void checkOverloadsWithSameName(String name, Collection<FunctionDescriptor> functions, JetClassOrObject klass) {
+    private void checkOverloadsWithSameName(String name, Collection<FunctionDescriptor> functions, String functionContainer) {
         if (functions.size() == 1) {
             // microoptimization
             return;
@@ -75,7 +107,7 @@ public class OverloadResolver {
                         return;
                     }
 
-                    context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(member, function, klass));
+                    context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
                 }
             }
         }

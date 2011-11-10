@@ -18,14 +18,14 @@ public class FunctionSignatureDiagnosticFactory extends DiagnosticFactoryWithMes
 
     @NotNull
     public Diagnostic on(@NotNull JetNamedFunction functionElement, @NotNull FunctionDescriptor functionDescriptor,
-                         @NotNull JetClassOrObject jetClassOrObject)
+                         @NotNull String functionContainer)
     {
         TextRange rangeToMark = new TextRange(
                 functionElement.getStartOfSignatureElement().getTextRange().getStartOffset(),
                 functionElement.getEndOfSignatureElement().getTextRange().getEndOffset()
             );
         String message = messageFormat.format(new Object[]{
-                jetClassOrObject.getName(),
+                functionContainer,
                 DescriptorRenderer.TEXT.render(functionDescriptor)});
         return new GenericDiagnostic(this, severity, message, functionElement.getContainingFile(), rangeToMark);
     }
