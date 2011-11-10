@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
@@ -46,7 +47,8 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsObjectLiteral translateClassDeclarations(JetClass classDeclaration) {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         propertyList.add(generateInitializeMethod(classDeclaration));
-        propertyList.addAll(classDeclaration.accept(classBodyVisitor, translationContext().newClass()));
+        propertyList.addAll(classDeclaration.accept(classBodyVisitor,
+                translationContext().newClass(classDeclaration)));
         return new JsObjectLiteral(propertyList);
     }
 

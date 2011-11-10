@@ -276,6 +276,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return null;
     }
 
+    //TODO method too long
     @Override
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,

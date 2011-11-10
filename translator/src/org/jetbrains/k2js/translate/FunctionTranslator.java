@@ -3,10 +3,14 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import com.sun.istack.internal.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
+import javax.xml.ws.Binding;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +40,9 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction generateFunctionObject(@NotNull JetNamedFunction jetFunction) {
         JetExpression jetBodyExpression = jetFunction.getBodyExpression();
-        JsFunction result = new JsFunction(scope());
-        JsNode jsBody = (new ExpressionTranslator(functionBodyContext(result)))
+        JsFunction result = JsFunction.getAnonymousFunctionWithScope
+                (translationContext().getScopeForElement(jetFunction));
+        JsNode jsBody = (new ExpressionTranslator(functionContext(jetFunction)))
                 .translate(jetBodyExpression);
         List<JsParameter> jsParameters = translateParameters(jetFunction.getValueParameters(), result.getScope());
         result.setParameters(jsParameters);
@@ -46,8 +51,10 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private TranslationContext functionBodyContext(@NotNull JsFunction function) {
-        return translationContext().newFunction(function);
+    private TranslationContext functionContext(@NotNull JetNamedFunction jetFunction) {
+        FunctionDescriptor descriptor =
+                BindingUtils.getFunctionDescriptor(translationContext().bindingContext(), jetFunction);
+        return translationContext().newFunction(descriptor);
     }
 
     @NotNull

@@ -23,14 +23,16 @@ public final class NamespaceTranslator extends AbstractTranslator {
         return program();
     }
 
+    //TODO logic unclear
     @NotNull
     public JsBlock translate(@NotNull JetNamespace namespace) {
         // TODO support multiple namespaces
         JsBlock block = program().getFragmentBlock(0);
         JsName namespaceName = scope().declareName(Namer.getNameForNamespace(namespace.getName()));
         block.addStatement(namespaceInitStatement(namespaceName));
-        JsFunction dummyFunction = new JsFunction(scope());
-        TranslationContext newContext = translationContext().newNamespace(namespaceName, dummyFunction);
+        TranslationContext newContext = translationContext().newNamespace(namespace);
+        JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope
+                (translationContext().getScopeForElement(namespace));
         JsBlock namespaceDeclarations = translateDeclarations(namespace, newContext);
         block.addStatement(AstUtil.convertToStatement(newNamespace(namespaceName, namespaceDeclarations, dummyFunction)));
         return block;
