@@ -15,7 +15,7 @@ fun test(a : A?) {
     a<!UNNECESSARY_SAFE_CALL!>?.<!>buzz() // warning
 }
 
-fun A.test() {
+fun A.test2() {
     foo()
     bar()
     buzz()

@@ -40,4 +40,26 @@ public class JetNamedFunction extends JetFunction {
         return findChildByType(JetTokens.EQ) == null;
     }
 
+    @NotNull
+    public JetElement getStartOfSignatureElement() {
+        return this;
+    }
+
+    @NotNull
+    public JetElement getEndOfSignatureElement() {
+        JetElement r = getReturnTypeRef();
+        if (r != null) {
+            return r;
+        }
+        
+        r = getValueParameterList();
+        if (r != null) {
+            return r;
+        }
+
+        // otherwise it is an error
+
+        return this;
+    }
+
 }
