@@ -375,17 +375,7 @@ public interface Errors {
         }
     };
 
-    ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> CONFLICTING_OVERLOADS = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "{1} is already defined in ''{0}''") {
-        @Override
-        protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
-            return jetClassOrObject.getName();
-        }
-
-        @Override
-        protected String makeMessageForB(@NotNull CallableMemberDescriptor memberDescriptor) {
-            return DescriptorRenderer.TEXT.render(memberDescriptor);
-        }
-    };
+    FunctionSignatureDiagnosticFactory CONFLICTING_OVERLOADS = new FunctionSignatureDiagnosticFactory(ERROR, "{1} is already defined in ''{0}''");
 
 
     ParameterizedDiagnosticFactory3<String, JetType, JetType> RESULT_TYPE_MISMATCH = ParameterizedDiagnosticFactory3.create(ERROR, "{0} must return {1} but returns {2}");

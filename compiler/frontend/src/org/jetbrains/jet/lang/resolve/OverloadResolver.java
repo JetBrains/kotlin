@@ -75,9 +75,7 @@ public class OverloadResolver {
                         return;
                     }
 
-                    // XXX: mark "fun" keyword and parameters as in Java IDE // stepan.koltsov@
-                    PsiElement mark = member.getNameIdentifier();
-                    context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(mark, klass, function));
+                    context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(member, function, klass));
                 }
             }
         }
