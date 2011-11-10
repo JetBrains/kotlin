@@ -123,6 +123,8 @@ public class TypeSubstitutor {
 
     @NotNull
     private JetType unsafeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) throws SubstitutionException {
+        if (ErrorUtils.isErrorType(type)) return type;
+
         TypeConstructor constructor = type.getConstructor();
         TypeProjection value = substitution.get(constructor);
         if (value != null) {
@@ -140,6 +142,8 @@ public class TypeSubstitutor {
     }
 
     private JetType specializeType(JetType subjectType, Variance callSiteVariance) throws SubstitutionException {
+        if (ErrorUtils.isErrorType(subjectType)) return subjectType;
+
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
         List<TypeProjection> arguments = subjectType.getArguments();
         for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
@@ -166,6 +170,8 @@ public class TypeSubstitutor {
             @NotNull TypeParameterDescriptor correspondingTypeParameter,
             @NotNull Variance contextCallSiteVariance) throws SubstitutionException {
         JetType typeToSubstituteIn = passedProjection.getType();
+        if (ErrorUtils.isErrorType(typeToSubstituteIn)) return passedProjection;
+
         Variance passedProjectionKind = passedProjection.getProjectionKind();
         Variance parameterVariance = correspondingTypeParameter.getVariance();
 
@@ -230,7 +236,7 @@ public class TypeSubstitutor {
 //                throw new SubstitutionException(""); // TODO : error message
 //            }
 //
-        return new TypeProjection(effectiveProjectionKindValue,  specializeType(effectiveTypeValue, effectiveContextVariance));
+        return new TypeProjection(effectiveProjectionKindValue, specializeType(effectiveTypeValue, effectiveContextVariance));
     }
 
     private static Variance asymmetricOr(Variance a, Variance b) {

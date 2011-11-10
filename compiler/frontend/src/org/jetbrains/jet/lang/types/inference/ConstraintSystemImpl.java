@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,21 +17,32 @@ import java.util.Set;
  */
 public class ConstraintSystemImpl implements ConstraintSystem {
 
+    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
+        final Set<TypeConstructor> constructors = Sets.newHashSet();
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
+            constructors.add(typeParameterDescriptor.getTypeConstructor());
+        }
+        final TypeProjection projection = new TypeProjection(type);
+
+        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+            @Override
+            public TypeProjection get(TypeConstructor key) {
+                if (constructors.contains(key)) {
+                    return projection;
+                }
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        });
+    }
+
+
     private static class LoopInTypeVariableConstraintsException extends RuntimeException {
-        private LoopInTypeVariableConstraintsException() {
-        }
-
-        private LoopInTypeVariableConstraintsException(String message) {
-            super(message);
-        }
-
-        private LoopInTypeVariableConstraintsException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        private LoopInTypeVariableConstraintsException(Throwable cause) {
-            super(cause);
-        }
+        public LoopInTypeVariableConstraintsException() {}
     }
 
     public static abstract class TypeValue {
@@ -168,7 +180,42 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private final Map<TypeParameterDescriptor, UnknownType> unknownTypes = Maps.newHashMap();
     private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
 
-    private final JetTypeChecker.TypeCheckingProcedure constraintExpander = new JetTypeChecker.TypeCheckingProcedure(new JetTypeChecker.TypingConstraintBuilder() {
+    private static final class TypeConstraintBuilderAdapter implements JetTypeChecker.TypingConstraintBuilder {
+        private final JetTypeChecker.TypingConstraintBuilder delegate;
+
+        private TypeConstraintBuilderAdapter(JetTypeChecker.TypingConstraintBuilder delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b) {
+            boolean result = delegate.assertEqualTypes(a, b);
+            if (!result) {
+                println("-- Failed to equate " + a + " and " + b);
+            }
+            return result;
+        }
+
+        @Override
+        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype) {
+            boolean result = delegate.assertSubtype(subtype, supertype);
+            if (!result) {
+                println("-- " + subtype + " can't be a subtype of " + supertype);
+            }
+            return result;
+        }
+
+        @Override
+        public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
+            boolean result = delegate.noCorrespondingSupertype(subtype, supertype);
+            if (!result) {
+                println("-- " + subtype + " has supertype corresponding to " + supertype);
+            }
+            return result;
+        }
+    }
+    
+    private final JetTypeChecker.TypeCheckingProcedure constraintExpander = new JetTypeChecker.TypeCheckingProcedure(new TypeConstraintBuilderAdapter(new JetTypeChecker.TypingConstraintBuilder() {
         @Override
         public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b) {
             TypeValue aValue = getTypeValueFor(a);
@@ -217,7 +264,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return subtypeValue instanceof UnknownType || supertypeValue instanceof UnknownType;
         }
 
-    });
+    }));
 
     public ConstraintSystemImpl() {}
 
@@ -257,7 +304,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private void mergeUnknowns(@NotNull UnknownType a, @NotNull UnknownType b) {
-
+        System.err.println("!!!mergeUnknowns() is not implemented!!!");
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.types.inference.SolutionStatus;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -312,8 +313,9 @@ public class CallResolver {
             }
 
             @Override
-            public void typeInferenceFailed(@NotNull BindingTrace trace) {
-                trace.report(TYPE_INFERENCE_FAILED.on(call.getCallNode()));
+            public void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status) {
+                assert !status.isSuccessful();
+                trace.report(TYPE_INFERENCE_FAILED.on(call.getCallNode(), status));
             }
 
             @Override
@@ -410,6 +412,8 @@ public class CallResolver {
                         constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
                     }
 
+                    TypeSubstitutor substituteUnknown = ConstraintSystemImpl.makeConstantSubstitutor(candidate.getTypeParameters(), ErrorUtils.createErrorType("Unknown"));
+
                     for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
                         ResolvedValueArgument valueArgument = entry.getValue();
                         ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
@@ -417,10 +421,14 @@ public class CallResolver {
                         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor);
 
                         for (JetExpression expression : valueArgument.getArgumentExpressions()) {
-//                            JetExpression expression = valueArgument.getArgumentExpression();
                             // TODO : more attempts, with different expected types
-                            ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, temporaryTrace);
-                            JetType type = temporaryServices.getType(scope, expression, NO_EXPECTED_TYPE);
+
+                            // Here we type check expecting an error type (that is a subtype of any type and a supertype of any type
+                            // and throw the results away
+                            // We'll type check the arguments later, with the inferred types expected
+                            TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(temporaryTrace);
+                            ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, traceForUnknown);
+                            JetType type = temporaryServices.getType(scope, expression, substituteUnknown.substitute(valueParameterDescriptor.getOutType(), Variance.INVARIANT));
                             if (type != null) {
                                 constraintSystem.addSubtypingConstraint(type, effectiveExpectedType);
                             }
@@ -450,10 +458,14 @@ public class CallResolver {
                         for (TypeParameterDescriptor typeParameterDescriptor : candidateCall.getCandidateDescriptor().getTypeParameters()) {
                             candidateCall.recordTypeArgument(typeParameterDescriptor, solution.getValue(typeParameterDescriptor));
                         }
+
+                        // Here we type check the arguments with inferred types expected
+                        checkValueArgumentTypes(scope, candidateCall);
+
                         candidateCall.setStatus(SUCCESS);
                     }
                     else {
-                        tracing.typeInferenceFailed(temporaryTrace);
+                        tracing.typeInferenceFailed(temporaryTrace, solution.getStatus());
                         candidateCall.setStatus(OTHER_ERROR);
                     }
                 }

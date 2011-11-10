@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.inference.SolutionStatus;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -390,7 +391,7 @@ public interface Errors {
     SimpleDiagnosticFactory NO_RECEIVER_ADMITTED = SimpleDiagnosticFactory.create(ERROR, "No receiver can be passed to this function or property");
 
     SimpleDiagnosticFactory CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = SimpleDiagnosticFactory.create(ERROR, "Can not create an instance of an abstract class");
-    SimpleDiagnosticFactory TYPE_INFERENCE_FAILED = SimpleDiagnosticFactory.create(ERROR, "Type inference failed");
+    ParameterizedDiagnosticFactory1<SolutionStatus> TYPE_INFERENCE_FAILED = ParameterizedDiagnosticFactory1.create(ERROR, "Type inference failed: {0}");
     ParameterizedDiagnosticFactory1<Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = new ParameterizedDiagnosticFactory1<Integer>(ERROR, "{0} type arguments expected") {
         @Override
         protected String makeMessageFor(@NotNull Integer argument) {
