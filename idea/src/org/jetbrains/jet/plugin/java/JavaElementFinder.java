@@ -28,6 +28,7 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
@@ -81,7 +82,7 @@ public class JavaElementFinder extends PsiElementFinder {
 
         for (PsiFile psiFile : psiFiles) {
             if (psiFile instanceof JetFile) {
-                if (qualifiedName.equals(((JetFile) psiFile).getRootNamespace().getFQName())) {
+                if (qualifiedName.equals(CodegenUtil.getFQName(((JetFile) psiFile).getRootNamespace()))) {
                     return new PsiPackageImpl(psiFile.getManager(), qualifiedName);
                 }
             }
@@ -144,7 +145,7 @@ public class JavaElementFinder extends PsiElementFinder {
         final GenerationState state = new GenerationState(project, builderFactory) {
             @Override
             protected void generateNamespace(JetNamespace namespace) {
-                final PsiJavaFileStubImpl fileStub = new PsiJavaFileStubImpl(namespace.getFQName(), true);
+                final PsiJavaFileStubImpl fileStub = new PsiJavaFileStubImpl(CodegenUtil.getFQName(namespace), true);
                 PsiManager manager = PsiManager.getInstance(project);
                 stubStack.push(fileStub);
 
