@@ -17,7 +17,7 @@ public interface ClassBuilderFactory {
     ClassBuilderFactory TEXT = new ClassBuilderFactory() {
         @Override
         public ClassBuilder newClassBuilder() {
-            return new ClassBuilder(new TraceClassVisitor(new PrintWriter(new StringWriter())));
+            return new ClassBuilder.Concrete(new TraceClassVisitor(new PrintWriter(new StringWriter())));
         }
 
         @Override
@@ -39,7 +39,7 @@ public interface ClassBuilderFactory {
     ClassBuilderFactory BINARIES = new ClassBuilderFactory() {
         @Override
         public ClassBuilder newClassBuilder() {
-            return new ClassBuilder(new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS));
+            return new ClassBuilder.Concrete(new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS));
         }
 
         @Override

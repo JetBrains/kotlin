@@ -56,5 +56,7 @@
       <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
       <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
       <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>
+
+      <java.elementFinder implementation="org.jetbrains.jet.plugin.java.JavaElementFinder"/>
   </extensions>
 </idea-plugin>

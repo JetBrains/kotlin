@@ -69,7 +69,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         appendType(signatureWriter, funDescriptor.getReturnType(), '=');
         signatureWriter.visitEnd();
 
-        cv.defineClass(V1_6,
+        cv.defineClass(fun,
+                       V1_6,
                        ACC_PUBLIC/*|ACC_SUPER*/,
                        name,
                        null,
@@ -112,23 +113,25 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         cv.newField(fun, ACC_PRIVATE | ACC_STATIC, "$instance", classDescr, null, null);
 
         MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()" + classDescr, null, new String[0]);
-        mv.visitCode();
-        mv.visitFieldInsn(GETSTATIC, name, "$instance", classDescr);
-        mv.visitInsn(DUP);
-        Label ret = new Label();
-        mv.visitJumpInsn(IFNONNULL, ret);
+        if (cv.generateCode()) {
+            mv.visitCode();
+            mv.visitFieldInsn(GETSTATIC, name, "$instance", classDescr);
+            mv.visitInsn(DUP);
+            Label ret = new Label();
+            mv.visitJumpInsn(IFNONNULL, ret);
 
-        mv.visitInsn(POP);
-        mv.visitTypeInsn(NEW, name);
-        mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, name, "<init>", "()V");
-        mv.visitInsn(DUP);
-        mv.visitFieldInsn(PUTSTATIC, name, "$instance", classDescr);
+            mv.visitInsn(POP);
+            mv.visitTypeInsn(NEW, name);
+            mv.visitInsn(DUP);
+            mv.visitMethodInsn(INVOKESPECIAL, name, "<init>", "()V");
+            mv.visitInsn(DUP);
+            mv.visitFieldInsn(PUTSTATIC, name, "$instance", classDescr);
 
-        mv.visitLabel(ret);
-        mv.visitInsn(ARETURN);
-        mv.visitMaxs(0,0);
-        mv.visitEnd();
+            mv.visitLabel(ret);
+            mv.visitInsn(ARETURN);
+            mv.visitMaxs(0,0);
+            mv.visitEnd();
+        }
     }
 
     private boolean generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetFunctionLiteral body) {
@@ -157,34 +160,36 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             return;
 
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
-        mv.visitCode();
+        if (cv.generateCode()) {
+            mv.visitCode();
 
-        InstructionAdapter iv = new InstructionAdapter(mv);
+            InstructionAdapter iv = new InstructionAdapter(mv);
 
-        iv.load(0, Type.getObjectType(className));
+            iv.load(0, Type.getObjectType(className));
 
-        final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
-        int count = 1;
-        if (receiver.exists()) {
-            StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(receiver.getType()), iv);
-            count++;
+            final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
+            int count = 1;
+            if (receiver.exists()) {
+                StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
+                StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(receiver.getType()), iv);
+                count++;
+            }
+
+            final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
+            for (ValueParameterDescriptor param : params) {
+                StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
+                StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getOutType()), iv);
+                count++;
+            }
+
+            iv.invokespecial(className, "invoke", delegate.getDescriptor());
+            StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.TYPE_OBJECT, iv);
+
+            iv.areturn(JetTypeMapper.TYPE_OBJECT);
+
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
         }
-
-        final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
-        for (ValueParameterDescriptor param : params) {
-            StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getOutType()), iv);
-            count++;
-        }
-
-        iv.invokespecial(className, "invoke", delegate.getDescriptor());
-        StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.TYPE_OBJECT, iv);
-
-        iv.areturn(JetTypeMapper.TYPE_OBJECT);
-
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
     }
 
     private Method generateConstructor(String funClass, JetFunctionLiteralExpression fun) {
@@ -221,14 +226,15 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
-        mv.visitCode();
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
+        if (cv.generateCode()) {
+            mv.visitCode();
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
 
-        iv.load(0, Type.getObjectType(funClass));
+            iv.load(0, Type.getObjectType(funClass));
 //        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));
-        iv.aconst(null); // @todo
-        iv.invokespecial(funClass, "<init>", "(Ljet/typeinfo/TypeInfo;)V");
+            iv.aconst(null); // @todo
+            iv.invokespecial(funClass, "<init>", "(Ljet/typeinfo/TypeInfo;)V");
 
         i = 1;
         for (Type type : argTypes) {
@@ -248,13 +254,11 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 }
             }
 
-            StackValue.field(type, name, fieldName, false).store(iv);
+            iv.visitInsn(RETURN);
+
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
         }
-
-        iv.visitInsn(RETURN);
-
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
         return constructor;
     }
 

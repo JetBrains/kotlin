@@ -116,18 +116,20 @@ public abstract class ClassBodyCodegen {
         if (staticInitializerChunks.size() > 0) {
             final MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                                                  "<clinit>", "()V", null, null);
-            mv.visitCode();
+            if (v.generateCode()) {
+                mv.visitCode();
 
-            InstructionAdapter v = new InstructionAdapter(mv);
+                InstructionAdapter v = new InstructionAdapter(mv);
 
-            for (CodeChunk chunk : staticInitializerChunks) {
-                chunk.generate(v);
+                for (CodeChunk chunk : staticInitializerChunks) {
+                    chunk.generate(v);
+                }
+
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(0, 0);
+
+                mv.visitEnd();
             }
-
-            mv.visitInsn(Opcodes.RETURN);
-            mv.visitMaxs(0, 0);
-
-            mv.visitEnd();
         }
     }
 }

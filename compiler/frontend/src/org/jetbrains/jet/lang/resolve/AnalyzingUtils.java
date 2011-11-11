@@ -16,15 +16,13 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -118,6 +116,27 @@ public class AnalyzingUtils {
             }
         }, declarations, filesToAnalyzeCompletely, flowDataTraceFactory);
         return bindingTraceContext.getBindingContext();
+    }
+
+    public BindingContext shallowAnalyzeFiles(Collection<PsiFile> files) {
+        assert files.size() > 0;
+        
+        Project project = files.iterator().next().getProject();
+
+        Collection<JetNamespace> namespaces = collectRootNamespaces(files);
+
+        return analyzeNamespaces(project, namespaces, Predicates.<PsiFile>alwaysFalse(), JetControlFlowDataTraceFactory.EMPTY);
+    }
+
+    public static List<JetNamespace> collectRootNamespaces(Collection<PsiFile> files) {
+        List<JetNamespace> namespaces = new ArrayList<JetNamespace>();
+
+        for (PsiFile file : files) {
+            if (file instanceof JetFile) {
+                namespaces.add(((JetFile) file).getRootNamespace());
+            }
+        }
+        return namespaces;
     }
 
 }

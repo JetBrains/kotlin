@@ -4,7 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.*;
 
@@ -61,7 +64,12 @@ public class JavaDescriptorResolver {
 
     public JavaDescriptorResolver(Project project, JavaSemanticServices semanticServices) {
         this.javaFacade = JavaPsiFacade.getInstance(project);
-        this.javaSearchScope = GlobalSearchScope.allScope(project);
+        this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+            @Override
+            public boolean contains(VirtualFile file) {
+                return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
+            }
+        };
         this.semanticServices = semanticServices;
     }
 
@@ -80,7 +88,7 @@ public class JavaDescriptorResolver {
     public ClassDescriptor resolveClass(@NotNull String qualifiedName) {
         ClassDescriptor classDescriptor = classDescriptorCache.get(qualifiedName);
         if (classDescriptor == null) {
-            PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
+            PsiClass psiClass = findClass(qualifiedName);
             if (psiClass == null) {
                 return null;
             }
@@ -247,13 +255,21 @@ public class JavaDescriptorResolver {
     }
 
     public NamespaceDescriptor resolveNamespace(String qualifiedName) {
-        PsiPackage psiPackage = javaFacade.findPackage(qualifiedName);
+        PsiPackage psiPackage = findPackage(qualifiedName);
         if (psiPackage == null) {
-            PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
+            PsiClass psiClass = findClass(qualifiedName);
             if (psiClass == null) return null;
             return resolveNamespace(psiClass);
         }
         return resolveNamespace(psiPackage);
+    }
+
+    private PsiClass findClass(String qualifiedName) {
+        return javaFacade.findClass(qualifiedName, javaSearchScope);
+    }
+
+    private PsiPackage findPackage(String qualifiedName) {
+        return javaFacade.findPackage(qualifiedName);
     }
 
     private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {

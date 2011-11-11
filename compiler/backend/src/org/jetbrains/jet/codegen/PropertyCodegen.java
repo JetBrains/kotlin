@@ -137,7 +137,7 @@ public class PropertyCodegen {
         final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind).getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, signature, null, null);
-        if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
+        if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
             if (kind != OwnerKind.NAMESPACE) {
@@ -182,7 +182,7 @@ public class PropertyCodegen {
 
         final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind).getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), signature, null, null);
-        if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
+        if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
             final Type type = state.getTypeMapper().mapType(propertyDescriptor.getOutType());

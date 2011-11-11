@@ -104,14 +104,18 @@ public class GenerationState {
         bindingContexts.push(bindingContext);
         try {
             for (JetNamespace namespace : namespaces) {
-                NamespaceCodegen codegen = forNamespace(namespace);
-                codegen.generate(namespace);
+                generateNamespace(namespace);
             }
         }
         finally {
             bindingContexts.pop();
             typeMapper = null;
         }
+    }
+
+    protected void generateNamespace(JetNamespace namespace) {
+        NamespaceCodegen codegen = forNamespace(namespace);
+        codegen.generate(namespace);
     }
 
     public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ObjectOrClosureCodegen closure) {

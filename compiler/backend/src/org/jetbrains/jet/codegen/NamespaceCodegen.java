@@ -31,7 +31,7 @@ public class NamespaceCodegen {
         this.v = v;
         this.state = state;
 
-        v.defineClass(V1_6,
+        v.defineClass(sourceFile, V1_6,
                       ACC_PUBLIC/*|ACC_SUPER*/,
                       getJVMClassName(fqName),
                       null,
@@ -82,25 +82,27 @@ public class NamespaceCodegen {
     private void generateStaticInitializers(JetNamespace namespace) {
         MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC,
                                        "<clinit>", "()V", null, null);
-        mv.visitCode();
+        if (v.generateCode()) {
+            mv.visitCode();
 
-        FrameMap frameMap = new FrameMap();
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
+            FrameMap frameMap = new FrameMap();
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
 
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                final JetExpression initializer = ((JetProperty) declaration).getInitializer();
-                if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                    final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
-                    codegen.genToJVMStack(initializer);
-                    codegen.intermediateValueForProperty(descriptor, true, null).store(new InstructionAdapter(mv));
+            for (JetDeclaration declaration : namespace.getDeclarations()) {
+                if (declaration instanceof JetProperty) {
+                    final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                    if (initializer != null && !(initializer instanceof JetConstantExpression)) {
+                        final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
+                        codegen.genToJVMStack(initializer);
+                        codegen.intermediateValueForProperty(descriptor, true, null).store(new InstructionAdapter(mv));
+                    }
                 }
             }
-        }
 
-        mv.visitInsn(RETURN);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
     }
 
     private void generateTypeInfoFields(JetNamespace namespace, CodegenContext context) {
