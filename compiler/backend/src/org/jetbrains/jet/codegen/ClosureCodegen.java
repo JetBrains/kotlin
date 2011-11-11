@@ -253,6 +253,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                         i++;
                     }
                 }
+
+                StackValue.field(type, name, fieldName, false).store(iv);
             }
 
             iv.visitInsn(RETURN);
