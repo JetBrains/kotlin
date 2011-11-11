@@ -2,15 +2,18 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
 
 import java.util.*;
@@ -124,8 +127,15 @@ public class IntrinsicMethods {
     private void declareIntrinsicStringMethods() {
         final ClassDescriptor stringClass = myStdLib.getString();
         final Collection<DeclarationDescriptor> stringMembers = stringClass.getMemberScope(Collections.<TypeProjection>emptyList()).getAllDescriptors();
-        final PsiClass stringPsiClass = JavaPsiFacade.getInstance(myProject).findClass("java.lang.String",
-                                                                                       ProjectScope.getLibrariesScope(myProject));
+        final PsiClass stringPsiClass = JavaPsiFacade.getInstance(myProject).findClass(
+                "java.lang.String",
+                new DelegatingGlobalSearchScope(ProjectScope.getLibrariesScope(myProject)) {
+                    @Override
+                    public boolean contains(VirtualFile file) {
+                        return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
+                    }
+                }
+        );
         for (DeclarationDescriptor stringMember : stringMembers) {
             if (stringMember instanceof FunctionDescriptor) {
                 final FunctionDescriptor stringMethod = (FunctionDescriptor) stringMember;
