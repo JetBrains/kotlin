@@ -122,7 +122,7 @@ public interface BindingContext {
     WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION = Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
-        NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
+        NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR, PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
     };
 
     ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
