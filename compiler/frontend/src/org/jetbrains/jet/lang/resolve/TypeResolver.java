@@ -78,7 +78,7 @@ public class TypeResolver {
                         result[0] = new JetTypeImpl(
                                 annotations,
                                 typeParameterDescriptor.getTypeConstructor(),
-                                nullable || TypeUtils.hasNullableBound(typeParameterDescriptor),
+                                nullable || TypeUtils.hasNullableLowerBound(typeParameterDescriptor),
                                 Collections.<TypeProjection>emptyList(),
                                 getScopeForTypeParameter(typeParameterDescriptor)
                         );

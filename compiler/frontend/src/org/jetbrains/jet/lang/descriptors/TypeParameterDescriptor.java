@@ -144,7 +144,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             defaultType = new JetTypeImpl(
                             Collections.<AnnotationDescriptor>emptyList(),
                             getTypeConstructor(),
-                            TypeUtils.hasNullableBound(this),
+                            TypeUtils.hasNullableLowerBound(this),
                             Collections.<TypeProjection>emptyList(),
                             new LazyScopeAdapter(new LazyValue<JetScope>() {
                                 @Override

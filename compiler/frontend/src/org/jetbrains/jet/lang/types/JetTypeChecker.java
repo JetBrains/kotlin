@@ -97,12 +97,14 @@ public class JetTypeChecker {
             if (!supertype.isNullable() && subtype.isNullable()) {
                 return false;
             }
+            subtype = TypeUtils.makeNotNullable(subtype);
+            supertype = TypeUtils.makeNotNullable(supertype);
             if (JetStandardClasses.isNothingOrNullableNothing(subtype)) {
                 return true;
             }
             @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype);
             if (closestSupertype == null) {
-                if (!constraintBuilder.noCorrespondingSupertype(subtype, supertype)) return false;
+                return constraintBuilder.noCorrespondingSupertype(subtype, supertype); // if this returns true, there still isn't any supertype to continue with
             }
 
             return checkSubtypeForTheSameConstructor(closestSupertype, supertype);

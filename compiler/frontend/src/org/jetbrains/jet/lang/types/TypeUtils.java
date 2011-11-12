@@ -385,8 +385,8 @@ public class TypeUtils {
         return result;
     }
 
-    public static boolean hasNullableBound(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
+    public static boolean hasNullableLowerBound(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+        for (JetType bound : typeParameterDescriptor.getLowerBounds()) {
             if (bound.isNullable()) {
                 return true;
             }

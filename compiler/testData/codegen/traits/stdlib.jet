@@ -36,8 +36,8 @@ trait WriteOnlyArray<in T> : ISized {
   }
 }
 
-class MutableArray<T>(length: Int) : ReadOnlyArray<T>, WriteOnlyArray<T> {
-    private val array = Array<T>(length)
+class MutableArray<T>(length: Int, init : fun(Int) : T) : ReadOnlyArray<T>, WriteOnlyArray<T> {
+    private val array = Array<T>(length, init)
 
     override fun get(index : Int) : T = array[index]
     override fun set(index : Int, value : T) : Unit { array[index] = value }
@@ -47,7 +47,7 @@ class MutableArray<T>(length: Int) : ReadOnlyArray<T>, WriteOnlyArray<T> {
 }
 
 fun box() : String {
-    var a = MutableArray<Int> (4)
+    var a = MutableArray<Int> (4, {0})
     a [0] = 10
     a.set(1, 2, 13)
     a [3] = 40
