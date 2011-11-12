@@ -7,10 +7,10 @@ public interface CompilationErrorHandler {
 
     CompilationErrorHandler THROW_EXCEPTION = new CompilationErrorHandler() {
         @Override
-        public void reportError(String message, String fileUrl) {
-            throw new IllegalStateException(message);
+        public void reportException(Throwable exception, String fileUrl) {
+            throw new IllegalStateException(exception);
         }
     };
 
-    void reportError(String message, String fileUrl);
+    void reportException(Throwable exception, String fileUrl);
 }

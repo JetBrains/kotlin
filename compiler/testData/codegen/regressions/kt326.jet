@@ -1,7 +1,7 @@
 namespace test
 
 class List<T>(len: Int) {
-  val a : Array<T> = Array<T>(len)
+  val a : Array<T?> = Array<T?>(len)
 
   fun reverse() {
     var i = 0
@@ -29,7 +29,7 @@ fun box() : String {
 
   val c = List<Array<Int>>(1)
   c.a[0] = Array<Int>(4,{-1})
-  println(c.a[0].size)
+  println(c.a[0]?.size)
 
   val e = List<Int>(5)
   e.a[0] = 0

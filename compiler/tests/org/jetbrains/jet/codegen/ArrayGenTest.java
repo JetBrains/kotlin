@@ -38,7 +38,7 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testCreateMultiGenerics () throws Exception {
-        loadText("class L<T>() { val a = Array<T>(5) } fun foo() = L<Int>.a");
+        loadText("class L<T>() { val a = Array<T?>(5) } fun foo() = L<Int>.a");
         System.out.println(generateToText());
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);

@@ -104,8 +104,8 @@ public class JetCompiler implements TranslatingCompiler {
                 if (!errors) {
                     generationState.compileCorrectNamespaces(bindingContext, namespaces, new CompilationErrorHandler() {
                         @Override
-                        public void reportError(String message, String fileUrl) {
-                            compileContext.addMessage(CompilerMessageCategory.WARNING, message, fileUrl, 0, 0);
+                        public void reportException(Throwable exception, String fileUrl) {
+                            compileContext.addMessage(CompilerMessageCategory.WARNING, exception.getClass().getCanonicalName() + ": " + exception.getMessage(), fileUrl, 0, 0);
                         }
                     });
 ///////////

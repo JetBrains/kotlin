@@ -130,7 +130,7 @@ public class TypeSubstitutor {
         if (value != null) {
             assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            return substitutionResult((TypeParameterDescriptor) constructor.getDeclarationDescriptor(), howThisTypeIsUsed, Variance.INVARIANT, value).getType();
+            return TypeUtils.makeNullableIfNeeded(substitutionResult((TypeParameterDescriptor) constructor.getDeclarationDescriptor(), howThisTypeIsUsed, Variance.INVARIANT, value).getType(), type.isNullable());
 
 //            if (!allows(howThisTypeIsUsed, value.getProjectionKind())) {
 //                throw new SubstitutionException("!!" + value.toString());

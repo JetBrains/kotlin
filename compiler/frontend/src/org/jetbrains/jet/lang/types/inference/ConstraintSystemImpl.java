@@ -209,7 +209,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
             boolean result = delegate.noCorrespondingSupertype(subtype, supertype);
             if (!result) {
-                println("-- " + subtype + " has supertype corresponding to " + supertype);
+                println("-- " + subtype + " has no supertype corresponding to " + supertype);
             }
             return result;
         }
@@ -273,9 +273,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
-            UnknownType unknownType = unknownTypes.get(typeParameterDescriptor);
-            if (unknownType != null) {
-                return unknownType;
+            // Checking that this is not a T?, but exactly T
+            if (typeParameterDescriptor.getDefaultType().isNullable() == type.isNullable()) {
+                UnknownType unknownType = unknownTypes.get(typeParameterDescriptor);
+                if (unknownType != null) {
+                    return unknownType;
+                }
             }
         }
 
