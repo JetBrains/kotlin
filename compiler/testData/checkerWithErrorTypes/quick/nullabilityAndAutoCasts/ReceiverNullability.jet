@@ -29,7 +29,7 @@ fun A.test2() {
     this<!UNNECESSARY_SAFE_CALL!>?.<!>buzz() // warning
 }
 
-fun A?.test() {
+fun A?.test3() {
     <!UNSAFE_CALL!>foo<!>() // error
     <!UNSAFE_CALL!>bar<!>() // error
     buzz()
