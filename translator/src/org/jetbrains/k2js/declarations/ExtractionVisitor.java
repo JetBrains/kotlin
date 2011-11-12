@@ -1,7 +1,10 @@
 package org.jetbrains.k2js.declarations;
 
+import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
+import com.intellij.util.xml.PropertyAccessor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.k2js.translate.Namer;
 
@@ -41,32 +44,25 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
 
     @Override
     public Void visitPropertyDescriptor(@NotNull PropertyDescriptor descriptor, @NotNull JsScope enclosingScope) {
-        PropertySetterDescriptor setter = descriptor.getSetter();
-        if (setter != null) {
-            setter.accept(this, enclosingScope);
+        String propertyName = descriptor.getName();
+        extractAccessor(descriptor.getGetter(), true, propertyName, enclosingScope);
+        if (descriptor.isVar()) {
+            extractAccessor(descriptor.getSetter(), false, propertyName, enclosingScope);
         }
-        PropertyGetterDescriptor getter = descriptor.getGetter();
-        if (getter != null) {
-            getter.accept(this, enclosingScope);
-        }
-        // We do not put this name into extractor because it can't be referenced from outside
-        // thus it doesn't have a descriptor.
-        enclosingScope.declareName(Namer.getBackingFieldNameForProperty(descriptor.getName()));
         return null;
     }
 
-    @Override
-    public Void visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, JsScope enclosingScope) {
-        String getterName = Namer.getNameForGetter(descriptor.getCorrespondingProperty().getName());
-        extractor.putName(descriptor, enclosingScope.declareName(getterName));
-        return null;
-    }
-
-    @Override
-    public Void visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, JsScope enclosingScope) {
-        String setterName = Namer.getNameForSetter(descriptor.getCorrespondingProperty().getName());
-        extractor.putName(descriptor, enclosingScope.declareName(setterName));
-        return null;
+    //Not using visitors here for convenience
+    public void extractAccessor(@Nullable PropertyAccessorDescriptor descriptor, boolean isGetter, String propertyName,
+                                @NotNull JsScope enclosingScope) {
+        assert descriptor != null : "Accessor descriptor should not be null";
+        String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
+        JsName jsName = enclosingScope.declareName(accessorName);
+        JsScope accessorScope = new JsScope(enclosingScope, (isGetter ? "getter " : "setter ") + propertyName);
+        extractor.putScope(descriptor, accessorScope);
+        extractor.putName(descriptor, jsName);
+        // Note : We do not put backing field name into extractor because it can't be referenced from outside
+        accessorScope.declareName(Namer.getKotlinBackingFieldName(descriptor.getCorrespondingProperty().getName()));
     }
 
     @Override

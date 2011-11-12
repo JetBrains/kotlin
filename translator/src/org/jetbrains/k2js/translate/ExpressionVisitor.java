@@ -5,15 +5,19 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsReturn;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,19 +130,21 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return new JsBinaryOperation(OperationTranslator.getBinaryOperator(jetOperationToken), left, right);
     }
 
-    //TODO correct look-up logic
+    //TODO clearify code
     @Override
     @NotNull
     public JsNode visitSimpleNameExpression(JetSimpleNameExpression expression, TranslationContext context) {
         String referencedName = expression.getReferencedName();
         JsName jsName = context.enclosingScope().findExistingName(referencedName);
-        if (jsName == null) {
-            throw new AssertionError("Unindentified name " + expression.getReferencedName());
-        }
+        assert jsName != null : "Undeclared name: " + referencedName;
         if (context.namespaceScope().ownsName(jsName)) {
             return context.getNamespaceQualifiedReference(jsName);
         }
-        return jsName.makeRef();
+        JsNameRef nameRef = jsName.makeRef();
+        if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+            nameRef.setQualifier(new JsThisRef());
+        }
+        return nameRef;
     }
 
     @Override

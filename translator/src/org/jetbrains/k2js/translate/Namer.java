@@ -22,7 +22,7 @@ public final class Namer {
     //private static final String CLASS_CREATE_METHOD_NAME = "create";
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
-    private static final String BACKING_FIELD_PREFIX = "_";
+    private static final String BACKING_FIELD_PREFIX = "$";
    // public static final String DEFAULT_SETTER_PARAM_NAME = "val";
 
     public static String getClassObjectName() {
@@ -30,17 +30,16 @@ public final class Namer {
         return CLASS_OBJECT_NAME;
     }
 
-    public static String getNameForAccessor(String propertyName, JetPropertyAccessor accessor) {
-        if (accessor.isGetter()) {
+    public static String getNameForAccessor(String propertyName, boolean isGetter) {
+        if (isGetter) {
             return getNameForGetter(propertyName);
         }
-        if (accessor.isSetter()) {
+        else {
             return getNameForSetter(propertyName);
         }
-        throw new AssertionError("accessor should be a getter or a setter!");
     }
 
-    public static String getBackingFieldNameForProperty(String propertyName) {
+    public static String getKotlinBackingFieldName(String propertyName) {
         return getNameWithPrefix(propertyName, BACKING_FIELD_PREFIX);
     }
 

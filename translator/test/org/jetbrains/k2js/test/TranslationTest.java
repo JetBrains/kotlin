@@ -1,6 +1,8 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.k2js.K2JSTranslator;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
@@ -13,21 +15,52 @@ import static org.junit.Assert.*;
 /**
  * @author Talanov Pavel
  */
-public class TranslationTest {
+public abstract class TranslationTest {
 
-    protected final static String TEST_DIR = "test_files/test_cases/";
+    final protected static String TEST_FILES = "testFiles/";
+    final private static String CASES = "cases/";
+    final private static String OUT = "out/";
 
-    protected void performTest(String inputFile, String namespaceName,
+    protected String testFilesDirectory;
+    protected String testCasesDirectory;
+    protected String outputDirectory;
+
+    @Before
+    public void setUpClass() {
+        testCasesDirectory = CASES;
+        outputDirectory = OUT;
+        testFilesDirectory = TEST_FILES + mainDirectory();
+    }
+
+    protected abstract String mainDirectory();
+
+    private String getOutputDirectory() {
+        return testFilesDirectory + outputDirectory;
+    }
+
+    private String getInputDirectory() {
+        return testFilesDirectory + testCasesDirectory;
+    }
+
+    protected void performTest(String filename, String namespaceName,
                              String functionName, Object expectedResult) throws Exception {
         K2JSTranslator.Arguments args = new K2JSTranslator.Arguments();
-        args.src = TEST_DIR + inputFile;
-        args.outputDir = getOutputFilename(TEST_DIR + inputFile);
+        args.src = getInputFilePath(filename);
+        args.outputDir = getOutputFilePath(filename);
         K2JSTranslator.translate(args);
         runWithRhino(args.outputDir, namespaceName, functionName, expectedResult);
     }
 
-    private String getOutputFilename(String inputFile) {
-        return inputFile.substring(0, inputFile.lastIndexOf('.')) + ".js";
+    private String getOutputFilePath(String filename) {
+        return getOutputDirectory() + convertToDotJsFile(filename);
+    }
+
+    private String convertToDotJsFile(String filename) {
+        return filename.substring(0, filename.lastIndexOf('.')) + ".js";
+    }
+
+    private String getInputFilePath(String filename) {
+        return getInputDirectory() + filename;
     }
 
     protected void runWithRhino(String inputFile, String namespaceName,

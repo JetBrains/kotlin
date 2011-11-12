@@ -25,16 +25,16 @@ public final class CodeGenerator {
         System.out.println(output.toString());
     }
 
-    private void generateCode(JsProgram program) {
-        JsSourceGenerationVisitor sourceGenerator =
-                        new JsSourceGenerationVisitor(output);
-        program.traverse(sourceGenerator, null);
-    }
-
     public void generateToFile(JsProgram program, File file) throws IOException {
         generateCode(program);
         FileWriter writer = new FileWriter(file);
         writer.write(output.toString());
         writer.close();
+    }
+
+    private void generateCode(JsProgram program) {
+        JsSourceGenerationVisitor sourceGenerator =
+                        new JsSourceGenerationVisitor(output);
+        program.traverse(sourceGenerator, null);
     }
 }

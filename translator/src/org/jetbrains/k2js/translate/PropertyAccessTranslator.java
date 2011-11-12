@@ -25,17 +25,13 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
 
     @Nullable
     public JsInvocation resolveAsPropertyGet(@NotNull JetDotQualifiedExpression expression) {
-        if (!(expression instanceof JetDotQualifiedExpression)) {
-            return null;
-        }
-        JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression)expression;
-        JetExpression selectorExpression = dotQualifiedExpression.getSelectorExpression();
+        JetExpression selectorExpression = expression.getSelectorExpression();
         assert selectorExpression != null : "Selector should not be null.";
         JsName getterName = getPropertyGetterName(selectorExpression);
         if (getterName == null) {
             return  null;
         }
-        return translateReceiverAndReturnAccessorInvocation(dotQualifiedExpression, getterName);
+        return translateReceiverAndReturnAccessorInvocation(expression, getterName);
     }
 
     @NotNull
@@ -73,7 +69,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (getter == null) {
             return null;
         }
-        return translationContext().declarations().getName(getter);
+        return translationContext().getNameForDescriptor(getter);
     }
 
     @Nullable
@@ -86,7 +82,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (setter == null) {
             return null;
         }
-        return translationContext().declarations().getName(setter);
+        return translationContext().getNameForDescriptor(setter);
     }
 
     @Nullable

@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
@@ -13,10 +12,39 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  *
- * This visitor collects all initializers from a given class in a list of statements.
- * Note: we do use this to preserve the order in which initializers are executed.
+ * This visitor collects all initializers from a given class into JsFunction object.
+ * Note: we do use visitor pattern to preserve the order in which initializers are executed.
  */
 public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
+
+    @NotNull private final JsScope initializerMethodScope;
+    @NotNull private final JetClass classDeclaration;
+    @NotNull private final TranslationContext initializerMethodContext;
+
+    public InitializerVisitor(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+        this.initializerMethodScope = new JsScope(context.getScopeForElement(classDeclaration),
+                "initializer " + classDeclaration.getName());
+        this.classDeclaration = classDeclaration;
+        this.initializerMethodContext = context.newEnclosingScope(initializerMethodScope);
+
+    }
+
+    @NotNull
+    public JsFunction generateInitializeMethodBody() {
+        JsFunction result = JsFunction.getAnonymousFunctionWithScope(initializerMethodScope);
+        result.setBody(getInitializerMethodBody(classDeclaration, initializerMethodContext));
+        return result;
+    }
+
+    @NotNull
+    private JsBlock getInitializerMethodBody(@NotNull JetClass classDeclaration,
+                                             @NotNull TranslationContext context) {
+        List<JsStatement> initializerStatements = classDeclaration.accept(this, context);
+        JsBlock block = new JsBlock();
+        block.setStatements(initializerStatements);
+        return block;
+    }
+
 
     @Override
     @NotNull
@@ -35,17 +63,28 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
         if (initializer == null) {
             return new ArrayList<JsStatement>();
         }
+        declareBackingFieldName(expression);
+        return Arrays.asList(translateInitializer(expression, context, initializer));
+    }
+
+    private void declareBackingFieldName(@NotNull JetProperty property) {
+        initializerMethodScope.declareName(Namer.getKotlinBackingFieldName(property.getName()));
+    }
+
+    @NotNull
+    private JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
+                                             @NotNull JetExpression initializer) {
         ExpressionTranslator translator = new ExpressionTranslator(context);
         JsExpression initExpression = AstUtil.convertToExpression(translator.translate(initializer));
-        return Arrays.asList(assignmentToBackingField(expression, initExpression, context));
+        return assignmentToBackingField(property, initExpression, context);
     }
 
     @NotNull
     JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
                                                   @NotNull TranslationContext context) {
-        JsName backingFieldName = context.classScope()
-                .findExistingName(Namer.getBackingFieldNameForProperty(property.getName()));
-        assert backingFieldName != null : "Class scope should contain backing field names";
+        String propertyName = property.getName();
+        assert propertyName != null : "Named property expected.";
+        JsName backingFieldName = getBackingFieldName(propertyName, context);
         JsNameRef backingFieldRef = backingFieldName.makeRef();
         backingFieldRef.setQualifier(new JsThisRef());
         return AstUtil.convertToStatement(AstUtil.newAssignment(backingFieldRef, initExpression));

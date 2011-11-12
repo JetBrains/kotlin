@@ -31,7 +31,8 @@ public final class FunctionTranslator extends AbstractTranslator {
                 (translationContext().getNamespaceQualifiedReference(functionName), function));
     }
 
-    @NotNull JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction jetFunction) {
+    @NotNull
+    JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction jetFunction) {
         JsName functionName = translationContext().namespaceScope().declareFreshName(jetFunction.getName());
         JsFunction function = generateFunctionObject(jetFunction);
         return new JsPropertyInitializer(functionName.makeRef(), function);
@@ -39,15 +40,25 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction generateFunctionObject(@NotNull JetNamedFunction jetFunction) {
-        JetExpression jetBodyExpression = jetFunction.getBodyExpression();
         JsFunction result = JsFunction.getAnonymousFunctionWithScope
                 (translationContext().getScopeForElement(jetFunction));
-        JsNode jsBody = (new ExpressionTranslator(functionContext(jetFunction)))
-                .translate(jetBodyExpression);
+        JsNode jsBody = translateBody(jetFunction);
         List<JsParameter> jsParameters = translateParameters(jetFunction.getValueParameters(), result.getScope());
         result.setParameters(jsParameters);
         result.setBody(AstUtil.convertToBlock(jsBody));
         return result;
+    }
+
+    @NotNull
+    private JsNode translateBody(@NotNull JetNamedFunction jetFunction) {
+        JetExpression jetBodyExpression = jetFunction.getBodyExpression();
+        //TODO support them ffs
+        assert jetBodyExpression != null : "Function without body not supported at the moment";
+        JsNode body = (new ExpressionTranslator(functionContext(jetFunction))).translate(jetBodyExpression);
+        if (jetFunction.hasBlockBody()) {
+            return AstUtil.convertToBlock(body);
+        }
+        return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression((body))));
     }
 
     @NotNull

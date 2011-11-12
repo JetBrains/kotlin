@@ -28,6 +28,7 @@ public final class OperationTranslator {
         map.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
         map.put(JetTokens.EQEQ, JsBinaryOperator.EQ);
         map.put(JetTokens.ANDAND, JsBinaryOperator.AND);
+        map.put(JetTokens.EXCLEQ, JsBinaryOperator.NEQ);
     }
 
     public static JsBinaryOperator getBinaryOperator(JetToken token) {

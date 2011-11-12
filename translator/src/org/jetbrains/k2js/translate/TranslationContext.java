@@ -4,14 +4,8 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.DeclarationExtractor;
 
@@ -92,7 +86,17 @@ public final class TranslationContext {
     }
 
     @NotNull
-    TranslationContext newFunction(@NotNull JetNamedFunction declaration) {
+    public TranslationContext newPropertyAccess(@NotNull JetPropertyAccessor declaration) {
+        return newPropertyAccess(BindingUtils.getPropertyAccessorDescriptor(bindingContext, declaration));
+    }
+
+    @NotNull
+    public TranslationContext newPropertyAccess(@NotNull PropertyAccessorDescriptor descriptor) {
+        return newFunction(descriptor);
+    }
+
+    @NotNull
+    public TranslationContext newFunction(@NotNull JetNamedFunction declaration) {
         return newFunction(BindingUtils.getFunctionDescriptor(bindingContext, declaration));
     }
 
@@ -102,6 +106,15 @@ public final class TranslationContext {
         Scopes newScopes = new Scopes(functionScope, scopes.classScope, scopes.namespaceScope);
         return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
     }
+
+    // Note: Should be used if and only if scope has no corresponding descriptor
+    @NotNull
+    public TranslationContext newEnclosingScope(@NotNull JsScope enclosingScope) {
+        Scopes newScopes = new Scopes(enclosingScope, scopes.classScope, scopes.namespaceScope);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
+    }
+
+
 
     @NotNull
     public JsNameRef getNamespaceQualifiedReference(JsName name) {
@@ -148,13 +161,24 @@ public final class TranslationContext {
 
     @NotNull
     public JsScope getScopeForElement(@NotNull JetElement element) {
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-        assert descriptor != null : "Element should have a descriptor";
+        DeclarationDescriptor descriptor = getDescriptorForElement(element);
         return getScopeForDescriptor(descriptor);
     }
 
     @NotNull
-    public DeclarationExtractor declarations() {
-        return extractor;
+    public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        return extractor.getName(descriptor);
+    }
+
+    @NotNull JsName getNameForElement(@NotNull JetElement element) {
+        DeclarationDescriptor descriptor = getDescriptorForElement(element);
+        return getNameForDescriptor(descriptor);
+    }
+
+    @NotNull
+    private DeclarationDescriptor getDescriptorForElement(@NotNull JetElement element) {
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        assert descriptor != null : "Element should have a descriptor";
+        return descriptor;
     }
 }

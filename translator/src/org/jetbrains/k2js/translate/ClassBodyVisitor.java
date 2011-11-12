@@ -2,8 +2,9 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
@@ -66,37 +67,31 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     }
 
     @NotNull
-    private JsPropertyInitializer generateDefaultGetter(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        JsName getterName = context.classScope().declareName(Namer.getNameForGetter(expression.getName()));
-        return AstUtil.newNamedMethod(getterName, generateDefaultGetterFunction(expression, context));
+    private JsPropertyInitializer generateDefaultGetter
+            (@NotNull JetProperty expression, @NotNull TranslationContext context) {
+        PropertyGetterDescriptor getterDescriptor =
+                BindingUtils.getPropertyGetterDescriptorForProperty(context.bindingContext(), expression);
+        return AstUtil.newNamedMethod(context.getNameForDescriptor(getterDescriptor),
+                generateDefaultGetterFunction(expression, context.newPropertyAccess(getterDescriptor)));
     }
 
     @NotNull
     private JsFunction generateDefaultGetterFunction(@NotNull JetProperty expression,
                                                      @NotNull TranslationContext context) {
-        JsNameRef backingFieldRef = declareOrGetBackingFieldName(getPropertyName(expression), context).makeRef();
+        JsNameRef backingFieldRef = getBackingFieldName(getPropertyName(expression), context).makeRef();
         backingFieldRef.setQualifier(new JsThisRef());
         JsReturn returnExpression = new JsReturn(backingFieldRef);
         return AstUtil.newFunction
             (context.enclosingScope(), null, new ArrayList<JsParameter>(), AstUtil.convertToBlock(returnExpression));
     }
 
-    //TODO rewrite
-    @NotNull
-    private JsName declareOrGetBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
-        String backingFieldName = Namer.getBackingFieldNameForProperty(propertyName);
-        JsName jsBackingFieldName = context.classScope().findExistingName(backingFieldName);
-        if (jsBackingFieldName == null) {
-            jsBackingFieldName = context.classScope().declareName(backingFieldName);
-        }
-        return jsBackingFieldName;
-    }
-
     @NotNull
     private JsPropertyInitializer generateDefaultSetter(@NotNull JetProperty expression,
                                                         @NotNull TranslationContext context) {
-        JsName setterName = context.classScope().declareName(Namer.getNameForSetter(expression.getName()));
-        return AstUtil.newNamedMethod(setterName, generateDefaultSetterFunction(expression, context));
+        PropertySetterDescriptor setterDescriptor =
+                BindingUtils.getPropertySetterDescriptorForProperty(context.bindingContext(), expression);
+        return AstUtil.newNamedMethod(context.getNameForDescriptor(setterDescriptor),
+                 generateDefaultSetterFunction(expression, context.newPropertyAccess(setterDescriptor)));
     }
 
     @NotNull
@@ -114,7 +109,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     @NotNull
     private JsBinaryOperation assignmentToBackingFieldFromDefaultParameter
         (@NotNull JetProperty expression, @NotNull TranslationContext context, @NotNull JsParameter defaultParameter) {
-        JsNameRef backingFieldRef = declareOrGetBackingFieldName(getPropertyName(expression), context).makeRef();
+        JsNameRef backingFieldRef = getBackingFieldName(getPropertyName(expression), context).makeRef();
         backingFieldRef.setQualifier(new JsThisRef());
         JsBinaryOperation assignExpression = new JsBinaryOperation(JsBinaryOperator.ASG);
         assignExpression.setArg1(backingFieldRef);
@@ -122,26 +117,50 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         return assignExpression;
     }
 
+    @Override
+    @NotNull
+    public List<JsPropertyInitializer> visitPropertyAccessor(@NotNull JetPropertyAccessor expression,
+                                                             @NotNull TranslationContext context) {
+        List<JsPropertyInitializer> methods = new ArrayList<JsPropertyInitializer>();
+        methods.add(generateMethodForAccessor(expression, context));
+        return methods;
+    }
 
+    @NotNull
+    private JsPropertyInitializer generateMethodForAccessor(@NotNull JetPropertyAccessor expression,
+                                                            @NotNull TranslationContext context) {
+        JsFunction methodBody = translateAccessorBody(expression, context);
+        // we know that custom getters and setters always have their descriptors
+        return AstUtil.newNamedMethod(context.getNameForElement(expression), methodBody);
+    }
 
-//    @Override
+    @NotNull
+    private JsFunction translateAccessorBody(@NotNull JetPropertyAccessor expression,
+                                             @NotNull TranslationContext context) {
+        JsFunction methodBody = JsFunction.getAnonymousFunctionWithScope(context.getScopeForElement(expression));
+        ExpressionTranslator expressionTranslator =
+                new ExpressionTranslator(context.newPropertyAccess(expression));
+        JetExpression bodyExpression = expression.getBodyExpression();
+        assert bodyExpression != null : "Custom accessor should have a body.";
+        JsBlock methodBodyBlock = AstUtil.convertToBlock(expressionTranslator.translate(bodyExpression));
+        methodBody.setBody(methodBodyBlock);
+        return methodBody;
+    }
+
 //    @NotNull
-//    public List<JsPropertyInitializer> visitPropertyAccessor
-//            (JetPropertyAccessor expression, TranslationContext context) {
-//        List<JsPropertyInitializer> methods = new ArrayList<JsPropertyInitializer>();
-//        JsPropertyInitializer namedMethod = generateMethodForAccessor(expression, context);
-//        methods.add(namedMethod);
-//        return methods;
+//    JsName getNameForGetter(@NotNull String propertyName, @NotNull TranslationContext context) {
+//        return getNameForAccessor(propertyName, true, context);
 //    }
 //
-//    private JsPropertyInitializer generateMethodForAccessor(JetPropertyAccessor expression, TranslationContext context) {
-//        JsFunction methodBody = new JsFunction(context.enclosingScope());
-//        ExpressionTranslator expressionTranslator =
-//                new ExpressionTranslator(context.newFunction(methodBody));
-//        JsBlock methodBodyBlock = AstUtil.convertToBlock(expressionTranslator.translate(expression.getBodyExpression()));
-//        methodBody.setBody(methodBodyBlock);
-//        //TODO figure out naming pattern
-//        return AstUtil.newNamedMethod(Namer.getNameForAccessor("nameForAccessor", expression), methodBody);
+//    @NotNull
+//    JsName getNameForSetter(@NotNull String propertyName, @NotNull TranslationContext context) {
+//        return getNameForAccessor(propertyName, false, context);
+//    }
+//
+//    @NotNull
+//    JsName getNameForAccessor(@NotNull String propertyName, boolean isGetter,
+//                              @NotNull TranslationContext context) {
+//        return context.classScope().findExistingName(Namer.getNameForAccessor(propertyName, isGetter));
 //    }
 
 
