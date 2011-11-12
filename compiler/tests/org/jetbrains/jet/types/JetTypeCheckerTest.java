@@ -675,7 +675,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 });
             }
 
-            Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
+            Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
             classDescriptor.initialize(
                     !open,
                     typeParameters,

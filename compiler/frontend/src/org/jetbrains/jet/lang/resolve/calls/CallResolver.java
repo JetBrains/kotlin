@@ -144,12 +144,12 @@ public class CallResolver {
                 DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
                 if (declarationDescriptor instanceof ClassDescriptor) {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                    Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
+                    Set<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
                     if (constructors.isEmpty()) {
                         trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(trace, scope, call);
                     }
-                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(TaskPrioritizer.convertWithImpliedThis(scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors), call, DataFlowInfo.EMPTY));
+                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(TaskPrioritizer.<FunctionDescriptor>convertWithImpliedThis(scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors), call, DataFlowInfo.EMPTY));
                 }
                 else {
                     trace.report(NOT_A_CLASS.on(calleeExpression));
@@ -162,12 +162,12 @@ public class CallResolver {
                 assert containingDeclaration instanceof ClassDescriptor;
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-                Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
+                Set<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
                 if (constructors.isEmpty()) {
                     trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
-                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCallImpl.convertCollection(constructors), call, DataFlowInfo.EMPTY));
+                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(ResolvedCallImpl.<FunctionDescriptor>convertCollection(constructors), call, DataFlowInfo.EMPTY));
             }
             else if (calleeExpression != null) {
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)

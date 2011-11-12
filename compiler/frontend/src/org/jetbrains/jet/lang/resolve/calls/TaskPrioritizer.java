@@ -183,7 +183,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 //        return result;
     }
 
-    public static <D extends CallableDescriptor> Collection<ResolvedCallImpl<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<D> descriptors) {
+    public static <D extends CallableDescriptor> Collection<ResolvedCallImpl<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
         Collection<ResolvedCallImpl<D>> result = Lists.newArrayList();
         for (ReceiverDescriptor receiverParameter : receiverParameters) {
             for (D extension : descriptors) {

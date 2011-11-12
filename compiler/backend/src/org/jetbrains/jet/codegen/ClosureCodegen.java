@@ -144,7 +144,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         function = function.initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<FunctionDescriptor>emptySet(), null);
+                Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);

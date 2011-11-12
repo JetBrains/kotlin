@@ -104,7 +104,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getConstructors() {
+    public Set<ConstructorDescriptor> getConstructors() {
         throw new UnsupportedOperationException(); // TODO
     }
 

@@ -26,7 +26,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor 
     JetType getSuperclassType();
 
     @NotNull
-    Set<FunctionDescriptor> getConstructors();
+    Set<ConstructorDescriptor> getConstructors();
 
     @Nullable
     ConstructorDescriptor getUnsubstitutedPrimaryConstructor();

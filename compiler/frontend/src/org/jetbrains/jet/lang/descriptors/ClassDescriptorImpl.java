@@ -21,7 +21,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     private TypeConstructor typeConstructor;
 
     private JetScope memberDeclarations;
-    private Set<FunctionDescriptor> constructors;
+    private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
     private JetType superclassType;
     private ReceiverDescriptor implicitReceiver;
@@ -37,7 +37,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                             @NotNull List<TypeParameterDescriptor> typeParameters,
                                             @NotNull Collection<JetType> supertypes,
                                             @NotNull JetScope memberDeclarations,
-                                            @NotNull Set<FunctionDescriptor> constructors,
+                                            @NotNull Set<ConstructorDescriptor> constructors,
                                             @Nullable ConstructorDescriptor primaryConstructor) {
         return initialize(sealed, typeParameters, supertypes, memberDeclarations, constructors, primaryConstructor, getClassType(supertypes));
     }
@@ -46,7 +46,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                                 @NotNull List<TypeParameterDescriptor> typeParameters,
                                                 @NotNull Collection<JetType> supertypes,
                                                 @NotNull JetScope memberDeclarations,
-                                                @NotNull Set<FunctionDescriptor> constructors,
+                                                @NotNull Set<ConstructorDescriptor> constructors,
                                                 @Nullable ConstructorDescriptor primaryConstructor,
                                                 @Nullable JetType superclassType) {
         this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, supertypes);
@@ -103,7 +103,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getConstructors() {
+    public Set<ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 

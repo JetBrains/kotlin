@@ -75,8 +75,8 @@ public class ErrorUtils {
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<ERROR CLASS>") {
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getConstructors() {
-            return ERROR_FUNCTION_GROUP;
+        public Set<ConstructorDescriptor> getConstructors() {
+            return ERROR_CONSTRUCTOR_GROUP;
         }
 
         @NotNull
@@ -87,11 +87,12 @@ public class ErrorUtils {
     };
 
     private static final Set<FunctionDescriptor> ERROR_FUNCTION_GROUP = Collections.singleton(createErrorFunction(0, Collections.<JetType>emptyList()));
+    private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor(0, Collections.<JetType>emptyList()));
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
 
     static {
         ERROR_CLASS.initialize(
-            true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_FUNCTION_GROUP, ERROR_CONSTRUCTOR);
+            true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_CONSTRUCTOR_GROUP, ERROR_CONSTRUCTOR);
     }
 
     private static JetScope getErrorScope() {
@@ -130,6 +131,18 @@ public class ErrorUtils {
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
+                Modality.OPEN,
+                Visibility.INTERNAL
+        );
+    }
+
+    public static ConstructorDescriptor createErrorConstructor(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
+        return new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false).initialize(
+                null,
+                ReceiverDescriptor.NO_RECEIVER,
+                Collections.<TypeParameterDescriptor>emptyList(), // TODO
+                Collections.<ValueParameterDescriptor>emptyList(), // TODO
+                createErrorType("<ERROR CONSRUCTOR RETURN TYPE>"),
                 Modality.OPEN,
                 Visibility.INTERNAL
         );
