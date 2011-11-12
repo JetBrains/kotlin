@@ -553,7 +553,7 @@ public class JetControlFlowProcessor {
                 trace.report(RETURN_NOT_ALLOWED.on(expression));
                 error = true;
             }
-            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetConstructor) {
+            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetSecondaryConstructor) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }

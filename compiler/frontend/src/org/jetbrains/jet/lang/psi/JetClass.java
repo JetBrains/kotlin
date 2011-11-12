@@ -26,7 +26,7 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
     }
 
     @NotNull
-    public List<JetConstructor> getSecondaryConstructors() {
+    public List<JetSecondaryConstructor> getSecondaryConstructors() {
         JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
         if (body == null) return Collections.emptyList();
 

@@ -684,7 +684,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     constructors,
                     null
             );
-            for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
+            for (JetSecondaryConstructor constructor : classElement.getSecondaryConstructors()) {
                 ConstructorDescriptorImpl functionDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
                 functionDescriptor.setReturnType(classDescriptor.getDefaultType());
                 constructors.add(functionDescriptor);

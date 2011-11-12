@@ -562,8 +562,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
-        if (declaration instanceof JetConstructor) {
-            generateSecondaryConstructor((JetConstructor) declaration);
+        if (declaration instanceof JetSecondaryConstructor) {
+            generateSecondaryConstructor((JetSecondaryConstructor) declaration);
         }
         else if (declaration instanceof JetClassObject) {
             generateClassObject((JetClassObject) declaration);
@@ -622,7 +622,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateSecondaryConstructor(JetConstructor constructor) {
+    private void generateSecondaryConstructor(JetSecondaryConstructor constructor) {
         ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
         if (constructorDescriptor == null) {
             throw new UnsupportedOperationException("failed to get descriptor for secondary constructor");

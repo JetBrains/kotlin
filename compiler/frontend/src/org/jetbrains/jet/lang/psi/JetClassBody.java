@@ -23,8 +23,8 @@ public class JetClassBody extends JetElement {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
 
-    public List<JetConstructor> getSecondaryConstructors() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetConstructor.class);
+    public List<JetSecondaryConstructor> getSecondaryConstructors() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetSecondaryConstructor.class);
     }
 
     @Override

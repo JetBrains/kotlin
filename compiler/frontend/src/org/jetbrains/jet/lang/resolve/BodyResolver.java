@@ -282,8 +282,8 @@ public class BodyResolver {
     }
 
     private void resolveSecondaryConstructorBodies() {
-        for (Map.Entry<JetConstructor, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
-            JetConstructor constructor = entry.getKey();
+        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
+            JetSecondaryConstructor constructor = entry.getKey();
             ConstructorDescriptor descriptor = entry.getValue();
 
             resolveSecondaryConstructorBody(constructor, descriptor, ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getScopeForMemberResolution());
@@ -292,7 +292,7 @@ public class BodyResolver {
         }
     }
 
-    private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
+    private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
         if (!context.completeAnalysisNeeded(declaration)) return;
         final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 

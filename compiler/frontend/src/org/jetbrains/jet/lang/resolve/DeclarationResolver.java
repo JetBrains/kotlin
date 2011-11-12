@@ -37,7 +37,7 @@ public class DeclarationResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             processPrimaryConstructor(classDescriptor, jetClass);
-            for (JetConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
+            for (JetSecondaryConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
                 processSecondaryConstructor(classDescriptor, jetConstructor);
             }
         }
@@ -75,7 +75,7 @@ public class DeclarationResolver {
 
             resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(), classDescriptor);
 //            processPrimaryConstructor(classDescriptor, jetClass);
-//            for (JetConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
+//            for (JetSecondaryConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
 //                processSecondaryConstructor(classDescriptor, jetConstructor);
 //            }
         }
@@ -154,7 +154,7 @@ public class DeclarationResolver {
         }
     }
 
-    private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
+    private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetSecondaryConstructor constructor) {
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
 //            context.getTrace().getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
             context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode()));

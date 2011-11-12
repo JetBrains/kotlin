@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetConstructor extends JetDeclaration implements JetDeclarationWithBody {
-    public JetConstructor(@NotNull ASTNode node) {
+public class JetSecondaryConstructor extends JetDeclaration implements JetDeclarationWithBody {
+    public JetSecondaryConstructor(@NotNull ASTNode node) {
         super(node);
     }
 

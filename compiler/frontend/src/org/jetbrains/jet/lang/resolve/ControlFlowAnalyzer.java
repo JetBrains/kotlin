@@ -45,7 +45,7 @@ public class ControlFlowAnalyzer {
                                                : functionDescriptor.getReturnType();
             checkFunction(function, expectedReturnType);
         }
-        for (JetConstructor constructor : this.context.getConstructors().keySet()) {
+        for (JetSecondaryConstructor constructor : this.context.getConstructors().keySet()) {
             if (!context.completeAnalysisNeeded(constructor)) continue;
             checkFunction(constructor, JetStandardClasses.getUnitType());
         }
