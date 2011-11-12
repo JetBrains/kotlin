@@ -23,4 +23,16 @@ fun test() {
     <!ERROR_COMPILE_TIME_VALUE!>'\123'<!>
     <!ERROR_COMPILE_TIME_VALUE!>'\ra'<!>
     <!ERROR_COMPILE_TIME_VALUE!>'\000'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\000'<!>
+    '\u0000'
+    '\u000a'
+    '\u000A'
+    <!ERROR_COMPILE_TIME_VALUE!>'\u'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\u0'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\u00'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\u000'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\u000z'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\\u000'<!>
+    <!ERROR_COMPILE_TIME_VALUE!>'\'<!>
 }
+

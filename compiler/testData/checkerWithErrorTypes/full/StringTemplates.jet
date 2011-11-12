@@ -18,4 +18,5 @@ fun demo() {
     "foo${bar + map { "foo" }}sdfsdf"
     "foo${bar + map {
       "foo$sdf${ buzz{}}" }}sdfsdf"
+    "a<!ILLEGAL_ESCAPE_SEQUENCE!>\u<!> <!ILLEGAL_ESCAPE_SEQUENCE!>\u<!>0 <!ILLEGAL_ESCAPE_SEQUENCE!>\u<!>00 <!ILLEGAL_ESCAPE_SEQUENCE!>\u<!>000 \u0000 \u0AaA <!ILLEGAL_ESCAPE_SEQUENCE!>\u<!>0AAz.length( ) + \u0022b"
 }

@@ -198,7 +198,7 @@ public class CheckerTestUtil {
                 opened.pop();
             }
 
-            assert opened.isEmpty() : "Stack is not empty";
+            assert opened.isEmpty() : "Stack is not empty: " + opened;
 
         }
         else {

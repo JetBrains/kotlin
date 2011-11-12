@@ -92,7 +92,7 @@ HEX_SIGNIFICAND={HEX_INTEGER_LITERAL}|0[Xx]{HEX_DIGIT}*\.{HEX_DIGIT}+
 CHARACTER_LITERAL="'"([^\\\'\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
 // TODO: introduce symbols (e.g. 'foo) as another way to write string literals
 STRING_LITERAL=\"([^\\\"\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
-ESCAPE_SEQUENCE=\\[^\n]
+ESCAPE_SEQUENCE=\\(u{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}|[^\n])
 
 // ANY_ESCAPE_SEQUENCE = \\[^]
 THREE_QUO = (\"\"\")

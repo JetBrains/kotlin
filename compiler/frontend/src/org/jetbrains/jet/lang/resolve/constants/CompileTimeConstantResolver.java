@@ -165,29 +165,60 @@ public class CompileTimeConstantResolver {
             return error;
         }
 
+        // Strip the quotes
         if (text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
-            return new ErrorValue("Incorret character constant");
+            return new ErrorValue("Incorrect character literal");
+        }
+        text = text.substring(1, text.length() - 1); // now there're no quotes
+        
+        if (text.length() == 0) {
+            return new ErrorValue("Empty character literal");            
         }
 
-        text = text.substring(1, text.length() - 1);
-
-        if (text.length() == 0) {
-            return new ErrorValue("Empty character literal");
-        } else if (text.length() == 1) {
-            if (text.charAt(0) == '\\') {
-                return new ErrorValue("Illegal escape: " + text);
-            } else {
+        if (text.charAt(0) != '\\') {
+            // No escape
+            if (text.length() == 1) {
                 return new CharValue(text.charAt(0));
             }
-        } else if (text.length() == 2 && text.charAt(0) == '\\') {
-            Character escaped = translateEscape(text.charAt(1));
-            if (escaped == null) {
-                return new ErrorValue("Illegal escape: " + text);
-            }
-            return new CharValue(escaped);
-        } else {
-            return new ErrorValue("Too many characters in character literal");
+            return new ErrorValue("Too many characters in a character literal" + text);
         }
+        return escapedStringToCharValue(text);
+    }
+
+    @NotNull
+    public static CompileTimeConstant<?> escapedStringToCharValue(@NotNull String text) {
+        assert text.length() > 0 && text.charAt(0) == '\\' : "Only escaped sequences must be passed to this routine: " + text;
+
+        // Escape
+        String escape = text.substring(1); // strip the slash
+        switch (escape.length()) {
+            case 0:
+                // bare slash
+                return illegalEscape(text);
+            case 1:
+                // one-char escape
+                Character escaped = translateEscape(escape.charAt(0));
+                if (escaped == null) {
+                    return illegalEscape(text);
+                }
+                return new CharValue(escaped);
+            case 5:
+                // unicode escape
+                if (escape.charAt(0) == 'u') {
+                    try {
+                        Integer intValue = Integer.valueOf(escape.substring(1), 16);
+                        return new CharValue((char) intValue.intValue());
+                    } catch (NumberFormatException e) {
+                        // Will be reported below
+                    }
+                }
+                break;
+        }
+        return illegalEscape(text);
+    }
+
+    private static ErrorValue illegalEscape(String text) {
+        return new ErrorValue("Illegal escape: " + text);
     }
 
     @Nullable

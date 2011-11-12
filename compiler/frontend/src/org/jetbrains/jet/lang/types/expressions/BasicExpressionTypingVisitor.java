@@ -840,18 +840,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
                 @Override
                 public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
-                    // TODO : Check escape
                     String text = entry.getText();
-                    assert text.length() == 2 && text.charAt(0) == '\\';
-                    char escaped = text.charAt(1);
 
-                    Character character = CompileTimeConstantResolver.translateEscape(escaped);
-                    if (character == null) {
+                    CompileTimeConstant<?> character = CompileTimeConstantResolver.escapedStringToCharValue(text);
+                    if (character instanceof ErrorValue) {
                         context.trace.report(ILLEGAL_ESCAPE_SEQUENCE.on(entry));
                         value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
                     }
                     else {
-                        builder.append(character);
+                        builder.append(((CharValue) character).getValue());
                     }
                 }
             });
@@ -866,7 +863,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext data) {
         return facade.getType(expression.getBaseExpression(), data);
     }
-    
+
     @Override
     public JetType visitJetElement(JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
