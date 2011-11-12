@@ -19,7 +19,12 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private final ClassBodyVisitor classBodyVisitor = new ClassBodyVisitor();
 
-    public ClassTranslator(TranslationContext context) {
+    @NotNull
+    public static ClassTranslator newInstance(@NotNull TranslationContext context) {
+        return new ClassTranslator(context);
+    }
+
+    private ClassTranslator(TranslationContext context) {
         super(context);
     }
 

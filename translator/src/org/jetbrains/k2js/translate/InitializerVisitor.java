@@ -77,8 +77,8 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     @NotNull
     private JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
                                              @NotNull JetExpression initializer) {
-        ExpressionTranslator translator = new ExpressionTranslator(context);
-        JsExpression initExpression = AstUtil.convertToExpression(translator.translate(initializer));
+        JsExpression initExpression = AstUtil.convertToExpression(Translation.expressionTranslator(context)
+                .translate(initializer));
         return assignmentToBackingField(property, initExpression, context);
     }
 

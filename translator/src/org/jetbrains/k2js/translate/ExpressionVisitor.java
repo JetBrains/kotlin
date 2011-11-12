@@ -93,12 +93,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsInvocation translateAsSetterCall(@NotNull JetBinaryExpression expression,
                                               @NotNull TranslationContext context) {
         JetToken jetOperationToken = (JetToken) expression.getOperationToken();
-        if (!OperationTranslator.isAssignment(jetOperationToken)) {
+        if (!OperatorTable.isAssignment(jetOperationToken)) {
             return null;
         }
-        PropertyAccessTranslator translator = new PropertyAccessTranslator(context);
         JetExpression leftExpression = expression.getLeft();
-        JsInvocation setterCall = translator.resolveAsPropertySet(leftExpression);
+        JsInvocation setterCall = Translation.propertyAccessTranslator(context).resolveAsPropertySet(leftExpression);
         if (setterCall == null) {
             return null;
         }
@@ -116,7 +115,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         assert rightExpression != null : "Binary expression should have a right expression";
         JsExpression right = AstUtil.convertToExpression(rightExpression.accept(this, context));
         JetToken jetOperationToken = (JetToken) expression.getOperationToken();
-        return new JsBinaryOperation(OperationTranslator.getBinaryOperator(jetOperationToken), left, right);
+        return new JsBinaryOperation(OperatorTable.getBinaryOperator(jetOperationToken), left, right);
     }
 
     //TODO support other cases
@@ -140,8 +139,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return nameRef;
         }
 
-        PropertyAccessTranslator propertyAccessTranslator = new PropertyAccessTranslator(context);
-        JsInvocation getterCall = propertyAccessTranslator.resolveAsPropertyGet(expression);
+        JsInvocation getterCall = Translation.propertyAccessTranslator(context).resolveAsPropertyGet(expression);
         if (getterCall != null) {
             return getterCall;
         }
@@ -159,7 +157,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
         JsName jsPropertyName = context.declareLocalName(getPropertyName(expression));
-        JsExpression jsInitExpression = translateInitializer(expression, context);
+        JsExpression jsInitExpression = translateInitializerForProperty(expression, context);
         return AstUtil.newVar(jsPropertyName, jsInitExpression);
     }
 
@@ -318,10 +316,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Nullable
     private JsInvocation translateAsGetterCall(@NotNull JetDotQualifiedExpression expression,
                                                @NotNull TranslationContext context) {
-        JsInvocation result;
-        PropertyAccessTranslator translator = new PropertyAccessTranslator(context);
-        result = translator.resolveAsPropertyGet(expression);
-        return result;
+        return Translation.propertyAccessTranslator(context).resolveAsPropertyGet(expression);
     }
 
     @NotNull
@@ -353,6 +348,16 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         nameRef.setQualifier(receiver);
         return selector;
     }
+
+    //TODO: implement unary operations
+//    @Override
+//    @NotNull
+//    public JsNode visitPrefixExpression(@NotNull JetUnaryExpression expression,
+//                                              @NotNull TranslationContext context) {
+//        JsExpression baseExpression = AstUtil.convertToExpression(expression.accept(this, context));
+//        expression
+//
+//    }
 
 
 }

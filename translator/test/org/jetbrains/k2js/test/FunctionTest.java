@@ -80,4 +80,9 @@ public final class FunctionTest extends TranslationTest {
     public void functionUsedBeforeDeclaration() throws Exception {
         testFooBoxIsTrue("functionUsedBeforeDeclaration.kt");
     }
+
+    @Test
+    public void functionWithTwoParametersCall() throws Exception {
+        testFooBoxIsTrue("functionWithTwoParametersCall.kt");
+    }
 }

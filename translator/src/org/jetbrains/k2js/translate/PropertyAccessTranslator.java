@@ -23,7 +23,12 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 //TODO ask for code review. Class has messy code.
 public final class PropertyAccessTranslator extends AbstractTranslator {
 
-    public PropertyAccessTranslator(@NotNull TranslationContext context) {
+    @NotNull
+    public static PropertyAccessTranslator newInstance(@NotNull TranslationContext context) {
+        return new PropertyAccessTranslator(context);
+    }
+
+    private PropertyAccessTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 
@@ -50,8 +55,8 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation translateReceiverAndReturnAccessorInvocation
             (@NotNull JetDotQualifiedExpression dotQualifiedExpression, @NotNull JsName accessorName) {
-        ExpressionTranslator translator = new ExpressionTranslator(translationContext());
-        JsNode node = translator.translate(dotQualifiedExpression.getReceiverExpression());
+        JsNode node = Translation.expressionTranslator(translationContext())
+                .translate(dotQualifiedExpression.getReceiverExpression());
         JsNameRef result = accessorName.makeRef();
         result.setQualifier(AstUtil.convertToExpression(node));
         return AstUtil.newInvocation(result);

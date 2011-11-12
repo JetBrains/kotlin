@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Talanov Pavel
  */
-public final class OperationTranslator {
+public final class OperatorTable {
 
 
     private static Map<JetToken, JsOperator> map = new HashMap<JetToken, JsOperator>();

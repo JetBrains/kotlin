@@ -31,7 +31,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     // method declaration
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
-        properties.add((new FunctionTranslator(context)).translateAsMethod(expression));
+        properties.add(Translation.functionTranslator(context).translateAsMethod(expression));
         return properties;
     }
 
@@ -138,11 +138,10 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     private JsFunction translateAccessorBody(@NotNull JetPropertyAccessor expression,
                                              @NotNull TranslationContext context) {
         JsFunction methodBody = JsFunction.getAnonymousFunctionWithScope(context.getScopeForElement(expression));
-        ExpressionTranslator expressionTranslator =
-                new ExpressionTranslator(context.newPropertyAccess(expression));
         JetExpression bodyExpression = expression.getBodyExpression();
         assert bodyExpression != null : "Custom accessor should have a body.";
-        JsBlock methodBodyBlock = AstUtil.convertToBlock(expressionTranslator.translate(bodyExpression));
+        JsBlock methodBodyBlock = AstUtil.convertToBlock(
+                Translation.translateExpression(bodyExpression, context.newPropertyAccess(expression)));
         methodBody.setBody(methodBodyBlock);
         return methodBody;
     }

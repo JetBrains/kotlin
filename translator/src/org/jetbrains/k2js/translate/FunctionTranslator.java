@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import com.sun.istack.internal.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
@@ -16,7 +15,12 @@ import java.util.List;
  */
 public final class FunctionTranslator extends AbstractTranslator {
 
-    public FunctionTranslator(@NotNull TranslationContext context) {
+    @NotNull
+    public static FunctionTranslator newInstance(@NotNull TranslationContext context) {
+        return new FunctionTranslator(context);
+    }
+
+    private FunctionTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 
@@ -51,18 +55,12 @@ public final class FunctionTranslator extends AbstractTranslator {
         JetExpression jetBodyExpression = jetFunction.getBodyExpression();
         //TODO support them ffs
         assert jetBodyExpression != null : "Function without body not supported at the moment";
-        JsNode body = (new ExpressionTranslator(functionContext(jetFunction))).translate(jetBodyExpression);
+        JsNode body = Translation.expressionTranslator
+                (translationContext().newFunction(jetFunction)).translate(jetBodyExpression);
         if (jetFunction.hasBlockBody()) {
             return AstUtil.convertToBlock(body);
         }
         return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression((body))));
-    }
-
-    @NotNull
-    private TranslationContext functionContext(@NotNull JetNamedFunction jetFunction) {
-        FunctionDescriptor descriptor =
-                BindingUtils.getFunctionDescriptor(translationContext().bindingContext(), jetFunction);
-        return translationContext().newFunction(descriptor);
     }
 
     @NotNull

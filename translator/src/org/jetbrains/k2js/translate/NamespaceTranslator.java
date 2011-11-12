@@ -14,7 +14,12 @@ import java.util.List;
  */
 public final class NamespaceTranslator extends AbstractTranslator {
 
-    public NamespaceTranslator(@NotNull TranslationContext context) {
+    @NotNull
+    public static NamespaceTranslator newInstance(@NotNull TranslationContext context) {
+        return new NamespaceTranslator(context);
+    }
+
+    private NamespaceTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 
@@ -40,7 +45,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
     private JsBlock translateDeclarations(@NotNull JetNamespace namespace, @NotNull TranslationContext newContext) {
-        DeclarationTranslator declarationTranslator = new DeclarationTranslator(newContext);
+        DeclarationTranslator declarationTranslator = Translation.declarationTranslator(newContext);
         JsBlock namespaceDeclarations = new JsBlock();
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             namespaceDeclarations.addStatement(declarationTranslator.translateDeclaration(declaration));

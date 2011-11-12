@@ -11,7 +11,12 @@ public final class ExpressionTranslator extends AbstractTranslator {
 
     final private ExpressionVisitor visitor = new ExpressionVisitor();
 
-    public ExpressionTranslator(@NotNull TranslationContext context) {
+    @NotNull
+    public static ExpressionTranslator newInstance(@NotNull TranslationContext context) {
+        return new ExpressionTranslator(context);
+    }
+
+    private ExpressionTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 

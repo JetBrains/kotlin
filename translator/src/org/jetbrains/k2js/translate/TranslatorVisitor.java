@@ -40,12 +40,13 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
 
 
     @Nullable
-    protected JsExpression translateInitializer(@NotNull JetProperty declaration, @NotNull TranslationContext context) {
+    protected JsExpression translateInitializerForProperty(@NotNull JetProperty declaration,
+                                                           @NotNull TranslationContext context) {
         JsExpression jsInitExpression = null;
         JetExpression initializer = declaration.getInitializer();
         if (initializer != null) {
-            jsInitExpression = AstUtil.convertToExpression(
-                    (new ExpressionTranslator(context)).translate(initializer));
+            jsInitExpression = AstUtil.convertToExpression(Translation.expressionTranslator(context)
+                    .translate(initializer));
         }
         return jsInitExpression;
     }

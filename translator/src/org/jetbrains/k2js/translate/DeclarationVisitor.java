@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 /**
  * @author Talanov Pavel
  */
+//TODO: rework the class
 public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
 
     @NotNull
@@ -21,7 +22,7 @@ public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
     public JsStatement visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
         JsName propertyName = context.declareLocalName(getPropertyName(expression));
         JsNameRef jsPropertyNameReference = context.getNamespaceQualifiedReference(propertyName);
-        JsExpression jsInitExpression = translateInitializer(expression, context);
+        JsExpression jsInitExpression = translateInitializerForProperty(expression, context);
         JsExpression result;
         if (jsInitExpression != null) {
             result = AstUtil.newAssignment(jsPropertyNameReference, jsInitExpression);
@@ -34,15 +35,13 @@ public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
     @NotNull
     @Override
     public JsStatement visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
-        ClassTranslator translator = new ClassTranslator(context);
-        return translator.translateClass(expression);
+        return Translation.classTranslator(context).translateClass(expression);
     }
 
     @NotNull
     @Override
     public JsStatement visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
-        FunctionTranslator functionTranslator = new FunctionTranslator(context);
-        return AstUtil.convertToStatement(functionTranslator.translateAsFunction(expression));
+        return AstUtil.convertToStatement(Translation.functionTranslator(context).translateAsFunction(expression));
     }
 
 }

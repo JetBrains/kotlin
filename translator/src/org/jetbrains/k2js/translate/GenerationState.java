@@ -25,7 +25,7 @@ public final class GenerationState {
         NamespaceDescriptor descriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
         DeclarationExtractor extractor = new DeclarationExtractor();
         extractor.extractDeclarations(descriptor, result.getRootScope());
-        (new NamespaceTranslator(TranslationContext.rootContext(result, bindingContext, extractor)))
+        Translation.namespaceTranslator(TranslationContext.rootContext(result, bindingContext, extractor))
                 .generateAst(namespace);
         return result;
     }
