@@ -692,7 +692,7 @@ public class CallResolver {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (successfulCandidates.size() > 0) {
-            OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(successfulCandidates);
+            OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(successfulCandidates, true);
             if (results.isAmbiguity()) {
                 // This check is needed for the following case:
                 //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
@@ -716,7 +716,7 @@ public class CallResolver {
                         }
                     }
                     if (!thisLevel.isEmpty()) {
-                        OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(thisLevel);
+                        OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
                         if (results.isSuccess()) {
                             results.getResult().getTrace().commit();
                             return OverloadResolutionResults.singleFailedCandidate(results.getResult());
@@ -754,7 +754,7 @@ public class CallResolver {
         return true;
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> chooseAndReportMaximallySpecific(Set<ResolvedCallImpl<D>> candidates) {
+    private <D extends CallableDescriptor> OverloadResolutionResults<D> chooseAndReportMaximallySpecific(Set<ResolvedCallImpl<D>> candidates, boolean discriminateGenerics) {
         if (candidates.size() != 1) {
             Set<ResolvedCallImpl<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
             for (Iterator<ResolvedCallImpl<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
@@ -772,9 +772,11 @@ public class CallResolver {
                 return OverloadResolutionResults.success(maximallySpecific);
             }
 
-            ResolvedCallImpl<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
-            if (maximallySpecificGenericsDiscriminated != null) {
-                return OverloadResolutionResults.success(maximallySpecificGenericsDiscriminated);
+            if (discriminateGenerics) {
+                ResolvedCallImpl<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
+                if (maximallySpecificGenericsDiscriminated != null) {
+                    return OverloadResolutionResults.success(maximallySpecificGenericsDiscriminated);
+                }
             }
 
             Set<ResolvedCallImpl<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
