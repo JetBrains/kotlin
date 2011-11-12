@@ -70,6 +70,7 @@ public class OverloadingConflictResolver {
      * Int < Short < Byte
      */
     private <Descriptor extends CallableDescriptor> boolean moreSpecific(Descriptor f, Descriptor g, boolean discriminateGenericDescriptors) {
+        if (discriminateGenericDescriptors && !isGeneric(f) && isGeneric(g)) return true;
         if (OverridingUtil.overrides(f, g)) return true;
         if (OverridingUtil.overrides(g, f)) return false;
 
