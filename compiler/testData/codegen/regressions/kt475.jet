@@ -1,0 +1,14 @@
+import java.math.BigDecimal
+
+fun box() : String {
+  // Easy to make BigDecimals user-friendly
+  System.out?.println(
+    "2.00".bd - "1.00"
+  )
+  return "OK"
+}
+
+val String.bd = BigDecimal(this)
+
+fun BigDecimal.minus(other : BigDecimal) = this.subtract(other)
+fun BigDecimal.minus(other : String) = subtract(other.bd) // this can be omitted

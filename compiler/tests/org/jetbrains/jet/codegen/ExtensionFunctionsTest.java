@@ -32,4 +32,8 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     public void testVirtual() throws Exception {
         blackBoxFile("extensionFunctions/virtual.jet");
     }
+
+    public void testKt475() throws Exception {
+        blackBoxFile("regressions/kt475.jet");
+    }
 }
