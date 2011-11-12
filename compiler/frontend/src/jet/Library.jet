@@ -499,7 +499,7 @@ class Char : Number, Comparable<Char> {
   fun plus(other : Int)    : Int
   fun plus(other : Short)  : Int
   fun plus(other : Byte)   : Int
-  fun plus(other : Char)   : Int
+//  fun plus(other : Char)   : Int
 
   fun minus(other : Double) : Double
   fun minus(other : Float)  : Float
@@ -515,7 +515,7 @@ class Char : Number, Comparable<Char> {
   fun times(other : Int)    : Int
   fun times(other : Short)  : Int
   fun times(other : Byte)   : Int
-  fun times(other : Char)   : Int
+//  fun times(other : Char)   : Int
 
   fun div(other : Double) : Double
   fun div(other : Float)  : Float
@@ -523,7 +523,7 @@ class Char : Number, Comparable<Char> {
   fun div(other : Int)    : Int
   fun div(other : Short)  : Int
   fun div(other : Byte)   : Int
-  fun div(other : Char)   : Int
+//  fun div(other : Char)   : Int
 
   fun mod(other : Double) : Double
   fun mod(other : Float)  : Float
@@ -531,7 +531,7 @@ class Char : Number, Comparable<Char> {
   fun mod(other : Int)    : Int
   fun mod(other : Short)  : Int
   fun mod(other : Byte)   : Int
-  fun mod(other : Char)   : Int
+//  fun mod(other : Char)   : Int
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>

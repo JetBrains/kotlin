@@ -395,7 +395,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("'1'.plus(1.flt)", "Float");
         assertType("'1'.plus(1.lng)", "Long");
         assertType("'1'.plus(1)", "Int");
-        assertType("'1'.plus('1')", "Int");
+        assertType("'1'.minus('1')", "Int"); // Plus is not available for char
 
         assertType("(1:Short).plus(1.dbl)", "Double");
         assertType("(1:Short).plus(1.flt)", "Float");

@@ -104,7 +104,8 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testChar() throws Exception {
-        binOpTest("fun foo(a: Char, b: Char): Int = a + b", 'A', (char) 3, (int) 'D');
+        // '+' is not available for Chars
+        binOpTest("fun foo(a: Char, b: Char): Int = a - b", 'D', (char) 3, (int) 'A');
     }
 
     public void testFloat() throws Exception {
