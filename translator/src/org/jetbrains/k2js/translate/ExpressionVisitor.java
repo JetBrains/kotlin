@@ -113,7 +113,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private JsNode translateAsBinaryOperation(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context) {
         JsExpression left = AstUtil.convertToExpression(expression.getLeft().accept(this, context));
         JetExpression rightExpression = expression.getRight();
-        assert rightExpression != null : "Binary expression should have a right exprssion";
+        assert rightExpression != null : "Binary expression should have a right expression";
         JsExpression right = AstUtil.convertToExpression(rightExpression.accept(this, context));
         JetToken jetOperationToken = (JetToken) expression.getOperationToken();
         return new JsBinaryOperation(OperationTranslator.getBinaryOperator(jetOperationToken), left, right);
@@ -124,17 +124,34 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
                                             @NotNull TranslationContext context) {
+
+        //TODO: this is only a hack for now
+        // Problem is that namespace properties do not generate getters and setter actually so they must be referenced
+        // by name
+        JsName referencedName = getReferencedName(expression, context);
+        if (referencedName != null) {
+            if (context.namespaceScope().ownsName(referencedName)) {
+                return context.getNamespaceQualifiedReference(referencedName);
+            }
+            JsNameRef nameRef = referencedName.makeRef();
+            if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                nameRef.setQualifier(new JsThisRef());
+            }
+            return nameRef;
+        }
+
+        PropertyAccessTranslator propertyAccessTranslator = new PropertyAccessTranslator(context);
+        JsInvocation getterCall = propertyAccessTranslator.resolveAsPropertyGet(expression);
+        if (getterCall != null) {
+            return getterCall;
+        }
+        throw new AssertionError("Undefined name in this scope: " + expression.getReferencedName());
+    }
+
+    @Nullable
+    private JsName getReferencedName(@NotNull JetSimpleNameExpression expression, @NotNull TranslationContext context) {
         String referencedName = expression.getReferencedName();
-        JsName jsName = context.enclosingScope().findExistingName(referencedName);
-        assert jsName != null : "Undeclared name: " + referencedName;
-        if (context.namespaceScope().ownsName(jsName)) {
-            return context.getNamespaceQualifiedReference(jsName);
-        }
-        JsNameRef nameRef = jsName.makeRef();
-        if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            nameRef.setQualifier(new JsThisRef());
-        }
-        return nameRef;
+        return context.enclosingScope().findExistingName(referencedName);
     }
 
     @Override

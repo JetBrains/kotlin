@@ -39,8 +39,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     private JsFunction generateFunctionObject(@NotNull JetNamedFunction jetFunction) {
         JsFunction result = JsFunction.getAnonymousFunctionWithScope
                 (translationContext().getScopeForElement(jetFunction));
-        JsNode jsBody = translateBody(jetFunction);
         List<JsParameter> jsParameters = translateParameters(jetFunction.getValueParameters(), result.getScope());
+        JsNode jsBody = translateBody(jetFunction);
         result.setParameters(jsParameters);
         result.setBody(AstUtil.convertToBlock(jsBody));
         return result;

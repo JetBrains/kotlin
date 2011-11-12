@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 
@@ -37,6 +38,15 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         return translateReceiverAndReturnAccessorInvocation(expression, getterName);
     }
 
+    @Nullable
+    JsInvocation resolveAsPropertyGet(@NotNull JetSimpleNameExpression expression) {
+        JsName getterName = getPropertyGetterName(expression);
+        if (getterName == null) {
+            return null;
+        }
+        return AstUtil.newInvocation(AstUtil.thisQualifiedReference(getterName));
+    }
+
     @NotNull
     private JsInvocation translateReceiverAndReturnAccessorInvocation
             (@NotNull JetDotQualifiedExpression dotQualifiedExpression, @NotNull JsName accessorName) {
@@ -49,17 +59,33 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
 
     @Nullable
     public JsInvocation resolveAsPropertySet(@NotNull JetExpression expression) {
-        if (!(expression instanceof JetDotQualifiedExpression)) {
-            return null;
+        if (expression instanceof JetDotQualifiedExpression) {
+            return resolveAsPropertySet((JetDotQualifiedExpression) expression);
         }
-        JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression) expression;
+        if (expression instanceof JetSimpleNameExpression) {
+            return resolveAsPropertySet((JetSimpleNameExpression) expression);
+        }
+        return null;
+    }
+
+    @Nullable
+    private JsInvocation resolveAsPropertySet(@NotNull JetDotQualifiedExpression dotQualifiedExpression) {
         JetExpression selectorExpression = dotQualifiedExpression.getSelectorExpression();
         assert selectorExpression != null : "Selector should not be null.";
-        JsName getterName = getPropertySetterName(selectorExpression);
-        if (getterName == null) {
+        JsName setterName = getPropertySetterName(selectorExpression);
+        if (setterName == null) {
             return null;
         }
-        return translateReceiverAndReturnAccessorInvocation(dotQualifiedExpression, getterName);
+        return translateReceiverAndReturnAccessorInvocation(dotQualifiedExpression, setterName);
+    }
+
+    @Nullable
+    JsInvocation resolveAsPropertySet(@NotNull JetSimpleNameExpression expression) {
+        JsName setterName = getPropertySetterName(expression);
+        if (setterName == null) {
+            return null;
+        }
+        return AstUtil.newInvocation(AstUtil.thisQualifiedReference(setterName));
     }
 
     @Nullable

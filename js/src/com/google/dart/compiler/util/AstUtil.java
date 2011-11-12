@@ -7,6 +7,7 @@ package com.google.dart.compiler.util;
 import com.google.dart.compiler.InternalCompilerException;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.common.SourceInfo;
+
 import java.util.List;
 
 /**
@@ -182,31 +183,6 @@ public class AstUtil {
         return fn;
     }
 
-    public static JsStatement convertToStatement(JsNode jsNode) {
-        if (jsNode instanceof JsExpression) {
-            return new JsExprStmt((JsExpression) jsNode);
-        }
-        if (jsNode instanceof JsStatement) {
-            return (JsStatement) jsNode;
-        }
-        throw new RuntimeException("Cannot convert JsNode to JsStatement: Unexpected node");
-    }
-
-    public static JsBlock convertToBlock(JsNode jsNode) {
-        if (jsNode instanceof JsBlock) {
-            return (JsBlock)jsNode;
-        }
-        JsStatement jsStatement = convertToStatement(jsNode);
-        return new JsBlock(jsStatement);
-    }
-
-    public static JsExpression convertToExpression(JsNode jsNode) {
-        if (jsNode instanceof JsExpression) {
-            return (JsExpression)jsNode;
-        }
-        throw new RuntimeException("Cannot convert JsNode to JsExpression: Unexpected node");
-    }
-
     public static JsInvocation call(SourceInfo src, JsExpression target, JsExpression... params) {
         return (JsInvocation) newInvocation(target, params).setSourceRef(src);
     }
@@ -252,8 +228,38 @@ public class AstUtil {
         return new JsBinaryOperation(JsBinaryOperator.INOP, propName, obj).setSourceRef(src);
     }
 
+
+    // Pavel Talanov
     public static JsPropertyInitializer newNamedMethod(JsName name, JsFunction function) {
         JsNameRef methodName = name.makeRef();
         return new JsPropertyInitializer(methodName, function);
+    }
+
+    public static JsStatement convertToStatement(JsNode jsNode) {
+        assert (jsNode instanceof JsExpression) || (jsNode instanceof JsStatement)
+                : "Unexpected node of type: " + jsNode.getClass().toString();
+        if (jsNode instanceof JsExpression) {
+            return new JsExprStmt((JsExpression) jsNode);
+        }
+        return (JsStatement) jsNode;
+    }
+
+    public static JsBlock convertToBlock(JsNode jsNode) {
+        if (jsNode instanceof JsBlock) {
+            return (JsBlock) jsNode;
+        }
+        JsStatement jsStatement = convertToStatement(jsNode);
+        return new JsBlock(jsStatement);
+    }
+
+    public static JsExpression convertToExpression(JsNode jsNode) {
+        assert jsNode instanceof JsExpression : "Unexpected node of type: " + jsNode.getClass().toString();
+        return (JsExpression) jsNode;
+    }
+
+    public static JsNameRef thisQualifiedReference(JsName name) {
+        JsNameRef result = name.makeRef();
+        result.setQualifier(new JsThisRef());
+        return result;
     }
 }

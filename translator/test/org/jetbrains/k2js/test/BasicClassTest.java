@@ -35,8 +35,14 @@ public class BasicClassTest extends AbstractClassTest {
     }
 
     // TODO : excluded test
+//    @Test
+//    public void constructorWithParameter() throws Exception {
+//        testFooBoxIsTrue("constructorWithParameter.kt");
+//    }
+
     @Test
-    public void constructorWithParameter() throws Exception {
-        //testFooBoxIsTrue("constructorWithParameter.kt");
+    public void incrementProperty() throws Exception {
+        //testFooBoxIsTrue("incrementProperty.kt");
+        performTest("incrementProperty.kt", "foo", "box", "OK");
     }
 }
