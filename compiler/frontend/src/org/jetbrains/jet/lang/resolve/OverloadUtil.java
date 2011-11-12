@@ -7,6 +7,9 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
  */
 public class OverloadUtil {
 
+    /**
+     * Does not check names.
+     */
     public static OverloadCompatibilityInfo isOverloadble(FunctionDescriptor a, FunctionDescriptor b) {
         OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.isOverridableByImpl(a, b, false);
         if (overrideCompatibilityInfo.isSuccess()) {

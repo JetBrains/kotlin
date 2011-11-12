@@ -64,10 +64,6 @@ public class JetOverloadTest extends JetLiteFixture {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        assertOverloadable(
-                "fun ab() : Int",
-                "fun a() : Int");
-
         assertNotOverloadable(
                 "fun a() : Int",
                 "fun a() : Any");
