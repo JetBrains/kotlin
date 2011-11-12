@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLike {
     private ConstructorDescriptor primaryConstructor;
-    private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
+    private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private final Set<CallableMemberDescriptor> callableMembers = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
@@ -224,7 +224,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getConstructors() {
+    public Set<ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 

@@ -48,7 +48,7 @@ public class JetStandardClasses {
                 }
             },
             JetScope.EMPTY,
-            Collections.<FunctionDescriptor>emptySet(),
+            Collections.<ConstructorDescriptor>emptySet(),
             null,
             null
     );
@@ -71,7 +71,7 @@ public class JetStandardClasses {
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<JetType>emptySet(),
             JetScope.EMPTY,
-            Collections.<FunctionDescriptor>emptySet(),
+            Collections.<ConstructorDescriptor>emptySet(),
             null,
             null
     );
@@ -123,7 +123,7 @@ public class JetStandardClasses {
                     parameters,
                     Collections.singleton(getAnyType()),
                     STUB,
-                    Collections.<FunctionDescriptor>emptySet(), // TODO
+                    Collections.<ConstructorDescriptor>emptySet(), // TODO
                     null); // TODO : constructor
             TUPLE_CONSTRUCTORS.add(TUPLE[i].getTypeConstructor());
         }
@@ -148,7 +148,7 @@ public class JetStandardClasses {
             FUNCTION[i] = function.initialize(
                     false,
                     createTypeParameters(i, function),
-                    Collections.singleton(getAnyType()), STUB, Collections.<FunctionDescriptor>emptySet(), null);
+                    Collections.singleton(getAnyType()), STUB, Collections.<ConstructorDescriptor>emptySet(), null);
             FUNCTION_TYPE_CONSTRUCTORS.add(FUNCTION[i].getTypeConstructor());
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
@@ -163,7 +163,7 @@ public class JetStandardClasses {
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
-                    Collections.singleton(getAnyType()), STUB, Collections.<FunctionDescriptor>emptySet(), null);
+                    Collections.singleton(getAnyType()), STUB, Collections.<ConstructorDescriptor>emptySet(), null);
             RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.add(RECEIVER_FUNCTION[i].getTypeConstructor());
         }
     }

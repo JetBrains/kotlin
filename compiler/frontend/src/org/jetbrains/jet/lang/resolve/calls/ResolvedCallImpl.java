@@ -43,7 +43,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     }
 
     @NotNull
-    public static <D extends CallableDescriptor> List<ResolvedCallImpl<D>> convertCollection(@NotNull Collection<D> descriptors) {
+    public static <D extends CallableDescriptor> List<ResolvedCallImpl<D>> convertCollection(@NotNull Collection<? extends D> descriptors) {
         List<ResolvedCallImpl<D>> result = Lists.newArrayList();
         for (D descriptor : descriptors) {
             result.add(create(descriptor));

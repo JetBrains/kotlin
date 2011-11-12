@@ -21,7 +21,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private TypeConstructor typeConstructor;
     private JavaClassMembersScope unsubstitutedMemberScope;
 //    private JetType classObjectType;
-    private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
+    private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private Modality modality;
     private Visibility visibility;
     private JetType superclassType;
@@ -97,7 +97,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getConstructors() {
+    public Set<ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 
