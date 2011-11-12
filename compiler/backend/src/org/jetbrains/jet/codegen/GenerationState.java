@@ -112,7 +112,7 @@ public class GenerationState {
                     generateNamespace(namespace);
                 }
                 catch (Throwable e) {
-                    errorHandler.reportError("Exception: " + e.getClass().getCanonicalName() + ": " + e.getMessage(), namespace.getContainingFile().getVirtualFile().getUrl());
+                    errorHandler.reportException(e, namespace.getContainingFile().getVirtualFile().getUrl());
                 }
             }
         }
