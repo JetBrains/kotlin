@@ -56,6 +56,6 @@ namespace io {
 
 namespace string {
     fun String.replaceAll(pattern : String, replacement : String) : String {
-        return java.util.regex.Pattern.compile(pattern).matcher(this).replaceAll(replacement).npe()
+        return (this as java.lang.String).replace(pattern as CharSequence, replacement as CharSequence).npe()
     }
 }
