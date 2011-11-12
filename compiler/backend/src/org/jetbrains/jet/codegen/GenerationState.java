@@ -100,11 +100,20 @@ public class GenerationState {
     }
 
     public void compileCorrectNamespaces(BindingContext bindingContext, List<JetNamespace> namespaces) {
+        compileCorrectNamespaces(bindingContext, namespaces, CompilationErrorHandler.THROW_EXCEPTION);
+    }
+
+    public void compileCorrectNamespaces(BindingContext bindingContext, List<JetNamespace> namespaces, CompilationErrorHandler errorHandler) {
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         bindingContexts.push(bindingContext);
         try {
             for (JetNamespace namespace : namespaces) {
-                generateNamespace(namespace);
+                try {
+                    generateNamespace(namespace);
+                }
+                catch (Throwable e) {
+                    errorHandler.reportError("Exception: " + e.getClass().getCanonicalName() + ": " + e.getMessage(), namespace.getContainingFile().getVirtualFile().getUrl());
+                }
             }
         }
         finally {

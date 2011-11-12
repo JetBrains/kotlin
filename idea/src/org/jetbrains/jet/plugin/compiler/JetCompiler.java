@@ -18,6 +18,7 @@ import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -101,7 +102,12 @@ public class JetCompiler implements TranslatingCompiler {
                 }
                 
                 if (!errors) {
-                    generationState.compileCorrectNamespaces(bindingContext, namespaces);
+                    generationState.compileCorrectNamespaces(bindingContext, namespaces, new CompilationErrorHandler() {
+                        @Override
+                        public void reportError(String message, String fileUrl) {
+                            compileContext.addMessage(CompilerMessageCategory.WARNING, message, fileUrl, 0, 0);
+                        }
+                    });
 ///////////
 //                    GenerationState generationState2 = new GenerationState(compileContext.getProject(), ClassBuilderFactory.TEXT);
 //                    generationState2.compileCorrectNamespaces(bindingContext, namespaces);
