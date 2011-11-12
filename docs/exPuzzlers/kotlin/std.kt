@@ -11,6 +11,12 @@ fun array(vararg array : Float) = array
 
 fun Any?.identityEquals(other : Any?) = this === other
 
+fun <T : Any> T?.npe() : T {
+    if (this == null)
+      throw NullPointerException()
+    return this;
+}
+
 namespace io {
     import java.io.*
 
@@ -45,5 +51,11 @@ namespace io {
         systemIn = System.`in`
     }
     return stdin?.readLine()
+    }
+}
+
+namespace string {
+    fun String.replaceAll(pattern : String, replacement : String) : String {
+        return java.util.regex.Pattern.compile(pattern).matcher(this).replaceAll(replacement).npe()
     }
 }
