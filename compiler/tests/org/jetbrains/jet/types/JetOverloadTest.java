@@ -127,6 +127,10 @@ public class JetOverloadTest extends JetLiteFixture {
                 "fun a<T1, X : Array<out T1>>(a : Array<*>) : T1",
                 "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
 
+        assertOverloadable(
+                "fun ff() : Int",
+                "fun Int.ff() : Int"
+        );
     }
 
     private void assertNotOverloadable(String funA, String funB) {

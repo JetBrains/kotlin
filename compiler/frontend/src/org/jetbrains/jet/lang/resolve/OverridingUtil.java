@@ -7,12 +7,10 @@ import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -95,6 +93,26 @@ public class OverridingUtil {
     public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         return isOverridableByImpl(superDescriptor, subDescriptor, true);
     }
+    
+    private static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
+        ReceiverDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ArrayList<JetType> parameters = new ArrayList<JetType>();
+        if (receiverParameter.exists()) {
+            parameters.add(receiverParameter.getType());
+        }
+        for (ValueParameterDescriptor valueParameterDescriptor : callableDescriptor.getValueParameters()) {
+            parameters.add(valueParameterDescriptor.getOutType());
+        }
+        return parameters;
+    }
+    
+    private static int compiledValueParameterCount(CallableDescriptor callableDescriptor) {
+        if (callableDescriptor.getReceiverParameter().exists()) {
+            return 1 + callableDescriptor.getValueParameters().size();
+        } else {
+            return callableDescriptor.getValueParameters().size();
+        }
+    }
 
     /**
      * @param forOverride true for override, false for overload
@@ -116,7 +134,7 @@ public class OverridingUtil {
             return OverrideCompatibilityInfo.typeParameterNumberMismatch();
         }
 
-        if (superDescriptor.getValueParameters().size() != subDescriptor.getValueParameters().size()) {
+        if (compiledValueParameterCount(superDescriptor) != compiledValueParameterCount(subDescriptor)) {
             return OverrideCompatibilityInfo.valueParameterNumberMismatch();
         }
 
@@ -139,13 +157,13 @@ public class OverridingUtil {
             }
         }
 
-        List<ValueParameterDescriptor> superValueParameters = superDescriptor.getValueParameters();
-        List<ValueParameterDescriptor> subValueParameters = subDescriptor.getValueParameters();
+        List<JetType> superValueParameters = compiledValueParameters(superDescriptor);
+        List<JetType> subValueParameters = compiledValueParameters(subDescriptor);
         for (int i = 0, unsubstitutedValueParametersSize = superValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
-            ValueParameterDescriptor superValueParameter = superValueParameters.get(i);
-            ValueParameterDescriptor subValueParameter = subValueParameters.get(i);
+            JetType superValueParameter = superValueParameters.get(i);
+            JetType subValueParameter = subValueParameters.get(i);
 
-            if (!JetTypeImpl.equalTypes(superValueParameter.getOutType(), subValueParameter.getOutType(), axioms)) {
+            if (!JetTypeImpl.equalTypes(superValueParameter, subValueParameter, axioms)) {
                 return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter);
             }
         }
@@ -209,7 +227,7 @@ public class OverridingUtil {
         }
 
         @NotNull
-        public static OverrideCompatibilityInfo valueParameterTypeMismatch(ValueParameterDescriptor superValueParameter, ValueParameterDescriptor subValueParameter) {
+        public static OverrideCompatibilityInfo valueParameterTypeMismatch(JetType superValueParameter, JetType subValueParameter) {
             return new OverrideCompatibilityInfo(false, "valueParameterTypeMismatch"); // TODO
         }
 
