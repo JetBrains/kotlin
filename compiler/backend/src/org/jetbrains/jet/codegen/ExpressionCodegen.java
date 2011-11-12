@@ -4,7 +4,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
@@ -15,7 +14,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
@@ -26,8 +28,6 @@ import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 import java.util.*;
-
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 
 /**
  * @author max
@@ -77,17 +77,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.intrinsics = state.getIntrinsics();
-    }
-
-    private static CallableMethod asCallableMethod(FunctionDescriptor fd) {
-        Method descriptor = ClosureCodegen.erasedInvokeSignature(fd);
-        String owner = ClosureCodegen.getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
-        if (fd.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(fd.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor());
-        }
-        result.requestGenerateCallee(Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
-        return result;
     }
 
     public GenerationState getState() {
@@ -1021,7 +1010,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (expression.getParent() instanceof JetQualifiedExpression) {
             final JetExpression receiverExpression = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
             if (receiverExpression instanceof JetSuperExpression) {
+                assert receiver == StackValue.none();
                 superCall = true;
+                receiver = StackValue.thisOrOuter(this, context.getThisDescriptor());
                 JetSuperExpression superExpression = (JetSuperExpression) receiverExpression;
                 PsiElement enclosingElement = bindingContext.get(BindingContext.LABEL_TARGET, superExpression.getTargetLabel());
                 ClassDescriptor enclosed = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, enclosingElement);
@@ -1033,17 +1024,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                         fd = c.getAccessor(fd);
                         superCall = false;
+                        receiver = StackValue.thisOrOuter(this, enclosed);
                     }
                 }
             }
         }
 
-        Callable callableMethod = resolveToCallable(fd, superCall);
-        return invokeCallable(fd, callableMethod, expression, receiver);
-    }
-
-    @Nullable
-    private StackValue invokeCallable(DeclarationDescriptor fd, Callable callable, JetCallExpression expression, StackValue receiver) {
+        Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {
             final CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, expression, receiver);
@@ -1079,11 +1066,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         CallableMethod callableMethod;
         if (fd instanceof VariableAsFunctionDescriptor) {
             assert !superCall;
-            callableMethod = asCallableMethod((FunctionDescriptor) fd);
+            callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         }
         else if (fd instanceof ExpressionAsFunctionDescriptor) {
             FunctionDescriptor invoke = CodegenUtil.createInvoke((ExpressionAsFunctionDescriptor) fd);
-            callableMethod = asCallableMethod(invoke);
+            callableMethod = ClosureCodegen.asCallableMethod(invoke);
         }
         else if (fd instanceof FunctionDescriptor) {
             callableMethod = typeMapper.mapToCallableMethod((FunctionDescriptor) fd, superCall, OwnerKind.IMPLEMENTATION);
@@ -1108,17 +1095,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
         final Type calleeType = callableMethod.getGenerateCalleeType();
         if (calleeType != null && expression instanceof JetCallExpression) {
+            assert !callableMethod.isNeedsThis();
             gen(expression.getCalleeExpression(), calleeType);
         }
 
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        assert resolvedCall != null;
+
+        FunctionDescriptor callableDescriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        boolean hasThis = resolvedCall.getThisObject().exists();
+        boolean hasReceiver = resolvedCall.getReceiverArgument().exists();
+
         if (callableMethod.isNeedsThis()) {
             if(callableMethod.isNeedsReceiver()) {
-                generateThisOrOuter((ClassDescriptor) callableMethod.getThisClass()).put(JetTypeMapper.TYPE_OBJECT, v);
-                receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+                generateFromResolvedCall(resolvedCall.getThisObject());
+                if(receiver == StackValue.none()) {
+                    generateFromResolvedCall(resolvedCall.getReceiverArgument());
+                }
+                else {
+                    receiver.put(typeMapper.mapType(callableMethod.getReceiverFunction().getReceiverParameter().getType()), v);
+                }
             }
             else {
                 if (receiver == StackValue.none()) {
-                    generateThisOrOuter((ClassDescriptor) callableMethod.getThisClass()).put(JetTypeMapper.TYPE_OBJECT, v);
+                    generateFromResolvedCall(resolvedCall.getThisObject());
                 }
                 else {
                     receiver.put(JetTypeMapper.TYPE_OBJECT, v);
@@ -1128,19 +1128,37 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             if (callableMethod.isNeedsReceiver()) {
                 if (receiver == StackValue.none()) {
-                    v.load(0, JetTypeMapper.TYPE_OBJECT);
+                    generateFromResolvedCall(resolvedCall.getReceiverArgument());
                 }
                 else
                     receiver.put(callableMethod.getSignature().getArgumentTypes()[0], v);
             }
         }
-        
+
         int mask = pushMethodArguments(expression, callableMethod.getValueParameterTypes());
         pushTypeArguments(expression);
         if(mask == 0)
             callableMethod.invoke(v);
         else
             callableMethod.invokeWithDefault(v, mask);
+    }
+
+    private void generateFromResolvedCall(ReceiverDescriptor descriptor) {
+        if(descriptor instanceof ClassReceiver) {
+            ClassReceiver classReceiver = (ClassReceiver) descriptor;
+            generateThisOrOuter((ClassDescriptor) classReceiver.getDeclarationDescriptor()).put(typeMapper.mapType(descriptor.getType()), v);
+        }
+        else if(descriptor instanceof ExtensionReceiver) {
+            ExtensionReceiver extensionReceiver = (ExtensionReceiver) descriptor;
+            generateReceiver((FunctionDescriptor) extensionReceiver.getDeclarationDescriptor()).put(typeMapper.mapType(descriptor.getType()), v);
+        }
+        else if(descriptor instanceof ExpressionReceiver) {
+            ExpressionReceiver expressionReceiver = (ExpressionReceiver) descriptor;
+            genToJVMStack(expressionReceiver.getExpression());
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private static JetExpression getReceiverForSelector(PsiElement expression) {
@@ -1151,31 +1169,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return null;
     }
 
-    private static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
-        Set<JetType> allSuperTypes = new THashSet<JetType>();
-
-        addSuperTypes(subClass.getDefaultType(), allSuperTypes);
-
-        final DeclarationDescriptor superOriginal = superClass.getOriginal();
-
-        for (JetType superType : allSuperTypes) {
-            final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
-            if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static void addSuperTypes(JetType type, Set<JetType> set) {
-        set.add(type);
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            addSuperTypes(jetType, set);
-        }
-    }
-
     private StackValue generateReceiver(FunctionDescriptor descriptor) {
         assert context instanceof CodegenContext.FunctionContext;
         CodegenContext.FunctionContext cur = (CodegenContext.FunctionContext) context;
@@ -1184,21 +1177,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         return context.lookupInContext(descriptor, v, StackValue.local(0, JetTypeMapper.TYPE_OBJECT));
-//        assert context instanceof CodegenContext.FunctionContext;
-//        CodegenContext.FunctionContext cur = (CodegenContext.FunctionContext) context;
-//
-//        StackValue result = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
-//        while (cur != null) {
-//
-//            if (cur.getReceiverDescriptor() == descriptor) {
-//                return cur.getReceiverExpression(typeMapper);
-//            }
-//
-//            result = cur.getOuterExpression(result);
-//            cur = cur.getOuterFunction();
-//        }
-//
-//        throw new UnsupportedOperationException("Don't know how to generate receiver for " + descriptor);
     }
 
     public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
@@ -1209,7 +1187,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if(cur instanceof CodegenContext.MethodContext && !(cur instanceof CodegenContext.ConstructorContext))
                 cur = cur.getParentContext();
 
-            if (isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
+            if (CodegenUtil.isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
                 Type type = typeMapper.mapType(calleeContainingClass.getDefaultType());
                 result.put(JetTypeMapper.TYPE_OBJECT, v);
                 return StackValue.onStack(type);

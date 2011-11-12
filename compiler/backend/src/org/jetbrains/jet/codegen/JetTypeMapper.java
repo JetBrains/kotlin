@@ -341,7 +341,7 @@ public class JetTypeMapper {
             if(isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor.getOriginal(), valueParameterTypes, OwnerKind.TRAIT_IMPL);
             }
-            thisClass = containingClass;
+            thisClass = (ClassDescriptor) functionParent;
         }
         else {
             throw new UnsupportedOperationException("unknown function parent");
@@ -350,7 +350,7 @@ public class JetTypeMapper {
         final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
         result.setNeedsThis(thisClass);
         if(functionDescriptor.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(functionDescriptor.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor());
+            result.setNeedsReceiver(functionDescriptor);
         }
 
         return result;

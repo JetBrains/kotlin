@@ -45,6 +45,17 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return new Method("invoke", JetTypeMapper.TYPE_OBJECT, args);
     }
 
+    public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
+        Method descriptor = erasedInvokeSignature(fd);
+        String owner = getInternalClassName(fd);
+        final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+        if (fd.getReceiverParameter().exists()) {
+            result.setNeedsReceiver(fd);
+        }
+        result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));
+        return result;
+    }
+
     public Method invokeSignature(FunctionDescriptor fd) {
         return state.getTypeMapper().mapSignature("invoke", fd);
     }

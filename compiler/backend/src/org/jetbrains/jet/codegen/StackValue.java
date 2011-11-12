@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
@@ -237,6 +238,10 @@ public abstract class StackValue {
 
     public static StackValue composed(StackValue prefix, StackValue suffix) {
         return new Composed(prefix, suffix);
+    }
+
+    public static StackValue thisOrOuter(ExpressionCodegen codegen, ClassDescriptor descriptor) {
+        return new ThisOuter(codegen, descriptor);
     }
 
     private static class None extends StackValue {
@@ -815,6 +820,22 @@ public abstract class StackValue {
         public void store(InstructionAdapter v) {
             prefix.put(JetTypeMapper.TYPE_OBJECT, v);
             suffix.store(v);
+        }
+    }
+
+    private static class ThisOuter extends StackValue {
+        private ExpressionCodegen codegen;
+        private ClassDescriptor descriptor;
+
+        public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor) {
+            super(JetTypeMapper.TYPE_OBJECT);
+            this.codegen = codegen;
+            this.descriptor = descriptor;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            codegen.generateThisOrOuter(descriptor);
         }
     }
 }

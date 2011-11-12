@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.util.PsiTreeUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -13,6 +14,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -141,5 +143,30 @@ public class CodegenUtil {
                                    fd.getReturnType(),
                                    Modality.FINAL, Visibility.PUBLIC);
         return invokeDescriptor;
+    }
+
+    public static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
+        Set<JetType> allSuperTypes = new THashSet<JetType>();
+
+        addSuperTypes(subClass.getDefaultType(), allSuperTypes);
+
+        final DeclarationDescriptor superOriginal = superClass.getOriginal();
+
+        for (JetType superType : allSuperTypes) {
+            final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
+            if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void addSuperTypes(JetType type, Set<JetType> set) {
+        set.add(type);
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            addSuperTypes(jetType, set);
+        }
     }
 }

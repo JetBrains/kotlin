@@ -1,7 +1,9 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -18,8 +20,9 @@ public class CallableMethod implements Callable {
     private final Method signature;
     private int invokeOpcode;
     private final List<Type> valueParameterTypes;
-    private DeclarationDescriptor thisClass = null;
-    private DeclarationDescriptor receiverClass = null;
+    private ClassDescriptor thisClass = null;
+
+    private FunctionDescriptor receiverFunction = null;
     private Type generateCalleeType = null;
 
     public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
@@ -45,11 +48,11 @@ public class CallableMethod implements Callable {
         return valueParameterTypes;
     }
 
-    public void setNeedsReceiver(@Nullable DeclarationDescriptor receiverClass) {
-        this.receiverClass = receiverClass;
+    public void setNeedsReceiver(@Nullable FunctionDescriptor receiverClass) {
+        this.receiverFunction = receiverClass;
     }
 
-    public void setNeedsThis(@Nullable DeclarationDescriptor receiverClass) {
+    public void setNeedsThis(@Nullable ClassDescriptor receiverClass) {
         this.thisClass = receiverClass;
     }
 
@@ -78,10 +81,14 @@ public class CallableMethod implements Callable {
     }
 
     public boolean isNeedsReceiver() {
-        return receiverClass != null;
+        return receiverFunction != null;
     }
 
-    public DeclarationDescriptor getThisClass() {
+    public ClassDescriptor getThisClass() {
         return thisClass;
+    }
+
+    public FunctionDescriptor getReceiverFunction() {
+        return receiverFunction;
     }
 }
