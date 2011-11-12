@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -61,7 +62,7 @@ public class OverloadResolver {
             DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
             if (containingDeclaration instanceof NamespaceDescriptor) {
                 NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(namespaceDescriptor.getName(), function.getName()), function);
+                functionsByName.putValue(new Key(DescriptorRenderer.getFQName(namespaceDescriptor), function.getName()), function);
             }
         }
 

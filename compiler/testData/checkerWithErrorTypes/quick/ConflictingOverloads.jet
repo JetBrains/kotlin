@@ -40,3 +40,9 @@ namespace ns2 {
     fun e() = 1
 }
 
+namespace ns3 {
+    namespace ns1 {
+        fun e() = 1
+    }
+}
+
