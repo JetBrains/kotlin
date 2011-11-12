@@ -1,14 +1,12 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kohsuke.rngom.digested.Main;
 
 /**
  * @author Talanov Pavel
- *
- * This class tests basic language features and constructs such as constants, local variables, simple loops,
- * conditional clauses etc.
+ *         <p/>
+ *         This class tests basic language features and constructs such as constants, local variables, simple loops,
+ *         conditional clauses etc.
  */
 public final class FunctionTest extends TranslationTest {
 

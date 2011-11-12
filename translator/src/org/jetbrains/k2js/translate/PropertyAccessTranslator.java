@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +32,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         assert selectorExpression != null : "Selector should not be null.";
         JsName getterName = getPropertyGetterName(selectorExpression);
         if (getterName == null) {
-            return  null;
+            return null;
         }
         return translateReceiverAndReturnAccessorInvocation(expression, getterName);
     }
@@ -49,12 +52,12 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (!(expression instanceof JetDotQualifiedExpression)) {
             return null;
         }
-        JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression)expression;
+        JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression) expression;
         JetExpression selectorExpression = dotQualifiedExpression.getSelectorExpression();
         assert selectorExpression != null : "Selector should not be null.";
         JsName getterName = getPropertySetterName(selectorExpression);
         if (getterName == null) {
-            return  null;
+            return null;
         }
         return translateReceiverAndReturnAccessorInvocation(dotQualifiedExpression, getterName);
     }
@@ -92,7 +95,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (resolvedCall != null) {
             DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
             if (descriptor instanceof PropertyDescriptor) {
-                return (PropertyDescriptor)descriptor;
+                return (PropertyDescriptor) descriptor;
             }
         }
         return null;

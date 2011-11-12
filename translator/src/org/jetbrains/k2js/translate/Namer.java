@@ -2,7 +2,6 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 
 /**
  * @author Talanov Pavel
@@ -23,7 +22,7 @@ public final class Namer {
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
-   // public static final String DEFAULT_SETTER_PARAM_NAME = "val";
+    // public static final String DEFAULT_SETTER_PARAM_NAME = "val";
 
     public static String getClassObjectName() {
         //TODO dummy representation
@@ -33,8 +32,7 @@ public final class Namer {
     public static String getNameForAccessor(String propertyName, boolean isGetter) {
         if (isGetter) {
             return getNameForGetter(propertyName);
-        }
-        else {
+        } else {
             return getNameForSetter(propertyName);
         }
     }
@@ -67,7 +65,6 @@ public final class Namer {
     public static JsNameRef creationMethodReference() {
         return AstUtil.newQualifiedNameRef("Class.create");
     }
-
 
 
 }

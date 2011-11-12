@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 
@@ -14,9 +13,11 @@ import java.util.List;
  * @author Talanov Pavel
  */
 //TODO ClassTranslator needs heavy improvement
+// did some improvement
 public final class ClassTranslator extends AbstractTranslator {
 
-    @NotNull private final ClassBodyVisitor classBodyVisitor = new ClassBodyVisitor();
+    @NotNull
+    private final ClassBodyVisitor classBodyVisitor = new ClassBodyVisitor();
 
     public ClassTranslator(TranslationContext context) {
         super(context);
@@ -33,7 +34,6 @@ public final class ClassTranslator extends AbstractTranslator {
                 AstUtil.newAssignment(translationContext().getNamespaceQualifiedReference(jsClassName), jsClassDeclaration));
     }
 
-    @NotNull
     private void addClassOwnDeclarations(@NotNull JetClass classDeclaration,
                                          @NotNull JsInvocation jsClassDeclaration) {
         JsObjectLiteral jsClassDescription = translateClassDeclarations(classDeclaration);
@@ -47,11 +47,11 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    @Nullable
+    @NotNull
     private List<JsNameRef> getSuperclassNameReferences(@NotNull JetClass classDeclaration) {
         List<JsNameRef> superclassReferences = new ArrayList<JsNameRef>();
         for (ClassDescriptor superClassDescriptor :
-            BindingUtils.getSuperclassDescriptors(translationContext().bindingContext(), classDeclaration)) {
+                BindingUtils.getSuperclassDescriptors(translationContext().bindingContext(), classDeclaration)) {
             //TODO should get a full class name here
             superclassReferences.add(translationContext().getNamespaceQualifiedReference
                     (translationContext().getNameForDescriptor(superClassDescriptor)));

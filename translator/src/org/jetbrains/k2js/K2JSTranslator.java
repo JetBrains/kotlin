@@ -12,8 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.sampullara.cli.Argument;
-import org.jetbrains.k2js.generate.CodeGenerator;
-import org.jetbrains.k2js.translate.GenerationState;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -25,6 +23,8 @@ import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
+import org.jetbrains.k2js.generate.CodeGenerator;
+import org.jetbrains.k2js.translate.GenerationState;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,16 +75,16 @@ public class K2JSTranslator {
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState();
         List<JetNamespace> namespaces = Lists.newArrayList();
-        if(vFile.isDirectory())  {
+        if (vFile.isDirectory()) {
             File dir = new File(vFile.getPath());
             addFiles(environment, project, namespaces, dir);
-        }
-        else {
+        } else {
             PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
             if (psiFile instanceof JetFile) {
-                namespaces.add(((JetFile) psiFile).getRootNamespace());
-            }
-            else {
+                JetNamespace rootNamespace = ((JetFile) psiFile).getRootNamespace();
+                AnalyzingUtils.checkForSyntacticErrors(rootNamespace);
+                namespaces.add(rootNamespace);
+            } else {
                 System.out.print("Not a Kotlin file: " + vFile.getPath());
                 return;
             }
@@ -92,6 +92,8 @@ public class K2JSTranslator {
 
         BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS)
                 .analyzeNamespaces(project, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
 
         ErrorCollector errorCollector = new ErrorCollector(bindingContext);
         errorCollector.report();
@@ -106,8 +108,7 @@ public class K2JSTranslator {
                 File outputFile = new File(arguments.outputDir);
                 try {
                     generator.generateToFile(program, outputFile);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     System.out.println("Failed to write to specified file");
                 }
             }
@@ -116,7 +117,7 @@ public class K2JSTranslator {
     }
 
     private static class ErrorCollector {
-        Multimap<PsiFile,DiagnosticWithTextRange> maps = LinkedHashMultimap.<PsiFile, DiagnosticWithTextRange>create();
+        Multimap<PsiFile, DiagnosticWithTextRange> maps = LinkedHashMultimap.<PsiFile, DiagnosticWithTextRange>create();
 
         boolean hasErrors;
 
@@ -128,17 +129,16 @@ public class K2JSTranslator {
 
         private void report(Diagnostic diagnostic) {
             hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
-            if(diagnostic instanceof DiagnosticWithTextRange) {
+            if (diagnostic instanceof DiagnosticWithTextRange) {
                 DiagnosticWithTextRange diagnosticWithTextRange = (DiagnosticWithTextRange) diagnostic;
                 maps.put(diagnosticWithTextRange.getPsiFile(), diagnosticWithTextRange);
-            }
-            else {
+            } else {
                 System.out.println(diagnostic.getSeverity().toString() + ": " + diagnostic.getMessage());
             }
         }
 
         void report() {
-            if(!maps.isEmpty()) {
+            if (!maps.isEmpty()) {
                 for (PsiFile psiFile : maps.keySet()) {
                     System.out.println(psiFile.getVirtualFile().getPath());
                     Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
@@ -152,15 +152,14 @@ public class K2JSTranslator {
     }
 
     private static void addFiles(JavaCoreEnvironment environment, Project project, List<JetNamespace> namespaces, File dir) {
-        for(File file : dir.listFiles()) {
-            if(!file.isDirectory()) {
+        for (File file : dir.listFiles()) {
+            if (!file.isDirectory()) {
                 VirtualFile virtualFile = environment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
                 if (psiFile instanceof JetFile) {
                     namespaces.add(((JetFile) psiFile).getRootNamespace());
                 }
-            }
-            else {
+            } else {
                 addFiles(environment, project, namespaces, file);
             }
         }
@@ -171,15 +170,15 @@ public class K2JSTranslator {
         File rtJar = null;
         if (javaHome == null) {
             ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-            if(systemClassLoader instanceof URLClassLoader) {
+            if (systemClassLoader instanceof URLClassLoader) {
                 URLClassLoader loader = (URLClassLoader) systemClassLoader;
-                for(URL url: loader.getURLs()) {
-                    if("file".equals(url.getProtocol())) {
-                        if(url.getFile().endsWith("/lib/rt.jar")) {
+                for (URL url : loader.getURLs()) {
+                    if ("file".equals(url.getProtocol())) {
+                        if (url.getFile().endsWith("/lib/rt.jar")) {
                             rtJar = new File(url.getFile());
                             break;
                         }
-                        if(url.getFile().endsWith("/Classes/classes.jar")) {
+                        if (url.getFile().endsWith("/Classes/classes.jar")) {
                             rtJar = new File(url.getFile()).getAbsoluteFile();
                             break;
                         }
@@ -187,12 +186,11 @@ public class K2JSTranslator {
                 }
             }
 
-            if(rtJar == null) {
+            if (rtJar == null) {
                 System.out.println("JAVA_HOME environment variable needs to be defined");
                 return null;
             }
-        }
-        else {
+        } else {
             rtJar = findRtJar(javaHome);
         }
 

@@ -2,14 +2,14 @@ package org.jetbrains.k2js.test;
 
 import org.jetbrains.k2js.K2JSTranslator;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
 import java.io.FileReader;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -43,7 +43,7 @@ public abstract class TranslationTest {
     }
 
     protected void performTest(String filename, String namespaceName,
-                             String functionName, Object expectedResult) throws Exception {
+                               String functionName, Object expectedResult) throws Exception {
         K2JSTranslator.Arguments args = new K2JSTranslator.Arguments();
         args.src = getInputFilePath(filename);
         args.outputDir = getOutputFilePath(filename);
@@ -64,7 +64,7 @@ public abstract class TranslationTest {
     }
 
     protected void runWithRhino(String inputFile, String namespaceName,
-                              String functionName, Object expectedResult) throws Exception {
+                                String functionName, Object expectedResult) throws Exception {
         Context cx = Context.enter();
         FileReader reader = new FileReader(inputFile);
         try {
@@ -82,14 +82,14 @@ public abstract class TranslationTest {
     }
 
     protected Object extractAndCallFunctionObject(String namespaceName, String functionName,
-                                                Context cx, Scriptable scope) {
+                                                  Context cx, Scriptable scope) {
         Object foo = scope.get(namespaceName, scope);
         assertTrue(foo instanceof NativeObject);
-        NativeObject namespaceObject = (NativeObject)foo;
+        NativeObject namespaceObject = (NativeObject) foo;
         Object box = namespaceObject.get(functionName, namespaceObject);
         assertTrue(box instanceof Function);
         Object functionArgs[] = {};
-        Function function = (Function)box;
+        Function function = (Function) box;
         return function.call(cx, scope, scope, functionArgs);
     }
 

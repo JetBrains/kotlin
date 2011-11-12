@@ -82,7 +82,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         backingFieldRef.setQualifier(new JsThisRef());
         JsReturn returnExpression = new JsReturn(backingFieldRef);
         return AstUtil.newFunction
-            (context.enclosingScope(), null, new ArrayList<JsParameter>(), AstUtil.convertToBlock(returnExpression));
+                (context.enclosingScope(), null, new ArrayList<JsParameter>(), AstUtil.convertToBlock(returnExpression));
     }
 
     @NotNull
@@ -91,7 +91,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         PropertySetterDescriptor setterDescriptor =
                 BindingUtils.getPropertySetterDescriptorForProperty(context.bindingContext(), expression);
         return AstUtil.newNamedMethod(context.getNameForDescriptor(setterDescriptor),
-                 generateDefaultSetterFunction(expression, context.newPropertyAccess(setterDescriptor)));
+                generateDefaultSetterFunction(expression, context.newPropertyAccess(setterDescriptor)));
     }
 
     @NotNull
@@ -100,7 +100,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         JsFunction result = new JsFunction(context.enclosingScope());
         JsParameter defaultParameter = new JsParameter(context.enclosingScope().declareTemporary());
         JsBinaryOperation assignment = assignmentToBackingFieldFromDefaultParameter
-                                        (expression, context, defaultParameter);
+                (expression, context, defaultParameter);
         result.setParameters(Arrays.asList(defaultParameter));
         result.setBody(AstUtil.convertToBlock(assignment));
         return result;
@@ -108,7 +108,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
 
     @NotNull
     private JsBinaryOperation assignmentToBackingFieldFromDefaultParameter
-        (@NotNull JetProperty expression, @NotNull TranslationContext context, @NotNull JsParameter defaultParameter) {
+            (@NotNull JetProperty expression, @NotNull TranslationContext context, @NotNull JsParameter defaultParameter) {
         JsNameRef backingFieldRef = getBackingFieldName(getPropertyName(expression), context).makeRef();
         backingFieldRef.setQualifier(new JsThisRef());
         JsBinaryOperation assignExpression = new JsBinaryOperation(JsBinaryOperator.ASG);

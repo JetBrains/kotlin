@@ -21,6 +21,4 @@ public final class DeclarationTranslator extends AbstractTranslator {
     }
 
 
-
-
 }

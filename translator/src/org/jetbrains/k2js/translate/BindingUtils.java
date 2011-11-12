@@ -13,11 +13,12 @@ import java.util.List;
 
 /**
  * @author Talanov Pavel
- *
- * This class contains some code related to BindingContext use. Intention is not to pollute other classes.
+ *         <p/>
+ *         This class contains some code related to BindingContext use. Intention is not to pollute other classes.
  */
 public final class BindingUtils {
-    private BindingUtils() {}
+    private BindingUtils() {
+    }
 
 
     @NotNull
@@ -27,7 +28,7 @@ public final class BindingUtils {
         assert descriptor != null;
         assert descriptorClass.isInstance(descriptor)
                 : expression.toString() + " expected to have of type" + descriptorClass.toString();
-        return (D)descriptor;
+        return (D) descriptor;
     }
 
     @NotNull
@@ -68,7 +69,7 @@ public final class BindingUtils {
 
     @NotNull
     static public PropertySetterDescriptor getPropertySetterDescriptorForProperty(@NotNull BindingContext context,
-                                                                           @NotNull JetProperty property) {
+                                                                                  @NotNull JetProperty property) {
         PropertySetterDescriptor result = getPropertyDescriptor(context, property).getSetter();
         assert result != null : "Property should have a setter descriptor";
         return result;
@@ -76,7 +77,7 @@ public final class BindingUtils {
 
     @NotNull
     static public PropertyGetterDescriptor getPropertyGetterDescriptorForProperty(@NotNull BindingContext context,
-                                                                           @NotNull JetProperty property) {
+                                                                                  @NotNull JetProperty property) {
         PropertyGetterDescriptor result = getPropertyDescriptor(context, property).getGetter();
         assert result != null : "Property should have a getter descriptor";
         return result;
@@ -84,17 +85,17 @@ public final class BindingUtils {
 
     @NotNull
     static public List<ClassDescriptor> getSuperclassDescriptors(@NotNull BindingContext context,
-                                                           @NotNull JetClass classDeclaration) {
+                                                                 @NotNull JetClass classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
         Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
         for (JetType type : superclassTypes) {
             DeclarationDescriptor superClassDescriptor =
-                type.getConstructor().getDeclarationDescriptor();
+                    type.getConstructor().getDeclarationDescriptor();
             assert superClassDescriptor instanceof ClassDescriptor
-                : "Superclass descriptor of a type should be of type ClassDescriptor";
+                    : "Superclass descriptor of a type should be of type ClassDescriptor";
             if (isNotAny(superClassDescriptor)) {
-                superClassDescriptors.add((ClassDescriptor)superClassDescriptor);
+                superClassDescriptors.add((ClassDescriptor) superClassDescriptor);
             }
         }
         return superClassDescriptors;
@@ -102,7 +103,7 @@ public final class BindingUtils {
 
     //TODO better implementation?
     private static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
-        return superClassDescriptor.getName() != "Any";
+        return !superClassDescriptor.getName().equals("Any");
     }
 
 }

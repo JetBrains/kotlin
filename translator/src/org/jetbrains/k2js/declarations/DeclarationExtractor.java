@@ -45,6 +45,6 @@ public final class DeclarationExtractor {
     }
 
     /*package*/ void putName(@NotNull DeclarationDescriptor descriptor, @NotNull JsName name) {
-        descriptorToNameMap.put(descriptor,  name);
+        descriptorToNameMap.put(descriptor, name);
     }
 }

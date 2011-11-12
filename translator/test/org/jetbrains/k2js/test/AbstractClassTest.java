@@ -1,8 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.jetbrains.k2js.translate.TranslationContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -17,7 +14,7 @@ public abstract class AbstractClassTest extends TranslationTest {
 
     private final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
 
-    protected String kotlinLibrartyPath() {
+    protected String kotlinLibraryPath() {
         return KOTLIN_JS_LIB;
     }
 
@@ -29,13 +26,13 @@ public abstract class AbstractClassTest extends TranslationTest {
 
     @Override
     protected void runWithRhino(String inputFile, String namespaceName,
-                              String functionName, Object expectedResult) throws Exception {
+                                String functionName, Object expectedResult) throws Exception {
         Context cx = Context.enter();
         Scriptable scope = cx.initStandardObjects();
-        runFileWithRhino(kotlinLibrartyPath(), cx, scope);
+        runFileWithRhino(kotlinLibraryPath(), cx, scope);
         runFileWithRhino(inputFile, cx, scope);
         Object result = extractAndCallFunctionObject(namespaceName, functionName, cx, scope);
-        assertTrue("Result is not what expected!",result.equals(expectedResult));
+        assertTrue("Result is not what expected!", result.equals(expectedResult));
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
         Context.exit();

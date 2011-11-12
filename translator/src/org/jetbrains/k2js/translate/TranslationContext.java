@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsProgram;
+import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,9 +25,12 @@ public final class TranslationContext {
             this.namespaceScope = namespaceScope;
         }
 
-        @NotNull public final JsScope enclosingScope;
-        @NotNull public final JsScope classScope;
-        @NotNull public final JsScope namespaceScope;
+        @NotNull
+        public final JsScope enclosingScope;
+        @NotNull
+        public final JsScope classScope;
+        @NotNull
+        public final JsScope namespaceScope;
     }
 
     @NotNull
@@ -35,12 +41,16 @@ public final class TranslationContext {
         return new TranslationContext(null, program, bindingContext, scopes, extractor);
     }
 
-    @NotNull private final JsProgram program;
-    @NotNull private final BindingContext bindingContext;
-    @NotNull private final Scopes scopes;
-    @Nullable private final JsName namespaceName;
-    @NotNull private final DeclarationExtractor extractor;
-
+    @NotNull
+    private final JsProgram program;
+    @NotNull
+    private final BindingContext bindingContext;
+    @NotNull
+    private final Scopes scopes;
+    @Nullable
+    private final JsName namespaceName;
+    @NotNull
+    private final DeclarationExtractor extractor;
 
 
     private TranslationContext(@Nullable JsName namespaceName, @NotNull JsProgram program,
@@ -115,7 +125,6 @@ public final class TranslationContext {
     }
 
 
-
     @NotNull
     public JsNameRef getNamespaceQualifiedReference(JsName name) {
         if (namespaceName != null) {
@@ -170,7 +179,8 @@ public final class TranslationContext {
         return extractor.getName(descriptor);
     }
 
-    @NotNull JsName getNameForElement(@NotNull JetElement element) {
+    @NotNull
+    JsName getNameForElement(@NotNull JetElement element) {
         DeclarationDescriptor descriptor = getDescriptorForElement(element);
         return getNameForDescriptor(descriptor);
     }

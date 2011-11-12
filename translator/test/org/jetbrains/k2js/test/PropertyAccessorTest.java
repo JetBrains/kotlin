@@ -39,4 +39,10 @@ public final class PropertyAccessorTest extends AbstractClassTest {
         testFooBoxIsTrue("customSetter.kt");
     }
 
+    //TODO test
+//    @Test
+//    public void namespaceCustomAccessors() throws Exception {
+//        testFooBoxIsTrue("namespaceCustomAccessors.kt");
+//    }
+
 }

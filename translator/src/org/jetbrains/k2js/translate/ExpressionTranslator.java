@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
  */
 public final class ExpressionTranslator extends AbstractTranslator {
 
-    final private ExpressionVisitor visitor = new ExpressionVisitor(translationContext());
+    final private ExpressionVisitor visitor = new ExpressionVisitor();
 
     public ExpressionTranslator(@NotNull TranslationContext context) {
         super(context);

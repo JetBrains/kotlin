@@ -6,9 +6,7 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 
@@ -27,23 +25,10 @@ public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
         JsExpression result;
         if (jsInitExpression != null) {
             result = AstUtil.newAssignment(jsPropertyNameReference, jsInitExpression);
-        }
-        else {
+        } else {
             result = jsPropertyNameReference;
         }
         return AstUtil.convertToStatement(result);
-    }
-
-    //TODO duplicate code translateInitializer 1
-    @Nullable
-    private JsExpression translateInitializer(@NotNull JetProperty declaration, @NotNull TranslationContext context) {
-        JsExpression jsInitExpression = null;
-        JetExpression initializer = declaration.getInitializer();
-        if (initializer != null) {
-            jsInitExpression = AstUtil.convertToExpression(
-                (new ExpressionTranslator(context)).translate(initializer));
-        }
-        return jsInitExpression;
     }
 
     @NotNull

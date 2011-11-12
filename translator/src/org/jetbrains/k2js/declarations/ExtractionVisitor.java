@@ -2,7 +2,6 @@ package org.jetbrains.k2js.declarations;
 
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
-import com.intellij.util.xml.PropertyAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -13,7 +12,8 @@ import org.jetbrains.k2js.translate.Namer;
  */
 public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, JsScope> {
 
-    @NotNull private final DeclarationExtractor extractor;
+    @NotNull
+    private final DeclarationExtractor extractor;
 
     /*package*/ ExtractionVisitor(@NotNull DeclarationExtractor extractor) {
         this.extractor = extractor;

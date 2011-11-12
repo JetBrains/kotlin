@@ -20,7 +20,7 @@ public class BasicClassTest extends AbstractClassTest {
     public void kotlinJsLibRunsWithRhino() throws Exception {
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects();
-        runFileWithRhino(kotlinLibrartyPath(), context, scope);
+        runFileWithRhino(kotlinLibraryPath(), context, scope);
         Context.exit();
     }
 

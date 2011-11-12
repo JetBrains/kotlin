@@ -10,7 +10,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
  */
 public abstract class AbstractTranslator {
 
-    @NotNull private final TranslationContext context;
+    @NotNull
+    private final TranslationContext context;
 
     public AbstractTranslator(@NotNull TranslationContext context) {
         this.context = context;

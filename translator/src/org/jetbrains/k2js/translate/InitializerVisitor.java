@@ -11,15 +11,18 @@ import java.util.List;
 
 /**
  * @author Talanov Pavel
- *
- * This visitor collects all initializers from a given class into JsFunction object.
- * Note: we do use visitor pattern to preserve the order in which initializers are executed.
+ *         <p/>
+ *         This visitor collects all initializers from a given class into JsFunction object.
+ *         Note: we do use visitor pattern to preserve the order in which initializers are executed.
  */
 public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
 
-    @NotNull private final JsScope initializerMethodScope;
-    @NotNull private final JetClass classDeclaration;
-    @NotNull private final TranslationContext initializerMethodContext;
+    @NotNull
+    private final JsScope initializerMethodScope;
+    @NotNull
+    private final JetClass classDeclaration;
+    @NotNull
+    private final TranslationContext initializerMethodContext;
 
     public InitializerVisitor(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
         this.initializerMethodScope = new JsScope(context.getScopeForElement(classDeclaration),
@@ -81,7 +84,7 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
 
     @NotNull
     JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
-                                                  @NotNull TranslationContext context) {
+                                         @NotNull TranslationContext context) {
         String propertyName = property.getName();
         assert propertyName != null : "Named property expected.";
         JsName backingFieldName = getBackingFieldName(propertyName, context);

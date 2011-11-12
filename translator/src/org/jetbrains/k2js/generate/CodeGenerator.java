@@ -34,7 +34,7 @@ public final class CodeGenerator {
 
     private void generateCode(JsProgram program) {
         JsSourceGenerationVisitor sourceGenerator =
-                        new JsSourceGenerationVisitor(output);
+                new JsSourceGenerationVisitor(output);
         program.traverse(sourceGenerator, null);
     }
 }

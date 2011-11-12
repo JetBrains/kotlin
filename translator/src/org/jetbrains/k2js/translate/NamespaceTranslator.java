@@ -55,7 +55,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
     private JsInvocation newNamespace(@NotNull JsName name, @NotNull JsBlock namespaceDeclarations,
-                                     @NotNull JsFunction dummyFunction) {
+                                      @NotNull JsFunction dummyFunction) {
         List<JsParameter> params = new ArrayList<JsParameter>();
         params.add(new JsParameter(name));
         dummyFunction.setParameters(params);

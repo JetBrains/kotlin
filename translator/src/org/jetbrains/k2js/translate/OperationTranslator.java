@@ -35,7 +35,7 @@ public final class OperationTranslator {
         assert JetTokens.OPERATIONS.contains(token) : "Token should represent a binary operation!";
         JsOperator result = map.get(token);
         if (result instanceof JsBinaryOperator) {
-            return (JsBinaryOperator)result;
+            return (JsBinaryOperator) result;
         }
         throw new AssertionError("Invalid map: should contain token: " + token.toString());
     }
