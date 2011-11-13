@@ -23,7 +23,7 @@ public class ClassCodegen {
 
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
 
-        final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION);
+        final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state.getTypeMapper());
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {
                 generate(contextForInners, (JetClass) declaration);
@@ -36,12 +36,12 @@ public class ClassCodegen {
     private void generateImplementation(CodegenContext context, JetClassOrObject aClass, OwnerKind kind, HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         ClassBuilder v = state.forClassImplementation(descriptor);
-        CodegenContext classContext = context.intoClass(descriptor, kind);
+        CodegenContext classContext = context.intoClass(descriptor, kind, state.getTypeMapper());
         new ImplementationBodyCodegen(aClass, classContext, v, state).generate(accessors);
 
         if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
             v = state.forTraitImplementation(descriptor);
-            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL), v, state).generate(null);
+            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state.getTypeMapper()), v, state).generate(null);
         }
     }
 }

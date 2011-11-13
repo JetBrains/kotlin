@@ -29,8 +29,11 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class ClosureCodegen extends ObjectOrClosureCodegen {
 
+    private final BindingContext bindingContext;
+
     public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, CodegenContext context) {
         super(exprContext, context, state);
+        bindingContext = state.getBindingContext();
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
@@ -63,7 +66,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
         final Pair<String, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(fun);
 
-        final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, fun);
+        final FunctionDescriptor funDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, fun);
 
         cv = nameAndVisitor.getSecond();
         name = nameAndVisitor.getFirst();

@@ -1,7 +1,6 @@
 namespace x
 
 class Outer() {
-
     class object {
         class Inner() {
         }

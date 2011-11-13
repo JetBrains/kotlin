@@ -13,6 +13,9 @@ import java.util.Set;
  * @author abreslav
  */
 public class JetPsiUtil {
+
+    public static final String NO_NAME_PROVIDED = "<no name provided>";
+
     @Nullable
     public static JetExpression deparenthesize(@NotNull JetExpression expression) {
         if (expression instanceof JetBinaryExpressionWithTypeRHS) {
@@ -38,7 +41,7 @@ public class JetPsiUtil {
 
     @NotNull
     public static String safeName(String name) {
-        return name == null ? "<no name provided>" : name;
+        return name == null ? NO_NAME_PROVIDED : name;
     }
 
     @NotNull

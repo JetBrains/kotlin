@@ -1,11 +1,9 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,9 +61,9 @@ public class ObjectOrClosureCodegen {
             FunctionDescriptor fd = (FunctionDescriptor) d;
 
             // we generate method
-            assert context instanceof CodegenContext.FunctionContext;
+            assert context instanceof CodegenContext.ReceiverContext;
 
-            CodegenContext.FunctionContext fcontext = (CodegenContext.FunctionContext) context;
+            CodegenContext.ReceiverContext fcontext = (CodegenContext.ReceiverContext) context;
 
             if(fcontext.getReceiverDescriptor() != fd)
                 return null;

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -22,7 +23,7 @@ public class CallableMethod implements Callable {
     private final List<Type> valueParameterTypes;
     private ClassDescriptor thisClass = null;
 
-    private FunctionDescriptor receiverFunction = null;
+    private CallableDescriptor receiverFunction = null;
     private Type generateCalleeType = null;
 
     public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
@@ -48,7 +49,7 @@ public class CallableMethod implements Callable {
         return valueParameterTypes;
     }
 
-    public void setNeedsReceiver(@Nullable FunctionDescriptor receiverClass) {
+    public void setNeedsReceiver(@Nullable CallableDescriptor receiverClass) {
         this.receiverFunction = receiverClass;
     }
 
@@ -88,7 +89,7 @@ public class CallableMethod implements Callable {
         return thisClass;
     }
 
-    public FunctionDescriptor getReceiverFunction() {
+    public CallableDescriptor getReceiverFunction() {
         return receiverFunction;
     }
 }

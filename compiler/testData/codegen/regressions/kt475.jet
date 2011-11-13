@@ -1,14 +1,18 @@
-import java.math.BigDecimal
+import java.util.ArrayList
 
 fun box() : String {
-  // Easy to make BigDecimals user-friendly
-  System.out?.println(
-    "2.00".bd - "1.00"
-  )
-  return "OK"
+  val array = ArrayList<String>()
+  array.add("0")
+  array.add("1")
+  array.add("2")
+  array.last = "5"
+  return if(array.length == 3 && array.last == "5") "OK" else "fail"
 }
 
-val String.bd = BigDecimal(this)
+var <T> ArrayList<T>.length : Int
+    get() = size()
+    set(value: Int) = throw java.lang.Error()
 
-fun BigDecimal.minus(other : BigDecimal) = this.subtract(other)
-fun BigDecimal.minus(other : String) = subtract(other.bd) // this can be omitted
+var <T> ArrayList<T>.last : T
+    get() = get(size()-1)
+    set(el : T) { set(size()-1, el) }

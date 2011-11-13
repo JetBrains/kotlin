@@ -176,21 +176,21 @@ fun t12(x: Int) : Int {
 
 fun box(): String {
 /*
-    if (!s0()) return "fail"
-    if (!s1()) return "fail"
-    if (!t1()) return "fail"
-    if (!t2()) return "fail"
-    if (!t3()) return "fail"
-    if (!t4()) return "fail"
-    if (!t5()) return "fail"
-    if (!t6()) return "fail"
-    if (!t7()) return "fail"
-    if (!t8()) return "fail"
-    if (!t9(0)) return "fail"
-    if (!t10()) return "fail"
-    if (t11(1) != 104) return "fail"
+    if (!s0()) return "s0 fail"
+    if (!s1()) return "s1 fail"
+    if (!t1()) return "t1 fail"
+    if (!t2()) return "t2 fail"
+    if (!t3()) return "t3 fail"
+    if (!t4()) return "t4 fail"
+    if (!t5()) return "t5 fail"
+    if (!t6()) return "t6 fail"
+    if (!t7()) return "t7 fail"
+    if (!t8()) return "t8 fail"
+    if (!t9(0)) return "t9 fail"
+    if (!t10()) return "t10 fail"
+    if (t11(1) != 104) return "t11 fail"
 */
-    if (t12(0) != 100) return "fail"
+    if (t12(0) != 100) return "t12 fail"
 
     return "OK"
 }

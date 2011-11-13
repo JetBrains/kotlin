@@ -196,7 +196,11 @@ public abstract class StackValue {
                 v.checkcast(type);
         }
         else if (type.getSort() == Type.OBJECT) {
-            box(this.type, type, v);
+            if(this.type.getSort() == Type.OBJECT && !type.equals(JetTypeMapper.TYPE_OBJECT)) {
+                v.checkcast(type);
+            }
+            else
+                box(this.type, type, v);
         }
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
             if (this.type.equals(JetTypeMapper.TYPE_OBJECT)) {

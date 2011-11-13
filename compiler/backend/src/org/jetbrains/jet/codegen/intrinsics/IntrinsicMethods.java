@@ -34,6 +34,7 @@ public class IntrinsicMethods {
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
+    public static final Equals EQUALS = new Equals();
 
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
@@ -77,7 +78,8 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("String", "plus", 1, new Concat());
 
         declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
-        declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, new Equals());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
+        declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, new StringPlus());
 
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());

@@ -501,7 +501,7 @@ public class NamespaceGenTest extends CodegenTestCase {
         loadText("fun <E,D> E.foo(extra: java.util.List<D>) = (1, \"foo\", this, extra)");
         System.out.println(generateToText());
         final Method main = generateFunction();
-        Tuple4 tuple4 = (Tuple4) main.invoke(null, "aaa", Arrays.asList(10), TypeInfo.STRING_TYPE_INFO, TypeInfo.INT_TYPE_INFO);
+        Tuple4 tuple4 = (Tuple4) main.invoke(null, "aaa", TypeInfo.STRING_TYPE_INFO, TypeInfo.INT_TYPE_INFO, Arrays.asList(10));
         assertEquals(1, tuple4._1);
         assertEquals("foo", tuple4._2);
         assertEquals("aaa", tuple4._3);

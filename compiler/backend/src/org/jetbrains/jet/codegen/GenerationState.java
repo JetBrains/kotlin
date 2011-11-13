@@ -64,11 +64,11 @@ public class GenerationState {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.IMPLEMENTATION) + ".class");
+        return factory.newVisitor(typeMapper.mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + ".class");
     }
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.TRAIT_IMPL) + ".class");
+        return factory.newVisitor(typeMapper.mapType(aClass.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName() + ".class");
     }
 
     public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {

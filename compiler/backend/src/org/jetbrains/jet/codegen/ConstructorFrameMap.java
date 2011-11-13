@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.objectweb.asm.Type;
 
@@ -25,6 +26,19 @@ public class ConstructorFrameMap extends FrameMap {
             }
         }
 
+        if (classDescriptor != null) {
+            List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
+            for (TypeParameterDescriptor parameter : parameters) {
+                if(parameter.isReified()) {
+                    int index = enterTemp();
+                    myTypeParameterCount++;
+                    if(myFirstTypeParameter == -1) {
+                        myFirstTypeParameter = index;
+                    }
+                }
+            }
+        }
+
         List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
 
         List<ValueParameterDescriptor> paramDescrs = descriptor != null
@@ -33,18 +47,6 @@ public class ConstructorFrameMap extends FrameMap {
         for (int i = 0; i < paramDescrs.size(); i++) {
             ValueParameterDescriptor parameter = paramDescrs.get(i);
             enter(parameter, explicitArgTypes.get(i).getSize());
-        }
-
-        if (classDescriptor != null) {
-            myTypeParameterCount = classDescriptor.getTypeConstructor().getParameters().size();
-            if (kind == OwnerKind.IMPLEMENTATION) {
-                if (myTypeParameterCount > 0) {
-                    myFirstTypeParameter = enterTemp();
-                    for (int i = 1; i < myTypeParameterCount; i++) {
-                        enterTemp();
-                    }
-                }
-            }
         }
     }
 

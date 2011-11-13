@@ -1,4 +1,5 @@
 import java.util.ArrayList
+
 trait Tr {
    fun extra() : String = "_"
 }

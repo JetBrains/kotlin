@@ -169,4 +169,5 @@ public class CodegenUtil {
             addSuperTypes(jetType, set);
         }
     }
+
 }

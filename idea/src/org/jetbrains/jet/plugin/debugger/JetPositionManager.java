@@ -17,8 +17,10 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -111,10 +113,10 @@ public class JetPositionManager implements PositionManager {
         else {
             JetNamespace namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetNamespace.class);
             if (namespace != null) {
-                names.add(JetTypeMapper.jvmName(namespace));
+                names.add(NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)));
             }
             else {
-                names.add(JetTypeMapper.jvmName(file.getRootNamespace()));
+                names.add(NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(file.getRootNamespace())));
             }
         }
         return names;

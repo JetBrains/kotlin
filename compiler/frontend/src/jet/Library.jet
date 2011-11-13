@@ -34,6 +34,8 @@ namespace io {
   fun readLine() : String?
 }
 
+fun Any?.identityEquals(other : Any?) // = this === other
+
 // Can't write a body due to a bootstrapping problem (see JET-74)
 fun Any?.equals(other : Any?) : Boolean// = this === other
 

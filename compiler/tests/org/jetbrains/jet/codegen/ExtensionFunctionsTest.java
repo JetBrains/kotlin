@@ -34,6 +34,6 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testKt475() throws Exception {
-//        blackBoxFile("regressions/kt475.jet");
+        blackBoxFile("regressions/kt475.jet");
     }
 }
