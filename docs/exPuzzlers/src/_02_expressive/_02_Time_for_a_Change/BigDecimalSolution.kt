@@ -10,7 +10,7 @@ fun main(args : Array<String>) {
   )
 }
 
-val String.bd = BigDecimal(this)
+val String.bd : BigDecimal get() = BigDecimal(this)
 
 fun BigDecimal.minus(other : BigDecimal) = this.subtract(other)
 fun BigDecimal.minus(other : String) = subtract(other.bd) // this can be omitted

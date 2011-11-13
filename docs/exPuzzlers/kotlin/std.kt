@@ -1,61 +1,36 @@
 namespace std
 
-fun <T> array(vararg array : T) = array
-fun array(vararg array : Byte) = array
-fun array(vararg array : Char) = array
-fun array(vararg array : Short) = array
-fun array(vararg array : Int) = array
-fun array(vararg array : Long) = array
-fun array(vararg array : Double) = array
-fun array(vararg array : Float) = array
+inline fun <T> array(vararg array : T) = array
+inline fun array(vararg array : Byte) = array
+inline fun array(vararg array : Char) = array
+inline fun array(vararg array : Short) = array
+inline fun array(vararg array : Int) = array
+inline fun array(vararg array : Long) = array
+inline fun array(vararg array : Double) = array
+inline fun array(vararg array : Float) = array
 
 fun Any?.identityEquals(other : Any?) = this === other
 
-fun <T : Any> T?.npe() : T {
+inline fun <T : Any> T?.sure() : T {
     if (this == null)
       throw NullPointerException()
     return this;
 }
 
-namespace io {
-    import java.io.*
-
-    fun print(message : Any?) { System.out?.print(message) }
-    fun print(message : Int) { System.out?.print(message) }
-    fun print(message : Long) { System.out?.print(message) }
-    fun print(message : Byte) { System.out?.print(message) }
-    fun print(message : Short) { System.out?.print(message) }
-    fun print(message : Char) { System.out?.print(message) }
-    fun print(message : Boolean) { System.out?.print(message) }
-    fun print(message : Float) { System.out?.print(message) }
-    fun print(message : Double) { System.out?.print(message) }
-    fun print(message : CharArray) { System.out?.print(message) }
-
-    fun println(message : Any?) { System.out?.println(message) }
-    fun println(message : Int) { System.out?.println(message) }
-    fun println(message : Long) { System.out?.println(message) }
-    fun println(message : Byte) { System.out?.println(message) }
-    fun println(message : Short) { System.out?.println(message) }
-    fun println(message : Char) { System.out?.println(message) }
-    fun println(message : Boolean) { System.out?.println(message) }
-    fun println(message : Float) { System.out?.println(message) }
-    fun println(message : Double) { System.out?.println(message) }
-    fun println(message : CharArray) { System.out?.println(message) }
-
-    private var systemIn : InputStream? = null // Unfortunately, System.in may change
-    private var stdin : BufferedReader? = null // This may introduce leaks of system.in objects...
-
-    fun readLine() : String? {
-    if (stdin == null || systemIn != System.`in`) {
-        stdin = java.io.BufferedReader(java.io.InputStreamReader(System.`in`))
-        systemIn = System.`in`
+namespace string {
+    fun String.replaceAllSubstrings(pattern : String, replacement : String) : String {
+        return (this as java.lang.String).replace(pattern as CharSequence, replacement as CharSequence).sure()
     }
-    return stdin?.readLine()
+
+    fun String.replaceAllWithRegex(pattern : String, replacement : String) : String {
+        return (this as java.lang.String).replaceAll(pattern, replacement).sure()
     }
 }
 
-namespace string {
-    fun String.replaceAll(pattern : String, replacement : String) : String {
-        return (this as java.lang.String).replace(pattern as CharSequence, replacement as CharSequence).npe()
+namespace jutils {
+
+    fun <T : Any> T.getJavaClass() : Class<T> {
+        return ((this as Object).getClass()) as Class<T>
     }
+
 }
