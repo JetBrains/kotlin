@@ -797,7 +797,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
                 //TODO: hack, will not need if resolve goes to right descriptor itself
                 if (declaration instanceof JetParameter) {
@@ -828,6 +828,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
                     JetExpression r = getReceiverForSelector(expression);
                     final boolean isSuper = r instanceof JetSuperExpression;
+                    if(propertyDescriptor.getVisibility() == Visibility.PRIVATE && context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
+                        DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
+                        if(enclosed != null && enclosed != context.getThisDescriptor()) {
+                            CodegenContext c = context;
+                            while(c.getContextDescriptor() != enclosed) {
+                                c = c.getParentContext();
+                            }
+                            propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
+                        }
+                    }
                     final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
                     if(!directToField && resolvedCall != null && !isSuper) {
                         if (resolvedCall.getThisObject().exists()) {

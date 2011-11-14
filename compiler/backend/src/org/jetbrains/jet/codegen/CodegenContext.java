@@ -47,6 +47,19 @@ public abstract class CodegenContext {
     }
 
     protected abstract ClassDescriptor getThisDescriptor ();
+    
+    public DeclarationDescriptor getClassOrNamespaceDescriptor() {
+        CodegenContext c = this;
+        while(true) {
+            DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
+            if(!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof NamespaceDescriptor)) {
+                c = c.getParentContext();
+            }
+            else {
+                return contextDescriptor;
+            }
+        }
+    }
 
     protected CallableDescriptor getReceiverDescriptor() {
         return null;

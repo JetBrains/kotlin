@@ -28,6 +28,9 @@ public class ClassCodegen {
             if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {
                 generate(contextForInners, (JetClass) declaration);
             }
+            if(declaration instanceof JetClassObject) {
+                state.forClass().generate(contextForInners, ((JetClassObject)declaration).getObjectDeclaration());
+            }
         }
 
         generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors);

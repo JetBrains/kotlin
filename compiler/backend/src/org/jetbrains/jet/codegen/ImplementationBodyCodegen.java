@@ -218,7 +218,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv = new InstructionAdapter(mv);
 
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+                        if(original.getVisibility() == Visibility.PRIVATE)
+                            iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getReturnType().getDescriptor());
+                        else
+                            iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
                         iv.areturn(method.getReturnType());
                         mv.visitMaxs(0,0);
@@ -241,7 +244,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             //noinspection AssignmentToForLoopParameter
                             reg += argType.getSize();
                         }
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+                        if(original.getVisibility() == Visibility.PRIVATE)
+                            iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
+                        else
+                            iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
                         iv.areturn(method.getReturnType());
                         mv.visitMaxs(0,0);
@@ -572,7 +578,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateSecondaryConstructor((JetSecondaryConstructor) declaration);
         }
         else if (declaration instanceof JetClassObject) {
-            generateClassObject((JetClassObject) declaration);
+            // done earlier in order to have accessors
         }
         else if (declaration instanceof JetEnumEntry && !((JetEnumEntry) declaration).hasPrimaryConstructor()) {
             String name = declaration.getName();
@@ -873,9 +879,5 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 v.putstatic(typeMapper.mapType(descriptor.getDefaultType(), kind).getInternalName(), "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
             }
         });
-    }
-
-    private void generateClassObject(JetClassObject declaration) {
-         state.forClass().generate(context, declaration.getObjectDeclaration());
     }
 }
