@@ -1295,7 +1295,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
                 Type type = typeMapper.mapType(outType);
                 assert type.getSort() == Type.ARRAY;
-                Type elementType = type.getElementType();
+                Type elementType = JetTypeMapper.correctElementType(type);
                 int size = valueArgument.getArgumentExpressions().size();
 
                 v.iconst(valueArgument.getArgumentExpressions().size());
@@ -1314,7 +1314,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         return mask;
     }
-    
+
     private int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         if(resolvedCall != null) {
@@ -2032,7 +2032,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             Type type = typeMapper.mapType(arrayType, OwnerKind.IMPLEMENTATION);
             gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
-            v.newarray(type.getElementType());
+            v.newarray(JetTypeMapper.correctElementType(type));
         }
 
         if(args.size() == 2) {
@@ -2092,7 +2092,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 return StackValue.arrayElement(notBoxed, true);
             }
             else {
-                return StackValue.arrayElement(arrayType.getElementType(), false);
+                return StackValue.arrayElement(JetTypeMapper.correctElementType(arrayType), false);
             }
         }
         else {

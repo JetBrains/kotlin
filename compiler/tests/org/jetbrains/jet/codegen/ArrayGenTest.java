@@ -166,4 +166,8 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction("box");
         assertTrue((Integer)foo.invoke(null) == 10);
     }
+
+    public void testKt503() {
+        blackBoxFile("regressions/kt503.jet");
+    }
 }

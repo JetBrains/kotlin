@@ -162,7 +162,7 @@ public class NamespaceCodegen {
         v.aconst(jvmType);
         v.iconst(jetType.isNullable() ? 1 : 0);
         List<TypeProjection> arguments = jetType.getArguments();
-        if (arguments.size() > 0 && !(jvmType.getSort() == Type.ARRAY && jvmType.getElementType().getSort() != Type.OBJECT)) {
+        if (arguments.size() > 0 && !(jvmType.getSort() == Type.ARRAY && JetTypeMapper.correctElementType(jvmType).getSort() != Type.OBJECT)) {
             v.iconst(arguments.size());
             v.newarray(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
 

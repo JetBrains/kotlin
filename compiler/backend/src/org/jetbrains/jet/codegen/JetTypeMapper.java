@@ -121,6 +121,12 @@ public class JetTypeMapper {
         return type;
     }
 
+    static Type correctElementType(Type type) {
+        String internalName = type.getInternalName();
+        assert internalName.charAt(0) == '[';
+        return Type.getType(internalName.substring(1));
+    }
+
     public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
