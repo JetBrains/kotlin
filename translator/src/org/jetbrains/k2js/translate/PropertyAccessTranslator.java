@@ -63,7 +63,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    public JsInvocation resolveAsPropertySet(@NotNull JetExpression expression) {
+    public JsInvocation resolveAsPropertySetterCall(@NotNull JetExpression expression) {
         if (expression instanceof JetDotQualifiedExpression) {
             return resolveAsPropertySet((JetDotQualifiedExpression) expression);
         }

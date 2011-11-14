@@ -37,6 +37,11 @@ public final class Translation {
     }
 
     @NotNull
+    static public OperationTranslator operationTranslator(@NotNull TranslationContext context) {
+        return OperationTranslator.newInstance(context);
+    }
+
+    @NotNull
     static public DeclarationTranslator declarationTranslator(@NotNull TranslationContext context) {
         return DeclarationTranslator.newInstance(context);
     }

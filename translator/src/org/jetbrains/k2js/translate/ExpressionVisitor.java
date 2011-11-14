@@ -10,11 +10,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,42 +79,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBinaryExpression(@NotNull JetBinaryExpression expression,
                                         @NotNull TranslationContext context) {
-        JsInvocation setterCall = translateAsSetterCall(expression, context);
-        if (setterCall != null) {
-            return setterCall;
-        }
-        return translateAsBinaryOperation(expression, context);
+        return Translation.operationTranslator(context).translate(expression);
     }
 
-    //TODO method too long
-    @Nullable
-    public JsInvocation translateAsSetterCall(@NotNull JetBinaryExpression expression,
-                                              @NotNull TranslationContext context) {
-        JetToken jetOperationToken = (JetToken) expression.getOperationToken();
-        if (!OperatorTable.isAssignment(jetOperationToken)) {
-            return null;
-        }
-        JetExpression leftExpression = expression.getLeft();
-        JsInvocation setterCall = Translation.propertyAccessTranslator(context).resolveAsPropertySet(leftExpression);
-        if (setterCall == null) {
-            return null;
-        }
-        JetExpression rightExpression = expression.getRight();
-        assert rightExpression != null : "Selector should not be null";
-        JsExpression right = AstUtil.convertToExpression(rightExpression.accept(this, context));
-        setterCall.setArguments(Arrays.asList(right));
-        return setterCall;
-    }
-
-    @NotNull
-    private JsNode translateAsBinaryOperation(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context) {
-        JsExpression left = AstUtil.convertToExpression(expression.getLeft().accept(this, context));
-        JetExpression rightExpression = expression.getRight();
-        assert rightExpression != null : "Binary expression should have a right expression";
-        JsExpression right = AstUtil.convertToExpression(rightExpression.accept(this, context));
-        JetToken jetOperationToken = (JetToken) expression.getOperationToken();
-        return new JsBinaryOperation(OperatorTable.getBinaryOperator(jetOperationToken), left, right);
-    }
 
     //TODO support other cases
     @Override
@@ -349,15 +314,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return selector;
     }
 
-    //TODO: implement unary operations
-//    @Override
-//    @NotNull
-//    public JsNode visitPrefixExpression(@NotNull JetUnaryExpression expression,
-//                                              @NotNull TranslationContext context) {
-//        JsExpression baseExpression = AstUtil.convertToExpression(expression.accept(this, context));
-//        expression
-//
-//    }
+    @NotNull
+    public JsNode visitPrefixExpression(@NotNull JetUnaryExpression expression,
+                                        @NotNull TranslationContext context) {
+        return Translation.operationTranslator(context).translate(expression);
+
+    }
 
 
 }
