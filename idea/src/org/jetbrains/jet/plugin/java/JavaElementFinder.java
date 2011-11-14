@@ -6,6 +6,7 @@ package org.jetbrains.jet.plugin.java;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.compiler.ex.CompilerPathsEx;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
@@ -30,6 +31,8 @@ import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -37,11 +40,11 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class JavaElementFinder extends PsiElementFinder {
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.java.JavaElementFinder");
+    
     private final Project project;
 
     public JavaElementFinder(Project project) {
@@ -74,6 +77,28 @@ public class JavaElementFinder extends PsiElementFinder {
             }
         }
         return answer.toArray(new PsiClass[answer.size()]);
+    }
+
+    @Override
+    public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        Set<String> answer = new HashSet<String>();
+
+        String packageFQN = psiPackage.getQualifiedName();
+        for (PsiFile psiFile : collectProjectFiles(project, GlobalSearchScope.allScope(project))) {
+            if (psiFile instanceof JetFile) {
+                final JetNamespace rootNamespace = ((JetFile) psiFile).getRootNamespace();
+                if (packageFQN.equals(CodegenUtil.getFQName(rootNamespace))) {
+                    answer.add("namespace");
+                    for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
+                        if (declaration instanceof JetClassOrObject) {
+                            answer.add(declaration.getName());
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
     }
 
     @Override
@@ -168,7 +193,9 @@ public class JavaElementFinder extends PsiElementFinder {
                 }
                 finally {
                     final StubElement pop = stubStack.pop();
-                    assert pop == fileStub : "Unbalanced stack operations";
+                    if (pop != fileStub) {
+                        LOG.error("Unbalanced stack operations");
+                    }
                 }
             }
         };
