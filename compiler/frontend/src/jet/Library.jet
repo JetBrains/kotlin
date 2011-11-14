@@ -608,8 +608,8 @@ class Short : Number, Comparable<Short> {
 
   fun inc() : Short
   fun dec() : Short
-  fun plus() : Int
-  fun minus() : Int
+  fun plus() : Short
+  fun minus() : Short
 }
 
 class Byte : Number, Comparable<Byte> {
@@ -671,6 +671,6 @@ class Byte : Number, Comparable<Byte> {
 
   fun inc() : Byte
   fun dec() : Byte
-  fun plus() : Int
-  fun minus() : Int
+  fun plus() : Byte
+  fun minus() : Byte
 }
