@@ -85,4 +85,14 @@ public final class ExpressionTest extends TranslationTest {
     public void functionWithTwoParametersCall() throws Exception {
         testFooBoxIsTrue("functionWithTwoParametersCall.kt");
     }
+
+    @Test
+    public void prefixIntOperations() throws Exception {
+        testFooBoxIsTrue("prefixIntOperations.kt");
+    }
+
+    @Test
+    public void postfixIntOperations() throws Exception {
+        testFooBoxIsTrue("postfixIntOperations.kt");
+    }
 }

@@ -1,7 +1,8 @@
 package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsOperator;
+import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -14,30 +15,43 @@ import java.util.Map;
 public final class OperatorTable {
 
 
-    private static Map<JetToken, JsOperator> map = new HashMap<JetToken, JsOperator>();
+    private static Map<JetToken, JsBinaryOperator> binaryOperatorsMap = new HashMap<JetToken, JsBinaryOperator>();
+    private static Map<JetToken, JsUnaryOperator> unaryOperatorsMap = new HashMap<JetToken, JsUnaryOperator>();
 
     static {
-        map.put(JetTokens.PLUS, JsBinaryOperator.ADD);
-        map.put(JetTokens.MINUS, JsBinaryOperator.SUB);
-        map.put(JetTokens.MUL, JsBinaryOperator.MUL);
-        map.put(JetTokens.DIV, JsBinaryOperator.DIV);
-        map.put(JetTokens.EQ, JsBinaryOperator.ASG);
-        map.put(JetTokens.GT, JsBinaryOperator.GT);
-        map.put(JetTokens.GTEQ, JsBinaryOperator.GTE);
-        map.put(JetTokens.LT, JsBinaryOperator.LT);
-        map.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
-        map.put(JetTokens.EQEQ, JsBinaryOperator.EQ);
-        map.put(JetTokens.ANDAND, JsBinaryOperator.AND);
-        map.put(JetTokens.EXCLEQ, JsBinaryOperator.NEQ);
+        unaryOperatorsMap.put(JetTokens.PLUSPLUS, JsUnaryOperator.INC);     //++
+        unaryOperatorsMap.put(JetTokens.MINUSMINUS, JsUnaryOperator.DEC);   //--
+        unaryOperatorsMap.put(JetTokens.EXCL, JsUnaryOperator.NOT);         //!
+        unaryOperatorsMap.put(JetTokens.MINUS, JsUnaryOperator.NEG);        //-
+        unaryOperatorsMap.put(JetTokens.PLUS, JsUnaryOperator.POS);         //+
     }
 
-    public static JsBinaryOperator getBinaryOperator(JetToken token) {
-        assert JetTokens.OPERATIONS.contains(token) : "Token should represent a binary operation!";
-        JsOperator result = map.get(token);
-        if (result instanceof JsBinaryOperator) {
-            return (JsBinaryOperator) result;
-        }
-        throw new AssertionError("Invalid map: should contain token: " + token.toString());
+    //TODO : not all operators
+    static {
+        binaryOperatorsMap.put(JetTokens.PLUS, JsBinaryOperator.ADD);
+        binaryOperatorsMap.put(JetTokens.MINUS, JsBinaryOperator.SUB);
+        binaryOperatorsMap.put(JetTokens.MUL, JsBinaryOperator.MUL);
+        binaryOperatorsMap.put(JetTokens.DIV, JsBinaryOperator.DIV);
+        binaryOperatorsMap.put(JetTokens.EQ, JsBinaryOperator.ASG);
+        binaryOperatorsMap.put(JetTokens.GT, JsBinaryOperator.GT);
+        binaryOperatorsMap.put(JetTokens.GTEQ, JsBinaryOperator.GTE);
+        binaryOperatorsMap.put(JetTokens.LT, JsBinaryOperator.LT);
+        binaryOperatorsMap.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
+        binaryOperatorsMap.put(JetTokens.EQEQ, JsBinaryOperator.EQ);
+        binaryOperatorsMap.put(JetTokens.ANDAND, JsBinaryOperator.AND);
+        binaryOperatorsMap.put(JetTokens.EXCLEQ, JsBinaryOperator.NEQ);
+    }
+
+    @NotNull
+    public static JsBinaryOperator getBinaryOperator(@NotNull JetToken token) {
+        assert JetTokens.OPERATIONS.contains(token) : "Token should represent an operation!";
+        return binaryOperatorsMap.get(token);
+    }
+
+    @NotNull
+    public static JsUnaryOperator getUnaryOperator(@NotNull JetToken token) {
+        assert JetTokens.OPERATIONS.contains(token) : "Token should represent an operation!";
+        return unaryOperatorsMap.get(token);
     }
 
     public static boolean isAssignment(JetToken token) {

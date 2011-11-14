@@ -314,10 +314,19 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return selector;
     }
 
+    @Override
     @NotNull
-    public JsNode visitPrefixExpression(@NotNull JetUnaryExpression expression,
+    public JsNode visitPrefixExpression(@NotNull JetPrefixExpression expression,
                                         @NotNull TranslationContext context) {
-        return Translation.operationTranslator(context).translate(expression);
+        return Translation.operationTranslator(context).translatePrefixOperation(expression);
+
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitPostfixExpression(@NotNull JetPostfixExpression expression,
+                                         @NotNull TranslationContext context) {
+        return Translation.operationTranslator(context).translatePostfixOperation(expression);
 
     }
 
