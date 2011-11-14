@@ -243,7 +243,7 @@ public class CallMaker {
 
             @Override
             public String toString() {
-                return callElement.toString();
+                return callElement.getText();
             }
         };
     }
