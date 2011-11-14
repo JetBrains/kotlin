@@ -146,6 +146,14 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         return methodBody;
     }
 
+    @Override
+    @NotNull
+    public List<JsPropertyInitializer> visitAnonymousInitializer(@NotNull JetClassInitializer expression,
+                                                                 @NotNull TranslationContext context) {
+        // parsed it in initializer visitor => no additional actions are needed
+        return new ArrayList<JsPropertyInitializer>();
+    }
+
 //    @NotNull
 //    JsName getNameForGetter(@NotNull String propertyName, @NotNull TranslationContext context) {
 //        return getNameForAccessor(propertyName, true, context);

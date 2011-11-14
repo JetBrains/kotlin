@@ -42,7 +42,13 @@ public class BasicClassTest extends AbstractClassTest {
 
     @Test
     public void incrementProperty() throws Exception {
-        //testFooBoxIsTrue("incrementProperty.kt");
         performTest("incrementProperty.kt", "foo", "box", "OK");
     }
+
+    @Test
+    public void SimpleInitializer() throws Exception {
+        testFooBoxIsTrue("simpleInitializer.kt");
+    }
+
+
 }
