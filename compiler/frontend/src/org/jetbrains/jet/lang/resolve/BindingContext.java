@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -12,7 +13,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.util.CommonSuppliers;
+import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
@@ -51,10 +52,10 @@ public interface BindingContext {
 
     WritableSlice<VariableDescriptor, Boolean> MUST_BE_WRAPPED_IN_A_REF = Slices.createSimpleSetSlice();
     
-    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
-    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice();
-    
-    WritableSlice<DeferredTypeKey, DeferredType> DEFERRED_TYPE = new CollectionSliceWrapper<DeferredTypeKey, DeferredType>(DEFERRED_TYPES, CommonSuppliers.<DeferredType>getArrayListSupplier());
+//    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
+//    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice();
+
+    WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
     WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(RewritePolicy.DO_NOTHING) {
         @Override
@@ -139,4 +140,8 @@ public interface BindingContext {
 
     @Nullable
     <K, V> V get(ReadOnlySlice<K, V> slice, K key);
+
+    // slice.isCollective() must be true
+    @NotNull
+    <K, V> Collection<K> getKeys(WritableSlice<K, V> slice);
 }

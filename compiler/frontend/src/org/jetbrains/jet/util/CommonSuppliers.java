@@ -27,6 +27,13 @@ public class CommonSuppliers {
         }
     };
 
+    private static final Supplier<?> HASH_SET_SUPPLIER = new Supplier() {
+        @Override
+        public Set get() {
+            return Sets.newHashSet();
+        }
+    };
+
     public static <T> Supplier<List<T>> getArrayListSupplier() {
         //noinspection unchecked
         return (Supplier<List<T>>) ARRAY_LIST_SUPPLIER;
@@ -36,7 +43,12 @@ public class CommonSuppliers {
         //noinspection unchecked
         return (Supplier<Set<T>>) LINKED_HASH_SET_SUPPLIER;
     }
-    
+
+    public static <T> Supplier<Set<T>> getHashSetSupplier() {
+        //noinspection unchecked
+        return (Supplier<Set<T>>) HASH_SET_SUPPLIER;
+    }
+
     public static <K, V> SetMultimap<K, V> newLinkedHashSetHashSetMultimap() {
         return Multimaps.newSetMultimap(Maps.<K, Collection<V>>newHashMap(), CommonSuppliers.<V>getLinkedHashSetSupplier());
     }

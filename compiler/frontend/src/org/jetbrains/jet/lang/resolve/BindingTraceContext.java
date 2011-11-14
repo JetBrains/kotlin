@@ -30,6 +30,12 @@ public class BindingTraceContext implements BindingTrace {
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             return BindingTraceContext.this.get(slice, key);
         }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            return BindingTraceContext.this.getKeys(slice);
+        }
     };
 
     @Override
@@ -55,5 +61,11 @@ public class BindingTraceContext implements BindingTrace {
     @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
         return map.get(slice, key);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+        return map.getKeys(slice);
     }
 }

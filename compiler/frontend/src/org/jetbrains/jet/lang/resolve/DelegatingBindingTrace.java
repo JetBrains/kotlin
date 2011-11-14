@@ -27,6 +27,13 @@ public class DelegatingBindingTrace implements BindingTrace {
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             return DelegatingBindingTrace.this.get(slice, key);
         }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            return DelegatingBindingTrace.this.getKeys(slice);
+
+        }
     };
 
     public DelegatingBindingTrace(BindingContext parentContext) {
@@ -54,6 +61,19 @@ public class DelegatingBindingTrace implements BindingTrace {
             return map.get(slice, key);
         }
         return parentContext.get(slice, key);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+        Collection<K> keys = map.getKeys(slice);
+        Collection<K> fromParent = parentContext.getKeys(slice);
+        if (keys.isEmpty()) return fromParent;
+        if (fromParent.isEmpty()) return keys;
+
+        List<K> result = Lists.newArrayList(keys);
+        result.addAll(fromParent);
+        return result;
     }
 
     public void addAllMyDataTo(BindingTrace trace) {

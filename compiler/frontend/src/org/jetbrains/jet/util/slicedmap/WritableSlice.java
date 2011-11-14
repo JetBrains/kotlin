@@ -10,4 +10,7 @@ public interface WritableSlice<K, V> extends ReadOnlySlice<K, V> {
     void afterPut(MutableSlicedMap map, K key, V value);
 
     RewritePolicy getRewritePolicy();
+
+    // In a sliced map one can request all keys for a collective slice
+    boolean isCollective();
 }

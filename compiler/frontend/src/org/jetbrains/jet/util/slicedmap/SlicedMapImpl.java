@@ -1,7 +1,12 @@
 package org.jetbrains.jet.util.slicedmap;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import org.jetbrains.jet.util.CommonSuppliers;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -23,6 +28,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
     }
     
     private final Map<SlicedMapKey<?, ?>, Object> map;
+    private final Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = Multimaps.newListMultimap(new HashMap<WritableSlice<?, ?>, Collection<Object>>(), CommonSuppliers.getArrayListSupplier());
 
     private SlicedMapImpl(Map<SlicedMapKey<?, ?>, Object> map) {
         this.map = map;
@@ -33,6 +39,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
         if (!slice.check(key, value)) {
             return;
         }
+
         SlicedMapKey<K, V> slicedMapKey = slice.makeKey(key);
         RewritePolicy rewritePolicy = slice.getRewritePolicy();
         if (rewritePolicy.rewriteProcessingNeeded(key)) {
@@ -43,6 +50,11 @@ public class SlicedMapImpl implements MutableSlicedMap {
                 }
             }
         }
+
+        if (slice.isCollective()) {
+            collectiveSliceKeys.put(slice, key);
+        }
+
         map.put(slicedMapKey, value);
         slice.afterPut(this, key, value);
     }
@@ -58,6 +70,13 @@ public class SlicedMapImpl implements MutableSlicedMap {
         //noinspection unchecked
         V value = (V) map.get(slicedMapKey);
         return slice.computeValue(this, key, value, value == null && !map.containsKey(slicedMapKey));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+        assert slice.isCollective() : "Keys are not collected for slice " + slice;
+        return (Collection<K>) collectiveSliceKeys.get(slice);
     }
 
     @Override

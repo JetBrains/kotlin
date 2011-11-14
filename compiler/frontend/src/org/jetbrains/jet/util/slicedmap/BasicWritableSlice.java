@@ -39,8 +39,8 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
     // True to put, false to skip
     @Override
     public boolean check(K key, V value) {
-        assert key != null;
-        assert value != null;
+//        assert key != null : this + " called with null key";
+        assert value != null : this + " called with null value";
         return true;
     }
 
@@ -60,6 +60,10 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
         return rewritePolicy;
     }
 
+    @Override
+    public boolean isCollective() {
+        return false;
+    }
 
     @Override
     public String toString() {

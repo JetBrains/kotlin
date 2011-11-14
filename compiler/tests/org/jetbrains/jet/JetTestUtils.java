@@ -10,6 +10,7 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author abreslav
@@ -31,6 +32,12 @@ public class JetTestUtils {
                 public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
                     return DUMMY_TRACE.get(slice, key);
                 }
+
+                @NotNull
+                @Override
+                public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+                    return DUMMY_TRACE.getKeys(slice);
+                }
             };
         }
 
@@ -46,6 +53,13 @@ public class JetTestUtils {
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
             return null;
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            assert slice.isCollective();
+            return Collections.emptySet();
         }
 
         @Override
@@ -70,6 +84,12 @@ public class JetTestUtils {
                     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
                         return DUMMY_EXCEPTION_ON_ERROR_TRACE.get(slice, key);
                     }
+
+                    @NotNull
+                    @Override
+                    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+                        return DUMMY_EXCEPTION_ON_ERROR_TRACE.getKeys(slice);
+                    }
                 };
             }
 
@@ -86,11 +106,18 @@ public class JetTestUtils {
                 return null;
             }
 
+            @NotNull
             @Override
-            public void report(@NotNull Diagnostic diagnostic) {
-                if (diagnostic.getSeverity() == Severity.ERROR) {
-                    throw new IllegalStateException(diagnostic.getMessage());
-                }
+            public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+                assert slice.isCollective();
+                return Collections.emptySet();
             }
-        };
+
+            @Override
+                public void report(@NotNull Diagnostic diagnostic) {
+                    if (diagnostic.getSeverity() == Severity.ERROR) {
+                        throw new IllegalStateException(diagnostic.getMessage());
+                    }
+                }
+            };
 }
