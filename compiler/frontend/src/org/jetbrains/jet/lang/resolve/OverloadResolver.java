@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.MultiMap;
-import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -81,7 +80,7 @@ public class OverloadResolver {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 inClasses.put(classDescriptor, klass.getConstructors());
             } else {
-                throw new NotImplementedException();
+                throw new IllegalStateException();
             }
         }
         
