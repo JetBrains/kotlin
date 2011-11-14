@@ -62,8 +62,7 @@ public class PropertyCodegen {
             if (initializer != null) {
                 if (initializer instanceof JetConstantExpression) {
                     CompileTimeConstant<?> compileTimeValue = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
-                    assert compileTimeValue != null;
-                    value = compileTimeValue.getValue();
+                    value = compileTimeValue != null ? compileTimeValue.getValue() : null;
                 }
             }
             final int modifiers;
