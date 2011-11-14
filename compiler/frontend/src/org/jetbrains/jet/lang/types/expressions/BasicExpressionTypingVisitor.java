@@ -861,7 +861,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext data) {
-        return facade.getType(expression.getBaseExpression(), data);
+        JetExpression baseExpression = expression.getBaseExpression();
+        if (baseExpression == null) {
+            return null;
+        }
+        return facade.getType(baseExpression, data);
     }
 
     @Override
