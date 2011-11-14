@@ -87,7 +87,7 @@ public abstract class TranslationTest {
         assertTrue(foo instanceof NativeObject);
         NativeObject namespaceObject = (NativeObject) foo;
         Object box = namespaceObject.get(functionName, namespaceObject);
-        assertTrue(box instanceof Function);
+        assertTrue("Function " + functionName + " not defined in namespace " + namespaceName, box instanceof Function);
         Object functionArgs[] = {};
         Function function = (Function) box;
         return function.call(cx, scope, scope, functionArgs);

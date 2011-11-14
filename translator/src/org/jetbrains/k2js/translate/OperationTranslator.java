@@ -41,7 +41,7 @@ public final class OperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateBaseExpression(@NotNull JetUnaryExpression expression) {
         JetExpression baseExpression = expression.getBaseExpression();
-        assert baseExpression != null : "Unary operation should have not null base expression";
+        assert baseExpression != null : "Unary operation should have a base expression";
         return AstUtil.convertToExpression
                 (Translation.translateExpression(baseExpression, translationContext()));
     }

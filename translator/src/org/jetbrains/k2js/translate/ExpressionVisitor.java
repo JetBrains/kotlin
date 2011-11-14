@@ -2,6 +2,7 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -182,11 +183,56 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitIfExpression(@NotNull JetIfExpression expression, @NotNull TranslationContext context) {
+        if (isStatement(expression)) {
+            return translateAsIfStatement(expression, context);
+        } else {
+            return translateAsConditionalExpression(expression, context);
+        }
+
+    }
+
+    @NotNull
+    private JsIf translateAsIfStatement(@NotNull JetIfExpression expression,
+                                        @NotNull TranslationContext context) {
         JsIf result = new JsIf();
         result.setIfExpr(translateConditionExpression(expression.getCondition(), context));
-        result.setThenStmt(translateNullableExpressionToNotNullStatement(expression.getThen(), context));
-        result.setElseStmt(translateElseStatement(expression, context));
+        result.setThenStmt(translateNullableExpressionAsNotNullStatement(expression.getThen(), context));
+        result.setElseStmt(translateElseAsStatement(expression, context));
         return result;
+    }
+
+    @Nullable
+    private JsStatement translateElseAsStatement(JetIfExpression expression, TranslationContext context) {
+        JetExpression jetElse = expression.getElse();
+        if (jetElse == null) {
+            return null;
+        }
+        return AstUtil.convertToStatement(jetElse.accept(this, context));
+    }
+
+    @NotNull
+    private JsConditional translateAsConditionalExpression(@NotNull JetIfExpression expression,
+                                                           @NotNull TranslationContext context) {
+        JsConditional result = new JsConditional();
+        result.setTestExpression(translateConditionExpression(expression.getCondition(), context));
+        result.setThenExpression(translateNullableExpression(expression.getThen(), context));
+        result.setElseExpression(translateNullableExpression(expression.getElse(), context));
+        return result;
+    }
+
+    //TODO: ask about a legal way to do it
+    private boolean isStatement(@NotNull JetIfExpression expression) {
+        PsiElement parent = expression.getParent();
+        return (parent instanceof JetBlockExpression) || (parent instanceof JetIfExpression);
+    }
+
+    @NotNull
+    private JsStatement translateNullableExpressionAsNotNullStatement(@Nullable JetExpression nullableExpression,
+                                                                      @NotNull TranslationContext context) {
+        if (nullableExpression == null) {
+            return context.program().getEmptyStmt();
+        }
+        return AstUtil.convertToStatement(nullableExpression.accept(this, context));
     }
 
     @NotNull
@@ -199,28 +245,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return AstUtil.convertToExpression(jsCondition);
     }
 
-    @NotNull
-    private JsStatement translateNullableExpressionToNotNullStatement(@Nullable JetExpression expression,
-                                                                      @NotNull TranslationContext context) {
-        return AstUtil.convertToStatement(translateNullableExpression(expression, context));
-    }
-
     @Nullable
-    private JsStatement translateElseStatement(@NotNull JetIfExpression expression,
-                                               @NotNull TranslationContext context) {
-        if (expression.getElse() == null) {
+    private JsExpression translateNullableExpression(@Nullable JetExpression expression,
+                                                     @NotNull TranslationContext context) {
+        if (expression == null) {
             return null;
         }
-        return AstUtil.convertToStatement(translateNullableExpression(expression.getElse(), context));
-    }
-
-    @NotNull
-    private JsNode translateNullableExpression(@Nullable JetExpression expression,
-                                               @NotNull TranslationContext context) {
-        if (expression == null) {
-            return context.program().getEmptyStmt();
-        }
-        return expression.accept(this, context);
+        return AstUtil.convertToExpression(expression.accept(this, context));
     }
 
     @Override
@@ -228,7 +259,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {
         JsWhile result = new JsWhile();
         result.setCondition(translateConditionExpression(expression.getCondition(), context));
-        result.setBody(translateNullableExpressionToNotNullStatement(expression.getBody(), context));
+        result.setBody(translateNullableExpressionAsNotNullStatement(expression.getBody(), context));
         return result;
     }
 
@@ -237,7 +268,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitDoWhileExpression(@NotNull JetDoWhileExpression expression, @NotNull TranslationContext context) {
         JsDoWhile result = new JsDoWhile();
         result.setCondition(translateConditionExpression(expression.getCondition(), context));
-        result.setBody(translateNullableExpressionToNotNullStatement(expression.getBody(), context));
+        result.setBody(translateNullableExpressionAsNotNullStatement(expression.getBody(), context));
         return result;
     }
 
