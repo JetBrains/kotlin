@@ -136,9 +136,9 @@ public class Converter {
       methods.add(
         new Constructor(
           Identifier.EMPTY_IDENTIFIER,
-          new HashSet<String>(),
+          Collections.<String>emptySet(),
           new ClassType(name, false),
-          new LinkedList<Element>(),
+          Collections.<Element>emptyList(),
           new ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
           new Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),
           true
@@ -149,7 +149,7 @@ public class Converter {
     if (psiClass.isInterface())
       return new Trait(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
     if (psiClass.isEnum())
-      return new Enum(name, modifiers, typeParameters, new LinkedList<Type>(), implementsTypes,
+      return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), implementsTypes,
         innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
     return new Class(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
   }

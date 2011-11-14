@@ -12,27 +12,30 @@ import java.util.List;
 public class Block extends Statement {
   public final static Block EMPTY_BLOCK = new Block();
 
-  public List<Statement> getStatements() {
-    return myStatements;
-  }
-
-  private List<Statement> myStatements = new LinkedList<Statement>();
+  private List<Statement> myStatements;
   private boolean myNotEmpty = false;
 
   private Block() {
+    myStatements = new LinkedList<Statement>();
   }
 
   public Block(List<Statement> statements) {
+    myStatements = new LinkedList<Statement>();
     myStatements = statements;
   }
 
   public Block(List<Statement> statements, boolean notEmpty) {
+    myStatements = new LinkedList<Statement>();
     myStatements = statements;
     myNotEmpty = notEmpty;
   }
 
   public boolean isEmpty() {
     return !myNotEmpty && myStatements.size() == 0;
+  }
+
+  public List<Statement> getStatements() {
+    return myStatements;
   }
 
   @NotNull

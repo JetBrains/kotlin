@@ -3,7 +3,7 @@ package org.jetbrains.jet.j2k.ast;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ public class ClassType extends Type {
   public ClassType(Identifier type, boolean isNullable) {
     myType = type;
     myNullable = isNullable;
-    myParameters = new LinkedList<Type>();
+    myParameters = Collections.<Type>emptyList();
   }
 
   @NotNull
