@@ -1,11 +1,12 @@
 class B {
-  void call() {}
+  B(int i) {}
+  int call() {return 1;}
 }
 
 class A extends B {
   A() {
-    super();
+    super(10);
   }
 
-  void call() { return super.call(); }
+  int call() { return super.call(); }
 }

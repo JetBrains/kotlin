@@ -9,8 +9,6 @@ val __ = C(arg1, 0, 0)
 return __
 }
 }
-{
-}
 }
 public open class User() {
 class object {

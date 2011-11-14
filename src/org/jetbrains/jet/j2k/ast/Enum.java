@@ -11,8 +11,8 @@ import java.util.Set;
  * @author ignatov
  */
 public class Enum extends Class {
-  public Enum(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
-    super(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+  public Enum(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes, List<Expression> baseClassParams, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+    super(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, innerClasses, methods, fields);
   }
 
   @Nullable

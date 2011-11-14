@@ -164,12 +164,13 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
   @Override
   public void visitMethodCallExpression(PsiMethodCallExpression expression) {
     super.visitMethodCallExpression(expression);
-    myResult = // TODO: not resolved
-      new MethodCallExpression(
-        expressionToExpression(expression.getMethodExpression()),
-        elementToElement(expression.getArgumentList()),
-        typeToType(expression.getType()).isNullable()
-      );
+    if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression))
+      myResult = // TODO: not resolved
+        new MethodCallExpression(
+          expressionToExpression(expression.getMethodExpression()),
+          elementToElement(expression.getArgumentList()),
+          typeToType(expression.getType()).isNullable()
+        );
   }
 
   @Override
@@ -305,7 +306,7 @@ public class ExpressionVisitor extends StatementVisitor implements Visitor {
     return false;
   }
 
-  private boolean isInsidePrimaryConstructor(PsiReferenceExpression expression) {
+  private boolean isInsidePrimaryConstructor(PsiExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())

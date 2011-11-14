@@ -31,7 +31,7 @@ public class AstUtil {
     return join(array.toArray(new String[array.size()]), delimiter);
   }
 
-  private static List<String> nodesToKotlin(List<? extends INode> nodes) {
+  public static List<String> nodesToKotlin(List<? extends INode> nodes) {
     List<String> result = new LinkedList<String>();
     for (INode n : nodes)
       result.add(n.toKotlin());

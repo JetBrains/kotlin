@@ -1,12 +1,10 @@
-open class B() {
-open fun call() : Unit {
+open class B(i : Int) {
+open fun call() : Int {
+return 1
 }
 }
-open class A() : B {
-override fun call() : Unit {
+open class A() : B(10) {
+override fun call() : Int {
 return super.call()
-}
-{
-super()
 }
 }

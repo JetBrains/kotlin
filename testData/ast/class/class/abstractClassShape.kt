@@ -7,6 +7,4 @@ open public fun getColor() : String? {
 return color
 }
 abstract open public fun area() : Double
-{
-}
 }

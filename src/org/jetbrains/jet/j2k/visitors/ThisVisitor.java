@@ -14,10 +14,6 @@ import java.util.HashSet;
 public class ThisVisitor extends JavaRecursiveElementVisitor {
   HashSet<PsiMethod> myResolvedConstructors = new HashSet<PsiMethod>();
 
-  public HashSet<PsiMethod> getResult() {
-    return myResolvedConstructors;
-  }
-
   @Override
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     for (PsiReference r : expression.getReferences())

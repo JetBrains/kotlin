@@ -14,6 +14,7 @@ public class AnonymousClass extends Class {
       Collections.<String>emptySet(),
       Collections.<Element>emptyList(),
       Collections.<Type>emptyList(),
+      Collections.<Expression>emptyList(),
       Collections.<Type>emptyList(),
       innerClasses,
       methods,

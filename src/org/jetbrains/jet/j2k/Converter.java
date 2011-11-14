@@ -85,9 +85,26 @@ public class Converter {
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
     final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
+    final List<Expression> baseClassParams = new LinkedList<Expression>();
+
+//    for (PsiType t : psiClass.getExtendsListTypes())
+//      if (t != null && t instanceof PsiClassType) {
+//        final PsiClass resolve = ((PsiClassType) t).resolve();
+//        if (resolve != null) {
+    final SuperVisitor visitor = new SuperVisitor();
+    psiClass.accept(visitor);
+    final HashSet<PsiExpressionList> resolvedSuperCallParameters = visitor.getResolvedSuperCallParameters();
+    if (resolvedSuperCallParameters.size() == 1)
+      baseClassParams.addAll(
+        expressionsToExpressionList(
+          resolvedSuperCallParameters.toArray(new PsiExpressionList[1])[0].getExpressions()
+        )
+      );
+//        }
+//      }
 
     // we create primary constructor
-    if (!psiClass.isEnum() && !psiClass.isInterface() && getPrimaryConstructor(psiClass) == null) {
+    if (!psiClass.isEnum() && !psiClass.isInterface() && getPrimaryConstructorForThisCase(psiClass) == null) {
       final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
       final Map<String, String> initializers = new HashMap<String, String>();
 
@@ -147,11 +164,11 @@ public class Converter {
     }
 
     if (psiClass.isInterface())
-      return new Trait(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+      return new Trait(name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, innerClasses, methods, fields);
     if (psiClass.isEnum())
-      return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), implementsTypes,
+      return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), Collections.<Expression>emptyList(), implementsTypes,
         innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
-    return new Class(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+    return new Class(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, innerClasses, methods, fields);
   }
 
   private static String getDefaultInitializer(Field f) {
@@ -219,7 +236,7 @@ public class Converter {
   }
 
   @Nullable
-  public static PsiMethod getPrimaryConstructor(PsiClass psiClass) {
+  public static PsiMethod getPrimaryConstructorForThisCase(PsiClass psiClass) {
     ThisVisitor tv = new ThisVisitor();
     psiClass.accept(tv);
     return tv.getPrimaryConstructor();
@@ -233,12 +250,28 @@ public class Converter {
       if (parent.getConstructors().length == 1)
         return true;
       else {
-        PsiMethod c = getPrimaryConstructor(parent); // TODO: move up to classToClass() method
+        PsiMethod c = getPrimaryConstructorForThisCase(parent); // TODO: move up to classToClass() method
         if (c != null && c.hashCode() == constructor.hashCode())
           return true;
       }
     }
     return false;
+  }
+
+  @Nullable
+  public static PsiMethod getPrimaryConstructor(@NotNull PsiClass psiClass) { // TODO
+    for (PsiMethod c : psiClass.getConstructors())
+      if (isConstructorPrimary(c))
+        return c;
+    return null;
+  }
+
+  private static List<Statement> removeEmpty(List<Statement> statements) {
+    List<Statement> result = new LinkedList<Statement>();
+    for (Statement s : statements)
+      if (s != Statement.EMPTY_STATEMENT && s != Expression.EMPTY_EXPRESSION)
+        result.add(s);
+    return result;
   }
 
   @NotNull
@@ -257,14 +290,13 @@ public class Converter {
 
     if (method.isConstructor()) { // TODO: simplify
       boolean isPrimary = isConstructorPrimary(method);
-
       return new Constructor(
         identifier,
         modifiers,
         type,
         typeParameters,
         params,
-        body,
+        new Block(removeEmpty(body.getStatements()), false),
         isPrimary
       );
     }

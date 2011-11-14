@@ -9,12 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.j2k.util.AstUtil.*;
+
 /**
  * @author ignatov
  */
 public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
+  private final List<Expression> myBaseClassParams;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
@@ -23,8 +26,9 @@ public class Class extends Member {
   final List<Field> myFields;
 
   public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
-               List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+               List<Expression> baseClassParams, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
     myName = name;
+    myBaseClassParams = baseClassParams;
     myModifiers = modifiers;
     myTypeParameters = typeParameters;
     myExtendsTypes = extendsTypes;
@@ -70,7 +74,7 @@ public class Class extends Member {
       for (Element t : myTypeParameters)
         if (t instanceof TypeParameter)
           wheres.add(((TypeParameter) t).getWhereToKotlin());
-      return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
+      return SPACE + "where" + SPACE + join(wheres, COMMA_WITH_SPACE) + SPACE;
     }
     return EMPTY;
   }
@@ -112,14 +116,23 @@ public class Class extends Member {
     return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
   }
 
+  List<String> baseClassSignatureWithParams() {
+    if (TYPE.equals("class") && myExtendsTypes.size() == 1) {
+      LinkedList<String> result = new LinkedList<String>();
+      result.add(myExtendsTypes.get(0).toKotlin() + "(" + joinNodes(myBaseClassParams, COMMA_WITH_SPACE) + ")");
+      return result;
+    } else
+      return nodesToKotlin(myExtendsTypes);
+  }
+
   String implementTypesToKotlin() {
-    List<Type> allTypes = new LinkedList<Type>() {
+    List<String> allTypes = new LinkedList<String>() {
       {
-        addAll(myExtendsTypes);
-        addAll(myImplementsTypes);
+        addAll(baseClassSignatureWithParams());
+        addAll(nodesToKotlin(myImplementsTypes));
       }
     };
-    return allTypes.size() == 0 ? EMPTY : SPACE + COLON + SPACE + AstUtil.joinNodes(allTypes, COMMA_WITH_SPACE);
+    return allTypes.size() == 0 ? EMPTY : SPACE + COLON + SPACE + join(allTypes, COMMA_WITH_SPACE);
   }
 
   String modifiersToKotlin() {
@@ -134,7 +147,7 @@ public class Class extends Member {
       modifierList.add(Modifier.OPEN);
 
     if (modifierList.size() > 0)
-      return AstUtil.join(modifierList, SPACE) + SPACE;
+      return join(modifierList, SPACE) + SPACE;
 
     return EMPTY;
   }
