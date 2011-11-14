@@ -95,4 +95,14 @@ public final class ExpressionTest extends TranslationTest {
     public void postfixIntOperations() throws Exception {
         testFooBoxIsTrue("postfixIntOperations.kt");
     }
+
+    @Test
+    public void notBoolean() throws Exception {
+        testFooBoxIsTrue("notBoolean.kt");
+    }
+
+    @Test
+    public void positiveAndNegativeNumbers() throws Exception {
+        testFooBoxIsTrue("positiveAndNegativeNumbers.kt");
+    }
 }
