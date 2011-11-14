@@ -8,9 +8,9 @@ import org.junit.Test;
  *         This class tests basic language features and constructs such as constants, local variables, simple loops,
  *         conditional clauses etc.
  */
-public final class FunctionTest extends TranslationTest {
+public final class ExpressionTest extends TranslationTest {
 
-    private static final String MAIN = "function/";
+    private static final String MAIN = "expression/";
 
     protected String mainDirectory() {
         return MAIN;
