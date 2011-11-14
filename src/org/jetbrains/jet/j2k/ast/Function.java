@@ -15,7 +15,13 @@ public class Function extends Member {
   private final Type myType;
   private final List<Element> myTypeParameters;
   final Element myParams;
-  final Block myBlock;
+
+  // TODO: maybe remove it?
+  public void setBlock(Block block) {
+    myBlock = block;
+  }
+
+  Block myBlock;
 
   public Function(Identifier name, Set<String> modifiers, Type type, List<Element> typeParameters, Element params, Block block) {
     myName = name;

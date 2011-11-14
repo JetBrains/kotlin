@@ -1,1 +1,0 @@
-private var f : Foo?

@@ -10,6 +10,14 @@ public class AssignmentExpression extends Expression {
   private final Expression myRight;
   private final String myOp;
 
+  public Expression getLeft() {
+    return myLeft;
+  }
+
+  public Expression getRight() {
+    return myRight;
+  }
+
   public AssignmentExpression(Expression left, Expression right, String op) {
     myLeft = left;
     myRight = right;
@@ -20,5 +28,11 @@ public class AssignmentExpression extends Expression {
   @Override
   public String toKotlin() {
     return myLeft.toKotlin() + SPACE + myOp + SPACE + myRight.toKotlin();
+  }
+
+  @NotNull
+  @Override
+  public Kind getKind() {
+    return Kind.ASSINGNMENT_EXPRESSION;
   }
 }

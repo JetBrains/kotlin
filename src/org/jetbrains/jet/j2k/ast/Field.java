@@ -22,6 +22,18 @@ public class Field extends Member {
     myInitializer = initializer;
   }
 
+  public Element getInitializer() {
+    return myInitializer;
+  }
+
+  public Identifier getIdentifier() {
+    return myIdentifier;
+  }
+
+  public Type getType() {
+    return myType;
+  }
+
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
@@ -41,6 +53,10 @@ public class Field extends Member {
   @Override
   public boolean isStatic() {
     return myModifiers.contains(Modifier.STATIC);
+  }
+
+  public boolean isFinal() {
+    return myModifiers.contains(Modifier.FINAL);
   }
 
   @NotNull

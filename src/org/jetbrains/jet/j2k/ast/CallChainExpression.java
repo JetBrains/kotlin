@@ -9,6 +9,16 @@ public class CallChainExpression extends Expression {
   private Expression myExpression;
   private Expression myIdentifier;
 
+  public Expression getIdentifier() {
+    return myIdentifier;
+  }
+
+  @NotNull
+  @Override
+  public Kind getKind() {
+    return Kind.CALL_CHAIN;
+  }
+
   public CallChainExpression(Expression expression, Expression identifier) {
     myExpression = expression;
     myIdentifier = identifier;

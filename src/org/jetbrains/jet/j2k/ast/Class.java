@@ -52,7 +52,7 @@ public class Class extends Member {
 
   String primaryConstructorBodyToKotlin() {
     Constructor maybeConstructor = getPrimaryConstructor();
-    if (maybeConstructor != null)
+    if (maybeConstructor != null && !maybeConstructor.getBlock().isEmpty())
       return maybeConstructor.primaryBodyToKotlin();
     return EMPTY;
   }
@@ -150,10 +150,10 @@ public class Class extends Member {
   String bodyToKotlin() {
     return SPACE + "{" + N +
       AstUtil.joinNodes(getNonStatic(myFields), N) + N +
-      primaryConstructorBodyToKotlin() + N +
       classObjectToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
       AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N +
+      primaryConstructorBodyToKotlin() + N +
       "}";
   }
 

@@ -7,12 +7,10 @@ import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
 import org.jetbrains.jet.j2k.ast.Modifier;
+import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ignatov
@@ -45,6 +43,39 @@ public class Converter {
     );
   }
 
+  private static List<Field> getFinalOrWithEmptyInitializer(List<? extends Field> fields) {
+    List<Field> result = new LinkedList<Field>();
+    for (Field f : fields)
+      if (f.isFinal() || f.getInitializer().toKotlin().isEmpty())
+        result.add(f);
+    return result;
+  }
+
+  private static List<Parameter> createParametersFromFields(List<? extends Field> fields) {
+    List<Parameter> result = new LinkedList<Parameter>();
+    for (Field f : fields)
+      result.add(new Parameter(f.getIdentifier(), f.getType()));
+    return result;
+  }
+
+  private static List<Statement> createInitStatementsFromFields(List<? extends Field> fields) {
+    List<Statement> result = new LinkedList<Statement>();
+    for (Field f : fields) {
+      final String identifierToKotlin = f.getIdentifier().toKotlin();
+      result.add(new DummyStringStatement("this." + identifierToKotlin + " = " + identifierToKotlin));
+    }
+    return result;
+  }
+
+  private static String createPrimaryConstructorInvocation(String s, List<? extends Field> fields, Map<String, String> initializers) {
+    List<String> result = new LinkedList<String>();
+    for (Field f : fields) {
+      final String id = f.getIdentifier().toKotlin();
+      result.add(initializers.get(id));
+    }
+    return s + "(" + AstUtil.join(result, ", ") + ")";
+  }
+
   public static Class classToClass(PsiClass psiClass) {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
@@ -53,14 +84,83 @@ public class Converter {
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
     final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
-
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
+
+    // we create primary constructor
+    if (!psiClass.isEnum() && getPrimaryConstructor(psiClass) == null) {
+      final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
+      final Map<String, String> initializers = new HashMap<String, String>();
+
+      for (Field f : finalOrWithEmptyInitializer) {
+        String init = getDefaultInitializer(f);
+        initializers.put(f.getIdentifier().toKotlin(), init);
+      }
+
+      for (final Function f : methods) {
+        // and modify secondaries
+        if (f.getKind() == INode.Kind.CONSTRUCTOR && !((Constructor) f).isPrimary()) {
+          final List<Statement> newStatements = new LinkedList<Statement>();
+
+          for (Statement s : f.getBlock().getStatements()) {
+            boolean isRemoved = false;
+
+            if (s.getKind() == INode.Kind.ASSINGNMENT_EXPRESSION) {
+              final AssignmentExpression assignmentExpression = (AssignmentExpression) s;
+              if (assignmentExpression.getLeft().getKind() == INode.Kind.CALL_CHAIN) {
+                for (Field fo : finalOrWithEmptyInitializer) {
+                  final String id = fo.getIdentifier().toKotlin();
+                  if (((CallChainExpression) assignmentExpression.getLeft()).getIdentifier().toKotlin().endsWith(id)) {
+                    initializers.put(id, assignmentExpression.getRight().toKotlin());
+                    isRemoved = true;
+                  }
+                }
+              }
+            }
+            if (!isRemoved) {
+              newStatements.add(s);
+            }
+          }
+
+          newStatements.add(
+            0,
+            new DummyStringStatement(
+              "val __ = " + createPrimaryConstructorInvocation(
+                name.toKotlin(),
+                finalOrWithEmptyInitializer,
+                initializers)));
+
+          f.setBlock(new Block(newStatements));
+        }
+      }
+
+      methods.add(
+        new Constructor(
+          Identifier.EMPTY_IDENTIFIER,
+          new HashSet<String>(),
+          new ClassType(name, false),
+          new LinkedList<Element>(),
+          new ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
+          new Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),
+          true
+        )
+      );
+    }
+
     if (psiClass.isInterface())
       return new Trait(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
     if (psiClass.isEnum())
       return new Enum(name, modifiers, typeParameters, new LinkedList<Type>(), implementsTypes,
         innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
     return new Class(name, modifiers, typeParameters, extendsTypes, implementsTypes, innerClasses, methods, fields);
+  }
+
+  private static String getDefaultInitializer(Field f) {
+    if (f.getType().isNullable()) return "null";
+
+    final String typeToKotlin = f.getType().toKotlin();
+    if (typeToKotlin.equals("Boolean")) return "false";
+    if (typeToKotlin.equals("Int")) return "0";
+    return "TYPE: " + typeToKotlin + " HAVEN'T DEFAULT VALUE";
   }
 
   // TODO: hack for enums
