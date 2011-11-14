@@ -12,6 +12,11 @@ public class DelegatingSlice<K, V> implements WritableSlice<K, V> {
         this.delegate = delegate;
     }
 
+    @Override
+    public boolean isCollective() {
+        return delegate.isCollective();
+    }
+
     public boolean check(K key, V value) {
         return delegate.check(key, value);
     }

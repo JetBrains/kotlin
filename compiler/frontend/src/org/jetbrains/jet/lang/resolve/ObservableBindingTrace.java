@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -16,13 +17,14 @@ public class ObservableBindingTrace implements BindingTrace {
 
         void handleRecord(WritableSlice<K, V> slice, K key, V value);
     }
+
     private final BindingTrace originalTrace;
 
     private Map<WritableSlice, RecordHandler> handlers = Maps.newHashMap();
+
     public ObservableBindingTrace(BindingTrace originalTrace) {
         this.originalTrace = originalTrace;
     }
-
     @Override
     public void report(@NotNull Diagnostic diagnostic) {
         originalTrace.report(diagnostic);
@@ -51,7 +53,13 @@ public class ObservableBindingTrace implements BindingTrace {
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
         return originalTrace.get(slice, key);
     }
-    
+
+    @Override
+    @NotNull
+    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+        return originalTrace.getKeys(slice);
+    }
+
     public <K, V> ObservableBindingTrace addHandler(@NotNull WritableSlice<K, V> slice, @NotNull RecordHandler<K, V> handler) {
         handlers.put(slice, handler);
         return this;

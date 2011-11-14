@@ -17,7 +17,10 @@ public class Slices {
         @Override
         public <K, V> boolean processRewrite(WritableSlice<K, V> slice, K key, V oldValue, V newValue) {
             assert (oldValue == null && newValue == null) || (oldValue != null && oldValue.equals(newValue))
-                    : "Rewrite at slice " + slice + " key: " + key + " old value: " + oldValue + " new value: " + newValue;
+                    : "Rewrite at slice " + slice +
+                      " key: " + key +
+                      " old value: " + oldValue + '@' + System.identityHashCode(oldValue) +
+                      " new value: " + newValue + '@' + System.identityHashCode(newValue);
             return true;
         }
     };
@@ -45,8 +48,13 @@ public class Slices {
     public static <K> WritableSlice<K, Boolean> createSimpleSetSlice() {
         return createRemovableSetSlice();
     }
+
+    public static <K> WritableSlice<K, Boolean> createCollectiveSetSlice() {
+        return new SetSlice<K>(RewritePolicy.DO_NOTHING, true);
+    }
+
     public static <K> RemovableSlice<K, Boolean> createRemovableSetSlice() {
-        return new SetSlice<K>(RewritePolicy.DO_NOTHING);
+        return new SetSlice<K>(RewritePolicy.DO_NOTHING, false);
     }
 
     public static class SliceBuilder<K, V> {
@@ -157,8 +165,15 @@ public class Slices {
 
     public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {
 
+        private final boolean collective;
+
         protected SetSlice(RewritePolicy rewritePolicy) {
+            this(rewritePolicy, false);
+        }
+
+        protected SetSlice(RewritePolicy rewritePolicy, boolean collective) {
             super(rewritePolicy);
+            this.collective = collective;
         }
 
         @Override
@@ -167,6 +182,10 @@ public class Slices {
             return super.computeValue(map, key, value, valueNotFound);
         }
 
+        @Override
+        public boolean isCollective() {
+            return collective;
+        }
     }
 
 }

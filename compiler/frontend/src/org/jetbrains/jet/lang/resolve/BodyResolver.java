@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -25,8 +26,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPES;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DeferredTypeKey.DEFERRED_TYPE_KEY;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
@@ -544,17 +543,17 @@ public class BodyResolver {
     }
 
     private void computeDeferredTypes() {
-        Collection<DeferredType> deferredTypes = context.getTrace().get(DEFERRED_TYPES, DEFERRED_TYPE_KEY);
+        Collection<Box<DeferredType>> deferredTypes = context.getTrace().getKeys(DEFERRED_TYPE);
         if (deferredTypes != null) {
             final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size());
-            context.getTrace().addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<BindingContext.DeferredTypeKey, DeferredType>() {
+            context.getTrace().addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<Box<DeferredType>, Boolean>() {
                 @Override
-                public void handleRecord(WritableSlice<BindingContext.DeferredTypeKey, DeferredType> deferredTypeKeyDeferredTypeWritableSlice, BindingContext.DeferredTypeKey key, DeferredType value) {
-                    queue.addLast(value);
+                public void handleRecord(WritableSlice<Box<DeferredType>, Boolean> deferredTypeKeyDeferredTypeWritableSlice, Box<DeferredType> key, Boolean value) {
+                    queue.addLast(key.getData());
                 }
             });
-            for (DeferredType deferredType : deferredTypes) {
-                queue.addLast(deferredType);
+            for (Box<DeferredType> deferredType : deferredTypes) {
+                queue.addLast(deferredType.getData());
             }
             while (!queue.isEmpty()) {
                 DeferredType deferredType = queue.pullFirst();
