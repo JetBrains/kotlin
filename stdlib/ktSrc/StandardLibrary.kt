@@ -1,36 +1,68 @@
 namespace std
 
 namespace io {
-  import java.io.*
+    import java.io.*
 
-  fun print(message : Any?) { System.out?.print(message) }
-  fun print(message : Int) { System.out?.print(message) }
-  fun print(message : Long) { System.out?.print(message) }
-  fun print(message : Byte) { System.out?.print(message) }
-  fun print(message : Short) { System.out?.print(message) }
-  fun print(message : Char) { System.out?.print(message) }
-  fun print(message : Boolean) { System.out?.print(message) }
-  fun print(message : Float) { System.out?.print(message) }
-  fun print(message : Double) { System.out?.print(message) }
+    inline fun print(message : Any?) { System.out?.print(message) }
+    inline fun print(message : Int) { System.out?.print(message) }
+    inline fun print(message : Long) { System.out?.print(message) }
+    inline fun print(message : Byte) { System.out?.print(message) }
+    inline fun print(message : Short) { System.out?.print(message) }
+    inline fun print(message : Char) { System.out?.print(message) }
+    inline fun print(message : Boolean) { System.out?.print(message) }
+    inline fun print(message : Float) { System.out?.print(message) }
+    inline fun print(message : Double) { System.out?.print(message) }
+    inline fun print(message : CharArray) { System.out?.print(message) }
 
-  fun println(message : Any?) { System.out?.println(message) }
-  fun println(message : Int) { System.out?.println(message) }
-  fun println(message : Long) { System.out?.println(message) }
-  fun println(message : Byte) { System.out?.println(message) }
-  fun println(message : Short) { System.out?.println(message) }
-  fun println(message : Char) { System.out?.println(message) }
-  fun println(message : Boolean) { System.out?.println(message) }
-  fun println(message : Float) { System.out?.println(message) }
-  fun println(message : Double) { System.out?.println(message) }
+    inline fun println(message : Any?) { System.out?.println(message) }
+    inline fun println(message : Int) { System.out?.println(message) }
+    inline fun println(message : Long) { System.out?.println(message) }
+    inline fun println(message : Byte) { System.out?.println(message) }
+    inline fun println(message : Short) { System.out?.println(message) }
+    inline fun println(message : Char) { System.out?.println(message) }
+    inline fun println(message : Boolean) { System.out?.println(message) }
+    inline fun println(message : Float) { System.out?.println(message) }
+    inline fun println(message : Double) { System.out?.println(message) }
+    inline fun println(message : CharArray) { System.out?.println(message) }
+    inline fun println() { System.out?.println() }
 
-  private var systemIn : InputStream? = null // Unfortunately, System.in may change
-  private var stdin : BufferedReader? = null // This may introduce leaks of system.in objects...
+    private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : InputStream() {
+        override fun read() : Int {
+            return System.`in`?.read() ?: -1
+        }
 
-  fun readLine() : String? {
-    if (stdin == null || systemIn != System.`in`) {
-        stdin = java.io.BufferedReader(java.io.InputStreamReader(System.`in`))
-        systemIn = System.`in`
-    }
-    return stdin?.readLine()
-  }
+        override fun reset() {
+            System.`in`?.reset()
+        }
+
+        override fun read(b: ByteArray?): Int {
+            return System.`in`?.read(b) ?: -1
+        }
+
+        override fun close() {
+            System.`in`?.close()
+        }
+
+        override fun mark(readlimit: Int) {
+            System.`in`?.mark(readlimit)
+        }
+
+        override fun skip(n: Long): Long {
+            return System.`in`?.skip(n) ?: -1.lng
+        }
+
+        override fun available(): Int {
+            return System.`in`?.available() ?: 0
+        }
+
+        override fun markSupported(): Boolean {
+            return System.`in`?.markSupported() ?: false
+        }
+
+        override fun read(b: ByteArray?, off: Int, len: Int): Int {
+            return System.`in`?.read(b, off, len) ?: -1
+        }
+    }))
+
+    fun readLine() : String? = stdin.readLine()
 }
