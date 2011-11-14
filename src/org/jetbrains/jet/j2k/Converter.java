@@ -62,7 +62,7 @@ public class Converter {
     List<Statement> result = new LinkedList<Statement>();
     for (Field f : fields) {
       final String identifierToKotlin = f.getIdentifier().toKotlin();
-      result.add(new DummyStringStatement("this." + identifierToKotlin + " = " + identifierToKotlin));
+      result.add(new DummyStringStatement("$" + identifierToKotlin + " = " + identifierToKotlin));
     }
     return result;
   }
@@ -87,7 +87,7 @@ public class Converter {
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
 
     // we create primary constructor
-    if (!psiClass.isEnum() && getPrimaryConstructor(psiClass) == null) {
+    if (!psiClass.isEnum() && !psiClass.isInterface() && getPrimaryConstructor(psiClass) == null) {
       final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
       final Map<String, String> initializers = new HashMap<String, String>();
 

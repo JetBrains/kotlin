@@ -22,8 +22,8 @@ open public fun getName() : String? {
 return myName
 }
 {
-this.myName = myName
-this.myHasDollar = myHasDollar
+$myName = myName
+$myHasDollar = myHasDollar
 }
 }
 public open class User() {

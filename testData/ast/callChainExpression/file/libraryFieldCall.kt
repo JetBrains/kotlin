@@ -3,7 +3,7 @@ class object {
 val ourOut : PrintStream?
 }
 {
-this.ourOut = ourOut
+$ourOut = ourOut
 }
 }
 open class User() {
