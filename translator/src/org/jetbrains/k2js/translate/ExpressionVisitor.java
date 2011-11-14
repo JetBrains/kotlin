@@ -2,7 +2,6 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -183,7 +182,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitIfExpression(@NotNull JetIfExpression expression, @NotNull TranslationContext context) {
-        if (isStatement(expression)) {
+        boolean isStatement = BindingUtils.isStatement(context.bindingContext(), expression);
+        if (isStatement) {
             return translateAsIfStatement(expression, context);
         } else {
             return translateAsConditionalExpression(expression, context);
@@ -218,12 +218,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         result.setThenExpression(translateNullableExpression(expression.getThen(), context));
         result.setElseExpression(translateNullableExpression(expression.getElse(), context));
         return result;
-    }
-
-    //TODO: ask about a legal way to do it
-    private boolean isStatement(@NotNull JetIfExpression expression) {
-        PsiElement parent = expression.getParent();
-        return (parent instanceof JetBlockExpression) || (parent instanceof JetIfExpression);
     }
 
     @NotNull

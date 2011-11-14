@@ -41,11 +41,10 @@ public final class ExpressionTest extends TranslationTest {
         performTest("if.kt", "foo", "box", 5);
     }
 
-    //TODO: test fails because of problem with isStatement()
-//    @Test
-//    public void ifElseIf() throws Exception {
-//        performTest("elseif.kt", "foo", "box", 5);
-//    }
+    @Test
+    public void ifElseIf() throws Exception {
+        performTest("elseif.kt", "foo", "box", 5);
+    }
 
     @Test
     public void whileSimpleTest() throws Exception {

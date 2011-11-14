@@ -101,6 +101,10 @@ public final class BindingUtils {
         return superClassDescriptors;
     }
 
+    static public boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
+        return context.get(BindingContext.STATEMENT, expression);
+    }
+
     //TODO better implementation?
     private static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
         return !superClassDescriptor.getName().equals("Any");
