@@ -28,6 +28,11 @@ public final class ClassInheritanceTest extends AbstractClassTest {
     public void initializationOrder() throws Exception {
         testFooBoxIsTrue("initializationOrder.kt");
     }
+
+    @Test
+    public void complexInitializationOrder() throws Exception {
+        testFooBoxIsTrue("complexInitializationOrder.kt");
+    }
 }
 
 
