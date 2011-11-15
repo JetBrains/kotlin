@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -130,7 +129,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
         JsExpression callee = getCallee(expression, context);
-        List<JsExpression> arguments = generateArgumentList(expression.getValueArguments(), context);
+        List<JsExpression> arguments = translateArgumentList(expression.getValueArguments(), context);
         if (isConstructorInvocation(expression, context)) {
             JsNew constructorCall = new JsNew(callee);
             constructorCall.setArguments(arguments);
@@ -158,25 +157,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         JsNode jsCallee = jetCallee.accept(this, context);
         return AstUtil.convertToExpression(jsCallee);
-    }
-
-    @NotNull
-    private List<JsExpression> generateArgumentList(@NotNull List<? extends ValueArgument> jetArguments,
-                                                    @NotNull TranslationContext context) {
-        List<JsExpression> jsArguments = new ArrayList<JsExpression>();
-        for (ValueArgument argument : jetArguments) {
-            jsArguments.add(translateArgument(context, argument));
-        }
-        return jsArguments;
-    }
-
-    @NotNull
-    private JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
-        JetExpression jetExpression = argument.getArgumentExpression();
-        if (jetExpression == null) {
-            throw new AssertionError("Argument with no expression encountered!");
-        }
-        return AstUtil.convertToExpression(jetExpression.accept(this, context));
     }
 
     @Override

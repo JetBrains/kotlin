@@ -33,6 +33,11 @@ public final class ClassInheritanceTest extends AbstractClassTest {
     public void complexInitializationOrder() throws Exception {
         testFooBoxIsTrue("complexInitializationOrder.kt");
     }
+
+    @Test
+    public void valuePassedToAncestorConstructor() throws Exception {
+        testFooBoxIsTrue("valuePassedToAncestorConstructor.kt");
+    }
 }
 
 

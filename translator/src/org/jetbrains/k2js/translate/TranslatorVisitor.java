@@ -5,10 +5,10 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetVisitor;
+import org.jetbrains.jet.lang.psi.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Talanov Pavel
@@ -49,5 +49,24 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
                     .translate(initializer));
         }
         return jsInitExpression;
+    }
+
+    @NotNull
+    protected List<JsExpression> translateArgumentList(@NotNull List<? extends ValueArgument> jetArguments,
+                                                       @NotNull TranslationContext context) {
+        List<JsExpression> jsArguments = new ArrayList<JsExpression>();
+        for (ValueArgument argument : jetArguments) {
+            jsArguments.add(translateArgument(context, argument));
+        }
+        return jsArguments;
+    }
+
+    @NotNull
+    private JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
+        JetExpression jetExpression = argument.getArgumentExpression();
+        if (jetExpression == null) {
+            throw new AssertionError("Argument with no expression encountered!");
+        }
+        return AstUtil.convertToExpression(Translation.translateExpression(jetExpression, context));
     }
 }

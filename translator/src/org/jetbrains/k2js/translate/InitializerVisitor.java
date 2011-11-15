@@ -55,9 +55,29 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
         List<JsStatement> result = new ArrayList<JsStatement>();
         if (BindingUtils.hasAncestor(context.bindingContext(), classDeclaration)) {
             JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
+            List<JsExpression> arguments = translateArguments(classDeclaration, context);
             result.add(AstUtil.convertToStatement
-                    (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName))));
+                    (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName), arguments)));
         }
+        return result;
+    }
+
+    @NotNull
+    private List<JsExpression> translateArguments(@NotNull JetClass classDeclaration,
+                                                  @NotNull TranslationContext context) {
+        JetDelegatorToSuperCall superCall = getSuperCall(classDeclaration);
+        return translateArgumentList(superCall.getValueArguments(), context);
+    }
+
+    @NotNull
+    private JetDelegatorToSuperCall getSuperCall(@NotNull JetClass classDeclaration) {
+        JetDelegatorToSuperCall result = null;
+        for (JetDelegationSpecifier specifier : classDeclaration.getDelegationSpecifiers()) {
+            if (specifier instanceof JetDelegatorToSuperCall) {
+                result = (JetDelegatorToSuperCall) specifier;
+            }
+        }
+        assert result != null : "Class must call ancestor's constructor.";
         return result;
     }
 

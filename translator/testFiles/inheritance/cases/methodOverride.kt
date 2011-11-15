@@ -1,10 +1,10 @@
 namespace foo
 
-open class C {
+open class C() {
     open fun f(): Any = "C f"
 }
 
-class D() : C {
+class D() : C() {
     override fun f(): String = "D f"
 }
 
