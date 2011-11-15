@@ -91,6 +91,8 @@ public abstract class TypeInfo<T> implements JetObject {
         return new TypeInfoImpl<T>(klazz, nullable, projections);
     }
 
+    public abstract Class<T> getTypeClass();
+    
     public abstract Object getClassObject();
 
     public abstract boolean isInstance(Object obj);
@@ -126,6 +128,11 @@ public abstract class TypeInfo<T> implements JetObject {
 
         @Override
         public Object[] newArray(int length) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Class<T> getTypeClass() {
             throw new UnsupportedOperationException();
         }
 
@@ -215,6 +222,11 @@ public abstract class TypeInfo<T> implements JetObject {
         @Override
         public Object[] newArray(int length) {
             return (Object[]) Array.newInstance(signature.klazz, length);
+        }
+
+        @Override
+        public Class<T> getTypeClass() {
+            return signature.klazz;
         }
 
         public final Object getClassObject() {
