@@ -50,7 +50,9 @@ public class NamespaceCodegen {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
         final ClassCodegen classCodegen = state.forClass();
 
-        GenerationState.prepareAnonymousClasses(namespace, state.getTypeMapper());
+        if (v.generateCode()) {
+            GenerationState.prepareAnonymousClasses(namespace, state.getTypeMapper());
+        }
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {

@@ -19,9 +19,11 @@ public class ClassCodegen {
     }
 
     public void generate(CodegenContext context, JetClassOrObject aClass) {
-        GenerationState.prepareAnonymousClasses((JetElement) aClass, state.getTypeMapper());
-
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
+        ClassBuilder classBuilder = state.forClassImplementation(descriptor);
+        if (classBuilder.generateCode()) {
+            GenerationState.prepareAnonymousClasses((JetElement) aClass, state.getTypeMapper());
+        }
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state.getTypeMapper());
         for (JetDeclaration declaration : aClass.getDeclarations()) {
@@ -33,18 +35,17 @@ public class ClassCodegen {
             }
         }
 
-        generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors);
+        generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
     }
 
-    private void generateImplementation(CodegenContext context, JetClassOrObject aClass, OwnerKind kind, HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+    private void generateImplementation(CodegenContext context, JetClassOrObject aClass, OwnerKind kind, HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors, ClassBuilder classBuilder) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-        ClassBuilder v = state.forClassImplementation(descriptor);
         CodegenContext classContext = context.intoClass(descriptor, kind, state.getTypeMapper());
-        new ImplementationBodyCodegen(aClass, classContext, v, state).generate(accessors);
+        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate(accessors);
 
         if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
-            v = state.forTraitImplementation(descriptor);
-            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state.getTypeMapper()), v, state).generate(null);
+            ClassBuilder traitBuilder = state.forTraitImplementation(descriptor);
+            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state.getTypeMapper()), traitBuilder, state).generate(null);
         }
     }
 }
