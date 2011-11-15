@@ -87,10 +87,6 @@ public class Converter {
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
     final List<Expression> baseClassParams = new LinkedList<Expression>();
 
-//    for (PsiType t : psiClass.getExtendsListTypes())
-//      if (t != null && t instanceof PsiClassType) {
-//        final PsiClass resolve = ((PsiClassType) t).resolve();
-//        if (resolve != null) {
     final SuperVisitor visitor = new SuperVisitor();
     psiClass.accept(visitor);
     final HashSet<PsiExpressionList> resolvedSuperCallParameters = visitor.getResolvedSuperCallParameters();
@@ -100,20 +96,18 @@ public class Converter {
           resolvedSuperCallParameters.toArray(new PsiExpressionList[1])[0].getExpressions()
         )
       );
-//        }
-//      }
 
     // we create primary constructor
     if (!psiClass.isEnum() && !psiClass.isInterface() && getPrimaryConstructorForThisCase(psiClass) == null) {
       final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
       final Map<String, String> initializers = new HashMap<String, String>();
 
-      for (Field f : finalOrWithEmptyInitializer) {
-        String init = getDefaultInitializer(f);
-        initializers.put(f.getIdentifier().toKotlin(), init);
-      }
-
       for (final Function f : methods) {
+        for (Field fo : finalOrWithEmptyInitializer) {
+          String init = getDefaultInitializer(fo);
+          initializers.put(fo.getIdentifier().toKotlin(), init);
+        }
+
         // and modify secondaries
         if (f.getKind() == INode.Kind.CONSTRUCTOR && !((Constructor) f).isPrimary()) {
           final List<Statement> newStatements = new LinkedList<Statement>();
@@ -126,7 +120,7 @@ public class Converter {
               if (assignmentExpression.getLeft().getKind() == INode.Kind.CALL_CHAIN) {
                 for (Field fo : finalOrWithEmptyInitializer) {
                   final String id = fo.getIdentifier().toKotlin();
-                  if (((CallChainExpression) assignmentExpression.getLeft()).getIdentifier().toKotlin().endsWith(id)) {
+                  if (((CallChainExpression) assignmentExpression.getLeft()).getIdentifier().toKotlin().endsWith("." + id)) {
                     initializers.put(id, assignmentExpression.getRight().toKotlin());
                     isRemoved = true;
                   }
@@ -172,12 +166,16 @@ public class Converter {
   }
 
   private static String getDefaultInitializer(Field f) {
-    if (f.getType().isNullable()) return "null";
-
-    final String typeToKotlin = f.getType().toKotlin();
-    if (typeToKotlin.equals("Boolean")) return "false";
-    if (typeToKotlin.equals("Int")) return "0";
-    return "TYPE: " + typeToKotlin + " HAVEN'T DEFAULT VALUE";
+    if (f.getType().isNullable())
+      return "null";
+    else {
+      final String typeToKotlin = f.getType().toKotlin();
+      if (typeToKotlin.equals("Boolean")) return "false";
+      if (typeToKotlin.equals("Char")) return "' '";
+      if (typeToKotlin.equals("Double")) return "0.dbl";
+      if (typeToKotlin.equals("Float")) return "0.flt";
+      return "0";
+    }
   }
 
   // TODO: hack for enums
