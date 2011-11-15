@@ -15,9 +15,8 @@ public class ArrayType extends Type {
   @NotNull
   @Override
   public String toKotlin() {
-    String nullable = isNullableStr();
     if (PRIMITIVE_TYPES.contains(myType.toKotlin().toLowerCase()))
-      return myType.toKotlin() + "Array" + nullable; // TODO
-    return "Array" + "<" + myType.toKotlin() + ">" + nullable;
+      return myType.toKotlin() + "Array" + isNullableStr(); // returns IntArray, BooleanArray, etc.
+    return "Array" + "<" + myType.toKotlin() + ">" + isNullableStr();
   }
 }
