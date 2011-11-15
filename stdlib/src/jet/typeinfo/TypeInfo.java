@@ -91,7 +91,7 @@ public abstract class TypeInfo<T> implements JetObject {
         return new TypeInfoImpl<T>(klazz, nullable, projections);
     }
 
-    public abstract Class<T> getTypeClass();
+    public abstract Class<T> getJavaClass();
     
     public abstract Object getClassObject();
 
@@ -132,7 +132,7 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        public Class<T> getTypeClass() {
+        public Class<T> getJavaClass() {
             throw new UnsupportedOperationException();
         }
 
@@ -225,7 +225,7 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        public Class<T> getTypeClass() {
+        public Class<T> getJavaClass() {
             return signature.klazz;
         }
 
