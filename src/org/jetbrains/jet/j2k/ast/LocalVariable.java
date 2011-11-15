@@ -27,7 +27,7 @@ public class LocalVariable extends Expression {
   @NotNull
   @Override
   public String toKotlin() {
-    if (myInitializer.toKotlin().isEmpty()) // TODO: remove
+    if (myInitializer.isEmpty())
       return myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
 
     return myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE +

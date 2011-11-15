@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Element extends Node {
   public static final Element EMPTY_ELEMENT = new EmptyElement();
 
+  public boolean isEmpty() {
+    return false;
+  }
+
   /**
    * @author ignatov
    */
@@ -16,6 +20,11 @@ public abstract class Element extends Node {
     @Override
     public String toKotlin() {
       return EMPTY;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return true;
     }
   }
 }

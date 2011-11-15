@@ -27,8 +27,4 @@ public abstract class Expression extends Statement {
   boolean isNullable() {
     return false;
   }
-
-  public boolean isEmpty() {
-    return false;
-  }
 }

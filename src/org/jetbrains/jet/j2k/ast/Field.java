@@ -64,7 +64,7 @@ public class Field extends Member {
   public String toKotlin() {
     String modifier = modifiersToKotlin();
 
-    if (myInitializer.toKotlin().isEmpty()) // TODO: remove
+    if (myInitializer.isEmpty())
       return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
 
     return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE +
