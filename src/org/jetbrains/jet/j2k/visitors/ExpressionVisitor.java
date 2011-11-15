@@ -123,6 +123,7 @@ public class ExpressionVisitor extends StatementVisitor {
   @Override
   public void visitClassObjectAccessExpression(PsiClassObjectAccessExpression expression) {
     super.visitClassObjectAccessExpression(expression);
+    myResult = new ClassObjectAccessExpression(elementToElement(expression.getOperand()));
   }
 
   @Override
