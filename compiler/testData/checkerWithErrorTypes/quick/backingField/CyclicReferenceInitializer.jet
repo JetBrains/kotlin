@@ -1,0 +1,3 @@
+class Cyclic() {
+    val a = <!UNRESOLVED_REFERENCE, UNINITIALIZED_VARIABLE!>$a<!>
+}

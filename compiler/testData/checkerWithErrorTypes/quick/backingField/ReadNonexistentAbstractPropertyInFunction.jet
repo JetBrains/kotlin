@@ -1,0 +1,5 @@
+abstract class ReadNonexistent {
+    abstract val aa: Int
+    
+    fun ff() = <!UNRESOLVED_REFERENCE!>$aa<!>
+}
