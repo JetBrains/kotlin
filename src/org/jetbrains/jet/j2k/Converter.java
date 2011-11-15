@@ -28,14 +28,12 @@ public class Converter {
   @NotNull
   private static List<Class> classesToClassList(PsiClass[] classes) {
     List<Class> result = new LinkedList<Class>();
-    for (PsiClass t : classes) {
-      result.add(classToClass(t));
-    }
+    for (PsiClass t : classes) result.add(classToClass(t));
     return result;
   }
 
-  public static AnonymousClass anonymousClassToAnonymousClass(PsiAnonymousClass anonymousClass) { // TODO: replace by Block,
-    // use class.getChild() method
+  public static AnonymousClass anonymousClassToAnonymousClass(PsiAnonymousClass anonymousClass) {
+    // TODO: replace by Block, use class.getChild() method
     return new AnonymousClass(
       classesToClassList(anonymousClass.getAllInnerClasses()),
       methodsToFunctionList(anonymousClass.getMethods(), true),
@@ -53,8 +51,7 @@ public class Converter {
 
   private static List<Parameter> createParametersFromFields(List<? extends Field> fields) {
     List<Parameter> result = new LinkedList<Parameter>();
-    for (Field f : fields)
-      result.add(new Parameter(f.getIdentifier(), f.getType()));
+    for (Field f : fields) result.add(new Parameter(f.getIdentifier(), f.getType()));
     return result;
   }
 
@@ -87,6 +84,7 @@ public class Converter {
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
     final List<Expression> baseClassParams = new LinkedList<Expression>();
 
+    // we try to find super() call and generate class declaration like that: class A(name: String, i : Int) : Base(name)
     final SuperVisitor visitor = new SuperVisitor();
     psiClass.accept(visitor);
     final HashSet<PsiExpressionList> resolvedSuperCallParameters = visitor.getResolvedSuperCallParameters();
@@ -97,7 +95,7 @@ public class Converter {
         )
       );
 
-    // we create primary constructor
+    // we create primary constructor from all non final fields and fields without initializers
     if (!psiClass.isEnum() && !psiClass.isInterface() && getPrimaryConstructorForThisCase(psiClass) == null) {
       final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
       final Map<String, String> initializers = new HashMap<String, String>();
@@ -178,7 +176,10 @@ public class Converter {
     }
   }
 
-  // TODO: hack for enums
+  // hack for enums, we remove methods:
+  // private int ordinal() { ... }
+  // private String name() { ... }
+  // those methods any enum class inherits from java.lang.Enum
   private static List<Field> fieldsToFieldListForEnums(PsiField[] fields) {
     List<Field> result = new LinkedList<Field>();
     for (PsiField f : fields) {
@@ -201,9 +202,7 @@ public class Converter {
 
   private static List<Field> fieldsToFieldList(PsiField[] fields) {
     List<Field> result = new LinkedList<Field>();
-    for (PsiField f : fields) {
-      result.add(fieldToField(f));
-    }
+    for (PsiField f : fields) result.add(fieldToField(f));
     return result;
   }
 
@@ -227,9 +226,7 @@ public class Converter {
   @NotNull
   private static List<Function> methodsToFunctionList(PsiMethod[] methods, boolean notEmpty) {
     List<Function> result = new LinkedList<Function>();
-    for (PsiMethod t : methods) {
-      result.add(methodToFunction(t, notEmpty));
-    }
+    for (PsiMethod t : methods) result.add(methodToFunction(t, notEmpty));
     return result;
   }
 
@@ -254,14 +251,6 @@ public class Converter {
       }
     }
     return false;
-  }
-
-  @Nullable
-  public static PsiMethod getPrimaryConstructor(@NotNull PsiClass psiClass) { // TODO
-    for (PsiMethod c : psiClass.getConstructors())
-      if (isConstructorPrimary(c))
-        return c;
-    return null;
   }
 
   private static List<Statement> removeEmpty(List<Statement> statements) {
@@ -310,8 +299,7 @@ public class Converter {
 
   @NotNull
   public static Block blockToBlock(@Nullable PsiCodeBlock block, boolean notEmpty) {
-    if (block == null)
-      return Block.EMPTY_BLOCK;
+    if (block == null) return Block.EMPTY_BLOCK;
     return new Block(statementsToStatementList(block.getStatements()), notEmpty);
   }
 
@@ -323,16 +311,13 @@ public class Converter {
   @NotNull
   public static List<Statement> statementsToStatementList(PsiStatement[] statements) {
     List<Statement> result = new LinkedList<Statement>();
-    for (PsiStatement t : statements) {
-      result.add(statementToStatement(t));
-    }
+    for (PsiStatement t : statements) result.add(statementToStatement(t));
     return result;
   }
 
   @NotNull
   public static Statement statementToStatement(@Nullable PsiStatement s) {
-    if (s == null)
-      return Statement.EMPTY_STATEMENT;
+    if (s == null) return Statement.EMPTY_STATEMENT;
     final StatementVisitor statementVisitor = new StatementVisitor();
     s.accept(statementVisitor);
     return statementVisitor.getResult();
@@ -341,16 +326,13 @@ public class Converter {
   @NotNull
   public static List<Expression> expressionsToExpressionList(PsiExpression[] expressions) {
     List<Expression> result = new LinkedList<Expression>();
-    for (PsiExpression e : expressions) {
-      result.add(expressionToExpression(e));
-    }
+    for (PsiExpression e : expressions) result.add(expressionToExpression(e));
     return result;
   }
 
   @NotNull
   public static Expression expressionToExpression(@Nullable PsiExpression e) {
-    if (e == null)
-      return Expression.EMPTY_EXPRESSION;
+    if (e == null) return Expression.EMPTY_EXPRESSION;
     final ExpressionVisitor expressionVisitor = new ExpressionVisitor();
     e.accept(expressionVisitor);
     return expressionVisitor.getResult();
@@ -358,8 +340,7 @@ public class Converter {
 
   @NotNull
   public static Element elementToElement(PsiElement e) {
-    if (e == null)
-      return Element.EMPTY_ELEMENT;
+    if (e == null) return Element.EMPTY_ELEMENT;
     final ElementVisitor elementVisitor = new ElementVisitor();
     e.accept(elementVisitor);
     return elementVisitor.getResult();
@@ -368,16 +349,13 @@ public class Converter {
   @NotNull
   public static List<Element> elementsToElementList(PsiElement[] elements) {
     List<Element> result = new LinkedList<Element>();
-    for (PsiElement e : elements) {
-      result.add(elementToElement(e));
-    }
+    for (PsiElement e : elements) result.add(elementToElement(e));
     return result;
   }
 
   @NotNull
   public static Type typeToType(@Nullable PsiType type) {
-    if (type == null)
-      return Type.EMPTY_TYPE; // TODO
+    if (type == null) return Type.EMPTY_TYPE;
     TypeVisitor typeVisitor = new TypeVisitor();
     type.accept(typeVisitor);
     return typeVisitor.getResult();
@@ -386,49 +364,39 @@ public class Converter {
   @NotNull
   public static List<Type> typesToTypeList(PsiType[] types) {
     List<Type> result = new LinkedList<Type>();
-    for (PsiType t : types) {
-      result.add(typeToType(t));
-    }
+    for (PsiType t : types) result.add(typeToType(t));
     return result;
   }
 
   @NotNull
   private static List<Type> typesToNotNullableTypeList(PsiType[] types) {
     List<Type> result = new LinkedList<Type>(typesToTypeList(types));
-    for (Type p : result)
-      p.setNullable(false);
-    return result;
-  }
-
-  @NotNull
-  public static Type typeToNotNullableType(@Nullable PsiType type) {
-    Type result = typeToType(type);
-    result.setNullable(false);
+    for (Type p : result) p.setNullable(false);
     return result;
   }
 
   @NotNull
   private static List<Import> importsToImportList(PsiImportStatementBase[] imports) {
     List<Import> result = new LinkedList<Import>();
-    for (PsiImportStatementBase t : imports) {
-      result.add(importToImport(t));
-    }
+    for (PsiImportStatementBase t : imports) result.add(importToImport(t));
     return result;
   }
 
   @NotNull
   private static Import importToImport(PsiImportStatementBase t) {
-    if (t != null && t.getImportReference() != null)
-      return new Import(t.getImportReference().getQualifiedName()); // TODO: use identifier
+    if (t != null) {
+      final PsiJavaCodeReferenceElement reference = t.getImportReference();
+      if (reference != null) {
+        return new Import(reference.getQualifiedName()); // TODO: use identifier
+      }
+    }
     return new Import("");
   }
 
   @NotNull
   public static List<Parameter> parametersToParameterList(PsiParameter[] parameters) {
     List<Parameter> result = new LinkedList<Parameter>();
-    for (PsiParameter t : parameters) {
-      result.add(parameterToParameter(t));
-    }
+    for (PsiParameter t : parameters) result.add(parameterToParameter(t));
     return result;
   }
 
@@ -442,8 +410,7 @@ public class Converter {
 
   @NotNull
   public static Identifier identifierToIdentifier(@Nullable PsiIdentifier identifier) {
-    if (identifier == null)
-      return Identifier.EMPTY_IDENTIFIER;
+    if (identifier == null) return Identifier.EMPTY_IDENTIFIER;
     return new IdentifierImpl(identifier.getText());
   }
 
