@@ -19,10 +19,15 @@ public class Converter {
   @NotNull
   public static File fileToFile(PsiJavaFile javaFile) {
     final PsiImportList importList = javaFile.getImportList();
-    List<Import> imports = importList == null ?
-      new LinkedList<Import>() :
-      importsToImportList(importList.getAllImportStatements());
-    return new File(javaFile.getPackageName(), imports, classesToClassList(javaFile.getClasses())); // TODO: use identifier
+    List<Import> imports = importList == null ? Collections.<Import>emptyList() : importsToImportList(importList.getAllImportStatements());
+    return new File(getPackageName(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
+  }
+
+  private static String getPackageName(String packageName) {
+    List<String> result = new LinkedList<String>();
+    for (String part : packageName.split("\\."))
+      result.add(new IdentifierImpl(part).toKotlin());
+    return AstUtil.join(result, ".");
   }
 
   @NotNull
