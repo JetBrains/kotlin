@@ -85,6 +85,6 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsFunction generateInitializeMethodBody(@NotNull JetClass classDeclaration) {
         InitializerVisitor initializerVisitor = new InitializerVisitor(classDeclaration,
                 translationContext().newClass(classDeclaration));
-        return initializerVisitor.generateInitializeMethodBody();
+        return initializerVisitor.generateInitializeMethod();
     }
 }

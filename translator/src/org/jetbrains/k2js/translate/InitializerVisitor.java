@@ -33,15 +33,16 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     }
 
     @NotNull
-    public JsFunction generateInitializeMethodBody() {
+    public JsFunction generateInitializeMethod() {
         JsFunction result = JsFunction.getAnonymousFunctionWithScope(initializerMethodScope);
-        result.setBody(getInitializerMethodBody(classDeclaration, initializerMethodContext));
+        result.setParameters(translatePrimaryConstructorParameters(classDeclaration));
+        result.setBody(generateInitializerMethodBody(classDeclaration, initializerMethodContext));
         return result;
     }
 
     @NotNull
-    private JsBlock getInitializerMethodBody(@NotNull JetClass classDeclaration,
-                                             @NotNull TranslationContext context) {
+    private JsBlock generateInitializerMethodBody(@NotNull JetClass classDeclaration,
+                                                  @NotNull TranslationContext context) {
         List<JsStatement> initializerStatements = classDeclaration.accept(this, context);
         JsBlock block = new JsBlock();
         block.setStatements(initializerStatements);
@@ -57,6 +58,17 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
             initializerStatements.addAll(declaration.accept(this, context));
         }
         return initializerStatements;
+    }
+
+    @NotNull
+    List<JsParameter> translatePrimaryConstructorParameters(@NotNull JetClass expression) {
+        List<JsParameter> result = new ArrayList<JsParameter>();
+        List<JetParameter> parameters = expression.getPrimaryConstructorParameters();
+        for (JetParameter parameter : parameters) {
+            JsName parameterName = initializerMethodScope.declareName(parameter.getName());
+            result.add(new JsParameter(parameterName));
+        }
+        return result;
     }
 
     @Override

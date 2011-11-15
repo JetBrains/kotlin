@@ -35,10 +35,10 @@ public class BasicClassTest extends AbstractClassTest {
     }
 
     //TODO: test excluded. Wait for bugfix and implement functionality
-//    @Test
-//    public void constructorWithParameter() throws Exception {
-//        testFooBoxIsTrue("constructorWithParameter.kt");
-//    }
+    @Test
+    public void constructorWithParameter() throws Exception {
+        testFooBoxIsTrue("constructorWithParameter.kt");
+    }
 
     @Test
     public void incrementProperty() throws Exception {
@@ -50,5 +50,8 @@ public class BasicClassTest extends AbstractClassTest {
         testFooBoxIsTrue("simpleInitializer.kt");
     }
 
-
+    @Test
+    public void complexExpressionAsConstructorParameter() throws Exception {
+        testFooBoxIsTrue("complexExpressionAsConstructorParameter.kt");
+    }
 }
