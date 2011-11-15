@@ -37,7 +37,7 @@ public final class OperatorTable {
         binaryOperatorsMap.put(JetTokens.GTEQ, JsBinaryOperator.GTE);
         binaryOperatorsMap.put(JetTokens.LT, JsBinaryOperator.LT);
         binaryOperatorsMap.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
-        binaryOperatorsMap.put(JetTokens.EQEQ, JsBinaryOperator.EQ);
+        binaryOperatorsMap.put(JetTokens.EQEQ, JsBinaryOperator.REF_EQ);
         binaryOperatorsMap.put(JetTokens.ANDAND, JsBinaryOperator.AND);
         binaryOperatorsMap.put(JetTokens.EXCLEQ, JsBinaryOperator.NEQ);
         binaryOperatorsMap.put(JetTokens.PERC, JsBinaryOperator.MOD);

@@ -43,10 +43,22 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     @NotNull
     private JsBlock generateInitializerMethodBody(@NotNull JetClass classDeclaration,
                                                   @NotNull TranslationContext context) {
-        List<JsStatement> initializerStatements = classDeclaration.accept(this, context);
-        JsBlock block = new JsBlock();
-        block.setStatements(initializerStatements);
-        return block;
+
+        List<JsStatement> initializerStatements = generateCallToSuperMethod(classDeclaration, context);
+        initializerStatements.addAll(classDeclaration.accept(this, context));
+        return AstUtil.newBlock(initializerStatements);
+    }
+
+    @NotNull
+    private List<JsStatement> generateCallToSuperMethod(@NotNull JetClass classDeclaration,
+                                                        @NotNull TranslationContext context) {
+        List<JsStatement> result = new ArrayList<JsStatement>();
+        if (BindingUtils.hasAncestor(context.bindingContext(), classDeclaration)) {
+            JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
+            result.add(AstUtil.convertToStatement
+                    (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName))));
+        }
+        return result;
     }
 
 

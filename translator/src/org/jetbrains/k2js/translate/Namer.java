@@ -22,6 +22,7 @@ public final class Namer {
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
+    public static final String SUPER_METHOD_NAME = "super_init";
     // public static final String DEFAULT_SETTER_PARAM_NAME = "val";
 
     public static String getClassObjectName() {

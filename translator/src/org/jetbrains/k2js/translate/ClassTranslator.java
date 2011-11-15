@@ -73,6 +73,7 @@ public final class ClassTranslator extends AbstractTranslator {
         return new JsObjectLiteral(propertyList);
     }
 
+    // TODO: names are inconsistent
     @NotNull
     private JsPropertyInitializer generateInitializeMethod(@NotNull JetClass classDeclaration) {
         JsPropertyInitializer initializer = new JsPropertyInitializer();

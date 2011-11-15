@@ -101,6 +101,10 @@ public final class BindingUtils {
         return superClassDescriptors;
     }
 
+    static public boolean hasAncestor(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
+        return !getSuperclassDescriptors(context, classDeclaration).isEmpty();
+    }
+
     static public boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
         return context.get(BindingContext.STATEMENT, expression);
     }

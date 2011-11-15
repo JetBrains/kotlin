@@ -23,6 +23,11 @@ public final class ClassInheritanceTest extends AbstractClassTest {
     public void methodOverride() throws Exception {
         testFooBoxIsTrue("methodOverride.kt");
     }
+
+    @Test
+    public void initializationOrder() throws Exception {
+        testFooBoxIsTrue("initializationOrder.kt");
+    }
 }
 
 

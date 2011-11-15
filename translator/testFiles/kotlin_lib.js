@@ -24,9 +24,7 @@ var Class = (function() {
       parent = properties.shift();
 
     function klass() {
-      if (parent != null) {
-        parent.prototype.initialize.apply(this)
-      }
+      this.initializing = klass;
       this.initialize.apply(this, arguments);
     }
 
@@ -38,6 +36,19 @@ var Class = (function() {
       subclass.prototype = parent.prototype;
       klass.prototype = new subclass;
       parent.subclasses.push(klass);
+    }
+
+
+    if (parent != null) {
+        klass.addMethods(
+        {
+            'super_init' : function () {
+                //if (this.initializing != null) {
+                    this.initializing = this.initializing.superclass;
+                    this.initializing.prototype.initialize.apply(this, arguments)
+               // }
+            }
+        });
     }
 
     for (var i = 0, length = properties.length; i < length; i++)

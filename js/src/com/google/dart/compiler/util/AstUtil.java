@@ -262,4 +262,10 @@ public class AstUtil {
         result.setQualifier(new JsThisRef());
         return result;
     }
+
+    public static JsBlock newBlock(List<JsStatement> statements) {
+        JsBlock result = new JsBlock();
+        result.setStatements(statements);
+        return result;
+    }
 }
