@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class DummyStringStatement extends Statement {
-  private String myString;
+  private final String myString;
 
   public DummyStringStatement(String string) {
     myString = string;

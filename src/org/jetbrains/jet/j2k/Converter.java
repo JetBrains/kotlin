@@ -36,7 +36,7 @@ public class Converter {
     // TODO: replace by Block, use class.getChild() method
     return new AnonymousClass(
       classesToClassList(anonymousClass.getAllInnerClasses()),
-      methodsToFunctionList(anonymousClass.getMethods(), true),
+      methodsToFunctionList(anonymousClass.getMethods()),
       fieldsToFieldList(anonymousClass.getAllFields())
     );
   }
@@ -73,10 +73,10 @@ public class Converter {
     return s + "(" + AstUtil.join(result, ", ") + ")";
   }
 
-  public static Class classToClass(PsiClass psiClass) {
+  private static Class classToClass(PsiClass psiClass) {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
-    final List<Function> methods = methodsToFunctionList(psiClass.getMethods(), true);
+    final List<Function> methods = methodsToFunctionList(psiClass.getMethods());
     final List<Field> fields = fieldsToFieldList(psiClass.getFields());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
@@ -113,7 +113,7 @@ public class Converter {
           for (Statement s : f.getBlock().getStatements()) {
             boolean isRemoved = false;
 
-            if (s.getKind() == INode.Kind.ASSINGNMENT_EXPRESSION) {
+            if (s.getKind() == INode.Kind.ASSIGNMENT_EXPRESSION) {
               final AssignmentExpression assignmentExpression = (AssignmentExpression) s;
               if (assignmentExpression.getLeft().getKind() == INode.Kind.CALL_CHAIN) {
                 for (Field fo : finalOrWithEmptyInitializer) {
@@ -146,7 +146,7 @@ public class Converter {
         new Constructor(
           Identifier.EMPTY_IDENTIFIER,
           Collections.<String>emptySet(),
-          new ClassType(name, false),
+          new ClassType(name),
           Collections.<Element>emptyList(),
           new ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
           new Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),
@@ -224,14 +224,14 @@ public class Converter {
   }
 
   @NotNull
-  private static List<Function> methodsToFunctionList(PsiMethod[] methods, boolean notEmpty) {
+  private static List<Function> methodsToFunctionList(PsiMethod[] methods) {
     List<Function> result = new LinkedList<Function>();
-    for (PsiMethod t : methods) result.add(methodToFunction(t, notEmpty));
+    for (PsiMethod t : methods) result.add(methodToFunction(t, true));
     return result;
   }
 
   @Nullable
-  public static PsiMethod getPrimaryConstructorForThisCase(PsiClass psiClass) {
+  private static PsiMethod getPrimaryConstructorForThisCase(PsiClass psiClass) {
     ThisVisitor tv = new ThisVisitor();
     psiClass.accept(tv);
     return tv.getPrimaryConstructor();
@@ -371,7 +371,7 @@ public class Converter {
   @NotNull
   private static List<Type> typesToNotNullableTypeList(PsiType[] types) {
     List<Type> result = new LinkedList<Type>(typesToTypeList(types));
-    for (Type p : result) p.setNullable(false);
+    for (Type p : result) p.convertToNotNull();
     return result;
   }
 

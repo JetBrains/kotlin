@@ -11,17 +11,12 @@ import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
 /**
  * @author ignatov
  */
-public class TypeVisitor extends PsiTypeVisitor<Type> implements Visitor {
+public class TypeVisitor extends PsiTypeVisitor<Type> {
   private Type myResult = Type.EMPTY_TYPE;
 
   @NotNull
   public Type getResult() {
     return myResult;
-  }
-
-  @Override
-  public Type visitType(PsiType type) {
-    return super.visitType(type);
   }
 
   @Override

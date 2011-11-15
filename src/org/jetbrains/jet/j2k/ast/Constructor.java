@@ -9,7 +9,7 @@ import java.util.Set;
  * @author ignatov
  */
 public class Constructor extends Function {
-  private boolean myIsPrimary;
+  private final boolean myIsPrimary;
 
   public Constructor(Identifier identifier, Set<String> modifiers, Type type, List<Element> typeParameters, Element params, Block block, boolean isPrimary) {
     super(identifier, modifiers, type, typeParameters, params, block);

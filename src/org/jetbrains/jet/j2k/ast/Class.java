@@ -103,7 +103,7 @@ public class Class extends Member {
         result.add(new Function(
           new IdentifierImpl("init"),
           modifiers,
-          new ClassType(myName, false),
+          new ClassType(myName),
           m.getTypeParameters(),
           m.getParams(),
           block

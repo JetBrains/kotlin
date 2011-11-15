@@ -13,7 +13,6 @@ public class ExpressionList extends Expression {
 
   public ExpressionList(List<Expression> expressions, List<Type> types) {
     myExpressions = expressions;
-    List<Type> types1 = types;
   }
 
   public ExpressionList(List<Expression> expressions) {

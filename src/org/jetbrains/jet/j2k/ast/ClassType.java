@@ -18,10 +18,10 @@ public class ClassType extends Type {
     myParameters = parameters;
   }
 
-  public ClassType(Identifier type, boolean isNullable) {
+  public ClassType(Identifier type) {
     myType = type;
-    myNullable = isNullable;
-    myParameters = Collections.<Type>emptyList();
+    myNullable = false;
+    myParameters = Collections.emptyList();
   }
 
   @NotNull

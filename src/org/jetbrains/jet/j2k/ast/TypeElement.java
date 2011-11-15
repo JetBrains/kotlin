@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class TypeElement extends Element {
-  private Type myType;
+  private final Type myType;
 
   public TypeElement(Type type) {
     myType = type;

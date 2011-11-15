@@ -15,8 +15,8 @@ public abstract class Type extends Element {
     return Kind.TYPE;
   }
 
-  public void setNullable(boolean nullable) {
-    myNullable = nullable;
+  public void convertToNotNull() {
+    myNullable = false;
   }
 
   public boolean isNullable() {

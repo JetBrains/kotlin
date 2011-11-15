@@ -13,7 +13,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
 /**
  * @author ignatov
  */
-public class StatementVisitor extends ElementVisitor implements Visitor {
+public class StatementVisitor extends ElementVisitor {
   private Statement myResult = Statement.EMPTY_STATEMENT;
 
   @NotNull

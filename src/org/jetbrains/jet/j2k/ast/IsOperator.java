@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class IsOperator extends Expression {
-  private Expression myExpression;
-  private Element myTypeElement;
+  private final Expression myExpression;
+  private final Element myTypeElement;
 
   public IsOperator(Expression expression, Element typeElement) {
     myExpression = expression;

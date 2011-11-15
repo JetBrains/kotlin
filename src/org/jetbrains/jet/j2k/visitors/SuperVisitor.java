@@ -9,7 +9,7 @@ import java.util.HashSet;
  * @author ignatov
  */
 public class SuperVisitor extends JavaRecursiveElementVisitor {
-  private HashSet<PsiExpressionList> myResolvedSuperCallParameters;
+  private final HashSet<PsiExpressionList> myResolvedSuperCallParameters;
 
   public SuperVisitor() {
     myResolvedSuperCallParameters = new HashSet<PsiExpressionList>();

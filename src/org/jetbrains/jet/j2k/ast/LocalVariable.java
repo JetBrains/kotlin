@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class LocalVariable extends Expression {
   private final Identifier myIdentifier;
-  private Set<String> myModifiersSet;
+  private final Set<String> myModifiersSet;
   private final Type myType;
   private final Expression myInitializer;
 

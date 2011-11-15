@@ -14,7 +14,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
 /**
  * @author ignatov
  */
-public class ExpressionVisitor extends StatementVisitor implements Visitor {
+public class ExpressionVisitor extends StatementVisitor {
   private Expression myResult = Expression.EMPTY_EXPRESSION;
 
   @NotNull

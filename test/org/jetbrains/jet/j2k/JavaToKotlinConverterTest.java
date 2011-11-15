@@ -20,8 +20,8 @@ import static org.jetbrains.jet.j2k.TestCaseBuilder.getTestDataPathBase;
  * @author ignatov
  */
 public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
-  private String myDataPath;
-  private String myName;
+  private final String myDataPath;
+  private final String myName;
 
   public JavaToKotlinConverterTest(String dataPath, String name) {
     myDataPath = dataPath;
@@ -51,18 +51,14 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
 
     final File tmp = new File(kotlinPath + ".tmp");
     if (!expected.equals(actual)) writeStringToFile(tmp, actual);
-    if (expected.equals(actual) && tmp.exists()) tmp.delete();
+    if (expected.equals(actual) && tmp.exists()) //noinspection ResultOfMethodCallIgnored
+      tmp.delete();
 
     Assert.assertEquals(expected, actual);
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-  }
-
   @NotNull
-  protected String getTestFilePath() {
+  String getTestFilePath() {
     return myDataPath + File.separator + myName + ".jav";
   }
 
@@ -101,13 +97,13 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  protected String fileToKotlin(String text) throws IOException {
+  String fileToKotlin(String text) throws IOException {
     configureFromText(text);
     return prettify(Converter.fileToFile((PsiJavaFile) myFile).toKotlin());
   }
 
   @NotNull
-  protected String methodToKotlin(String text) throws IOException {
+  String methodToKotlin(String text) throws IOException {
     String result = fileToKotlin("final class C {" + text + "}")
       .replaceAll("class C\\(\\) \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));
@@ -115,7 +111,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  protected String statementToKotlin(String text) throws Exception {
+  String statementToKotlin(String text) throws Exception {
     String result = methodToKotlin("void main() {" + text + "}");
     int pos = result.lastIndexOf("}");
     result = result.substring(0, pos).replaceFirst("open fun main\\(\\) : Unit \\{", "");
@@ -123,7 +119,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  protected String expressionToKotlin(String code) throws Exception {
+  String expressionToKotlin(String code) throws Exception {
     String result = statementToKotlin("Object o =" + code + "}");
     result = result.replaceFirst("var o : Any\\? =", "");
     return prettify(result);

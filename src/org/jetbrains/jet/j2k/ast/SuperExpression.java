@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class SuperExpression extends Expression {
-  private Identifier myIdentifier;
+  private final Identifier myIdentifier;
 
   public SuperExpression(Identifier identifier) {
     myIdentifier = identifier;

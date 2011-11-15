@@ -9,8 +9,8 @@ import java.util.List;
  * @author ignatov
  */
 public class PolyadicExpression extends Expression {
-  private List<Expression> myExpressions;
-  private String myToken;
+  private final List<Expression> myExpressions;
+  private final String myToken;
 
   public PolyadicExpression(List<Expression> expressions, String token) {
     super();

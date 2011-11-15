@@ -1,9 +1,6 @@
 package org.jetbrains.jet.j2k.visitors;
 
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceExpression;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -12,14 +9,16 @@ import java.util.HashSet;
  * @author ignatov
  */
 public class ThisVisitor extends JavaRecursiveElementVisitor {
-  HashSet<PsiMethod> myResolvedConstructors = new HashSet<PsiMethod>();
+  private final HashSet<PsiMethod> myResolvedConstructors = new HashSet<PsiMethod>();
 
   @Override
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     for (PsiReference r : expression.getReferences())
-      if (r.getCanonicalText().equals("this"))
-        if (r.resolve() != null && r.resolve() instanceof PsiMethod && ((PsiMethod) r.resolve()).isConstructor())
-          myResolvedConstructors.add((PsiMethod) r.resolve());
+      if (r.getCanonicalText().equals("this")) {
+        final PsiElement res = r.resolve();
+        if (res != null && res instanceof PsiMethod && ((PsiMethod) res).isConstructor())
+          myResolvedConstructors.add((PsiMethod) res);
+      }
   }
 
   @Nullable

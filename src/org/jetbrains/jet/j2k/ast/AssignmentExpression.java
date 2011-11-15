@@ -33,6 +33,6 @@ public class AssignmentExpression extends Expression {
   @NotNull
   @Override
   public Kind getKind() {
-    return Kind.ASSINGNMENT_EXPRESSION;
+    return Kind.ASSIGNMENT_EXPRESSION;
   }
 }

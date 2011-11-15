@@ -26,11 +26,6 @@ public class IdentifierImpl extends Expression implements Identifier {
   }
 
   @Override
-  public String getName() {
-    return myName;
-  }
-
-  @Override
   public boolean isEmpty() {
     return myName.length() == 0;
   }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ThisExpression extends Expression {
-  private Identifier myIdentifier;
+  private final Identifier myIdentifier;
 
   public ThisExpression(Identifier identifier) {
     myIdentifier = identifier;

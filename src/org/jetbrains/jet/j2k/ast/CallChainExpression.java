@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class CallChainExpression extends Expression {
-  private Expression myExpression;
-  private Expression myIdentifier;
+  private final Expression myExpression;
+  private final Expression myIdentifier;
 
   public Expression getIdentifier() {
     return myIdentifier;

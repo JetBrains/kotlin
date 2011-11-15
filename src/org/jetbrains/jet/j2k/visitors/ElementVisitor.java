@@ -10,11 +10,10 @@ import static org.jetbrains.jet.j2k.Converter.*;
 /**
  * @author ignatov
  */
-public class ElementVisitor extends JavaElementVisitor implements Visitor {
+public class ElementVisitor extends JavaElementVisitor {
   private Element myResult = Element.EMPTY_ELEMENT;
 
   @NotNull
-  @Override
   public Element getResult() {
     return myResult;
   }
