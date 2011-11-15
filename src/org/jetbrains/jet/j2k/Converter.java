@@ -77,7 +77,7 @@ public class Converter {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
     final List<Function> methods = methodsToFunctionList(psiClass.getMethods(), true);
-    final List<Field> fields = fieldsToFieldList(psiClass.getAllFields());
+    final List<Field> fields = fieldsToFieldList(psiClass.getFields());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
     final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
