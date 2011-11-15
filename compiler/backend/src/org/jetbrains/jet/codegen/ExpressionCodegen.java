@@ -1111,7 +1111,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue returnValueAsStackValue(FunctionDescriptor fd, Type callReturnType) {
         if (callReturnType != Type.VOID_TYPE) {
-            final Type retType = typeMapper.mapType(fd.getReturnType());
+            final Type retType = typeMapper.mapReturnType(fd.getReturnType());
             StackValue.onStack(callReturnType).upcast(retType, v);
             return StackValue.onStack(retType);
         }
@@ -1163,6 +1163,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         assert resolvedCall != null;
 
+        genThisAndReceiverFromResolvedCall(callableMethod, receiver, resolvedCall);
+
+        pushTypeArguments(resolvedCall);
+        int mask = pushMethodArguments(expression, callableMethod.getValueParameterTypes());
+        if(mask == 0)
+            callableMethod.invoke(v);
+        else
+            callableMethod.invokeWithDefault(v, mask);
+    }
+
+    private void genThisAndReceiverFromResolvedCall(CallableMethod callableMethod, StackValue receiver, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         if (callableMethod.isNeedsThis()) {
             if(callableMethod.isNeedsReceiver()) {
                 generateFromResolvedCall(resolvedCall.getThisObject());
@@ -1191,13 +1202,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     receiver.put(callableMethod.getSignature().getArgumentTypes()[0], v);
             }
         }
-
-        pushTypeArguments(resolvedCall);
-        int mask = pushMethodArguments(expression, callableMethod.getValueParameterTypes());
-        if(mask == 0)
-            callableMethod.invoke(v);
-        else
-            callableMethod.invokeWithDefault(v, mask);
     }
 
     protected void generateFromResolvedCall(ReceiverDescriptor descriptor) {
@@ -1470,9 +1474,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                           Arrays.asList(expression.getLeft(), expression.getRight()), receiver);
             }
             else {
+                ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+
                 CallableMethod callableMethod = (CallableMethod) callable;
-                genToJVMStack(expression.getLeft());
-                genToJVMStack(expression.getRight());
+                genThisAndReceiverFromResolvedCall(callableMethod, StackValue.none(), resolvedCall);
+                pushTypeArguments(resolvedCall);
+                pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
                 callableMethod.invoke(v);
                 return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
             }
