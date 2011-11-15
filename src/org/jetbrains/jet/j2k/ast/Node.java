@@ -17,10 +17,7 @@ public abstract class Node implements INode {
   }
 
   final static Set<String> ONLY_KOTLIN_KEYWORDS = new HashSet<String>(Arrays.asList(
-    "namespace", "in", "val", "var", "when", "object",
-    "out", "in", "is", "as", "ref", "override",
-    "open", "attribute", "lazy", "set", "get",
-    "fun", "where", "by", "trait", "type", "This"
+    "namespace", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
   ));
 
   public final static Set<String> PRIMITIVE_TYPES = new HashSet<String>(Arrays.asList(

@@ -1,1 +1,1 @@
-`when`(`open`, `trait`)
+`when`(open, `trait`)
