@@ -2,13 +2,20 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
+
+import java.util.List;
 
 /**
  * @author yole
@@ -85,8 +92,8 @@ public abstract class StackValue {
         return new ArrayElement(type, unbox);
     }
 
-    public static StackValue collectionElement(Type type, CallableMethod getter, CallableMethod setter, FrameMap frame) {
-        return new CollectionElement(type, getter, setter, frame);
+    public static StackValue collectionElement(Type type, ResolvedCall<FunctionDescriptor> getter, ResolvedCall<FunctionDescriptor> setter, ExpressionCodegen codegen) {
+        return new CollectionElement(type, getter, setter, codegen);
     }
 
     public static StackValue field(Type type, String owner, String name, boolean isStatic) {
@@ -477,13 +484,23 @@ public abstract class StackValue {
     private static class CollectionElement extends StackValue {
         private final CallableMethod getter;
         private final CallableMethod setter;
+        private final ExpressionCodegen codegen;
         private final FrameMap frame;
+        private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
+        private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
+        private final FunctionDescriptor setterDescriptor;
+        private final FunctionDescriptor getterDescriptor;
 
-        public CollectionElement(Type type, CallableMethod getter, CallableMethod setter, FrameMap frame) {
+        public CollectionElement(Type type, ResolvedCall<FunctionDescriptor> resolvedGetCall, ResolvedCall<FunctionDescriptor> resolvedSetCall, ExpressionCodegen codegen) {
             super(type);
-            this.getter = getter;
-            this.setter = setter;
-            this.frame = frame;
+            this.resolvedGetCall = resolvedGetCall;
+            this.resolvedSetCall = resolvedSetCall;
+            this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
+            this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
+            this.setter = resolvedSetCall == null ? null : codegen.typeMapper.mapToCallableMethod(setterDescriptor, false, OwnerKind.IMPLEMENTATION);
+            this.getter = resolvedGetCall == null ? null : codegen.typeMapper.mapToCallableMethod(getterDescriptor, false, OwnerKind.IMPLEMENTATION);
+            this.codegen = codegen;
+            this.frame = codegen.myFrameMap;
         }
 
         @Override
@@ -505,69 +522,164 @@ public abstract class StackValue {
 
         @Override
         public void dupReceiver(InstructionAdapter v) {
-            int size = calcSize();
-            
-            if(size == 2) {
+            if(isStandardStack(resolvedGetCall) && isStandardStack(resolvedSetCall)) {
                 v.dup2();   // collection and index
             }
             else {
-                Method signature = getter.getSignature();
-                Type[] argumentTypes = signature.getArgumentTypes();
-
-                int firstIndex = frame.enterTemp();
-                int lastIndex = firstIndex;
+                int size = 0;
+                int lastIndex = frame.enterTemp();
                 frame.leaveTemp();
                 
-                for(int i = argumentTypes.length-1; i >= 0; i--) {
-                    int sz = argumentTypes[i].getSize();
+                // indexes
+                List<ValueParameterDescriptor> valueParameters = resolvedGetCall.getResultingDescriptor().getValueParameters();
+                int firstParamIndex = -1;
+                for(int i = valueParameters.size()-1; i >= 0; --i) {
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());
+                    int sz = type.getSize();
                     frame.enterTemp(sz);
                     lastIndex += sz;
-                    v.store(lastIndex-sz, argumentTypes[i]);
+                    size += sz;
+                    v.store((firstParamIndex = lastIndex)-sz, type);
                 }
 
-                if(getter.getInvokeOpcode() != Opcodes.INVOKESTATIC) {
+                List<TypeParameterDescriptor> typeParameters = resolvedGetCall.getResultingDescriptor().getTypeParameters();
+                int firstTypeParamIndex = -1;
+                for(int i = typeParameters.size()-1; i >= 0; --i)  {
+                    if(typeParameters.get(i).isReified()) {
+                        frame.enterTemp();
+                        lastIndex++;
+                        size++;
+                        v.store(firstTypeParamIndex = lastIndex-1, JetTypeMapper.TYPE_OBJECT);
+                    }
+                }
+
+                ReceiverDescriptor receiverParameter = resolvedGetCall.getReceiverArgument();
+                int receiverIndex = -1;
+                if(receiverParameter.exists()) {
+                    Type type = codegen.typeMapper.mapType(receiverParameter.getType());
+                    int sz = type.getSize();
+                    frame.enterTemp(sz);
+                    lastIndex += sz;
+                    size += sz;
+                    v.store((receiverIndex = lastIndex)-sz, type);
+                }
+
+                ReceiverDescriptor thisObject = resolvedGetCall.getThisObject();
+                int thisIndex = -1;
+                if(thisObject.exists()) {
                     frame.enterTemp();
                     lastIndex++;
-                    v.store(lastIndex-1, JetTypeMapper.TYPE_OBJECT);
+                    size++;
+                    v.store((thisIndex = lastIndex)-1, JetTypeMapper.TYPE_OBJECT);
+                }
+                
+                // for setter
+
+                int  realReceiverIndex;
+                Type realReceiverType;
+                if(thisIndex != -1) {
+                    if(receiverIndex != -1) {
+                        realReceiverIndex = receiverIndex;
+                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType());
+                    }
+                    else {
+                        realReceiverIndex = thisIndex;
+                        realReceiverType = JetTypeMapper.TYPE_OBJECT;
+                    }
+                }
+                else {
+                    if(receiverIndex != -1) {
+                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType());
+                        realReceiverIndex = receiverIndex;
+                    }
+                    else {
+                        throw new UnsupportedOperationException();
+                    }
                 }
 
-                firstIndex = lastIndex;
-                int curIndex = lastIndex;
-                if(getter.getInvokeOpcode() != Opcodes.INVOKESTATIC) {
-                    v.load(curIndex-1, JetTypeMapper.TYPE_OBJECT);
-                    curIndex--;
+                if(resolvedSetCall.getThisObject().exists()) {
+                    if(resolvedSetCall.getReceiverArgument().exists()) {
+                        codegen.generateFromResolvedCall(resolvedSetCall.getThisObject());
+                    }
+                    v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
+                }
+                else {
+                    if(resolvedSetCall.getReceiverArgument().exists()) {
+                        v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
+                    }
+                    else {
+                        throw new UnsupportedOperationException();
+                    }
                 }
 
-                for(int i = 0; i != argumentTypes.length; i++) {
-                    int sz = argumentTypes[i].getSize();
-                    v.load(curIndex-sz, argumentTypes[i]);
-                    curIndex -= sz;
+                for (TypeParameterDescriptor typeParameterDescriptor : setterDescriptor.getOriginal().getTypeParameters()) {
+                    if(typeParameterDescriptor.isReified()) {
+                        codegen.generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor));
+                    }
                 }
 
-                curIndex = firstIndex;
-                if(getter.getInvokeOpcode() != Opcodes.INVOKESTATIC) {
-                    v.load(curIndex-1, JetTypeMapper.TYPE_OBJECT);
-                    curIndex--;
+                int index = firstParamIndex;
+                for(int i = 0; i != valueParameters.size(); ++i) {
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());
+                    int sz = type.getSize();
+                    v.load(index-sz, type);
+                    index -= sz;
                 }
 
-                for(int i = 0; i != argumentTypes.length; i++) {
-                    int sz = argumentTypes[i].getSize();
-                    v.load(curIndex-sz, argumentTypes[i]);
-                    curIndex -= sz;
+                // restoring original
+                if(thisIndex != -1) {
+                    v.load(thisIndex-1, JetTypeMapper.TYPE_OBJECT);
+                }
+                
+                if(receiverIndex != -1) {
+                    Type type = codegen.typeMapper.mapType(receiverParameter.getType());
+                    v.load(receiverIndex-type.getSize(), type);
+                }
+
+                if(firstTypeParamIndex != -1) {
+                    index = firstTypeParamIndex;
+                    for(int i = 0; i != typeParameters.size(); ++i)  {
+                        if(typeParameters.get(i).isReified()) {
+                            v.load(index-1, JetTypeMapper.TYPE_OBJECT);
+                            index--;
+                        }
+                    }
+                }
+                
+                index = firstParamIndex;
+                for(int i = 0; i != valueParameters.size(); ++i) {
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());
+                    int sz = type.getSize();
+                    v.load(index-sz, type);
+                    index -= sz;
                 }
 
                 frame.leaveTemp(size);
             }
         }
 
-        private int calcSize() {
-            assert getter != null;
-            int size = getter.getInvokeOpcode() == Opcodes.INVOKESTATIC ? 0 : 1;
-            Method signature = getter.getSignature();
-            Type[] argumentTypes = signature.getArgumentTypes();
-            for(int i = 0; i != argumentTypes.length; ++i)
-                size += argumentTypes[i].getSize();
-            return size;
+        private boolean isStandardStack(ResolvedCall call) {
+            for (TypeParameterDescriptor typeParameterDescriptor : call.getResultingDescriptor().getTypeParameters()) {
+                if(typeParameterDescriptor.isReified())
+                    return false;
+            }
+            
+            if(call.getResultingDescriptor().getValueParameters().size() != 1)
+                return false;
+
+            if(codegen.typeMapper.mapType(call.getResultingDescriptor().getValueParameters().get(0).getOutType()).getSize() != 1)
+                return false;
+
+            if(call.getThisObject().exists()) {
+                if(call.getReceiverArgument().exists())
+                    return false;
+            }
+            else {
+                if(codegen.typeMapper.mapType(call.getResultingDescriptor().getReceiverParameter().getType()).getSize() != 1)
+                    return false;
+            }
+
+            return true;
         }
     }
 

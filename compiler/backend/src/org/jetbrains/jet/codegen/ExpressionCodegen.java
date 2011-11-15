@@ -53,8 +53,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private int myLastLineNumber = -1;
 
     final InstructionAdapter v;
-    private final FrameMap myFrameMap;
-    private final JetTypeMapper typeMapper;
+    final FrameMap myFrameMap;
+    final JetTypeMapper typeMapper;
 
     private final GenerationState state;
     private final Type returnType;
@@ -1200,7 +1200,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             callableMethod.invokeWithDefault(v, mask);
     }
 
-    private void generateFromResolvedCall(ReceiverDescriptor descriptor) {
+    protected void generateFromResolvedCall(ReceiverDescriptor descriptor) {
         if(descriptor instanceof ClassReceiver) {
             ClassReceiver classReceiver = (ClassReceiver) descriptor;
             generateThisOrOuter((ClassDescriptor) classReceiver.getDeclarationDescriptor()).put(typeMapper.mapType(descriptor.getType()), v);
@@ -2111,12 +2111,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             boolean isGetter = accessor.getSignature().getName().equals("get");
 
             ResolvedCall<FunctionDescriptor> resolvedSetCall = bindingContext.get(BindingContext.INDEXED_LVALUE_SET, expression);
-            FunctionDescriptor setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
-            CallableMethod setter = resolvedSetCall == null ? null : typeMapper.mapToCallableMethod(setterDescriptor, false, OwnerKind.IMPLEMENTATION);
-
             ResolvedCall<FunctionDescriptor> resolvedGetCall = bindingContext.get(BindingContext.INDEXED_LVALUE_GET, expression);
+
+            FunctionDescriptor setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
             FunctionDescriptor getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
-            CallableMethod getter = resolvedGetCall == null ? null : typeMapper.mapToCallableMethod(getterDescriptor, false, OwnerKind.IMPLEMENTATION);
 
             Type asmType;
             Type[] argumentTypes = accessor.getSignature().getArgumentTypes();
@@ -2126,12 +2124,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 if(getterDescriptor.getReceiverParameter().exists()) {
                     index++;
                 }
+                for (TypeParameterDescriptor typeParameterDescriptor : getterDescriptor.getTypeParameters()) {
+                    if(typeParameterDescriptor.isReified()) {
+                        generateTypeInfo(resolvedGetCall.getTypeArguments().get(typeParameterDescriptor));
+                        index++;
+                    }
+                }
                 asmType = accessor.getSignature().getReturnType();
             }
             else {
                 assert setterDescriptor != null;
                 if(setterDescriptor.getReceiverParameter().exists()) {
                     index++;
+                }
+                for (TypeParameterDescriptor typeParameterDescriptor : setterDescriptor.getOriginal().getTypeParameters()) {
+                    if(typeParameterDescriptor.isReified()) {
+                        generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor));
+                        index++;
+                    }
                 }
                 asmType = argumentTypes[argumentTypes.length-1];
             }
@@ -2140,7 +2150,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 gen(jetExpression, argumentTypes[index]);
                 index++;
             }
-            return StackValue.collectionElement(asmType, getter, setter, myFrameMap);
+            return StackValue.collectionElement(asmType, resolvedGetCall, resolvedSetCall, this);
         }
     }
 

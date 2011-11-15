@@ -84,12 +84,4 @@ public class CallableMethod implements Callable {
     public boolean isNeedsReceiver() {
         return receiverFunction != null;
     }
-
-    public ClassDescriptor getThisClass() {
-        return thisClass;
-    }
-
-    public CallableDescriptor getReceiverFunction() {
-        return receiverFunction;
-    }
 }

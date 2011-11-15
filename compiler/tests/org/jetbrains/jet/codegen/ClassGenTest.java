@@ -202,4 +202,10 @@ public class ClassGenTest extends CodegenTestCase {
         System.out.println(generateToText());
         blackBox();
     }
+
+    public void testKt504 () throws Exception {
+        loadFile("regressions/kt504.jet");
+        System.out.println(generateToText());
+        blackBox();
+    }
 }

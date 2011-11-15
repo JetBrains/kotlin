@@ -1,0 +1,16 @@
+import java.util.HashMap
+import java.util.Map
+import java.io.*
+
+fun <K, V> Map<K, V>.set(key : K, value : V) = put(key, value)
+
+fun box() : String {
+
+    val commands : Map<String, String> = HashMap()
+
+    commands["c1"]  = "239"
+    if(commands["c1"] != "239") return "fail"
+
+    commands["c1"] += "932"
+    return if(commands["c1"] == "239932") "OK" else "fail"
+}
