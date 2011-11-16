@@ -1,9 +1,6 @@
-open class Library(ourOut : PrintStream?) {
+open class Library() {
 class object {
 val ourOut : PrintStream?
-}
-{
-$ourOut = ourOut
 }
 }
 open class User() {

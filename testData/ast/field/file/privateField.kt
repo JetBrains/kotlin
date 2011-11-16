@@ -1,6 +1,3 @@
-open class C(f : Foo?) {
+open class C() {
 private var f : Foo?
-{
-$f = f
-}
 }

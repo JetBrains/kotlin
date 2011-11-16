@@ -1,8 +1,5 @@
-open class Library(myString : String?) {
+open class Library() {
 public val myString : String?
-{
-$myString = myString
-}
 }
 open class User() {
 open fun main() : Unit {

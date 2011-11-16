@@ -1,12 +1,6 @@
-open class Base(myFirst : String?) {
+open class Base() {
 private var myFirst : String?
-{
-$myFirst = myFirst
 }
-}
-open class Child(mySecond : String?) : Base() {
+open class Child() : Base() {
 private var mySecond : String?
-{
-$mySecond = mySecond
-}
 }

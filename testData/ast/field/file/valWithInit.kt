@@ -1,6 +1,3 @@
-open class C(f : Foo?) {
+open class C() {
 val f : Foo? = Foo(1, 2)
-{
-$f = f
-}
 }

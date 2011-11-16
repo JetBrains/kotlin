@@ -101,7 +101,7 @@ public class Converter {
       );
 
     // we create primary constructor from all non final fields and fields without initializers
-    if (!psiClass.isEnum() && !psiClass.isInterface() && getPrimaryConstructorForThisCase(psiClass) == null) {
+    if (!psiClass.isEnum() && !psiClass.isInterface() && psiClass.getConstructors().length > 1 && getPrimaryConstructorForThisCase(psiClass) == null) {
       final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
       final Map<String, String> initializers = new HashMap<String, String>();
 
