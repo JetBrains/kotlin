@@ -173,7 +173,7 @@ public class Converter {
   @NotNull
   private static List<Initializer> initializersToInitializerList(PsiClassInitializer[] initializers) {
     List<Initializer> result = new LinkedList<Initializer>();
-    for (PsiClassInitializer  i : initializers) result.add(initializerToInitializer(i));
+    for (PsiClassInitializer i : initializers) result.add(initializerToInitializer(i));
     return result;
   }
 
@@ -403,9 +403,11 @@ public class Converter {
   }
 
   @NotNull
-  private static Import importToImport(PsiImportStatementBase i) {
-    final String text = i == null ? "" : quoteKeywords(i.getText().replace("import ", "").replace("static ", "").replace(";", ""));
-    return new Import(text); // TODO: import reference
+  private static Import importToImport(@NotNull PsiImportStatementBase i) { // TODO: import reference
+    final PsiJavaCodeReferenceElement reference = i.getImportReference();
+    if (reference != null)
+      return new Import(quoteKeywords(reference.getQualifiedName()) + (i.isOnDemand() ? ".*" : ""));
+    return new Import(""); // TODO: remove
   }
 
   @NotNull
