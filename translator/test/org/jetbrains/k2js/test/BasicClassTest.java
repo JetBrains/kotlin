@@ -32,7 +32,7 @@ public class BasicClassTest extends AbstractClassTest {
 
     @Test
     public void incrementProperty() throws Exception {
-        performTest("incrementProperty.kt", "foo", "box", "OK");
+        testFunctionOutput("incrementProperty.kt", "foo", "box", "OK");
     }
 
     @Test

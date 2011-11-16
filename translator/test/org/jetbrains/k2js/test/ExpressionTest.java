@@ -31,12 +31,12 @@ public final class ExpressionTest extends TranslationTest {
 
     @Test
     public void testAssign() throws Exception {
-        performTest("assign.jet", "foo", "f", 2.0);
+        testFunctionOutput("assign.jet", "foo", "f", 2.0);
     }
 
     @Test
     public void namespaceProperties() throws Exception {
-        performTest("localProperty.jet", "foo", "box", 50);
+        testFunctionOutput("localProperty.jet", "foo", "box", 50);
     }
 
     @Test
@@ -46,12 +46,12 @@ public final class ExpressionTest extends TranslationTest {
 
     @Test
     public void ifElse() throws Exception {
-        performTest("if.kt", "foo", "box", 5);
+        testFunctionOutput("if.kt", "foo", "box", 5);
     }
     //TODO: test fails due to isStatement issue, include when issue is solved or implement another solution
 //    @Test
 //    public void ifElseIf() throws Exception {
-//        performTest("elseif.kt", "foo", "box", 5);
+//        testFunctionOutput("elseif.kt", "foo", "box", 5);
 //    }
 
     @Test

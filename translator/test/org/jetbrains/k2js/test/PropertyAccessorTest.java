@@ -26,7 +26,7 @@ public final class PropertyAccessorTest extends AbstractClassTest {
 
     @Test
     public void setter() throws Exception {
-        performTest("setter.kt", "foo", "f", 99.0);
+        testFunctionOutput("setter.kt", "foo", "f", 99.0);
     }
 
     @Test

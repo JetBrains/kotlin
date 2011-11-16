@@ -16,7 +16,7 @@ public final class ClassInheritanceTest extends AbstractClassTest {
 
     @Test
     public void initializersOfBasicClassExecute() throws Exception {
-        performTest("initializersOfBasicClassExecute.kt", "foo", "box", 3);
+        testFunctionOutput("initializersOfBasicClassExecute.kt", "foo", "box", 3);
     }
 
     @Test

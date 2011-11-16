@@ -3,14 +3,10 @@ package org.jetbrains.k2js.test;
 import org.jetbrains.k2js.K2JSTranslator;
 import org.junit.Before;
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
 import java.io.FileReader;
 import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -48,13 +44,14 @@ public abstract class TranslationTest {
         return testFilesDirectory + testCasesDirectory;
     }
 
-    protected void performTest(String filename, String namespaceName,
-                               String functionName, Object expectedResult) throws Exception {
+    protected void testFunctionOutput(String filename, String namespaceName,
+                                      String functionName, Object expectedResult) throws Exception {
         K2JSTranslator.Arguments args = new K2JSTranslator.Arguments();
         args.src = getInputFilePath(filename);
         args.outputDir = getOutputFilePath(filename);
         K2JSTranslator.translate(args);
-        runWithRhino(generateFilenameList(args.outputDir), namespaceName, functionName, expectedResult);
+        runRhinoTest(generateFilenameList(args.outputDir),
+                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     abstract protected List<String> generateFilenameList(String inputfile);
@@ -77,33 +74,17 @@ public abstract class TranslationTest {
         reader.close();
     }
 
-    protected void runWithRhino(List<String> filenames, String namespaceName,
-                                String functionName, Object expectedResult) throws Exception {
+    protected void runRhinoTest(List<String> filenames, RhinoResultChecker checker) throws Exception {
         Context cx = Context.enter();
         Scriptable scope = cx.initStandardObjects();
         for (String filename : filenames) {
             runFileWithRhino(filename, cx, scope);
         }
-        Object result = extractAndCallFunctionObject(namespaceName, functionName, cx, scope);
-        assertTrue("Result is not what expected!", result.equals(expectedResult));
-        String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
-        System.out.println(report);
+        checker.runChecks(cx, scope);
         Context.exit();
     }
 
-    protected Object extractAndCallFunctionObject(String namespaceName, String functionName,
-                                                  Context cx, Scriptable scope) {
-        Object foo = scope.get(namespaceName, scope);
-        assertTrue(foo instanceof NativeObject);
-        NativeObject namespaceObject = (NativeObject) foo;
-        Object box = namespaceObject.get(functionName, namespaceObject);
-        assertTrue("Function " + functionName + " not defined in namespace " + namespaceName, box instanceof Function);
-        Object functionArgs[] = {};
-        Function function = (Function) box;
-        return function.call(cx, scope, scope, functionArgs);
-    }
-
     protected void testFooBoxIsTrue(String filename) throws Exception {
-        performTest(filename, "foo", "box", true);
+        testFunctionOutput(filename, "foo", "box", true);
     }
 }
