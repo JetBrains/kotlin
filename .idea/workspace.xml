@@ -5,7 +5,7 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="Refactored test code a lot. Introduced KotlinLibTest.">
+    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java" />
     </list>
@@ -117,7 +117,7 @@
           <file leaf-file-name="KotlinLibTest.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="65" column="5" selection-start="2336" selection-end="2336" vertical-scroll-proportion="0.7894737">
+                <state line="56" column="53" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.55263156">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -1024,7 +1024,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="5" selection-start="2336" selection-end="2336" vertical-scroll-proportion="0.7894737">
+        <state line="56" column="53" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.55263156">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
