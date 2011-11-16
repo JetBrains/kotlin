@@ -39,7 +39,18 @@ public interface ClassBuilderFactory {
     ClassBuilderFactory BINARIES = new ClassBuilderFactory() {
         @Override
         public ClassBuilder newClassBuilder() {
-            return new ClassBuilder.Concrete(new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS));
+            return new ClassBuilder.Concrete(new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS){
+                @Override
+                protected String getCommonSuperClass(String type1, String type2) {
+                    try {
+                        return super.getCommonSuperClass(type1, type2);
+                    }
+                    catch (Throwable t) {
+                        // @todo we might need at some point do more sofisticated handling
+                        return "java/lang/Object";
+                    }
+                }
+            });
         }
 
         @Override

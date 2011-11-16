@@ -126,12 +126,8 @@ public class FunctionCodegen {
 
                     codegen.returnExpression(bodyExpressions);
                 }
-                try {
+
                 mv.visitMaxs(0, 0);
-                }
-                catch (Throwable t) {
-                    System.out.println(t);
-                }
                 mv.visitEnd();
 
                 generateBridgeIfNeeded(owner, state, v, jvmSignature, functionDescriptor, kind);

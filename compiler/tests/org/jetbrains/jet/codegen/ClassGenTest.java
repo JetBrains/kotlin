@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class ClassGenTest extends CodegenTestCase {
     public void testPSVMClass() throws Exception {
@@ -207,5 +208,18 @@ public class ClassGenTest extends CodegenTestCase {
         loadFile("regressions/kt504.jet");
         System.out.println(generateToText());
         blackBox();
+    }
+
+    public void testKt501 () throws Exception {
+        blackBoxFile("regressions/kt501.jet");
+    }
+
+    public void testKt496 () throws Exception {
+        blackBoxFile("regressions/kt496.jet");
+        System.out.println(generateToText());
+    }
+
+    public void testKt500 () throws Exception {
+        blackBoxFile("regressions/kt500.jet");
     }
 }
