@@ -45,7 +45,7 @@ public class KotlinLibTest extends TranslationTest {
     public void kotlinJsLibRunsWithRhino() throws Exception {
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects();
-        //
+        //       ss
         runFileWithRhino(kotlinLibraryPath(), context, scope);
         Context.exit();
     }
