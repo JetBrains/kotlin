@@ -30,13 +30,43 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     public JsStatement translateClass(@NotNull JetClass classDeclaration) {
+        if (!classDeclaration.isTrait()) {
+            return translateAsClassWithState(classDeclaration);
+        } else {
+            return translateAsStatelessTrait(classDeclaration);
+        }
+    }
+
+    private JsStatement translateAsStatelessTrait(@NotNull JetClass classDeclaration) {
+        JsObjectLiteral traitLiteral = translateClassDeclarations(classDeclaration);
+        return AstUtil.convertToStatement
+                (AstUtil.newAssignment(namespaceQualifiedClassNameReference(classDeclaration), traitLiteral));
+    }
+
+    private JsStatement translateAsClassWithState(JetClass jetClassDeclaration) {
+        JsInvocation jsClassDeclaration = createMethodInvocation();
+        addSuperclassReferences(jetClassDeclaration, jsClassDeclaration);
+        addClassOwnDeclarations(jetClassDeclaration, jsClassDeclaration);
+        return classDeclarationStatement(jetClassDeclaration, jsClassDeclaration);
+    }
+
+    @NotNull
+    private JsInvocation createMethodInvocation() {
         JsInvocation jsClassDeclaration = new JsInvocation();
         jsClassDeclaration.setQualifier(Namer.creationMethodReference());
-        addSuperclassReferences(classDeclaration, jsClassDeclaration);
-        addClassOwnDeclarations(classDeclaration, jsClassDeclaration);
-        JsName jsClassName = translationContext().getNameForElement(classDeclaration);
-        return AstUtil.convertToStatement(
-                AstUtil.newAssignment(translationContext().getNamespaceQualifiedReference(jsClassName), jsClassDeclaration));
+        return jsClassDeclaration;
+    }
+
+    @NotNull
+    private JsStatement classDeclarationStatement(@NotNull JetClass classDeclaration,
+                                                  @NotNull JsInvocation jsClassDeclaration) {
+        return AstUtil.convertToStatement(AstUtil.newAssignment
+                (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration));
+    }
+
+    private JsNameRef namespaceQualifiedClassNameReference(JetClass classDeclaration) {
+        return translationContext().getNamespaceQualifiedReference
+                (translationContext().getNameForElement(classDeclaration));
     }
 
     private void addClassOwnDeclarations(@NotNull JetClass classDeclaration,
@@ -67,7 +97,9 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsObjectLiteral translateClassDeclarations(@NotNull JetClass classDeclaration) {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-        propertyList.add(generateInitializeMethod(classDeclaration));
+        if (!classDeclaration.isTrait()) {
+            propertyList.add(generateInitializeMethod(classDeclaration));
+        }
         propertyList.addAll(classDeclaration.accept(classBodyVisitor,
                 translationContext().newClass(classDeclaration)));
         return new JsObjectLiteral(propertyList);
@@ -88,4 +120,5 @@ public final class ClassTranslator extends AbstractTranslator {
                 translationContext().newClass(classDeclaration));
         return initializerVisitor.generateInitializeMethod();
     }
+
 }

@@ -93,11 +93,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         // by name
         JsName referencedName = getReferencedName(expression, context);
         if (referencedName != null) {
-            if (context.namespaceScope().ownsName(referencedName)) {
+            if (requiresNamespaceQualifier(context, referencedName)) {
                 return context.getNamespaceQualifiedReference(referencedName);
             }
             JsNameRef nameRef = referencedName.makeRef();
-            if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+            if (requiresThisQualifier(expression, context)) {
                 nameRef.setQualifier(new JsThisRef());
             }
             return nameRef;
@@ -108,6 +108,17 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return getterCall;
         }
         throw new AssertionError("Undefined name in this scope: " + expression.getReferencedName());
+    }
+
+    private boolean requiresNamespaceQualifier(TranslationContext context, JsName referencedName) {
+        return context.namespaceScope().ownsName(referencedName);
+    }
+
+    private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression,
+                                          @NotNull TranslationContext context) {
+        boolean isClassMember = context.classScope().ownsName(getReferencedName(expression, context));
+        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+        return isClassMember || isBackingFieldAccess;
     }
 
     @Nullable

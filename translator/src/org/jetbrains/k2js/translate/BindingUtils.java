@@ -101,12 +101,20 @@ public final class BindingUtils {
         return superClassDescriptors;
     }
 
-    static public boolean hasAncestor(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
-        return !getSuperclassDescriptors(context, classDeclaration).isEmpty();
+    static public boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
+        List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(context, classDeclaration);
+        for (ClassDescriptor descriptor : superclassDescriptors) {
+            if (descriptor.getKind() == ClassKind.CLASS) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static public boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        return context.get(BindingContext.STATEMENT, expression);
+        Boolean isStatement = context.get(BindingContext.STATEMENT, expression);
+        assert isStatement != null : "Invalid behaviour of get(BindingContext.STATEMENT)";
+        return isStatement;
     }
 
     //TODO better implementation?

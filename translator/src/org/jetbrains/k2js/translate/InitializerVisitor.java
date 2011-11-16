@@ -53,7 +53,7 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     private List<JsStatement> generateCallToSuperMethod(@NotNull JetClass classDeclaration,
                                                         @NotNull TranslationContext context) {
         List<JsStatement> result = new ArrayList<JsStatement>();
-        if (BindingUtils.hasAncestor(context.bindingContext(), classDeclaration)) {
+        if (BindingUtils.hasAncestorClass(context.bindingContext(), classDeclaration)) {
             JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
             List<JsExpression> arguments = translateArguments(classDeclaration, context);
             result.add(AstUtil.convertToStatement
