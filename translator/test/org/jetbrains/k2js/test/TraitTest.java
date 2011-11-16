@@ -39,4 +39,9 @@ public final class TraitTest extends AbstractClassTest {
         testFooBoxIsTrue("traitExtendsTrait.kt");
     }
 
+    @Test
+    public void traitExtendsTwoTraits() throws Exception {
+        testFooBoxIsTrue("traitExtendsTwoTraits.kt");
+    }
+
 }
