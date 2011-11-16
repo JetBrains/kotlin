@@ -2,6 +2,7 @@ package org.jetbrains.k2js.translate;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -103,12 +104,7 @@ public final class BindingUtils {
 
     static public boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
         List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(context, classDeclaration);
-        for (ClassDescriptor descriptor : superclassDescriptors) {
-            if (descriptor.getKind() == ClassKind.CLASS) {
-                return true;
-            }
-        }
-        return false;
+        return (findAncestorClass(superclassDescriptors) != null);
     }
 
     static public boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
@@ -122,4 +118,14 @@ public final class BindingUtils {
         return !superClassDescriptor.getName().equals("Any");
     }
 
+    //TODO move unrelated utils to other class
+    @Nullable
+    public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
+        for (ClassDescriptor descriptor : superclassDescriptors) {
+            if (descriptor.getKind() == ClassKind.CLASS) {
+                return descriptor;
+            }
+        }
+        return null;
+    }
 }

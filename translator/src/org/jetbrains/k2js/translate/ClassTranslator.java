@@ -3,7 +3,9 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.JetClass;
 
 import java.util.ArrayList;
@@ -37,13 +39,15 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
+    @NotNull
     private JsStatement translateAsStatelessTrait(@NotNull JetClass classDeclaration) {
         JsObjectLiteral traitLiteral = translateClassDeclarations(classDeclaration);
         return AstUtil.convertToStatement
                 (AstUtil.newAssignment(namespaceQualifiedClassNameReference(classDeclaration), traitLiteral));
     }
 
-    private JsStatement translateAsClassWithState(JetClass jetClassDeclaration) {
+    @NotNull
+    private JsStatement translateAsClassWithState(@NotNull JetClass jetClassDeclaration) {
         JsInvocation jsClassDeclaration = createMethodInvocation();
         addSuperclassReferences(jetClassDeclaration, jsClassDeclaration);
         addClassOwnDeclarations(jetClassDeclaration, jsClassDeclaration);
@@ -64,7 +68,8 @@ public final class ClassTranslator extends AbstractTranslator {
                 (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration));
     }
 
-    private JsNameRef namespaceQualifiedClassNameReference(JetClass classDeclaration) {
+    @NotNull
+    private JsNameRef namespaceQualifiedClassNameReference(@NotNull JetClass classDeclaration) {
         return translationContext().getNamespaceQualifiedReference
                 (translationContext().getNameForElement(classDeclaration));
     }
@@ -85,13 +90,43 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private List<JsNameRef> getSuperclassNameReferences(@NotNull JetClass classDeclaration) {
         List<JsNameRef> superclassReferences = new ArrayList<JsNameRef>();
-        for (ClassDescriptor superClassDescriptor :
-                BindingUtils.getSuperclassDescriptors(translationContext().bindingContext(), classDeclaration)) {
-            //TODO should get a full class name here
-            superclassReferences.add(translationContext().getNamespaceQualifiedReference
-                    (translationContext().getNameForDescriptor(superClassDescriptor)));
-        }
+        List<ClassDescriptor> superclassDescriptors =
+                BindingUtils.getSuperclassDescriptors(translationContext().bindingContext(), classDeclaration);
+        addAncestorClass(superclassReferences, superclassDescriptors);
+        addTraits(superclassReferences, superclassDescriptors);
         return superclassReferences;
+    }
+
+    private void addTraits(@NotNull List<JsNameRef> superclassReferences,
+                           @NotNull List<ClassDescriptor> superclassDescriptors) {
+        for (ClassDescriptor superClassDescriptor :
+                superclassDescriptors) {
+            assert (superClassDescriptor.getKind() == ClassKind.TRAIT) : "Only traits are expected here";
+            superclassReferences.add(getClassReference(superClassDescriptor));
+        }
+    }
+
+    private void addAncestorClass(@NotNull List<JsNameRef> superclassReferences,
+                                  @NotNull List<ClassDescriptor> superclassDescriptors) {
+        //here we remove ancestor class from the list
+        ClassDescriptor ancestorClass = findAndRemoveAncestorClass(superclassDescriptors);
+        if (ancestorClass != null) {
+            superclassReferences.add(getClassReference(ancestorClass));
+        }
+    }
+
+    @NotNull
+    private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
+        //TODO should get a full class name here
+        return translationContext().getNamespaceQualifiedReference
+                (translationContext().getNameForDescriptor(superClassDescriptor));
+    }
+
+    @Nullable
+    private ClassDescriptor findAndRemoveAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
+        ClassDescriptor ancestorClass = BindingUtils.findAncestorClass(superclassDescriptors);
+        superclassDescriptors.remove(ancestorClass);
+        return ancestorClass;
     }
 
     @NotNull
