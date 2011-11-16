@@ -20,10 +20,10 @@ public class Converter {
   public static File fileToFile(PsiJavaFile javaFile) {
     final PsiImportList importList = javaFile.getImportList();
     List<Import> imports = importList == null ? Collections.<Import>emptyList() : importsToImportList(importList.getAllImportStatements());
-    return new File(getPackageName(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
+    return new File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
   }
 
-  private static String getPackageName(String packageName) {
+  private static String quoteKeywords(String packageName) {
     List<String> result = new LinkedList<String>();
     for (String part : packageName.split("\\."))
       result.add(new IdentifierImpl(part).toKotlin());
@@ -388,14 +388,9 @@ public class Converter {
   }
 
   @NotNull
-  private static Import importToImport(PsiImportStatementBase t) {
-    if (t != null) {
-      final PsiJavaCodeReferenceElement reference = t.getImportReference();
-      if (reference != null) {
-        return new Import(reference.getQualifiedName()); // TODO: use identifier
-      }
-    }
-    return new Import("");
+  private static Import importToImport(PsiImportStatementBase i) {
+    final String text = i == null ? "" : quoteKeywords(i.getText().replace("import ", "").replace("static ", "").replace(";", ""));
+    return new Import(text); // TODO: import reference
   }
 
   @NotNull

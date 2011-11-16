@@ -117,11 +117,6 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitImportStatement(PsiImportStatement statement) {
-    super.visitImportStatement(statement);
-  }
-
-  @Override
   public void visitIfStatement(PsiIfStatement statement) {
     super.visitIfStatement(statement);
     myResult = new IfStatement(
@@ -132,22 +127,12 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitImportStaticStatement(PsiImportStaticStatement statement) {
-    super.visitImportStaticStatement(statement);
-  }
-
-  @Override
   public void visitLabeledStatement(PsiLabeledStatement statement) {
     super.visitLabeledStatement(statement);
     myResult = new LabelStatement(
       identifierToIdentifier(statement.getLabelIdentifier()),
       statementToStatement(statement.getStatement())
     );
-  }
-
-  @Override
-  public void visitPackageStatement(PsiPackageStatement statement) {
-    super.visitPackageStatement(statement);
   }
 
   @Override
