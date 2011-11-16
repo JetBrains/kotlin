@@ -33,4 +33,9 @@ public final class TraitTest extends AbstractClassTest {
     public void classDerivesFromTraitAndClass() throws Exception {
         testFooBoxIsTrue("classDerivesFromTraitAndClass.kt");
     }
+
+    @Test
+    public void example() throws Exception {
+        testFooBoxIsTrue("example.kt");
+    }
 }

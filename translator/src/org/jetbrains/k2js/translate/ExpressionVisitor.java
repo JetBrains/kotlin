@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -26,6 +27,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         CompileTimeConstant<?> compileTimeValue =
                 context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
         assert compileTimeValue != null;
+        if (compileTimeValue instanceof NullValue) {
+            return context.program().getNullLiteral();
+        }
         Object value = compileTimeValue.getValue();
         if (value instanceof Integer) {
             return context.program().getNumberLiteral((Integer) value);
