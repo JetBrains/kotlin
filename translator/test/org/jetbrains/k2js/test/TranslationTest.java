@@ -56,6 +56,7 @@ public abstract class TranslationTest {
 
     abstract protected List<String> generateFilenameList(String inputfile);
 
+    //TODO: refactor filename generation logic
     private String getOutputFilePath(String filename) {
         return getOutputDirectory() + convertToDotJsFile(filename);
     }
@@ -66,6 +67,10 @@ public abstract class TranslationTest {
 
     private String getInputFilePath(String filename) {
         return getInputDirectory() + filename;
+    }
+
+    protected String cases(String filename) {
+        return getInputFilePath(filename);
     }
 
     protected void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {

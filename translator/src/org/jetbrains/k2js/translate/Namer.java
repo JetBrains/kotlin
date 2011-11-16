@@ -58,13 +58,17 @@ public final class Namer {
         return name;
     }
 
+    //TODO: dummy
     public static JsNameRef classObjectReference() {
-        //TODO dummy
         return AstUtil.newQualifiedNameRef("Class");
     }
 
-    public static JsNameRef creationMethodReference() {
+    public static JsNameRef classCreationMethodReference() {
         return AstUtil.newQualifiedNameRef("Class.create");
+    }
+
+    public static JsNameRef traitCreationMethodReference() {
+        return AstUtil.newQualifiedNameRef("Trait.create");
     }
 
 

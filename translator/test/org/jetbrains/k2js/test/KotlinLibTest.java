@@ -42,12 +42,26 @@ public class KotlinLibTest extends TranslationTest {
 
     @Test
     public void classObjectHasCreateMethod() throws Exception {
-        String objectName = "Class";
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();
         propertyToType.put("create", Function.class);
-        runPropertyTypeCheck(objectName, propertyToType);
+        runPropertyTypeCheck("Class", propertyToType);
     }
 
+    @Test
+    public void traitObjectHasCreateMethod() throws Exception {
+        final Map<String, Class<? extends Scriptable>> propertyToType
+                = new HashMap<String, Class<? extends Scriptable>>();
+        propertyToType.put("create", Function.class);
+        runPropertyTypeCheck("Trait", propertyToType);
+    }
+
+    @Test
+    public void createdTraitIsJSObject() throws Exception {
+        final Map<String, Class<? extends Scriptable>> propertyToType
+                = new HashMap<String, Class<? extends Scriptable>>();
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("trait.js")),
+                new RhinoPropertyTypesChecker("foo", propertyToType));
+    }
 
 }

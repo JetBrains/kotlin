@@ -10,6 +10,13 @@ var emptyFunction = function() {}
 
 var Class = (function() {
 
+  var IS_DONTENUM_BUGGY = (function(){
+    for (var p in { toString: 1 }) {
+      if (p === 'toString') return false;
+    }
+    return true;
+  })();
+
   function subclass() {};
   function create() {
     var parent = null, properties = $A(arguments);
@@ -17,7 +24,6 @@ var Class = (function() {
       parent = properties.shift();
 
     function klass() {
-      this.initializing = klass;
       this.initialize.apply(this, arguments);
     }
 
@@ -29,17 +35,6 @@ var Class = (function() {
       subclass.prototype = parent.prototype;
       klass.prototype = new subclass;
       parent.subclasses.push(klass);
-    }
-
-
-    if (parent != null) {
-        klass.addMethods(
-        {
-            'super_init' : function () {
-                this.initializing = this.initializing.superclass;
-                this.initializing.prototype.initialize.apply(this, arguments)
-            }
-        });
     }
 
     for (var i = 0, length = properties.length; i < length; i++)
@@ -56,6 +51,12 @@ var Class = (function() {
     var ancestor   = this.superclass && this.superclass.prototype,
         properties = Object.keys(source);
 
+    if (IS_DONTENUM_BUGGY) {
+      if (source.toString != Object.prototype.toString)
+        properties.push("toString");
+      if (source.valueOf != Object.prototype.valueOf)
+        properties.push("valueOf");
+    }
 
     for (var i = 0, length = properties.length; i < length; i++) {
       var property = properties[i], value = source[property];
@@ -66,6 +67,8 @@ var Class = (function() {
           return function() { return ancestor[m].apply(this, arguments); };
         })(property).wrap(method);
 
+        value.valueOf = method.valueOf.bind(method);
+        value.toString = method.toString.bind(method);
       }
       this.prototype[property] = value;
     }
@@ -83,25 +86,9 @@ var Class = (function() {
 
 var Trait = (function() {
 
-
-  function add(object, source) {
-    properties = Object.keys(source);
-    for (var i = 0, length = properties.length; i < length; i++) {
-      var property = properties[i];
-      var value = source[property];
-      object[property] = value;
-    }
-    return this;
-  }
-
   function create() {
-
-    result = {}
-    for (var i = 0, length = arguments.length; i < length; i++)
-    {
-        add(result, arguments[i]);
-    }
-    return result;
+    var traitClass = Class.create.apply(Class, arguments)
+    return new traitClass;
   }
 
   return {
