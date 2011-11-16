@@ -9,7 +9,7 @@ import java.util.List;
  * @author ignatov
  */
 public class AnonymousClass extends Class {
-  public AnonymousClass(List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+  public AnonymousClass(List<Class> innerClasses, List<Function> methods, List<Field> fields, List<Initializer> initializers) {
     super(new IdentifierImpl("anonClass"),
       Collections.<String>emptySet(),
       Collections.<Element>emptyList(),
@@ -18,7 +18,8 @@ public class AnonymousClass extends Class {
       Collections.<Type>emptyList(),
       innerClasses,
       methods,
-      fields);
+      fields,
+      initializers);
   }
 
   @NotNull

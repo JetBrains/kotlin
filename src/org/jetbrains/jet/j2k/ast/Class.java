@@ -18,6 +18,7 @@ public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
   private final List<Expression> myBaseClassParams;
+  private List<Initializer> myInitializers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
@@ -26,7 +27,7 @@ public class Class extends Member {
   final List<Field> myFields;
 
   public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
-               List<Expression> baseClassParams, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields) {
+               List<Expression> baseClassParams, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields, List<Initializer> initializers) {
     myName = name;
     myBaseClassParams = baseClassParams;
     myModifiers = modifiers;
@@ -36,6 +37,7 @@ public class Class extends Member {
     myInnerClasses = innerClasses;
     myMethods = methods;
     myFields = fields;
+    myInitializers = initializers;
   }
 
   @Nullable
@@ -163,6 +165,7 @@ public class Class extends Member {
   String bodyToKotlin() {
     return SPACE + "{" + N +
       AstUtil.joinNodes(getNonStatic(myFields), N) + N +
+      AstUtil.joinNodes(getNonStatic(myInitializers), N) + N +
       classObjectToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
       AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N +
@@ -190,10 +193,12 @@ public class Class extends Member {
     final List<Member> staticMethods = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
     staticMethods.addAll(getStatic(methodsExceptConstructors()));
     final List<Member> staticFields = getStatic(myFields);
+    final List<Member> staticInitializers = getStatic(myInitializers);
     final List<Member> staticInnerClasses = getStatic(myInnerClasses);
-    if (staticFields.size() + staticMethods.size() + staticInnerClasses.size() > 0) {
+    if (staticFields.size() + staticMethods.size() + staticInnerClasses.size() + staticInitializers.size() > 0) {
       return "class" + SPACE + "object" + SPACE + "{" + N +
         AstUtil.joinNodes(staticFields, N) + N +
+        AstUtil.joinNodes(staticInitializers, N) + N +
         AstUtil.joinNodes(staticMethods, N) + N +
         AstUtil.joinNodes(staticInnerClasses, N) + N +
         "}";

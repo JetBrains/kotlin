@@ -42,7 +42,8 @@ public class Converter {
     return new AnonymousClass(
       classesToClassList(anonymousClass.getAllInnerClasses()),
       methodsToFunctionList(anonymousClass.getMethods()),
-      fieldsToFieldList(anonymousClass.getAllFields())
+      fieldsToFieldList(anonymousClass.getAllFields()),
+      initializersToInitializerList(anonymousClass.getInitializers())
     );
   }
 
@@ -83,6 +84,7 @@ public class Converter {
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
     final List<Function> methods = methodsToFunctionList(psiClass.getMethods());
     final List<Field> fields = fieldsToFieldList(psiClass.getFields());
+    final List<Initializer> anonymousInitializers = initializersToInitializerList(psiClass.getInitializers());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
     final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
@@ -161,11 +163,26 @@ public class Converter {
     }
 
     if (psiClass.isInterface())
-      return new Trait(name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, innerClasses, methods, fields);
+      return new Trait(name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, innerClasses, methods, fields, anonymousInitializers);
     if (psiClass.isEnum())
       return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), Collections.<Expression>emptyList(), implementsTypes,
-        innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()));
-    return new Class(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, innerClasses, methods, fields);
+        innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()), anonymousInitializers);
+    return new Class(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, innerClasses, methods, fields, anonymousInitializers);
+  }
+
+  @NotNull
+  private static List<Initializer> initializersToInitializerList(PsiClassInitializer[] initializers) {
+    List<Initializer> result = new LinkedList<Initializer>();
+    for (PsiClassInitializer  i : initializers) result.add(initializerToInitializer(i));
+    return result;
+  }
+
+  @NotNull
+  private static Initializer initializerToInitializer(PsiClassInitializer i) {
+    return new Initializer(
+      blockToBlock(i.getBody(), true),
+      modifiersListToModifiersSet(i.getModifierList())
+    );
   }
 
   private static String getDefaultInitializer(Field f) {
