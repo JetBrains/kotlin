@@ -18,12 +18,12 @@ public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
   private final List<Expression> myBaseClassParams;
-  private List<Initializer> myInitializers;
+  private final List<Initializer> myInitializers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
   final List<Class> myInnerClasses;
-  final List<Function> myMethods;
+  private final List<Function> myMethods;
   final List<Field> myFields;
 
   public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,

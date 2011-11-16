@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ClassObjectAccessExpression extends Expression {
-  private Element myTypeElement;
+  private final Element myTypeElement;
 
   public ClassObjectAccessExpression(Element typeElement) {
     myTypeElement = typeElement;

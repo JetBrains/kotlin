@@ -17,13 +17,14 @@ import java.util.*;
  */
 public class Converter {
   @NotNull
-  public static File fileToFile(PsiJavaFile javaFile) {
+  public static File fileToFile(@NotNull PsiJavaFile javaFile) {
     final PsiImportList importList = javaFile.getImportList();
     List<Import> imports = importList == null ? Collections.<Import>emptyList() : importsToImportList(importList.getAllImportStatements());
     return new File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
   }
 
-  private static String quoteKeywords(String packageName) {
+  @NotNull
+  private static String quoteKeywords(@NotNull String packageName) {
     List<String> result = new LinkedList<String>();
     for (String part : packageName.split("\\."))
       result.add(new IdentifierImpl(part).toKotlin());
@@ -31,13 +32,14 @@ public class Converter {
   }
 
   @NotNull
-  private static List<Class> classesToClassList(PsiClass[] classes) {
+  private static List<Class> classesToClassList(@NotNull PsiClass[] classes) {
     List<Class> result = new LinkedList<Class>();
     for (PsiClass t : classes) result.add(classToClass(t));
     return result;
   }
 
-  public static AnonymousClass anonymousClassToAnonymousClass(PsiAnonymousClass anonymousClass) {
+  @NotNull
+  public static AnonymousClass anonymousClassToAnonymousClass(@NotNull PsiAnonymousClass anonymousClass) {
     // TODO: replace by Block, use class.getChild() method
     return new AnonymousClass(
       classesToClassList(anonymousClass.getAllInnerClasses()),
@@ -47,7 +49,8 @@ public class Converter {
     );
   }
 
-  private static List<Field> getFinalOrWithEmptyInitializer(List<? extends Field> fields) {
+  @NotNull
+  private static List<Field> getFinalOrWithEmptyInitializer(@NotNull List<? extends Field> fields) {
     List<Field> result = new LinkedList<Field>();
     for (Field f : fields)
       if (f.isFinal() || f.getInitializer().toKotlin().isEmpty())
@@ -55,13 +58,15 @@ public class Converter {
     return result;
   }
 
-  private static List<Parameter> createParametersFromFields(List<? extends Field> fields) {
+  @NotNull
+  private static List<Parameter> createParametersFromFields(@NotNull List<? extends Field> fields) {
     List<Parameter> result = new LinkedList<Parameter>();
     for (Field f : fields) result.add(new Parameter(f.getIdentifier(), f.getType()));
     return result;
   }
 
-  private static List<Statement> createInitStatementsFromFields(List<? extends Field> fields) {
+  @NotNull
+  private static List<Statement> createInitStatementsFromFields(@NotNull List<? extends Field> fields) {
     List<Statement> result = new LinkedList<Statement>();
     for (Field f : fields) {
       final String identifierToKotlin = f.getIdentifier().toKotlin();
@@ -70,7 +75,8 @@ public class Converter {
     return result;
   }
 
-  private static String createPrimaryConstructorInvocation(String s, List<? extends Field> fields, Map<String, String> initializers) {
+  @NotNull
+  private static String createPrimaryConstructorInvocation(@NotNull String s, @NotNull List<? extends Field> fields, @NotNull Map<String, String> initializers) {
     List<String> result = new LinkedList<String>();
     for (Field f : fields) {
       final String id = f.getIdentifier().toKotlin();
@@ -79,7 +85,8 @@ public class Converter {
     return s + "(" + AstUtil.join(result, ", ") + ")";
   }
 
-  private static Class classToClass(PsiClass psiClass) {
+  @NotNull
+  private static Class classToClass(@NotNull PsiClass psiClass) {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
     final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
     final List<Function> methods = methodsToFunctionList(psiClass.getMethods());
@@ -171,7 +178,7 @@ public class Converter {
   }
 
   @NotNull
-  private static List<Initializer> initializersToInitializerList(PsiClassInitializer[] initializers) {
+  private static List<Initializer> initializersToInitializerList(@NotNull PsiClassInitializer[] initializers) {
     List<Initializer> result = new LinkedList<Initializer>();
     for (PsiClassInitializer i : initializers) result.add(initializerToInitializer(i));
     return result;
@@ -185,7 +192,8 @@ public class Converter {
     );
   }
 
-  private static String getDefaultInitializer(Field f) {
+  @NotNull
+  private static String getDefaultInitializer(@NotNull Field f) {
     if (f.getType().isNullable())
       return "null";
     else {
@@ -202,7 +210,8 @@ public class Converter {
   // private int ordinal() { ... }
   // private String name() { ... }
   // those methods any enum class inherits from java.lang.Enum
-  private static List<Field> fieldsToFieldListForEnums(PsiField[] fields) {
+  @NotNull
+  private static List<Field> fieldsToFieldListForEnums(@NotNull PsiField[] fields) {
     List<Field> result = new LinkedList<Field>();
     for (PsiField f : fields) {
       if ((f.getName().equals("ordinal")
@@ -222,13 +231,15 @@ public class Converter {
     return result;
   }
 
-  private static List<Field> fieldsToFieldList(PsiField[] fields) {
+  @NotNull
+  private static List<Field> fieldsToFieldList(@NotNull PsiField[] fields) {
     List<Field> result = new LinkedList<Field>();
     for (PsiField f : fields) result.add(fieldToField(f));
     return result;
   }
 
-  private static Field fieldToField(PsiField field) {
+  @NotNull
+  private static Field fieldToField(@NotNull PsiField field) {
     Set<String> modifiers = modifiersListToModifiersSet(field.getModifierList());
     if (field instanceof PsiEnumConstant) // TODO: remove instanceof
       return new EnumConstant(
@@ -246,14 +257,14 @@ public class Converter {
   }
 
   @NotNull
-  private static List<Function> methodsToFunctionList(PsiMethod[] methods) {
+  private static List<Function> methodsToFunctionList(@NotNull PsiMethod[] methods) {
     List<Function> result = new LinkedList<Function>();
     for (PsiMethod t : methods) result.add(methodToFunction(t, true));
     return result;
   }
 
   @Nullable
-  private static PsiMethod getPrimaryConstructorForThisCase(PsiClass psiClass) {
+  private static PsiMethod getPrimaryConstructorForThisCase(@NotNull PsiClass psiClass) {
     ThisVisitor tv = new ThisVisitor();
     psiClass.accept(tv);
     return tv.getPrimaryConstructor();
@@ -273,7 +284,8 @@ public class Converter {
     return false;
   }
 
-  private static List<Statement> removeEmpty(List<Statement> statements) {
+  @NotNull
+  private static List<Statement> removeEmpty(@NotNull List<Statement> statements) {
     List<Statement> result = new LinkedList<Statement>();
     for (Statement s : statements)
       if (s != Statement.EMPTY_STATEMENT && s != Expression.EMPTY_EXPRESSION)
@@ -282,7 +294,7 @@ public class Converter {
   }
 
   @NotNull
-  private static Function methodToFunction(PsiMethod method, boolean notEmpty) {
+  private static Function methodToFunction(@NotNull PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
     final Type type = typeToType(method.getReturnType());
     final Block body = blockToBlock(method.getBody(), notEmpty);
@@ -329,7 +341,7 @@ public class Converter {
   }
 
   @NotNull
-  public static List<Statement> statementsToStatementList(PsiStatement[] statements) {
+  public static List<Statement> statementsToStatementList(@NotNull PsiStatement[] statements) {
     List<Statement> result = new LinkedList<Statement>();
     for (PsiStatement t : statements) result.add(statementToStatement(t));
     return result;
@@ -344,7 +356,7 @@ public class Converter {
   }
 
   @NotNull
-  public static List<Expression> expressionsToExpressionList(PsiExpression[] expressions) {
+  public static List<Expression> expressionsToExpressionList(@NotNull PsiExpression[] expressions) {
     List<Expression> result = new LinkedList<Expression>();
     for (PsiExpression e : expressions) result.add(expressionToExpression(e));
     return result;
@@ -359,7 +371,7 @@ public class Converter {
   }
 
   @NotNull
-  public static Element elementToElement(PsiElement e) {
+  public static Element elementToElement(@Nullable PsiElement e) {
     if (e == null) return Element.EMPTY_ELEMENT;
     final ElementVisitor elementVisitor = new ElementVisitor();
     e.accept(elementVisitor);
@@ -367,7 +379,7 @@ public class Converter {
   }
 
   @NotNull
-  public static List<Element> elementsToElementList(PsiElement[] elements) {
+  public static List<Element> elementsToElementList(@NotNull PsiElement[] elements) {
     List<Element> result = new LinkedList<Element>();
     for (PsiElement e : elements) result.add(elementToElement(e));
     return result;
@@ -382,21 +394,21 @@ public class Converter {
   }
 
   @NotNull
-  public static List<Type> typesToTypeList(PsiType[] types) {
+  public static List<Type> typesToTypeList(@NotNull PsiType[] types) {
     List<Type> result = new LinkedList<Type>();
     for (PsiType t : types) result.add(typeToType(t));
     return result;
   }
 
   @NotNull
-  private static List<Type> typesToNotNullableTypeList(PsiType[] types) {
+  private static List<Type> typesToNotNullableTypeList(@NotNull PsiType[] types) {
     List<Type> result = new LinkedList<Type>(typesToTypeList(types));
     for (Type p : result) p.convertToNotNull();
     return result;
   }
 
   @NotNull
-  private static List<Import> importsToImportList(PsiImportStatementBase[] imports) {
+  private static List<Import> importsToImportList(@NotNull PsiImportStatementBase[] imports) {
     List<Import> result = new LinkedList<Import>();
     for (PsiImportStatementBase t : imports) result.add(importToImport(t));
     return result;
@@ -411,14 +423,14 @@ public class Converter {
   }
 
   @NotNull
-  public static List<Parameter> parametersToParameterList(PsiParameter[] parameters) {
+  public static List<Parameter> parametersToParameterList(@NotNull PsiParameter[] parameters) {
     List<Parameter> result = new LinkedList<Parameter>();
     for (PsiParameter t : parameters) result.add(parameterToParameter(t));
     return result;
   }
 
   @NotNull
-  public static Parameter parameterToParameter(PsiParameter parameter) {
+  public static Parameter parameterToParameter(@NotNull PsiParameter parameter) {
     return new Parameter(
       new IdentifierImpl(parameter.getName()), // TODO: remove
       typeToType(parameter.getType())
@@ -431,6 +443,7 @@ public class Converter {
     return new IdentifierImpl(identifier.getText());
   }
 
+  @NotNull
   public static Set<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {

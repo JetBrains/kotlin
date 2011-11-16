@@ -8,7 +8,7 @@ import java.util.Set;
  * @author ignatov
  */
 public class Initializer extends Member {
-  private Block myBlock;
+  private final Block myBlock;
 
   public Initializer(Block block, Set<String> modifiers) {
     myBlock = block;
