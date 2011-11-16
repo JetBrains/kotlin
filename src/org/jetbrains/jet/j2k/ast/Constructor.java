@@ -28,10 +28,6 @@ public class Constructor extends Function {
     return myIsPrimary;
   }
 
-  public String privatePrimaryToKotlin() {
-    return modifiersToKotlin() + "(" + myParams.toKotlin() + ")" + SPACE + myBlock.toKotlin();
-  }
-
   @NotNull
   @Override
   public Kind getKind() {
