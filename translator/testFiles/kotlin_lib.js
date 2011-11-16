@@ -10,13 +10,6 @@ var emptyFunction = function() {}
 
 var Class = (function() {
 
-  var IS_DONTENUM_BUGGY = (function(){
-    for (var p in { toString: 1 }) {
-      if (p === 'toString') return false;
-    }
-    return true;
-  })();
-
   function subclass() {};
   function create() {
     var parent = null, properties = $A(arguments);
@@ -43,10 +36,8 @@ var Class = (function() {
         klass.addMethods(
         {
             'super_init' : function () {
-                //if (this.initializing != null) {
-                    this.initializing = this.initializing.superclass;
-                    this.initializing.prototype.initialize.apply(this, arguments)
-               // }
+                this.initializing = this.initializing.superclass;
+                this.initializing.prototype.initialize.apply(this, arguments)
             }
         });
     }
@@ -65,12 +56,6 @@ var Class = (function() {
     var ancestor   = this.superclass && this.superclass.prototype,
         properties = Object.keys(source);
 
-    if (IS_DONTENUM_BUGGY) {
-      if (source.toString != Object.prototype.toString)
-        properties.push("toString");
-      if (source.valueOf != Object.prototype.valueOf)
-        properties.push("valueOf");
-    }
 
     for (var i = 0, length = properties.length; i < length; i++) {
       var property = properties[i], value = source[property];
@@ -81,8 +66,8 @@ var Class = (function() {
           return function() { return ancestor[m].apply(this, arguments); };
         })(property).wrap(method);
 
-        value.valueOf = method.valueOf.bind(method);
-        value.toString = method.toString.bind(method);
+       // value.valueOf = method.valueOf.bind(method);
+       // value.toString = method.toString.bind(method);
       }
       this.prototype[property] = value;
     }
@@ -95,6 +80,17 @@ var Class = (function() {
     Methods: {
       addMethods: addMethods
     }
+  };
+})();
+
+var Trait = (function() {
+
+  function create() {
+    return new Class.create(arguments);
+  }
+
+  return {
+    create: create
   };
 })();
 

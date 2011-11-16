@@ -8,6 +8,7 @@ import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
 import java.io.FileReader;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -20,6 +21,7 @@ public abstract class TranslationTest {
     final protected static String TEST_FILES = "testFiles/";
     final private static String CASES = "cases/";
     final private static String OUT = "out/";
+    final private String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
 
     protected String testFilesDirectory;
     protected String testCasesDirectory;
@@ -33,6 +35,10 @@ public abstract class TranslationTest {
     }
 
     protected abstract String mainDirectory();
+
+    protected String kotlinLibraryPath() {
+        return KOTLIN_JS_LIB;
+    }
 
     private String getOutputDirectory() {
         return testFilesDirectory + outputDirectory;
@@ -48,8 +54,10 @@ public abstract class TranslationTest {
         args.src = getInputFilePath(filename);
         args.outputDir = getOutputFilePath(filename);
         K2JSTranslator.translate(args);
-        runWithRhino(args.outputDir, namespaceName, functionName, expectedResult);
+        runWithRhino(generateFilenameList(args.outputDir), namespaceName, functionName, expectedResult);
     }
+
+    abstract protected List<String> generateFilenameList(String inputfile);
 
     private String getOutputFilePath(String filename) {
         return getOutputDirectory() + convertToDotJsFile(filename);
@@ -63,22 +71,24 @@ public abstract class TranslationTest {
         return getInputDirectory() + filename;
     }
 
-    protected void runWithRhino(String inputFile, String namespaceName,
+    protected void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
+        FileReader reader = new FileReader(inputFile);
+        context.evaluateReader(scope, reader, inputFile, 1, null);
+        reader.close();
+    }
+
+    protected void runWithRhino(List<String> filenames, String namespaceName,
                                 String functionName, Object expectedResult) throws Exception {
         Context cx = Context.enter();
-        FileReader reader = new FileReader(inputFile);
-        try {
-            Scriptable scope = cx.initStandardObjects();
-            cx.evaluateReader(scope, reader, "test case", 1, null);
-            Object result = extractAndCallFunctionObject(namespaceName, functionName, cx, scope);
-            assertTrue("Result is not what expected!", result.equals(expectedResult));
-            String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
-            System.out.println(report);
-
-        } finally {
-            Context.exit();
-            reader.close();
+        Scriptable scope = cx.initStandardObjects();
+        for (String filename : filenames) {
+            runFileWithRhino(filename, cx, scope);
         }
+        Object result = extractAndCallFunctionObject(namespaceName, functionName, cx, scope);
+        assertTrue("Result is not what expected!", result.equals(expectedResult));
+        String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
+        System.out.println(report);
+        Context.exit();
     }
 
     protected Object extractAndCallFunctionObject(String namespaceName, String functionName,

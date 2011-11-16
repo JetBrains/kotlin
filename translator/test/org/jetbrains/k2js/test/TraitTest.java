@@ -15,11 +15,6 @@ public final class TraitTest extends AbstractClassTest {
     }
 
     @Test
-    public void traitCompiles() throws Exception {
-        testFooBoxIsTrue("traitCompiles.kt");
-    }
-
-    @Test
     public void traitAddsFunctionsToClass() throws Exception {
         testFooBoxIsTrue("traitAddsFunctionsToClass.kt");
     }
@@ -38,4 +33,10 @@ public final class TraitTest extends AbstractClassTest {
     public void example() throws Exception {
         testFooBoxIsTrue("example.kt");
     }
+
+    @Test
+    public void traitExtendsTrait() throws Exception {
+        testFooBoxIsTrue("traitExtendsTrait.kt");
+    }
+
 }

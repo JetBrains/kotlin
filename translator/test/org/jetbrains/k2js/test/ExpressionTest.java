@@ -2,6 +2,9 @@ package org.jetbrains.k2js.test;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Talanov Pavel
  *         <p/>
@@ -14,6 +17,11 @@ public final class ExpressionTest extends TranslationTest {
 
     protected String mainDirectory() {
         return MAIN;
+    }
+
+    @Override
+    protected List<String> generateFilenameList(String inputFile) {
+        return Arrays.asList(inputFile);
     }
 
     @Test

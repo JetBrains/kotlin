@@ -1,8 +1,6 @@
 package org.jetbrains.k2js.test;
 
 import org.junit.Test;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
 
 /**
  * @author Talanov Pavel
@@ -14,14 +12,6 @@ public class BasicClassTest extends AbstractClassTest {
     @Override
     protected String mainDirectory() {
         return MAIN;
-    }
-
-    @Test
-    public void kotlinJsLibRunsWithRhino() throws Exception {
-        Context context = Context.enter();
-        Scriptable scope = context.initStandardObjects();
-        runFileWithRhino(kotlinLibraryPath(), context, scope);
-        Context.exit();
     }
 
     @Test
