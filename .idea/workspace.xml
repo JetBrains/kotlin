@@ -5,17 +5,9 @@
     <option name="SCOPE_TYPE" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoFunctionResultChecker.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoResultChecker.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoUtils.java" />
+    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="Refactored test code a lot. Introduced KotlinLibTest.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ClassInheritanceTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ClassInheritanceTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ExpressionTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ExpressionTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/PropertyAccessorTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/PropertyAccessorTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -125,7 +117,7 @@
           <file leaf-file-name="KotlinLibTest.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="33" column="78" selection-start="872" selection-end="872" vertical-scroll-proportion="-0.10526316">
+                <state line="65" column="5" selection-start="2336" selection-end="2336" vertical-scroll-proportion="0.7894737">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -203,8 +195,10 @@
           <file leaf-file-name="TranslationTest.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="78" column="23" selection-start="2502" selection-end="2502" vertical-scroll-proportion="0.0">
-                  <folding />
+                <state line="76" column="23" selection-start="2458" selection-end="2458" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="false" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -212,10 +206,8 @@
           <file leaf-file-name="RhinoUtils.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoUtils.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="17" column="64" selection-start="369" selection-end="369" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
+                <state line="16" column="64" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0">
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -868,7 +860,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored tests a bit. Working on KotlinLibTest" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored test code a lot. Introduced KotlinLibTest." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -881,7 +873,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Added string constant support." />
     <MESSAGE value="Added constructor calls. Working on method logic." />
     <MESSAGE value="Added simple method call support." />
     <MESSAGE value="Added DeclarationExtractor logic." />
@@ -906,6 +897,7 @@
     <MESSAGE value="Refactored ClassTranslator code a bit. Added support for different order of inherited classes." />
     <MESSAGE value="Added suppoer for null literal and a test for Traits." />
     <MESSAGE value="Refactored tests a bit. Working on KotlinLibTest" />
+    <MESSAGE value="Refactored test code a lot. Introduced KotlinLibTest." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1007,17 +999,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="64" selection-start="369" selection-end="369" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="16" column="64" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="23" selection-start="2502" selection-end="2502" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="76" column="23" selection-start="2458" selection-end="2458" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1032,7 +1024,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="78" selection-start="872" selection-end="872" vertical-scroll-proportion="-0.10526316">
+        <state line="65" column="5" selection-start="2336" selection-end="2336" vertical-scroll-proportion="0.7894737">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

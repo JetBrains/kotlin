@@ -64,6 +64,4 @@ public class KotlinLibTest extends TranslationTest {
                     }
                 });
     }
-
-
 }
