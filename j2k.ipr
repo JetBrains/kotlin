@@ -152,6 +152,14 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="ignatov">
+      <words>
+        <w>kotlin</w>
+        <w>nullable</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/j2k.iml" filepath="$PROJECT_DIR$/j2k.iml" />
