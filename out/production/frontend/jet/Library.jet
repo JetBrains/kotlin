@@ -1,13 +1,13 @@
 namespace jet
 
 namespace typeinfo {
-    class TypeInfo<T> {
+    class TypeInfo<out T> {
       fun isSubtypeOf(other : TypeInfo<*>) : Boolean
       fun isInstance(obj : Any?) : Boolean
     }
 
     fun typeinfo<T>() : TypeInfo<T>
-    fun typeinfo<T>(expression : T) : TypeInfo<out T>
+    fun typeinfo<T>(expression : T) : TypeInfo<T>
 }
 
 namespace io {
@@ -34,11 +34,17 @@ namespace io {
   fun readLine() : String?
 }
 
+fun Any?.identityEquals(other : Any?) // = this === other
+
 // Can't write a body due to a bootstrapping problem (see JET-74)
 fun Any?.equals(other : Any?) : Boolean// = this === other
 
 // Returns "null" for null
 fun Any?.toString() : String// = this === other
+
+// fun <T> array(vararg elements : T) : Array<T>
+
+// fun array(vararg elements : Int) : IntArray
 
 fun String?.plus(other: Any?) : String
 
@@ -495,7 +501,7 @@ class Char : Number, Comparable<Char> {
   fun plus(other : Int)    : Int
   fun plus(other : Short)  : Int
   fun plus(other : Byte)   : Int
-  fun plus(other : Char)   : Int
+//  fun plus(other : Char)   : Int
 
   fun minus(other : Double) : Double
   fun minus(other : Float)  : Float
@@ -511,7 +517,7 @@ class Char : Number, Comparable<Char> {
   fun times(other : Int)    : Int
   fun times(other : Short)  : Int
   fun times(other : Byte)   : Int
-  fun times(other : Char)   : Int
+//  fun times(other : Char)   : Int
 
   fun div(other : Double) : Double
   fun div(other : Float)  : Float
@@ -519,7 +525,7 @@ class Char : Number, Comparable<Char> {
   fun div(other : Int)    : Int
   fun div(other : Short)  : Int
   fun div(other : Byte)   : Int
-  fun div(other : Char)   : Int
+//  fun div(other : Char)   : Int
 
   fun mod(other : Double) : Double
   fun mod(other : Float)  : Float
@@ -527,7 +533,7 @@ class Char : Number, Comparable<Char> {
   fun mod(other : Int)    : Int
   fun mod(other : Short)  : Int
   fun mod(other : Byte)   : Int
-  fun mod(other : Char)   : Int
+//  fun mod(other : Char)   : Int
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>
@@ -602,8 +608,8 @@ class Short : Number, Comparable<Short> {
 
   fun inc() : Short
   fun dec() : Short
-  fun plus() : Int
-  fun minus() : Int
+  fun plus() : Short
+  fun minus() : Short
 }
 
 class Byte : Number, Comparable<Byte> {
@@ -665,6 +671,6 @@ class Byte : Number, Comparable<Byte> {
 
   fun inc() : Byte
   fun dec() : Byte
-  fun plus() : Int
-  fun minus() : Int
+  fun plus() : Byte
+  fun minus() : Byte
 }

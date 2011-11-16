@@ -7,7 +7,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/frontend/jet/Library.jet" afterPath="$PROJECT_DIR$/out/production/frontend/jet/Library.jet" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -117,10 +117,8 @@
           <file leaf-file-name="KotlinLibTest.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="56" column="53" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.55263156">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
+                <state line="39" column="47" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.40201005">
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -129,9 +127,7 @@
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoResultChecker.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state line="9" column="77" selection-start="264" selection-end="264" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -140,9 +136,7 @@
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoFunctionResultChecker.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state line="29" column="35" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -150,7 +144,7 @@
           <file leaf-file-name="ReflectiveCallable.class" pinned="false" current="false" current-in-tab="false">
             <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="11" column="40" selection-start="397" selection-end="397" vertical-scroll-proportion="-6.8">
+                <state line="11" column="40" selection-start="397" selection-end="397" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -159,7 +153,7 @@
           <file leaf-file-name="ParentRunner.class" pinned="false" current="false" current-in-tab="false">
             <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/runners/ParentRunner.class">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -168,7 +162,7 @@
           <file leaf-file-name="BlockJUnit4ClassRunner.class" pinned="false" current="false" current-in-tab="false">
             <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/runners/BlockJUnit4ClassRunner.class">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -177,7 +171,7 @@
           <file leaf-file-name="Function.class" pinned="false" current="false" current-in-tab="false">
             <entry file="jar://$PROJECT_DIR$/translator/lib/js.jar!/org/mozilla/javascript/Function.class">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="5" column="63" selection-start="210" selection-end="210" vertical-scroll-proportion="-2.72">
+                <state line="5" column="63" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -196,9 +190,7 @@
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state line="76" column="23" selection-start="2458" selection-end="2458" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="false" />
-                  </folding>
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -246,7 +238,7 @@
           <file leaf-file-name="TraitTest.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TraitTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.22326455">
+                <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.13492064">
                   <folding />
                 </state>
               </provider>
@@ -385,6 +377,22 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Favorites" />
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -515,22 +523,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -546,9 +538,9 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -810,11 +802,9 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907662" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3275862" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24973261" sideWeight="0.7183908" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28544062" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907662" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854405" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3275862" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
@@ -822,11 +812,13 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2513369" sideWeight="0.66570884" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3342912" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3342912" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3275862" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854405" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3994253" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="JsTestDriver Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907662" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -907,127 +899,105 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0_01/src.zip!/java/util/Map.java">
+    <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/runners/BlockJUnit4ClassRunner.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="362" column="14" selection-start="16898" selection-end="16898" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/kotlin_lib.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="2" selection-start="0" selection-end="9776" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/translator/lib/js.jar!/org/mozilla/javascript/Function.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="63" selection-start="210" selection-end="210" vertical-scroll-proportion="-2.72">
+        <state line="5" column="63" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="23" selection-start="2458" selection-end="2458" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="64" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/trait/cases/traitExtendsTrait.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="39" selection-start="320" selection-end="320" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/AbstractClassTest.java">
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/trait/out/traitExtendsTrait.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="183" selection-end="332" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="40" selection-start="397" selection-end="397" vertical-scroll-proportion="-6.8">
+        <state line="22" column="0" selection-start="0" selection-end="390" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ExpressionTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="29" selection-start="603" selection-end="603" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/runners/BlockJUnit4ClassRunner.class">
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/trait/out/traitCompiles.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/runners/ParentRunner.class">
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TraitTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+        <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.13492064">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoResultChecker.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="77" selection-start="264" selection-end="264" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/PropertyAccessorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0">
+        <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/JetSimpleNameExpression.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="17" selection-start="1599" selection-end="1599" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TraitTest.java">
+    <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 110.283/lib/openapi.jar!/com/intellij/psi/tree/IElementType.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="19" selection-start="110" selection-end="110" vertical-scroll-proportion="0.22326455">
+        <state line="5" column="16" selection-start="162" selection-end="162" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoUtils.java">
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/JetNodeType.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="64" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0">
+        <state line="14" column="13" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lexer/JetToken.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="23" selection-start="2458" selection-end="2458" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+        <state line="10" column="13" selection-start="241" selection-end="241" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/RhinoFunctionResultChecker.java">
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/trait/cases/traitAddsFunctionsToClass.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="35" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="20" column="23" selection-start="0" selection-end="322" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/KotlinLibTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="53" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.55263156">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="39" column="47" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.40201005">
+          <folding />
         </state>
       </provider>
     </entry>
