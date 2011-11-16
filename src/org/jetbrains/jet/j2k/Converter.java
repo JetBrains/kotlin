@@ -242,9 +242,7 @@ public class Converter {
     return tv.getPrimaryConstructor();
   }
 
-  public static boolean isConstructorPrimary(@Nullable PsiMethod constructor) {
-    if (constructor == null)
-      return false;
+  public static boolean isConstructorPrimary(@NotNull PsiMethod constructor) {
     if (constructor.getParent() instanceof PsiClass) {
       final PsiClass parent = (PsiClass) constructor.getParent();
       if (parent.getConstructors().length == 1)
