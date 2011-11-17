@@ -47,18 +47,15 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
 
     if (classType instanceof PsiClassReferenceType) { // TODO: simplify
       final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
-      PsiElement resolveClass = reference.resolve();
-      if (resolveClass != null && resolveClass instanceof PsiClass) {
-        final PsiClass innerClass = (PsiClass) resolveClass;
-        PsiClass outerClass = innerClass.getContainingClass();
-        if (outerClass != null) {
-          String result = new IdentifierImpl(innerClass.getName()).toKotlin();
-          while (outerClass != null) {
-            result = new IdentifierImpl(outerClass.getName()).toKotlin() + "." + result;
-            outerClass = outerClass.getContainingClass();
-          }
-          classTypeName = result;
+      if (reference.isQualified()) {
+        String result = new IdentifierImpl(reference.getReferenceName()).toKotlin();
+        PsiElement qualifier = reference.getQualifier();
+        while (qualifier != null) {
+          final PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
+          result = new IdentifierImpl(p.getReferenceName()).toKotlin() + "." + result; // TODO: maybe need to replace by safe call?
+          qualifier = p.getQualifier();
         }
+        classTypeName = result;
       }
     }
 

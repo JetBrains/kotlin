@@ -1,6 +1,6 @@
 open class Library() {
 class object {
-val ourOut : PrintStream?
+val ourOut : java.io.PrintStream?
 }
 }
 open class User() {
