@@ -268,4 +268,8 @@ public class AstUtil {
         result.setStatements(statements);
         return result;
     }
+
+    public static JsPrefixOperation negation(JsExpression expression) {
+        return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
+    }
 }

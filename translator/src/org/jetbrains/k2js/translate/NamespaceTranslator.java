@@ -33,7 +33,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     public JsBlock translate(@NotNull JetNamespace namespace) {
         // TODO support multiple namespaces
         JsBlock block = program().getFragmentBlock(0);
-        JsName namespaceName = scope().declareName(Namer.getNameForNamespace(namespace.getName()));
+        JsName namespaceName = translationContext().enclosingScope().declareName(Namer.getNameForNamespace(namespace.getName()));
         block.addStatement(namespaceInitStatement(namespaceName));
         TranslationContext newContext = translationContext().newNamespace(namespace);
         JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope

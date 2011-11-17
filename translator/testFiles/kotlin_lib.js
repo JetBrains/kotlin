@@ -6,6 +6,17 @@ function $A(iterable) {
   return results;
 }
 
+var isType = function(object, class) {
+    current = object.get_class();
+    while (current !== class) {
+        if (current === null) {
+            return false;
+        }
+        current = current.superclass;
+    }
+    return true;
+}
+
 var emptyFunction = function() {}
 
 var Class = (function() {
@@ -32,10 +43,17 @@ var Class = (function() {
     }
 
 
+    klass.addMethods(
+    {
+        get_class : function () {
+            return klass;
+        }
+    });
+
     if (parent != null) {
         klass.addMethods(
         {
-            'super_init' : function () {
+            super_init : function () {
                 this.initializing = this.initializing.superclass;
                 this.initializing.prototype.initialize.apply(this, arguments)
             }

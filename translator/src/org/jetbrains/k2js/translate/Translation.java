@@ -47,6 +47,11 @@ public final class Translation {
     }
 
     @NotNull
+    static public TypeOperationTranslator typeOperationTranslator(@NotNull TranslationContext context) {
+        return TypeOperationTranslator.newInstance(context);
+    }
+
+    @NotNull
     static public JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
         return expressionTranslator(context).translate(expression);
     }

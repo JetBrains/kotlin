@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Talanov Pavel
  */
-public class RhinoPropertyTypesChecker implements RhinoResultChecker {
+public final class RhinoPropertyTypesChecker implements RhinoResultChecker {
 
     final private String objectName;
     final private Map<String, Class<? extends Scriptable>> propertyToType;

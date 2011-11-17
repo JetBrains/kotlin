@@ -46,12 +46,16 @@ public abstract class TranslationTest {
 
     protected void testFunctionOutput(String filename, String namespaceName,
                                       String functionName, Object expectedResult) throws Exception {
+        translateFile(filename);
+        runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
+                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+    }
+
+    private void translateFile(String filename) {
         K2JSTranslator.Arguments args = new K2JSTranslator.Arguments();
         args.src = getInputFilePath(filename);
         args.outputDir = getOutputFilePath(filename);
         K2JSTranslator.translate(args);
-        runRhinoTest(generateFilenameList(args.outputDir),
-                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     abstract protected List<String> generateFilenameList(String inputfile);

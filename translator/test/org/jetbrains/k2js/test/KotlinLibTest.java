@@ -34,10 +34,12 @@ public class KotlinLibTest extends TranslationTest {
 
     @Test
     public void kotlinJsLibRunsWithRhino() throws Exception {
-        Context context = Context.enter();
-        Scriptable scope = context.initStandardObjects();
-        runFileWithRhino(kotlinLibraryPath(), context, scope);
-        Context.exit();
+        runRhinoTest(Arrays.asList(kotlinLibraryPath()), new RhinoResultChecker() {
+            @Override
+            public void runChecks(Context context, Scriptable scope) throws Exception {
+                //do nothing
+            }
+        });
     }
 
     @Test
@@ -63,5 +65,24 @@ public class KotlinLibTest extends TranslationTest {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("trait.js")),
                 new RhinoPropertyTypesChecker("foo", propertyToType));
     }
+
+    @Test
+    public void isSameType() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isSameType.js")),
+                new RhinoFunctionResultChecker("test", true));
+    }
+
+    @Test
+    public void isAncestorType() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isAncestorType.js")),
+                new RhinoFunctionResultChecker("test", true));
+    }
+
+    @Test
+    public void isComplexTest() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isComplexTest.js")),
+                new RhinoFunctionResultChecker("test", true));
+    }
+
 
 }

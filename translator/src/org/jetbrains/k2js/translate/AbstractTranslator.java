@@ -1,9 +1,7 @@
 package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
-import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 
 /**
  * @author Talanov Pavel
@@ -25,15 +23,5 @@ public abstract class AbstractTranslator {
     @NotNull
     protected TranslationContext translationContext() {
         return context;
-    }
-
-    @NotNull
-    protected BindingContext bindingContext() {
-        return context.bindingContext();
-    }
-
-    @NotNull
-    protected JsScope scope() {
-        return context.enclosingScope();
     }
 }

@@ -81,17 +81,20 @@ public final class OperationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JetToken getOperationToken(@NotNull JetBinaryExpression expression) {
-        return (JetToken) expression.getOperationToken();
-    }
-
-    @NotNull
     private JsExpression translateAsBinaryOperation(@NotNull JetBinaryExpression expression) {
         JsExpression left = AstUtil.convertToExpression
                 (Translation.translateExpression(expression.getLeft(), translationContext()));
         JsExpression right = translateRightExpression(expression);
-        JetToken jetOperationToken = getOperationToken(expression);
-        return new JsBinaryOperation(OperatorTable.getBinaryOperator(jetOperationToken), left, right);
+        JetToken token = getOperationToken(expression);
+        if (OperatorTable.hasCorrespondingBinaryOperator(token)) {
+            return new JsBinaryOperation(OperatorTable.getBinaryOperator(token), left, right);
+        }
+        if (OperatorTable.hasCorrespondingFunctionInvocation(token)) {
+            JsInvocation functionInvocation = OperatorTable.getCorrespondingFunctionInvocation(token);
+            functionInvocation.setArguments(Arrays.asList(left, right));
+            return functionInvocation;
+        }
+        throw new AssertionError("Unsupported token encountered: " + token.toString());
     }
 
     @NotNull
@@ -100,6 +103,11 @@ public final class OperationTranslator extends AbstractTranslator {
         assert rightExpression != null : "Binary expression should have a right expression";
         return AstUtil.convertToExpression
                 (Translation.translateExpression(rightExpression, translationContext()));
+    }
+
+    @NotNull
+    private JetToken getOperationToken(@NotNull JetBinaryExpression expression) {
+        return (JetToken) expression.getOperationToken();
     }
 
 

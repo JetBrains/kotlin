@@ -350,5 +350,19 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     }
 
+//    @Override
+//    @NotNull
+//    public JsNode visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression,
+//                                                   @NotNull TranslationContext context) {
+//        return Translation.typeOperationTranslator(context).translate(expression);
+//    }
+
+    @Override
+    @NotNull
+    public JsNode visitIsExpression(@NotNull JetIsExpression expression,
+                                    @NotNull TranslationContext context) {
+        return Translation.typeOperationTranslator(context).translateIsExpression(expression);
+    }
+
 
 }

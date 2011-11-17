@@ -8,7 +8,7 @@ import com.google.dart.compiler.util.AstUtil;
  */
 
 /*
- * This class is a complete dummy and needs a lot of work
+ * This class is a complete dummy and should completely change in the future
  */
 public final class Namer {
 
@@ -69,6 +69,10 @@ public final class Namer {
 
     public static JsNameRef traitCreationMethodReference() {
         return AstUtil.newQualifiedNameRef("Trait.create");
+    }
+
+    public static JsNameRef isOperationReference() {
+        return AstUtil.newQualifiedNameRef("isType");
     }
 
 
