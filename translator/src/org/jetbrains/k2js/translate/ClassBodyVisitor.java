@@ -153,22 +153,4 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         // parsed it in initializer visitor => no additional actions are needed
         return new ArrayList<JsPropertyInitializer>();
     }
-
-//    @NotNull
-//    JsName getNameForGetter(@NotNull String propertyName, @NotNull TranslationContext context) {
-//        return getNameForAccessor(propertyName, true, context);
-//    }
-//
-//    @NotNull
-//    JsName getNameForSetter(@NotNull String propertyName, @NotNull TranslationContext context) {
-//        return getNameForAccessor(propertyName, false, context);
-//    }
-//
-//    @NotNull
-//    JsName getNameForAccessor(@NotNull String propertyName, boolean isGetter,
-//                              @NotNull TranslationContext context) {
-//        return context.classScope().findExistingName(Namer.getNameForAccessor(propertyName, isGetter));
-//    }
-
-
 }

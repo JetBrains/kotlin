@@ -46,8 +46,8 @@ public final class Translation {
     }
 
     @NotNull
-    static public DeclarationTranslator declarationTranslator(@NotNull TranslationContext context) {
-        return DeclarationTranslator.newInstance(context);
+    static public NamespaceDeclarationTranslator declarationTranslator(@NotNull TranslationContext context) {
+        return NamespaceDeclarationTranslator.newInstance(context);
     }
 
     @NotNull
@@ -60,7 +60,6 @@ public final class Translation {
         return expressionTranslator(context).translate(expression);
     }
 
-    //TODO: clean out similar code fragments
     @NotNull
     static public JsExpression translateAsExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
         return AstUtil.convertToExpression(translateExpression(expression, context));

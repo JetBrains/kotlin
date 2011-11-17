@@ -24,7 +24,7 @@ public class BasicClassTest extends IncludeLibraryTest {
         testFooBoxIsTrue("methodDeclarationAndCall.kt");
     }
 
-    //TODO: test excluded. Wait for bugfix and implement functionality
+    //TODO: wait for bugfix and implement properties as consructor parameter declaration
     @Test
     public void constructorWithParameter() throws Exception {
         testFooBoxIsTrue("constructorWithParameter.kt");

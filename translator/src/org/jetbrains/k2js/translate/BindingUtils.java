@@ -62,13 +62,6 @@ public final class BindingUtils {
     }
 
     @NotNull
-    static public String getPropertyNameForPropertyAccessor(@NotNull BindingContext context,
-                                                            @NotNull JetPropertyAccessor accessor) {
-        PropertyAccessorDescriptor descriptor = getPropertyAccessorDescriptor(context, accessor);
-        return descriptor.getCorrespondingProperty().getName();
-    }
-
-    @NotNull
     static public PropertySetterDescriptor getPropertySetterDescriptorForProperty(@NotNull BindingContext context,
                                                                                   @NotNull JetProperty property) {
         PropertySetterDescriptor result = getPropertyDescriptor(context, property).getSetter();

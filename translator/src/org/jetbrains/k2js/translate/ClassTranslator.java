@@ -50,8 +50,8 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement classDeclarationStatement(@NotNull JetClass classDeclaration,
                                                   @NotNull JsInvocation jsClassDeclaration) {
-        return AstUtil.convertToStatement(AstUtil.newAssignment
-                (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration));
+        return AstUtil.newAssignmentStatement
+                (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration);
     }
 
     @NotNull

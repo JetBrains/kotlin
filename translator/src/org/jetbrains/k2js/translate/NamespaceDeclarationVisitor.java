@@ -14,7 +14,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
  * @author Talanov Pavel
  */
 //TODO: rework the class
-public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
+public class NamespaceDeclarationVisitor extends TranslatorVisitor<JsStatement> {
 
     @NotNull
     @Override

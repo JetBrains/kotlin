@@ -61,7 +61,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                         @NotNull TranslationContext context) {
         JetExpression returnedExpression = jetReturnExpression.getReturnedExpression();
         if (returnedExpression != null) {
-            JsExpression jsExpression = AstUtil.convertToExpression(returnedExpression.accept(this, context));
+            JsExpression jsExpression = translateAsExpression(returnedExpression, context);
             return new JsReturn(jsExpression);
         }
         return new JsReturn();
@@ -166,12 +166,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @NotNull
     private JsExpression translateCallee(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
-        JetExpression jetCallee = expression.getCalleeExpression();
-        if (jetCallee == null) {
+        JetExpression callee = expression.getCalleeExpression();
+        if (callee == null) {
             throw new AssertionError("Call expression with no callee encountered!");
         }
-        JsNode jsCallee = jetCallee.accept(this, context);
-        return AstUtil.convertToExpression(jsCallee);
+        return translateAsExpression(callee, context);
     }
 
     @Override
@@ -227,9 +226,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     private JsExpression translateConditionExpression(@Nullable JetExpression expression,
                                                       @NotNull TranslationContext context) {
-        JsNode jsCondition = translateNullableExpression(expression, context);
-        if (jsCondition == context.program().getEmptyStmt()) {
-            throw new AssertionError("Empty condition clause!");
+        JsExpression jsCondition = translateNullableExpression(expression, context);
+        if (jsCondition == null) {
+            throw new AssertionError("Empty condition!");
         }
         return AstUtil.convertToExpression(jsCondition);
     }
@@ -240,6 +239,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expression == null) {
             return null;
         }
+        return translateAsExpression(expression, context);
+    }
+
+    private JsExpression translateAsExpression(JetExpression expression, TranslationContext context) {
         return AstUtil.convertToExpression(expression.accept(this, context));
     }
 
@@ -286,7 +289,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return null;
     }
 
-    //TODO method too long
     @Override
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
@@ -295,8 +297,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @NotNull
-    private JsNode translateQualifiedExpression(@NotNull JetQualifiedExpression expression,
-                                                @NotNull TranslationContext context) {
+    private JsExpression translateQualifiedExpression(@NotNull JetQualifiedExpression expression,
+                                                      @NotNull TranslationContext context) {
         JsInvocation getterCall = translateAsGetterCall(expression, context);
         if (getterCall != null) {
             return getterCall;
@@ -311,8 +313,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @NotNull
-    private JsNode translateAsQualifiedAccess(@NotNull JetQualifiedExpression expression,
-                                              @NotNull TranslationContext context) {
+    private JsExpression translateAsQualifiedAccess(@NotNull JetQualifiedExpression expression,
+                                                    @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
         JsExpression selector = translateSelector(expression, context);
         assert (selector instanceof JsNameRef || selector instanceof JsInvocation)
@@ -329,23 +331,23 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                            @NotNull TranslationContext context) {
         JetExpression jetSelector = expression.getSelectorExpression();
         assert jetSelector != null : "Selector should not be null in dot qualified expression.";
-        return AstUtil.convertToExpression(jetSelector.accept(this, context));
+        return translateAsExpression(jetSelector, context);
     }
 
     @NotNull
     private JsExpression translateReceiver(@NotNull JetQualifiedExpression expression,
                                            @NotNull TranslationContext context) {
-        return AstUtil.convertToExpression(expression.getReceiverExpression().accept(this, context));
+        return translateAsExpression(expression.getReceiverExpression(), context);
     }
 
     @NotNull
-    private JsNode translateAsQualifiedNameReference(@NotNull JsExpression receiver, @NotNull JsNameRef selector) {
+    private JsExpression translateAsQualifiedNameReference(@NotNull JsExpression receiver, @NotNull JsNameRef selector) {
         selector.setQualifier(receiver);
         return selector;
     }
 
     @NotNull
-    private JsNode translateAsQualifiedInvocation(@NotNull JsExpression receiver, @NotNull JsInvocation selector) {
+    private JsExpression translateAsQualifiedInvocation(@NotNull JsExpression receiver, @NotNull JsInvocation selector) {
         JsExpression qualifier = selector.getQualifier();
         JsNameRef nameRef = (JsNameRef) qualifier;
         nameRef.setQualifier(receiver);
@@ -382,7 +384,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         JsBinaryOperation nullCheck = new JsBinaryOperation
                 (JsBinaryOperator.NEQ, receiver, nullLiteral);
-        JsExpression thenExpression = AstUtil.convertToExpression(translateQualifiedExpression(expression, context));
+        JsExpression thenExpression = translateQualifiedExpression(expression, context);
         return new JsConditional(nullCheck, thenExpression, nullLiteral);
     }
 

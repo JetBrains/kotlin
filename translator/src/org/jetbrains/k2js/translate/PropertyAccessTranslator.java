@@ -1,9 +1,9 @@
 package org.jetbrains.k2js.translate;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,10 +56,10 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation translateReceiverAndReturnAccessorInvocation
             (@NotNull JetQualifiedExpression qualifiedExpression, @NotNull JsName accessorName) {
-        JsNode node = Translation.expressionTranslator(translationContext())
-                .translate(qualifiedExpression.getReceiverExpression());
+        JsExpression qualifier = Translation.translateAsExpression
+                (qualifiedExpression.getReceiverExpression(), translationContext());
         JsNameRef result = accessorName.makeRef();
-        result.setQualifier(AstUtil.convertToExpression(node));
+        result.setQualifier(qualifier);
         return AstUtil.newInvocation(result);
     }
 

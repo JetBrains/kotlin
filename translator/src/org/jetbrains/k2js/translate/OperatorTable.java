@@ -55,38 +55,34 @@ public final class OperatorTable {
         operatorToFunctionNameReference.put(JetTokens.IS_KEYWORD, Namer.isOperationReference());
     }
 
-    @NotNull
     public static boolean hasCorrespondingBinaryOperator(@NotNull JetToken token) {
         return binaryOperatorsMap.containsKey(token);
     }
 
-    @NotNull
     static boolean hasCorrespondingFunctionInvocation(@NotNull JetToken token) {
         return operatorToFunctionNameReference.containsKey(token);
     }
 
     @NotNull
-    public static JsInvocation getCorrespondingFunctionInvocation(@NotNull JetToken token) {
+    static public JsInvocation getCorrespondingFunctionInvocation(@NotNull JetToken token) {
         JsNameRef functionReference = operatorToFunctionNameReference.get(token);
         assert functionReference != null : "Token should represent a function call!";
         return AstUtil.newInvocation(functionReference);
     }
 
     @NotNull
-    public static JsBinaryOperator getBinaryOperator(@NotNull JetToken token) {
+    static public JsBinaryOperator getBinaryOperator(@NotNull JetToken token) {
         assert JetTokens.OPERATIONS.contains(token) : "Token should represent an operation!";
         return binaryOperatorsMap.get(token);
     }
 
     @NotNull
-    public static JsUnaryOperator getUnaryOperator(@NotNull JetToken token) {
+    static public JsUnaryOperator getUnaryOperator(@NotNull JetToken token) {
         assert JetTokens.OPERATIONS.contains(token) : "Token should represent an operation!";
         return unaryOperatorsMap.get(token);
     }
 
-    public static boolean isAssignment(JetToken token) {
+    static public boolean isAssignment(JetToken token) {
         return (token == JetTokens.EQ);
     }
-
-
 }

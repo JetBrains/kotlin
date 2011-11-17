@@ -44,4 +44,9 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
         testFooBoxIsTrue("whenValueOrType.kt");
     }
 
+    @Test
+    public void multipleCases() throws Exception {
+        testFooBoxIsTrue("multipleCases.kt");
+    }
+
 }

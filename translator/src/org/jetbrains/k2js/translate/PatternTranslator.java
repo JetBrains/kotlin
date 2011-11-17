@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.psi.*;
 /**
  * @author Talanov Pavel
  */
-//TODO: fix members order
 public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
@@ -21,30 +20,22 @@ public final class PatternTranslator extends AbstractTranslator {
         super(context);
     }
 
-//    @NotNull
-//    public JsExpression translate(@NotNull JetBinaryExpressionWithTypeRHS expression) {
-//        JsExpression left = AstUtil.convertToExpression
-//                (Translation.translateExpression(expression.getLeft(), translationContext()));
-//        JsNameRef right = getClassReference(expression);
-//        JetToken token = getOperationToken(expression);
-//        if (OperatorTable.hasCorrespondingFunctionInvocation(token)) {
-//            JsInvocation functionInvocation = OperatorTable.getCorrespondingFunctionInvocation(token);
-//            functionInvocation.setArguments(Arrays.asList(left, right));
-//            return functionInvocation;
-//        }
-//        throw new AssertionError("Unsupported token encountered: " + token.toString());
-//    }
-
     @NotNull
     public JsExpression translateIsExpression(@NotNull JetIsExpression expression) {
-        JsExpression left = AstUtil.convertToExpression
-                (Translation.translateExpression(expression.getLeftHandSide(), translationContext()));
+        JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), translationContext());
         JetPattern pattern = getPattern(expression);
         JsExpression resultingExpression = translatePattern(pattern, left);
         if (expression.isNegated()) {
             return AstUtil.negated(resultingExpression);
         }
         return resultingExpression;
+    }
+
+    @NotNull
+    private JetPattern getPattern(@NotNull JetIsExpression expression) {
+        JetPattern pattern = expression.getPattern();
+        assert pattern != null : "Pattern should not be null";
+        return pattern;
     }
 
     @NotNull
@@ -56,23 +47,6 @@ public final class PatternTranslator extends AbstractTranslator {
             return translateExpressionPattern(expressionToMatch, (JetExpressionPattern) pattern);
         }
         throw new AssertionError("Unsupported pattern type " + pattern.getClass());
-    }
-
-    @NotNull
-    private JsExpression translateExpressionPattern(JsExpression expressionToMatch, JetExpressionPattern pattern) {
-        JetExpression patternExpression = pattern.getExpression();
-        assert patternExpression != null : "Expression patter should have an expression.";
-        JsExpression expressionToMatchAgainst =
-                Translation.translateAsExpression(patternExpression, translationContext());
-        //TODO: should call equals method here
-        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, expressionToMatch, expressionToMatchAgainst);
-    }
-
-    @NotNull
-    private JetPattern getPattern(@NotNull JetIsExpression expression) {
-        JetPattern pattern = expression.getPattern();
-        assert pattern != null : "Pattern should not be null";
-        return pattern;
     }
 
     @NotNull
@@ -88,13 +62,6 @@ public final class PatternTranslator extends AbstractTranslator {
         return getClassNameReferenceForTypeReference(typeReference);
     }
 
-//    @NotNull
-//    private JsNameRef getClassReference(@NotNull JetBinaryExpressionWithTypeRHS expression) {
-//        JetTypeReference typeReference = expression.getRight();
-//        assert typeReference != null : "Binary type expression should have a right expression";
-//        return getClassNameReferenceForTypeReference(typeReference);
-//    }
-
     @NotNull
     private JsNameRef getClassNameReferenceForTypeReference(@NotNull JetTypeReference typeReference) {
         ClassDescriptor referencedClass = BindingUtils.getClassDescriptorForTypeReference
@@ -104,13 +71,13 @@ public final class PatternTranslator extends AbstractTranslator {
         return translationContext().getNamespaceQualifiedReference(className);
     }
 
-//    @NotNull
-//    private JetToken getOperationToken(@NotNull JetBinaryExpressionWithTypeRHS expression) {
-//        JetSimpleNameExpression operationExpression = expression.getOperationSign();
-//        IElementType elementType = operationExpression.getReferencedNameElementType();
-//        assert elementType instanceof JetToken : "Binary type operation should have IElementType of type JetToken";
-//        return (JetToken) elementType;
-//    }
-
-
+    @NotNull
+    private JsExpression translateExpressionPattern(JsExpression expressionToMatch, JetExpressionPattern pattern) {
+        JetExpression patternExpression = pattern.getExpression();
+        assert patternExpression != null : "Expression patter should have an expression.";
+        JsExpression expressionToMatchAgainst =
+                Translation.translateAsExpression(patternExpression, translationContext());
+        //TODO: should call equals method here
+        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, expressionToMatch, expressionToMatchAgainst);
+    }
 }

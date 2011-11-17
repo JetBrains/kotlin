@@ -272,4 +272,8 @@ public class AstUtil {
     public static JsPrefixOperation negated(JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }
+
+    public static JsStatement newAssignmentStatement(JsNameRef nameRef, JsExpression expr) {
+        return convertToStatement(new JsBinaryOperation(JsBinaryOperator.ASG, nameRef, expr));
+    }
 }

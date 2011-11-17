@@ -28,8 +28,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     public JsStatement translateAsFunction(@NotNull JetNamedFunction jetFunction) {
         JsName functionName = translationContext().namespaceScope().declareFreshName(jetFunction.getName());
         JsFunction function = generateFunctionObject(jetFunction);
-        return AstUtil.convertToStatement(AstUtil.newAssignment
-                (translationContext().getNamespaceQualifiedReference(functionName), function));
+        return AstUtil.newAssignmentStatement
+                (translationContext().getNamespaceQualifiedReference(functionName), function);
     }
 
     @NotNull
@@ -55,12 +55,11 @@ public final class FunctionTranslator extends AbstractTranslator {
         JetExpression jetBodyExpression = jetFunction.getBodyExpression();
         //TODO support them ffs
         assert jetBodyExpression != null : "Function without body not supported at the moment";
-        JsNode body = Translation.expressionTranslator
-                (translationContext().newFunction(jetFunction)).translate(jetBodyExpression);
+        JsNode body = Translation.translateExpression(jetBodyExpression, translationContext().newFunction(jetFunction));
         if (jetFunction.hasBlockBody()) {
             return AstUtil.convertToBlock(body);
         }
-        return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression((body))));
+        return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression(body)));
     }
 
     @NotNull

@@ -39,23 +39,24 @@ public final class NamespaceTranslator extends AbstractTranslator {
         JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope
                 (translationContext().getScopeForElement(namespace));
         JsBlock namespaceDeclarations = translateDeclarations(namespace, newContext);
-        block.addStatement(AstUtil.convertToStatement(newNamespace(namespaceName, namespaceDeclarations, dummyFunction)));
+        JsInvocation namespaceExpression = newNamespace(namespaceName, namespaceDeclarations, dummyFunction);
+        block.addStatement(AstUtil.convertToStatement(namespaceExpression));
         return block;
     }
 
     @NotNull
     private JsBlock translateDeclarations(@NotNull JetNamespace namespace, @NotNull TranslationContext newContext) {
-        DeclarationTranslator declarationTranslator = Translation.declarationTranslator(newContext);
+        NamespaceDeclarationTranslator namespaceDeclarationTranslator = Translation.declarationTranslator(newContext);
         JsBlock namespaceDeclarations = new JsBlock();
         for (JetDeclaration declaration : namespace.getDeclarations()) {
-            namespaceDeclarations.addStatement(declarationTranslator.translateDeclaration(declaration));
+            namespaceDeclarations.addStatement(namespaceDeclarationTranslator.translateDeclaration(declaration));
         }
         return namespaceDeclarations;
     }
 
     @NotNull
     private JsStatement namespaceInitStatement(@NotNull JsName namespaceName) {
-        return AstUtil.convertToStatement(AstUtil.newAssignment(namespaceName.makeRef(), new JsObjectLiteral()));
+        return AstUtil.newAssignmentStatement(namespaceName.makeRef(), new JsObjectLiteral());
     }
 
     @NotNull

@@ -1,7 +1,6 @@
 package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,8 +41,7 @@ public final class OperationTranslator extends AbstractTranslator {
     private JsExpression translateBaseExpression(@NotNull JetUnaryExpression expression) {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null : "Unary operation should have a base expression";
-        return AstUtil.convertToExpression
-                (Translation.translateExpression(baseExpression, translationContext()));
+        return Translation.translateAsExpression(baseExpression, translationContext());
     }
 
     @NotNull
@@ -63,6 +61,7 @@ public final class OperationTranslator extends AbstractTranslator {
         return translateAsBinaryOperation(expression);
     }
 
+    //TODO: think about the ways to improve logic here
     @Nullable
     public JsInvocation translateAsSetterCall(@NotNull JetBinaryExpression expression) {
         JetToken jetOperationToken = getOperationToken(expression);
@@ -82,8 +81,7 @@ public final class OperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateAsBinaryOperation(@NotNull JetBinaryExpression expression) {
-        JsExpression left = AstUtil.convertToExpression
-                (Translation.translateExpression(expression.getLeft(), translationContext()));
+        JsExpression left = Translation.translateAsExpression(expression.getLeft(), translationContext());
         JsExpression right = translateRightExpression(expression);
         JetToken token = getOperationToken(expression);
         if (OperatorTable.hasCorrespondingBinaryOperator(token)) {
@@ -101,8 +99,7 @@ public final class OperationTranslator extends AbstractTranslator {
     private JsExpression translateRightExpression(@NotNull JetBinaryExpression expression) {
         JetExpression rightExpression = expression.getRight();
         assert rightExpression != null : "Binary expression should have a right expression";
-        return AstUtil.convertToExpression
-                (Translation.translateExpression(rightExpression, translationContext()));
+        return Translation.translateAsExpression(rightExpression, translationContext());
     }
 
     @NotNull

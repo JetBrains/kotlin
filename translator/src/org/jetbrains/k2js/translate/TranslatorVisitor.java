@@ -2,7 +2,6 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -45,8 +44,7 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
         JsExpression jsInitExpression = null;
         JetExpression initializer = declaration.getInitializer();
         if (initializer != null) {
-            jsInitExpression = AstUtil.convertToExpression(Translation.expressionTranslator(context)
-                    .translate(initializer));
+            jsInitExpression = Translation.translateAsExpression(initializer, context);
         }
         return jsInitExpression;
     }
@@ -67,6 +65,6 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
         if (jetExpression == null) {
             throw new AssertionError("Argument with no expression encountered!");
         }
-        return AstUtil.convertToExpression(Translation.translateExpression(jetExpression, context));
+        return Translation.translateAsExpression(jetExpression, context);
     }
 }
