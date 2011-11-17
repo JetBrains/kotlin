@@ -23,5 +23,4 @@ public class RTTITest extends AbstractClassTest {
     public void notIsOtherClass() throws Exception {
         testFooBoxIsTrue("notIsOtherClass.kt");
     }
-
 }

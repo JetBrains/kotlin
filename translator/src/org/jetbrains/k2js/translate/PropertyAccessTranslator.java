@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
@@ -33,7 +34,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    public JsInvocation resolveAsPropertyGet(@NotNull JetDotQualifiedExpression expression) {
+    public JsInvocation resolveAsPropertyGet(@NotNull JetQualifiedExpression expression) {
         JetExpression selectorExpression = expression.getSelectorExpression();
         assert selectorExpression != null : "Selector should not be null.";
         JsName getterName = getPropertyGetterName(selectorExpression);
@@ -54,9 +55,9 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
 
     @NotNull
     private JsInvocation translateReceiverAndReturnAccessorInvocation
-            (@NotNull JetDotQualifiedExpression dotQualifiedExpression, @NotNull JsName accessorName) {
+            (@NotNull JetQualifiedExpression qualifiedExpression, @NotNull JsName accessorName) {
         JsNode node = Translation.expressionTranslator(translationContext())
-                .translate(dotQualifiedExpression.getReceiverExpression());
+                .translate(qualifiedExpression.getReceiverExpression());
         JsNameRef result = accessorName.makeRef();
         result.setQualifier(AstUtil.convertToExpression(node));
         return AstUtil.newInvocation(result);
