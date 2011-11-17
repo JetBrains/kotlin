@@ -46,7 +46,7 @@ public final class PatternTranslator extends AbstractTranslator {
         JetPattern pattern = getPattern(expression);
         JsExpression resultingExpression = translatePattern(pattern, left);
         if (expression.isNegated()) {
-            return AstUtil.negation(resultingExpression);
+            return AstUtil.negated(resultingExpression);
         }
         return resultingExpression;
     }

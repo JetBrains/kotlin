@@ -30,7 +30,7 @@ public final class RhinoFunctionResultChecker implements RhinoResultChecker {
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = extractAndCallFunctionObject(namespaceName, functionName, context, scope);
-        assertTrue("Result is not what expected! Exprected: " + expectedResult + " Evaluated : " + result,
+        assertTrue("Result is not what expected! Expected: " + expectedResult + " Evaluated : " + result,
                 result.equals(expectedResult));
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);

@@ -25,6 +25,7 @@ public class WhenTranslator extends AbstractTranslator {
     private final JsExpression expressionToMatch;
     @NotNull
     private final JsName dummyCounterName;
+    private int currentEntryNumber = 0;
 
     private WhenTranslator(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         super(context);
@@ -35,16 +36,27 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     JsNode translate() {
-        return translateEntries();
+        JsFor resultingFor = generateDummyFor();
+        List<JsStatement> entries = translateEntries();
+        resultingFor.setBody(AstUtil.newBlock(entries));
+        return resultingFor;
     }
 
-    private JsBlock translateEntries() {
-        //JsFor resultingFor = generateDummyFor();
+    @NotNull
+    private List<JsStatement> translateEntries() {
         List<JsStatement> entries = new ArrayList<JsStatement>();
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            entries.add(translateEntry(entry));
+            entries.add(surroundWithDummyIf(translateEntry(entry)));
         }
-        return AstUtil.newBlock(entries);
+        return entries;
+    }
+
+    @NotNull
+    private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
+        JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
+                dummyCounterName.makeRef(), translationContext().program().getNumberLiteral(currentEntryNumber));
+        currentEntryNumber++;
+        return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }
 
     @NotNull
@@ -110,8 +122,12 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translatePatternCondition(@NotNull JetWhenConditionIsPattern condition) {
-        return Translation.typeOperationTranslator(translationContext()).
+        JsExpression patternMatchExpression = Translation.typeOperationTranslator(translationContext()).
                 translatePattern(getPattern(condition), expressionToMatch);
+        if (condition.isNegated()) {
+            return AstUtil.negated(patternMatchExpression);
+        }
+        return patternMatchExpression;
     }
 
     @NotNull

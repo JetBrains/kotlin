@@ -269,7 +269,7 @@ public class AstUtil {
         return result;
     }
 
-    public static JsPrefixOperation negation(JsExpression expression) {
+    public static JsPrefixOperation negated(JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }
 }
