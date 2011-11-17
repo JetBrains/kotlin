@@ -44,6 +44,11 @@ public final class OperatorTable {
         binaryOperatorsMap.put(JetTokens.ANDAND, JsBinaryOperator.AND);
         binaryOperatorsMap.put(JetTokens.EXCLEQ, JsBinaryOperator.NEQ);
         binaryOperatorsMap.put(JetTokens.PERC, JsBinaryOperator.MOD);
+        binaryOperatorsMap.put(JetTokens.PLUSEQ, JsBinaryOperator.ASG_ADD);
+        binaryOperatorsMap.put(JetTokens.MINUSEQ, JsBinaryOperator.ASG_SUB);
+        binaryOperatorsMap.put(JetTokens.DIVEQ, JsBinaryOperator.ASG_DIV);
+        binaryOperatorsMap.put(JetTokens.MULTEQ, JsBinaryOperator.ASG_MUL);
+        binaryOperatorsMap.put(JetTokens.PERCEQ, JsBinaryOperator.ASG_MOD);
     }
 
     static {

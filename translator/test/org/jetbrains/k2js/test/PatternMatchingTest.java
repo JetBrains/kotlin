@@ -34,4 +34,14 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
         testFooBoxIsTrue("whenValue.kt");
     }
 
+    @Test
+    public void whenNotValue() throws Exception {
+        testFooBoxIsTrue("whenNotValue.kt");
+    }
+
+    @Test
+    public void whenValueOrType() throws Exception {
+        testFooBoxIsTrue("whenValueOrType.kt");
+    }
+
 }

@@ -394,4 +394,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
 
+    @Override
+    @NotNull
+    public JsNode visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression,
+                                                   @NotNull TranslationContext context) {
+        return Translation.translateExpression(expression.getLeft(), context);
+    }
+
+
 }
