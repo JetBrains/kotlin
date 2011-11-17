@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
+//TODO: fix members order
 public class WhenTranslator extends AbstractTranslator {
 
     @NotNull

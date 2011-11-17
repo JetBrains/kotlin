@@ -1,19 +1,15 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetIsExpression;
-import org.jetbrains.jet.lang.psi.JetPattern;
-import org.jetbrains.jet.lang.psi.JetTypePattern;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.*;
 
 /**
  * @author Talanov Pavel
  */
+//TODO: fix members order
 public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
@@ -56,7 +52,20 @@ public final class PatternTranslator extends AbstractTranslator {
         if (pattern instanceof JetTypePattern) {
             return translateTypePattern(expressionToMatch, (JetTypePattern) pattern);
         }
+        if (pattern instanceof JetExpressionPattern) {
+            return translateExpressionPattern(expressionToMatch, (JetExpressionPattern) pattern);
+        }
         throw new AssertionError("Unsupported pattern type " + pattern.getClass());
+    }
+
+    @NotNull
+    private JsExpression translateExpressionPattern(JsExpression expressionToMatch, JetExpressionPattern pattern) {
+        JetExpression patternExpression = pattern.getExpression();
+        assert patternExpression != null : "Expression patter should have an expression.";
+        JsExpression expressionToMatchAgainst =
+                Translation.translateAsExpression(patternExpression, translationContext());
+        //TODO: should call equals method here
+        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, expressionToMatch, expressionToMatchAgainst);
     }
 
     @NotNull
