@@ -91,7 +91,7 @@ public class WhenTranslator extends AbstractTranslator {
             return statementToExecute;
         }
         JsExpression condition = translateConditions(entry);
-        return new JsIf(condition, statementToExecute, null);
+        return new JsIf(condition, addDummyBreak(statementToExecute), null);
     }
 
     @NotNull
@@ -117,6 +117,11 @@ public class WhenTranslator extends AbstractTranslator {
             return translatePatternCondition((JetWhenConditionIsPattern) condition);
         }
         throw new AssertionError("Unsupported when condition " + condition.getClass());
+    }
+
+    @NotNull
+    private JsBlock addDummyBreak(@NotNull JsStatement statement) {
+        return AstUtil.newBlock(statement, new JsBreak());
     }
 
 

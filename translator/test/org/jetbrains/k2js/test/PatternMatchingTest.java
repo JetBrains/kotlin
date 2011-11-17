@@ -24,4 +24,9 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
         testFooBoxIsTrue("whenNotType.kt");
     }
 
+    @Test
+    public void whenExecutesOnlyOnce() throws Exception {
+        testFooBoxIsTrue("whenExecutesOnlyOnce.kt");
+    }
+
 }
