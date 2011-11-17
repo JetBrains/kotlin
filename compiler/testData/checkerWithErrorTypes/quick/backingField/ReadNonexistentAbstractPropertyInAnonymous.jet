@@ -1,0 +1,7 @@
+abstract class ReadNonexistent() {
+    abstract val aa: Int
+    
+    {
+        val x = <!NO_BACKING_FIELD!>$aa<!>
+    }
+}
