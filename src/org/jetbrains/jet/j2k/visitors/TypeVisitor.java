@@ -43,8 +43,27 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
 
   @Override
   public Type visitClassType(PsiClassType classType) {
+    String classTypeName = getClassTypeName(classType);
+
+    if (classType instanceof PsiClassReferenceType) { // TODO: simplify
+      final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
+      PsiElement resolveClass = reference.resolve();
+      if (resolveClass != null && resolveClass instanceof PsiClass) {
+        final PsiClass innerClass = (PsiClass) resolveClass;
+        PsiClass outerClass = innerClass.getContainingClass();
+        if (outerClass != null) {
+          String result = new IdentifierImpl(innerClass.getName()).toKotlin();
+          while (outerClass != null) {
+            result = new IdentifierImpl(outerClass.getName()).toKotlin() + "." + result;
+            outerClass = outerClass.getContainingClass();
+          }
+          classTypeName = result;
+        }
+      }
+    }
+
     myResult = new ClassType(
-      new IdentifierImpl(getClassTypeName(classType)),
+      new IdentifierImpl(classTypeName),
       typesToTypeList(classType.getParameters())
     );
     return super.visitClassType(classType);

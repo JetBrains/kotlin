@@ -1,3 +1,5 @@
+package org.test;
+
 class OuterClass {
   class InnerClass {
   }
