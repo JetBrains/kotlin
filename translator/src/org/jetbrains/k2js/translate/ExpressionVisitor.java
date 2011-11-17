@@ -379,10 +379,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression,
                                                @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
+        JsNullLiteral nullLiteral = context.program().getNullLiteral();
         JsBinaryOperation nullCheck = new JsBinaryOperation
-                (JsBinaryOperator.NEQ, receiver, context.program().getNullLiteral());
-        JsStatement thenStatement = AstUtil.convertToStatement(translateQualifiedExpression(expression, context));
-        return new JsIf(nullCheck, thenStatement, null);
+                (JsBinaryOperator.NEQ, receiver, nullLiteral);
+        JsExpression thenExpression = AstUtil.convertToExpression(translateQualifiedExpression(expression, context));
+        return new JsConditional(nullCheck, thenExpression, nullLiteral);
     }
 
 

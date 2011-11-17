@@ -44,6 +44,11 @@ public final class PropertyAccessorTest extends AbstractClassTest {
         testFooBoxIsTrue("safeCall.kt");
     }
 
+    @Test
+    public void safeCallReturnsNullIfFails() throws Exception {
+        testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
+    }
+
     //TODO test
 //    @Test
 //    public void namespaceCustomAccessors() throws Exception {
