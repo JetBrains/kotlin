@@ -19,4 +19,9 @@ public class RTTITest extends AbstractClassTest {
         testFooBoxIsTrue("isSameClass.kt");
     }
 
+    @Test
+    public void notIsOtherClass() throws Exception {
+        testFooBoxIsTrue("notIsOtherClass.kt");
+    }
+
 }
