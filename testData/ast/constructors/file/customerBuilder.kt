@@ -31,13 +31,13 @@ _lastName = lastName
 return this
 }
 open public fun Build() : Customer? {
-return org.test.customer.Customer(_firstName, _lastName)
+return Customer(_firstName, _lastName)
 }
 }
 public open class User() {
 class object {
 open public fun main() : Unit {
-var customer : Customer? = org.test.customer.CustomerBuilder().WithFirstName("Homer")?.WithLastName("Simpson")?.Build()
+var customer : Customer? = CustomerBuilder().WithFirstName("Homer")?.WithLastName("Simpson")?.Build()
 System.out?.println(customer?.getFirstName())
 System.out?.println(customer?.getLastName())
 }

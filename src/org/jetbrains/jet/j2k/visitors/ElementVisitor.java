@@ -42,7 +42,19 @@ public class ElementVisitor extends JavaElementVisitor {
   @Override
   public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
     super.visitReferenceElement(reference);
-    myResult = new IdentifierImpl(reference.getQualifiedName()); // TODO
+
+    if (!reference.isQualified())
+      myResult = new IdentifierImpl(reference.getReferenceName());
+    else {
+      String result = reference.getReferenceName();
+      PsiElement qualifier = reference.getQualifier();
+      while (qualifier != null){
+        final PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
+        result = p.getReferenceName() + "." + result; // TODO: maybe need to replace by safe call?
+        qualifier = p.getQualifier();
+      }
+      myResult = new IdentifierImpl(result);
+    }
   }
 
   @Override

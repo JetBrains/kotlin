@@ -196,6 +196,7 @@ public class ExpressionVisitor extends StatementVisitor {
     } else { // new Class(): common case
       final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
       myResult = new NewClassExpression(
+        expressionToExpression(expression.getQualifier()),
         elementToElement(expression.getClassOrAnonymousClassReference()),
         elementToElement(expression.getArgumentList()),
         anonymousClass != null ? anonymousClassToAnonymousClass(anonymousClass) : null
