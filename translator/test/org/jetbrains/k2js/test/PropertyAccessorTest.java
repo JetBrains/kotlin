@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class PropertyAccessorTest extends AbstractClassTest {
+public final class PropertyAccessorTest extends IncludeLibraryTest {
 
     final private static String MAIN = "propertyAccess/";
 

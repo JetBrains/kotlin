@@ -386,5 +386,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return new JsConditional(nullCheck, thenExpression, nullLiteral);
     }
 
+    @Override
+    @NotNull
+    public JsNode visitWhenExpression(@NotNull JetWhenExpression expression,
+                                      @NotNull TranslationContext context) {
+        return Translation.translateWhenExpression(expression, context);
+    }
+
 
 }

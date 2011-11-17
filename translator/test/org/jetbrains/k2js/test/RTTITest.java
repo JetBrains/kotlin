@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public class RTTITest extends AbstractClassTest {
+public class RTTITest extends IncludeLibraryTest {
 
     final private static String MAIN = "rtti/";
 

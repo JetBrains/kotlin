@@ -11,7 +11,7 @@ public abstract class AbstractTranslator {
     @NotNull
     private final TranslationContext context;
 
-    public AbstractTranslator(@NotNull TranslationContext context) {
+    protected AbstractTranslator(@NotNull TranslationContext context) {
         this.context = context;
     }
 

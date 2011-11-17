@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class TraitTest extends AbstractClassTest {
+public final class TraitTest extends IncludeLibraryTest {
 
     final private static String MAIN = "trait/";
 

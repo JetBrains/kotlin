@@ -7,20 +7,21 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetIsExpression;
+import org.jetbrains.jet.lang.psi.JetPattern;
 import org.jetbrains.jet.lang.psi.JetTypePattern;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 
 /**
  * @author Talanov Pavel
  */
-public final class TypeOperationTranslator extends AbstractTranslator {
+public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
-    public static TypeOperationTranslator newInstance(@NotNull TranslationContext context) {
-        return new TypeOperationTranslator(context);
+    public static PatternTranslator newInstance(@NotNull TranslationContext context) {
+        return new PatternTranslator(context);
     }
 
-    private TypeOperationTranslator(@NotNull TranslationContext context) {
+    private PatternTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 
@@ -39,14 +40,30 @@ public final class TypeOperationTranslator extends AbstractTranslator {
 //    }
 
     @NotNull
-    JsExpression translateIsExpression(@NotNull JetIsExpression expression) {
+    public JsExpression translateIsExpression(@NotNull JetIsExpression expression) {
         JsExpression left = AstUtil.convertToExpression
                 (Translation.translateExpression(expression.getLeftHandSide(), translationContext()));
-        JsExpression resultingExpression = translateTypePattern(left, (JetTypePattern) expression.getPattern());
+        JetPattern pattern = getPattern(expression);
+        JsExpression resultingExpression = translatePattern(pattern, left);
         if (expression.isNegated()) {
             return AstUtil.negation(resultingExpression);
         }
         return resultingExpression;
+    }
+
+    @NotNull
+    public JsExpression translatePattern(@NotNull JetPattern pattern, @NotNull JsExpression expressionToMatch) {
+        if (pattern instanceof JetTypePattern) {
+            return translateTypePattern(expressionToMatch, (JetTypePattern) pattern);
+        }
+        throw new AssertionError("Unsupported pattern type " + pattern.getClass());
+    }
+
+    @NotNull
+    private JetPattern getPattern(@NotNull JetIsExpression expression) {
+        JetPattern pattern = expression.getPattern();
+        assert pattern != null : "Pattern should not be null";
+        return pattern;
     }
 
     @NotNull
