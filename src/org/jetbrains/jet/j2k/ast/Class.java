@@ -18,31 +18,26 @@ public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
   private final List<Expression> myBaseClassParams;
-  private final List<Initializer> myInitializers;
+  private List<? extends Member> myMembers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
-  final List<Class> myInnerClasses;
-  private final List<Function> myMethods;
-  final List<Field> myFields;
 
   public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
-               List<Expression> baseClassParams, List<Type> implementsTypes, List<Class> innerClasses, List<Function> methods, List<Field> fields, List<Initializer> initializers) {
+               List<Expression> baseClassParams, List<Type> implementsTypes, List<? extends Member> members) {
     myName = name;
     myBaseClassParams = baseClassParams;
     myModifiers = modifiers;
     myTypeParameters = typeParameters;
     myExtendsTypes = extendsTypes;
     myImplementsTypes = implementsTypes;
-    myInnerClasses = innerClasses;
-    myMethods = methods;
-    myFields = fields;
-    myInitializers = initializers;
+    myMembers = members;
   }
+
 
   @Nullable
   private Constructor getPrimaryConstructor() {
-    for (Function m : myMethods)
+    for (Member m : myMembers)
       if (m.getKind() == Kind.CONSTRUCTOR)
         if (((Constructor) m).isPrimary())
           return (Constructor) m;
@@ -82,9 +77,9 @@ public class Class extends Member {
   }
 
   @NotNull
-  List<Function> methodsExceptConstructors() {
-    final LinkedList<Function> result = new LinkedList<Function>();
-    for (Function m : myMethods)
+  LinkedList<Member> membersExceptConstructors() {
+    final LinkedList<Member> result = new LinkedList<Member>();
+    for (Member m : myMembers)
       if (m.getKind() != Kind.CONSTRUCTOR)
         result.add(m);
     return result;
@@ -93,12 +88,13 @@ public class Class extends Member {
   @NotNull
   List<Function> secondaryConstructorsAsStaticInitFunction() {
     final LinkedList<Function> result = new LinkedList<Function>();
-    for (Function m : myMethods)
+    for (Member m : myMembers)
       if (m.getKind() == Kind.CONSTRUCTOR && !((Constructor) m).isPrimary()) {
+        Function f = (Function) m;
         Set<String> modifiers = new HashSet<String>(m.myModifiers);
         modifiers.add(Modifier.STATIC);
 
-        final List<Statement> statements = m.getBlock().getStatements();
+        final List<Statement> statements = f.getBlock().getStatements();
         statements.add(new ReturnStatement(new IdentifierImpl("__"))); // TODO: move to one place, find other __ usages
         final Block block = new Block(statements);
 
@@ -106,8 +102,8 @@ public class Class extends Member {
           new IdentifierImpl("init"),
           modifiers,
           new ClassType(myName),
-          m.getTypeParameters(),
-          m.getParams(),
+          f.getTypeParameters(),
+          f.getParams(),
           block
         ));
       }
@@ -164,11 +160,8 @@ public class Class extends Member {
 
   String bodyToKotlin() {
     return SPACE + "{" + N +
-      AstUtil.joinNodes(getNonStatic(myFields), N) + N +
-      AstUtil.joinNodes(getNonStatic(myInitializers), N) + N +
+      AstUtil.joinNodes(getNonStatic(membersExceptConstructors()), N) + N +
       classObjectToKotlin() + N +
-      AstUtil.joinNodes(getNonStatic(methodsExceptConstructors()), N) + N +
-      AstUtil.joinNodes(getNonStatic(myInnerClasses), N) + N +
       primaryConstructorBodyToKotlin() + N +
       "}";
   }
@@ -190,17 +183,11 @@ public class Class extends Member {
   }
 
   private String classObjectToKotlin() {
-    final List<Member> staticMethods = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
-    staticMethods.addAll(getStatic(methodsExceptConstructors()));
-    final List<Member> staticFields = getStatic(myFields);
-    final List<Member> staticInitializers = getStatic(myInitializers);
-    final List<Member> staticInnerClasses = getStatic(myInnerClasses);
-    if (staticFields.size() + staticMethods.size() + staticInnerClasses.size() + staticInitializers.size() > 0) {
+    final List<Member> staticMembers = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
+    staticMembers.addAll(getStatic(membersExceptConstructors()));
+    if (staticMembers.size() > 0) {
       return "class" + SPACE + "object" + SPACE + "{" + N +
-        AstUtil.joinNodes(staticFields, N) + N +
-        AstUtil.joinNodes(staticInitializers, N) + N +
-        AstUtil.joinNodes(staticMethods, N) + N +
-        AstUtil.joinNodes(staticInnerClasses, N) + N +
+        AstUtil.joinNodes(staticMembers, N) + N +
         "}";
     }
     return EMPTY;
