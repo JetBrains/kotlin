@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -85,52 +84,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return Translation.operationTranslator(context).translate(expression);
     }
 
-
-    //TODO support other cases
-    @Override
-    @NotNull
-    public JsNode visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
-                                            @NotNull TranslationContext context) {
-
-        //TODO: this is only a hack for now
-        // Problem is that namespace properties do not generate getters and setter actually so they must be referenced
-        // by name
-        JsName referencedName = getReferencedName(expression, context);
-        if (referencedName != null) {
-            if (requiresNamespaceQualifier(context, referencedName)) {
-                return context.getNamespaceQualifiedReference(referencedName);
-            }
-            JsNameRef nameRef = referencedName.makeRef();
-            if (requiresThisQualifier(expression, context)) {
-                nameRef.setQualifier(new JsThisRef());
-            }
-            return nameRef;
-        }
-
-        JsInvocation getterCall = Translation.propertyAccessTranslator(context).resolveAsPropertyGet(expression);
-        if (getterCall != null) {
-            return getterCall;
-        }
-        throw new AssertionError("Undefined name in this scope: " + expression.getReferencedName());
-    }
-
-    private boolean requiresNamespaceQualifier(TranslationContext context, JsName referencedName) {
-        return context.namespaceScope().ownsName(referencedName);
-    }
-
-    private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression,
-                                          @NotNull TranslationContext context) {
-        boolean isClassMember = context.classScope().ownsName(getReferencedName(expression, context));
-        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-        return isClassMember || isBackingFieldAccess;
-    }
-
-    @Nullable
-    private JsName getReferencedName(@NotNull JetSimpleNameExpression expression, @NotNull TranslationContext context) {
-        String referencedName = expression.getReferencedName();
-        return context.enclosingScope().findExistingName(referencedName);
-    }
-
     @Override
     @NotNull
     // assume it is a local variable declaration
@@ -182,8 +135,15 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         } else {
             return translateAsConditionalExpression(expression, context);
         }
-
     }
+
+    @Override
+    @NotNull
+    public JsNode visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
+                                            @NotNull TranslationContext context) {
+        return Translation.referenceTranslator(context).translateSimpleName(expression);
+    }
+
 
     @NotNull
     private JsIf translateAsIfStatement(@NotNull JetIfExpression expression,
@@ -373,7 +333,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitIsExpression(@NotNull JetIsExpression expression,
                                     @NotNull TranslationContext context) {
-        return Translation.typeOperationTranslator(context).translateIsExpression(expression);
+        return Translation.patternTranslator(context).translateIsExpression(expression);
     }
 
     @Override
@@ -416,6 +376,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitContinueExpression(@NotNull JetContinueExpression expression,
                                           @NotNull TranslationContext context) {
         return new JsContinue();
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression,
+                                                 @NotNull TranslationContext context) {
+        return Translation.functionTranslator(context).translateAsLiteral(expression.getFunctionLiteral());
     }
 
 

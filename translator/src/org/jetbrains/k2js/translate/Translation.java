@@ -51,8 +51,13 @@ public final class Translation {
     }
 
     @NotNull
-    static public PatternTranslator typeOperationTranslator(@NotNull TranslationContext context) {
+    static public PatternTranslator patternTranslator(@NotNull TranslationContext context) {
         return PatternTranslator.newInstance(context);
+    }
+
+    @NotNull
+    static public ReferenceTranslator referenceTranslator(@NotNull TranslationContext context) {
+        return ReferenceTranslator.newInstance(context);
     }
 
     @NotNull

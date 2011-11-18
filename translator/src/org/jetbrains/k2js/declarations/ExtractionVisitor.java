@@ -13,32 +13,58 @@ import org.jetbrains.k2js.translate.Namer;
 public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, JsScope> {
 
     @NotNull
-    private final DeclarationExtractor extractor;
+    private final Declarations declarations;
 
-    /*package*/ ExtractionVisitor(@NotNull DeclarationExtractor extractor) {
-        this.extractor = extractor;
+    /*package*/ ExtractionVisitor(@NotNull Declarations declarations) {
+        this.declarations = declarations;
     }
-
 
     @Override
     public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @NotNull JsScope enclosingScope) {
+        JsScope classScope = extractClassDeclarations(descriptor, enclosingScope);
+        visitClassMembers(descriptor, classScope);
+        return null;
+    }
+
+    @NotNull
+    private JsScope extractClassDeclarations(@NotNull ClassDescriptor descriptor, @NotNull JsScope enclosingScope) {
         String className = descriptor.getName();
-        extractor.putName(descriptor, enclosingScope.declareName(className));
+        declarations.putName(descriptor, enclosingScope.declareName(className));
         JsScope classScope = new JsScope(enclosingScope, "class " + className);
-        extractor.putScope(descriptor, classScope);
+        declarations.putScope(descriptor, classScope);
+        return classScope;
+    }
+
+    private void visitClassMembers(@NotNull ClassDescriptor descriptor, @NotNull JsScope classScope) {
+        visitClassConstructor(descriptor, classScope);
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             memberDescriptor.accept(this, classScope);
         }
+    }
+
+    private void visitClassConstructor(@NotNull ClassDescriptor descriptor, @NotNull JsScope classScope) {
+        for (ConstructorDescriptor constructorDescriptor : descriptor.getConstructors()) {
+            constructorDescriptor.accept(this, classScope);
+        }
+    }
+
+    //TODO: think about the ways to make this less hacky
+    //For now constructor just references the name of the class. Initialize method scope is defined independently.
+    @Override
+    public Void visitConstructorDescriptor(@NotNull ConstructorDescriptor descriptor, @NotNull JsScope enclosingScope) {
+        String className = descriptor.getContainingDeclaration().getName();
+        JsName alreadyDeclaredClassName = enclosingScope.findExistingName(className);
+        declarations.putName(descriptor, alreadyDeclaredClassName);
         return null;
     }
 
     @Override
     public Void visitFunctionDescriptor(@NotNull FunctionDescriptor descriptor, @NotNull JsScope enclosingScope) {
         String functionName = descriptor.getName();
-        extractor.putName(descriptor, enclosingScope.declareName(functionName));
+        declarations.putName(descriptor, enclosingScope.declareName(functionName));
         JsScope functionScope = new JsScope(enclosingScope, "function " + functionName);
-        extractor.putScope(descriptor, functionScope);
+        declarations.putScope(descriptor, functionScope);
         return null;
     }
 
@@ -59,23 +85,35 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
         String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
         JsName jsName = enclosingScope.declareName(accessorName);
         JsScope accessorScope = new JsScope(enclosingScope, (isGetter ? "getter " : "setter ") + propertyName);
-        extractor.putScope(descriptor, accessorScope);
-        extractor.putName(descriptor, jsName);
-        // Note : We do not put backing field name into extractor because it can't be referenced from outside
+        declarations.putScope(descriptor, accessorScope);
+        declarations.putName(descriptor, jsName);
+        // Note : We do not put backing field name into declarations because it can't be referenced from outside
+        //TODO: find if there is repetetive code like descriptor.getCorrespondingProperty().getName())
         accessorScope.declareName(Namer.getKotlinBackingFieldName(descriptor.getCorrespondingProperty().getName()));
     }
 
     @Override
     public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, JsScope enclosingScope) {
+        JsScope namespaceScope = extractNamespaceDeclaration(descriptor, enclosingScope);
+        visitMemberDeclarations(descriptor, namespaceScope);
+        return null;
+    }
+
+    @NotNull
+    private JsScope extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
+                                                @NotNull JsScope enclosingScope) {
         String namespaceName = descriptor.getName();
-        extractor.putName(descriptor, enclosingScope.declareName(namespaceName));
+        declarations.putName(descriptor, enclosingScope.declareName(namespaceName));
         JsScope namespaceScope = new JsScope(enclosingScope, "namespace " + namespaceName);
-        extractor.putScope(descriptor, namespaceScope);
+        declarations.putScope(descriptor, namespaceScope);
+        return namespaceScope;
+    }
+
+    private void visitMemberDeclarations(@NotNull NamespaceDescriptor descriptor, @NotNull JsScope namespaceScope) {
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getMemberScope().getAllDescriptors()) {
             memberDescriptor.accept(this, namespaceScope);
         }
-        return null;
     }
 
 }

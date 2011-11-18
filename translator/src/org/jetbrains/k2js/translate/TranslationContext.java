@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.declarations.DeclarationExtractor;
+import org.jetbrains.k2js.declarations.Declarations;
 
 /**
  * @author Talanov Pavel
@@ -35,7 +35,7 @@ public final class TranslationContext {
 
     @NotNull
     public static TranslationContext rootContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
-                                                 @NotNull DeclarationExtractor extractor) {
+                                                 @NotNull Declarations extractor) {
         JsScope rootScope = program.getRootScope();
         Scopes scopes = new Scopes(rootScope, rootScope, rootScope);
         return new TranslationContext(null, program, bindingContext, scopes, extractor);
@@ -50,17 +50,17 @@ public final class TranslationContext {
     @Nullable
     private final JsName namespaceName;
     @NotNull
-    private final DeclarationExtractor extractor;
+    private final Declarations declarations;
 
 
     private TranslationContext(@Nullable JsName namespaceName, @NotNull JsProgram program,
                                @NotNull BindingContext bindingContext, @NotNull Scopes scopes,
-                               @NotNull DeclarationExtractor extractor) {
+                               @NotNull Declarations declarations) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namespaceName = namespaceName;
         this.scopes = scopes;
-        this.extractor = extractor;
+        this.declarations = declarations;
     }
 
     @NotNull
@@ -70,17 +70,17 @@ public final class TranslationContext {
 
     @NotNull
     public TranslationContext newNamespace(@NotNull NamespaceDescriptor descriptor) {
-        JsScope namespaceScope = extractor.getScope(descriptor);
+        JsScope namespaceScope = declarations.getScope(descriptor);
         JsName namespaceName = scopes.enclosingScope.findExistingName(descriptor.getName());
         Scopes newScopes = new Scopes(namespaceScope, namespaceScope, namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations);
     }
 
     @NotNull
     public TranslationContext newBlock() {
         Scopes newScopes = new Scopes(new JsScope
                 (scopes.enclosingScope, "Scope for a block"), scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations);
     }
 
     @NotNull
@@ -90,9 +90,9 @@ public final class TranslationContext {
 
     @NotNull
     public TranslationContext newClass(@NotNull ClassDescriptor descriptor) {
-        JsScope classScope = extractor.getScope(descriptor);
+        JsScope classScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(classScope, classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations);
     }
 
     @NotNull
@@ -102,26 +102,32 @@ public final class TranslationContext {
 
     @NotNull
     public TranslationContext newPropertyAccess(@NotNull PropertyAccessorDescriptor descriptor) {
-        return newFunction(descriptor);
+        return newFunctionDeclaration(descriptor);
     }
 
     @NotNull
-    public TranslationContext newFunction(@NotNull JetNamedFunction declaration) {
-        return newFunction(BindingUtils.getFunctionDescriptor(bindingContext, declaration));
+    public TranslationContext newFunctionDeclaration(@NotNull JetNamedFunction declaration) {
+        return newFunctionDeclaration(BindingUtils.getFunctionDescriptor(bindingContext, declaration));
     }
 
     @NotNull
-    public TranslationContext newFunction(@NotNull FunctionDescriptor descriptor) {
-        JsScope functionScope = extractor.getScope(descriptor);
+    public TranslationContext newFunctionDeclaration(@NotNull FunctionDescriptor descriptor) {
+        JsScope functionScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(functionScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations);
+    }
+
+    @NotNull
+    public TranslationContext newFunctionLiteral(@NotNull JsScope correspondingScope) {
+        Scopes newScopes = new Scopes(correspondingScope, scopes.classScope, scopes.namespaceScope);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations);
     }
 
     // Note: Should be used if and only if scope has no corresponding descriptor
     @NotNull
     public TranslationContext newEnclosingScope(@NotNull JsScope enclosingScope) {
         Scopes newScopes = new Scopes(enclosingScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, extractor);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations);
     }
 
 
@@ -165,7 +171,7 @@ public final class TranslationContext {
 
     @NotNull
     public JsScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return extractor.getScope(descriptor);
+        return declarations.getScope(descriptor);
     }
 
     @NotNull
@@ -176,7 +182,7 @@ public final class TranslationContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return extractor.getName(descriptor);
+        return declarations.getName(descriptor);
     }
 
     @NotNull
@@ -190,5 +196,9 @@ public final class TranslationContext {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         assert descriptor != null : "Element should have a descriptor";
         return descriptor;
+    }
+
+    public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {
+        return declarations.isDeclared(descriptor);
     }
 }

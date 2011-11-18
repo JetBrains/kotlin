@@ -126,6 +126,12 @@ public final class BindingUtils {
         return getClassDescriptorForType(getTypeByReference(context, typeReference));
     }
 
+    @Nullable
+    static public DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
+                                                                            @NotNull JetReferenceExpression reference) {
+        return context.get(BindingContext.REFERENCE_TARGET, reference);
+    }
+
     //TODO better implementation?
     static private boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
         return !superClassDescriptor.getName().equals("Any");

@@ -23,4 +23,9 @@ public class FunctionTest extends AbstractExpressionTest {
     public void functionWithTwoParametersCall() throws Exception {
         testFooBoxIsTrue("functionWithTwoParametersCall.kt");
     }
+
+    @Test
+    public void functionLiteral() throws Exception {
+        testFooBoxIsTrue("functionLiteral.kt");
+    }
 }

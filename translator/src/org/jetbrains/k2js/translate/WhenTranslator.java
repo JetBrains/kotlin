@@ -151,7 +151,7 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translatePatternCondition(@NotNull JetWhenConditionIsPattern condition) {
-        JsExpression patternMatchExpression = Translation.typeOperationTranslator(translationContext()).
+        JsExpression patternMatchExpression = Translation.patternTranslator(translationContext()).
                 translatePattern(getPattern(condition), expressionToMatch);
         if (condition.isNegated()) {
             return AstUtil.negated(patternMatchExpression);
