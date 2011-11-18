@@ -32,4 +32,14 @@ public final class WhileTest extends AbstractExpressionTest {
     public void whileDoesntExecuteEvenOnceIfConditionIsFalse() throws Exception {
         testFooBoxIsTrue("while2.kt");
     }
+
+    @Test
+    public void breakWhile() throws Exception {
+        testFooBoxIsTrue("breakWhile.kt");
+    }
+
+    @Test
+    public void breakDoWhile() throws Exception {
+        testFooBoxIsTrue("breakDoWhile.kt");
+    }
 }
