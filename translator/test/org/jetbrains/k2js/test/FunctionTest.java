@@ -28,4 +28,14 @@ public class FunctionTest extends AbstractExpressionTest {
     public void functionLiteral() throws Exception {
         testFooBoxIsTrue("functionLiteral.kt");
     }
+
+    @Test
+    public void adderClosure() throws Exception {
+        testFooBoxIsTrue("adderClosure.kt");
+    }
+
+    @Test
+    public void loopClosure() throws Exception {
+        testFooBoxIsTrue("loopClosure.kt");
+    }
 }
