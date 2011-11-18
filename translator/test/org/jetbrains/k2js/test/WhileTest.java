@@ -42,4 +42,14 @@ public final class WhileTest extends AbstractExpressionTest {
     public void breakDoWhile() throws Exception {
         testFooBoxIsTrue("breakDoWhile.kt");
     }
+
+    @Test
+    public void continueWhile() throws Exception {
+        testFooBoxIsTrue("continueWhile.kt");
+    }
+
+    @Test
+    public void continueDoWhile() throws Exception {
+        testFooBoxIsTrue("continueDoWhile.kt");
+    }
 }
