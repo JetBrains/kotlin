@@ -1130,7 +1130,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.none();
     }
 
-    private Callable resolveToCallable(DeclarationDescriptor fd, boolean superCall) {
+    Callable resolveToCallable(DeclarationDescriptor fd, boolean superCall) {
         final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(fd);
         if (intrinsic != null) {
             return intrinsic;
@@ -2099,11 +2099,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final JetExpression array = expression.getArrayExpression();
         JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, array);
         final Type arrayType = type == null ? Type.VOID_TYPE : typeMapper.mapType(type);
-        gen(array, arrayType);
         final List<JetExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         assert operationDescriptor != null;
         if (arrayType.getSort() == Type.ARRAY && indices.size() == 1 && operationDescriptor.getValueParameters().get(0).getOutType().equals(state.getStandardLibrary().getIntType())) {
+            gen(array, arrayType);
             for (JetExpression index : indices) {
                 gen(index, Type.INT_TYPE);
             }
@@ -2132,6 +2132,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Type[] argumentTypes = accessor.getSignature().getArgumentTypes();
             int index = 0;
             if(isGetter) {
+                Callable callable = resolveToCallable(getterDescriptor, false);
+                if(callable instanceof CallableMethod)
+                    genThisAndReceiverFromResolvedCall((CallableMethod) callable, receiver, resolvedGetCall);
+                else
+                    gen(array, typeMapper.mapType(((ClassDescriptor)getterDescriptor.getContainingDeclaration()).getDefaultType()));
+                
                 assert getterDescriptor != null;
                 if(getterDescriptor.getReceiverParameter().exists()) {
                     index++;
@@ -2145,6 +2151,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 asmType = accessor.getSignature().getReturnType();
             }
             else {
+                Callable callable = resolveToCallable(resolvedSetCall.getResultingDescriptor(), false);
+                if(callable instanceof CallableMethod)
+                    genThisAndReceiverFromResolvedCall((CallableMethod) callable, receiver, resolvedSetCall);
+                else
+                    gen(array, arrayType);
+
                 assert setterDescriptor != null;
                 if(setterDescriptor.getReceiverParameter().exists()) {
                     index++;

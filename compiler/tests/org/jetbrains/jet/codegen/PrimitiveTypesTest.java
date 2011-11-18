@@ -280,4 +280,8 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testKt446 () throws Exception {
         blackBoxFile("regressions/kt446.jet");
     }
+
+    public void testKt518 () throws Exception {
+        blackBoxFile("regressions/kt518.jet");
+    }
 }

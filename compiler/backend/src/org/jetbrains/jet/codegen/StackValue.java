@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -482,8 +483,8 @@ public abstract class StackValue {
     }
 
     private static class CollectionElement extends StackValue {
-        private final CallableMethod getter;
-        private final CallableMethod setter;
+        private final Callable getter;
+        private final Callable setter;
         private final ExpressionCodegen codegen;
         private final FrameMap frame;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
@@ -497,8 +498,8 @@ public abstract class StackValue {
             this.resolvedSetCall = resolvedSetCall;
             this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
             this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
-            this.setter = resolvedSetCall == null ? null : codegen.typeMapper.mapToCallableMethod(setterDescriptor, false, OwnerKind.IMPLEMENTATION);
-            this.getter = resolvedGetCall == null ? null : codegen.typeMapper.mapToCallableMethod(getterDescriptor, false, OwnerKind.IMPLEMENTATION);
+            this.setter = resolvedSetCall == null ? null : codegen.resolveToCallable(setterDescriptor, false);
+            this.getter = resolvedGetCall == null ? null : codegen.resolveToCallable(getterDescriptor, false);
             this.codegen = codegen;
             this.frame = codegen.myFrameMap;
         }
@@ -508,7 +509,10 @@ public abstract class StackValue {
             if (getter == null) {
                 throw new UnsupportedOperationException("no getter specified");
             }
-            getter.invoke(v);
+            if(getter instanceof CallableMethod)
+                ((CallableMethod)getter).invoke(v);
+            else
+                ((IntrinsicMethod)getter).generate(codegen, v, null, null, null, null);
             coerce(type, v);
         }
 
@@ -517,7 +521,10 @@ public abstract class StackValue {
             if (setter == null) {
                 throw new UnsupportedOperationException("no setter specified");
             }
-            setter.invoke(v);
+            if(setter instanceof CallableMethod)
+                ((CallableMethod)setter).invoke(v);
+            else
+                ((IntrinsicMethod)setter).generate(codegen, v, null, null, null, null);
         }
 
         @Override
