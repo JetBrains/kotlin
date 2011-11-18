@@ -1,6 +1,6 @@
 namespace foo
 
-fun box() : Boolean {
+fun box() : Int {
   val c = 3
   val d = 5
   var z = 0
@@ -13,5 +13,5 @@ fun box() : Boolean {
     is 5, is 3 => z++;
     else => z = -1000;
   }
-  return c == 2
+  return z
 }

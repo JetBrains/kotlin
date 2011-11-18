@@ -46,7 +46,7 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
 
     @Test
     public void multipleCases() throws Exception {
-        testFooBoxIsTrue("multipleCases.kt");
+        testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
     }
 
 }

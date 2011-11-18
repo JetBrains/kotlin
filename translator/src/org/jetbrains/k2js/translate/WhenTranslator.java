@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
@@ -105,12 +106,34 @@ public class WhenTranslator extends AbstractTranslator {
     //TODO: ask what these conditions mean
     @NotNull
     private JsExpression translateConditions(@NotNull JetWhenEntry entry) {
-        JetWhenCondition[] conditions = entry.getConditions();
-//        for (JetWhenCondition condition : conditions) {
-//            translateCondition(condition);
-//        }
-        return translateCondition(conditions[0]);
+        List<JsExpression> conditions = new ArrayList<JsExpression>();
+        for (JetWhenCondition condition : entry.getConditions()) {
+            conditions.add(translateCondition(condition));
+        }
+        return anyOfThemIsTrue(conditions);
     }
+
+    @NotNull
+    private JsExpression anyOfThemIsTrue(List<JsExpression> conditions) {
+        assert !conditions.isEmpty() : "When entry (not else) should have at least one condition";
+        JsExpression current = null;
+        for (JsExpression condition : conditions) {
+            current = addCaseCondition(current, condition);
+        }
+        assert current != null;
+        return current;
+    }
+
+    @NotNull
+    private JsExpression addCaseCondition(@Nullable JsExpression current, @NotNull JsExpression condition) {
+        if (current == null) {
+            current = condition;
+        } else {
+            current = new JsBinaryOperation(JsBinaryOperator.OR, current, condition);
+        }
+        return current;
+    }
+
 
     @NotNull
     private JsExpression translateCondition(@NotNull JetWhenCondition condition) {
