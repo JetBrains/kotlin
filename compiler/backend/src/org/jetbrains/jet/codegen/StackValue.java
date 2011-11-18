@@ -269,7 +269,7 @@ public abstract class StackValue {
     }
 
     public static class Local extends StackValue {
-        private final int index;
+        final int index;
 
         public Local(int index, Type type) {
             super(type);

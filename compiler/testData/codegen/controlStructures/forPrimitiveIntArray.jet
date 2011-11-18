@@ -10,5 +10,10 @@ fun box() : String {
     }
     if(sum != 10) return "a failed"
 
+    val b : IntArray? = null
+    for (el in b) {
+        sum = sum + el
+    }
+
     return "OK"
 }

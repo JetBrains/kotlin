@@ -278,7 +278,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if(nextDescriptor == null)
             throw new IllegalStateException("No next() method " + DiagnosticUtils.atLocation(loopRange));
         if(hasNextDescriptor == null)
-            throw new IllegalStateException("No iterator() method " + DiagnosticUtils.atLocation(loopRange));
+            throw new IllegalStateException("No hasNext method or property" + DiagnosticUtils.atLocation(loopRange));
 
         final JetParameter loopParameter = expression.getLoopParameter();
         final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
@@ -293,9 +293,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         gen(expression.getLoopRange(), loopRangeType);
         invokeFunctionNoParams(iteratorDescriptor, asmIterType, v);
         v.store(iteratorVar, asmIterType);
+        
+        Label end = new Label();
+        if(iteratorType.isNullable()) {
+            v.load(iteratorVar, JetTypeMapper.TYPE_OBJECT);
+            v.ifnull(end);
+        }
 
         Label begin = new Label();
-        Label end = new Label();
         myContinueTargets.push(begin);
         myBreakTargets.push(end);
 
@@ -346,6 +351,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         protected Type loopRangeType;
         protected JetType expressionType;
         protected VariableDescriptor parameterDescriptor;
+        Label end = new Label();
 
         public ForLoopGenerator(JetForExpression expression, Type loopRangeType) {
             this.expression = expression;
@@ -364,7 +370,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             Label condition = new Label();
             Label increment = new Label();
-            Label end = new Label();
             v.mark(condition);
             myContinueTargets.push(increment);
             myBreakTargets.push(end);
@@ -398,8 +403,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private class ForInArrayLoopGenerator extends ForLoopGenerator {
-        private int myLengthVar;
         private int myIndexVar;
+        private int myArrayVar;
+        private boolean localArrayVar;
 
         public ForInArrayLoopGenerator(JetForExpression expression, Type loopRangeType) {
             super(expression, loopRangeType);
@@ -407,11 +413,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void generatePrologue() {
-            myLengthVar = myFrameMap.enterTemp();
-            gen(expression.getLoopRange(), loopRangeType);
-            v.arraylength();
-            v.store(myLengthVar, Type.INT_TYPE);
             myIndexVar = myFrameMap.enterTemp();
+
+            StackValue value = gen(expression.getLoopRange());
+            if(value instanceof StackValue.Local) {
+                myArrayVar = ((StackValue.Local)value).index;
+                localArrayVar = true;
+            }
+            else {
+                myArrayVar = myFrameMap.enterTemp();
+                value.put(loopRangeType, v);
+                v.store(myArrayVar, JetTypeMapper.TYPE_OBJECT);
+            }
+
+            if(expressionType.isNullable()) {
+                v.load(myArrayVar, JetTypeMapper.TYPE_OBJECT);
+                v.ifnull(end);
+            }
+
             v.iconst(0);
             v.store(myIndexVar, Type.INT_TYPE);
         }
@@ -420,10 +439,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Type arrayElParamType = state.getStandardLibrary().getArray().equals(expressionType.getConstructor().getDeclarationDescriptor()) ? JetTypeMapper.boxType(asmParamType): asmParamType;
 
             v.load(myIndexVar, Type.INT_TYPE);
-            v.load(myLengthVar, Type.INT_TYPE);
+            v.load(myArrayVar, JetTypeMapper.TYPE_OBJECT);
+            v.arraylength();
             v.ificmpge(end);
 
-            gen(expression.getLoopRange(), loopRangeType);  // array
+            v.load(myArrayVar, JetTypeMapper.TYPE_OBJECT);
             v.load(myIndexVar, Type.INT_TYPE);
             v.aload(arrayElParamType);
             StackValue.onStack(arrayElParamType).put(asmParamType, v);
@@ -435,7 +455,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         protected void cleanupTemp() {
-            myFrameMap.leaveTemp(2);
+            myFrameMap.leaveTemp(localArrayVar ? 1 : 2);
         }
     }
 

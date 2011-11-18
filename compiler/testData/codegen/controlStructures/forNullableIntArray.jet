@@ -12,5 +12,10 @@ fun box() : String {
     System.out?.println(sum)
     if(sum != 10) return "b failed"
 
+    val d : Array<Int?>? = null
+    for (el in d) {
+        sum = sum + (el ?: 7)
+    }
+
     return "OK"
 }

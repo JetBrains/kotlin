@@ -66,6 +66,14 @@ fun box() : String {
     System.out?.println(sum)
     if(sum != 10) return "b failed"
 
+    val c7 = MyCollection5()
+    sum = 0
+    for (el in c7) {
+        sum = sum + el
+    }
+    if(sum != 0) return "c7 failed"
+
+
     return "OK"
 }
 
@@ -107,6 +115,17 @@ class MyCollection3() {
 
 class MyCollection4() {
     fun iterator() = MyIterator()
+
+    class MyIterator() {
+        var k : Int = 5
+
+        fun next() : Int = k--
+        fun hasNext() = k > 0
+    }
+}
+
+class MyCollection5() {
+    fun iterator() : MyIterator? = null
 
     class MyIterator() {
         var k : Int = 5
