@@ -1,0 +1,17 @@
+class SimpleClass() : java.lang.Object() {
+    fun foo() : String = "610" + toString ()
+
+    override fun toString() : String { return foo() }
+}
+
+class ComplexClass() : SimpleClass by delegate {
+    val delegate = SimpleClass()
+    override fun toString() : String { return foo() + " complex" }
+}
+
+fun box() : String {
+  val c = SimpleClass()
+  val d = ComplexClass()
+  System.out?.println(d)
+  return c.foo()
+}
