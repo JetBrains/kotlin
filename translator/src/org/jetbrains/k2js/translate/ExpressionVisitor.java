@@ -342,10 +342,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                                @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JsBinaryOperation nullCheck = new JsBinaryOperation
-                (JsBinaryOperator.NEQ, receiver, nullLiteral);
         JsExpression thenExpression = translateQualifiedExpression(expression, context);
-        return new JsConditional(nullCheck, thenExpression, nullLiteral);
+        return new JsConditional(TranslationUtils.notNullCheck(receiver, context),
+                thenExpression, nullLiteral);
     }
 
     @Override

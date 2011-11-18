@@ -281,4 +281,12 @@ public class AstUtil {
         assert statement instanceof JsExprStmt : "Cannot extract exprssion form statement: " + statement;
         return (((JsExprStmt) statement).getExpression());
     }
+
+    public static JsBinaryOperation and(JsExpression op1, JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.AND, op1, op2);
+    }
+
+    public static JsBinaryOperation or(JsExpression op1, JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
+    }
 }

@@ -49,4 +49,9 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
         testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
     }
 
+    @Test
+    public void matchNullableType() throws Exception {
+        testFooBoxIsTrue("matchNullableType.kt");
+    }
+
 }

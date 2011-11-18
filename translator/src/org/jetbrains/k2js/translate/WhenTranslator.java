@@ -103,7 +103,6 @@ public class WhenTranslator extends AbstractTranslator {
         return Translation.translateAsStatement(expressionToExecute, translationContext());
     }
 
-    //TODO: ask what these conditions mean
     @NotNull
     private JsExpression translateConditions(@NotNull JetWhenEntry entry) {
         List<JsExpression> conditions = new ArrayList<JsExpression>();
@@ -127,11 +126,10 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression addCaseCondition(@Nullable JsExpression current, @NotNull JsExpression condition) {
         if (current == null) {
-            current = condition;
+            return condition;
         } else {
-            current = new JsBinaryOperation(JsBinaryOperator.OR, current, condition);
+            return AstUtil.or(current, condition);
         }
-        return current;
     }
 
 
