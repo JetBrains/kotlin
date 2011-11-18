@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class ObjectGenTest extends CodegenTestCase {
     public void testSimpleObject() throws Exception {
@@ -15,5 +16,9 @@ public class ObjectGenTest extends CodegenTestCase {
 
     public void testMethodOnObject() throws Exception {
         blackBoxFile("objects/methodOnObject.jet");
+    }
+
+    public void testKt535() throws Exception {
+        blackBoxFile("regressions/kt535.jet");
     }
 }

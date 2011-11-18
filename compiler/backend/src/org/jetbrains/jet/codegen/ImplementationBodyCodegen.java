@@ -869,7 +869,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 v.aconst(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION));
                 v.iconst(0);
                 ClassDescriptor outerClassDescriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
-                if(outerClassDescriptor == null) {
+                if(outerClassDescriptor == null || CodegenUtil.isClassObject(descriptor)) {
                     v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
                 }
                 else {

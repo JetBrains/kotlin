@@ -101,7 +101,7 @@ public class CodegenUtil {
         }
 
         ClassDescriptor outerClassDescriptor = getOuterClassDescriptor(type.getConstructor().getDeclarationDescriptor());
-        if(outerClassDescriptor == null)
+        if(outerClassDescriptor == null || isClassObject(type.getConstructor().getDeclarationDescriptor()))
             return false;
 
         return hasTypeInfoField(outerClassDescriptor.getDefaultType());
