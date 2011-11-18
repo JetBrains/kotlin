@@ -15,7 +15,6 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 
 /**
@@ -123,7 +122,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @Nullable
     private PropertyDescriptor getPropertyDescriptor(@NotNull JetExpression expression) {
         ResolvedCall<?> resolvedCall =
-                translationContext().bindingContext().get(BindingContext.RESOLVED_CALL, expression);
+                BindingUtils.getResolvedCall(translationContext().bindingContext(), expression);
         if (resolvedCall != null) {
             DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
             if (descriptor instanceof PropertyDescriptor) {

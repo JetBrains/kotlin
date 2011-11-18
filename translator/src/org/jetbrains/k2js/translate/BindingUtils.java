@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
@@ -139,12 +140,18 @@ public final class BindingUtils {
 
     //TODO move unrelated utils to other class
     @Nullable
-    public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
+    static public ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
         for (ClassDescriptor descriptor : superclassDescriptors) {
             if (descriptor.getKind() == ClassKind.CLASS) {
                 return descriptor;
             }
         }
         return null;
+    }
+
+    @Nullable
+    static public ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
+                                                  @NotNull JetExpression expression) {
+        return (context.get(BindingContext.RESOLVED_CALL, expression));
     }
 }

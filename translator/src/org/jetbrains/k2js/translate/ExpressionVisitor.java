@@ -109,7 +109,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private boolean isConstructorInvocation(@NotNull JetCallExpression expression,
                                             @NotNull TranslationContext context) {
         ResolvedCall<?> resolvedCall =
-                (context.bindingContext().get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression()));
+                BindingUtils.getResolvedCall(context.bindingContext(), expression.getCalleeExpression());
         if (resolvedCall == null) {
             return false;
         }

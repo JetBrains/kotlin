@@ -1,9 +1,11 @@
 package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 
@@ -81,8 +83,14 @@ public final class OperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateAsBinaryOperation(@NotNull JetBinaryExpression expression) {
+
         JsExpression left = Translation.translateAsExpression(expression.getLeft(), translationContext());
         JsExpression right = translateRightExpression(expression);
+
+        JsNameRef operationReference = getOverloadedOperationReference(expression);
+        if (operationReference != null) {
+            return overloadedMethodInvocation(left, right, operationReference);
+        }
         JetToken token = getOperationToken(expression);
         if (OperatorTable.hasCorrespondingBinaryOperator(token)) {
             return new JsBinaryOperation(OperatorTable.getBinaryOperator(token), left, right);
@@ -93,6 +101,24 @@ public final class OperationTranslator extends AbstractTranslator {
             return functionInvocation;
         }
         throw new AssertionError("Unsupported token encountered: " + token.toString());
+    }
+
+    private JsExpression overloadedMethodInvocation(JsExpression left, JsExpression right, JsNameRef operationReference) {
+        operationReference.setQualifier(left);
+        return AstUtil.newInvocation(operationReference, right);
+    }
+
+    @Nullable
+    private JsNameRef getOverloadedOperationReference(@NotNull JetBinaryExpression expression) {
+        DeclarationDescriptor operationDescriptor = BindingUtils.getDescriptorForReferenceExpression
+                (translationContext().bindingContext(), expression.getOperationReference());
+        if (operationDescriptor == null) {
+            return null;
+        }
+        if (!translationContext().isDeclared(operationDescriptor)) {
+            return null;
+        }
+        return translationContext().getNameForDescriptor(operationDescriptor).makeRef();
     }
 
     @NotNull
