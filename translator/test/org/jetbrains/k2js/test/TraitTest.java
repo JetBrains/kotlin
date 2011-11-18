@@ -44,4 +44,10 @@ public final class TraitTest extends IncludeLibraryTest {
         testFooBoxIsTrue("traitExtendsTwoTraits.kt");
     }
 
+    @Test
+    public void funDelegation() throws Exception {
+        testFooBoxIsOk("funDelegation.jet");
+    }
+
+
 }

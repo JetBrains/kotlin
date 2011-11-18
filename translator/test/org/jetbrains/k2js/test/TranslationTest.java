@@ -100,4 +100,9 @@ public abstract class TranslationTest {
     protected void testFooBoxIsTrue(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", true);
     }
+
+    protected void testFooBoxIsOk(String filename) throws Exception {
+        testFunctionOutput(filename, "foo", "box", "OK");
+    }
+
 }

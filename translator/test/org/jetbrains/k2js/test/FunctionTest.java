@@ -38,4 +38,20 @@ public class FunctionTest extends AbstractExpressionTest {
     public void loopClosure() throws Exception {
         testFooBoxIsTrue("loopClosure.kt");
     }
+
+    @Test
+    public void functionLiteralAsParameter() throws Exception {
+        testFooBoxIsTrue("functionLiteralAsParameter.kt");
+    }
+
+    @Test
+    public void closureWithParameter() throws Exception {
+        testFooBoxIsOk("closureWithParameter.jet");
+    }
+
+    @Test
+    public void closureWithParameterAndBoxing() throws Exception {
+        testFooBoxIsOk("closureWithParameterAndBoxing.jet");
+    }
+
 }
