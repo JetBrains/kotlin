@@ -2,7 +2,7 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
@@ -45,10 +45,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction generateFunctionObject(@NotNull JetFunction jetFunction) {
         JsFunction result = createFunctionObject(jetFunction);
-        List<JsParameter> jsParameters = translateParameters(jetFunction.getValueParameters(), result.getScope());
-        JsNode jsBody = translateBody(jetFunction, result.getScope());
-        result.setParameters(jsParameters);
-        result.setBody(AstUtil.convertToBlock(jsBody));
+        result.setParameters(translateParameters(jetFunction.getValueParameters(), result.getScope()));
+        result.setBody(translateBody(jetFunction, result.getScope()));
         return result;
     }
 
@@ -64,18 +62,41 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsStatement translateBody(@NotNull JetFunction function, @NotNull JsScope functionScope) {
+    private JsBlock translateBody(@NotNull JetFunction function, @NotNull JsScope functionScope) {
         JetExpression jetBodyExpression = function.getBodyExpression();
         //TODO decide if there are cases where this assert is illegal
         assert jetBodyExpression != null : "Function without body not supported";
         JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext(function, functionScope));
-        if (function.hasBlockBody()) {
-            return AstUtil.convertToBlock(body);
-        }
-        return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression(body)));
+        return wrapWithReturnIfNeeded(body, !function.hasBlockBody());
     }
 
-    private TranslationContext functionBodyContext(JetFunction function, JsScope functionScope) {
+    @NotNull
+    private JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
+        if (!needsReturn) {
+            return AstUtil.convertToBlock(body);
+        }
+        if (body instanceof JsExpression) {
+            return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression(body)));
+        }
+        if (body instanceof JsBlock) {
+            JsBlock bodyBlock = (JsBlock) body;
+            addReturnToBlockStatement(bodyBlock);
+            return bodyBlock;
+        }
+        throw new AssertionError("Invalid node as function body");
+    }
+
+    private void addReturnToBlockStatement(@NotNull JsBlock bodyBlock) {
+        List<JsStatement> statements = bodyBlock.getStatements();
+        int lastIndex = statements.size() - 1;
+        JsStatement lastStatement = statements.get(lastIndex);
+        statements.set(lastIndex,
+                new JsReturn(AstUtil.extractExpressionFromStatement(lastStatement)));
+    }
+
+    @NotNull
+    private TranslationContext functionBodyContext(@NotNull JetFunction function,
+                                                   @NotNull JsScope functionScope) {
         if (function instanceof JetNamedFunction) {
             return translationContext().newFunctionDeclaration((JetNamedFunction) function);
         }

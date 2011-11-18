@@ -276,4 +276,9 @@ public class AstUtil {
     public static JsStatement newAssignmentStatement(JsNameRef nameRef, JsExpression expr) {
         return convertToStatement(new JsBinaryOperation(JsBinaryOperator.ASG, nameRef, expr));
     }
+
+    public static JsExpression extractExpressionFromStatement(JsStatement statement) {
+        assert statement instanceof JsExprStmt : "Cannot extract exprssion form statement: " + statement;
+        return (((JsExprStmt) statement).getExpression());
+    }
 }
