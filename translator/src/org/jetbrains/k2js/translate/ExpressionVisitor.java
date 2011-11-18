@@ -400,7 +400,22 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression,
                                                    @NotNull TranslationContext context) {
+        // we actually do not care for types in js
         return Translation.translateExpression(expression.getLeft(), context);
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitBreakExpression(@NotNull JetBreakExpression expression,
+                                       @NotNull TranslationContext context) {
+        return new JsBreak();
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitContinueExpression(@NotNull JetContinueExpression expression,
+                                          @NotNull TranslationContext context) {
+        return new JsContinue();
     }
 
 
