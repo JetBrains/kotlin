@@ -14,6 +14,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -48,10 +49,20 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
+    protected void createEnvironmentWithMockJdk() {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         myEnvironment.addToClasspath(rtJar);
         myEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
+    }
+
+    protected void createEnvironmentWithFullJdk() {
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
+        final File rtJar = CompileEnvironment.findRtJar(true);
+        myEnvironment.addToClasspath(rtJar);
     }
 
     @Override
