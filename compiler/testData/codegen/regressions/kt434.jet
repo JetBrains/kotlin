@@ -9,5 +9,5 @@ fun String.decodeURI(encoding : String) : String? =
     }
 
 fun box() : String {
-    return if("hhh".decodeURI("lala") == null) "OK" else "fail"
+    return if("hhh".decodeURI("") == null) "OK" else "fail"
 }
