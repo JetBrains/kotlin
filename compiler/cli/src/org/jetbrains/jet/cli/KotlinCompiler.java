@@ -11,6 +11,9 @@ import org.jetbrains.jet.compiler.CompileEnvironmentException;
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class KotlinCompiler {
+    private KotlinCompiler() {
+    }
+
     public static class Arguments {
         @Argument(value = "output", description = "output directory")
         public String outputDir;

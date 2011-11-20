@@ -63,14 +63,70 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testPrimitiveIterator () throws Exception {
-        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.nextByte()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorByte () throws Exception {
+        loadText("fun box() { for(x in ByteArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorShort () throws Exception {
+        loadText("fun box() { for(x in ShortArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorInt () throws Exception {
+        loadText("fun box() { for(x in IntArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorLong () throws Exception {
+        loadText("fun box() { for(x in LongArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorFloat () throws Exception {
+        loadText("fun box() { for(x in FloatArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorDouble () throws Exception {
+        loadText("fun box() { for(x in DoubleArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorChar () throws Exception {
+        loadText("fun box() { for(x in CharArray(5)) { java.lang.System.out?.println(x) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testPrimitiveIteratorBoolean () throws Exception {
+        loadText("fun box() { for(x in BooleanArray(5)) { java.lang.System.out?.println(x) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
 
     public void testLongIterator () throws Exception {
-        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.nextLong()) } }");
         System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);

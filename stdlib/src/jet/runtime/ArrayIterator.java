@@ -1,7 +1,6 @@
 package jet.runtime;
 
-import jet.Iterator;
-import jet.JetObject;
+import jet.*;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 
@@ -46,17 +45,23 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         return new GenericIterator<T>(array, elementTypeInfo);
     }
 
-    private static class ByteIterator extends ArrayIterator<Byte> {
+    private static class ArrayByteIterator extends ByteIterator {
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayByteIterator.class, false);
+
         private final byte[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ByteIterator.class, false);
+        private int index;
 
-        private ByteIterator(byte[] array) {
-            super(array.length);
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayByteIterator(byte[] array) {
             this.array = array;
         }
 
         @Override
-        public Byte next() {
+        public byte nextByte() {
             return array[index++];
         }
 
@@ -66,21 +71,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Byte> iterator(byte[] array) {
-        return new ByteIterator(array);
+    public static ByteIterator iterator(byte[] array) {
+        return new ArrayByteIterator(array);
     }
 
-    private static class ShortIterator extends ArrayIterator<Short> {
+    private static class ArrayShortIterator extends ShortIterator {
         private final short[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ShortIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayShortIterator.class, false);
 
-        private ShortIterator(short[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayShortIterator(short[] array) {
             this.array = array;
         }
 
         @Override
-        public Short next() {
+        public short nextShort() {
             return array[index++];
         }
 
@@ -90,21 +101,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Short> iterator(short[] array) {
-        return new ShortIterator(array);
+    public static ShortIterator iterator(short[] array) {
+        return new ArrayShortIterator(array);
     }
 
-    private static class IntegerIterator extends ArrayIterator<Integer> {
+    private static class ArrayIntegerIterator extends IntIterator {
         private final int[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(IntegerIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayIntegerIterator.class, false);
 
-        private IntegerIterator(int[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayIntegerIterator(int[] array) {
             this.array = array;
         }
 
         @Override
-        public Integer next() {
+        public int nextInt() {
             return array[index++];
         }
 
@@ -114,21 +131,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Integer> iterator(int[] array) {
-        return new IntegerIterator(array);
+    public static IntIterator iterator(int[] array) {
+        return new ArrayIntegerIterator(array);
     }
 
-    private static class LongIterator extends ArrayIterator<Long> {
+    private static class ArrayLongIterator extends LongIterator {
         private final long[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(LongIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayLongIterator.class, false);
 
-        private LongIterator(long[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayLongIterator(long[] array) {
             this.array = array;
         }
 
         @Override
-        public Long next() {
+        public long nextLong() {
             return array[index++];
         }
 
@@ -138,21 +161,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Long> iterator(long[] array) {
-        return new LongIterator(array);
+    public static LongIterator iterator(long[] array) {
+        return new ArrayLongIterator(array);
     }
 
-    private static class FloatIterator extends ArrayIterator<Float> {
+    private static class ArrayFloatIterator extends FloatIterator {
         private final float[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(FloatIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayFloatIterator.class, false);
 
-        private FloatIterator(float[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayFloatIterator(float[] array) {
             this.array = array;
         }
 
         @Override
-        public Float next() {
+        public float nextFloat() {
             return array[index++];
         }
 
@@ -162,21 +191,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Float> iterator(float[] array) {
-        return new FloatIterator(array);
+    public static FloatIterator iterator(float[] array) {
+        return new ArrayFloatIterator(array);
     }
 
-    private static class DoubleIterator extends ArrayIterator<Double> {
+    private static class ArrayDoubleIterator extends DoubleIterator {
         private final double[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(DoubleIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayDoubleIterator.class, false);
 
-        private DoubleIterator(double[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayDoubleIterator(double[] array) {
             this.array = array;
         }
 
         @Override
-        public Double next() {
+        public double nextDouble() {
             return array[index++];
         }
 
@@ -186,21 +221,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Double> iterator(double[] array) {
-        return new DoubleIterator(array);
+    public static DoubleIterator iterator(double[] array) {
+        return new ArrayDoubleIterator(array);
     }
 
-    private static class CharacterIterator extends ArrayIterator<Character> {
+    private static class ArrayCharacterIterator extends CharIterator {
         private final char[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(CharacterIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayCharacterIterator.class, false);
 
-        private CharacterIterator(char[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayCharacterIterator(char[] array) {
             this.array = array;
         }
 
         @Override
-        public Character next() {
+        public char nextChar() {
             return array[index++];
         }
 
@@ -210,21 +251,27 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Character> iterator(char[] array) {
-        return new CharacterIterator(array);
+    public static CharIterator iterator(char[] array) {
+        return new ArrayCharacterIterator(array);
     }
 
-    private static class BooleanIterator extends ArrayIterator<Boolean> {
+    private static class ArrayBooleanIterator extends BooleanIterator {
         private final boolean[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(BooleanIterator.class, false);
+        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayBooleanIterator.class, false);
 
-        private BooleanIterator(boolean[] array) {
-            super(array.length);
+        private int index;
+
+        @Override
+        public boolean getHasNext() {
+            return index < array.length;
+        }
+
+        private ArrayBooleanIterator(boolean[] array) {
             this.array = array;
         }
 
         @Override
-        public Boolean next() {
+        public boolean nextBoolean() {
             return array[index++];
         }
 
@@ -234,39 +281,7 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
     }
 
-    public static Iterator<Boolean> iterator(boolean[] array) {
-        return new BooleanIterator(array);
-    }
-
-    public static void main(String[] args) {
-        String[] strings = {"Byte", "byte", "Short", "short", "Integer", "int", "Long", "long", "Float", "float", "Double", "double", "Character", "char", "Boolean", "boolean"};
-        for(int i = 0; i != strings.length; i += 2) {
-            String boxed = strings[i];
-            String unboxed = strings[i+1];
-            System.out.println("    private static class " + boxed + "Iterator extends ArrayIterator<" + boxed + "> {\n" +
-                               "        private final " + unboxed + "[] array;\n" +
-                               "        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(" + boxed + "Iterator.class, false);\n" +
-                               "\n" +
-                               "        private " + boxed + "Iterator(" + unboxed + "[] array) {\n" +
-                               "            super(array.length);\n" +
-                               "            this.array = array;\n" +
-                               "        }\n" +
-                               "\n" +
-                               "        @Override\n" +
-                               "        public " + boxed + " next() {\n" +
-                               "            return array[index++];\n" +
-                               "        }\n" +
-                               "\n" +
-                               "        @Override\n" +
-                               "        public TypeInfo<?> getTypeInfo() {\n" +
-                               "            return typeInfo;\n" +
-                               "        }\n" +
-                               "    }\n" +
-                               "\n" +
-                               "    public static Iterator<" + boxed + "> iterator(" + unboxed + "[] array) {\n" +
-                               "        return new " +  boxed + "Iterator(array);\n" +
-                               "    }\n" +
-                               "");
-        }
+    public static BooleanIterator iterator(boolean[] array) {
+        return new ArrayBooleanIterator(array);
     }
 }

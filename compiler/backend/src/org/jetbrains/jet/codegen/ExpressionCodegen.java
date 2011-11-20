@@ -887,7 +887,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                     generateFromResolvedCall(resolvedCall.getThisObject());
                                 }
                                 else {
-                                    receiver.put(typeMapper.mapType(((ClassDescriptor)resolvedCall.getResultingDescriptor().getContainingDeclaration()).getDefaultType()), v);
+                                    ClassDescriptor containingDeclaration = (ClassDescriptor) resolvedCall.getResultingDescriptor().getContainingDeclaration();
+                                    if(CodegenUtil.isInterface(containingDeclaration))
+                                        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+                                    else
+                                        receiver.put(typeMapper.mapType(containingDeclaration.getDefaultType()), v);
                                 }
                             }
                         }

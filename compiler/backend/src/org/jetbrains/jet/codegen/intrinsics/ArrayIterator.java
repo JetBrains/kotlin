@@ -32,34 +32,42 @@ public class ArrayIterator implements IntrinsicMethod {
         if(containingDeclaration.equals(standardLibrary.getArray())) {
             codegen.generateTypeInfo(funDescriptor.getReturnType().getArguments().get(0).getType());
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;Ljet/typeinfo/TypeInfo;)Ljet/Iterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getByteArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([B)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([B)Ljet/ByteIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_BYTE_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getShortArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([S)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([S)Ljet/ShortIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_SHORT_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getIntArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([I)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([I)Ljet/IntIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_INT_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getLongArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([J)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([J)Ljet/LongIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_LONG_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getFloatArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([F)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([F)Ljet/FloatIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_FLOAT_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getDoubleArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([D)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([D)Ljet/DoubleIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_DOUBLE_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getCharArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([C)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([C)Ljet/CharIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_CHAR_ITERATOR);
         }
         else if(containingDeclaration.equals(standardLibrary.getBooleanArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Z)Ljet/Iterator;");
+            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Z)Ljet/BooleanIterator;");
+            return StackValue.onStack(JetTypeMapper.TYPE_BOOLEAN_ITERATOR);
         }
         else {
             throw new UnsupportedOperationException(containingDeclaration.toString());
         }
-        return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
     }
 }

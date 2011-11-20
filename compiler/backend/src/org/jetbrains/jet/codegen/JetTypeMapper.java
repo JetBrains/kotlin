@@ -74,6 +74,14 @@ public class JetTypeMapper {
     public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/runtime/SharedVar$Char");
     public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/runtime/SharedVar$Long");
     public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
+    public static final Type TYPE_BOOLEAN_ITERATOR = Type.getObjectType("jet/BooleanIterator");
+    public static final Type TYPE_CHAR_ITERATOR = Type.getObjectType("jet/CharIterator");
+    public static final Type TYPE_BYTE_ITERATOR = Type.getObjectType("jet/ByteIterator");
+    public static final Type TYPE_SHORT_ITERATOR = Type.getObjectType("jet/ShortIterator");
+    public static final Type TYPE_INT_ITERATOR = Type.getObjectType("jet/IntIterator");
+    public static final Type TYPE_LONG_ITERATOR = Type.getObjectType("jet/LongIterator");
+    public static final Type TYPE_FLOAT_ITERATOR = Type.getObjectType("jet/FloatIterator");
+    public static final Type TYPE_DOUBLE_ITERATOR = Type.getObjectType("jet/DoubleIterator");
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;

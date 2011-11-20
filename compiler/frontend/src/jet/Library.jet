@@ -53,6 +53,38 @@ trait Iterator<out T> {
   val hasNext : Boolean
 }
 
+abstract open class ByteIterator : Iterator<Byte> {
+  fun nextByte() : Byte
+}
+
+abstract open class ShortIterator : Iterator<Short> {
+  fun nextShort() : Short
+}
+
+abstract open class CharIterator : Iterator<Char> {
+  fun nextChar()  : Char
+}
+
+abstract open class IntIterator : Iterator<Int> {
+  fun nextInt()  : Int
+}
+
+abstract open class LongIterator : Iterator<Long> {
+  fun nextLong()  : Long
+}
+
+abstract open class FloatIterator : Iterator<Float> {
+  fun nextFloat()  : Float
+}
+
+abstract open class DoubleIterator : Iterator<Double> {
+  fun nextDouble()  : Double
+}
+
+abstract open class BooleanIterator : Iterator<Boolean> {
+  fun nextBoolean()  : Boolean
+}
+
 trait Iterable<out T> {
   fun iterator() : Iterator<T>
 }
@@ -70,7 +102,7 @@ class ByteArray(val size : Int) {
   fun get(index : Int) : Byte
   fun set(index : Int, value : Byte) : Unit
 
-  fun iterator() : Iterator<Byte>
+  fun iterator() : ByteIterator
 
   val indices : IntRange
 }
@@ -79,7 +111,7 @@ class ShortArray(val size : Int) {
   fun get(index : Int) : Short
   fun set(index : Int, value : Short) : Unit
 
-  fun iterator() : Iterator<Short>
+  fun iterator() : ShortIterator
 
   val indices : IntRange
 }
@@ -88,7 +120,7 @@ class IntArray(val size : Int) {
   fun get(index : Int) : Int
   fun set(index : Int, value : Int) : Unit
 
-  fun iterator() : Iterator<Int>
+  fun iterator() : IntIterator
 
   val indices : IntRange
 }
@@ -97,7 +129,7 @@ class LongArray(val size : Int) {
   fun get(index : Int) : Long
   fun set(index : Int, value : Long) : Unit
 
-  fun iterator() : Iterator<Long>
+  fun iterator() : LongIterator
 
   val indices : IntRange
 }
@@ -106,7 +138,7 @@ class FloatArray(val size : Int) {
   fun get(index : Int) : Float
   fun set(index : Int, value : Float) : Unit
 
-  fun iterator() : Iterator<Float>
+  fun iterator() : FloatIterator
 
   val indices : IntRange
 }
@@ -115,7 +147,7 @@ class DoubleArray(val size : Int) {
   fun get(index : Int) : Double
   fun set(index : Int, value : Double) : Unit
 
-  fun iterator() : Iterator<Double>
+  fun iterator() : DoubleIterator
 
   val indices : IntRange
 }
@@ -124,7 +156,7 @@ class CharArray(val size : Int) {
   fun get(index : Int) : Char
   fun set(index : Int, value : Char) : Unit
 
-  fun iterator() : Iterator<Char>
+  fun iterator() : CharIterator
 
   val indices : IntRange
 }
@@ -133,7 +165,7 @@ class BooleanArray(val size : Int) {
   fun get(index : Int) : Boolean
   fun set(index : Int, value : Boolean) : Unit
 
-  fun iterator() : Iterator<Boolean>
+  fun iterator() : BooleanIterator
 
   val indices : IntRange
 }
