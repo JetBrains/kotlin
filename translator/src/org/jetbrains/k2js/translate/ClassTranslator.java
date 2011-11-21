@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
+import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +22,7 @@ import java.util.List;
 public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
-    private final ClassBodyVisitor classBodyVisitor = new ClassBodyVisitor();
+    private final DeclarationBodyVisitor declarationBodyVisitor = new DeclarationBodyVisitor();
 
     @NotNull
     public static ClassTranslator newInstance(@NotNull TranslationContext context) {
@@ -31,11 +34,11 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsStatement translateClass(@NotNull JetClass jetClassDeclaration) {
+    public JsInvocation translateClass(@NotNull JetClass jetClassDeclaration) {
         JsInvocation jsClassDeclaration = classCreateMethodInvocation(jetClassDeclaration);
         addSuperclassReferences(jetClassDeclaration, jsClassDeclaration);
         addClassOwnDeclarations(jetClassDeclaration, jsClassDeclaration);
-        return classDeclarationStatement(jetClassDeclaration, jsClassDeclaration);
+        return jsClassDeclaration;
     }
 
     @NotNull
@@ -47,18 +50,13 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    @NotNull
-    private JsStatement classDeclarationStatement(@NotNull JetClass classDeclaration,
-                                                  @NotNull JsInvocation jsClassDeclaration) {
-        return AstUtil.newAssignmentStatement
-                (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration);
-    }
-
-    @NotNull
-    private JsNameRef namespaceQualifiedClassNameReference(@NotNull JetClass classDeclaration) {
-        return translationContext().getNamespaceQualifiedReference
-                (translationContext().getNameForElement(classDeclaration));
-    }
+    //TODO
+//    @NotNull
+//    private JsStatement classDeclarationStatement(@NotNull JetClass classDeclaration,
+//                                                  @NotNull JsInvocation jsClassDeclaration) {
+//        JsNameRef unqualifiedClassNameReference = translationContext().getNameForElement(classDeclaration).makeRef();
+//        return AstUtil.newAssignmentStatement(unqualifiedClassNameReference, jsClassDeclaration);
+//    }
 
     private void addClassOwnDeclarations(@NotNull JetClass classDeclaration,
                                          @NotNull JsInvocation jsClassDeclaration) {
@@ -119,27 +117,10 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsObjectLiteral translateClassDeclarations(@NotNull JetClass classDeclaration) {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         if (!classDeclaration.isTrait()) {
-            propertyList.add(generateInitializeMethod(classDeclaration));
+            propertyList.add(InitializerGenerator.generateInitializeMethod(classDeclaration, translationContext()));
         }
-        propertyList.addAll(classDeclaration.accept(classBodyVisitor,
+        propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration,
                 translationContext().newClass(classDeclaration)));
         return new JsObjectLiteral(propertyList);
     }
-
-    // TODO: names are inconsistent
-    @NotNull
-    private JsPropertyInitializer generateInitializeMethod(@NotNull JetClass classDeclaration) {
-        JsPropertyInitializer initializer = new JsPropertyInitializer();
-        initializer.setLabelExpr(program().getStringLiteral(Namer.INITIALIZE_METHOD_NAME));
-        initializer.setValueExpr(generateInitializeMethodBody(classDeclaration));
-        return initializer;
-    }
-
-    @NotNull
-    private JsFunction generateInitializeMethodBody(@NotNull JetClass classDeclaration) {
-        InitializerVisitor initializerVisitor = new InitializerVisitor(classDeclaration,
-                translationContext().newClass(classDeclaration));
-        return initializerVisitor.generateInitializeMethod();
-    }
-
 }

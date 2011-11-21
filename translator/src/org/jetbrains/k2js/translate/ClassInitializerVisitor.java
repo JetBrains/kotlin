@@ -6,34 +6,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Talanov Pavel
- *         <p/>
- *         This visitor collects all initializers from a given class into JsFunction object.
- *         Note: we do use visitor pattern to preserve the order in which initializers are executed.
  */
-public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
+public final class ClassInitializerVisitor extends AbstractInitializerVisitor {
 
-    @NotNull
-    private final JsScope initializerMethodScope;
     @NotNull
     private final JetClass classDeclaration;
-    @NotNull
-    private final TranslationContext initializerMethodContext;
 
-    public InitializerVisitor(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
-        this.initializerMethodScope = new JsScope(context.getScopeForElement(classDeclaration),
-                "initializer " + classDeclaration.getName());
+    public ClassInitializerVisitor(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+        super(context, new JsScope(context.getScopeForElement(classDeclaration),
+                "initializer " + classDeclaration.getName()));
         this.classDeclaration = classDeclaration;
-        this.initializerMethodContext = context.newEnclosingScope(initializerMethodScope);
-
     }
 
+    @Override
     @NotNull
-    public JsFunction generateInitializeMethod() {
+    public JsFunction generate() {
         JsFunction result = JsFunction.getAnonymousFunctionWithScope(initializerMethodScope);
         result.setParameters(translatePrimaryConstructorParameters(classDeclaration));
         result.setBody(generateInitializerMethodBody(classDeclaration, initializerMethodContext));
@@ -102,48 +93,4 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
         }
         return result;
     }
-
-    @Override
-    @NotNull
-    public List<JsStatement> visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        JetExpression initializer = expression.getInitializer();
-        declareBackingFieldName(expression);
-        if (initializer == null) {
-            return new ArrayList<JsStatement>();
-        }
-        return Arrays.asList(translateInitializer(expression, context, initializer));
-    }
-
-    private void declareBackingFieldName(@NotNull JetProperty property) {
-        initializerMethodScope.declareName(Namer.getKotlinBackingFieldName(property.getName()));
-    }
-
-    @NotNull
-    private JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
-                                             @NotNull JetExpression initializer) {
-        JsExpression initExpression = Translation.translateAsExpression(initializer, context);
-        return assignmentToBackingField(property, initExpression, context);
-    }
-
-    @NotNull
-    JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
-                                         @NotNull TranslationContext context) {
-
-        return AstUtil.newAssignmentStatement(backingFieldReference(property, context), initExpression);
-    }
-
-    @Override
-    @NotNull
-    public List<JsStatement> visitAnonymousInitializer(@NotNull JetClassInitializer initializer,
-                                                       @NotNull TranslationContext context) {
-        return Arrays.asList(Translation.translateAsStatement(initializer.getBody(), context));
-    }
-
-    @Override
-    @NotNull
-    // Not interested in other types of declarations, they do not contain initializers.
-    public List<JsStatement> visitDeclaration(@NotNull JetDeclaration expression, @NotNull TranslationContext context) {
-        return new ArrayList<JsStatement>();
-    }
-
 }

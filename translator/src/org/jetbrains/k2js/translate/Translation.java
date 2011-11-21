@@ -1,12 +1,13 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.declarations.Declarations;
 
 /**
  * @author Talanov Pavel
@@ -46,11 +47,6 @@ public final class Translation {
     }
 
     @NotNull
-    static public NamespaceDeclarationTranslator declarationTranslator(@NotNull TranslationContext context) {
-        return NamespaceDeclarationTranslator.newInstance(context);
-    }
-
-    @NotNull
     static public PatternTranslator patternTranslator(@NotNull TranslationContext context) {
         return PatternTranslator.newInstance(context);
     }
@@ -78,5 +74,12 @@ public final class Translation {
     @NotNull
     static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         return WhenTranslator.translateWhenExpression(expression, context);
+    }
+
+    public static void generateAst(@NotNull JsProgram result, @NotNull BindingContext bindingContext,
+                                   @NotNull Declarations declarations, @NotNull JetNamespace namespace) {
+        JsBlock block = result.getFragmentBlock(0);
+        TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations);
+        block.addStatement(Translation.namespaceTranslator(context).translateNamespace(namespace));
     }
 }

@@ -9,16 +9,18 @@ import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Talanov Pavel
  */
-public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
+public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
 
-    @Override
+
     @NotNull
-    public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+    public List<JsPropertyInitializer> traverseClass(@NotNull JetClass expression,
+                                                     @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
         for (JetDeclaration declaration : expression.getDeclarations()) {
             properties.addAll(declaration.accept(this, context));
@@ -26,13 +28,28 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
         return properties;
     }
 
+    @NotNull
+    public List<JsPropertyInitializer> traverseNamespace(@NotNull JetNamespace expression,
+                                                         @NotNull TranslationContext context) {
+        List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
+        for (JetDeclaration declaration : expression.getDeclarations()) {
+            properties.addAll(declaration.accept(this, context));
+        }
+        return properties;
+    }
+
+    //TODO
     @Override
     @NotNull
-    // method declaration
+    public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+        //return Arrays.asList(Translation.classTranslator(context).translateClass(expression));
+        return Collections.emptyList();
+    }
+
+    @Override
+    @NotNull
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
-        List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
-        properties.add(Translation.functionTranslator(context).translateAsMethod(expression));
-        return properties;
+        return Arrays.asList(Translation.functionTranslator(context).translateAsMethod(expression));
     }
 
     @Override
@@ -145,6 +162,6 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     public List<JsPropertyInitializer> visitAnonymousInitializer(@NotNull JetClassInitializer expression,
                                                                  @NotNull TranslationContext context) {
         // parsed it in initializer visitor => no additional actions are needed
-        return new ArrayList<JsPropertyInitializer>();
+        return Collections.emptyList();
     }
 }

@@ -49,6 +49,16 @@ public final class PropertyAccessorTest extends IncludeLibraryTest {
         testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
     }
 
+    @Test
+    public void namespacePropertyInitializer() throws Exception {
+        testFooBoxIsTrue("namespacePropertyInitializer.kt");
+    }
+
+    @Test
+    public void namespacePropertySet() throws Exception {
+        testFooBoxIsTrue("namespacePropertySet.kt");
+    }
+
     //TODO test
 //    @Test
 //    public void namespaceCustomAccessors() throws Exception {

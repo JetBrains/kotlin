@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 
 import java.util.ArrayList;
@@ -23,50 +22,44 @@ public final class NamespaceTranslator extends AbstractTranslator {
         super(context);
     }
 
-    public JsProgram generateAst(@NotNull JetNamespace namespace) {
-        translate(namespace);
-        return program();
-    }
-
-    //TODO logic unclear
     @NotNull
-    public JsBlock translate(@NotNull JetNamespace namespace) {
-        // TODO support multiple namespaces
-        JsBlock block = program().getFragmentBlock(0);
-        JsName namespaceName = translationContext().enclosingScope().declareName(Namer.getNameForNamespace(namespace.getName()));
-        block.addStatement(namespaceInitStatement(namespaceName));
-        TranslationContext newContext = translationContext().newNamespace(namespace);
-        JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope
-                (translationContext().getScopeForElement(namespace));
-        JsBlock namespaceDeclarations = translateDeclarations(namespace, newContext);
-        JsInvocation namespaceExpression = newNamespace(namespaceName, namespaceDeclarations, dummyFunction);
-        block.addStatement(AstUtil.convertToStatement(namespaceExpression));
-        return block;
+    public JsStatement translateNamespace(@NotNull JetNamespace namespace) {
+        ClassDeclarationTranslator translator = new ClassDeclarationTranslator(translationContext(), namespace);
+        translator.generateDeclarations();
+        JsName declarationsObjectName = translator.getDeclarationsObjectName();
+        JsBlock result = new JsBlock();
+        JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation(namespace);
+        namespaceDeclaration.getArguments().add(declarationsObjectName.makeRef());
+        addMemberDeclarations(namespace, namespaceDeclaration);
+        result.addStatement(translator.getDeclarationsStatement());
+        result.addStatement(namespaceDeclarationStatement(namespace, namespaceDeclaration));
+        return result;
     }
 
     @NotNull
-    private JsBlock translateDeclarations(@NotNull JetNamespace namespace, @NotNull TranslationContext newContext) {
-        NamespaceDeclarationTranslator namespaceDeclarationTranslator = Translation.declarationTranslator(newContext);
-        JsBlock namespaceDeclarations = new JsBlock();
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
-            namespaceDeclarations.addStatement(namespaceDeclarationTranslator.translateDeclaration(declaration));
-        }
-        return namespaceDeclarations;
+    private JsInvocation namespaceCreateMethodInvocation(@NotNull JetNamespace namespace) {
+        return AstUtil.newInvocation(Namer.namespaceCreationMethodReference());
     }
 
     @NotNull
-    private JsStatement namespaceInitStatement(@NotNull JsName namespaceName) {
-        return AstUtil.newAssignmentStatement(namespaceName.makeRef(), new JsObjectLiteral());
+    private JsStatement namespaceDeclarationStatement(@NotNull JetNamespace namespace,
+                                                      @NotNull JsInvocation namespaceDeclaration) {
+        return AstUtil.newAssignmentStatement
+                (translationContext().getNameForElement(namespace).makeRef(), namespaceDeclaration);
+    }
+
+    private void addMemberDeclarations(@NotNull JetNamespace namespace,
+                                       @NotNull JsInvocation jsNamespace) {
+        JsObjectLiteral jsClassDescription = translateNamespaceMemberDeclarations(namespace);
+        jsNamespace.getArguments().add(jsClassDescription);
     }
 
     @NotNull
-    private JsInvocation newNamespace(@NotNull JsName name, @NotNull JsBlock namespaceDeclarations,
-                                      @NotNull JsFunction dummyFunction) {
-        List<JsParameter> params = new ArrayList<JsParameter>();
-        params.add(new JsParameter(name));
-        dummyFunction.setParameters(params);
-        JsExpression invocationParam = name.makeRef();
-        dummyFunction.setBody(namespaceDeclarations);
-        return AstUtil.newInvocation(dummyFunction, invocationParam);
+    private JsObjectLiteral translateNamespaceMemberDeclarations(@NotNull JetNamespace namespace) {
+        List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
+        propertyList.add(InitializerGenerator.generateInitializeMethod(namespace, translationContext()));
+        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(namespace,
+                translationContext().newNamespace(namespace)));
+        return new JsObjectLiteral(propertyList);
     }
 }

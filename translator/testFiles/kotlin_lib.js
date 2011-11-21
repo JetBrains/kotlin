@@ -6,9 +6,9 @@ function $A(iterable) {
   return results;
 }
 
-var isType = function(object, class) {
+var isType = function(object, klass) {
     current = object.get_class();
-    while (current !== class) {
+    while (current !== klass) {
         if (current === null) {
             return false;
         }
@@ -101,7 +101,6 @@ var Class = (function() {
 
 var Trait = (function() {
 
-
   function add(object, source) {
     properties = Object.keys(source);
     for (var i = 0, length = properties.length; i < length; i++) {
@@ -132,9 +131,8 @@ var Trait = (function() {
 var Namespace = (function() {
 
   function create() {
-    return Class.create.apply(this, arguments);
+    return Trait.create.apply(Trait, arguments);
   }
-
   return {
     create: create
   };

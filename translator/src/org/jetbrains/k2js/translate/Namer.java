@@ -71,6 +71,10 @@ public final class Namer {
         return AstUtil.newQualifiedNameRef("Trait.create");
     }
 
+    public static JsNameRef namespaceCreationMethodReference() {
+        return AstUtil.newQualifiedNameRef("Namespace.create");
+    }
+
     public static JsNameRef isOperationReference() {
         return AstUtil.newQualifiedNameRef("isType");
     }
