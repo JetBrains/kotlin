@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.jetbrains.jet.j2k.Converter.typeToType;
 import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
 
@@ -43,9 +46,23 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
 
   @Override
   public Type visitClassType(PsiClassType classType) {
-    String classTypeName = getClassTypeName(classType);
+    String classTypeName = createQualifiedName(classType);
+    if (classTypeName.equals(""))
+      classTypeName = getClassTypeName(classType);
+    List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
 
-    if (classType instanceof PsiClassReferenceType) { // TODO: simplify
+    final IdentifierImpl identifier = new IdentifierImpl(classTypeName);
+    if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0)
+      myResult = new ClassType(identifier, resolvedClassTypeParams);
+    else
+      myResult = new ClassType(identifier, typesToTypeList(classType.getParameters()));
+    return super.visitClassType(classType);
+  }
+
+  @NotNull
+  private static String createQualifiedName(@NotNull PsiClassType classType) {
+    String classTypeName = "";
+    if (classType instanceof PsiClassReferenceType) {
       final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
       if (reference.isQualified()) {
         String result = new IdentifierImpl(reference.getReferenceName()).toKotlin();
@@ -58,12 +75,23 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
         classTypeName = result;
       }
     }
+    return classTypeName;
+  }
 
-    myResult = new ClassType(
-      new IdentifierImpl(classTypeName),
-      typesToTypeList(classType.getParameters())
-    );
-    return super.visitClassType(classType);
+  @NotNull
+  private static List<Type> createRawTypesForResolvedReference(@NotNull PsiClassType classType) {
+    final List<Type> typeParams = new LinkedList<Type>();
+    if (classType instanceof PsiClassReferenceType) {
+      final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
+      final PsiElement resolve = reference.resolve();
+      if (resolve != null) {
+        if (resolve instanceof PsiClass)
+          //noinspection UnusedDeclaration
+          for (PsiTypeParameter p : ((PsiClass) resolve).getTypeParameters())
+            typeParams.add(new StarProjectionType());
+      }
+    }
+    return typeParams;
   }
 
   @NotNull
