@@ -28,6 +28,11 @@ public class ReferenceTranslator extends AbstractTranslator {
         // Problem is that namespace properties do not generate getters and setter actually so they must be referenced
         // by name
         JsExpression result;
+        String name = expression.getReferencedName();
+        result = resolveAsPropertyAccess(expression);
+        if (result != null) {
+            return result;
+        }
         result = resolveAsGlobalReference(expression);
         if (result != null) {
             return result;
@@ -36,13 +41,13 @@ public class ReferenceTranslator extends AbstractTranslator {
         if (result != null) {
             return result;
         }
-        JsInvocation getterCall =
-                Translation.propertyAccessTranslator(translationContext()).resolveAsPropertyGet(expression);
-        if (getterCall != null) {
-            return getterCall;
-        }
         throw new AssertionError("Undefined name in this scope: " + expression.getReferencedName());
 
+    }
+
+    @Nullable
+    private JsInvocation resolveAsPropertyAccess(@NotNull JetSimpleNameExpression expression) {
+        return Translation.propertyAccessTranslator(translationContext()).resolveAsPropertyGet(expression);
     }
 
     @Nullable
@@ -56,17 +61,19 @@ public class ReferenceTranslator extends AbstractTranslator {
             return null;
         }
         JsName referencedName = translationContext().getNameForDescriptor(referencedDescriptor);
-        return TranslationUtils.generateCorrectReference(translationContext(), expression, referencedName);
+        return TranslationUtils.getReference(translationContext(), expression, referencedName);
     }
 
     @Nullable
     private JsExpression resolveAsLocalReference(@NotNull JetSimpleNameExpression expression) {
-        JsName localReferencedName = TranslationUtils.getLocalReferencedName(translationContext(), expression);
+        String name = expression.getReferencedName();
+        assert name != null : "SimpleNameExpression should reference a name";
+        JsName localReferencedName = TranslationUtils.getLocalReferencedName
+                (translationContext(), name);
         if (localReferencedName == null) {
             return null;
         }
-        return TranslationUtils.generateCorrectReference(translationContext(), expression, localReferencedName);
+        return localReferencedName.makeRef();
     }
-
 
 }

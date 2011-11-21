@@ -5,7 +5,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author Talanov Pavel
@@ -16,50 +15,28 @@ public final class TranslationUtils {
     static public JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
                                                  @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return new JsBinaryOperation
-                (JsBinaryOperator.NEQ, expressionToCheck, nullLiteral);
+        return AstUtil.notEqual(expressionToCheck, nullLiteral);
     }
 
     @NotNull
     static public JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
                                                 @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return new JsBinaryOperation
-                (JsBinaryOperator.REF_EQ, expressionToCheck, nullLiteral);
+        return AstUtil.equals(expressionToCheck, nullLiteral);
     }
 
-    //TODO: make logic clear
     @NotNull
-    static public JsNameRef generateCorrectReference(@NotNull TranslationContext context,
-                                                     @NotNull JetSimpleNameExpression expression,
-                                                     @NotNull JsName referencedName) {
-        if (requiresNamespaceQualifier(context, referencedName)) {
-            return context.getNamespaceQualifiedReference(referencedName);
-        } else if (requiresThisQualifier(context, expression, referencedName)) {
-            return AstUtil.thisQualifiedReference(referencedName);
-        }
-        return referencedName.makeRef();
+    static public JsNameRef getReference(@NotNull TranslationContext context,
+                                         @NotNull JetSimpleNameExpression expression,
+                                         @NotNull JsName referencedName) {
+        return (new ReferenceProvider(context, expression, referencedName)).generateCorrectReference();
     }
 
-    static private boolean requiresNamespaceQualifier(@NotNull TranslationContext context,
-                                                      @NotNull JsName referencedName) {
-        return context.namespaceScope().ownsName(referencedName);
-    }
-
-    static private boolean requiresThisQualifier(@NotNull TranslationContext context,
-                                                 @NotNull JetSimpleNameExpression expression,
-                                                 @NotNull JsName referencedName) {
-        JsName name = context.enclosingScope().findExistingName(referencedName.getIdent());
-        boolean isClassMember = context.classScope().ownsName(name);
-        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-        return isClassMember || isBackingFieldAccess;
-    }
 
     @Nullable
     static public JsName getLocalReferencedName(@NotNull TranslationContext context,
-                                                @NotNull JetSimpleNameExpression expression) {
-        String referencedName = expression.getReferencedName();
-        return context.enclosingScope().findExistingName(referencedName);
+                                                @NotNull String name) {
+        return context.enclosingScope().findExistingName(name);
     }
 
 }

@@ -51,6 +51,14 @@ public class KotlinLibTest extends TranslationTest {
     }
 
     @Test
+    public void namespaceObjectHasCreateMethod() throws Exception {
+        final Map<String, Class<? extends Scriptable>> propertyToType
+                = new HashMap<String, Class<? extends Scriptable>>();
+        propertyToType.put("create", Function.class);
+        runPropertyTypeCheck("Namespace", propertyToType);
+    }
+
+    @Test
     public void traitObjectHasCreateMethod() throws Exception {
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();

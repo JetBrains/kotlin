@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
-//TODO: fix members order
 public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
@@ -71,6 +70,11 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
+    private JsVars generateInitStatement() {
+        return AstUtil.newVar(dummyCounterName, translationContext().program().getNumberLiteral(0));
+    }
+
+    @NotNull
     private JsBinaryOperation generateConditionStatement() {
         JsNumberLiteral entriesNumber = program().getNumberLiteral(whenExpression.getEntries().size());
         return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounterName.makeRef(), entriesNumber);
@@ -79,11 +83,6 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsPrefixOperation generateIncrementStatement() {
         return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounterName.makeRef());
-    }
-
-    @NotNull
-    private JsVars generateInitStatement() {
-        return AstUtil.newVar(dummyCounterName, translationContext().program().getNumberLiteral(0));
     }
 
     @NotNull

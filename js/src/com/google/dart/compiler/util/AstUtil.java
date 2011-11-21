@@ -308,15 +308,15 @@ public class AstUtil {
         throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
     }
 
-    public static JsExpression equals(JsExpression arg1, JsExpression arg2) {
+    public static JsBinaryOperation equals(JsExpression arg1, JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2);
+    }
+
+    public static JsBinaryOperation notEqual(JsExpression arg1, JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.REF_NEQ, arg1, arg2);
     }
 
     public static JsExpression equalsTrue(JsExpression expression, JsProgram program) {
         return equals(expression, program.getTrueLiteral());
-    }
-
-    public static void thisQualify(JsExpression expression) {
-        setQualifier(expression, new JsThisRef());
     }
 }

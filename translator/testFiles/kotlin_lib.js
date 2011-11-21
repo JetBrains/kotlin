@@ -127,6 +127,19 @@ var Trait = (function() {
   };
 })();
 
+
+
+var Namespace = (function() {
+
+  function create() {
+    return Class.create.apply(this, arguments);
+  }
+
+  return {
+    create: create
+  };
+})();
+
 (function() {
 
   var _toString = Object.prototype.toString,

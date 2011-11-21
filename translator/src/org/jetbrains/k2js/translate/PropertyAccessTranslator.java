@@ -50,7 +50,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
             return null;
         }
         JsNameRef getterReference =
-                TranslationUtils.generateCorrectReference(translationContext(), expression, getterName);
+                TranslationUtils.getReference(translationContext(), expression, getterName);
         return AstUtil.newInvocation(getterReference);
     }
 

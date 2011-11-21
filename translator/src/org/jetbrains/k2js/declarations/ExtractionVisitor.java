@@ -71,6 +71,7 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
     @Override
     public Void visitPropertyDescriptor(@NotNull PropertyDescriptor descriptor, @NotNull JsScope enclosingScope) {
         String propertyName = descriptor.getName();
+        declarations.putName(descriptor, enclosingScope.declareName(Namer.getKotlinBackingFieldName(propertyName)));
         extractAccessor(descriptor.getGetter(), true, propertyName, enclosingScope);
         if (descriptor.isVar()) {
             extractAccessor(descriptor.getSetter(), false, propertyName, enclosingScope);
@@ -87,13 +88,10 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
         JsScope accessorScope = new JsScope(enclosingScope, (isGetter ? "getter " : "setter ") + propertyName);
         declarations.putScope(descriptor, accessorScope);
         declarations.putName(descriptor, jsName);
-        // Note : We do not put backing field name into declarations because it can't be referenced from outside
-        //TODO: find if there is repetetive code like descriptor.getCorrespondingProperty().getName())
-        accessorScope.declareName(Namer.getKotlinBackingFieldName(descriptor.getCorrespondingProperty().getName()));
     }
 
     @Override
-    public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, JsScope enclosingScope) {
+    public Void visitNamespaceDescriptor(@NotNull NamespaceDescriptor descriptor, @NotNull JsScope enclosingScope) {
         JsScope namespaceScope = extractNamespaceDeclaration(descriptor, enclosingScope);
         visitMemberDeclarations(descriptor, namespaceScope);
         return null;
