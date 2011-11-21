@@ -283,7 +283,26 @@ public class JetFlowInformationProvider {
                             PsiElement psiElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
                             JetProperty property = psiElement instanceof JetProperty ? (JetProperty) psiElement : null;
                             varWithValReassignErrorGenerated.add(variableDescriptor);
-                            trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[] { property }));
+                            boolean hasReassignMethodReturningUnit = false;
+                            JetSimpleNameExpression operationReference = null;
+                            PsiElement parent = expression.getParent();
+                            if (parent instanceof JetBinaryExpression) {
+                                operationReference = ((JetBinaryExpression) parent).getOperationReference();
+                            }
+                            else if (parent instanceof JetUnaryExpression) {
+                                operationReference = ((JetUnaryExpression) parent).getOperationSign();
+                            }
+                            if (operationReference != null) {
+                                DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference);
+                                if (descriptor instanceof FunctionDescriptor) {
+                                    if (JetStandardClasses.isUnit(((FunctionDescriptor) descriptor).getReturnType())) {
+                                        hasReassignMethodReturningUnit = true;
+                                    }
+                                }
+                            }
+                            if (!hasReassignMethodReturningUnit) {
+                                trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[]{property}));
+                            }
                         }
                         if (inAnonymousInitializers && variableDescriptor instanceof PropertyDescriptor && !enterInitializationPoints.isInitialized() &&
                             exitInitializationPoints.isInitialized()) {
