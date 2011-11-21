@@ -88,7 +88,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (functionTypeExpected) {
-                returnType = JetStandardClasses.obtainReturnTypeFromFunctionType(expectedType);
+                returnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
             }
             returnType = context.getServices().getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
                                                                     context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType));
@@ -98,7 +98,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
         boolean hasDeclaredValueParameters = functionLiteral.getValueParameterList() != null;
         if (!hasDeclaredValueParameters && functionTypeExpected) {
-            JetType expectedReturnType = JetStandardClasses.obtainReturnTypeFromFunctionType(expectedType);
+            JetType expectedReturnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
             if (JetStandardClasses.isUnit(expectedReturnType)) {
                 functionDescriptor.setReturnType(JetStandardClasses.getUnitType());
                 return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, JetStandardClasses.getUnitType()), expression, context);

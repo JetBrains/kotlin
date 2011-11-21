@@ -385,7 +385,7 @@ public class JetStandardClasses {
     }
 
     @NotNull
-    public static JetType obtainReturnTypeFromFunctionType(@NotNull JetType type) {
+    public static JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
         assert isFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
