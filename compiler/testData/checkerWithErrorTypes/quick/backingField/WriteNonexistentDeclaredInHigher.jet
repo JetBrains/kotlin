@@ -1,0 +1,7 @@
+val y = 1
+
+class A() {
+    {
+        <!UNRESOLVED_REFERENCE!>$y<!> = 1
+    }
+}

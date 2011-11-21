@@ -129,7 +129,6 @@ class AnonymousInitializers(var a: String, val b: String) {
 
     {
         x = 11
-        <!UNRESOLVED_REFERENCE!>$y<!> = 11
         <!VAL_REASSIGNMENT!>z<!> = 10
     }
 
