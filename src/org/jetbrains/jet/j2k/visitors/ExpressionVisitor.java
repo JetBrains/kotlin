@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
@@ -185,31 +186,45 @@ public class ExpressionVisitor extends StatementVisitor {
     super.visitNewExpression(expression);
 
     if (expression.getArrayInitializer() != null) // new Foo[] {}
-      myResult = expressionToExpression(expression.getArrayInitializer());
+      myResult = createNewEmptyArray(expression);
     else if (expression.getArrayDimensions().length > 0) { // new Foo[5]
-      final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
-      callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
-
-      myResult = new NewClassExpression(
-        typeToType(expression.getType()), // TODO: remove
-        new ExpressionList(callExpression)
-      );
+      myResult = createNewNonEmptyArray(expression);
     } else { // new Class(): common case
-      final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
-      myResult = new NewClassExpression(
+      myResult = createNewClassExpression(expression);
+    }
+  }
+
+  @NotNull
+  private Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
+    final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
+    final PsiMethod constructor = expression.resolveMethod();
+    if (constructor == null || isConstructorPrimary(constructor)) {
+      return new NewClassExpression(
         expressionToExpression(expression.getQualifier()),
         elementToElement(expression.getClassOrAnonymousClassReference()),
         elementToElement(expression.getArgumentList()),
         anonymousClass != null ? anonymousClassToAnonymousClass(anonymousClass) : null
       );
-      // is constructor secondary
-      final PsiMethod constructor = expression.resolveMethod();
-      if (constructor != null && !isConstructorPrimary(constructor)) {
-        myResult = new CallChainExpression(
-          new IdentifierImpl(constructor.getName(), false),
-          new MethodCallExpression(new IdentifierImpl("init"), elementToElement(expression.getArgumentList()), false, typesToTypeList(expression.getTypeArguments())));
-      }
     }
+    // is constructor secondary
+    return new CallChainExpression(
+      new IdentifierImpl(constructor.getName(), false),
+      new MethodCallExpression(new IdentifierImpl("init"), elementToElement(expression.getArgumentList()), false, typesToTypeList(expression.getTypeArguments())));
+  }
+
+  @NotNull
+  private NewClassExpression createNewNonEmptyArray(@NotNull PsiNewExpression expression) {
+    final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
+    callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
+    return new NewClassExpression(
+      typeToType(expression.getType()),
+      new ExpressionList(callExpression)
+    );
+  }
+
+  @NotNull
+  private static Expression createNewEmptyArray(@NotNull PsiNewExpression expression) {
+    return expressionToExpression(expression.getArrayInitializer());
   }
 
   @Override
@@ -242,7 +257,7 @@ public class ExpressionVisitor extends StatementVisitor {
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
 
-    final boolean isFieldReference = isFieldReference(expression);
+    final boolean isFieldReference = isFieldReference(expression, getContainingClass(expression));
     final boolean hasDollar = isFieldReference && isInsidePrimaryConstructor(expression);
     final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
     final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
@@ -285,13 +300,13 @@ public class ExpressionVisitor extends StatementVisitor {
     return "";
   }
 
-  private boolean isFieldReference(PsiReferenceExpression expression) {
+  private boolean isFieldReference(PsiReferenceExpression expression, PsiClass currentClass) {
     final PsiReference reference = expression.getReference();
     if (reference != null) {
       final PsiElement resolvedReference = reference.resolve();
       if (resolvedReference != null) {
         if (resolvedReference instanceof PsiField) {
-          return true;
+          return ((PsiField) resolvedReference).getContainingClass() == currentClass;
         }
       }
     }
@@ -316,6 +331,17 @@ public class ExpressionVisitor extends StatementVisitor {
       context = context.getContext();
     }
     return false;
+  }
+
+  @Nullable
+  private PsiClass getContainingClass(@NotNull PsiExpression expression) {
+    PsiElement context = expression.getContext();
+    while (context != null) {
+      if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
+        return ((PsiMethod) context).getContainingClass();
+      context = context.getContext();
+    }
+    return null;
   }
 
   private boolean isThisExpression(PsiReferenceExpression expression) {
