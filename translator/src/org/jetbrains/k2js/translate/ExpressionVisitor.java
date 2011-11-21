@@ -249,6 +249,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return null;
     }
 
+    //TODO: refactor and possibly move somewhere
     @Override
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
@@ -343,7 +344,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsExpression receiver = translateReceiver(expression, context);
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         JsExpression thenExpression = translateQualifiedExpression(expression, context);
-        return new JsConditional(TranslationUtils.notNullCheck(receiver, context),
+        return new JsConditional(TranslationUtils.notNullCheck(context, receiver),
                 thenExpression, nullLiteral);
     }
 

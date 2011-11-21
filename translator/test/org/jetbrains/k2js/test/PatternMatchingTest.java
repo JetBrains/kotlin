@@ -54,4 +54,14 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
         testFooBoxIsTrue("matchNullableType.kt");
     }
 
+    @Test
+    public void whenConditionMethodCall() throws Exception {
+        testFooBoxIsTrue("whenConditionMethodCall.kt");
+    }
+
+    @Test
+    public void whenConditionPropertyAccess() throws Exception {
+        testFooBoxIsTrue("whenConditionPropertyAccess.kt");
+    }
+
 }

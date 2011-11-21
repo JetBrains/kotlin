@@ -44,4 +44,9 @@ public class BasicClassTest extends IncludeLibraryTest {
     public void complexExpressionAsConstructorParameter() throws Exception {
         testFooBoxIsTrue("complexExpressionAsConstructorParameter.kt");
     }
+
+    @Test
+    public void propertyAccess() throws Exception {
+        testFooBoxIsTrue("propertyAccess.kt");
+    }
 }

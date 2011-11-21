@@ -63,7 +63,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
-        return AstUtil.or(TranslationUtils.isNullCheck(expressionToMatch, translationContext()), isCheck);
+        return AstUtil.or(TranslationUtils.isNullCheck(translationContext(), expressionToMatch), isCheck);
     }
 
     private boolean isNullable(JetTypePattern pattern) {

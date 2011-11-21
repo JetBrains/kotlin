@@ -49,7 +49,9 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (getterName == null) {
             return null;
         }
-        return AstUtil.newInvocation(AstUtil.thisQualifiedReference(getterName));
+        JsNameRef getterReference =
+                TranslationUtils.generateCorrectReference(translationContext(), expression, getterName);
+        return AstUtil.newInvocation(getterReference);
     }
 
     @NotNull
@@ -58,12 +60,12 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         JsExpression qualifier = Translation.translateAsExpression
                 (qualifiedExpression.getReceiverExpression(), translationContext());
         JsNameRef result = accessorName.makeRef();
-        result.setQualifier(qualifier);
+        AstUtil.setQualifier(result, qualifier);
         return AstUtil.newInvocation(result);
     }
 
     @Nullable
-    public JsInvocation resolveAsPropertySetterCall(@NotNull JetExpression expression) {
+    public JsInvocation translateAsPropertySetterCall(@NotNull JetExpression expression) {
         if (expression instanceof JetDotQualifiedExpression) {
             return resolveAsPropertySet((JetDotQualifiedExpression) expression);
         }

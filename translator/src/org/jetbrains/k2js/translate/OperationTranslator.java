@@ -72,7 +72,7 @@ public final class OperationTranslator extends AbstractTranslator {
         }
         JetExpression leftExpression = expression.getLeft();
         JsInvocation setterCall = Translation.propertyAccessTranslator(translationContext()).
-                resolveAsPropertySetterCall(leftExpression);
+                translateAsPropertySetterCall(leftExpression);
         if (setterCall == null) {
             return null;
         }

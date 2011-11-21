@@ -1,11 +1,12 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author Talanov Pavel
@@ -55,47 +56,16 @@ public class ReferenceTranslator extends AbstractTranslator {
             return null;
         }
         JsName referencedName = translationContext().getNameForDescriptor(referencedDescriptor);
-        return generateCorrectReference(expression, referencedName);
+        return TranslationUtils.generateCorrectReference(translationContext(), expression, referencedName);
     }
 
     @Nullable
     private JsExpression resolveAsLocalReference(@NotNull JetSimpleNameExpression expression) {
-        JsName localReferencedName = getLocalReferencedName(expression);
+        JsName localReferencedName = TranslationUtils.getLocalReferencedName(translationContext(), expression);
         if (localReferencedName == null) {
             return null;
         }
-        return generateCorrectReference(expression, localReferencedName);
-    }
-
-    @NotNull
-    private JsNameRef generateCorrectReference(@NotNull JetSimpleNameExpression expression,
-                                               @NotNull JsName referencedName) {
-        JsNameRef result;
-        if (requiresNamespaceQualifier(referencedName)) {
-            result = translationContext().getNamespaceQualifiedReference(referencedName);
-        } else {
-            result = referencedName.makeRef();
-            if (requiresThisQualifier(expression)) {
-                result.setQualifier(new JsThisRef());
-            }
-        }
-        return result;
-    }
-
-    private boolean requiresNamespaceQualifier(@NotNull JsName referencedName) {
-        return translationContext().namespaceScope().ownsName(referencedName);
-    }
-
-    private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression) {
-        boolean isClassMember = translationContext().classScope().ownsName(getLocalReferencedName(expression));
-        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-        return isClassMember || isBackingFieldAccess;
-    }
-
-    @Nullable
-    private JsName getLocalReferencedName(@NotNull JetSimpleNameExpression expression) {
-        String referencedName = expression.getReferencedName();
-        return translationContext().enclosingScope().findExistingName(referencedName);
+        return TranslationUtils.generateCorrectReference(translationContext(), expression, localReferencedName);
     }
 
 

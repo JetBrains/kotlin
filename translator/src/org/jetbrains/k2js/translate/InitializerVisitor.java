@@ -128,12 +128,8 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     @NotNull
     JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
                                          @NotNull TranslationContext context) {
-        String propertyName = property.getName();
-        assert propertyName != null : "Named property expected.";
-        JsName backingFieldName = getBackingFieldName(propertyName, context);
-        JsNameRef backingFieldRef = backingFieldName.makeRef();
-        backingFieldRef.setQualifier(new JsThisRef());
-        return AstUtil.newAssignmentStatement(backingFieldRef, initExpression);
+
+        return AstUtil.newAssignmentStatement(backingFieldReference(property, context), initExpression);
     }
 
     @Override
