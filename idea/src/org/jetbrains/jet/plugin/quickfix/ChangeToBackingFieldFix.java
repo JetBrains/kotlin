@@ -6,9 +6,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetThisExpression;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.references.JetThisReference;
 
 /**
  * @author svtk
@@ -33,7 +36,12 @@ public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExp
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetSimpleNameExpression backingField = (JetSimpleNameExpression) JetPsiFactory.createExpression(project, "$" + element.getText());
-        element.replace(backingField);
+        if (element.getParent() instanceof JetDotQualifiedExpression && ((JetDotQualifiedExpression) element.getParent()).getReceiverExpression() instanceof JetThisExpression) {
+            element.getParent().replace(backingField);
+        }
+        else {
+            element.replace(backingField);
+        }
     }
 
     public static JetIntentionActionFactory<JetSimpleNameExpression> createFactory() {

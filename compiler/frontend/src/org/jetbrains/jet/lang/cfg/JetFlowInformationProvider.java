@@ -285,11 +285,19 @@ public class JetFlowInformationProvider {
                             varWithValReassignErrorGenerated.add(variableDescriptor);
                             trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor, property == null ? new JetProperty[0] : new JetProperty[] { property }));
                         }
-                        if (expression instanceof JetSimpleNameExpression && inAnonymousInitializers &&
-                            variableDescriptor instanceof PropertyDescriptor && !enterInitializationPoints.isInitialized() && exitInitializationPoints.isInitialized()) {
-                            JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
-                            if (simpleNameExpression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
-                                trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD.on(simpleNameExpression, variableDescriptor));
+                        if (inAnonymousInitializers && variableDescriptor instanceof PropertyDescriptor && !enterInitializationPoints.isInitialized() &&
+                            exitInitializationPoints.isInitialized()) {
+                            JetExpression variable = expression;
+                            if (expression instanceof JetDotQualifiedExpression) {
+                                if (((JetDotQualifiedExpression) expression).getReceiverExpression() instanceof JetThisExpression) {
+                                    variable = ((JetDotQualifiedExpression) expression).getSelectorExpression();
+                                }
+                            }
+                            if (variable instanceof JetSimpleNameExpression) {
+                                JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) variable;
+                                if (simpleNameExpression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
+                                    trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD.on(simpleNameExpression, expression, variableDescriptor));
+                                }
                             }
                         }
                     }
