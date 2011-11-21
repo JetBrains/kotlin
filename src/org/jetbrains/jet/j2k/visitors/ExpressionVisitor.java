@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
@@ -207,9 +208,14 @@ public class ExpressionVisitor extends StatementVisitor {
       );
     }
     // is constructor secondary
+    final List<Type> typeParameters = expression.getClassReference() != null ? typesToTypeList(expression.getClassReference().getTypeParameters()) : Collections.<Type>emptyList();
     return new CallChainExpression(
       new IdentifierImpl(constructor.getName(), false),
-      new MethodCallExpression(new IdentifierImpl("init"), elementToElement(expression.getArgumentList()), false, typesToTypeList(expression.getTypeArguments())));
+      new MethodCallExpression(
+        new IdentifierImpl("init"),
+        elementToElement(expression.getArgumentList()),
+        false,
+        typeParameters));
   }
 
   @NotNull

@@ -98,11 +98,19 @@ public class Class extends Member {
         statements.add(new ReturnStatement(new IdentifierImpl("__"))); // TODO: move to one place, find other __ usages
         final Block block = new Block(statements);
 
+        final List<Element> typeParameters = new LinkedList<Element>();
+        if (f.getTypeParameters().size() == 0)
+          typeParameters.addAll(myTypeParameters);
+        else {
+          typeParameters.addAll(myTypeParameters);
+          typeParameters.addAll(f.getTypeParameters());
+        }
+
         result.add(new Function(
           new IdentifierImpl("init"),
           modifiers,
           new ClassType(myName),
-          f.getTypeParameters(),
+          typeParameters,
           f.getParams(),
           block
         ));
