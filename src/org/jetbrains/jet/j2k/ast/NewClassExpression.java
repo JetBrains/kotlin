@@ -30,7 +30,7 @@ public class NewClassExpression extends Expression {
     final String callOperator = myQualifier.isNullable() ? QUESTDOT : DOT;
     final String qualifier = myQualifier.isEmpty() ? EMPTY : myQualifier.toKotlin() + callOperator;
     return myAnonymousClass != null ?
-      qualifier + myName.toKotlin() + "(" + myArguments.toKotlin() + ")" + myAnonymousClass.toKotlin() :
+      "object" + SPACE + ":" + SPACE + qualifier + myName.toKotlin() + "(" + myArguments.toKotlin() + ")" + myAnonymousClass.toKotlin() :
       qualifier + myName.toKotlin() + "(" + myArguments.toKotlin() + ")";
   }
 }
