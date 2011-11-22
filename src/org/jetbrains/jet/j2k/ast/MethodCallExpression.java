@@ -12,7 +12,7 @@ public class MethodCallExpression extends Expression {
   private final Expression myMethodCall;
   private final Element myParamList;
   private final boolean myIsResultNullable;
-  private List<Type> myTypeParameters;
+  private final List<Type> myTypeParameters;
 
   public MethodCallExpression(Expression methodCall, Element paramList, boolean nullable, List<Type> typeParameters) {
     myMethodCall = methodCall;

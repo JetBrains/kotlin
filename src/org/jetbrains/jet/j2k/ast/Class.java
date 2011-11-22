@@ -18,7 +18,7 @@ public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
   private final List<Expression> myBaseClassParams;
-  private List<? extends Member> myMembers;
+  private final List<? extends Member> myMembers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
@@ -174,7 +174,7 @@ public class Class extends Member {
       "}";
   }
 
-  private List<Member> getStatic(List<? extends Member> members) {
+  private static List<Member> getStatic(List<? extends Member> members) {
     List<Member> result = new LinkedList<Member>();
     for (Member m : members)
       if (m.isStatic())
@@ -182,7 +182,7 @@ public class Class extends Member {
     return result;
   }
 
-  private List<Member> getNonStatic(List<? extends Member> members) {
+  private static List<Member> getNonStatic(List<? extends Member> members) {
     List<Member> result = new LinkedList<Member>();
     for (Member m : members)
       if (!m.isStatic())

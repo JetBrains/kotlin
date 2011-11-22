@@ -77,7 +77,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private String getOperatorString(@NotNull IElementType tokenType) {
+  private static String getOperatorString(@NotNull IElementType tokenType) {
     if (tokenType == JavaTokenType.PLUS) return "+";
     if (tokenType == JavaTokenType.MINUS) return "-";
     if (tokenType == JavaTokenType.ASTERISK) return "*";
@@ -197,7 +197,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
+  private static Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
     final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
     final PsiMethod constructor = expression.resolveMethod();
     if (constructor == null || isConstructorPrimary(constructor)) {
@@ -209,7 +209,8 @@ public class ExpressionVisitor extends StatementVisitor {
       );
     }
     // is constructor secondary
-    final List<Type> typeParameters = expression.getClassReference() != null ? typesToTypeList(expression.getClassReference().getTypeParameters()) : Collections.<Type>emptyList();
+    final PsiJavaCodeReferenceElement reference = expression.getClassReference();
+    final List<Type> typeParameters = reference != null ? typesToTypeList(reference.getTypeParameters()) : Collections.<Type>emptyList();
     return new CallChainExpression(
       new IdentifierImpl(constructor.getName(), false),
       new MethodCallExpression(
@@ -220,7 +221,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private NewClassExpression createNewNonEmptyArray(@NotNull PsiNewExpression expression) {
+  private static NewClassExpression createNewNonEmptyArray(@NotNull PsiNewExpression expression) {
     final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
     callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
     return new NewClassExpression(
@@ -291,7 +292,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private String getClassName(PsiReferenceExpression expression) {
+  private static String getClassName(@NotNull PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
@@ -307,7 +308,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return "";
   }
 
-  private boolean isFieldReference(PsiReferenceExpression expression, PsiClass currentClass) {
+  private static boolean isFieldReference(@NotNull PsiReferenceExpression expression, PsiClass currentClass) {
     final PsiReference reference = expression.getReference();
     if (reference != null) {
       final PsiElement resolvedReference = reference.resolve();
@@ -320,7 +321,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return false;
   }
 
-  private boolean isInsideSecondaryConstructor(PsiReferenceExpression expression) {
+  private static boolean isInsideSecondaryConstructor(PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -330,7 +331,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return false;
   }
 
-  private boolean isInsidePrimaryConstructor(PsiExpression expression) {
+  private static boolean isInsidePrimaryConstructor(PsiExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -341,7 +342,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Nullable
-  private PsiClass getContainingClass(@NotNull PsiExpression expression) {
+  private static PsiClass getContainingClass(@NotNull PsiExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -351,7 +352,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return null;
   }
 
-  private boolean isThisExpression(PsiReferenceExpression expression) {
+  private static boolean isThisExpression(PsiReferenceExpression expression) {
     for (PsiReference r : expression.getReferences())
       if (r.getCanonicalText().equals("this")) {
         final PsiElement res = r.resolve();
