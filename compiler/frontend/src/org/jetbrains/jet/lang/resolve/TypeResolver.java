@@ -286,8 +286,11 @@ public class TypeResolver {
     private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType) {
         ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
         if (classifierDescriptor instanceof ClassDescriptor) {
-            List<TypeProjection> typeArguments = resolveTypeProjections(scope, classifierDescriptor.getTypeConstructor(), userType.getTypeArguments());
-            return ((ClassDescriptor) classifierDescriptor).getMemberScope(typeArguments);
+            ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
+            JetType classObjectType = classDescriptor.getClassObjectType();
+            if (classObjectType != null) {
+                return classObjectType.getMemberScope();
+            }
         }
 
         NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
