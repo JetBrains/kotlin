@@ -32,10 +32,10 @@ public final class ReferenceProvider {
     //TODO
     @NotNull
     public JsNameRef generateCorrectReference() {
-        if (requiresThisQualifier) {
-            return AstUtil.thisQualifiedReference(referencedName);
-        } else if (requiresNamespaceQualifier) {
+        if (requiresNamespaceQualifier) {
             return context.getNamespaceQualifiedReference(referencedName);
+        } else if (requiresThisQualifier) {
+            return AstUtil.thisQualifiedReference(referencedName);
         }
         return referencedName.makeRef();
     }
@@ -46,9 +46,8 @@ public final class ReferenceProvider {
 
     private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression) {
         JsName name = context.enclosingScope().findExistingName(referencedName.getIdent());
-        boolean isNamespaceMember = requiresNamespaceQualifier;
         boolean isClassMember = context.classScope().ownsName(name);
         boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-        return (isNamespaceMember && !isClassMember) || isClassMember || isBackingFieldAccess;
+        return isClassMember || isBackingFieldAccess;
     }
 }

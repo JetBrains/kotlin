@@ -5,6 +5,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
@@ -32,8 +33,9 @@ public final class Translation {
     }
 
     @NotNull
-    static public NamespaceTranslator namespaceTranslator(@NotNull TranslationContext context) {
-        return NamespaceTranslator.newInstance(context);
+    static public JsStatement translateNamespace(@NotNull JetNamespace namespace,
+                                                 @NotNull TranslationContext context) {
+        return NamespaceTranslator.translate(context, namespace);
     }
 
     @NotNull
@@ -76,10 +78,19 @@ public final class Translation {
         return WhenTranslator.translateWhenExpression(expression, context);
     }
 
+    @NotNull
+    static public JsNameRef generateCorrectReference(@NotNull TranslationContext context,
+                                                     @NotNull JetSimpleNameExpression expression,
+                                                     @NotNull JsName referencedName) {
+        return (new ReferenceProvider(context, expression, referencedName)).generateCorrectReference();
+    }
+
     public static void generateAst(@NotNull JsProgram result, @NotNull BindingContext bindingContext,
                                    @NotNull Declarations declarations, @NotNull JetNamespace namespace) {
         JsBlock block = result.getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations);
-        block.addStatement(Translation.namespaceTranslator(context).translateNamespace(namespace));
+        block.addStatement(Translation.translateNamespace(namespace, context));
     }
+
+
 }

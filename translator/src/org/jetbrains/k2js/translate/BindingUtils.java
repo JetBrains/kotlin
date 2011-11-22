@@ -149,6 +149,10 @@ public final class BindingUtils {
         return null;
     }
 
+    static public boolean belongsToNamespace(@NotNull BindingContext context, @NotNull JetProperty property) {
+        return getPropertyDescriptor(context, property).getContainingDeclaration() instanceof NamespaceDescriptor;
+    }
+
     @Nullable
     static public ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
                                                   @NotNull JetExpression expression) {

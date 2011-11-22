@@ -79,5 +79,9 @@ public final class Namer {
         return AstUtil.newQualifiedNameRef("isType");
     }
 
+    public static JsNameRef initializeMethodReference() {
+        return AstUtil.newQualifiedNameRef("initialize");
+    }
+
 
 }

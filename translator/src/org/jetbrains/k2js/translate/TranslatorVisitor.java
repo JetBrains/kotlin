@@ -26,7 +26,11 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
 
     @NotNull
     protected JsNameRef backingFieldReference(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        return AstUtil.thisQualifiedReference(getBackingFieldName(getPropertyName(expression), context));
+        JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
+        if (BindingUtils.belongsToNamespace(context.bindingContext(), expression)) {
+            return context.getNamespaceQualifiedReference(backingFieldName);
+        }
+        return AstUtil.thisQualifiedReference(backingFieldName);
     }
 
     @NotNull

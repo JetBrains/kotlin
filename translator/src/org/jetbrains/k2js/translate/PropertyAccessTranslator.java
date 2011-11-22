@@ -92,7 +92,8 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (setterName == null) {
             return null;
         }
-        return AstUtil.newInvocation(AstUtil.thisQualifiedReference(setterName));
+        JsNameRef setterReference = Translation.generateCorrectReference(translationContext(), expression, setterName);
+        return AstUtil.newInvocation(setterReference);
     }
 
     @Nullable

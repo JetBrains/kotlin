@@ -90,12 +90,6 @@ public class KotlinLibTest extends IncludeLibraryTest {
     }
 
     @Test
-    public void namespacePropertyAccess() throws Exception {
-        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace2.js")),
-                new RhinoFunctionResultChecker("test", true));
-    }
-
-    @Test
     public void isSameType() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isSameType.js")),
                 new RhinoFunctionResultChecker("test", true));

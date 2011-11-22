@@ -7,6 +7,8 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 
+
+//TODO: thing about redesigning this class
 public class InitializerGenerator {
 
     @NotNull
