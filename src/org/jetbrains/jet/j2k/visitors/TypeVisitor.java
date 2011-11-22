@@ -95,7 +95,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   }
 
   @NotNull
-  private String getClassTypeName(@NotNull PsiClassType classType) {
+  private static String getClassTypeName(@NotNull PsiClassType classType) {
     String canonicalTypeStr = classType.getCanonicalText();
     if (canonicalTypeStr.equals("java.lang.Object")) return "Any";
     if (canonicalTypeStr.equals("java.lang.Byte")) return "Byte";
@@ -106,7 +106,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     if (canonicalTypeStr.equals("java.lang.Long")) return "Long";
     if (canonicalTypeStr.equals("java.lang.Short")) return "Short";
     if (canonicalTypeStr.equals("java.lang.Boolean")) return "Boolean";
-    return classType.getClassName();
+    return classType.getClassName() != null ? classType.getClassName() : classType.getCanonicalText();
   }
 
   @Override
