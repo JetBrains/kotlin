@@ -188,6 +188,9 @@ public class ExpressionTypingServices {
             trace.record(STATEMENT, returnedExpression, false);
             if (cachedType != null) {
                 typeMap.put(returnedExpression, cachedType);
+            } 
+            else {
+                typeMap.put(returnedExpression, ErrorUtils.createErrorType("Error function type"));
             }
         }
         return typeMap;
