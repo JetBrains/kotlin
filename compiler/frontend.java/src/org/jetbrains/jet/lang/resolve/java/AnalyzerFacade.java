@@ -68,6 +68,18 @@ public class AnalyzerFacade {
                             throw e;
                         }
                         catch (Throwable e) {
+                            // This is needed for the Web Demo server to log the exceptions coming from the analyzer instead of showing them in the editor.
+                            if (System.getProperty("kotlin.running.in.server.mode", "false").equals("true")) {
+                                if (e instanceof RuntimeException) {
+                                    RuntimeException runtimeException = (RuntimeException) e;
+                                    throw runtimeException;
+                                }
+                                if (e instanceof Error) {
+                                    Error error = (Error) e;
+                                    throw error;
+                                }
+                                throw new RuntimeException(e);
+                            }
                             e.printStackTrace();
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
                             bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
