@@ -2,13 +2,16 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 
 import java.util.Collection;
 
@@ -16,16 +19,21 @@ import java.util.Collection;
 * @author svtk
 */
 public class QuickFixes {
-    private static final Multimap<PsiElementOnlyDiagnosticFactory, JetIntentionActionFactory> actionMap = HashMultimap.create();
+    private static final Multimap<PsiElementOnlyDiagnosticFactory, JetIntentionActionFactory> jetActionMap = HashMultimap.create();
+    private static final Multimap<DiagnosticFactory, IntentionAction> actionMap = HashMultimap.create();
 
     public static Collection<JetIntentionActionFactory> get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
+        return jetActionMap.get(diagnosticFactory);
+    }
+
+    public static Collection<IntentionAction> get(DiagnosticFactory diagnosticFactory) {
         return actionMap.get(diagnosticFactory);
     }
 
     private QuickFixes() {}
 
     private static <T extends PsiElement> void add(PsiElementOnlyDiagnosticFactory<? extends T> diagnosticFactory, JetIntentionActionFactory<T> actionFactory) {
-        actionMap.put(diagnosticFactory, actionFactory);
+        jetActionMap.put(diagnosticFactory, actionFactory);
     }
 
     static {
@@ -108,5 +116,9 @@ public class QuickFixes {
         add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
         
         add(Errors.INITIALIZATION_USING_BACKING_FIELD, ChangeToBackingFieldFix.createFactory());
+
+        ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
+        actionMap.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
+        actionMap.put(Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
     }
 }

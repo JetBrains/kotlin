@@ -89,20 +89,23 @@ public class JetPsiChecker implements Annotator {
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
                             annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
                         }
-                        if (annotation != null && diagnostic instanceof DiagnosticWithPsiElementImpl) {
-                            DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
-                            if (diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
+                        if (annotation != null) {
+                            if (diagnostic instanceof DiagnosticWithPsiElementImpl && diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
                                 PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
                                 Collection<JetIntentionActionFactory> intentionActionFactories = QuickFixes.get(factory);
                                 for (JetIntentionActionFactory intentionActionFactory : intentionActionFactories) {
                                     IntentionAction action = null;
                                     if (intentionActionFactory != null) {
-                                        action = intentionActionFactory.createAction(diagnosticWithPsiElement);
+                                        action = intentionActionFactory.createAction((DiagnosticWithPsiElement) diagnostic);
                                     }
                                     if (action != null) {
                                         annotation.registerFix(action);
                                     }
                                 }
+                            }
+                            Collection<IntentionAction> actions = QuickFixes.get(diagnostic.getFactory());
+                            for (IntentionAction action : actions) {
+                                annotation.registerFix(action);
                             }
                         }
                     }
