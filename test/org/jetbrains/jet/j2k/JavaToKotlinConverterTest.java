@@ -47,7 +47,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/class")) actual = fileToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
 
-    assert !actual.equals("") : "Specify what is it: file, class, method, statement or expression";
+    assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression";
 
     final File tmp = new File(kotlinPath + ".tmp");
     if (!expected.equals(actual)) writeStringToFile(tmp, actual);

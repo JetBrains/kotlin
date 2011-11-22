@@ -47,7 +47,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   @Override
   public Type visitClassType(PsiClassType classType) {
     String classTypeName = createQualifiedName(classType);
-    if (classTypeName.equals(""))
+    if (classTypeName.isEmpty())
       classTypeName = getClassTypeName(classType);
     List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
 

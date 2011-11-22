@@ -58,7 +58,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (tokenType == JavaTokenType.OREQ) secondOp = "or";
     if (tokenType == JavaTokenType.GTGTGTEQ) secondOp = "cyclicShiftRight";
 
-    if (!secondOp.equals("")) // if not Kotlin operators
+    if (!secondOp.isEmpty()) // if not Kotlin operators
       myResult = new AssignmentExpression(
         expressionToExpression(expression.getLExpression()),
         new BinaryExpression(
