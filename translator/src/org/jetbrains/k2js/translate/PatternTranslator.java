@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -99,7 +102,6 @@ public final class PatternTranslator extends AbstractTranslator {
         assert patternExpression != null : "Expression patter should have an expression.";
         JsExpression expressionToMatchAgainst =
                 Translation.translateAsExpression(patternExpression, translationContext());
-        //TODO: should call equals method here
-        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, expressionToMatch, expressionToMatchAgainst);
+        return AstUtil.equals(expressionToMatch, expressionToMatchAgainst);
     }
 }

@@ -108,8 +108,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     private boolean isConstructorInvocation(@NotNull JetCallExpression expression,
                                             @NotNull TranslationContext context) {
-        ResolvedCall<?> resolvedCall =
-                BindingUtils.getResolvedCall(context.bindingContext(), expression.getCalleeExpression());
+        JetExpression calleeExpression = expression.getCalleeExpression();
+        assert calleeExpression != null : "JetCallExpression should have not null callee";
+        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context.bindingContext(), calleeExpression);
         if (resolvedCall == null) {
             return false;
         }

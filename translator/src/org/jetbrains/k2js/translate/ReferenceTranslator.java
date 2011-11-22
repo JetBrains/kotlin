@@ -24,11 +24,7 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     @NotNull
     JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression) {
-        //TODO: this is only a hack for now
-        // Problem is that namespace properties do not generate getters and setter actually so they must be referenced
-        // by name
         JsExpression result;
-        String name = expression.getReferencedName();
         result = resolveAsPropertyAccess(expression);
         if (result != null) {
             return result;

@@ -13,7 +13,8 @@ import org.jetbrains.k2js.declarations.Declarations;
 /**
  * @author Talanov Pavel
  *         <p/>
- *         This class is a factory for obtaining instances of translators.
+ *         This class provides a interface which all translators use to interact with each other.
+ *         Goal is to simlify interaction between translators.
  */
 public final class Translation {
 

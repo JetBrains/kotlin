@@ -29,7 +29,6 @@ public final class ReferenceProvider {
         this.requiresNamespaceQualifier = requiresNamespaceQualifier();
     }
 
-    //TODO
     @NotNull
     public JsNameRef generateCorrectReference() {
         if (requiresNamespaceQualifier) {

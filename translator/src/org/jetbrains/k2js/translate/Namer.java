@@ -83,5 +83,9 @@ public final class Namer {
         return AstUtil.newQualifiedNameRef("initialize");
     }
 
+    public static String nameForClassesVariable() {
+        return "classes";
+    }
+
 
 }

@@ -38,8 +38,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     public void generateDeclarations() {
-        //TODO: hardcoded string
-        declarationsObject = translationContext().enclosingScope().declareName("classes");
+        declarationsObject = translationContext().enclosingScope().declareName(Namer.nameForClassesVariable());
+        assert declarationsObject != null;
         declarationsStatement =
                 AstUtil.newAssignmentStatement(declarationsObject.makeRef(), generateDummyFunctionInvocation());
     }

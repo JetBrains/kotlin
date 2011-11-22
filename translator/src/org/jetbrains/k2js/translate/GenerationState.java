@@ -18,7 +18,6 @@ public final class GenerationState {
     public GenerationState() {
     }
 
-    //TODO method too long
     @NotNull
     public JsProgram compileCorrectNamespaces(@NotNull BindingContext bindingContext, @NotNull List<JetNamespace> namespaces) {
         //TODO hardcoded

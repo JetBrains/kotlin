@@ -50,14 +50,6 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    //TODO
-//    @NotNull
-//    private JsStatement classDeclarationStatement(@NotNull JetClass classDeclaration,
-//                                                  @NotNull JsInvocation jsClassDeclaration) {
-//        JsNameRef unqualifiedClassNameReference = translationContext().getNameForElement(classDeclaration).makeRef();
-//        return AstUtil.newAssignmentStatement(unqualifiedClassNameReference, jsClassDeclaration);
-//    }
-
     private void addClassOwnDeclarations(@NotNull JetClass classDeclaration,
                                          @NotNull JsInvocation jsClassDeclaration) {
         JsObjectLiteral jsClassDescription = translateClassDeclarations(classDeclaration);

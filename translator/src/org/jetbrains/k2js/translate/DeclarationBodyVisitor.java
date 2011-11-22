@@ -38,11 +38,10 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
         return properties;
     }
 
-    //TODO
     @Override
     @NotNull
     public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
-        //return Arrays.asList(Translation.classTranslator(context).translateClass(expression));
+        //TODO: we are interested only in class own declarations
         return Collections.emptyList();
     }
 

@@ -72,7 +72,6 @@ public final class ClassInitializerVisitor extends AbstractInitializerVisitor {
         return result;
     }
 
-
     @Override
     @NotNull
     public List<JsStatement> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
