@@ -34,13 +34,13 @@ public class ObjectOrClosureCodegen {
             return result != null ? innerValue : StackValue.composed(result, innerValue);
         }
 
-        if (d instanceof VariableDescriptor) {
+        if (d instanceof VariableDescriptor && !(d instanceof PropertyDescriptor)) {
             VariableDescriptor vd = (VariableDescriptor) d;
 
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
-            final Type sharedVarType = exprContext.getSharedVarType(vd);
+            final Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
             Type localType = state.getTypeMapper().mapType(vd.getOutType());
             final Type type = sharedVarType != null ? sharedVarType : localType;
 
@@ -78,6 +78,9 @@ public class ObjectOrClosureCodegen {
 
             answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
             closure.put(d, answer);
+
+            assert captureReceiver == null;
+            captureReceiver = type;
 
             return innerValue;
         }

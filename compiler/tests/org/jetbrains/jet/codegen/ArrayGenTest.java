@@ -139,6 +139,55 @@ public class ArrayGenTest extends CodegenTestCase {
         foo.invoke(null);
     }
 
+    public void testByteIterator () throws Exception {
+        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testShortIterator () throws Exception {
+        loadText("fun box() { val x = ShortArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testIntIterator () throws Exception {
+        loadText("fun box() { val x = IntArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testLongIterator2 () throws Exception {
+        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testFloatIterator () throws Exception {
+        loadText("fun box() { val x = FloatArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testDoubleIterator () throws Exception {
+        loadText("fun box() { val x = ShortArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
+    public void testBooleanIterator () throws Exception {
+        loadText("fun box() { val x = BooleanArray(5).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        foo.invoke(null);
+    }
+
     public void testArrayIndices () throws Exception {
         loadText("fun box() { val x = Array<Int>(5, {it}).indices.iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
         System.out.println(generateToText());

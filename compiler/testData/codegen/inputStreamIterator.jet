@@ -1,0 +1,26 @@
+import java.io.*
+
+val ByteArray.inputStream : ByteArrayInputStream
+    get() = ByteArrayInputStream(this)
+
+fun InputStream.iterator() : ByteIterator =
+    object: ByteIterator() {
+        override val hasNext : Boolean
+            get() = available() > 0
+
+        override fun nextByte() = read().byt
+    }
+
+fun box() : String {
+    val x = ByteArray (10)
+
+    for(index in 0..9) {
+        x [index] = index.byt
+    }
+
+    for(b in x.inputStream) {
+       System.out?.println(b)
+    }
+
+    return "OK"
+}

@@ -1,6 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -39,43 +38,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private Set<String> getSuperInterfaces(JetClassOrObject aClass) {
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
-        String superClassName = null;
         Set<String> superInterfaces = new LinkedHashSet<String>();
 
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
             JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
             assert superType != null;
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            PsiElement superPsi = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
-
-            if (superPsi instanceof PsiClass) {
-                PsiClass psiClass = (PsiClass) superPsi;
-                String fqn = psiClass.getQualifiedName();
-                assert fqn != null;
-                if (psiClass.isInterface()) {
-                    superInterfaces.add(fqn.replace('.', '/'));
-                }
-                else {
-                    if (superClassName == null) {
-                        superClassName = fqn.replace('.', '/');
-
-                        while (psiClass != null) {
-                            for (PsiClass ifs : psiClass.getInterfaces()) {
-                                String qualifiedName = ifs.getQualifiedName();
-                                assert qualifiedName != null;
-                                superInterfaces.add(qualifiedName.replace('.', '/'));
-                            }
-                            psiClass = psiClass.getSuperClass();
-                        }
-                    }
-                    else {
-                        throw new RuntimeException("Cannot determine single class to inherit from");
-                    }
-                }
-            }
-            else {
-                if(superPsi == null || ((JetClass)superPsi).isTrait())
-                    superInterfaces.add(typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName());
+            if(CodegenUtil.isInterface(superClassDescriptor)) {
+                superInterfaces.add(typeMapper.getFQName(superClassDescriptor));
             }
         }
         return superInterfaces;
@@ -137,21 +107,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 assert superType != null;
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
-                if (declaration != null) {
-                    if (declaration instanceof PsiClass) {
-                        if (!((PsiClass) declaration).isInterface()) {
-                            superClass = typeMapper.mapType(superClassDescriptor.getDefaultType(), kind).getInternalName();
-                            superCall = specifier;
-                            return;
-                        }
-                    }
-                    else if(declaration instanceof JetClass) {
-                        if(!((JetClass) declaration).isTrait()) {
-                            superClass = typeMapper.mapType(superClassDescriptor.getDefaultType(), kind).getInternalName();
-                            superCall = specifier;
-                        }
-                    }
+                if(!CodegenUtil.isInterface(superClassDescriptor)) {
+                    superClass = typeMapper.mapType(superClassDescriptor.getDefaultType(), kind).getInternalName();
+                    superCall = specifier;
                 }
             }
         }
@@ -332,16 +290,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             method = callableMethod.getSignature();
         }
 
-        int firstClosureIndex = -1;
-        if(context.closure != null) {
+        ObjectOrClosureCodegen closure = context.closure;
+        if(closure != null) {
             final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(method.getArgumentTypes()));
 
-            firstClosureIndex = consArgTypes.size()+1;
+            int insert = 0;
+            if(closure.captureThis) {
+                if(!CodegenUtil.hasThis0(descriptor))
+                    consArgTypes.add(insert, Type.getObjectType(context.getThisDescriptor().getName()));
+                insert++;
+            }
+            else {
+                if(CodegenUtil.hasThis0(descriptor))
+                    insert++;
+            }
 
-            Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = context.closure.closure;
-            for (DeclarationDescriptor descriptor : closure.keySet()) {
-                final Type sharedVarType = context.closure.exprContext.getSharedVarType(descriptor);
-                consArgTypes.add(sharedVarType != null ? sharedVarType : typeMapper.mapType(((VariableDescriptor) descriptor).getOutType()));
+            if(closure.captureReceiver != null)
+                consArgTypes.add(insert++, closure.captureReceiver);
+
+            for (DeclarationDescriptor descriptor : closure.closure.keySet()) {
+                if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+                    final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
+                    final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+                    consArgTypes.add(insert++, type);
+                }
+                else if(descriptor instanceof FunctionDescriptor) {
+                    assert closure.captureReceiver != null;
+                }
             }
 
             method = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
@@ -450,17 +425,28 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateTypeInfoInitializer(frameMap.getFirstTypeParameter(), frameMap.getTypeParameterCount(), iv);
         }
 
-        if(context.closure != null) {
-            Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = context.closure.closure;
-            int k = 0;
-            for (DeclarationDescriptor varDescr : closure.keySet()) {
-                Type sharedVarType = context.closure.exprContext.getSharedVarType(varDescr);
-                if(sharedVarType == null) {
-                    sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getOutType());
-                }
+        if(closure != null) {
+            int k = outerDescriptor != null && outerDescriptor.getKind() != ClassKind.OBJECT ? 2 : 1;
+            if(closure.captureReceiver != null) {
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                iv.load(firstClosureIndex + k, StackValue.refType(sharedVarType));
-                iv.putfield(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$" + (k+1), sharedVarType.getDescriptor());
+                iv.load(1, closure.captureReceiver);
+                iv.putfield(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "receiver$0", closure.captureReceiver.getDescriptor());
+                k += closure.captureReceiver.getSize();
+            }
+
+            int l = 0;
+            for (DeclarationDescriptor varDescr : closure.closure.keySet()) {
+                if(varDescr instanceof VariableDescriptor && !(varDescr instanceof PropertyDescriptor)) {
+                    Type sharedVarType = typeMapper.getSharedVarType(varDescr);
+                    if(sharedVarType == null) {
+                        sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getOutType());
+                    }
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    iv.load(k, StackValue.refType(sharedVarType));
+                    k += StackValue.refType(sharedVarType).getSize();
+                    iv.putfield(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$" + (l+1), sharedVarType.getDescriptor());
+                    l++;
+                }
             }
         }
 

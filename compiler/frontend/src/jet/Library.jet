@@ -34,7 +34,7 @@ namespace io {
   fun readLine() : String?
 }
 
-fun Any?.identityEquals(other : Any?) // = this === other
+fun Any?.identityEquals(other : Any?) : Boolean // = this === other
 
 // Can't write a body due to a bootstrapping problem (see JET-74)
 fun Any?.equals(other : Any?) : Boolean// = this === other
@@ -53,36 +53,52 @@ trait Iterator<out T> {
   val hasNext : Boolean
 }
 
-abstract open class ByteIterator : Iterator<Byte> {
-  fun nextByte() : Byte
+abstract open class ByteIterator() : Iterator<Byte> {
+  abstract open fun nextByte() : Byte
+
+  override fun next() : Byte
 }
 
-abstract open class ShortIterator : Iterator<Short> {
-  fun nextShort() : Short
+abstract open class ShortIterator() : Iterator<Short> {
+  abstract open fun nextShort() : Short
+
+  override fun next() : Short
 }
 
-abstract open class CharIterator : Iterator<Char> {
-  fun nextChar()  : Char
+abstract open class CharIterator() : Iterator<Char> {
+  abstract open fun nextChar()  : Char
+
+  override fun next() : Char
 }
 
-abstract open class IntIterator : Iterator<Int> {
-  fun nextInt()  : Int
+abstract open class IntIterator() : Iterator<Int> {
+  abstract open fun nextInt()  : Int
+
+  override fun next() : Int
 }
 
-abstract open class LongIterator : Iterator<Long> {
-  fun nextLong()  : Long
+abstract open class LongIterator() : Iterator<Long> {
+  abstract open fun nextLong()  : Long
+
+  override fun next() : Long
 }
 
-abstract open class FloatIterator : Iterator<Float> {
-  fun nextFloat()  : Float
+abstract open class FloatIterator() : Iterator<Float> {
+  abstract open fun nextFloat()  : Float
+
+  override fun next() : Float
 }
 
-abstract open class DoubleIterator : Iterator<Double> {
-  fun nextDouble()  : Double
+abstract open class DoubleIterator() : Iterator<Double> {
+  abstract open fun nextDouble()  : Double
+
+  override fun next() : Double
 }
 
-abstract open class BooleanIterator : Iterator<Boolean> {
-  fun nextBoolean()  : Boolean
+abstract open class BooleanIterator() : Iterator<Boolean> {
+  abstract open fun nextBoolean()  : Boolean
+
+  override fun next() : Boolean
 }
 
 trait Iterable<out T> {

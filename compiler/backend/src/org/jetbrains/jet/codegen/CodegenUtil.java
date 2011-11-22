@@ -89,6 +89,9 @@ public class CodegenUtil {
     }
 
     public static boolean hasTypeInfoField(JetType type) {
+        if(isInterface(type))
+            return false;
+
         List<TypeParameterDescriptor> parameters = type.getConstructor().getParameters();
         for (TypeParameterDescriptor parameter : parameters) {
             if(parameter.isReified())

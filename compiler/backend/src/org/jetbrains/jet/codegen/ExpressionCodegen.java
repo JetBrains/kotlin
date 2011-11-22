@@ -81,7 +81,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.intrinsics = state.getIntrinsics();
     }
 
-    StackValue castToRequiredTypeOfInterfaceIfNeeded(StackValue inner, DeclarationDescriptor provided, ClassDescriptor required) {
+    StackValue castToRequiredTypeOfInterfaceIfNeeded(StackValue inner, DeclarationDescriptor provided, @Nullable ClassDescriptor required) {
         if(required == null)
             return inner;
 
@@ -640,13 +640,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.load(0, JetTypeMapper.TYPE_OBJECT);
         }
 
-        for (DeclarationDescriptor descriptor : closureCodegen.closure.keySet()) {
-            Type sharedVarType = getSharedVarType(descriptor);
-            if(sharedVarType == null)
-                sharedVarType = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
-            consArgTypes.add(sharedVarType);
-            final EnclosedValueDescriptor valueDescriptor = closureCodegen.closure.get(descriptor);
-            valueDescriptor.getOuterValue().put(sharedVarType, v);
+        if(closureCodegen.captureReceiver != null) {
+            v.load(context.isStatic() ? 0 : 1, closureCodegen.captureReceiver);
+            consArgTypes.add(closureCodegen.captureReceiver);
+        }
+        
+        for (Map.Entry<DeclarationDescriptor, EnclosedValueDescriptor> entry : closureCodegen.closure.entrySet()) {
+            if(entry.getKey() instanceof VariableDescriptor && !(entry.getKey() instanceof PropertyDescriptor)) {
+                Type sharedVarType = typeMapper.getSharedVarType(entry.getKey());
+                if(sharedVarType == null)
+                    sharedVarType = state.getTypeMapper().mapType(((VariableDescriptor) entry.getKey()).getOutType());
+                consArgTypes.add(sharedVarType);
+                entry.getValue().getOuterValue().put(sharedVarType, v);
+            }
         }
 
         Method cons = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
@@ -654,20 +660,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(Type.getObjectType(closure.getClassname()));
     }
 
-    Type getSharedVarType(DeclarationDescriptor variableDescriptor) {
-        if(!(variableDescriptor instanceof VariableDescriptor))
-            return null;
-
-        Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) variableDescriptor);
-        if (aBoolean != null && aBoolean) {
-            JetType outType = ((VariableDescriptor) variableDescriptor).getOutType();
-            return StackValue.sharedTypeForType(typeMapper.mapType(outType));
-        }
-        else {
-            return null;
-        }
-    }
-    
     private StackValue generateBlock(List<JetElement> statements) {
         Label blockStart = new Label();
         v.mark(blockStart);
@@ -677,7 +669,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, statement);
                 assert variableDescriptor != null;
 
-                final Type sharedVarType = getSharedVarType(variableDescriptor);
+                final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
                 final Type type = sharedVarType != null ? sharedVarType : typeMapper.mapType(variableDescriptor.getOutType());
                 myFrameMap.enter(variableDescriptor, type.getSize());
             }
@@ -705,7 +697,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
                 int index = myFrameMap.leave(variableDescriptor);
 
-                final Type sharedVarType = getSharedVarType(variableDescriptor);
+                final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
                 final Type type = sharedVarType != null ? sharedVarType : typeMapper.mapType(variableDescriptor.getOutType());
                 if(sharedVarType != null) {
                     v.aconst(null);
@@ -819,7 +811,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             int index = lookupLocal(descriptor);
             if (index >= 0) {
-                Type sharedVarType = getSharedVarType(descriptor);
+                Type sharedVarType = typeMapper.getSharedVarType(descriptor);
                 final JetType outType = ((VariableDescriptor) descriptor).getOutType();
                 if(sharedVarType != null) {
                     return StackValue.shared(index, typeMapper.mapType(outType));
@@ -914,7 +906,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                     receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
                                 else {
                                     if(resolvedCall.getThisObject() instanceof ExtensionReceiver)
-                                        receiver = generateReceiver(((ExtensionReceiver)resolvedCall.getThisObject()).getDeclarationDescriptor(), null);
+                                        receiver = generateReceiver(((ExtensionReceiver)resolvedCall.getThisObject()).getDeclarationDescriptor());
                                     else
                                         receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
                                 }
@@ -991,6 +983,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         functionDescriptor = functionDescriptor.getOriginal();
         String owner;
+
+        IntrinsicMethod intrinsic = intrinsics.getIntrinsic(functionDescriptor);
+        if(intrinsic != null) {
+            intrinsic.generate(this, v, type, null, null, StackValue.onStack(JetTypeMapper.TYPE_OBJECT));
+            return;
+        }
 
         boolean isInterface;
         boolean isInsideClass = containingDeclaration == context.getThisDescriptor();
@@ -1247,7 +1245,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else if(descriptor instanceof ExtensionReceiver) {
             ExtensionReceiver extensionReceiver = (ExtensionReceiver) descriptor;
-            generateReceiver(extensionReceiver.getDeclarationDescriptor(), null).put(typeMapper.mapType(descriptor.getType()), v);
+            generateReceiver(extensionReceiver.getDeclarationDescriptor()).put(typeMapper.mapType(descriptor.getType()), v);
         }
         else if(descriptor instanceof ExpressionReceiver) {
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) descriptor;
@@ -1266,16 +1264,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return null;
     }
 
-    private StackValue generateReceiver(DeclarationDescriptor provided, ClassDescriptor required) {
+    private StackValue generateReceiver(DeclarationDescriptor provided) {
         assert context instanceof CodegenContext.ReceiverContext;
         CodegenContext.ReceiverContext cur = (CodegenContext.ReceiverContext) context;
         if (cur.getReceiverDescriptor() == provided) {
             StackValue result = cur.getReceiverExpression(typeMapper);
-            return castToRequiredTypeOfInterfaceIfNeeded(result, provided, required);
+            return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
         }
 
         StackValue result = context.lookupInContext(provided, v, StackValue.local(0, JetTypeMapper.TYPE_OBJECT));
-        return castToRequiredTypeOfInterfaceIfNeeded(result, provided, required);
+        return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
     }
 
     public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
@@ -1939,7 +1937,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         assert index >= 0;
 
-        final Type sharedVarType = getSharedVarType(variableDescriptor);
+        final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
         assert variableDescriptor != null;
         Type varType = typeMapper.mapType(variableDescriptor.getOutType());
         if(sharedVarType != null) {
@@ -2217,8 +2215,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return generateThisOrOuter((ClassDescriptor) descriptor);
         }
         else {
-            if(descriptor instanceof FunctionDescriptor) {
-                return generateReceiver(descriptor, null);
+            if(descriptor instanceof FunctionDescriptor || descriptor instanceof PropertyDescriptor) {
+                return generateReceiver(descriptor);
             }
             throw new UnsupportedOperationException();
         }

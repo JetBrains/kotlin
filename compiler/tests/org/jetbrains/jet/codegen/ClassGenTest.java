@@ -24,7 +24,7 @@ public class ClassGenTest extends CodegenTestCase {
         loadFile("classes/inheritingFromArrayList.jet");
 
         final Class aClass = loadClass("Foo", generateClassesInFile());
-        checkInterface(aClass, List.class);
+        assertInstanceOf(aClass.newInstance(), List.class);
     }
 
     public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() throws Exception {
@@ -45,13 +45,6 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testRightHandOverride() throws Exception {
         blackBoxFile("classes/rightHandOverride.jet");
-    }
-
-    private static void checkInterface(Class aClass, Class ifs) {
-        for (Class anInterface : aClass.getInterfaces()) {
-            if (anInterface == ifs) return;
-        }
-        fail(aClass.getName() + " must have " + ifs.getName() + " in its interfaces");
     }
 
     public void testNewInstanceExplicitConstructor() throws Exception {

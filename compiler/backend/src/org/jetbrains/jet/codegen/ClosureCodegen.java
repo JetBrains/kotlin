@@ -98,7 +98,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
         ClassDescriptor thisDescriptor = context.getThisDescriptor();
         final Type enclosingType = thisDescriptor == null ? null : Type.getObjectType(thisDescriptor.getName());
-        if (enclosingType == null) captureThis = false;
+        if (enclosingType == null)
+            captureThis = false;
 
         final Method constructor = generateConstructor(funClass, fun);
 
@@ -208,14 +209,14 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
     private Method generateConstructor(String funClass, JetFunctionLiteralExpression fun) {
         int argCount = captureThis ? 1 : 0;
+        argCount += (captureReceiver != null ? 1 : 0);
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if(descriptor instanceof VariableDescriptor) {
+            if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 argCount++;
             }
             else if(descriptor instanceof FunctionDescriptor) {
-                captureReceiver = state.getTypeMapper().mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType());
-                argCount++;
+                assert captureReceiver != null;
             }
         }
 
@@ -231,8 +232,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if(descriptor instanceof VariableDescriptor) {
-                final Type sharedVarType = exprContext.getSharedVarType(descriptor);
+            if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+                final Type sharedVarType = exprContext.getTypeMapper().getSharedVarType(descriptor);
                 final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
                 argTypes[i++] = type;
             }

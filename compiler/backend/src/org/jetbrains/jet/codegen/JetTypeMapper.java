@@ -664,4 +664,24 @@ public class JetTypeMapper {
         JetType type = arrayType.getArguments().get(0).getType();
         return isGenericsArray(type) ? type : null;
     }
+
+    public Type getSharedVarType(DeclarationDescriptor descriptor) {
+        if(descriptor instanceof PropertyDescriptor) {
+            return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
+        }
+        else if (descriptor instanceof FunctionDescriptor) {
+            return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType()));
+        }
+        else if (descriptor instanceof VariableDescriptor) {
+            Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) descriptor);
+            if (aBoolean != null && aBoolean) {
+                JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                return StackValue.sharedTypeForType(mapType(outType));
+            }
+            else {
+                return null;
+            }
+        }
+        return null;
+    }
 }

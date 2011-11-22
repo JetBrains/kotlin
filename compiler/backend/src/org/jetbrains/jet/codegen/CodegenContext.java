@@ -21,6 +21,11 @@ public abstract class CodegenContext {
         protected ClassDescriptor getThisDescriptor() {
             return null;
         }
+
+        @Override
+        public boolean isStatic() {
+            return true;
+        }
     };
 
     protected static final StackValue local0 = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
@@ -244,6 +249,8 @@ public abstract class CodegenContext {
         return getThisDescriptor() != null ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 
+    public abstract boolean isStatic();
+
     public abstract static class ReceiverContext extends CodegenContext {
         final CallableDescriptor receiverDescriptor;
 
@@ -274,6 +281,11 @@ public abstract class CodegenContext {
 
         public Type enclosingClassType() {
             return getParentContext().enclosingClassType();
+        }
+
+        @Override
+        public boolean isStatic() {
+            return getParentContext().isStatic();
         }
 
         protected StackValue getOuterExpression(StackValue prefix) {
@@ -310,6 +322,11 @@ public abstract class CodegenContext {
         protected ClassDescriptor getThisDescriptor() {
             return (ClassDescriptor) getContextDescriptor();
         }
+
+        @Override
+        public boolean isStatic() {
+            return false;
+        }
     }
 
     public static class AnonymousClassContext extends CodegenContext {
@@ -325,6 +342,11 @@ public abstract class CodegenContext {
         @Override
         protected ClassDescriptor getThisDescriptor() {
             return (ClassDescriptor) getContextDescriptor();
+        }
+
+        @Override
+        public boolean isStatic() {
+            return false;
         }
     }
 
@@ -350,6 +372,11 @@ public abstract class CodegenContext {
         public DeclarationDescriptor getContextDescriptor() {
             return classDescriptor;
         }
+
+        @Override
+        public boolean isStatic() {
+            return false;
+        }
     }
 
     public static class NamespaceContext extends CodegenContext {
@@ -360,6 +387,11 @@ public abstract class CodegenContext {
         @Override
         protected ClassDescriptor getThisDescriptor() {
             return null;
+        }
+
+        @Override
+        public boolean isStatic() {
+            return true;
         }
     }
 }

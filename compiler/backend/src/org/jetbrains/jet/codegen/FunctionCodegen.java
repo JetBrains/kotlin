@@ -110,7 +110,7 @@ public class FunctionCodegen {
                 }
                 else {
                     for (ValueParameterDescriptor parameter : paramDescrs) {
-                        Type sharedVarType = codegen.getSharedVarType(parameter);
+                        Type sharedVarType = state.getTypeMapper().getSharedVarType(parameter);
                         Type localVarType = state.getTypeMapper().mapType(parameter.getOutType());
                         if (sharedVarType != null) {
                             int index = frameMap.getIndex(parameter);

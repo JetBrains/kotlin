@@ -19,6 +19,8 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     //todo not needed when frontend will be able to calculate properly
     static JetType getSuperClass(ClassDescriptor myClassDescr, BindingContext bindingContext) {
         JetClassOrObject myClass = (JetClassOrObject) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, myClassDescr);
+        if(myClass == null)
+            return JetStandardClasses.getAnyType();
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
 
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {

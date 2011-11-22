@@ -35,6 +35,7 @@ public class IntrinsicMethods {
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
+    public static final IteratorNext ITERATOR_NEXT = new IteratorNext();
 
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
@@ -82,6 +83,15 @@ public class IntrinsicMethods {
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, new StringPlus());
+
+        declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("IntIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("LongIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("CharIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("BooleanIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("FloatIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("DoubleIterator", "next", 0, ITERATOR_NEXT);
 
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
@@ -168,7 +178,11 @@ public class IntrinsicMethods {
     private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation) {
         JetScope memberScope = getClassMemberScope(className);
         final Set<FunctionDescriptor> group = memberScope.getFunctions(functionName);
-        declareOverload(group, arity, implementation);
+        for (FunctionDescriptor descriptor : group) {
+            if (className.equals(descriptor.getContainingDeclaration().getName()) && descriptor.getValueParameters().size() == arity) {
+                myMethods.put(descriptor.getOriginal(), implementation);
+            }
+        }
     }
 
     private void declareOverload(Set<FunctionDescriptor> group, int arity, IntrinsicMethod implementation) {
