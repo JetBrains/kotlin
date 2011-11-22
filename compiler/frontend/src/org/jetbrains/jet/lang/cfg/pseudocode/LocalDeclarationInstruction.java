@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
-* @author abreslav
+* @author svtk
 */
 public class LocalDeclarationInstruction extends InstructionWithNext {
 

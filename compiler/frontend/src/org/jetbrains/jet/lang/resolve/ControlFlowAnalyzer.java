@@ -67,7 +67,7 @@ public class ControlFlowAnalyzer {
                                                                     ? propertyDescriptor.getGetter()
                                                                     : propertyDescriptor.getSetter();
                     assert accessorDescriptor != null;
-                    flowInformationProvider.checkDefiniteReturn(accessor, accessorDescriptor.getReturnType());
+                    checkFunction(accessor, accessorDescriptor.getReturnType());
                 }
             }
         }

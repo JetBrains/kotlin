@@ -388,6 +388,7 @@ public class JetControlFlowProcessor {
                     }
                     JetParameter catchParameter = catchClause.getCatchParameter();
                     if (catchParameter != null) {
+                        builder.declare(catchParameter);
                         builder.write(catchParameter, catchParameter);
                     }
                     JetExpression catchBody = catchClause.getCatchBody();
@@ -458,6 +459,7 @@ public class JetControlFlowProcessor {
             }
             JetParameter loopParameter = expression.getLoopParameter();
             if (loopParameter != null) {
+                builder.declare(loopParameter);
                 builder.write(loopParameter, loopParameter);
             }
             // TODO : primitive cases
@@ -669,18 +671,11 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitProperty(JetProperty property) {
+            builder.declare(property);
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
                 value(initializer, false);
                 builder.write(property, property);
-            }
-        }
-
-        @Override
-        public void visitPropertyAccessor(JetPropertyAccessor accessor) {
-            JetExpression bodyExpression = accessor.getBodyExpression();
-            if (bodyExpression != null) {
-                processLocalDeclaration(accessor, bodyExpression);
             }
         }
 
@@ -838,11 +833,6 @@ public class JetControlFlowProcessor {
                     value(declaration, inCondition);
                 }
             }
-            for (JetProperty property : properties) {
-                for (JetPropertyAccessor accessor : property.getAccessors()) {
-                    value(accessor, inCondition);
-                }
-            }
         }
 
         @Override
@@ -855,11 +845,4 @@ public class JetControlFlowProcessor {
             builder.unsupported(element);
         }
     }
-
-    private final CFPVisitor FOR_LOCAL_CLASSES = new CFPVisitor(false) {
-        @Override
-        public void visitNamedFunction(JetNamedFunction function) {
-            // Nothing
-        }
-    };
 }

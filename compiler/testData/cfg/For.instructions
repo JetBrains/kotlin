@@ -10,8 +10,9 @@ l0:
     r(1)            NEXT:[r(2)]                 PREV:[<START>]
     r(2)            NEXT:[r(..)]                PREV:[r(1)]
     r(..)           NEXT:[r(1..2)]              PREV:[r(2)]
-    r(1..2)         NEXT:[w(i)]                 PREV:[r(..)]
-    w(i)            NEXT:[jmp?(l2)]             PREV:[r(1..2)]
+    r(1..2)         NEXT:[v(i)]                 PREV:[r(..)]
+    v(i)            NEXT:[w(i)]                 PREV:[r(1..2)]
+    w(i)            NEXT:[jmp?(l2)]             PREV:[v(i)]
 l3:
     jmp?(l2)        NEXT:[read (Unit), r(i)]    PREV:[w(i)]
 l4:

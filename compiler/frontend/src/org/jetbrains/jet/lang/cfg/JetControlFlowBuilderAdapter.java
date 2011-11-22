@@ -177,4 +177,16 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         assert builder != null;
         builder.write(assignment, lValue);
     }
+
+    @Override
+    public void declare(@NotNull JetParameter parameter) {
+        assert builder != null;
+        builder.declare(parameter);
+    }
+
+    @Override
+    public void declare(@NotNull JetProperty property) {
+        assert builder != null;
+        builder.declare(property);
+    }
 }

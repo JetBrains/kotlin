@@ -12,6 +12,10 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
+    public void visitVariableDeclarationInstruction(VariableDeclarationInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
     public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
         visitJump(instruction);
     }

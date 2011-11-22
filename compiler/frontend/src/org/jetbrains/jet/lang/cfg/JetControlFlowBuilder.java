@@ -58,6 +58,9 @@ public interface JetControlFlowBuilder {
     void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);
 
     void write(@NotNull JetElement assignment, @NotNull JetElement lValue);
+    
+    void declare(@NotNull JetParameter parameter);
+    void declare(@NotNull JetProperty property);
 
     // Other
     void unsupported(JetElement element);

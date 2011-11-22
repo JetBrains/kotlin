@@ -440,31 +440,23 @@ public class JetFlowInformationProvider {
     }
 
     private Collection<VariableDescriptor> collectDeclaredVariables(JetElement element) {
+        final Pseudocode pseudocode = pseudocodeMap.get(element);
+        assert pseudocode != null;
+        
         final Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
-        element.accept(new JetTreeVisitor<Void>() {
+        JetControlFlowGraphTraverser.<Void>create(pseudocode, false).traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
             @Override
-            public Void visitProperty(JetProperty property, Void data) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-                if (descriptor != null) {
-                    assert descriptor instanceof VariableDescriptor;
-                    declaredVariables.add((VariableDescriptor) descriptor);
-                }
-                return super.visitProperty(property, data);
-            }
-
-            @Override
-            public Void visitForExpression(JetForExpression expression, Void data) {
-                JetParameter loopParameter = expression.getLoopParameter();
-                if (loopParameter != null) {
-                    DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, loopParameter);
+            public void execute(Instruction instruction, @Nullable Void enterData, @Nullable Void exitData) {
+                if (instruction instanceof VariableDeclarationInstruction) {
+                    JetDeclaration variableDeclarationElement = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
+                    DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement);
                     if (descriptor != null) {
                         assert descriptor instanceof VariableDescriptor;
                         declaredVariables.add((VariableDescriptor) descriptor);
                     }
                 }
-                return super.visitForExpression(expression, data);
             }
-        }, null);
+        });
         return declaredVariables;
     }
 
