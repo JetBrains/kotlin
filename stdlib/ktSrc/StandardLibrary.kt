@@ -2,6 +2,7 @@ namespace std
 
 namespace io {
     import java.io.*
+    import java.nio.charset.*
 
     inline fun print(message : Any?) { System.out?.print(message) }
     inline fun print(message : Int) { System.out?.print(message) }
@@ -32,23 +33,25 @@ namespace io {
     inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
     val InputStream.buffered : BufferedInputStream
-        get() = if(this instanceof BufferedInputStream) this else BufferedInputStream(this)
+        get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
 
-    inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
+//    inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
 
     val InputStream.reader : InputStreamReader
         get() = InputStreamReader(this)
 
-    val InputStream.bufferedReader : BufferedReader
-        get() = buffered.reader
+//    val InputStream.bufferedReader : BufferedReader
+//        get() = buffered.reader
 
-    inline fun val InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
+/*
+    inline fun InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
 
-    inline fun val InputStream.reader(charsetName: String) = InputStreamReader(this, charsetNme)
+    inline fun InputStream.reader(charsetName: String) = InputStreamReader(this, charsetNme)
 
-    inline fun val InputStream.reader(charset: Charset) = InputStreamReader(this, charset)
+    inline fun InputStream.reader(charset: Charset) = InputStreamReader(this, charset)
 
-    inline fun val InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
+    inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
+*/
 
     fun InputStream.iterator() : ByteIterator = object: ByteIterator() {
         override val hasNext : Boolean
@@ -57,10 +60,10 @@ namespace io {
         override fun nextByte() = read().byt
     }
 
-    val Reader.buffered : BufferedReader
-        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
+//    val Reader.buffered : BufferedReader
+//        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
 
-    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
+//    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 
     private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : InputStream() {
         override fun read() : Int {
