@@ -706,6 +706,7 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+            coerce(type, v);
         }
 
         @Override
@@ -735,6 +736,7 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             v.load(0, JetTypeMapper.TYPE_OBJECT);
             v.getfield(owner, name, this.type.getDescriptor());
+            coerce(type, v);
         }
 
         @Override
