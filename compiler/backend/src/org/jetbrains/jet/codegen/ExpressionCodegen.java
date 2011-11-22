@@ -790,6 +790,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(descriptor);
         if (intrinsic != null) {
             final Type expectedType = expressionType(expression);
+            if(receiver == StackValue.none()) {
+                if (resolvedCall.getThisObject().exists()) {
+                    if(resolvedCall.getReceiverArgument().exists()) {
+                        generateFromResolvedCall(resolvedCall.getThisObject());
+                        generateFromResolvedCall(resolvedCall.getReceiverArgument());
+                        receiver = StackValue.onStack(typeMapper.mapType(resolvedCall.getReceiverArgument().getType()));
+                    }
+                    else {
+                        generateFromResolvedCall(resolvedCall.getThisObject());
+                        receiver = StackValue.onStack(typeMapper.mapType(resolvedCall.getThisObject().getType()));
+                    }
+                }
+                else {
+                    if (resolvedCall.getReceiverArgument().exists()) {
+                        generateFromResolvedCall(resolvedCall.getReceiverArgument());
+                        receiver = StackValue.onStack(typeMapper.mapType(resolvedCall.getReceiverArgument().getType()));
+                    }
+                }
+            }
             return intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList(), receiver);
         }
 

@@ -69,4 +69,9 @@ public class VarArgTest extends CodegenTestCase {
         assertTrue(((Integer[])res)[0].equals(2));
         assertTrue(((Integer[])res)[1].equals(4));
     }
+
+    public void testKt581() {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("regressions/kt581.jet");
+    }
 }
