@@ -1,4 +1,4 @@
-namespace org.test.customer {
+namespace org.test.customer
 open class Customer(first : String?, last : String?) {
 public val _firstName : String?
 public val _lastName : String?
@@ -40,7 +40,6 @@ open public fun main() : Unit {
 var customer : Customer? = CustomerBuilder().WithFirstName("Homer")?.WithLastName("Simpson")?.Build()
 System.out?.println(customer?.getFirstName())
 System.out?.println(customer?.getLastName())
-}
 }
 }
 }

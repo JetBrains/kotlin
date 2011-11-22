@@ -1,4 +1,4 @@
-namespace demo {
+namespace demo
 import java.awt.*
 import java.awt.event.*
 import java.io.*
@@ -16,6 +16,5 @@ open public fun windowClosing(e : WindowEvent?) : Unit {
 dispose()
 }
 })
-}
 }
 }
