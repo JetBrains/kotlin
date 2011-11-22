@@ -99,6 +99,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (tokenType == JavaTokenType.OROR) return "||";
     if (tokenType == JavaTokenType.PLUSPLUS) return "++";
     if (tokenType == JavaTokenType.MINUSMINUS) return "--";
+    if (tokenType == JavaTokenType.EXCL) return "!";
 
     System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType.toString());
     return "";
