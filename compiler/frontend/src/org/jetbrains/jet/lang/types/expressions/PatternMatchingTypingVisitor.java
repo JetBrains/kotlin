@@ -228,7 +228,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetProperty variableDeclaration = pattern.getVariableDeclaration();
                 JetTypeReference propertyTypeRef = variableDeclaration.getPropertyTypeRef();
                 JetType type = propertyTypeRef == null ? subjectType : context.getTypeResolver().resolveType(context.scope, propertyTypeRef);
-                VariableDescriptor variableDescriptor = context.getClassDescriptorResolver().resolveLocalVariableDescriptorWithType(context.scope.getContainingDeclaration(), variableDeclaration, type);
+                VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptorWithType(context.scope.getContainingDeclaration(), variableDeclaration, type);
                 scopeToExtend.addVariableDescriptor(variableDescriptor);
                 if (propertyTypeRef != null) {
                     if (!context.semanticServices.getTypeChecker().isSubtypeOf(subjectType, type)) {

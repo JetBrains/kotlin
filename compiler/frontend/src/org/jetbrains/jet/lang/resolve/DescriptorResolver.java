@@ -27,14 +27,14 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 /**
  * @author abreslav
  */
-public class ClassDescriptorResolver {
+public class DescriptorResolver {
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
     private final TypeResolver typeResolverNotCheckingBounds;
     private final BindingTrace trace;
     private final AnnotationResolver annotationResolver;
 
-    public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
+    public DescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
         this.typeResolver = new TypeResolver(semanticServices, trace, true);
         this.typeResolverNotCheckingBounds = new TypeResolver(semanticServices, trace, false);

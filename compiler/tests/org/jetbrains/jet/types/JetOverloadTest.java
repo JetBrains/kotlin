@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverloadUtil;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
@@ -20,14 +20,14 @@ public class JetOverloadTest extends JetLiteFixture {
     private ModuleDescriptor root = new ModuleDescriptor("test_root");
     private JetStandardLibrary library;
     private JetSemanticServices semanticServices;
-    private ClassDescriptorResolver classDescriptorResolver;
+    private DescriptorResolver descriptorResolver;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
         semanticServices = JetSemanticServices.createSemanticServices(library);
-        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
+        descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class JetOverloadTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
-        return classDescriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function);
+        return descriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function);
     }
 
 }

@@ -168,7 +168,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                         type = ErrorUtils.createErrorType("Cannot be inferred");
                     }
                 }
-                ValueParameterDescriptor valueParameterDescriptor = context.getClassDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type);
+                ValueParameterDescriptor valueParameterDescriptor = context.getDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type);
                 valueParameterDescriptors.add(valueParameterDescriptor);
             }
         }

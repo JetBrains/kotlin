@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -29,13 +29,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
     public class JetDefaultModalityModifiersTestCase  {
         private ModuleDescriptor root = new ModuleDescriptor("test_root");
-        private ClassDescriptorResolver classDescriptorResolver;
+        private DescriptorResolver descriptorResolver;
         private JetScope scope;
 
         public void setUp() throws Exception {
             JetStandardLibrary library = JetStandardLibrary.getJetStandardLibrary(getProject());
             JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(library);
-            classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE);
+            descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE);
             scope = createScope(library.getLibraryScope());
         }
 
@@ -54,7 +54,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
         private MutableClassDescriptor createClassDescriptor(ClassKind kind, JetClass aClass) {
             MutableClassDescriptor classDescriptor = new MutableClassDescriptor(JetTestUtils.DUMMY_TRACE, root, scope, kind);
-            classDescriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor);
+            descriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor);
             return classDescriptor;
         }
 
@@ -72,7 +72,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetNamedFunction function = (JetNamedFunction) declarations.get(0);
-            FunctionDescriptorImpl functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function);
+            FunctionDescriptorImpl functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }
@@ -83,7 +83,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetProperty property = (JetProperty) declarations.get(0);
-            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property);
+            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -95,7 +95,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetProperty property = (JetProperty) declarations.get(0);
-            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property);
+            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

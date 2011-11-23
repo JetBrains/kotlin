@@ -59,7 +59,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         TopDownAnalyzer.processObject(context.semanticServices, context.trace, scope, scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
-            PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
+            PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
             scope.addVariableDescriptor(propertyDescriptor);
         }
         return checkExpectedType(declaration, context);
@@ -82,7 +82,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
             context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter));
         }
 
-        VariableDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property);
+        VariableDescriptor propertyDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property);
         JetExpression initializer = property.getInitializer();
         if (property.getPropertyTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getOutType();
@@ -95,7 +95,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
 
     @Override
     public JetType visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
-        FunctionDescriptorImpl functionDescriptor = context.getClassDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
+        FunctionDescriptorImpl functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
         scope.addFunctionDescriptor(functionDescriptor);
         context.getServices().checkFunctionReturnType(context.scope, function, functionDescriptor, context.dataFlowInfo);
         return checkExpectedType(function, context);

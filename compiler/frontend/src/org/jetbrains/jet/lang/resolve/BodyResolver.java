@@ -357,8 +357,8 @@ public class BodyResolver {
         }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
-            //context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
-            //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
+            //context.getDescriptorResolver().computeFlowData(declaration, bodyExpression);
+            //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(declaration, bodyExpression);
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
 
             typeInferrer.checkFunctionReturnType(functionInnerScope, declaration, JetStandardClasses.getUnitType());
@@ -482,7 +482,7 @@ public class BodyResolver {
     }
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
-        //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
+        //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
         JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getOutType() : NO_EXPECTED_TYPE;
         JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, expectedTypeForInitializer);
@@ -532,7 +532,7 @@ public class BodyResolver {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
-            //JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
+            //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
