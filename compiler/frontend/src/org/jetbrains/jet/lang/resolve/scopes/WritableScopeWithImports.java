@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,20 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     public void importScope(@NotNull JetScope imported) {
         getImports().add(0, imported);
         currentIndividualImportScope = null;
+    }
+
+    @Override
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+        super.getImplicitReceiversHierarchy(result);
+        // Imported scopes come with their receivers
+        // Example: class member resolution scope imports a scope of it's class object
+        //          members of the class object must be able to find it as an implicit receiver
+        for (JetScope scope : getImports()) {
+            ReceiverDescriptor definedReceiver = scope.getImplicitReceiver();
+            if (definedReceiver.exists()) {
+                result.add(0, definedReceiver);
+            }
+        }
     }
 
     @Override

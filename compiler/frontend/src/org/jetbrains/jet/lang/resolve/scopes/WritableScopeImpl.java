@@ -232,15 +232,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return super.getClassifier(name);
     }
 
-    @NotNull
-    @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        if (implicitReceiver == null) {
-            return super.getImplicitReceiver();
-        }
-        return implicitReceiver;
-    }
-
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
@@ -270,6 +261,15 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         NamespaceDescriptor namespace = getWorkerScope().getNamespace(name);
         if (namespace != null) return namespace;
         return super.getNamespace(name);
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getImplicitReceiver() {
+        if (implicitReceiver == null) {
+            return super.getImplicitReceiver();
+        }
+        return implicitReceiver;
     }
 
     @Override
