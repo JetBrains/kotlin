@@ -82,7 +82,7 @@ public class BodyResolver {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
-        computeDeferredTypes();        
+        computeDeferredTypes();
     }
     
     private void resolveDelegationSpecifierLists() {
@@ -501,6 +501,18 @@ public class BodyResolver {
         for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : this.context.getFunctions().entrySet()) {
             JetNamedFunction declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
+            
+            if (descriptor.getReturnType() instanceof DeferredType) {
+                // handle type inference loop: function body contains a closure that calls that function
+                //
+                // fun f() = { f() }
+                //
+                // function type resolution must be started before function body resolution
+                //
+
+                DeferredType returnType = (DeferredType) descriptor.getReturnType();
+                returnType.getActualType();
+            }
 
             JetScope declaringScope = this.context.getDeclaringScopes().get(declaration);
             assert declaringScope != null;
@@ -545,7 +557,8 @@ public class BodyResolver {
     private void computeDeferredTypes() {
         Collection<Box<DeferredType>> deferredTypes = context.getTrace().getKeys(DEFERRED_TYPE);
         if (deferredTypes != null) {
-            final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size());
+            // +1 is a work around agains new Queue(0).addLast(...) bug // stepan.koltsov@ 2011-11-21
+            final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
             context.getTrace().addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<Box<DeferredType>, Boolean>() {
                 @Override
                 public void handleRecord(WritableSlice<Box<DeferredType>, Boolean> deferredTypeKeyDeferredTypeWritableSlice, Box<DeferredType> key, Boolean value) {

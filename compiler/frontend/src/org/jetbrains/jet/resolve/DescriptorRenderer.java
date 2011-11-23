@@ -222,6 +222,7 @@ public class DescriptorRenderer implements Renderer {
 
             renderName(descriptor, builder);
             renderValueParameters(descriptor, builder);
+            // TODO: getReturnType may be uninitialized and throw IllegalStateException // stepan.koltsov@ 2011-11-21
             builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
             return super.visitFunctionDescriptor(descriptor, builder);
         }
