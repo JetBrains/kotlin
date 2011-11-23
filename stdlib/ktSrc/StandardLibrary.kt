@@ -48,8 +48,8 @@ namespace io {
     val InputStream.reader : InputStreamReader
         get() = InputStreamReader(this)
 
-//    val InputStream.bufferedReader : BufferedReader
-//        get() = buffered.reader
+    val InputStream.bufferedReader : BufferedReader
+        get() = BufferedReader(reader)
 
 /*
     inline fun InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
@@ -65,6 +65,8 @@ namespace io {
 //        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
 
 //    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
+
+//    val String.reader = StringReader(this)
 
     private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : InputStream() {
         override fun read() : Int {

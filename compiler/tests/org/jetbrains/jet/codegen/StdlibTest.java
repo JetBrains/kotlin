@@ -73,4 +73,8 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("inputStreamIterator.jet");
         System.out.println(generateToText());
     }
+
+    public void testKt533 () {
+        blackBoxFile("regressions/kt533.kt");
+    }
 }
