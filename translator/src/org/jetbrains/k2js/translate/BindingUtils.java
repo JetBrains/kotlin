@@ -62,13 +62,6 @@ public final class BindingUtils {
     }
 
     @NotNull
-    static public String getPropertyNameForPropertyAccessor(@NotNull BindingContext context,
-                                                            @NotNull JetPropertyAccessor accessor) {
-        PropertyAccessorDescriptor descriptor = getPropertyAccessorDescriptor(context, accessor);
-        return descriptor.getCorrespondingProperty().getName();
-    }
-
-    @NotNull
     static public PropertySetterDescriptor getPropertySetterDescriptorForProperty(@NotNull BindingContext context,
                                                                                   @NotNull JetProperty property) {
         PropertySetterDescriptor result = getPropertyDescriptor(context, property).getSetter();
@@ -91,15 +84,21 @@ public final class BindingUtils {
         Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
         for (JetType type : superclassTypes) {
-            DeclarationDescriptor superClassDescriptor =
-                    type.getConstructor().getDeclarationDescriptor();
-            assert superClassDescriptor instanceof ClassDescriptor
-                    : "Superclass descriptor of a type should be of type ClassDescriptor";
-            if (isNotAny(superClassDescriptor)) {
-                superClassDescriptors.add((ClassDescriptor) superClassDescriptor);
+            ClassDescriptor result = getClassDescriptorForType(type);
+            if (isNotAny(result)) {
+                superClassDescriptors.add(result);
             }
         }
         return superClassDescriptors;
+    }
+
+    @NotNull
+    static public ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
+        DeclarationDescriptor superClassDescriptor =
+                type.getConstructor().getDeclarationDescriptor();
+        assert superClassDescriptor instanceof ClassDescriptor
+                : "Superclass descriptor of a type should be of type ClassDescriptor";
+        return (ClassDescriptor) superClassDescriptor;
     }
 
     static public boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
@@ -113,8 +112,28 @@ public final class BindingUtils {
         return isStatement;
     }
 
+    @NotNull
+    static public JetType getTypeByReference(@NotNull BindingContext context,
+                                             @NotNull JetTypeReference typeReference) {
+        JetType result = context.get(BindingContext.TYPE, typeReference);
+        assert result != null : "TypeReference should reference a type";
+        return result;
+    }
+
+    @NotNull
+    static public ClassDescriptor getClassDescriptorForTypeReference(@NotNull BindingContext context,
+                                                                     @NotNull JetTypeReference typeReference) {
+        return getClassDescriptorForType(getTypeByReference(context, typeReference));
+    }
+
+    @Nullable
+    static public DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
+                                                                            @NotNull JetReferenceExpression reference) {
+        return context.get(BindingContext.REFERENCE_TARGET, reference);
+    }
+
     //TODO better implementation?
-    private static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
+    static private boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
         return !superClassDescriptor.getName().equals("Any");
     }
 

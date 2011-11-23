@@ -7,16 +7,16 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 /**
  * @author Talanov Pavel
  */
-public final class DeclarationTranslator extends AbstractTranslator {
+public final class NamespaceDeclarationTranslator extends AbstractTranslator {
 
-    private DeclarationVisitor visitor = new DeclarationVisitor();
+    private NamespaceDeclarationVisitor visitor = new NamespaceDeclarationVisitor();
 
     @NotNull
-    public static DeclarationTranslator newInstance(@NotNull TranslationContext context) {
-        return new DeclarationTranslator(context);
+    public static NamespaceDeclarationTranslator newInstance(@NotNull TranslationContext context) {
+        return new NamespaceDeclarationTranslator(context);
     }
 
-    private DeclarationTranslator(TranslationContext context) {
+    private NamespaceDeclarationTranslator(TranslationContext context) {
         super(context);
     }
 

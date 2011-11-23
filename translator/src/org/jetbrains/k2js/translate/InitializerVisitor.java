@@ -121,8 +121,7 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     @NotNull
     private JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
                                              @NotNull JetExpression initializer) {
-        JsExpression initExpression = AstUtil.convertToExpression(Translation.expressionTranslator(context)
-                .translate(initializer));
+        JsExpression initExpression = Translation.translateAsExpression(initializer, context);
         return assignmentToBackingField(property, initExpression, context);
     }
 
@@ -134,15 +133,14 @@ public class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
         JsName backingFieldName = getBackingFieldName(propertyName, context);
         JsNameRef backingFieldRef = backingFieldName.makeRef();
         backingFieldRef.setQualifier(new JsThisRef());
-        return AstUtil.convertToStatement(AstUtil.newAssignment(backingFieldRef, initExpression));
+        return AstUtil.newAssignmentStatement(backingFieldRef, initExpression);
     }
 
     @Override
     @NotNull
     public List<JsStatement> visitAnonymousInitializer(@NotNull JetClassInitializer initializer,
                                                        @NotNull TranslationContext context) {
-        return Arrays.asList(AstUtil.convertToStatement
-                (Translation.expressionTranslator(context).translate(initializer.getBody())));
+        return Arrays.asList(Translation.translateAsStatement(initializer.getBody(), context));
     }
 
     @Override

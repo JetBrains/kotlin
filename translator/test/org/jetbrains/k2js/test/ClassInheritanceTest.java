@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class ClassInheritanceTest extends AbstractClassTest {
+public final class ClassInheritanceTest extends IncludeLibraryTest {
 
     final private static String MAIN = "inheritance/";
 

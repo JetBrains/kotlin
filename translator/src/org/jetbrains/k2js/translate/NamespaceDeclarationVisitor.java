@@ -14,7 +14,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
  * @author Talanov Pavel
  */
 //TODO: rework the class
-public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
+public class NamespaceDeclarationVisitor extends TranslatorVisitor<JsStatement> {
 
     @NotNull
     @Override
@@ -41,7 +41,7 @@ public class DeclarationVisitor extends TranslatorVisitor<JsStatement> {
     @NotNull
     @Override
     public JsStatement visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
-        return AstUtil.convertToStatement(Translation.functionTranslator(context).translateAsFunction(expression));
+        return AstUtil.convertToStatement(Translation.functionTranslator(context).translateAsFunctionDeclaration(expression));
     }
 
 }

@@ -1,8 +1,12 @@
 package org.jetbrains.k2js.translate;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNode;
+import com.google.dart.compiler.backend.js.ast.JsStatement;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetWhenExpression;
 
 /**
  * @author Talanov Pavel
@@ -42,12 +46,37 @@ public final class Translation {
     }
 
     @NotNull
-    static public DeclarationTranslator declarationTranslator(@NotNull TranslationContext context) {
-        return DeclarationTranslator.newInstance(context);
+    static public NamespaceDeclarationTranslator declarationTranslator(@NotNull TranslationContext context) {
+        return NamespaceDeclarationTranslator.newInstance(context);
+    }
+
+    @NotNull
+    static public PatternTranslator patternTranslator(@NotNull TranslationContext context) {
+        return PatternTranslator.newInstance(context);
+    }
+
+    @NotNull
+    static public ReferenceTranslator referenceTranslator(@NotNull TranslationContext context) {
+        return ReferenceTranslator.newInstance(context);
     }
 
     @NotNull
     static public JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
         return expressionTranslator(context).translate(expression);
+    }
+
+    @NotNull
+    static public JsExpression translateAsExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        return AstUtil.convertToExpression(translateExpression(expression, context));
+    }
+
+    @NotNull
+    static public JsStatement translateAsStatement(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        return AstUtil.convertToStatement(translateExpression(expression, context));
+    }
+
+    @NotNull
+    static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
+        return WhenTranslator.translateWhenExpression(expression, context);
     }
 }

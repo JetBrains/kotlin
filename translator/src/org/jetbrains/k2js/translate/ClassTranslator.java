@@ -31,41 +31,27 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsStatement translateClass(@NotNull JetClass classDeclaration) {
-        if (!classDeclaration.isTrait()) {
-            return translateAsClassWithState(classDeclaration);
-        } else {
-            return translateAsStatelessTrait(classDeclaration);
-        }
-    }
-
-    @NotNull
-    private JsStatement translateAsStatelessTrait(@NotNull JetClass classDeclaration) {
-        JsObjectLiteral traitLiteral = translateClassDeclarations(classDeclaration);
-        return AstUtil.convertToStatement
-                (AstUtil.newAssignment(namespaceQualifiedClassNameReference(classDeclaration), traitLiteral));
-    }
-
-    @NotNull
-    private JsStatement translateAsClassWithState(@NotNull JetClass jetClassDeclaration) {
-        JsInvocation jsClassDeclaration = createMethodInvocation();
+    public JsStatement translateClass(@NotNull JetClass jetClassDeclaration) {
+        JsInvocation jsClassDeclaration = classCreateMethodInvocation(jetClassDeclaration);
         addSuperclassReferences(jetClassDeclaration, jsClassDeclaration);
         addClassOwnDeclarations(jetClassDeclaration, jsClassDeclaration);
         return classDeclarationStatement(jetClassDeclaration, jsClassDeclaration);
     }
 
     @NotNull
-    private JsInvocation createMethodInvocation() {
-        JsInvocation jsClassDeclaration = new JsInvocation();
-        jsClassDeclaration.setQualifier(Namer.creationMethodReference());
-        return jsClassDeclaration;
+    private JsInvocation classCreateMethodInvocation(@NotNull JetClass jetClassDeclaration) {
+        if (jetClassDeclaration.isTrait()) {
+            return AstUtil.newInvocation(Namer.traitCreationMethodReference());
+        } else {
+            return AstUtil.newInvocation(Namer.classCreationMethodReference());
+        }
     }
 
     @NotNull
     private JsStatement classDeclarationStatement(@NotNull JetClass classDeclaration,
                                                   @NotNull JsInvocation jsClassDeclaration) {
-        return AstUtil.convertToStatement(AstUtil.newAssignment
-                (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration));
+        return AstUtil.newAssignmentStatement
+                (namespaceQualifiedClassNameReference(classDeclaration), jsClassDeclaration);
     }
 
     @NotNull

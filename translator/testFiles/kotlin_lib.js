@@ -6,6 +6,17 @@ function $A(iterable) {
   return results;
 }
 
+var isType = function(object, class) {
+    current = object.get_class();
+    while (current !== class) {
+        if (current === null) {
+            return false;
+        }
+        current = current.superclass;
+    }
+    return true;
+}
+
 var emptyFunction = function() {}
 
 var Class = (function() {
@@ -32,10 +43,17 @@ var Class = (function() {
     }
 
 
+    klass.addMethods(
+    {
+        get_class : function () {
+            return klass;
+        }
+    });
+
     if (parent != null) {
         klass.addMethods(
         {
-            'super_init' : function () {
+            super_init : function () {
                 this.initializing = this.initializing.superclass;
                 this.initializing.prototype.initialize.apply(this, arguments)
             }
@@ -66,8 +84,6 @@ var Class = (function() {
           return function() { return ancestor[m].apply(this, arguments); };
         })(property).wrap(method);
 
-       // value.valueOf = method.valueOf.bind(method);
-       // value.toString = method.toString.bind(method);
       }
       this.prototype[property] = value;
     }
@@ -85,8 +101,25 @@ var Class = (function() {
 
 var Trait = (function() {
 
+
+  function add(object, source) {
+    properties = Object.keys(source);
+    for (var i = 0, length = properties.length; i < length; i++) {
+      var property = properties[i];
+      var value = source[property];
+      object[property] = value;
+    }
+    return this;
+  }
+
   function create() {
-    return new Class.create(arguments);
+
+    result = {}
+    for (var i = 0, length = arguments.length; i < length; i++)
+    {
+        add(result, arguments[i]);
+    }
+    return result;
   }
 
   return {

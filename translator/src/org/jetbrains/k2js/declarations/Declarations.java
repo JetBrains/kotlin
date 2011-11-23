@@ -11,19 +11,22 @@ import java.util.Map;
 /**
  * @author Talanov Pavel
  */
-public final class DeclarationExtractor {
+public final class Declarations {
     private final Map<DeclarationDescriptor, JsScope> descriptorToScopeMap
             = new HashMap<DeclarationDescriptor, JsScope>();
     private final Map<DeclarationDescriptor, JsName> descriptorToNameMap
             = new HashMap<DeclarationDescriptor, JsName>();
 
-    public DeclarationExtractor() {
+    private Declarations() {
 
     }
 
-    public void extractDeclarations(@NotNull DeclarationDescriptor descriptor, JsScope rootScope) {
-        ExtractionVisitor visitor = new ExtractionVisitor(this);
+    @NotNull
+    static public Declarations extractDeclarations(@NotNull DeclarationDescriptor descriptor, JsScope rootScope) {
+        Declarations declarations = new Declarations();
+        ExtractionVisitor visitor = new ExtractionVisitor(declarations);
         descriptor.accept(visitor, rootScope);
+        return declarations;
     }
 
     @NotNull
@@ -38,6 +41,10 @@ public final class DeclarationExtractor {
         JsName name = descriptorToNameMap.get(descriptor);
         assert name != null : "Unknown declaration";
         return name;
+    }
+
+    public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {
+        return descriptorToNameMap.containsKey(descriptor);
     }
 
     /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull JsScope scope) {

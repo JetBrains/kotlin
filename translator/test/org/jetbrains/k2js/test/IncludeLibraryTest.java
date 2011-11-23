@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
-public abstract class AbstractClassTest extends TranslationTest {
+public abstract class IncludeLibraryTest extends TranslationTest {
 
     @Override
     protected List<String> generateFilenameList(String inputFile) {

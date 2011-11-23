@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class TraitTest extends AbstractClassTest {
+public final class TraitTest extends IncludeLibraryTest {
 
     final private static String MAIN = "trait/";
 
@@ -38,5 +38,16 @@ public final class TraitTest extends AbstractClassTest {
     public void traitExtendsTrait() throws Exception {
         testFooBoxIsTrue("traitExtendsTrait.kt");
     }
+
+    @Test
+    public void traitExtendsTwoTraits() throws Exception {
+        testFooBoxIsTrue("traitExtendsTwoTraits.kt");
+    }
+
+    @Test
+    public void funDelegation() throws Exception {
+        testFooBoxIsOk("funDelegation.jet");
+    }
+
 
 }

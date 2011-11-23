@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public class BasicClassTest extends AbstractClassTest {
+public class BasicClassTest extends IncludeLibraryTest {
 
     final private static String MAIN = "class/";
 
@@ -24,7 +24,7 @@ public class BasicClassTest extends AbstractClassTest {
         testFooBoxIsTrue("methodDeclarationAndCall.kt");
     }
 
-    //TODO: test excluded. Wait for bugfix and implement functionality
+    //TODO: wait for bugfix and implement properties as consructor parameter declaration
     @Test
     public void constructorWithParameter() throws Exception {
         testFooBoxIsTrue("constructorWithParameter.kt");

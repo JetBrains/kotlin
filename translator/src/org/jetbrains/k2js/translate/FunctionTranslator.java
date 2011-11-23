@@ -2,10 +2,8 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import com.sun.istack.internal.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,42 +23,87 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsStatement translateAsFunction(@NotNull JetNamedFunction jetFunction) {
-        JsName functionName = translationContext().namespaceScope().declareFreshName(jetFunction.getName());
-        JsFunction function = generateFunctionObject(jetFunction);
-        return AstUtil.convertToStatement(AstUtil.newAssignment
-                (translationContext().getNamespaceQualifiedReference(functionName), function));
+    public JsStatement translateAsFunctionDeclaration(@NotNull JetNamedFunction expression) {
+        JsName functionName = translationContext().getNameForElement(expression);
+        JsFunction function = generateFunctionObject(expression);
+        return AstUtil.newAssignmentStatement
+                (translationContext().getNamespaceQualifiedReference(functionName), function);
     }
 
     @NotNull
-    JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction jetFunction) {
-        JsName functionName = translationContext().namespaceScope().declareFreshName(jetFunction.getName());
-        JsFunction function = generateFunctionObject(jetFunction);
+    JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction expression) {
+        JsName functionName = translationContext().getNameForElement(expression);
+        JsFunction function = generateFunctionObject(expression);
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
     @NotNull
-    private JsFunction generateFunctionObject(@NotNull JetNamedFunction jetFunction) {
-        JsFunction result = JsFunction.getAnonymousFunctionWithScope
-                (translationContext().getScopeForElement(jetFunction));
-        List<JsParameter> jsParameters = translateParameters(jetFunction.getValueParameters(), result.getScope());
-        JsNode jsBody = translateBody(jetFunction);
-        result.setParameters(jsParameters);
-        result.setBody(AstUtil.convertToBlock(jsBody));
-        return result;
+    JsFunction translateAsLiteral(@NotNull JetFunctionLiteral expression) {
+        return generateFunctionObject(expression);
     }
 
     @NotNull
-    private JsNode translateBody(@NotNull JetNamedFunction jetFunction) {
-        JetExpression jetBodyExpression = jetFunction.getBodyExpression();
-        //TODO support them ffs
-        assert jetBodyExpression != null : "Function without body not supported at the moment";
-        JsNode body = Translation.expressionTranslator
-                (translationContext().newFunction(jetFunction)).translate(jetBodyExpression);
-        if (jetFunction.hasBlockBody()) {
+    private JsFunction generateFunctionObject(@NotNull JetFunction jetFunction) {
+        JsFunction result = createFunctionObject(jetFunction);
+        result.setParameters(translateParameters(jetFunction.getValueParameters(), result.getScope()));
+        result.setBody(translateBody(jetFunction, result.getScope()));
+        return result;
+    }
+
+    private JsFunction createFunctionObject(JetFunction function) {
+        if (function instanceof JetNamedFunction) {
+            return JsFunction.getAnonymousFunctionWithScope
+                    (translationContext().getScopeForElement(function));
+        }
+        if (function instanceof JetFunctionLiteral) {
+            return new JsFunction(translationContext().enclosingScope());
+        }
+        throw new AssertionError("Unsupported type of function.");
+    }
+
+    @NotNull
+    private JsBlock translateBody(@NotNull JetFunction function, @NotNull JsScope functionScope) {
+        JetExpression jetBodyExpression = function.getBodyExpression();
+        //TODO decide if there are cases where this assert is illegal
+        assert jetBodyExpression != null : "Function without body not supported";
+        JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext(function, functionScope));
+        return wrapWithReturnIfNeeded(body, !function.hasBlockBody());
+    }
+
+    @NotNull
+    private JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
+        if (!needsReturn) {
             return AstUtil.convertToBlock(body);
         }
-        return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression((body))));
+        if (body instanceof JsExpression) {
+            return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression(body)));
+        }
+        if (body instanceof JsBlock) {
+            JsBlock bodyBlock = (JsBlock) body;
+            addReturnToBlockStatement(bodyBlock);
+            return bodyBlock;
+        }
+        throw new AssertionError("Invalid node as function body");
+    }
+
+    private void addReturnToBlockStatement(@NotNull JsBlock bodyBlock) {
+        List<JsStatement> statements = bodyBlock.getStatements();
+        int lastIndex = statements.size() - 1;
+        JsStatement lastStatement = statements.get(lastIndex);
+        statements.set(lastIndex,
+                new JsReturn(AstUtil.extractExpressionFromStatement(lastStatement)));
+    }
+
+    @NotNull
+    private TranslationContext functionBodyContext(@NotNull JetFunction function,
+                                                   @NotNull JsScope functionScope) {
+        if (function instanceof JetNamedFunction) {
+            return translationContext().newFunctionDeclaration((JetNamedFunction) function);
+        }
+        if (function instanceof JetFunctionLiteral) {
+            return translationContext().newFunctionLiteral(functionScope);
+        }
+        throw new AssertionError("Unsupported type of function.");
     }
 
     @NotNull

@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class PropertyAccessorTest extends AbstractClassTest {
+public final class PropertyAccessorTest extends IncludeLibraryTest {
 
     final private static String MAIN = "propertyAccess/";
 
@@ -37,6 +37,16 @@ public final class PropertyAccessorTest extends AbstractClassTest {
     @Test
     public void customSetter() throws Exception {
         testFooBoxIsTrue("customSetter.kt");
+    }
+
+    @Test
+    public void safeCall() throws Exception {
+        testFooBoxIsTrue("safeCall.kt");
+    }
+
+    @Test
+    public void safeCallReturnsNullIfFails() throws Exception {
+        testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
     }
 
     //TODO test

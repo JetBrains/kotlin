@@ -1,7 +1,6 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.k2js.K2JSTranslator;
-import org.junit.Before;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -19,45 +18,55 @@ public abstract class TranslationTest {
     final private static String OUT = "out/";
     final private String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
 
-    protected String testFilesDirectory;
-    protected String testCasesDirectory;
-    protected String outputDirectory;
-
-    @Before
-    public void setUpClass() {
-        testCasesDirectory = CASES;
-        outputDirectory = OUT;
-        testFilesDirectory = TEST_FILES + mainDirectory();
-    }
-
     protected abstract String mainDirectory();
 
     protected String kotlinLibraryPath() {
         return KOTLIN_JS_LIB;
     }
 
-    private String getOutputDirectory() {
-        return testFilesDirectory + outputDirectory;
+    private String casesDirectoryName() {
+        return CASES;
     }
 
-    private String getInputDirectory() {
-        return testFilesDirectory + testCasesDirectory;
+    private String outDirectoryName() {
+        return OUT;
+    }
+
+    private String testFilesPath() {
+        return TEST_FILES + suiteDirectoryName() + mainDirectory();
+    }
+
+    protected String suiteDirectoryName() {
+        return "";
+    }
+
+    private String getOutputPath() {
+        return testFilesPath() + outDirectoryName();
+    }
+
+    private String getInputPath() {
+        return testFilesPath() + casesDirectoryName();
     }
 
     protected void testFunctionOutput(String filename, String namespaceName,
                                       String functionName, Object expectedResult) throws Exception {
+        translateFile(filename);
+        runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
+                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+    }
+
+    private void translateFile(String filename) {
         K2JSTranslator.Arguments args = new K2JSTranslator.Arguments();
         args.src = getInputFilePath(filename);
         args.outputDir = getOutputFilePath(filename);
         K2JSTranslator.translate(args);
-        runRhinoTest(generateFilenameList(args.outputDir),
-                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     abstract protected List<String> generateFilenameList(String inputfile);
 
+    //TODO: refactor filename generation logic
     private String getOutputFilePath(String filename) {
-        return getOutputDirectory() + convertToDotJsFile(filename);
+        return getOutputPath() + convertToDotJsFile(filename);
     }
 
     private String convertToDotJsFile(String filename) {
@@ -65,7 +74,11 @@ public abstract class TranslationTest {
     }
 
     private String getInputFilePath(String filename) {
-        return getInputDirectory() + filename;
+        return getInputPath() + filename;
+    }
+
+    protected String cases(String filename) {
+        return getInputFilePath(filename);
     }
 
     protected void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
@@ -87,4 +100,9 @@ public abstract class TranslationTest {
     protected void testFooBoxIsTrue(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", true);
     }
+
+    protected void testFooBoxIsOk(String filename) throws Exception {
+        testFunctionOutput(filename, "foo", "box", "OK");
+    }
+
 }
