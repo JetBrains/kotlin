@@ -28,7 +28,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     @NonNls
     protected final String myFullDataPath;
     protected JetFile myFile;
-    private JetCoreEnvironment myEnvironment;
+    protected JetCoreEnvironment myEnvironment;
 
     public JetLiteFixture(@NonNls String dataPath) {
         myFullDataPath = getTestDataPath() + "/" + dataPath;

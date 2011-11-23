@@ -93,25 +93,16 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         final JetNamespace namespace = myFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)).replace("/", ".");
         Class<?> namespaceClass = loader.loadClass(fqName);
-            Method method = namespaceClass.getMethod("box");
-            return (String) method.invoke(null);
-        }
+        Method method = namespaceClass.getMethod("box");
+        return (String) method.invoke(null);
+    }
 
     protected String generateToText() {
         GenerationState state = new GenerationState(getProject(), ClassBuilderFactory.TEXT);
         AnalyzingUtils.checkForSyntacticErrors(myFile);
         state.compile(myFile);
 
-        StringBuilder answer = new StringBuilder();
-
-        final ClassFileFactory factory = state.getFactory();
-        List<String> files = factory.files();
-        for (String file : files) {
-            answer.append("@").append(file).append('\n');
-            answer.append(factory.asText(file));
-        }
-
-        return answer.toString();
+        return state.createText();
     }
 
     protected Class generateNamespaceClass() {

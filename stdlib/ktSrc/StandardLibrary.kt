@@ -30,7 +30,15 @@ namespace io {
     val ByteArray.inputStream : ByteArrayInputStream
         get() = ByteArrayInputStream(this)
 
-    inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
+//    inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
+
+    fun InputStream.iterator() : ByteIterator =
+        object: ByteIterator() {
+            override val hasNext : Boolean
+                get() = available() > 0
+
+            override fun nextByte() = read().byt
+        }
 
     val InputStream.buffered : BufferedInputStream
         get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
@@ -52,13 +60,6 @@ namespace io {
 
     inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
 */
-
-    fun InputStream.iterator() : ByteIterator = object: ByteIterator() {
-        override val hasNext : Boolean
-            get() = available() > 0
-
-        override fun nextByte() = read().byt
-    }
 
 //    val Reader.buffered : BufferedReader
 //        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
