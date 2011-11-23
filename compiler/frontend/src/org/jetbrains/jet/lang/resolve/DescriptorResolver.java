@@ -682,10 +682,7 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         else if (property.isVar()) {
-            setterDescriptor = new PropertySetterDescriptor(
-                    propertyDescriptor.getModality(),
-                    propertyDescriptor.getVisibility(),
-                    propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
+            setterDescriptor = createDefaultSetter(propertyDescriptor);
         }
 
         if (! property.isVar()) {
@@ -694,6 +691,15 @@ public class DescriptorResolver {
                 trace.report(VAL_WITH_SETTER.on(property, setter));
             }
         }
+        return setterDescriptor;
+    }
+
+    private PropertySetterDescriptor createDefaultSetter(PropertyDescriptor propertyDescriptor) {
+        PropertySetterDescriptor setterDescriptor;
+        setterDescriptor = new PropertySetterDescriptor(
+                propertyDescriptor.getModality(),
+                propertyDescriptor.getVisibility(),
+                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
         return setterDescriptor;
     }
 
@@ -722,11 +728,17 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
-            getterDescriptor = new PropertyGetterDescriptor(
-                    propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
-                    propertyDescriptor.getVisibility(),
-                    propertyDescriptor.getOutType(), false, true);
+            getterDescriptor = createDefaultGetter(propertyDescriptor);
         }
+        return getterDescriptor;
+    }
+
+    private PropertyGetterDescriptor createDefaultGetter(PropertyDescriptor propertyDescriptor) {
+        PropertyGetterDescriptor getterDescriptor;
+        getterDescriptor = new PropertyGetterDescriptor(
+                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
+                propertyDescriptor.getVisibility(),
+                propertyDescriptor.getOutType(), false, true);
         return getterDescriptor;
     }
 
@@ -800,7 +812,7 @@ public class DescriptorResolver {
                 name == null ? "<no name>" : name,
                 isMutable ? type : null,
                 type);
-        propertyDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), null, null);
+        propertyDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), createDefaultGetter(propertyDescriptor), createDefaultSetter(propertyDescriptor));
         trace.record(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter, propertyDescriptor);
         return propertyDescriptor;
     }
