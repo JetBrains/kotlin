@@ -608,17 +608,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
                 final Method cons = closure.getConstructor();
 
+                int k = 0;
                 if (closure.isCaptureThis()) {
+                    k++;
                     v.load(0, JetTypeMapper.TYPE_OBJECT);
                 }
 
                 if (closure.isCaptureReceiver() != null) {
+                    k++;
                     v.load(context.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor ? 0: 1, closure.isCaptureReceiver());
                 }
 
                 for (int i = 0; i < closure.getArgs().size(); i++) {
                     StackValue arg = closure.getArgs().get(i);
-                    arg.put(cons.getArgumentTypes()[i], v);
+                    arg.put(cons.getArgumentTypes()[i+k], v);
                 }
 
                 v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());

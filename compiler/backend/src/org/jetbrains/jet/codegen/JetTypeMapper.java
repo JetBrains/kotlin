@@ -173,6 +173,11 @@ public class JetTypeMapper {
     
     public String getFQName(DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
+
+        if(descriptor instanceof FunctionDescriptor) {
+            return getFQName(descriptor.getContainingDeclaration());
+        }
+
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
