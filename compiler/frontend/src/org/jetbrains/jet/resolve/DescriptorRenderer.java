@@ -73,7 +73,11 @@ public class DescriptorRenderer implements Renderer {
     }
 
     public String renderType(JetType type) {
-        return escape(type.toString());
+        if (type == null) {
+            return escape("<?>");
+        } else {
+            return escape(type.toString());
+        }
     }
 
     protected String escape(String s) {
@@ -222,8 +226,7 @@ public class DescriptorRenderer implements Renderer {
 
             renderName(descriptor, builder);
             renderValueParameters(descriptor, builder);
-            // TODO: getReturnType may be uninitialized and throw IllegalStateException // stepan.koltsov@ 2011-11-21
-            builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
+            builder.append(" : ").append(escape(renderType(descriptor.getReturnTypeSafe())));
             return super.visitFunctionDescriptor(descriptor, builder);
         }
 
