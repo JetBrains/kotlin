@@ -1,8 +1,4 @@
-@test {
-var i : Int = 0
-while ((i <= max))
-{
-{
+@test for (i in 0..max) {
 var n : Int = substring.length()
 var j : Int = i
 var k : Int = 0
@@ -15,11 +11,6 @@ continue@test
 }
 foundIt = true
 break@test
-}
-{
-(i++)
-}
-}
 }
 System.out?.println((if (foundIt)
 "Found it"
