@@ -1,8 +1,8 @@
 class T() {
-open fun main() : Unit {
+fun main() : Unit {
 }
-open fun i() : Int {
+fun i() : Int {
 }
-open fun s() : String? {
+fun s() : String? {
 }
 }

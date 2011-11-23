@@ -114,7 +114,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   static String statementToKotlin(String text) throws Exception {
     String result = methodToKotlin("void main() {" + text + "}");
     int pos = result.lastIndexOf("}");
-    result = result.substring(0, pos).replaceFirst("open fun main\\(\\) : Unit \\{", "");
+    result = result.substring(0, pos).replaceFirst("fun main\\(\\) : Unit \\{", "");
     return prettify(result);
   }
 

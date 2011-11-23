@@ -1,2 +1,2 @@
-open fun popAll(dst : Collection<in E?>?) : Unit {
+fun popAll(dst : Collection<in E?>?) : Unit {
 }

@@ -1,2 +1,2 @@
-open fun putU<U>(u : U?) : Unit {
+fun putU<U>(u : U?) : Unit {
 }

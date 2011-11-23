@@ -12,5 +12,6 @@ public abstract class Modifier {
   public static final String ABSTRACT = "abstract";
   public static final String FINAL = "final";
   public static final String OPEN = "open";
+  public static final String NOT_OPEN = "not open";
   public static final String OVERRIDE = "override";
 }

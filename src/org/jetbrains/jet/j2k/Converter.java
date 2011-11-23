@@ -274,6 +274,11 @@ public class Converter {
       modifiers.add(Modifier.OVERRIDE);
     if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
       modifiers.remove(Modifier.ABSTRACT);
+    if (method.getParent() instanceof PsiClass) {
+      final PsiModifierList parentModifierList = ((PsiClass) method.getParent()).getModifierList();
+      if (parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL))
+          modifiers.add(Modifier.NOT_OPEN);
+    }
 
     if (method.isConstructor()) { // TODO: simplify
       boolean isPrimary = isConstructorPrimary(method);

@@ -1,5 +1,5 @@
 class S() {
-open fun sB() : Boolean {
+fun sB() : Boolean {
 return true
 }
 class object {
