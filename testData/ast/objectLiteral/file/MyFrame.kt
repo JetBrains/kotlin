@@ -1,19 +1,17 @@
 namespace demo
-import java.awt.*
-import java.awt.event.*
-import java.io.*
-import java.net.*
+open class WindowAdapter() {
+open public fun windowClosing() : Unit {
+}
+}
 public class Client() : Frame() {
 {
 var a : WindowAdapter? = object : WindowAdapter() {
-open public fun windowClosing(e : WindowEvent?) : Unit {
-dispose()
+override public fun windowClosing() : Unit {
 }
 }
 addWindowListener(a)
 addWindowListener(object : WindowAdapter() {
-open public fun windowClosing(e : WindowEvent?) : Unit {
-dispose()
+override public fun windowClosing() : Unit {
 }
 })
 }
