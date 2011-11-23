@@ -84,7 +84,7 @@ public class CompileSession {
             }
             return false;
         }
-        final AnalyzingUtils instance = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
+        final AnalyzingUtils instance = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true);
         List<JetNamespace> allNamespaces = new ArrayList<JetNamespace>(mySourceFileNamespaces);
         allNamespaces.addAll(myLibrarySourceFileNamespaces);
         myBindingContext = instance.analyzeNamespaces(myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);

@@ -46,6 +46,12 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     }
 
     @Override
+    @Nullable
+    public JetType getReturnTypeSafe() {
+        return returnType;
+    }
+
+    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPropertyGetterDescriptor(this, data);
     }
