@@ -79,9 +79,22 @@ public final class BindingUtils {
     }
 
     @NotNull
+    static public JetClass getClassForDescriptor(@NotNull BindingContext context,
+                                                 @NotNull ClassDescriptor descriptor) {
+        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        assert result instanceof JetClass : "ClassDescriptor should have declaration of type JetClass";
+        return (JetClass) result;
+    }
+
+    @NotNull
     static public List<ClassDescriptor> getSuperclassDescriptors(@NotNull BindingContext context,
                                                                  @NotNull JetClass classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
+        return getSuperclassDescriptors(classDescriptor);
+    }
+
+    @NotNull
+    static public List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
         Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
         for (JetType type : superclassTypes) {

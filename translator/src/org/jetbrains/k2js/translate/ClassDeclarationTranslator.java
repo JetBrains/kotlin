@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.k2js.utils.ClassSorter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation generateDummyFunctionInvocation() {
         JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope(dummyFunctionScope);
-        List<JsStatement> classDeclarations = getClassDeclarationStatements();
+        List<JsStatement> classDeclarations = generateClassDeclarationStatements();
         classDeclarations.add(new JsReturn(generateReturnedObjectLiteral()));
         dummyFunction.setBody(AstUtil.newBlock(classDeclarations));
         return AstUtil.newInvocation(dummyFunction);
@@ -80,14 +81,23 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private List<JsStatement> getClassDeclarationStatements() {
+    private List<JsStatement> generateClassDeclarationStatements() {
         List<JsStatement> classDeclarations = new ArrayList<JsStatement>();
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
-            if (declaration instanceof JetClass) {
-                classDeclarations.add(generateDeclaration((JetClass) declaration));
-            }
+        for (JetClass jetClass : getClassDeclarations()) {
+            classDeclarations.add(generateDeclaration(jetClass));
         }
         return classDeclarations;
+    }
+
+    @NotNull
+    private List<JetClass> getClassDeclarations() {
+        List<JetClass> classes = new ArrayList<JetClass>();
+        for (JetDeclaration declaration : namespace.getDeclarations()) {
+            if (declaration instanceof JetClass) {
+                classes.add((JetClass) declaration);
+            }
+        }
+        return ClassSorter.sortUsingInheritanceOrder(classes, translationContext().bindingContext());
     }
 
     @NotNull

@@ -38,6 +38,11 @@ public final class ClassInheritanceTest extends IncludeLibraryTest {
     public void valuePassedToAncestorConstructor() throws Exception {
         testFooBoxIsTrue("valuePassedToAncestorConstructor.kt");
     }
+
+    @Test
+    public void baseClassDefinedAfterDerived() throws Exception {
+        testFooBoxIsTrue("baseClassDefinedAfterDerived.kt");
+    }
 }
 
 
