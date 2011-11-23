@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public class BasicClassTest extends IncludeLibraryTest {
+public class BasicClassTest extends TranslationTest {
 
     final private static String MAIN = "class/";
 
@@ -24,7 +24,7 @@ public class BasicClassTest extends IncludeLibraryTest {
         testFooBoxIsTrue("methodDeclarationAndCall.kt");
     }
 
-    //TODO: wait for bugfix and implement properties as consructor parameter declaration
+    //TODO: wait for bugfix and implement properties as constructor parameter declaration
     @Test
     public void constructorWithParameter() throws Exception {
         testFooBoxIsTrue("constructorWithParameter.kt");
@@ -43,5 +43,10 @@ public class BasicClassTest extends IncludeLibraryTest {
     @Test
     public void complexExpressionAsConstructorParameter() throws Exception {
         testFooBoxIsTrue("complexExpressionAsConstructorParameter.kt");
+    }
+
+    @Test
+    public void propertyAccess() throws Exception {
+        testFooBoxIsTrue("propertyAccess.kt");
     }
 }

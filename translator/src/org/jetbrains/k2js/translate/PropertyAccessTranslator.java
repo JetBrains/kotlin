@@ -15,7 +15,6 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 
 /**
@@ -50,7 +49,9 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (getterName == null) {
             return null;
         }
-        return AstUtil.newInvocation(AstUtil.thisQualifiedReference(getterName));
+        JsNameRef getterReference =
+                TranslationUtils.getReference(translationContext(), expression, getterName);
+        return AstUtil.newInvocation(getterReference);
     }
 
     @NotNull
@@ -59,12 +60,12 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         JsExpression qualifier = Translation.translateAsExpression
                 (qualifiedExpression.getReceiverExpression(), translationContext());
         JsNameRef result = accessorName.makeRef();
-        result.setQualifier(qualifier);
+        AstUtil.setQualifier(result, qualifier);
         return AstUtil.newInvocation(result);
     }
 
     @Nullable
-    public JsInvocation resolveAsPropertySetterCall(@NotNull JetExpression expression) {
+    public JsInvocation translateAsPropertySetterCall(@NotNull JetExpression expression) {
         if (expression instanceof JetDotQualifiedExpression) {
             return resolveAsPropertySet((JetDotQualifiedExpression) expression);
         }
@@ -91,7 +92,8 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (setterName == null) {
             return null;
         }
-        return AstUtil.newInvocation(AstUtil.thisQualifiedReference(setterName));
+        JsNameRef setterReference = Translation.generateCorrectReference(translationContext(), expression, setterName);
+        return AstUtil.newInvocation(setterReference);
     }
 
     @Nullable
@@ -123,7 +125,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @Nullable
     private PropertyDescriptor getPropertyDescriptor(@NotNull JetExpression expression) {
         ResolvedCall<?> resolvedCall =
-                translationContext().bindingContext().get(BindingContext.RESOLVED_CALL, expression);
+                BindingUtils.getResolvedCall(translationContext().bindingContext(), expression);
         if (resolvedCall != null) {
             DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
             if (descriptor instanceof PropertyDescriptor) {

@@ -9,16 +9,28 @@ import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Talanov Pavel
  */
-public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
+public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
 
-    @Override
+
     @NotNull
-    public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+    public List<JsPropertyInitializer> traverseClass(@NotNull JetClass expression,
+                                                     @NotNull TranslationContext context) {
+        List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
+        for (JetDeclaration declaration : expression.getDeclarations()) {
+            properties.addAll(declaration.accept(this, context));
+        }
+        return properties;
+    }
+
+    @NotNull
+    public List<JsPropertyInitializer> traverseNamespace(@NotNull JetNamespace expression,
+                                                         @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
         for (JetDeclaration declaration : expression.getDeclarations()) {
             properties.addAll(declaration.accept(this, context));
@@ -28,11 +40,15 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
 
     @Override
     @NotNull
-    // method declaration
+    public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+        //TODO: we are interested only in class own declarations
+        return Collections.emptyList();
+    }
+
+    @Override
+    @NotNull
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
-        List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
-        properties.add(Translation.functionTranslator(context).translateAsMethod(expression));
-        return properties;
+        return Arrays.asList(Translation.functionTranslator(context).translateAsMethod(expression));
     }
 
     @Override
@@ -78,9 +94,7 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     @NotNull
     private JsFunction generateDefaultGetterFunction(@NotNull JetProperty expression,
                                                      @NotNull TranslationContext context) {
-        JsNameRef backingFieldRef = getBackingFieldName(getPropertyName(expression), context).makeRef();
-        backingFieldRef.setQualifier(new JsThisRef());
-        JsReturn returnExpression = new JsReturn(backingFieldRef);
+        JsReturn returnExpression = new JsReturn(backingFieldReference(expression, context));
         return AstUtil.newFunction
                 (context.enclosingScope(), null, new ArrayList<JsParameter>(), AstUtil.convertToBlock(returnExpression));
     }
@@ -108,13 +122,9 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
 
     @NotNull
     private JsBinaryOperation assignmentToBackingFieldFromDefaultParameter
-            (@NotNull JetProperty expression, @NotNull TranslationContext context, @NotNull JsParameter defaultParameter) {
-        JsNameRef backingFieldRef = getBackingFieldName(getPropertyName(expression), context).makeRef();
-        backingFieldRef.setQualifier(new JsThisRef());
-        JsBinaryOperation assignExpression = new JsBinaryOperation(JsBinaryOperator.ASG);
-        assignExpression.setArg1(backingFieldRef);
-        assignExpression.setArg2(defaultParameter.getName().makeRef());
-        return assignExpression;
+            (@NotNull JetProperty expression, @NotNull TranslationContext context,
+             @NotNull JsParameter defaultParameter) {
+        return AstUtil.newAssignment(backingFieldReference(expression, context), defaultParameter.getName().makeRef());
     }
 
     @Override
@@ -151,6 +161,6 @@ public final class ClassBodyVisitor extends TranslatorVisitor<List<JsPropertyIni
     public List<JsPropertyInitializer> visitAnonymousInitializer(@NotNull JetClassInitializer expression,
                                                                  @NotNull TranslationContext context) {
         // parsed it in initializer visitor => no additional actions are needed
-        return new ArrayList<JsPropertyInitializer>();
+        return Collections.emptyList();
     }
 }

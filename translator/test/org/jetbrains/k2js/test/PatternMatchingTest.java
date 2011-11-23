@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class PatternMatchingTest extends IncludeLibraryTest {
+public final class PatternMatchingTest extends TranslationTest {
 
     final private static String MAIN = "patternMatching/";
 
@@ -47,6 +47,21 @@ public final class PatternMatchingTest extends IncludeLibraryTest {
     @Test
     public void multipleCases() throws Exception {
         testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
+    }
+
+    @Test
+    public void matchNullableType() throws Exception {
+        testFooBoxIsTrue("matchNullableType.kt");
+    }
+
+    @Test
+    public void whenConditionMethodCall() throws Exception {
+        testFooBoxIsTrue("whenConditionMethodCall.kt");
+    }
+
+    @Test
+    public void whenConditionPropertyAccess() throws Exception {
+        testFooBoxIsTrue("whenConditionPropertyAccess.kt");
     }
 
 }

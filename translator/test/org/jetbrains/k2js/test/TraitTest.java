@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class TraitTest extends IncludeLibraryTest {
+public final class TraitTest extends TranslationTest {
 
     final private static String MAIN = "trait/";
 
@@ -47,6 +47,11 @@ public final class TraitTest extends IncludeLibraryTest {
     @Test
     public void funDelegation() throws Exception {
         testFooBoxIsOk("funDelegation.jet");
+    }
+
+    @Test
+    public void definitionOrder() throws Exception {
+        testFooBoxIsTrue("definitionOrder.kt");
     }
 
 

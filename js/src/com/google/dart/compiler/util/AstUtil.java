@@ -281,4 +281,43 @@ public class AstUtil {
         assert statement instanceof JsExprStmt : "Cannot extract exprssion form statement: " + statement;
         return (((JsExprStmt) statement).getExpression());
     }
+
+    public static JsBinaryOperation and(JsExpression op1, JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.AND, op1, op2);
+    }
+
+    public static JsBinaryOperation or(JsExpression op1, JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
+    }
+
+    //TODO
+    public static void setQualifier(JsExpression selector, JsExpression receiver) {
+        if (selector instanceof JsInvocation) {
+            setQualifier(((JsInvocation) selector).getQualifier(), receiver);
+            return;
+        }
+        if (selector instanceof JsNameRef) {
+            JsNameRef nameRef = (JsNameRef) selector;
+            JsExpression qualifier = nameRef.getQualifier();
+            if (qualifier == null) {
+                nameRef.setQualifier(receiver);
+            } else {
+                setQualifier(qualifier, receiver);
+            }
+            return;
+        }
+        throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
+    }
+
+    public static JsBinaryOperation equals(JsExpression arg1, JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2);
+    }
+
+    public static JsBinaryOperation notEqual(JsExpression arg1, JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.REF_NEQ, arg1, arg2);
+    }
+
+    public static JsExpression equalsTrue(JsExpression expression, JsProgram program) {
+        return equals(expression, program.getTrueLiteral());
+    }
 }

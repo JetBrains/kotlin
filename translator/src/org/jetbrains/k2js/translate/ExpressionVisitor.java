@@ -108,8 +108,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     private boolean isConstructorInvocation(@NotNull JetCallExpression expression,
                                             @NotNull TranslationContext context) {
-        ResolvedCall<?> resolvedCall =
-                (context.bindingContext().get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression()));
+        JetExpression calleeExpression = expression.getCalleeExpression();
+        assert calleeExpression != null : "JetCallExpression should have not null callee";
+        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context.bindingContext(), calleeExpression);
         if (resolvedCall == null) {
             return false;
         }
@@ -249,6 +250,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return null;
     }
 
+    //TODO: refactor and possibly move somewhere
     @Override
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
@@ -342,10 +344,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                                @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JsBinaryOperation nullCheck = new JsBinaryOperation
-                (JsBinaryOperator.NEQ, receiver, nullLiteral);
         JsExpression thenExpression = translateQualifiedExpression(expression, context);
-        return new JsConditional(nullCheck, thenExpression, nullLiteral);
+        return new JsConditional(TranslationUtils.notNullCheck(context, receiver),
+                thenExpression, nullLiteral);
     }
 
     @Override

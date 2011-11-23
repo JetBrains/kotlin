@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
-//TODO: fix members order
 public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
@@ -71,6 +70,11 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
+    private JsVars generateInitStatement() {
+        return AstUtil.newVar(dummyCounterName, translationContext().program().getNumberLiteral(0));
+    }
+
+    @NotNull
     private JsBinaryOperation generateConditionStatement() {
         JsNumberLiteral entriesNumber = program().getNumberLiteral(whenExpression.getEntries().size());
         return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounterName.makeRef(), entriesNumber);
@@ -79,11 +83,6 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsPrefixOperation generateIncrementStatement() {
         return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounterName.makeRef());
-    }
-
-    @NotNull
-    private JsVars generateInitStatement() {
-        return AstUtil.newVar(dummyCounterName, translationContext().program().getNumberLiteral(0));
     }
 
     @NotNull
@@ -103,7 +102,6 @@ public class WhenTranslator extends AbstractTranslator {
         return Translation.translateAsStatement(expressionToExecute, translationContext());
     }
 
-    //TODO: ask what these conditions mean
     @NotNull
     private JsExpression translateConditions(@NotNull JetWhenEntry entry) {
         List<JsExpression> conditions = new ArrayList<JsExpression>();
@@ -127,11 +125,10 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression addCaseCondition(@Nullable JsExpression current, @NotNull JsExpression condition) {
         if (current == null) {
-            current = condition;
+            return condition;
         } else {
-            current = new JsBinaryOperation(JsBinaryOperator.OR, current, condition);
+            return AstUtil.or(current, condition);
         }
-        return current;
     }
 
 
@@ -140,7 +137,25 @@ public class WhenTranslator extends AbstractTranslator {
         if (condition instanceof JetWhenConditionIsPattern) {
             return translatePatternCondition((JetWhenConditionIsPattern) condition);
         }
+        if (condition instanceof JetWhenConditionCall) {
+            return translateCallCondition((JetWhenConditionCall) condition);
+        }
         throw new AssertionError("Unsupported when condition " + condition.getClass());
+    }
+
+    @NotNull
+    private JsExpression translateCallCondition(@NotNull JetWhenConditionCall condition) {
+        JsExpression suffixExpression =
+                Translation.translateAsExpression(getSuffixExpression(condition), translationContext());
+        AstUtil.setQualifier(suffixExpression, expressionToMatch);
+        return AstUtil.equalsTrue(suffixExpression, translationContext().program());
+    }
+
+    @NotNull
+    private JetExpression getSuffixExpression(@NotNull JetWhenConditionCall condition) {
+        JetExpression suffixExpression = condition.getCallSuffixExpression();
+        assert suffixExpression != null : "When call condition should have suffix expression";
+        return suffixExpression;
     }
 
     @NotNull

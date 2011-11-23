@@ -7,7 +7,6 @@ import org.mozilla.javascript.Scriptable;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,11 +15,6 @@ import java.util.Map;
 public class KotlinLibTest extends TranslationTest {
 
     final private static String MAIN = "kotlinLib/";
-
-    @Override
-    protected List<String> generateFilenameList(String inputFile) {
-        return Arrays.asList(kotlinLibraryPath());
-    }
 
     @Override
     protected String mainDirectory() {
@@ -51,6 +45,14 @@ public class KotlinLibTest extends TranslationTest {
     }
 
     @Test
+    public void namespaceObjectHasCreateMethod() throws Exception {
+        final Map<String, Class<? extends Scriptable>> propertyToType
+                = new HashMap<String, Class<? extends Scriptable>>();
+        propertyToType.put("create", Function.class);
+        runPropertyTypeCheck("Namespace", propertyToType);
+    }
+
+    @Test
     public void traitObjectHasCreateMethod() throws Exception {
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();
@@ -64,6 +66,27 @@ public class KotlinLibTest extends TranslationTest {
                 = new HashMap<String, Class<? extends Scriptable>>();
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("trait.js")),
                 new RhinoPropertyTypesChecker("foo", propertyToType));
+    }
+
+    @Test
+    public void createdNamespaceIsJSObject() throws Exception {
+        final Map<String, Class<? extends Scriptable>> propertyToType
+                = new HashMap<String, Class<? extends Scriptable>>();
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),
+                new RhinoPropertyTypesChecker("foo", propertyToType));
+    }
+
+    @Test
+    public void namespaceHasDeclaredFunction() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),
+                new RhinoFunctionResultChecker("test", true));
+    }
+
+
+    @Test
+    public void namespaceHasDeclaredClasses() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespaceWithClasses.js")),
+                new RhinoFunctionResultChecker("test", true));
     }
 
     @Test

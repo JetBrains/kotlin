@@ -2,6 +2,8 @@ package org.jetbrains.k2js.translate;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -23,6 +25,15 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
     }
 
     @NotNull
+    protected JsNameRef backingFieldReference(@NotNull JetProperty expression, @NotNull TranslationContext context) {
+        JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
+        if (BindingUtils.belongsToNamespace(context.bindingContext(), expression)) {
+            return context.getNamespaceQualifiedReference(backingFieldName);
+        }
+        return AstUtil.thisQualifiedReference(backingFieldName);
+    }
+
+    @NotNull
     protected String getPropertyName(@NotNull JetProperty expression) {
         String propertyName = expression.getName();
         if (propertyName == null) {
@@ -32,7 +43,7 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
     }
 
     @NotNull
-    protected JsName getBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
+    private JsName getBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
         String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
         return context.enclosingScope().findExistingName(backingFieldName);
     }

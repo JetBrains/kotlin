@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class PropertyAccessorTest extends IncludeLibraryTest {
+public final class PropertyAccessorTest extends TranslationTest {
 
     final private static String MAIN = "propertyAccess/";
 
@@ -47,6 +47,16 @@ public final class PropertyAccessorTest extends IncludeLibraryTest {
     @Test
     public void safeCallReturnsNullIfFails() throws Exception {
         testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
+    }
+
+    @Test
+    public void namespacePropertyInitializer() throws Exception {
+        testFooBoxIsTrue("namespacePropertyInitializer.kt");
+    }
+
+    @Test
+    public void namespacePropertySet() throws Exception {
+        testFooBoxIsTrue("namespacePropertySet.kt");
     }
 
     //TODO test

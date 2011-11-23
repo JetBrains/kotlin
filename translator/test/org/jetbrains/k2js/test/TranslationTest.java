@@ -5,6 +5,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -16,7 +17,7 @@ public abstract class TranslationTest {
     final protected static String TEST_FILES = "testFiles/";
     final private static String CASES = "cases/";
     final private static String OUT = "out/";
-    final private String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
+    final private static String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
 
     protected abstract String mainDirectory();
 
@@ -62,7 +63,9 @@ public abstract class TranslationTest {
         K2JSTranslator.translate(args);
     }
 
-    abstract protected List<String> generateFilenameList(String inputfile);
+    protected List<String> generateFilenameList(String inputFile) {
+        return Arrays.asList(kotlinLibraryPath(), inputFile);
+    }
 
     //TODO: refactor filename generation logic
     private String getOutputFilePath(String filename) {
@@ -87,10 +90,10 @@ public abstract class TranslationTest {
         reader.close();
     }
 
-    protected void runRhinoTest(List<String> filenames, RhinoResultChecker checker) throws Exception {
+    protected void runRhinoTest(List<String> fileNames, RhinoResultChecker checker) throws Exception {
         Context cx = Context.enter();
         Scriptable scope = cx.initStandardObjects();
-        for (String filename : filenames) {
+        for (String filename : fileNames) {
             runFileWithRhino(filename, cx, scope);
         }
         checker.runChecks(cx, scope);

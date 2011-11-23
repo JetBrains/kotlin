@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -52,14 +55,36 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateTypePattern(@NotNull JsExpression expressionToMatch,
                                               @NotNull JetTypePattern pattern) {
-        return AstUtil.newInvocation(Namer.isOperationReference(), expressionToMatch, getClassReference(pattern));
+
+        JsInvocation isCheck = AstUtil.newInvocation(Namer.isOperationReference(),
+                expressionToMatch, getClassReference(pattern));
+        if (isNullable(pattern)) {
+            return addNullCheck(expressionToMatch, isCheck);
+        }
+        return isCheck;
+    }
+
+    @NotNull
+    private JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
+        return AstUtil.or(TranslationUtils.isNullCheck(translationContext(), expressionToMatch), isCheck);
+    }
+
+    private boolean isNullable(JetTypePattern pattern) {
+        return BindingUtils.getTypeByReference(translationContext().bindingContext(),
+                getTypeReference(pattern)).isNullable();
     }
 
     @NotNull
     private JsExpression getClassReference(@NotNull JetTypePattern pattern) {
+        JetTypeReference typeReference = getTypeReference(pattern);
+        return getClassNameReferenceForTypeReference(typeReference);
+    }
+
+    @NotNull
+    private JetTypeReference getTypeReference(@NotNull JetTypePattern pattern) {
         JetTypeReference typeReference = pattern.getTypeReference();
         assert typeReference != null : "Type pattern should contain a type reference";
-        return getClassNameReferenceForTypeReference(typeReference);
+        return typeReference;
     }
 
     @NotNull
@@ -77,7 +102,6 @@ public final class PatternTranslator extends AbstractTranslator {
         assert patternExpression != null : "Expression patter should have an expression.";
         JsExpression expressionToMatchAgainst =
                 Translation.translateAsExpression(patternExpression, translationContext());
-        //TODO: should call equals method here
-        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, expressionToMatch, expressionToMatchAgainst);
+        return AstUtil.equals(expressionToMatch, expressionToMatchAgainst);
     }
 }
