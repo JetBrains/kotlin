@@ -4,9 +4,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
@@ -56,7 +58,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (tokenType == JavaTokenType.OREQ) secondOp = "or";
     if (tokenType == JavaTokenType.GTGTGTEQ) secondOp = "cyclicShiftRight";
 
-    if (!secondOp.equals("")) // if not Kotlin operators
+    if (!secondOp.isEmpty()) // if not Kotlin operators
       myResult = new AssignmentExpression(
         expressionToExpression(expression.getLExpression()),
         new BinaryExpression(
@@ -75,7 +77,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private String getOperatorString(@NotNull IElementType tokenType) {
+  private static String getOperatorString(@NotNull IElementType tokenType) {
     if (tokenType == JavaTokenType.PLUS) return "+";
     if (tokenType == JavaTokenType.MINUS) return "-";
     if (tokenType == JavaTokenType.ASTERISK) return "*";
@@ -97,6 +99,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (tokenType == JavaTokenType.OROR) return "||";
     if (tokenType == JavaTokenType.PLUSPLUS) return "++";
     if (tokenType == JavaTokenType.MINUSMINUS) return "--";
+    if (tokenType == JavaTokenType.EXCL) return "!";
 
     System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType.toString());
     return "";
@@ -170,7 +173,8 @@ public class ExpressionVisitor extends StatementVisitor {
         new MethodCallExpression(
           expressionToExpression(expression.getMethodExpression()),
           elementToElement(expression.getArgumentList()),
-          typeToType(expression.getType()).isNullable()
+          typeToType(expression.getType()).isNullable(),
+          typesToTypeList(expression.getTypeArguments())
         );
   }
 
@@ -184,30 +188,51 @@ public class ExpressionVisitor extends StatementVisitor {
     super.visitNewExpression(expression);
 
     if (expression.getArrayInitializer() != null) // new Foo[] {}
-      myResult = expressionToExpression(expression.getArrayInitializer());
+      myResult = createNewEmptyArray(expression);
     else if (expression.getArrayDimensions().length > 0) { // new Foo[5]
-      final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
-      callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
-
-      myResult = new NewClassExpression(
-        typeToType(expression.getType()), // TODO: remove
-        new ExpressionList(callExpression)
-      );
+      myResult = createNewNonEmptyArray(expression);
     } else { // new Class(): common case
-      final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
-      myResult = new NewClassExpression(
+      myResult = createNewClassExpression(expression);
+    }
+  }
+
+  @NotNull
+  private static Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
+    final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
+    final PsiMethod constructor = expression.resolveMethod();
+    if (constructor == null || isConstructorPrimary(constructor)) {
+      return new NewClassExpression(
+        expressionToExpression(expression.getQualifier()),
         elementToElement(expression.getClassOrAnonymousClassReference()),
         elementToElement(expression.getArgumentList()),
         anonymousClass != null ? anonymousClassToAnonymousClass(anonymousClass) : null
       );
-      // is constructor secondary
-      final PsiMethod constructor = expression.resolveMethod();
-      if (constructor != null && !isConstructorPrimary(constructor)) {
-        myResult = new CallChainExpression(
-          new IdentifierImpl(constructor.getName(), false),
-          new MethodCallExpression(new IdentifierImpl("init"), elementToElement(expression.getArgumentList()), false));
-      }
     }
+    // is constructor secondary
+    final PsiJavaCodeReferenceElement reference = expression.getClassReference();
+    final List<Type> typeParameters = reference != null ? typesToTypeList(reference.getTypeParameters()) : Collections.<Type>emptyList();
+    return new CallChainExpression(
+      new IdentifierImpl(constructor.getName(), false),
+      new MethodCallExpression(
+        new IdentifierImpl("init"),
+        elementToElement(expression.getArgumentList()),
+        false,
+        typeParameters));
+  }
+
+  @NotNull
+  private static NewClassExpression createNewNonEmptyArray(@NotNull PsiNewExpression expression) {
+    final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
+    callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
+    return new NewClassExpression(
+      typeToType(expression.getType()),
+      new ExpressionList(callExpression)
+    );
+  }
+
+  @NotNull
+  private static Expression createNewEmptyArray(@NotNull PsiNewExpression expression) {
+    return expressionToExpression(expression.getArrayInitializer());
   }
 
   @Override
@@ -240,7 +265,7 @@ public class ExpressionVisitor extends StatementVisitor {
   public void visitReferenceExpression(PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
 
-    final boolean isFieldReference = isFieldReference(expression);
+    final boolean isFieldReference = isFieldReference(expression, getContainingClass(expression));
     final boolean hasDollar = isFieldReference && isInsidePrimaryConstructor(expression);
     final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
     final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
@@ -267,7 +292,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private String getClassName(PsiReferenceExpression expression) {
+  private static String getClassName(@NotNull PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
@@ -283,20 +308,20 @@ public class ExpressionVisitor extends StatementVisitor {
     return "";
   }
 
-  private boolean isFieldReference(PsiReferenceExpression expression) {
+  private static boolean isFieldReference(@NotNull PsiReferenceExpression expression, PsiClass currentClass) {
     final PsiReference reference = expression.getReference();
     if (reference != null) {
       final PsiElement resolvedReference = reference.resolve();
       if (resolvedReference != null) {
         if (resolvedReference instanceof PsiField) {
-          return true;
+          return ((PsiField) resolvedReference).getContainingClass() == currentClass;
         }
       }
     }
     return false;
   }
 
-  private boolean isInsideSecondaryConstructor(PsiReferenceExpression expression) {
+  private static boolean isInsideSecondaryConstructor(PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -306,7 +331,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return false;
   }
 
-  private boolean isInsidePrimaryConstructor(PsiExpression expression) {
+  private static boolean isInsidePrimaryConstructor(PsiExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -316,7 +341,18 @@ public class ExpressionVisitor extends StatementVisitor {
     return false;
   }
 
-  private boolean isThisExpression(PsiReferenceExpression expression) {
+  @Nullable
+  private static PsiClass getContainingClass(@NotNull PsiExpression expression) {
+    PsiElement context = expression.getContext();
+    while (context != null) {
+      if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
+        return ((PsiMethod) context).getContainingClass();
+      context = context.getContext();
+    }
+    return null;
+  }
+
+  private static boolean isThisExpression(PsiReferenceExpression expression) {
     for (PsiReference r : expression.getReferences())
       if (r.getCanonicalText().equals("this")) {
         final PsiElement res = r.resolve();

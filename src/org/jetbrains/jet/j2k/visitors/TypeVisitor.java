@@ -1,9 +1,13 @@
 package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.PsiClassReferenceType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.typeToType;
 import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
@@ -42,15 +46,56 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
 
   @Override
   public Type visitClassType(PsiClassType classType) {
-    myResult = new ClassType(
-      new IdentifierImpl(getClassTypeName(classType)),
-      typesToTypeList(classType.getParameters())
-    );
+    String classTypeName = createQualifiedName(classType);
+    if (classTypeName.isEmpty())
+      classTypeName = getClassTypeName(classType);
+    List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
+
+    final IdentifierImpl identifier = new IdentifierImpl(classTypeName);
+    if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0)
+      myResult = new ClassType(identifier, resolvedClassTypeParams);
+    else
+      myResult = new ClassType(identifier, typesToTypeList(classType.getParameters()));
     return super.visitClassType(classType);
   }
 
   @NotNull
-  private String getClassTypeName(@NotNull PsiClassType classType) {
+  private static String createQualifiedName(@NotNull PsiClassType classType) {
+    String classTypeName = "";
+    if (classType instanceof PsiClassReferenceType) {
+      final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
+      if (reference.isQualified()) {
+        String result = new IdentifierImpl(reference.getReferenceName()).toKotlin();
+        PsiElement qualifier = reference.getQualifier();
+        while (qualifier != null) {
+          final PsiJavaCodeReferenceElement p = (PsiJavaCodeReferenceElement) qualifier;
+          result = new IdentifierImpl(p.getReferenceName()).toKotlin() + "." + result; // TODO: maybe need to replace by safe call?
+          qualifier = p.getQualifier();
+        }
+        classTypeName = result;
+      }
+    }
+    return classTypeName;
+  }
+
+  @NotNull
+  private static List<Type> createRawTypesForResolvedReference(@NotNull PsiClassType classType) {
+    final List<Type> typeParams = new LinkedList<Type>();
+    if (classType instanceof PsiClassReferenceType) {
+      final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
+      final PsiElement resolve = reference.resolve();
+      if (resolve != null) {
+        if (resolve instanceof PsiClass)
+          //noinspection UnusedDeclaration
+          for (PsiTypeParameter p : ((PsiClass) resolve).getTypeParameters())
+            typeParams.add(new StarProjectionType());
+      }
+    }
+    return typeParams;
+  }
+
+  @NotNull
+  private static String getClassTypeName(@NotNull PsiClassType classType) {
     String canonicalTypeStr = classType.getCanonicalText();
     if (canonicalTypeStr.equals("java.lang.Object")) return "Any";
     if (canonicalTypeStr.equals("java.lang.Byte")) return "Byte";
@@ -61,7 +106,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     if (canonicalTypeStr.equals("java.lang.Long")) return "Long";
     if (canonicalTypeStr.equals("java.lang.Short")) return "Short";
     if (canonicalTypeStr.equals("java.lang.Boolean")) return "Boolean";
-    return classType.getClassName();
+    return classType.getClassName() != null ? classType.getClassName() : classType.getCanonicalText();
   }
 
   @Override

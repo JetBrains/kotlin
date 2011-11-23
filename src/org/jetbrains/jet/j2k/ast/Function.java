@@ -78,6 +78,9 @@ public class Function extends Member {
     if (!myModifiers.contains(Modifier.OVERRIDE) && !myModifiers.contains(Modifier.FINAL))
       modifierList.add(Modifier.OPEN);
 
+    if (myModifiers.contains(Modifier.NOT_OPEN))
+      modifierList.remove(Modifier.OPEN);
+
     modifierList.add(accessModifier());
 
     if (modifierList.size() > 0)

@@ -1,6 +1,9 @@
 package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
+import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 
@@ -93,17 +96,66 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitForStatement(PsiForStatement statement) {
+  public void visitForStatement(@NotNull PsiForStatement statement) {
     super.visitForStatement(statement);
 
-    List<Statement> forStatements = new LinkedList<Statement>();
-    forStatements.add(statementToStatement(statement.getInitialization()));
-    forStatements.add(new WhileStatement(
-      expressionToExpression(statement.getCondition()),
-      new Block(
-        Arrays.asList(statementToStatement(statement.getBody()),
-          new Block(Arrays.asList(statementToStatement(statement.getUpdate())))))));
-    myResult = new Block(forStatements);
+    final PsiStatement initialization = statement.getInitialization();
+    final PsiStatement update = statement.getUpdate();
+    final PsiExpression condition = statement.getCondition();
+    final PsiLocalVariable firstChild = initialization != null && initialization.getFirstChild() instanceof PsiLocalVariable ?
+      (PsiLocalVariable) initialization.getFirstChild() : null;
+
+    final IElementType operationTokenType = condition != null && condition instanceof PsiBinaryExpression ?
+      ((PsiBinaryExpression) condition).getOperationTokenType() : null;
+    if (
+      initialization != null &&
+        initialization instanceof PsiDeclarationStatement
+        && initialization.getFirstChild() == initialization.getLastChild()
+        && condition != null
+        && update != null
+        && update.getChildren().length == 1
+        && update.getChildren()[0] instanceof PsiPostfixExpression
+        && ((PsiPostfixExpression) update.getChildren()[0]).getOperationTokenType() == JavaTokenType.PLUSPLUS
+        && operationTokenType != null
+        && (operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE)
+        && initialization.getFirstChild() != null
+        && initialization.getFirstChild() instanceof PsiLocalVariable
+        && firstChild != null
+        && firstChild.getNameIdentifier() != null
+        && isOnceWritableIterator(firstChild)
+      ) {
+      final Expression end = expressionToExpression(((PsiBinaryExpression) condition).getROperand());
+      final Expression endExpression = operationTokenType == JavaTokenType.LT ?
+        new BinaryExpression(end, new IdentifierImpl("1"), "-"):
+        end;
+      myResult = new ForeachWithRangeStatement(
+        new IdentifierImpl(firstChild.getName()),
+        expressionToExpression(firstChild.getInitializer()),
+        endExpression,
+        statementToStatement(statement.getBody())
+      );
+    } else { // common case: while loop instead of for loop
+      List<Statement> forStatements = new LinkedList<Statement>();
+      forStatements.add(statementToStatement(initialization));
+      forStatements.add(new WhileStatement(
+        expressionToExpression(condition),
+        new Block(
+          Arrays.asList(statementToStatement(statement.getBody()),
+            new Block(Arrays.asList(statementToStatement(update)))))));
+      myResult = new Block(forStatements);
+    }
+  }
+
+  private static boolean isOnceWritableIterator(PsiLocalVariable firstChild) {
+    int counter = 0;
+    if (firstChild != null)
+      for (PsiReference r : (ReferencesSearch.search(firstChild))) {
+        if (r instanceof PsiExpression) {
+          if (PsiUtil.isAccessedForWriting((PsiExpression) r))
+            counter++;
+        }
+      }
+    return counter == 1; // only increment usage
   }
 
   @Override

@@ -16,7 +16,7 @@ public class DeclarationStatement extends Statement {
     myElements = elements;
   }
 
-  private List<String> toStringList(List<Element> elements) {
+  private static List<String> toStringList(List<Element> elements) {
     List<String> result = new LinkedList<String>();
     for (Element e : elements) {
       if (e instanceof LocalVariable) {

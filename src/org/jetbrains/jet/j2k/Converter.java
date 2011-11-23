@@ -40,13 +40,19 @@ public class Converter {
 
   @NotNull
   public static AnonymousClass anonymousClassToAnonymousClass(@NotNull PsiAnonymousClass anonymousClass) {
-    // TODO: replace by Block, use class.getChild() method
-    return new AnonymousClass(
-      classesToClassList(anonymousClass.getAllInnerClasses()),
-      methodsToFunctionList(anonymousClass.getMethods()),
-      fieldsToFieldList(anonymousClass.getAllFields()),
-      initializersToInitializerList(anonymousClass.getInitializers())
-    );
+    return new AnonymousClass(getMembers(anonymousClass));
+  }
+
+  private static List<Member> getMembers(PsiClass psiClass) {
+    List<Member> members = new LinkedList<Member>();
+    for (PsiElement e : psiClass.getChildren()) {
+      if (e instanceof PsiMethod) members.add(methodToFunction((PsiMethod) e, true));
+      else if (e instanceof PsiField) members.add(fieldToField((PsiField) e));
+      else if (e instanceof PsiClass) members.add(classToClass((PsiClass) e));
+      else if (e instanceof PsiClassInitializer) members.add(initializerToInitializer((PsiClassInitializer) e));
+      else if (e instanceof PsiMember) System.out.println(e.getClass() + " " + e.getText());
+    }
+    return members;
   }
 
   @NotNull
@@ -88,15 +94,14 @@ public class Converter {
   @NotNull
   private static Class classToClass(@NotNull PsiClass psiClass) {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
-    final List<Class> innerClasses = classesToClassList(psiClass.getAllInnerClasses());
-    final List<Function> methods = methodsToFunctionList(psiClass.getMethods());
     final List<Field> fields = fieldsToFieldList(psiClass.getFields());
-    final List<Initializer> anonymousInitializers = initializersToInitializerList(psiClass.getInitializers());
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
     final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
     final IdentifierImpl name = new IdentifierImpl(psiClass.getName());
     final List<Expression> baseClassParams = new LinkedList<Expression>();
+
+    List<Member> members = getMembers(psiClass);
 
     // we try to find super() call and generate class declaration like that: class A(name: String, i : Int) : Base(name)
     final SuperVisitor visitor = new SuperVisitor();
@@ -114,49 +119,52 @@ public class Converter {
       final List<Field> finalOrWithEmptyInitializer = getFinalOrWithEmptyInitializer(fields);
       final Map<String, String> initializers = new HashMap<String, String>();
 
-      for (final Function f : methods) {
-        for (Field fo : finalOrWithEmptyInitializer) {
-          String init = getDefaultInitializer(fo);
-          initializers.put(fo.getIdentifier().toKotlin(), init);
-        }
-
+      for (final Member m : members) {
         // and modify secondaries
-        if (f.getKind() == INode.Kind.CONSTRUCTOR && !((Constructor) f).isPrimary()) {
-          final List<Statement> newStatements = new LinkedList<Statement>();
+        if (m.getKind() == INode.Kind.CONSTRUCTOR) {
+          Function f = (Function)m;
+          if (!((Constructor) f).isPrimary()) {
+            for (Field fo : finalOrWithEmptyInitializer) {
+              String init = getDefaultInitializer(fo);
+              initializers.put(fo.getIdentifier().toKotlin(), init);
+            }
 
-          for (Statement s : f.getBlock().getStatements()) {
-            boolean isRemoved = false;
+            final List<Statement> newStatements = new LinkedList<Statement>();
 
-            if (s.getKind() == INode.Kind.ASSIGNMENT_EXPRESSION) {
-              final AssignmentExpression assignmentExpression = (AssignmentExpression) s;
-              if (assignmentExpression.getLeft().getKind() == INode.Kind.CALL_CHAIN) {
-                for (Field fo : finalOrWithEmptyInitializer) {
-                  final String id = fo.getIdentifier().toKotlin();
-                  if (((CallChainExpression) assignmentExpression.getLeft()).getIdentifier().toKotlin().endsWith("." + id)) {
-                    initializers.put(id, assignmentExpression.getRight().toKotlin());
-                    isRemoved = true;
+            for (Statement s : f.getBlock().getStatements()) {
+              boolean isRemoved = false;
+
+              if (s.getKind() == INode.Kind.ASSIGNMENT_EXPRESSION) {
+                final AssignmentExpression assignmentExpression = (AssignmentExpression) s;
+                if (assignmentExpression.getLeft().getKind() == INode.Kind.CALL_CHAIN) {
+                  for (Field fo : finalOrWithEmptyInitializer) {
+                    final String id = fo.getIdentifier().toKotlin();
+                    if (((CallChainExpression) assignmentExpression.getLeft()).getIdentifier().toKotlin().endsWith("." + id)) {
+                      initializers.put(id, assignmentExpression.getRight().toKotlin());
+                      isRemoved = true;
+                    }
                   }
                 }
               }
+              if (!isRemoved) {
+                newStatements.add(s);
+              }
             }
-            if (!isRemoved) {
-              newStatements.add(s);
-            }
+
+            newStatements.add(
+              0,
+              new DummyStringStatement(
+                "val __ = " + createPrimaryConstructorInvocation(
+                  name.toKotlin(),
+                  finalOrWithEmptyInitializer,
+                  initializers)));
+
+            f.setBlock(new Block(newStatements));
           }
-
-          newStatements.add(
-            0,
-            new DummyStringStatement(
-              "val __ = " + createPrimaryConstructorInvocation(
-                name.toKotlin(),
-                finalOrWithEmptyInitializer,
-                initializers)));
-
-          f.setBlock(new Block(newStatements));
         }
       }
 
-      methods.add(
+      members.add(
         new Constructor(
           Identifier.EMPTY_IDENTIFIER,
           Collections.<String>emptySet(),
@@ -170,18 +178,10 @@ public class Converter {
     }
 
     if (psiClass.isInterface())
-      return new Trait(name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, innerClasses, methods, fields, anonymousInitializers);
+      return new Trait(name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, members);
     if (psiClass.isEnum())
-      return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), Collections.<Expression>emptyList(), implementsTypes,
-        innerClasses, methods, fieldsToFieldListForEnums(psiClass.getAllFields()), anonymousInitializers);
-    return new Class(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, innerClasses, methods, fields, anonymousInitializers);
-  }
-
-  @NotNull
-  private static List<Initializer> initializersToInitializerList(@NotNull PsiClassInitializer[] initializers) {
-    List<Initializer> result = new LinkedList<Initializer>();
-    for (PsiClassInitializer i : initializers) result.add(initializerToInitializer(i));
-    return result;
+      return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), Collections.<Expression>emptyList(), implementsTypes, members);
+    return new Class(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members);
   }
 
   @NotNull
@@ -204,31 +204,6 @@ public class Converter {
       if (typeToKotlin.equals("Float")) return "0.flt";
       return "0";
     }
-  }
-
-  // hack for enums, we remove methods:
-  // private int ordinal() { ... }
-  // private String name() { ... }
-  // those methods any enum class inherits from java.lang.Enum
-  @NotNull
-  private static List<Field> fieldsToFieldListForEnums(@NotNull PsiField[] fields) {
-    List<Field> result = new LinkedList<Field>();
-    for (PsiField f : fields) {
-      if ((f.getName().equals("ordinal")
-        && f.getType().getCanonicalText().equals("int")
-        && f.hasModifierProperty(PsiModifier.PRIVATE)
-        && f.hasModifierProperty(PsiModifier.FINAL)
-      ) ||
-        (f.getName().equals("name")
-          && f.getType().getCanonicalText().equals("java.lang.String")
-          && f.hasModifierProperty(PsiModifier.PRIVATE)
-          && f.hasModifierProperty(PsiModifier.FINAL)
-        ))
-        continue;
-
-      result.add(fieldToField(f));
-    }
-    return result;
   }
 
   @NotNull
@@ -254,13 +229,6 @@ public class Converter {
       typeToType(field.getType()),
       expressionToExpression(field.getInitializer()) // TODO: add modifiers
     );
-  }
-
-  @NotNull
-  private static List<Function> methodsToFunctionList(@NotNull PsiMethod[] methods) {
-    List<Function> result = new LinkedList<Function>();
-    for (PsiMethod t : methods) result.add(methodToFunction(t, true));
-    return result;
   }
 
   @Nullable
@@ -306,6 +274,11 @@ public class Converter {
       modifiers.add(Modifier.OVERRIDE);
     if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
       modifiers.remove(Modifier.ABSTRACT);
+    if (method.getParent() instanceof PsiClass) {
+      final PsiModifierList parentModifierList = ((PsiClass) method.getParent()).getModifierList();
+      if (parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL))
+          modifiers.add(Modifier.NOT_OPEN);
+    }
 
     if (method.isConstructor()) { // TODO: simplify
       boolean isPrimary = isConstructorPrimary(method);

@@ -1,4 +1,3 @@
-namespace test {
+namespace test
 class C() {
-}
 }
