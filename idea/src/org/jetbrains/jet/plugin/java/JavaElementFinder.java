@@ -211,7 +211,7 @@ public class JavaElementFinder extends PsiElementFinder {
                 
 
         if (dirty.size() > 0) {
-            final BindingContext context = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).shallowAnalyzeFiles(dirty);
+            final BindingContext context = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true).shallowAnalyzeFiles(dirty);
             state.compileCorrectNamespaces(context, AnalyzingUtils.collectRootNamespaces(dirty));
             state.getFactory().files();
         }

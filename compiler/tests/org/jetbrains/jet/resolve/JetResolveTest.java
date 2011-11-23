@@ -44,7 +44,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @Override
     protected ExpectedResolveData getExpectedResolveData() {
         Project project = getProject();
-        JetStandardLibrary lib = JetStandardLibrary.getJetStandardLibrary(project);
+        JetStandardLibrary lib = JetStandardLibrary.getJetStandardLibrary(project, true);
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
         nameToDescriptor.put("std::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
         FunctionDescriptor descriptorForGet = standardFunction(lib.getArray(), Collections.singletonList(new TypeProjection(lib.getIntType())), "get", lib.getIntType());

@@ -34,7 +34,7 @@ public class AnalyzerFacade {
         }
     };
     
-    private static final AnalyzingUtils ANALYZING_UTILS = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
+    private static final AnalyzingUtils ANALYZING_UTILS = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true);
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
 
