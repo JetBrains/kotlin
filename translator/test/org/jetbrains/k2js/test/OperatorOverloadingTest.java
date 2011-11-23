@@ -18,4 +18,14 @@ public class OperatorOverloadingTest extends TranslationTest {
     public void plusOverload() throws Exception {
         testFooBoxIsTrue("plusOverload.kt");
     }
+
+    @Test
+    public void postfixInc() throws Exception {
+        testFooBoxIsTrue("postfixIncOverload.kt");
+    }
+
+    @Test
+    public void prefixInc() throws Exception {
+        testFooBoxIsTrue("prefixDecOverload.kt");
+    }
 }

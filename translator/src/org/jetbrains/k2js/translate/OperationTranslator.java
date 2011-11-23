@@ -26,16 +26,24 @@ public final class OperationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    JsPostfixOperation translatePostfixOperation(@NotNull JetPostfixExpression expression) {
-        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
+    JsExpression translatePostfixOperation(@NotNull JetPostfixExpression expression) {
         JsExpression baseExpression = translateBaseExpression(expression);
+        JsNameRef operationReference = getOverloadedOperationReference(expression);
+        if (operationReference != null) {
+            return overloadedMethodInvocation(baseExpression, operationReference);
+        }
+        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
         return new JsPostfixOperation(operator, baseExpression);
     }
 
     @NotNull
-    JsPrefixOperation translatePrefixOperation(@NotNull JetPrefixExpression expression) {
-        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
+    JsExpression translatePrefixOperation(@NotNull JetPrefixExpression expression) {
         JsExpression baseExpression = translateBaseExpression(expression);
+        JsNameRef operationReference = getOverloadedOperationReference(expression);
+        if (operationReference != null) {
+            return overloadedMethodInvocation(baseExpression, operationReference);
+        }
+        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
         return new JsPrefixOperation(operator, baseExpression);
     }
 
@@ -44,6 +52,12 @@ public final class OperationTranslator extends AbstractTranslator {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null : "Unary operation should have a base expression";
         return Translation.translateAsExpression(baseExpression, translationContext());
+    }
+
+    @NotNull
+    private JsExpression overloadedMethodInvocation(@NotNull JsExpression base, @NotNull JsNameRef operationReference) {
+        AstUtil.setQualifier(operationReference, base);
+        return AstUtil.newInvocation(operationReference);
     }
 
     @NotNull
@@ -104,14 +118,13 @@ public final class OperationTranslator extends AbstractTranslator {
     }
 
     private JsExpression overloadedMethodInvocation(JsExpression left, JsExpression right, JsNameRef operationReference) {
-        operationReference.setQualifier(left);
+        AstUtil.setQualifier(operationReference, left);
         return AstUtil.newInvocation(operationReference, right);
     }
 
     @Nullable
-    private JsNameRef getOverloadedOperationReference(@NotNull JetBinaryExpression expression) {
-        DeclarationDescriptor operationDescriptor = BindingUtils.getDescriptorForReferenceExpression
-                (translationContext().bindingContext(), expression.getOperationReference());
+    private JsNameRef getOverloadedOperationReference(@NotNull JetExpression expression) {
+        DeclarationDescriptor operationDescriptor = getOperationDescriptor(expression);
         if (operationDescriptor == null) {
             return null;
         }
@@ -119,6 +132,20 @@ public final class OperationTranslator extends AbstractTranslator {
             return null;
         }
         return translationContext().getNameForDescriptor(operationDescriptor).makeRef();
+    }
+
+    @Nullable
+    private DeclarationDescriptor getOperationDescriptor(@NotNull JetExpression expression) {
+        JetSimpleNameExpression operationReference = null;
+        if (expression instanceof JetBinaryExpression) {
+            operationReference = ((JetBinaryExpression) expression).getOperationReference();
+        }
+        if (expression instanceof JetUnaryExpression) {
+            operationReference = ((JetUnaryExpression) expression).getOperationSign();
+        }
+        assert operationReference != null : "should be applied only to unary or binary operations";
+        return BindingUtils.getDescriptorForReferenceExpression
+                (translationContext().bindingContext(), operationReference);
     }
 
     @NotNull

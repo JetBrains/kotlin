@@ -19,6 +19,7 @@ import java.util.List;
  *         This class contains some code related to BindingContext use. Intention is not to pollute other classes.
  */
 public final class BindingUtils {
+
     private BindingUtils() {
     }
 
