@@ -129,7 +129,7 @@ public class JetTypeMapper {
         return type;
     }
 
-    static Type correctElementType(Type type) {
+    public static Type correctElementType(Type type) {
         String internalName = type.getInternalName();
         assert internalName.charAt(0) == '[';
         return Type.getType(internalName.substring(1));

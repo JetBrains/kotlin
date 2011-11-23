@@ -1,0 +1,16 @@
+namespace array_test
+
+fun box() : String {
+    var array : IntArray? = IntArray(10)
+    array?.set(0, 3)
+    if(array?.get(0) != 3) return "fail"
+
+    var a = Array<Array<String?>?>(5)
+    var b = Array<String?>(1)
+    b.set(0, "239")
+    a?.set(0, b)
+
+    if(a?.get(0)?.get(0) != "239") return "fail"
+
+    return "OK"
+}

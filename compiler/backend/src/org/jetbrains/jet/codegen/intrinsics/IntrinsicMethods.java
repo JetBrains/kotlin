@@ -36,6 +36,8 @@ public class IntrinsicMethods {
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
     public static final IteratorNext ITERATOR_NEXT = new IteratorNext();
+    public static final ArraySet ARRAY_SET = new ArraySet();
+    public static final ArrayGet ARRAY_GET = new ArrayGet();
 
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
@@ -121,6 +123,26 @@ public class IntrinsicMethods {
         declareIntrinsicProperty("DoubleArray", "indices", ARRAY_INDICES);
         declareIntrinsicProperty("CharArray", "indices", ARRAY_INDICES);
         declareIntrinsicProperty("BooleanArray", "indices", ARRAY_INDICES);
+
+        declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("ByteArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("ShortArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("IntArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("LongArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("FloatArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("DoubleArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("CharArray", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("BooleanArray", "set", 2, ARRAY_SET);
+
+        declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("ByteArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("ShortArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("IntArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("LongArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("FloatArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("DoubleArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("CharArray", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("BooleanArray", "get", 1, ARRAY_GET);
 
         declareIterator(myStdLib.getArray());
         declareIterator(myStdLib.getByteArrayClass());
