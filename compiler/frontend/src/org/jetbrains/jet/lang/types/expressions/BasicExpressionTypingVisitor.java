@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -245,8 +247,56 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
                 context.trace.report(USELESS_CAST.on(expression, expression.getOperationSign()));
+            } else {
+                if (isCastErased(actualType, targetType)) {
+                    context.trace.report(Errors.UNCHECKED_CAST.on(expression, actualType, targetType));
+                }
             }
         }
+    }
+
+    /**
+     * Check if assignment from ActualType to TargetType is erased.
+     * It is an error in "is" statement and warning in "as".
+     */
+    public static boolean isCastErased(JetType actualType, JetType targetType) {
+
+        JetType targetTypeClerared = TypeUtils.makeUnsubstitutedType(
+                (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
+
+        Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
+                TypeUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+
+        Set<JetType> clearSubstituted = new HashSet<JetType>();
+
+        for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
+            TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
+
+            Collection<TypeProjection> subst = clearTypeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
+            for (TypeProjection proj : subst) {
+                clearSubstituted.add(proj.getType());
+            }
+        }
+
+        for (int i = 0; i < targetType.getConstructor().getParameters().size(); ++i) {
+            TypeParameterDescriptor typeParameter = targetType.getConstructor().getParameters().get(i);
+            TypeProjection typeProjection = targetType.getArguments().get(i);
+
+            if (typeParameter.isReified()) {
+                continue;
+            }
+
+            // "is List<*>"
+            if (typeProjection.equals(TypeUtils.makeStarProjection(typeParameter))) {
+                continue;
+            }
+
+            // if parameter is mapped to nothing then it is erased
+            if (!clearSubstituted.contains(typeParameter.getDefaultType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
