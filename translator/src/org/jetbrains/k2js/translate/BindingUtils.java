@@ -172,4 +172,10 @@ public final class BindingUtils {
                                                   @NotNull JetExpression expression) {
         return (context.get(BindingContext.RESOLVED_CALL, expression));
     }
+
+    static public boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
+        Boolean result = context.get(BindingContext.VARIABLE_REASSIGNMENT, expression);
+        assert result != null;
+        return result;
+    }
 }

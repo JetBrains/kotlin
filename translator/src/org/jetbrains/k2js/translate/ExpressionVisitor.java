@@ -81,7 +81,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBinaryExpression(@NotNull JetBinaryExpression expression,
                                         @NotNull TranslationContext context) {
-        return Translation.operationTranslator(context).translate(expression);
+        return BinaryOperationTranslator.translate(expression, context);
     }
 
     @Override
@@ -320,7 +320,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitPrefixExpression(@NotNull JetPrefixExpression expression,
                                         @NotNull TranslationContext context) {
-        return Translation.operationTranslator(context).translatePrefixOperation(expression);
+        return UnaryOperationTranslator.translate(expression, context);
 
     }
 
@@ -328,7 +328,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitPostfixExpression(@NotNull JetPostfixExpression expression,
                                          @NotNull TranslationContext context) {
-        return Translation.operationTranslator(context).translatePostfixOperation(expression);
+        return UnaryOperationTranslator.translate(expression, context);
     }
 
     @Override

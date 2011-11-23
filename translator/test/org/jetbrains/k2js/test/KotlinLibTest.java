@@ -107,5 +107,11 @@ public class KotlinLibTest extends TranslationTest {
                 new RhinoFunctionResultChecker("test", true));
     }
 
+    @Test
+    public void commaExpression() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("commaExpression.js")),
+                new RhinoFunctionResultChecker("test", true));
+    }
+
 
 }
