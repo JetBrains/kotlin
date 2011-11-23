@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author Talanov Pavel
  */
-public class KotlinLibTest extends IncludeLibraryTest {
+public class KotlinLibTest extends TranslationTest {
 
     final private static String MAIN = "kotlinLib/";
 

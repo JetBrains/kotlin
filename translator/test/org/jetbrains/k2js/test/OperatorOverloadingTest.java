@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public class OperatorOverloadingTest extends IncludeLibraryTest {
+public class OperatorOverloadingTest extends TranslationTest {
 
     final private static String MAIN = "operatorOverloading/";
 

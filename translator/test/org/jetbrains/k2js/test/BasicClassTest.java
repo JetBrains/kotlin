@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public class BasicClassTest extends IncludeLibraryTest {
+public class BasicClassTest extends TranslationTest {
 
     final private static String MAIN = "class/";
 

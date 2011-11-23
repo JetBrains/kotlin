@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class PatternMatchingTest extends IncludeLibraryTest {
+public final class PatternMatchingTest extends TranslationTest {
 
     final private static String MAIN = "patternMatching/";
 

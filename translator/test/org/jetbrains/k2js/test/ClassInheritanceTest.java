@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class ClassInheritanceTest extends IncludeLibraryTest {
+public final class ClassInheritanceTest extends TranslationTest {
 
     final private static String MAIN = "inheritance/";
 
@@ -42,6 +42,11 @@ public final class ClassInheritanceTest extends IncludeLibraryTest {
     @Test
     public void baseClassDefinedAfterDerived() throws Exception {
         testFooBoxIsTrue("baseClassDefinedAfterDerived.kt");
+    }
+
+    @Test
+    public void definitionOrder() throws Exception {
+        testFooBoxIsTrue("definitionOrder.kt");
     }
 }
 

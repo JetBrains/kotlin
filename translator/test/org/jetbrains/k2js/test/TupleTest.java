@@ -3,7 +3,7 @@ package org.jetbrains.k2js.test;
 /**
  * @author Talanov Pavel
  */
-public class TupleTest extends IncludeLibraryTest {
+public class TupleTest extends TranslationTest {
 
     final private static String MAIN = "tuple/";
 
