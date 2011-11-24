@@ -6,12 +6,14 @@ package org.jetbrains.jet.plugin.internal.codewindow;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -29,6 +31,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Scanner;
 
 public class BytecodeToolwindow extends JPanel {
     private static final int UPDATE_DELAY = 500;
@@ -36,7 +39,7 @@ public class BytecodeToolwindow extends JPanel {
     private final Alarm myUpdateAlarm;
     private Location myCurrentLocation;
     private final Project myProject;
-    
+
 
     public BytecodeToolwindow(Project project) {
         super(new BorderLayout());
@@ -47,17 +50,17 @@ public class BytecodeToolwindow extends JPanel {
         myUpdateAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
+                myUpdateAlarm.addRequest(this, UPDATE_DELAY);
                 Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor());
                 if (!Comparing.equal(location, myCurrentLocation)) {
+                    updateBytecode(location, myCurrentLocation);
                     myCurrentLocation = location;
-                    updateBytecode(location);
                 }
-                myUpdateAlarm.addRequest(this, UPDATE_DELAY);
             }
         }, UPDATE_DELAY);
     }
 
-    private void updateBytecode(Location location) {
+    private void updateBytecode(Location location, Location oldLocation) {
         Editor editor = location.editor;
 
         if (editor == null) {
@@ -76,8 +79,62 @@ public class BytecodeToolwindow extends JPanel {
                 return;
             }
 
-            setText(generateToText((JetFile) psiFile));
+            if (oldLocation == null || !Comparing.equal(oldLocation.editor, location.editor) || oldLocation.modificationStamp != location.modificationStamp) {
+                setText(generateToText((JetFile) psiFile));
+            }
+
+            Document document = editor.getDocument();
+            int startLine = document.getLineNumber(location.startOffset);
+            int endLine = document.getLineNumber(location.endOffset);
+            if (endLine > startLine && location.endOffset > 0 && document.getCharsSequence().charAt(location.endOffset - 1) == '\n') endLine--;
+
+            Document byteCodeDocument = myEditor.getDocument();
+            Pair<Integer, Integer> linesRange = mapLines(byteCodeDocument.getText(), startLine, endLine);
+
+            myEditor.getSelectionModel().setSelection(byteCodeDocument.getLineStartOffset(linesRange.first),
+                                                      Math.min(byteCodeDocument.getLineStartOffset(linesRange.second + 1), byteCodeDocument.getTextLength()));
         }
+    }
+
+    private static Pair<Integer, Integer> mapLines(String text, int startLine, int endLine) {
+        int byteCodeLine = 0;
+        int byteCodeStartLine = -1;
+        int byteCodeEndLine = -1;
+
+        for (String line : text.split("\n")) {
+            line = line.trim();
+
+            if (line.startsWith("LINENUMBER")) {
+                int ktLineNum = new Scanner(line.substring("LINENUMBER".length())).nextInt() - 1;
+
+                if (byteCodeStartLine < 0 && ktLineNum >= startLine) {
+                    byteCodeStartLine = byteCodeLine;
+                }
+
+                if (byteCodeEndLine < 0 && ktLineNum > endLine) {
+                    byteCodeEndLine = byteCodeLine - 1;
+                    break;
+                }
+            }
+
+            if (byteCodeStartLine >= 0 && (line.startsWith("MAXSTACK") || line.startsWith("LOCALVARIABLE") || line.isEmpty())) {
+                byteCodeEndLine = byteCodeLine - 1;
+                break;
+            }
+
+
+            byteCodeLine++;
+        }
+
+
+
+        if (byteCodeStartLine == -1 || byteCodeEndLine == -1) {
+            return new Pair<Integer, Integer>(0, 0);
+        }
+        else {
+            return new Pair<Integer, Integer>(byteCodeStartLine, byteCodeEndLine);
+        }
+
     }
 
     private void setText(final String text) {
