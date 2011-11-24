@@ -53,4 +53,9 @@ public class OperatorOverloadingTest extends TranslationTest {
     public void unaryOnIntProperty() throws Exception {
         testFooBoxIsTrue("unaryOnIntProperty.kt");
     }
+
+    @Test
+    public void unaryOnIntPropertyAsStatement() throws Exception {
+        testFooBoxIsTrue("unaryOnIntProperty2.kt");
+    }
 }

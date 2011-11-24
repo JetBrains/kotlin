@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
 
@@ -145,7 +146,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
             AstUtil.setQualifier(operationReference, receiver);
             return AstUtil.newInvocation(operationReference);
         }
-        return new JsPrefixOperation(OperatorTable.getUnaryOperator(getOperationToken()), receiver);
+        return unaryAsBinary(getOperationToken(), receiver);
     }
 
     @NotNull
@@ -176,5 +177,16 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         IElementType elementType = operationExpression.getReferencedNameElementType();
         assert elementType instanceof JetToken : "Unary expression should have IElementType of type JetToken";
         return (JetToken) elementType;
+    }
+
+    public JsBinaryOperation unaryAsBinary(@NotNull JetToken token, @NotNull JsExpression expression) {
+        JsNumberLiteral oneLiteral = translationContext().program().getNumberLiteral(1);
+        if (token.equals(JetTokens.PLUSPLUS)) {
+            return new JsBinaryOperation(JsBinaryOperator.ADD, expression, oneLiteral);
+        }
+        if (token.equals(JetTokens.MINUSMINUS)) {
+            return new JsBinaryOperation(JsBinaryOperator.SUB, expression, oneLiteral);
+        }
+        throw new AssertionError("This method should be called only for increment and decrement operators");
     }
 }
