@@ -27,6 +27,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private final ReceiverDescriptor receiver;
     private final ReceiverDescriptor expectedThisObject;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
+    private final Set<PropertyDescriptor> overridingProperties = Sets.newLinkedHashSet();
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
     private final PropertyDescriptor original;
     private PropertyGetterDescriptor getter;
@@ -118,11 +119,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return getOutType();
     }
 
-    @Override
-    @Nullable
-    public JetType getReturnTypeSafe() {
-        return getOutType();
-    }
 
     public boolean isVar() {
         return isVar;
@@ -195,7 +191,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @Override
     public Set<? extends PropertyDescriptor> getOverriddenDescriptors() {
         return overriddenProperties;
-
     }
 
     @NotNull
@@ -217,7 +212,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
                         DescriptorUtils.convertModality(setter.getModality(), makeNonAbstract), setter.getVisibility(),
                         propertyDescriptor,
                         Lists.newArrayList(setter.getAnnotations()),
-                        setter.hasBody(), setter.isDefault());;
+                        setter.hasBody(), setter.isDefault());
         propertyDescriptor.initialize(DescriptorUtils.copyTypeParameters(propertyDescriptor, getTypeParameters()), newGetter, newSetter);
         return propertyDescriptor;
     }

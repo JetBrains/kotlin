@@ -63,11 +63,11 @@ fun t4(a: A, val b: A, var c: A) {
 // reassigned vals
 
 fun t1() {
-    val a : Int = 1
-    <!VAL_REASSIGNMENT!>a<!> = 2
+    val <!UNUSED_VARIABLE!>a<!> : Int = 1
+    <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>2<!>
 
-    var b : Int = 1
-    b = 3
+    var <!UNUSED_VARIABLE!>b<!> : Int = 1
+    b = <!UNUSED_VALUE!>3<!>
 }
 
 abstract enum class ProtocolState {
@@ -85,7 +85,7 @@ abstract enum class ProtocolState {
 fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
    <!VAL_REASSIGNMENT!>x<!> = x.signal()
-   x = x.signal() //repeat for x
+   x = <!UNUSED_VALUE!>x.signal()<!> //repeat for x
 }
 
 fun t4() {
@@ -265,7 +265,7 @@ class ClassObject() {
 }
 
 fun foo() {
-    val a = object {
+    val <!UNUSED_VARIABLE!>a<!> = object {
         val x : Int
         val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
         val z : Int
@@ -283,7 +283,7 @@ fun foo() {
 class TestObjectExpression() {
     val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>a<!> : Int
     fun foo() {
-        val a = object {
+        val <!UNUSED_VARIABLE!>a<!> = object {
             val x : Int
             val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
             {
@@ -325,10 +325,10 @@ object TestObjectDeclaration {
 
 fun func() {
     val b = 1
-    val a = object {
+    val <!UNUSED_VARIABLE!>a<!> = object {
         val x = b
         {
-            <!VAL_REASSIGNMENT!>b<!> = 4
+            <!VAL_REASSIGNMENT!>b<!> = <!UNUSED_VALUE!>4<!>
             <!UNRESOLVED_REFERENCE!>$b<!> = 3
         }
     }

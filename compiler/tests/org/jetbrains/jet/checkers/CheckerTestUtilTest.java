@@ -67,7 +67,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         doTest(new TheTest("Unexpected NONE_APPLICABLE at 122 to 123", "Missing TYPE_MISMATCH at 161 to 169") {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(2);
+                diagnosedRanges.remove(3);
                 diagnostics.remove(diagnostics.size() - 3);
             }
         });

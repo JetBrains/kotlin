@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -101,5 +102,18 @@ public class JetPsiUtil {
         } else {
             return unquoteIdentifier(quoted);
         }
+    }
+
+    public static boolean isLocal(@NotNull JetProperty property) {
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(property, JetClassOrObject.class);
+        JetDeclarationWithBody function = PsiTreeUtil.getParentOfType(property, JetDeclarationWithBody.class);
+        if (function != null && PsiTreeUtil.isAncestor(classOrObject, function, false)) {
+            return true;
+        }
+        if (classOrObject != null && PsiTreeUtil.isAncestor(function, classOrObject, false)) {
+            return false;
+        }
+        if (function != null) return true;
+        return false;
     }
 }

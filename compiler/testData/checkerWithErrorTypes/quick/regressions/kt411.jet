@@ -13,13 +13,13 @@ fun invoker(gen : fun() : Int) : Int  = 0
 
 //more tests
 fun t1() {
-    val v = @{ () : Int =>
+    val <!UNUSED_VARIABLE!>v<!> = @{ () : Int =>
         return@ 111
     }
 }
 
 fun t2() : String {
-    val g : fun(): Int = @{
+    val <!UNUSED_VARIABLE!>g<!> : fun(): Int = @{
         if (true) {
             return@ 1
         }
@@ -54,10 +54,10 @@ fun t3() : String {
 }
 
 fun t4() : Int {
-    val h : fun (): String = @l{
+    val <!UNUSED_VARIABLE!>h<!> : fun (): String = @l{
         return@l "a"
     }
-    val g : fun (): String = @{ () : String =>
+    val <!UNUSED_VARIABLE!>g<!> : fun (): String = @{ () : String =>
         return@ "a"
     }
 

@@ -16,7 +16,6 @@ import java.util.Set;
 public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     private MutableValueParameterDescriptor parameter;
-    private final Set<PropertySetterDescriptor> overriddenSetters = Sets.newHashSet();
 
     public PropertySetterDescriptor(@NotNull Modality modality, @NotNull Visibility visibility, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, boolean hasBody, boolean isDefault) {
         super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
@@ -33,12 +32,8 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
-        return overriddenSetters;
-    }
-
-    public void setOverriddenFunction(@NotNull PropertySetterDescriptor overriddenSetter) {
-        overriddenSetters.add(overriddenSetter);
+    public Set<? extends PropertyAccessorDescriptor> getOverriddenDescriptors() {
+        return super.getOverriddenDescriptors(false);
     }
 
     @NotNull
@@ -51,11 +46,6 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @Override
     public JetType getReturnType() {
         return JetStandardClasses.getUnitType();
-    }
-
-    @Override
-    public JetType getReturnTypeSafe() {
-        return getReturnType();
     }
 
     @Override

@@ -161,6 +161,6 @@ abstract class B3(i: Int) {
 }
 
 fun foo(a: B3) {
-    val a = <error>B3()</error>
-    val b = <error>B1(2, "s")</error>
+    val <warning>a</warning> = <error>B3()</error>
+    val <warning>b</warning> = <error>B1(2, "s")</error>
 }

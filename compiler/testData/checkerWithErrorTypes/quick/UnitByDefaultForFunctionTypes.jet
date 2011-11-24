@@ -1,3 +1,3 @@
 fun foo(f : fun()) {
-    val x : Unit = f()
+    val <!UNUSED_VARIABLE!>x<!> : Unit = f()
 }

@@ -8,13 +8,13 @@ import java.lang.Comparable as Com
 val l : List<in Int> = ArrayList<Int>()
 
 fun test(l : java.util.List<Int>) {
-  val x : java.<error>List</error>
-  val y : java.util.List<Int>
-  val b : java.lang.Object
-  val a : util.List<Int>
-  val z : java.<error>utils</error>.List<Int>
+  val <warning>x</warning> : java.<error>List</error>
+  val <warning>y</warning> : java.util.List<Int>
+  val <warning>b</warning> : java.lang.Object
+  val <warning>a</warning> : util.List<Int>
+  val <warning>z</warning> : java.<error>utils</error>.List<Int>
 
-  val f : java.io.File? = null
+  val <warning>f</warning> : java.io.File? = null
 
   Collections.<error>emptyList</error>
   Collections.emptyList<Int>
@@ -27,7 +27,7 @@ fun test(l : java.util.List<Int>) {
   <error>List</error><Int>
 
 
-  val o = "sdf" <warning>as</warning> Object
+  val <warning>o</warning> = "sdf" <warning>as</warning> Object
 
   try {
     // ...

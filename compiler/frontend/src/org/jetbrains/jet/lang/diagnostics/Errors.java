@@ -145,6 +145,19 @@ public interface Errors {
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
     PsiElementOnlyDiagnosticFactory1<JetProperty, DeclarationDescriptor> UNUSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is never used", NAME);
+    PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = new PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor>(WARNING, "The value ''{0}'' assigned to ''{1}'' is never used", NAME) {
+        @Override
+        protected String makeMessageForA(@NotNull JetElement element) {
+            return element.getText();
+        }
+    };
+    PsiElementOnlyDiagnosticFactory1<JetElement, JetElement> UNUSED_CHANGED_VALUE = new PsiElementOnlyDiagnosticFactory1<JetElement, JetElement>(WARNING, "The value changed at ''{0}'' is never used", NAME) {
+        @Override
+        protected String makeMessageFor(JetElement argument) {
+            return argument.getText();
+        }
+    };
+
     PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]> VAL_REASSIGNMENT = new PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]>(ERROR, "Val can not be reassigned", NAME) {
         @NotNull
         @Override

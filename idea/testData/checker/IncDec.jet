@@ -9,10 +9,10 @@ fun testIncDec() {
   ++x
   x--
   --x
-  x = x++
-  x = x--
+  x = <warning>x++</warning>
+  x = <warning>x--</warning>
   x = ++x
-  x = --x
+  x = <warning>--x</warning>
 }
 
 class WrongIncDec() {

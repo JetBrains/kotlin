@@ -18,5 +18,5 @@ enum class Foo<T> {
 
 
 fun box() {
-   val x: ProtocolState = ProtocolState.WAITING
+   val <warning>x</warning>: ProtocolState = ProtocolState.WAITING
 }

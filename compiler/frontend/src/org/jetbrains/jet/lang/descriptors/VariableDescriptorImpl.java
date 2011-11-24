@@ -89,10 +89,4 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
     public JetType getReturnType() {
         return getOutType();
     }
-
-    @Override
-    @Nullable
-    public JetType getReturnTypeSafe() {
-        return getOutType();
-    }
 }

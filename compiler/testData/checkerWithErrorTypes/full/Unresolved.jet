@@ -1,13 +1,13 @@
 namespace unresolved
 
 fun testGenericArgumentsCount() {
-    val p1: Tuple2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = (2, 2)
-    val p2: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Tuple2<!> = (2, 2)
+    val <!UNUSED_VARIABLE!>p1<!>: Tuple2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = (2, 2)
+    val <!UNUSED_VARIABLE!>p2<!>: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Tuple2<!> = (2, 2)
 }
 
 fun testUnresolved() {
     if (<!UNRESOLVED_REFERENCE!>a<!> is String) {
-        val s = <!UNRESOLVED_REFERENCE!>a<!>
+        val <!UNUSED_VARIABLE!>s<!> = <!UNRESOLVED_REFERENCE!>a<!>
     }
     <!UNRESOLVED_REFERENCE!>foo<!>(<!UNRESOLVED_REFERENCE!>a<!>)
     val s = "s"
