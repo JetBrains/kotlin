@@ -1,14 +1,12 @@
 package org.jetbrains.k2js.translate;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 
 /**
@@ -39,7 +37,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         this.expression = expression;
         this.isPropertyOnTheLeft = isPropertyAccess(expression.getLeft());
         this.isVariableReassignment = isVariableReassignment(expression);
-        this.operationReference = getOverloadedOperationReference(expression);
+        this.operationReference = getOverloadedOperationReference(expression.getOperationReference());
         this.right = translateRightExpression();
         //TODO: decide whether it is harmful to possibly translate left expression more than once
         this.left = translateLeftExpression();
@@ -47,10 +45,35 @@ public final class BinaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     JsExpression translate() {
-        if (operationReference != null) {
+        if (isCompareTo()) {
+            return asCompareToOverload();
+        }
+        if (isOverloadedCall()) {
             return asOverloadedMethodCall();
         }
         return asBinaryOperation();
+    }
+
+    @NotNull
+    private JsExpression asCompareToOverload() {
+        JetToken operationToken = getOperationToken();
+        assert (OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken));
+        JsNumberLiteral zetoLiteral = program().getNumberLiteral(0);
+        JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(operationToken);
+        return new JsBinaryOperation(correspondingOperator, overloadedMethodInvocation(), zetoLiteral);
+    }
+
+    private boolean isOverloadedCall() {
+        return operationReference != null;
+    }
+
+    private boolean isCompareTo() {
+        if (operationReference == null) {
+            return false;
+        }
+        String nameForOperationSymbol = OperatorConventions.getNameForOperationSymbol(getOperationToken());
+        assert nameForOperationSymbol != null : "Must have a name for overloaded operator";
+        return (nameForOperationSymbol.equals("compareTo"));
     }
 
     @NotNull
@@ -58,7 +81,15 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         if (isPropertyOnTheLeft) {
             return overloadOnProperty();
         }
+        if (isVariableReassignment) {
+            return nonPropertyReassignment();
+        }
         return overloadedMethodInvocation();
+    }
+
+    private JsExpression nonPropertyReassignment() {
+        assert left instanceof JsNameRef : "Reassignment should be called on l-value.";
+        return AstUtil.newAssignment((JsNameRef) left, overloadedMethodInvocation());
     }
 
     @NotNull
@@ -116,6 +147,5 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         setterCall.setArguments(assignTo);
         return setterCall;
     }
-
 
 }

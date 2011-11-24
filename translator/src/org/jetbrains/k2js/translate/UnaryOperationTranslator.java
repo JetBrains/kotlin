@@ -48,7 +48,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         this.isStatement = BindingUtils.isStatement(translationContext().bindingContext(), expression);
         this.baseExpression = translateBaseExpression();
         this.isPropertyAccess = isPropertyAccess(getBaseExpression());
-        this.operationReference = getOverloadedOperationReference(expression);
+        this.operationReference = getOverloadedOperationReference(expression.getOperationSign());
     }
 
     @NotNull
@@ -102,7 +102,6 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         JsExpression returnedValue = t1.nameReference();
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
     }
-
 
     //TODO: should modify this for properties
     @NotNull

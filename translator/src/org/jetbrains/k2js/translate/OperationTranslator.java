@@ -7,10 +7,8 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 
 /**
  * @author Talanov Pavel
@@ -22,8 +20,8 @@ public class OperationTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    protected JsNameRef getOverloadedOperationReference(@NotNull JetExpression expression) {
-        DeclarationDescriptor operationDescriptor = getOperationDescriptor(expression);
+    protected JsNameRef getOverloadedOperationReference(@NotNull JetSimpleNameExpression operationExpression) {
+        DeclarationDescriptor operationDescriptor = getOperationDescriptor(operationExpression);
         if (operationDescriptor == null) {
             return null;
         }
@@ -34,19 +32,10 @@ public class OperationTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private DeclarationDescriptor getOperationDescriptor(@NotNull JetExpression expression) {
-        JetSimpleNameExpression operationReference = null;
-        if (expression instanceof JetBinaryExpression) {
-            operationReference = ((JetBinaryExpression) expression).getOperationReference();
-        }
-        if (expression instanceof JetUnaryExpression) {
-            operationReference = ((JetUnaryExpression) expression).getOperationSign();
-        }
-        assert operationReference != null : "Should be applied only to unary or binary operations";
+    private DeclarationDescriptor getOperationDescriptor(@NotNull JetSimpleNameExpression expression) {
         return BindingUtils.getDescriptorForReferenceExpression
-                (translationContext().bindingContext(), operationReference);
+                (translationContext().bindingContext(), expression);
     }
-
 
     protected boolean isPropertyAccess(@NotNull JetExpression expression) {
         return Translation.propertyAccessTranslator(translationContext()).canBePropertyAccess(expression);
