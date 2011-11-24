@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -7,6 +8,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -94,5 +96,17 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     @Override
     public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
         throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
+    }
+
+    protected Set<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
+        Set<? extends PropertyDescriptor> overriddenProperties = getCorrespondingProperty().getOverriddenDescriptors();
+        Set<PropertyAccessorDescriptor> overriddenAccessors = Sets.newHashSet();
+        for (PropertyDescriptor overriddenProperty : overriddenProperties) {
+            PropertyAccessorDescriptor accessorDescriptor = isGetter ? overriddenProperty.getGetter() : overriddenProperty.getSetter();
+            if (accessorDescriptor != null) {
+                overriddenAccessors.add(accessorDescriptor);
+            }
+        }
+        return overriddenAccessors;
     }
 }

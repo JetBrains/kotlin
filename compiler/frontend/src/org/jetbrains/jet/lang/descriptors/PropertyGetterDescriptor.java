@@ -15,7 +15,6 @@ import java.util.Set;
  * @author abreslav
  */
 public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
-    private final Set<PropertyGetterDescriptor> overriddenGetters = Sets.newHashSet();
     private JetType returnType;
 
     public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, @NotNull Modality modality, @NotNull Visibility visibility, @Nullable JetType returnType, boolean hasBody, boolean isDefault) {
@@ -25,12 +24,8 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
-        return overriddenGetters;
-    }
-
-    public void addOverriddenFunction(@NotNull PropertyGetterDescriptor overriddenGetter) {
-        overriddenGetters.add(overriddenGetter);
+    public Set<? extends PropertyAccessorDescriptor> getOverriddenDescriptors() {
+        return super.getOverriddenDescriptors(true);
     }
 
     @NotNull
