@@ -1,7 +1,6 @@
 package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -158,11 +157,23 @@ public class ExpressionVisitor extends StatementVisitor {
   @Override
   public void visitLiteralExpression(PsiLiteralExpression expression) {
     super.visitLiteralExpression(expression);
-    myResult = new LiteralExpression(
-      new IdentifierImpl(
-        ((PsiLiteralExpressionImpl) expression).getCanonicalText() // TODO
-      )
-    );
+
+    final Object value = expression.getValue();
+    String text = expression.getText();
+
+    final PsiType type = expression.getType();
+    if (type != null) {
+      String canonicalTypeStr = type.getCanonicalText();
+      if (canonicalTypeStr.equals("double") || canonicalTypeStr.equals("java.lang.Double"))
+        text = text.replace("D", "").replace("d", "");
+      if (canonicalTypeStr.equals("float") || canonicalTypeStr.equals("java.lang.Float"))
+        text = text.replace("F", "").replace("f", "") + "." + "flt";
+      if (canonicalTypeStr.equals("long") || canonicalTypeStr.equals("java.lang.Long"))
+        text = text.replace("L", "").replace("l", "");
+      if (canonicalTypeStr.equals("int") || canonicalTypeStr.equals("java.lang.Integer")) // need for hex support
+        text = value != null ? value.toString() : text;
+    }
+    myResult = new LiteralExpression(new IdentifierImpl(text));
   }
 
   @Override
@@ -404,5 +415,12 @@ public class ExpressionVisitor extends StatementVisitor {
       expressionsToExpressionList(expression.getOperands()),
       getOperatorString(expression.getOperationTokenType())
     );
+  }
+}
+
+class Test {
+  void test() {
+    char c1 = 'c';
+    Character c2 = 'C';
   }
 }
