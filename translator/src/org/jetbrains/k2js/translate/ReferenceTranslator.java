@@ -43,7 +43,12 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     @Nullable
     private JsInvocation resolveAsPropertyAccess(@NotNull JetSimpleNameExpression expression) {
-        return Translation.propertyAccessTranslator(translationContext()).resolveAsPropertyGet(expression);
+
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
+        if (propertyAccessTranslator.canBePropertyGetterCall(expression)) {
+            return propertyAccessTranslator.translateAsPropertyGetterCall(expression);
+        }
+        return null;
     }
 
     @Nullable

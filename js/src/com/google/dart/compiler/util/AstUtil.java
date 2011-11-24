@@ -8,6 +8,7 @@ import com.google.dart.compiler.InternalCompilerException;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.common.SourceInfo;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -319,5 +320,18 @@ public class AstUtil {
 
     public static JsExpression equalsTrue(JsExpression expression, JsProgram program) {
         return equals(expression, program.getTrueLiteral());
+    }
+
+    public static JsBinaryOperation comma(JsExpression... expressions) {
+        return comma(Arrays.asList(expressions));
+    }
+
+    public static JsBinaryOperation comma(List<JsExpression> expressions) {
+        assert expressions.size() >= 2 : "Comma operator applicable to two or more expressions";
+        JsBinaryOperation result = new JsBinaryOperation(JsBinaryOperator.COMMA, expressions.get(0), expressions.get(1));
+        for (int i = 2; i < expressions.size(); ++i) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, result, expressions.get(i));
+        }
+        return result;
     }
 }

@@ -28,4 +28,19 @@ public class OperatorOverloadingTest extends TranslationTest {
     public void prefixInc() throws Exception {
         testFooBoxIsTrue("prefixDecOverload.kt");
     }
+
+    @Test
+    public void prefixIncReturnsCorrectValue() throws Exception {
+        testFooBoxIsTrue("prefixIncReturnsCorrectValue.kt");
+    }
+
+    @Test
+    public void overloadedCallOnProperty() throws Exception {
+        testFooBoxIsTrue("overloadedCallOnProperty.kt");
+    }
+
+    @Test
+    public void postfixOnProperty() throws Exception {
+        testFooBoxIsTrue("postfixOnProperty.kt");
+    }
 }

@@ -38,5 +38,4 @@ public final class TranslationUtils {
                                                 @NotNull String name) {
         return context.enclosingScope().findExistingName(name);
     }
-
 }

@@ -42,7 +42,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         return translateAsBinaryOperation();
     }
 
-    //TODO: think about the ways to improve logic here
+    //TODO: method too long
     @Nullable
     public JsInvocation translateAsSetterCall() {
         JetToken jetOperationToken = getOperationToken();
@@ -50,11 +50,11 @@ public final class BinaryOperationTranslator extends OperationTranslator {
             return null;
         }
         JetExpression leftExpression = expression.getLeft();
-        JsInvocation setterCall = Translation.propertyAccessTranslator(translationContext()).
-                translateAsPropertySetterCall(leftExpression);
-        if (setterCall == null) {
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
+        if (!propertyAccessTranslator.canBePropertySetterCall(leftExpression)) {
             return null;
         }
+        JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(leftExpression);
         JsExpression right = translateRightExpression();
         setterCall.setArguments(Arrays.asList(right));
         return setterCall;

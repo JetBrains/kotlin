@@ -19,6 +19,12 @@ import java.util.List;
  */
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
+    @NotNull
+    private JsExpression translateAsExpression(@NotNull JetExpression expression,
+                                               @NotNull TranslationContext context) {
+        return AstUtil.convertToExpression(expression.accept(this, context));
+    }
+
     @Override
     @NotNull
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
@@ -157,7 +163,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @Nullable
-    private JsStatement translateElseAsStatement(JetIfExpression expression, TranslationContext context) {
+    private JsStatement translateElseAsStatement(@NotNull JetIfExpression expression,
+                                                 @NotNull TranslationContext context) {
         JetExpression jetElse = expression.getElse();
         if (jetElse == null) {
             return null;
@@ -201,10 +208,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return null;
         }
         return translateAsExpression(expression, context);
-    }
-
-    private JsExpression translateAsExpression(JetExpression expression, TranslationContext context) {
-        return AstUtil.convertToExpression(expression.accept(this, context));
     }
 
     @Override
@@ -261,17 +264,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     private JsExpression translateQualifiedExpression(@NotNull JetQualifiedExpression expression,
                                                       @NotNull TranslationContext context) {
-        JsInvocation getterCall = translateAsGetterCall(expression, context);
-        if (getterCall != null) {
-            return getterCall;
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context);
+        if (propertyAccessTranslator.canBePropertyGetterCall(expression)) {
+            return propertyAccessTranslator.translateAsPropertyGetterCall(expression);
         }
         return translateAsQualifiedAccess(expression, context);
-    }
-
-    @Nullable
-    private JsInvocation translateAsGetterCall(@NotNull JetQualifiedExpression expression,
-                                               @NotNull TranslationContext context) {
-        return Translation.propertyAccessTranslator(context).resolveAsPropertyGet(expression);
     }
 
     @NotNull
@@ -384,6 +381,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression,
                                                  @NotNull TranslationContext context) {
         return Translation.functionTranslator(context).translateAsLiteral(expression.getFunctionLiteral());
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitThisExpression(@NotNull JetThisExpression expression,
+                                      @NotNull TranslationContext context) {
+        return new JsThisRef();
     }
 
 

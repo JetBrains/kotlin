@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -42,5 +45,34 @@ public class OperationTranslator extends AbstractTranslator {
         assert operationReference != null : "Should be applied only to unary or binary operations";
         return BindingUtils.getDescriptorForReferenceExpression
                 (translationContext().bindingContext(), operationReference);
+    }
+
+
+    protected final class TemporaryVariable {
+
+        @NotNull
+        private final JsExpression assignmentExpression;
+        @NotNull
+        private final JsName variableName;
+
+        private TemporaryVariable(@NotNull JsExpression initExpression) {
+            this.variableName = translationContext().enclosingScope().declareTemporary();
+            this.assignmentExpression = AstUtil.newAssignment(variableName.makeRef(), initExpression);
+        }
+
+        @NotNull
+        public JsNameRef nameReference() {
+            return variableName.makeRef();
+        }
+
+        @NotNull
+        public JsExpression assignmentExpression() {
+            return assignmentExpression;
+        }
+    }
+
+    @NotNull
+    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
+        return new TemporaryVariable(initExpression);
     }
 }
