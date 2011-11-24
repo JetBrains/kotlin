@@ -63,7 +63,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     JsExpression translate() {
-        if (operationReference != null) {
+        if ((operationReference != null) || isPropertyAccess) {
             return translateOverload();
         }
         return jsUnaryExpression();
@@ -84,18 +84,21 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     @NotNull
     private JsExpression asPrefix() {
         if (isVariableReassignment) {
-            return variableReassignment();
+            return variableReassignment(baseExpression);
         }
-        return overloadedMethodInvocation(baseExpression);
+        return operationExpression(baseExpression);
     }
 
+    //TODO: decide if this expression can be optimised in case of direct access (not property)
     @NotNull
     private JsExpression asPostfixWithReassignment() {
         // code fragment: expr(a++)
-        // generate: expr( (t = a, a = a.inc(), t) )
-        TemporaryVariable t = declareTemporary(baseExpression);
-        JsExpression variableReassignment = variableReassignment();
-        return AstUtil.comma(t.assignmentExpression(), variableReassignment, t.nameReference());
+        // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
+        TemporaryVariable t1 = declareTemporary(baseExpression);
+        TemporaryVariable t2 = declareTemporary(t1.nameReference());
+        JsExpression variableReassignment = variableReassignment(t1.nameReference());
+        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
+                variableReassignment, t2.nameReference());
     }
 
     @NotNull
@@ -105,41 +108,44 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         assert operationReference != null;
         TemporaryVariable t1 = declareTemporary(baseExpression);
         TemporaryVariable t2 = declareTemporary(t1.nameReference());
-        JsExpression methodCall = overloadedMethodInvocation(t2.nameReference());
+        JsExpression methodCall = operationExpression(t2.nameReference());
         JsExpression returnedValue = t1.nameReference();
-        return AstUtil.comma(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
+        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
     }
 
 
     //TODO: should modify this for properties
     @NotNull
-    private JsExpression variableReassignment() {
+    private JsExpression variableReassignment(@NotNull JsExpression toCallMethodUpon) {
         if (isPropertyAccess) {
-            return propertyReassignment();
+            return propertyReassignment(toCallMethodUpon);
         }
-        return localVariableReassignment();
+        return localVariableReassignment(toCallMethodUpon);
     }
 
-    private JsExpression localVariableReassignment() {
+    private JsExpression localVariableReassignment(@NotNull JsExpression toCallMethodUpon) {
         assert baseExpression instanceof JsNameRef : "Base expression should be an l-value";
-        return AstUtil.newAssignment((JsNameRef) baseExpression, overloadedMethodInvocation(baseExpression));
+        return AstUtil.newAssignment((JsNameRef) baseExpression, operationExpression(toCallMethodUpon));
     }
 
     @NotNull
-    private JsExpression propertyReassignment() {
+    private JsExpression propertyReassignment(@NotNull JsExpression toCallMethodUpon) {
         JetExpression jetBaseExpression = getBaseExpression();
         PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
         JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(jetBaseExpression);
         assert propertyAccessTranslator.canBePropertyGetterCall(jetBaseExpression) : "Should be a getter call";
-        JsExpression overloadedMethodCallOnPropertyGetter = overloadedMethodInvocation(baseExpression);
+        JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
         setterCall.setArguments(Arrays.asList(overloadedMethodCallOnPropertyGetter));
         return setterCall;
     }
 
     @NotNull
-    private JsExpression overloadedMethodInvocation(@NotNull JsExpression receiver) {
-        AstUtil.setQualifier(operationReference, receiver);
-        return AstUtil.newInvocation(operationReference);
+    private JsExpression operationExpression(@NotNull JsExpression receiver) {
+        if (operationReference != null) {
+            AstUtil.setQualifier(operationReference, receiver);
+            return AstUtil.newInvocation(operationReference);
+        }
+        return new JsPrefixOperation(OperatorTable.getUnaryOperator(getOperationToken()), receiver);
     }
 
     @NotNull

@@ -43,4 +43,14 @@ public class OperatorOverloadingTest extends TranslationTest {
     public void postfixOnProperty() throws Exception {
         testFooBoxIsTrue("postfixOnProperty.kt");
     }
+
+    @Test
+    public void operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() throws Exception {
+        testFooBoxIsTrue("operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce.kt");
+    }
+
+    @Test
+    public void unaryOnIntProperty() throws Exception {
+        testFooBoxIsTrue("unaryOnIntProperty.kt");
+    }
 }

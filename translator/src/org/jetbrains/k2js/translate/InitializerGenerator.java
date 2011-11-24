@@ -36,6 +36,8 @@ public class InitializerGenerator {
         return initializer;
     }
 
+    //TODO: track context change points, make them consistent,  make sure that inside class declaration block
+    // classes reference their ancestor by aliases
     @NotNull
     private JsFunction generateInitializeFunction() {
         AbstractInitializerVisitor visitor;
