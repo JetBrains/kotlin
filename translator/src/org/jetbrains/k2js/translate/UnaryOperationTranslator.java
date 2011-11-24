@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Arrays;
 
 /**
  * @author Talanov Pavel
@@ -48,18 +47,8 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         this.isVariableReassignment = isVariableReassignment(expression);
         this.isStatement = BindingUtils.isStatement(translationContext().bindingContext(), expression);
         this.baseExpression = translateBaseExpression();
-        this.isPropertyAccess = isPropertyAccess();
+        this.isPropertyAccess = isPropertyAccess(getBaseExpression());
         this.operationReference = getOverloadedOperationReference(expression);
-    }
-
-    private boolean isPropertyAccess() {
-        return Translation.propertyAccessTranslator(translationContext()).canBePropertyAccess(getBaseExpression());
-
-    }
-
-    private boolean isVariableReassignment(JetUnaryExpression expression) {
-        return BindingUtils.isVariableReassignment
-                (translationContext().bindingContext(), expression);
     }
 
     @NotNull
@@ -136,7 +125,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(jetBaseExpression);
         assert propertyAccessTranslator.canBePropertyGetterCall(jetBaseExpression) : "Should be a getter call";
         JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
-        setterCall.setArguments(Arrays.asList(overloadedMethodCallOnPropertyGetter));
+        setterCall.setArguments(overloadedMethodCallOnPropertyGetter);
         return setterCall;
     }
 

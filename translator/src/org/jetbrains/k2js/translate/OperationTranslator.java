@@ -48,6 +48,17 @@ public class OperationTranslator extends AbstractTranslator {
     }
 
 
+    protected boolean isPropertyAccess(@NotNull JetExpression expression) {
+        return Translation.propertyAccessTranslator(translationContext()).canBePropertyAccess(expression);
+
+    }
+
+    protected boolean isVariableReassignment(@NotNull JetExpression expression) {
+        return BindingUtils.isVariableReassignment
+                (translationContext().bindingContext(), expression);
+    }
+
+
     protected final class TemporaryVariable {
 
         @NotNull

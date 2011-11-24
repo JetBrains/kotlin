@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -64,5 +65,9 @@ public final class JsInvocation extends JsExpression implements HasArguments {
     public void setArguments(List<JsExpression> arguments) {
         assert this.args.isEmpty() : "Arguments already set.";
         this.args.addAll(arguments);
+    }
+
+    public void setArguments(JsExpression... arguments) {
+        setArguments(Arrays.asList(arguments));
     }
 }

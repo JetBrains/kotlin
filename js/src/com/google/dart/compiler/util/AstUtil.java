@@ -278,7 +278,7 @@ public class AstUtil {
     }
 
     public static JsExpression extractExpressionFromStatement(JsStatement statement) {
-        assert statement instanceof JsExprStmt : "Cannot extract exprssion form statement: " + statement;
+        assert statement instanceof JsExprStmt : "Cannot extract expression from statement: " + statement;
         return (((JsExprStmt) statement).getExpression());
     }
 

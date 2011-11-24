@@ -58,4 +58,19 @@ public class OperatorOverloadingTest extends TranslationTest {
     public void unaryOnIntPropertyAsStatement() throws Exception {
         testFooBoxIsTrue("unaryOnIntProperty2.kt");
     }
+
+    @Test
+    public void binaryDivOverload() throws Exception {
+        testFooBoxIsTrue("binaryDivOverload.kt");
+    }
+
+    @Test
+    public void plusAssignNoReassign() throws Exception {
+        testFooBoxIsTrue("plusAssignNoReassign.kt");
+    }
+
+    @Test
+    public void plusAssignReassign() throws Exception {
+        testFooBoxIsTrue("plusAssignReassign.kt");
+    }
 }

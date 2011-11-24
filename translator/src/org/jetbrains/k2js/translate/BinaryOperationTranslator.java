@@ -11,8 +11,6 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lexer.JetToken;
 
-import java.util.Arrays;
-
 /**
  * @author Talanov Pavel
  */
@@ -26,49 +24,56 @@ public final class BinaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     private final JetBinaryExpression expression;
+    private final boolean isPropertyOnTheLeft;
+    private final boolean isVariableReassignment;
+    @NotNull
+    private final JsExpression left;
+    @NotNull
+    private final JsExpression right;
+    @Nullable
+    private final JsNameRef operationReference;
 
     private BinaryOperationTranslator(@NotNull JetBinaryExpression expression,
                                       @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
+        this.isPropertyOnTheLeft = isPropertyAccess(expression.getLeft());
+        this.isVariableReassignment = isVariableReassignment(expression);
+        this.operationReference = getOverloadedOperationReference(expression);
+        this.right = translateRightExpression();
+        //TODO: decide whether it is harmful to possibly translate left expression more than once
+        this.left = translateLeftExpression();
     }
 
     @NotNull
     JsExpression translate() {
-        JsInvocation setterCall = translateAsSetterCall();
-        if (setterCall != null) {
-            return setterCall;
+        if (operationReference != null) {
+            return asOverloadedMethodCall();
         }
-        return translateAsBinaryOperation();
-    }
-
-    //TODO: method too long
-    @Nullable
-    public JsInvocation translateAsSetterCall() {
-        JetToken jetOperationToken = getOperationToken();
-        if (!OperatorTable.isAssignment(jetOperationToken)) {
-            return null;
-        }
-        JetExpression leftExpression = expression.getLeft();
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
-        if (!propertyAccessTranslator.canBePropertySetterCall(leftExpression)) {
-            return null;
-        }
-        JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(leftExpression);
-        JsExpression right = translateRightExpression();
-        setterCall.setArguments(Arrays.asList(right));
-        return setterCall;
+        return asBinaryOperation();
     }
 
     @NotNull
-    private JsExpression translateAsBinaryOperation() {
+    private JsExpression asOverloadedMethodCall() {
+        if (isPropertyOnTheLeft) {
+            return overloadOnProperty();
+        }
+        return overloadedMethodInvocation();
+    }
 
-        JsExpression left = Translation.translateAsExpression(expression.getLeft(), translationContext());
-        JsExpression right = translateRightExpression();
+    @NotNull
+    private JsExpression overloadOnProperty() {
+        if (isVariableReassignment) {
+            return setterCall(overloadedMethodInvocation());
+        } else {
+            return overloadedMethodInvocation();
+        }
+    }
 
-        JsNameRef operationReference = getOverloadedOperationReference(expression);
-        if (operationReference != null) {
-            return overloadedMethodInvocation(left, right, operationReference);
+    @NotNull
+    private JsExpression asBinaryOperation() {
+        if (isPropertyOnTheLeft && OperatorTable.isAssignment(getOperationToken())) {
+            return setterCall(right);
         }
         JetToken token = getOperationToken();
         if (OperatorTable.hasCorrespondingBinaryOperator(token)) {
@@ -76,15 +81,18 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         }
         if (OperatorTable.hasCorrespondingFunctionInvocation(token)) {
             JsInvocation functionInvocation = OperatorTable.getCorrespondingFunctionInvocation(token);
-            functionInvocation.setArguments(Arrays.asList(left, right));
+            functionInvocation.setArguments(left, right);
             return functionInvocation;
         }
         throw new AssertionError("Unsupported token encountered: " + token.toString());
     }
 
+    private JsExpression translateLeftExpression() {
+        return Translation.translateAsExpression(expression.getLeft(), translationContext());
+    }
+
     @NotNull
-    private JsExpression overloadedMethodInvocation(@NotNull JsExpression left, @NotNull JsExpression right,
-                                                    @NotNull JsNameRef operationReference) {
+    private JsExpression overloadedMethodInvocation() {
         AstUtil.setQualifier(operationReference, left);
         return AstUtil.newInvocation(operationReference, right);
     }
@@ -99,6 +107,14 @@ public final class BinaryOperationTranslator extends OperationTranslator {
     @NotNull
     private JetToken getOperationToken() {
         return (JetToken) expression.getOperationToken();
+    }
+
+    @NotNull
+    public JsInvocation setterCall(@NotNull JsExpression assignTo) {
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
+        JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(expression.getLeft());
+        setterCall.setArguments(assignTo);
+        return setterCall;
     }
 
 
