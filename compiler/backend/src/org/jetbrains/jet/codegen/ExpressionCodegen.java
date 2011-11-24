@@ -2068,14 +2068,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return type;
     }
 
-    private void generateNewArray(JetCallExpression expression, JetType arrayType) {
+    public void generateNewArray(JetCallExpression expression, JetType arrayType) {
         List<? extends ValueArgument> args = expression.getValueArguments();
 
         boolean isArray = state.getStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor());
         if(isArray) {
-            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
-                throw new CompilationException("array constructor of non-nullable type requires two arguments");
-            }
+//            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
+//                throw new CompilationException("array constructor of non-nullable type requires two arguments");
+//            }
         }
         else {
             if (args.size() != 1) {
