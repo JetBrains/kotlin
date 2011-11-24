@@ -84,7 +84,6 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
         return ReceiverDescriptor.NO_RECEIVER;
     }
 
-    @NotNull
     @Override
     public JetType getReturnType() {
         return getOutType();
