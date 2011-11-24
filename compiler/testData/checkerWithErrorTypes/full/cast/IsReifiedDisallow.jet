@@ -1,3 +1,0 @@
-class MyList<A>
-
-fun ff(l: MyList<String>) = l is <!INCOMPATIBLE_TYPES!>MyList<Int><!>

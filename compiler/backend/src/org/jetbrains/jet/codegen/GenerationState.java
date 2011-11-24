@@ -10,6 +10,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -30,7 +31,7 @@ public class GenerationState {
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
         this.project = project;
-        this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project, true);
+        this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
     }
@@ -82,7 +83,7 @@ public class GenerationState {
 
     public void compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
-        final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
+        final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
 //        NamespaceCodegen codegen = forNamespace(namespace);
@@ -113,6 +114,7 @@ public class GenerationState {
                 }
                 catch (Throwable e) {
                     errorHandler.reportException(e, namespace.getContainingFile().getVirtualFile().getUrl());
+                    DiagnosticUtils.throwIfRunningOnServer(e);
                 }
             }
         }

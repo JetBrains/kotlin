@@ -41,12 +41,11 @@ public class QuickJetPsiCheckerTest extends JetLiteFixture {
 
         createAndCheckPsiFile(name, clearText);
         JetFile jetFile = (JetFile) myFile;
-        boolean loadStdlib = !expectedText.contains("-STDLIB");
+
         boolean importJdk = expectedText.contains("+JDK");
-        
         ImportingStrategy importingStrategy = importJdk ? JavaDefaultImports.JAVA_DEFAULT_IMPORTS : ImportingStrategy.NONE;
-        
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(importingStrategy, loadStdlib), jetFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(importingStrategy), jetFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
 
         CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override

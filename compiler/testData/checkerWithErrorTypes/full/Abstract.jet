@@ -236,6 +236,6 @@ abstract class B3(i: Int) {
 }
 
 fun foo(a: B3) {
-    val a = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B3()<!>
-    val b = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B1(2, "s")<!>
+    val <!UNUSED_VARIABLE!>a<!> = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B3()<!>
+    val <!UNUSED_VARIABLE!>b<!> = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B1(2, "s")<!>
 }

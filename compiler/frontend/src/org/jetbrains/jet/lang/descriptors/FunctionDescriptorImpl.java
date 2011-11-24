@@ -125,12 +125,6 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return unsubstitutedReturnType;
     }
 
-    @Override
-    @Nullable
-    public JetType getReturnTypeSafe() {
-        return unsubstitutedReturnType;
-    }
-
     @NotNull
     @Override
     public FunctionDescriptor getOriginal() {

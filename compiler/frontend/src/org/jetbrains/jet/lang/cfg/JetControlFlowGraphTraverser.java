@@ -36,7 +36,8 @@ public class JetControlFlowGraphTraverser<D> {
             D initialDataValueForEnterInstruction,
             boolean straightDirection) {
         initializeDataMap(pseudocode, initialDataValue);
-        dataMap.put(pseudocode.getEnterInstruction(), Pair.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
+        dataMap.put(straightDirection ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction(),
+                    Pair.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
 
         boolean[] changed = new boolean[1];
         changed[0] = true;

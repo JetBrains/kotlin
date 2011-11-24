@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
@@ -274,7 +275,7 @@ public class JetFlowInformationProvider {
                         boolean hasInitializer = !possiblePoints.isEmpty() || enterInitializationPoints.isInitialized();
                         if (possiblePoints.size() == 1) {
                             JetElement initializer = possiblePoints.iterator().next();
-                            if (initializer == element.getParent()) {
+                            if (initializer instanceof JetProperty && initializer == element.getParent()) {
                                 hasInitializer = false;
                             }
                         }
@@ -402,13 +403,73 @@ public class JetFlowInformationProvider {
         for (VariableDescriptor declaredVariable : declaredVariables) {
             if (!usedVariables.contains(declaredVariable)) {
                 PsiElement element = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredVariable);
-                if (element instanceof JetProperty) {
+                if (element instanceof JetProperty && JetPsiUtil.isLocal((JetProperty) element)) {
                     PsiElement nameIdentifier = ((JetProperty) element).getNameIdentifier();
                     PsiElement elementToMark = nameIdentifier != null ? nameIdentifier : element;
                     trace.report(Errors.UNUSED_VARIABLE.on((JetProperty)element, elementToMark, declaredVariable));
                 }
             }
         }
+
+        markUnusedValues(subroutine, pseudocode, declaredVariables);
+    }
+
+    private void markUnusedValues(@NotNull JetElement subroutine, Pseudocode pseudocode, final Collection<VariableDescriptor> declaredVariables) {
+        JetControlFlowGraphTraverser<Set<VariableDescriptor>> traverser = JetControlFlowGraphTraverser.create(pseudocode, true);
+        traverser.collectInformationFromInstructionGraph(new JetControlFlowGraphTraverser.InstructionsMergeStrategy<Set<VariableDescriptor>>() {
+            @Override
+            public Pair<Set<VariableDescriptor>, Set<VariableDescriptor>> execute(Instruction instruction, @NotNull Collection<Set<VariableDescriptor>> incomingEdgesData) {
+                Set<VariableDescriptor> enterResult = Sets.newHashSet();
+                for (Set<VariableDescriptor> edgeData : incomingEdgesData) {
+                    enterResult.addAll(edgeData);
+                }
+                Set<VariableDescriptor> exitResult = Sets.newHashSet(enterResult);
+                if (instruction instanceof ReadValueInstruction) {
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, true);
+                    if (variableDescriptor != null) {
+                        exitResult.add(variableDescriptor);
+                    }
+                }
+                else if (instruction instanceof WriteValueInstruction) {
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, true);
+                    if (variableDescriptor != null) {
+                        exitResult.remove(variableDescriptor);
+                    }
+                }
+                return new Pair<Set<VariableDescriptor>, Set<VariableDescriptor>>(enterResult, exitResult);
+            }
+        }, Collections.<VariableDescriptor>emptySet(), Collections.<VariableDescriptor>emptySet(), false);
+        traverser.traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Set<VariableDescriptor>>() {
+            @Override
+            public void execute(Instruction instruction, @Nullable Set<VariableDescriptor> enterData, @Nullable Set<VariableDescriptor> exitData) {
+                assert enterData != null && exitData != null;
+                if (instruction instanceof WriteValueInstruction) {
+                    VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, false);
+                    if (variableDescriptor != null && declaredVariables.contains(variableDescriptor)) {
+                        if (!enterData.contains(variableDescriptor)) {
+                            PsiElement variableDeclarationElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
+                            assert variableDeclarationElement instanceof JetProperty || variableDeclarationElement instanceof JetParameter;
+                            boolean isLocal = !(variableDeclarationElement instanceof JetProperty) || JetPsiUtil.isLocal((JetProperty) variableDeclarationElement);
+                            if (isLocal) {
+                                JetElement element = ((WriteValueInstruction) instruction).getElement();
+                                if (element instanceof JetBinaryExpression && ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {
+                                    JetExpression right = ((JetBinaryExpression) element).getRight();
+                                    if (right != null) {
+                                        trace.report(Errors.UNUSED_VALUE.on(right, right, variableDescriptor));
+                                    }
+                                }
+                                else if (element instanceof JetPostfixExpression) {
+                                    IElementType operationToken = ((JetPostfixExpression) element).getOperationSign().getReferencedNameElementType();
+                                    if (operationToken == JetTokens.PLUSPLUS || operationToken == JetTokens.MINUSMINUS) {
+                                        trace.report(Errors.UNUSED_CHANGED_VALUE.on(element, element));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Nullable

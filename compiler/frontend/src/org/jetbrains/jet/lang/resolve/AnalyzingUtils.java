@@ -28,8 +28,8 @@ import java.util.*;
  * @author abreslav
  */
 public class AnalyzingUtils {
-    public static AnalyzingUtils getInstance(@NotNull ImportingStrategy importingStrategy, boolean loadStdlib) {
-        return new AnalyzingUtils(importingStrategy, loadStdlib);
+    public static AnalyzingUtils getInstance(@NotNull ImportingStrategy importingStrategy) {
+        return new AnalyzingUtils(importingStrategy);
     }
 
     public static void checkForSyntacticErrors(@NotNull PsiElement root) {
@@ -53,11 +53,9 @@ public class AnalyzingUtils {
     }
 
     private final ImportingStrategy importingStrategy;
-    private final boolean loadStdlib;
 
-    private AnalyzingUtils(ImportingStrategy importingStrategy, boolean loadStdlib) {
+    private AnalyzingUtils(ImportingStrategy importingStrategy) {
         this.importingStrategy = importingStrategy;
-        this.loadStdlib = loadStdlib;
     }
 
     public BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
@@ -73,7 +71,7 @@ public class AnalyzingUtils {
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, loadStdlib);
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");

@@ -11,6 +11,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -34,7 +35,7 @@ public class AnalyzerFacade {
         }
     };
     
-    private static final AnalyzingUtils ANALYZING_UTILS = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true);
+    private static final AnalyzingUtils ANALYZING_UTILS = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
 
@@ -68,18 +69,8 @@ public class AnalyzerFacade {
                             throw e;
                         }
                         catch (Throwable e) {
-                            // This is needed for the Web Demo server to log the exceptions coming from the analyzer instead of showing them in the editor.
-                            if (System.getProperty("kotlin.running.in.server.mode", "false").equals("true")) {
-                                if (e instanceof RuntimeException) {
-                                    RuntimeException runtimeException = (RuntimeException) e;
-                                    throw runtimeException;
-                                }
-                                if (e instanceof Error) {
-                                    Error error = (Error) e;
-                                    throw error;
-                                }
-                                throw new RuntimeException(e);
-                            }
+                            DiagnosticUtils.throwIfRunningOnServer(e);
+
                             e.printStackTrace();
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
                             bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
@@ -93,5 +84,4 @@ public class AnalyzerFacade {
         }
         return bindingContextCachedValue.getValue();
     }
-
 }

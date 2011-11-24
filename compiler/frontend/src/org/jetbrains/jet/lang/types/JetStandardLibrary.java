@@ -29,24 +29,16 @@ import java.util.Set;
 public class JetStandardLibrary {
 
     // TODO : consider releasing this memory
-    private static JetStandardLibrary cachedFullLibrary = null;
-    private static JetStandardLibrary cachedQuickLibrary = null;
+    private static JetStandardLibrary cachedLibrary = null;
     //    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
 
     // TODO : double checked locking
     synchronized
-    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project, boolean loadFullLibrary) {
-        if (loadFullLibrary) {
-            if (cachedFullLibrary == null) {
-                cachedFullLibrary = new JetStandardLibrary(project, true);
-            }
-            return cachedFullLibrary;
-        } else {
-            if (cachedQuickLibrary == null) {
-                cachedQuickLibrary = new JetStandardLibrary(project, false);
-            }
-            return cachedQuickLibrary;
+    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
+        if (cachedLibrary == null) {
+            cachedLibrary = new JetStandardLibrary(project);
         }
+        return cachedLibrary;
 //        JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
 //        if (standardLibrary == null) {
 //            standardLibrary = new JetStandardLibrary(project);
@@ -54,12 +46,6 @@ public class JetStandardLibrary {
 //        }
 //        return standardLibrary;
     }
-
-    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
-        return getJetStandardLibrary(project, true);
-    }
-
-    private final boolean loadFullLibrary;
 
     private JetScope libraryScope;
 
@@ -136,27 +122,20 @@ public class JetStandardLibrary {
     private NamespaceDescriptor typeInfoNamespace;
     private Set<FunctionDescriptor> typeInfoFunction;
 
-    private JetStandardLibrary(@NotNull Project project, boolean loadFullLibrary) {
-        this.loadFullLibrary = loadFullLibrary;
-
+    private JetStandardLibrary(@NotNull Project project) {
+        // TODO : review
+        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/Library.jet");
         try {
-            JetFile file = null;
-            if (loadFullLibrary) {
-                // TODO : review
-                InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/Library.jet");
-                //noinspection IOResourceOpenedButNotSafelyClosed
-                file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
-                        JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
-            }
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
+                    JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
 
             JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this);
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
             WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Root bootstrap scope");
 //            this.libraryScope = bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
 //            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
-            if (loadFullLibrary) {
-                TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace());
-            }
+            TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace());
 //            this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
             AnalyzingUtils.throwExceptionOnErrors(bindingTraceContext.getBindingContext());
@@ -174,11 +153,6 @@ public class JetStandardLibrary {
     private void initStdClasses() {
         if(libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
-
-            if (!loadFullLibrary) {
-                return;
-            }
-
             this.numberClass = (ClassDescriptor) libraryScope.getClassifier("Number");
             this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
             this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");

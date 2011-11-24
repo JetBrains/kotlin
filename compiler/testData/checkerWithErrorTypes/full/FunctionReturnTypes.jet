@@ -116,7 +116,7 @@ fun blockReturnValueTypeMatch12() : Int {
   else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
 }
 fun blockNoReturnIfValDeclaration(): Int {
-  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>val x = 1<!>
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>val <!UNUSED_VARIABLE!>x<!> = 1<!>
 }
 fun blockNoReturnIfEmptyIf(): Int {
   if (1 < 2) <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!> else <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{}<!>
@@ -174,37 +174,37 @@ class B() {
 }
 
 fun testFunctionLiterals() {
-    val endsWithVarDeclaration : fun() : Boolean = {
+    val <!UNUSED_VARIABLE!>endsWithVarDeclaration<!> : fun() : Boolean = {
         <!EXPECTED_TYPE_MISMATCH!>val x = 2<!>
     }
 
-    val endsWithAssignment = { () : Int =>
+    val <!UNUSED_VARIABLE!>endsWithAssignment<!> = { () : Int =>
         var x = 1
         <!EXPECTED_TYPE_MISMATCH!>x = 333<!>
     }
 
-    val endsWithReAssignment = { () : Int =>
+    val <!UNUSED_VARIABLE!>endsWithReAssignment<!> = { () : Int =>
         var x = 1
         <!ASSIGNMENT_TYPE_MISMATCH!>x += 333<!>
     }
 
-    val endsWithFunDeclaration : fun() : String = {
+    val <!UNUSED_VARIABLE!>endsWithFunDeclaration<!> : fun() : String = {
         var x = 1
         x = 333
         <!EXPECTED_TYPE_MISMATCH!>fun meow() : Unit {}<!>
     }
 
-    val endsWithObjectDeclaration : fun() : Int = {
+    val <!UNUSED_VARIABLE!>endsWithObjectDeclaration<!> : fun() : Int = {
         var x = 1
         x = 333
         <!EXPECTED_TYPE_MISMATCH!>object A {}<!>
     }
 
-    val expectedUnitReturnType1 = { () : Unit =>
+    val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!> = { () : Unit =>
         val x = 1
     }
 
-    val expectedUnitReturnType2 = { () : Unit =>
+    val <!UNUSED_VARIABLE!>expectedUnitReturnType2<!> = { () : Unit =>
         fun meow() : Unit {}
         object A {}
     }

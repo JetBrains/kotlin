@@ -9,10 +9,10 @@ fun testIncDec() {
   ++x
   x--
   --x
-  x = x++
-  x = x--
+  x = <!UNUSED_CHANGED_VALUE!>x++<!>
+  x = <!UNUSED_CHANGED_VALUE!>x--<!>
   x = ++x
-  x = --x
+  x = <!UNUSED_VALUE!>--x<!>
 }
 
 class WrongIncDec() {
@@ -39,8 +39,8 @@ fun testUnitIncDec() {
   ++x
   x--
   --x
-  x = <!TYPE_MISMATCH!>x++<!>
-  x = <!TYPE_MISMATCH!>x--<!>
+  x = <!TYPE_MISMATCH, UNUSED_CHANGED_VALUE!>x++<!>
+  x = <!TYPE_MISMATCH, UNUSED_CHANGED_VALUE!>x--<!>
   x = <!TYPE_MISMATCH!>++x<!>
-  x = <!TYPE_MISMATCH!>--x<!>
+  x = <!TYPE_MISMATCH, UNUSED_VALUE!>--x<!>
 }

@@ -11,7 +11,7 @@
       bar = 1
       this.bar
       1 : Int
-      val a : Int =1
+      val <warning>a</warning> : Int =1
       this : Foo
     }
   }

@@ -2,11 +2,11 @@
 // KT-451 Incorrect character literals cause assertion failures
 
 fun ff() {
-    val b = <!ERROR_COMPILE_TIME_VALUE!>''<!>
-    val c = <!ERROR_COMPILE_TIME_VALUE!>'23'<!>
-    val d = <!ERROR_COMPILE_TIME_VALUE!>'a<!>
-    val e = <!ERROR_COMPILE_TIME_VALUE!>'ab<!>
-    val f = <!ERROR_COMPILE_TIME_VALUE!>'\'<!>
+    val <!UNUSED_VARIABLE!>b<!> = <!ERROR_COMPILE_TIME_VALUE!>''<!>
+    val <!UNUSED_VARIABLE!>c<!> = <!ERROR_COMPILE_TIME_VALUE!>'23'<!>
+    val <!UNUSED_VARIABLE!>d<!> = <!ERROR_COMPILE_TIME_VALUE!>'a<!>
+    val <!UNUSED_VARIABLE!>e<!> = <!ERROR_COMPILE_TIME_VALUE!>'ab<!>
+    val <!UNUSED_VARIABLE!>f<!> = <!ERROR_COMPILE_TIME_VALUE!>'\'<!>
 }
 
 fun test() {
@@ -35,4 +35,3 @@ fun test() {
     <!ERROR_COMPILE_TIME_VALUE!>'\\u000'<!>
     <!ERROR_COMPILE_TIME_VALUE!>'\'<!>
 }
-
