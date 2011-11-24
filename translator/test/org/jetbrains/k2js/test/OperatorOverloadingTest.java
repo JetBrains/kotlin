@@ -73,4 +73,22 @@ public class OperatorOverloadingTest extends TranslationTest {
     public void plusAssignReassign() throws Exception {
         testFooBoxIsTrue("plusAssignReassign.kt");
     }
+
+    @Test
+    public void notOverload() throws Exception {
+        testFooBoxIsTrue("notOverload.kt");
+    }
+
+    //TODO: test fails due to issue KT-618
+//    @Test
+//    public void compareTo() throws Exception {
+//        testFooBoxIsTrue("compareTo.kt");
+//    }
+
+    @Test
+    public void plusAndMinusAsAnExpression() throws Exception {
+        testFooBoxIsTrue("plusAndMinusAsAnExpression.kt");
+    }
+
+
 }
