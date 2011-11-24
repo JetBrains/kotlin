@@ -5,7 +5,7 @@ namespace kt352
 val f : fun(Any) : Unit = <!TYPE_MISMATCH!>{ () : Unit => }<!>  //type mismatch
 
 fun foo() {
-    val f : fun(Any) : Unit = <!TYPE_MISMATCH!>{ () : Unit => }<!>  //!!! no error
+    val <!UNUSED_VARIABLE!>f<!> : fun(Any) : Unit = <!TYPE_MISMATCH!>{ () : Unit => }<!>  //!!! no error
 }
 
 class A() {

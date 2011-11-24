@@ -28,7 +28,7 @@ fun A.plus(a : Int) {
 fun <T> T.minus(t : T) : Int = 1
 
 fun test() {
-  val y = 1.abs
+  val <warning>y</warning> = 1.abs
 }
 val Int.abs : Int
   get() = if (this > 0) this else -this;

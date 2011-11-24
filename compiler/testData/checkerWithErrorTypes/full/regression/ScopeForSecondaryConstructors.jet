@@ -1,4 +1,4 @@
-  class Foo(var bar : Int, var barr : Int, var barrr : Int) {
+class Foo(var bar : Int, var barr : Int, var barrr : Int) {
     {
       bar = 1
       barr = 1
@@ -11,8 +11,7 @@
       bar = 1
       this.bar
       1 : Int
-      val a : Int =1
+      val <!UNUSED_VARIABLE!>a<!> : Int =1
       this : Foo
     }
   }
-

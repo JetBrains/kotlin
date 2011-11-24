@@ -28,7 +28,7 @@ class WithC() {
   }
 
   this(a : Int) : this() {
-    val b = x
+    val <warning>b</warning> = x
   }
 
 }

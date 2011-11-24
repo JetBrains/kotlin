@@ -17,42 +17,42 @@ class AClass() {
 val x : Any? = 1
 
 fun Any?.vars(a: Any?) : Int {
-    var b: Int = 0
+    var <!UNUSED_VARIABLE!>b<!>: Int = 0
     if (ns.y is Int) {
-        b = ns.y
+        b = <!UNUSED_VALUE!>ns.y<!>
     }
     if (ns.y is Int) {
-        b = example.ns.y
+        b = <!UNUSED_VALUE!>example.ns.y<!>
     }
     if (example.ns.y is Int) {
-        b = ns.y
+        b = <!UNUSED_VALUE!>ns.y<!>
     }
     if (example.ns.y is Int) {
-        b = example.ns.y
+        b = <!UNUSED_VALUE!>example.ns.y<!>
     }
 //    if (namespace.bottles.ns.y is Int) {
 //        b = ns.y
 //    }
     if (Obj.y is Int) {
-        b = Obj.y
+        b = <!UNUSED_VALUE!>Obj.y<!>
     }
     if (example.Obj.y is Int) {
-        b = Obj.y
+        b = <!UNUSED_VALUE!>Obj.y<!>
     }
     if (AClass.y is Int) {
-        b = AClass.y
+        b = <!UNUSED_VALUE!>AClass.y<!>
     }
     if (example.AClass.y is Int) {
-        b = AClass.y
+        b = <!UNUSED_VALUE!>AClass.y<!>
     }
     if (x is Int) {
-        b = x
+        b = <!UNUSED_VALUE!>x<!>
     }
     if (example.x is Int) {
-        b = x
+        b = <!UNUSED_VALUE!>x<!>
     }
     if (example.x is Int) {
-        b = example.x
+        b = <!UNUSED_VALUE!>example.x<!>
     }
     return 1
 }
@@ -74,18 +74,18 @@ trait T {}
 
 open class C {
     fun foo() {
-       var t : T? = null
+       var <!UNUSED_VARIABLE!>t<!> : T? = null
        if (this is T) {
-          t = this
+          t = <!UNUSED_VALUE!>this<!>
        }
        if (this is T) {
-          t = this@C
+          t = <!UNUSED_VALUE!>this@C<!>
        }
        if (this@C is T) {
-          t = this
+          t = <!UNUSED_VALUE!>this<!>
        }
        if (this@C is T) {
-          t = this@C
+          t = <!UNUSED_VALUE!>this@C<!>
        }
     }
 }

@@ -4,33 +4,33 @@ namespace kt235
 
 fun main(args: Array<String>) {
     val array = MyArray()
-    val f = { (): String =>
+    val <!UNUSED_VARIABLE!>f<!> = { (): String =>
        <!EXPECTED_TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected
     }
-    val g = {(): String =>
+    val <!UNUSED_VARIABLE!>g<!> = {(): String =>
        var x = 1
        <!EXPECTED_TYPE_MISMATCH!>x += 2<!>  //no error, but it should be here
     }
-    val h = {(): String =>
+    val <!UNUSED_VARIABLE!>h<!> = {(): String =>
        var x = 1
        <!EXPECTED_TYPE_MISMATCH!>x = 2<!>  //the same
     }
     val array1 = MyArray1()
-    val x = { (): String =>
+    val <!UNUSED_VARIABLE!>x<!> = { (): String =>
        <!EXPECTED_TYPE_MISMATCH!>array1[2] = 23<!>
     }
 
-    val fi = { (): Int =>
+    val <!UNUSED_VARIABLE!>fi<!> = { (): Int =>
        <!ASSIGNMENT_TYPE_MISMATCH!>array[2] = 23<!>
     }
-    val gi = {(): Int =>
+    val <!UNUSED_VARIABLE!>gi<!> = {(): Int =>
        var x = 1
        <!ASSIGNMENT_TYPE_MISMATCH!>x += 21<!>
     }
 
     var m: MyNumber = MyNumber()
-    val a = { (): MyNumber =>
-        m++
+    val <!UNUSED_VARIABLE!>a<!> = { (): MyNumber =>
+        <!UNUSED_CHANGED_VALUE!>m++<!>
     }
 }
 

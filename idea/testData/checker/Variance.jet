@@ -8,13 +8,13 @@ abstract class Usual<T> {}
 
 fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
     val c1: Consumer<Any> = <error>c</error>
-    val c2: Consumer<Int> = c1
+    val <warning>c2</warning>: Consumer<Int> = c1
 
     val p1: Producer<Any> = p
-    val p2: Producer<Int> = <error>p1</error>
+    val <warning>p2</warning>: Producer<Int> = <error>p1</error>
 
     val u1: Usual<Any> = <error>u</error>
-    val u2: Usual<Int> = <error>u1</error>
+    val <warning>u2</warning>: Usual<Int> = <error>u1</error>
 }
 
 //Arrays copy example

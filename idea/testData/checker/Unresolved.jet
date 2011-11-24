@@ -1,13 +1,13 @@
 namespace unresolved
 
 fun testGenericArgumentsCount() {
-    val p1: Tuple2<error><Int></error> = (2, 2)
-    val p2: <error>Tuple2</error> = (2, 2)
+    val <warning>p1</warning>: Tuple2<error><Int></error> = (2, 2)
+    val <warning>p2</warning>: <error>Tuple2</error> = (2, 2)
 }
 
 fun testUnresolved() {
     if (<error>a</error> is String) {
-        val s = <error>a</error>
+        val <warning>s</warning> = <error>a</error>
     }
     <error>foo</error>(<error>a</error>)
     val s = "s"
