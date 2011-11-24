@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,8 +47,19 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     public static abstract class TypeValue {
-        private final Set<TypeValue> upperBounds = Sets.newHashSet();
-        private final Set<TypeValue> lowerBounds = Sets.newHashSet();
+        private final Set<TypeValue> mutableUpperBounds = Sets.newHashSet();
+        private final Set<TypeValue> upperBounds = Collections.unmodifiableSet(mutableUpperBounds);
+
+        private final Set<TypeValue> mutableLowerBounds = Sets.newHashSet();
+        private final Set<TypeValue> lowerBounds = Collections.unmodifiableSet(mutableLowerBounds);
+
+        public void addUpperBound(@NotNull TypeValue bound) {
+            mutableUpperBounds.add(bound);
+        }
+        
+        public void addLowerBound(@NotNull TypeValue bound) {
+            mutableLowerBounds.add(bound);
+        }
 
         @NotNull
         public Set<TypeValue> getUpperBounds() {
@@ -86,8 +98,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 throw new LoopInTypeVariableConstraintsException();
             }
             if (value == null) {
-                JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
                 beingComputed = true;
+                JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
                 try {
                     if (positionVariance == Variance.IN_VARIANCE) {
                         // maximal solution
@@ -320,8 +332,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private void addSubtypingConstraintOnTypeValues(TypeValue typeValueForLower, TypeValue typeValueForUpper) {
         println(typeValueForLower + " :< " + typeValueForUpper);
         if (typeValueForLower != typeValueForUpper) {
-            typeValueForLower.getUpperBounds().add(typeValueForUpper);
-            typeValueForUpper.getLowerBounds().add(typeValueForLower);
+            typeValueForLower.addUpperBound(typeValueForUpper);
+            typeValueForUpper.addLowerBound(typeValueForLower);
         }
     }
 
@@ -358,11 +370,18 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         // effective bounds for each node
         Set<TypeValue> visited = Sets.newHashSet();
-        for (KnownType knownType : knownTypes.values()) {
-            transitiveClosure(knownType, visited);
-        }
         for (UnknownType unknownType : unknownTypes.values()) {
             transitiveClosure(unknownType, visited);
+        }
+
+        for (UnknownType unknownType : unknownTypes.values()) {
+            println("Constraints for " + unknownType.getTypeParameterDescriptor());
+            printTypeValue(unknownType);
+        }
+
+        for (KnownType knownType : knownTypes.values()) {
+            println("Constraints for " + knownType.getType());
+            printTypeValue(knownType);
         }
 
         // Find inconsistencies
@@ -380,6 +399,15 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         //  and thus the bounds may be violated if some of the constraints conflict
 
         return solution;
+    }
+
+    private void printTypeValue(TypeValue typeValue) {
+        for (TypeValue bound : typeValue.getUpperBounds()) {
+            println(" :< " + bound);
+        }
+        for (TypeValue bound : typeValue.getLowerBounds()) {
+            println(" :> " + bound);
+        }
     }
 
     private void check(TypeValue typeValue, Solution solution) {
@@ -416,7 +444,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 }
             }
             solution.registerError("[TODO] Loop in constraints");
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -426,6 +454,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         for (TypeValue upperBound : Sets.newHashSet(current.getUpperBounds())) {
+            if (upperBound instanceof KnownType) {
+                continue;
+            }
             transitiveClosure(upperBound, visited);
             Set<TypeValue> upperBounds = upperBound.getUpperBounds();
             for (TypeValue transitiveBound : upperBounds) {

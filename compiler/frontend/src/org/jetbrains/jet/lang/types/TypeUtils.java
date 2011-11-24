@@ -110,54 +110,65 @@ public class TypeUtils {
     }
 
     @Nullable
-    public static JetType intersect(JetTypeChecker typeChecker, Set<JetType> types) {
+    public static JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
         assert !types.isEmpty();
 
         if (types.size() == 1) {
             return types.iterator().next();
         }
 
-        StringBuilder debugName = new StringBuilder();
-        boolean nullable = false;
-        Set<JetType> resultingTypes = Sets.newHashSet();
+        // Intersection of T1..Tn is an intersection of their non-null versions,
+        //   made nullable is they all were nullable
+        boolean allNullable = true;
+        boolean nothingTypePresent = false;
+        List<JetType> nullabilityStripped = Lists.newArrayList();
+        for (JetType type : types) {
+            nothingTypePresent |= JetStandardClasses.isNothingOrNullableNothing(type);
+            allNullable &= type.isNullable();
+            nullabilityStripped.add(makeNotNullable(type));
+        }
+        
+        if (nothingTypePresent) {
+            return allNullable ? JetStandardClasses.getNullableNothingType() : JetStandardClasses.getNothingType();
+        }
 
+        // Now we remove types that have subtypes in the list
+        List<JetType> resultingTypes = Lists.newArrayList();
         outer:
-        for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext();) {
-            JetType type = iterator.next();
-
+        for (JetType type : nullabilityStripped) {
             if (!canHaveSubtypes(typeChecker, type)) {
-                for (JetType other : types) {
+                for (JetType other : nullabilityStripped) {
                     // It makes sense to check for subtyping of other <: type, despite that
                     // type is not supposed to be open, for there're enums
                     if (!type.equals(other) && !typeChecker.isSubtypeOf(type, other) && !typeChecker.isSubtypeOf(other, type)) {
                         return null;
                     }
                 }
-                return type;
+                return makeNullableAsSpecified(type, allNullable);
             }
             else {
-                for (JetType other : types) {
+                for (JetType other : nullabilityStripped) {
                     if (!type.equals(other) && typeChecker.isSubtypeOf(other, type)) {
                         continue outer;
                     }
+
                 }
             }
 
-            nullable |= type.isNullable();
-
             resultingTypes.add(type);
-            debugName.append(type.toString());
-            if (iterator.hasNext()) {
-                debugName.append(" & ");
-            }
         }
+        
+        if (resultingTypes.size() == 1) {
+            return makeNullableAsSpecified(resultingTypes.get(0), allNullable);
+        }
+
 
         List<AnnotationDescriptor> noAnnotations = Collections.<AnnotationDescriptor>emptyList();
         TypeConstructor constructor = new TypeConstructorImpl(
                 null,
                 noAnnotations,
                 false,
-                debugName.toString(),
+                makeDebugNameForIntersectionType(resultingTypes).toString(),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 resultingTypes);
 
@@ -171,9 +182,23 @@ public class TypeUtils {
         return new JetTypeImpl(
                 noAnnotations,
                 constructor,
-                nullable,
+                allNullable,
                 Collections.<TypeProjection>emptyList(),
                 new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
+    }
+
+    private static StringBuilder makeDebugNameForIntersectionType(Iterable<JetType> resultingTypes) {
+        StringBuilder debugName = new StringBuilder("{");
+        for (Iterator<JetType> iterator = resultingTypes.iterator(); iterator.hasNext(); ) {
+            JetType type = iterator.next();
+
+            debugName.append(type.toString());
+            if (iterator.hasNext()) {
+                debugName.append(" & ");
+            }
+        }
+        debugName.append("}");
+        return debugName;
     }
 
     public static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {

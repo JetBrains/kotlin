@@ -19,7 +19,7 @@ fun t3() {
 
 fun t4() {
     val e: E? = E()
-    System.out?.println(e?.foo() == e) //verify error
+    System.out?.println(e?.bar() == e) //verify error
     System.out?.println(e?.foo())  //verify error
 }
 
@@ -35,4 +35,5 @@ class C(val x: Int)
 class D(val s: String)
 class E() {
     fun foo() = 1
+    fun bar() = this
 }
