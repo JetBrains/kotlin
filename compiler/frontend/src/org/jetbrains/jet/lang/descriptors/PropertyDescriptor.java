@@ -119,11 +119,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return getOutType();
     }
 
-    @Override
-    @Nullable
-    public JetType getReturnTypeSafe() {
-        return getOutType();
-    }
 
     public boolean isVar() {
         return isVar;

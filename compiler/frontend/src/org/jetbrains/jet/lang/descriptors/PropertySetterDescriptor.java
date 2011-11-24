@@ -49,11 +49,6 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     }
 
     @Override
-    public JetType getReturnTypeSafe() {
-        return getReturnType();
-    }
-
-    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPropertySetterDescriptor(this, data);
     }
