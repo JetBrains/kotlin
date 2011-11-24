@@ -110,16 +110,17 @@ public class OverrideResolver {
         Set<CallableMemberDescriptor> manyImpl = Sets.newLinkedHashSet();
         collectMissingImplementations(classDescriptor, abstractNoImpl, manyImpl);
 
-        PsiElement nameIdentifier = klass;
+        PsiElement nameIdentifier = null;
         if (klass instanceof JetClass) {
             nameIdentifier = ((JetClass) klass).getNameIdentifier();
         }
         else if (klass instanceof JetObjectDeclaration) {
             nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
         }
+        PsiElement elementToMark = nameIdentifier != null ? nameIdentifier : klass;
 
         for (CallableMemberDescriptor memberDescriptor : manyImpl) {
-            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(elementToMark, klass, memberDescriptor));
             break;
         }
 
@@ -129,7 +130,7 @@ public class OverrideResolver {
         }
 
         for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
-            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(elementToMark, klass, memberDescriptor));
             break;
         }
 
