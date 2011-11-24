@@ -30,7 +30,7 @@ public class GenerationState {
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
         this.project = project;
-        this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project, true);
+        this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
     }
@@ -82,7 +82,7 @@ public class GenerationState {
 
     public void compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
-        final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
+        final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
 //        NamespaceCodegen codegen = forNamespace(namespace);

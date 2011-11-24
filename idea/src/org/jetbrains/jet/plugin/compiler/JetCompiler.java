@@ -80,7 +80,7 @@ public class JetCompiler implements TranslatingCompiler {
                     }
                 }
 
-                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS, true).analyzeNamespaces(
+                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(
                         compileContext.getProject(), namespaces,
                         Predicates.<PsiFile>alwaysTrue(),
                         JetControlFlowDataTraceFactory.EMPTY);

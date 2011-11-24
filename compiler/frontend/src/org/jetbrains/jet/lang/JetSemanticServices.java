@@ -17,11 +17,7 @@ public class JetSemanticServices {
     }
 
     public static JetSemanticServices createSemanticServices(Project project) {
-        return createSemanticServices(project, true);
-    }
-
-    public static JetSemanticServices createSemanticServices(Project project, boolean loadFullLibrary) {
-        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project, loadFullLibrary));
+        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project));
     }
 
     private final JetStandardLibrary standardLibrary;

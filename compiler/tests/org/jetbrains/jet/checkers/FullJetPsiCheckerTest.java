@@ -8,11 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.ImportingStrategy;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
-import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 
 import java.util.List;
 
@@ -45,13 +42,7 @@ public class FullJetPsiCheckerTest extends JetLiteFixture {
         String clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
 
         myFile = createPsiFile(myName, clearText);
-
-        boolean loadStdlib = !expectedText.contains("-STDLIB");
-        boolean importJdk = !expectedText.contains("-JDK");
-
-        ImportingStrategy importingStrategy = importJdk ? JavaDefaultImports.JAVA_DEFAULT_IMPORTS : ImportingStrategy.NONE;
-
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(importingStrategy, loadStdlib), myFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(myFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
 
         CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override
