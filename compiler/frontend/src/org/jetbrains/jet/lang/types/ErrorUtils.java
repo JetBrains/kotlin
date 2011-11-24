@@ -171,11 +171,20 @@ public class ErrorUtils {
     }
 
     private static JetType createErrorType(String debugMessage, JetScope memberScope) {
-        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
+        return createErrorTypeWithCustomDebugName(memberScope, "[ERROR : " + debugMessage + "]");
+    }
+
+    @NotNull
+    public static JetType createErrorTypeWithCustomDebugName(String debugName) {
+        return createErrorTypeWithCustomDebugName(ERROR_SCOPE, debugName);
+    }
+
+    private static JetType createErrorTypeWithCustomDebugName(JetScope memberScope, String debugName) {
+        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {
-        return createErrorType(value + " is not allowed here]", value.getType().getMemberScope());
+        return createErrorType(value + " is not allowed here", value.getType().getMemberScope());
     }
 
     public static ClassifierDescriptor getErrorClass() {

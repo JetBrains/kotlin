@@ -1,4 +1,20 @@
 <project name="Jet CI Bootstrap" default="unzipIdeaSDK">
+    <macrodef name="echoprop">
+        <attribute name="prop"/>
+        <sequential>
+            <echo>@{prop}=${@{prop}}</echo>
+        </sequential>
+    </macrodef>
+
+    <echoprop prop="os.name"/>
+    <echoprop prop="os.version"/>
+    <echoprop prop="os.arch"/>
+    <echoprop prop="java.home"/>
+    <echoprop prop="java.version"/>
+    <echoprop prop="user.name"/>
+    <echoprop prop="user.home"/>
+    <echoprop prop="user.dir"/>
+
     <target name="unzipIdeaSDK">
         <unzip dest="ideaSDK">
             <fileset dir="ideaSDK" includes="ideaIC*.zip"/>

@@ -1,11 +1,14 @@
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -17,8 +20,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.ensureBooleanResultWithCustomSubject;
@@ -245,6 +247,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
 
+            /*
+             * (a: SubjectType) is Type
+             */
             private void checkTypeCompatibility(@Nullable JetType type, @NotNull JetType subjectType, @NotNull JetElement reportErrorOn) {
                 // TODO : Take auto casts into account?
                 if (type == null) {
@@ -253,6 +258,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (TypeUtils.intersect(context.semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
 //                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
                     context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
+                    return;
+                }
+                
+                if (BasicExpressionTypingVisitor.isCastErased(subjectType, type)) {
+                    context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(reportErrorOn, type));
                 }
             }
 
