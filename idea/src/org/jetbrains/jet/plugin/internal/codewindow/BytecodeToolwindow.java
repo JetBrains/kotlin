@@ -9,6 +9,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -31,6 +32,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class BytecodeToolwindow extends JPanel {
@@ -91,8 +95,15 @@ public class BytecodeToolwindow extends JPanel {
             Document byteCodeDocument = myEditor.getDocument();
             Pair<Integer, Integer> linesRange = mapLines(byteCodeDocument.getText(), startLine, endLine);
 
-            myEditor.getSelectionModel().setSelection(byteCodeDocument.getLineStartOffset(linesRange.first),
-                                                      Math.min(byteCodeDocument.getLineStartOffset(linesRange.second + 1), byteCodeDocument.getTextLength()));
+            int startOffset = byteCodeDocument.getLineStartOffset(linesRange.first);
+            int endOffset = Math.min(byteCodeDocument.getLineStartOffset(linesRange.second + 1), byteCodeDocument.getTextLength());
+            myEditor.getCaretModel().moveToOffset(endOffset);
+            myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
+            myEditor.getCaretModel().moveToOffset(startOffset);
+            myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
+
+            myEditor.getSelectionModel().setSelection(startOffset,
+                                                      endOffset);
         }
     }
 
@@ -101,17 +112,35 @@ public class BytecodeToolwindow extends JPanel {
         int byteCodeStartLine = -1;
         int byteCodeEndLine = -1;
 
+        List<Integer> lines = new ArrayList<Integer>();
+        for (String line : text.split("\n")) {
+            line = line.trim();
+
+            if (line.startsWith("LINENUMBER")) {
+                int ktLineNum = new Scanner(line.substring("LINENUMBER".length())).nextInt() - 1;
+                lines.add(ktLineNum);
+            }
+        }
+        Collections.sort(lines);
+
+        for (Integer line : lines) {
+            if (line >= startLine) {
+                startLine = line;
+                break;
+            }
+        }
+        
         for (String line : text.split("\n")) {
             line = line.trim();
 
             if (line.startsWith("LINENUMBER")) {
                 int ktLineNum = new Scanner(line.substring("LINENUMBER".length())).nextInt() - 1;
 
-                if (byteCodeStartLine < 0 && ktLineNum >= startLine) {
+                if (byteCodeStartLine < 0 && ktLineNum == startLine) {
                     byteCodeStartLine = byteCodeLine;
                 }
 
-                if (byteCodeEndLine < 0 && ktLineNum > endLine) {
+                if (byteCodeStartLine > 0&& ktLineNum > endLine) {
                     byteCodeEndLine = byteCodeLine - 1;
                     break;
                 }
