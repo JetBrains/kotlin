@@ -2445,18 +2445,28 @@ If finally block is present, its last expression is the value of try expression.
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
+    public boolean hasTypeInfoForInstanceOf(JetType type) {
+        DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if(declarationDescriptor instanceof TypeParameterDescriptor)
+            return true;
+
+        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor.getOriginal();
+        if(classDescriptor.equals(state.getStandardLibrary().getArray())) {
+            return hasTypeInfoForInstanceOf(type.getArguments().get(0).getType());
+        }
+
+        for(TypeParameterDescriptor proj : classDescriptor.getTypeConstructor().getParameters()) {
+            if(proj.isReified()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        boolean javaClass = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor) instanceof PsiClass;
-        if (!javaClass && (jetType.getArguments().size() > 0 || !(descriptor instanceof ClassDescriptor))) {
-            generateTypeInfo(jetType);
-            expressionToGen.put(OBJECT_TYPE, v);
-            if (leaveExpressionOnStack) {
-                v.dupX1();
-            }
-            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
-        }
-        else {
+        if (!hasTypeInfoForInstanceOf(jetType)) {
             expressionToGen.put(OBJECT_TYPE, v);
             if (leaveExpressionOnStack) {
                 v.dup();
@@ -2478,6 +2488,14 @@ If finally block is present, its last expression is the value of try expression.
             else {
                 v.instanceOf(type);
             }
+        }
+        else {
+            generateTypeInfo(jetType);
+            expressionToGen.put(OBJECT_TYPE, v);
+            if (leaveExpressionOnStack) {
+                v.dupX1();
+            }
+            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
         }
     }
 
