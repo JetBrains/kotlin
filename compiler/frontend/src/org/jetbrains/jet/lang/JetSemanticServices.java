@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -34,8 +34,8 @@ public class JetSemanticServices {
     }
 
     @NotNull
-    public ClassDescriptorResolver getClassDescriptorResolver(BindingTrace trace) {
-        return new ClassDescriptorResolver(this, trace);
+    public DescriptorResolver getClassDescriptorResolver(BindingTrace trace) {
+        return new DescriptorResolver(this, trace);
     }
 
     @NotNull

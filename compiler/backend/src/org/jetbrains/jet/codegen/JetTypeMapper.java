@@ -129,7 +129,7 @@ public class JetTypeMapper {
         return type;
     }
 
-    static Type correctElementType(Type type) {
+    public static Type correctElementType(Type type) {
         String internalName = type.getInternalName();
         assert internalName.charAt(0) == '[';
         return Type.getType(internalName.substring(1));
@@ -173,6 +173,11 @@ public class JetTypeMapper {
     
     public String getFQName(DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
+
+        if(descriptor instanceof FunctionDescriptor) {
+            return getFQName(descriptor.getContainingDeclaration());
+        }
+
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {

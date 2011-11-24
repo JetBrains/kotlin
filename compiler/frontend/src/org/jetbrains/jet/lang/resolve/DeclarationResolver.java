@@ -94,7 +94,7 @@ public class DeclarationResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
-                    FunctionDescriptorImpl functionDescriptor = context.getClassDescriptorResolver().resolveFunctionDescriptor(namespaceLike, scope, function);
+                    FunctionDescriptorImpl functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(namespaceLike, scope, function);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.getDeclaringScopes().put(function, scope);
@@ -102,7 +102,7 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitProperty(JetProperty property) {
-                    PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolvePropertyDescriptor(namespaceLike, scope, property);
+                    PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolvePropertyDescriptor(namespaceLike, scope, property);
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
                     context.getDeclaringScopes().put(property, scope);
@@ -110,7 +110,7 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, context.getObjects().get(declaration));
+                    PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, context.getObjects().get(declaration));
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                 }
 
@@ -119,7 +119,7 @@ public class DeclarationResolver {
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
                         MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) namespaceLike).getClassObjectDescriptor();
                         assert classObjectDescriptor != null;
-                        PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry));
+                        PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry));
                         classObjectDescriptor.addPropertyDescriptor(propertyDescriptor);
                     }
                 }
@@ -137,10 +137,10 @@ public class DeclarationResolver {
 
         // TODO : not all the parameters are real properties
         JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
-        ConstructorDescriptor constructorDescriptor = context.getClassDescriptorResolver().resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
+        ConstructorDescriptor constructorDescriptor = context.getDescriptorResolver().resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
             if (parameter.getValOrVarNode() != null) {
-                PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
                         classDescriptor,
                         memberScope,
                         parameter
@@ -159,7 +159,7 @@ public class DeclarationResolver {
 //            context.getTrace().getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
             context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode()));
         }
-        ConstructorDescriptor constructorDescriptor = context.getClassDescriptorResolver().resolveSecondaryConstructorDescriptor(
+        ConstructorDescriptor constructorDescriptor = context.getDescriptorResolver().resolveSecondaryConstructorDescriptor(
                 classDescriptor.getScopeForMemberResolution(),
                 classDescriptor,
                 constructor);

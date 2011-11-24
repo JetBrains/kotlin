@@ -99,4 +99,9 @@ public class CompileSession {
         return generationState.getFactory();
     }
 
+    public String generateText() {
+        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.TEXT);
+        generationState.compileCorrectNamespaces(myBindingContext, mySourceFileNamespaces);
+        return generationState.createText();
+    }
 }

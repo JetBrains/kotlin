@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.ImportingStrategy;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 
 import java.util.List;
 
@@ -40,7 +41,11 @@ public class QuickJetPsiCheckerTest extends JetLiteFixture {
 
         createAndCheckPsiFile(name, clearText);
         JetFile jetFile = (JetFile) myFile;
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), jetFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+
+        boolean importJdk = expectedText.contains("+JDK");
+        ImportingStrategy importingStrategy = importJdk ? JavaDefaultImports.JAVA_DEFAULT_IMPORTS : ImportingStrategy.NONE;
+
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(importingStrategy), jetFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
 
         CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override

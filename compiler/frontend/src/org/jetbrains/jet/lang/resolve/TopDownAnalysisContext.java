@@ -23,7 +23,7 @@ import java.util.Set;
 
     private final ObservableBindingTrace trace;
     private final JetSemanticServices semanticServices;
-    private final ClassDescriptorResolver classDescriptorResolver;
+    private final DescriptorResolver descriptorResolver;
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
@@ -46,7 +46,7 @@ import java.util.Set;
     public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely) {
         this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
-        this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+        this.descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         this.analyzeCompletely = analyzeCompletely;
     }
 
@@ -93,8 +93,8 @@ import java.util.Set;
         return semanticServices;
     }
 
-    public ClassDescriptorResolver getClassDescriptorResolver() {
-        return classDescriptorResolver;
+    public DescriptorResolver getDescriptorResolver() {
+        return descriptorResolver;
     }
 
     public Map<JetClass, MutableClassDescriptor> getClasses() {

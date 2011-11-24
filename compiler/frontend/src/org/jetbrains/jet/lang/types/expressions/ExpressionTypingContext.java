@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -71,7 +71,7 @@ import java.util.Map;
 
     private CallResolver callResolver;
     private TypeResolver typeResolver;
-    private ClassDescriptorResolver classDescriptorResolver;
+    private DescriptorResolver descriptorResolver;
     private ExpressionTypingServices services;
     private CompileTimeConstantResolver compileTimeConstantResolver;
 
@@ -156,11 +156,11 @@ import java.util.Map;
         return typeResolver;
     }
 
-    public ClassDescriptorResolver getClassDescriptorResolver() {
-        if (classDescriptorResolver == null) {
-            classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+    public DescriptorResolver getDescriptorResolver() {
+        if (descriptorResolver == null) {
+            descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         }
-        return classDescriptorResolver;
+        return descriptorResolver;
     }
 
     public CompileTimeConstantResolver getCompileTimeConstantResolver() {

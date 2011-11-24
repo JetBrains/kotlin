@@ -1,5 +1,15 @@
 namespace std
 
+namespace util {
+    import java.util.*
+
+    val <T> Collection<T>.size : Int
+        get() = size()
+
+    val <T> Collection<T>.empty : Boolean
+        get() = isEmpty()
+}
+
 namespace io {
     import java.io.*
     import java.nio.charset.*
@@ -30,7 +40,15 @@ namespace io {
     val ByteArray.inputStream : ByteArrayInputStream
         get() = ByteArrayInputStream(this)
 
-    inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
+//    inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
+
+    fun InputStream.iterator() : ByteIterator =
+        object: ByteIterator() {
+            override val hasNext : Boolean
+                get() = available() > 0
+
+            override fun nextByte() = read().byt
+        }
 
     val InputStream.buffered : BufferedInputStream
         get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
@@ -40,8 +58,8 @@ namespace io {
     val InputStream.reader : InputStreamReader
         get() = InputStreamReader(this)
 
-//    val InputStream.bufferedReader : BufferedReader
-//        get() = buffered.reader
+    val InputStream.bufferedReader : BufferedReader
+        get() = BufferedReader(reader)
 
 /*
     inline fun InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
@@ -53,17 +71,12 @@ namespace io {
     inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
 */
 
-    fun InputStream.iterator() : ByteIterator = object: ByteIterator() {
-        override val hasNext : Boolean
-            get() = available() > 0
-
-        override fun nextByte() = read().byt
-    }
-
 //    val Reader.buffered : BufferedReader
 //        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
 
 //    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
+
+//    val String.reader = StringReader(this)
 
     private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : InputStream() {
         override fun read() : Int {

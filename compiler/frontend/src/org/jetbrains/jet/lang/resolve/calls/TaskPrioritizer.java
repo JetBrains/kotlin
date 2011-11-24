@@ -98,8 +98,16 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         }
         doComputeTasks(scope, explicitReceiver, call, name, result, AutoCastService.NO_AUTO_CASTS);
 
-        ReceiverDescriptor receiverToCast = explicitReceiver.exists() ? explicitReceiver : scope.getImplicitReceiver();
-        if (receiverToCast.exists()) {
+        List<ReceiverDescriptor> receivers;
+        if (explicitReceiver.exists()) {
+            receivers = Collections.singletonList(explicitReceiver);
+        }
+        else {
+            receivers = Lists.newArrayList();
+            scope.getImplicitReceiversHierarchy(receivers);
+        }
+        for (ReceiverDescriptor receiverToCast : receivers) {
+            assert receiverToCast.exists();
             doComputeTasks(scope, receiverToCast, call, name, result, new AutoCastServiceImpl(dataFlowInfo, bindingContext));
         }
         return result;

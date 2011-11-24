@@ -12,5 +12,5 @@ fun main(args : Array<String>) {
     println("Animals are equal: " + (pig == dog));
 
     // Note:
-    println("Animals are equal: " + (pig identityEquals dog));
+    println("Animals are equal: " + (pig identityEquals dog))
 }

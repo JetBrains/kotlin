@@ -157,4 +157,18 @@ public class GenerationState {
         });
     }
 
+    public String createText() {
+        StringBuilder answer = new StringBuilder();
+
+        final ClassFileFactory factory = getFactory();
+        List<String> files = factory.files();
+        for (String file : files) {
+            if (!file.startsWith("std/")) {
+                answer.append("@").append(file).append('\n');
+                answer.append(factory.asText(file));
+            }
+        }
+
+        return answer.toString();
+    }
 }

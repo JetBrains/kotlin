@@ -1,15 +1,6 @@
+import std.io.*
+
 import java.io.*
-
-val ByteArray.inputStream : ByteArrayInputStream
-    get() = ByteArrayInputStream(this)
-
-fun InputStream.iterator() : ByteIterator =
-    object: ByteIterator() {
-        override val hasNext : Boolean
-            get() = available() > 0
-
-        override fun nextByte() = read().byt
-    }
 
 fun box() : String {
     val x = ByteArray (10)

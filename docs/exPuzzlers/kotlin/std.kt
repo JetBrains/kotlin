@@ -9,7 +9,7 @@ inline fun array(vararg array : Long) = array
 inline fun array(vararg array : Double) = array
 inline fun array(vararg array : Float) = array
 
-fun Any?.identityEquals(other : Any?) = this === other
+//fun Any?.identityEquals(other : Any?) = this === other
 
 inline fun <T : Any> T?.sure() : T {
     if (this == null)

@@ -30,7 +30,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private JetStandardLibrary library;
     private JetSemanticServices semanticServices;
     private ClassDefinitions classDefinitions;
-    private ClassDescriptorResolver classDescriptorResolver;
+    private DescriptorResolver descriptorResolver;
     private JetScope scopeWithImports;
     private TypeResolver typeResolver;
 
@@ -44,7 +44,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
         semanticServices = JetSemanticServices.createSemanticServices(library);
         classDefinitions = new ClassDefinitions();
-        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
+        descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
         scopeWithImports = addImports(classDefinitions.BASIC_SCOPE);
         typeResolver = new TypeResolver(semanticServices, JetTestUtils.DUMMY_TRACE, true);
     }
@@ -604,7 +604,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
                 ModuleDescriptor module = new ModuleDescriptor("TypeCheckerTest");
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.add(functionDescriptor);
                     }
@@ -628,14 +628,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
             // This call has side-effects on the parameterScope (fills it in)
             List<TypeParameterDescriptor> typeParameters
-                    = classDescriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters());
-            classDescriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters);
+                    = descriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters());
+            descriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters);
 
             List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
             // TODO : assuming that the hierarchy is acyclic
             Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
                     ? Collections.singleton(JetStandardClasses.getAnyType())
-                    : classDescriptorResolver.resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
+                    : descriptorResolver.resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
     //        for (JetType supertype: supertypes) {
     //            if (supertype.getConstructor().isSealed()) {
     //                trace.getErrorHandler().genericError(classElement.getNameAsDeclaration().getNode(), "Class " + classElement.getName() + " can not extend final type " + supertype);
@@ -651,7 +651,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     @Override
                     public void visitProperty(JetProperty property) {
                         if (property.getPropertyTypeRef() != null) {
-                            memberDeclarations.addVariableDescriptor(classDescriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property));
+                            memberDeclarations.addVariableDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property));
                         } else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
@@ -661,7 +661,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     @Override
                     public void visitNamedFunction(JetNamedFunction function) {
                         if (function.getReturnTypeRef() != null) {
-                            memberDeclarations.addFunctionDescriptor(classDescriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function));
+                            memberDeclarations.addFunctionDescriptor(descriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function));
                         } else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
@@ -685,11 +685,11 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     null
             );
             for (JetSecondaryConstructor constructor : classElement.getSecondaryConstructors()) {
-                ConstructorDescriptorImpl functionDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
+                ConstructorDescriptorImpl functionDescriptor = descriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
                 functionDescriptor.setReturnType(classDescriptor.getDefaultType());
                 constructors.add(functionDescriptor);
             }
-            ConstructorDescriptorImpl primaryConstructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
+            ConstructorDescriptorImpl primaryConstructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
             if (primaryConstructorDescriptor != null) {
                 primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 constructors.add(primaryConstructorDescriptor);

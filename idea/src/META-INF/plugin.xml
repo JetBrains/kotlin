@@ -57,6 +57,9 @@
       <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
       <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>
 
-      <java.elementFinder implementation="org.jetbrains.jet.plugin.java.JavaElementFinder"/>
+ <!--     <java.elementFinder implementation="org.jetbrains.jet.plugin.java.JavaElementFinder"/>-->
+      <toolWindow id="CodeWindow"
+                  factoryClass="org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow$Factory"
+                  anchor="right"/>
   </extensions>
 </idea-plugin>

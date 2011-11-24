@@ -111,13 +111,6 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     private FunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
-        final JetType receiverType;
-        if (receiverTypeRef != null) {
-            receiverType = context.getTypeResolver().resolveType(context.scope, receiverTypeRef);
-        } else {
-            ReceiverDescriptor implicitReceiver = context.scope.getImplicitReceiver();
-            receiverType = implicitReceiver.exists() ? implicitReceiver.getType() : null;
-        }
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "<anonymous>");
 
@@ -133,7 +126,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            effectiveReceiverType = receiverType;
+            effectiveReceiverType = context.getTypeResolver().resolveType(context.scope, receiverTypeRef);
         }
         functionDescriptor.initialize(effectiveReceiverType, NO_RECEIVER, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null, Modality.FINAL, Visibility.LOCAL);
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
@@ -175,7 +168,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                         type = ErrorUtils.createErrorType("Cannot be inferred");
                     }
                 }
-                ValueParameterDescriptor valueParameterDescriptor = context.getClassDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type);
+                ValueParameterDescriptor valueParameterDescriptor = context.getDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type);
                 valueParameterDescriptors.add(valueParameterDescriptor);
             }
         }

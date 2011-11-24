@@ -275,4 +275,10 @@ public class ArrayGenTest extends CodegenTestCase {
     public void testKt503() {
         blackBoxFile("regressions/kt503.jet");
     }
+
+    public void testKt594() throws Exception {
+        loadFile("regressions/kt594.jet");
+        System.out.println(generateToText());
+        blackBox();
+    }
 }

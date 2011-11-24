@@ -224,7 +224,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         int i = 0;
         if (captureThis) {
-            argTypes[i++] = Type.getObjectType(context.getThisDescriptor().getName());
+            argTypes[i++] = state.getTypeMapper().mapType(context.getThisDescriptor().getDefaultType());
         }
 
         if (captureReceiver != null) {

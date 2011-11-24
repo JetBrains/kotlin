@@ -149,7 +149,7 @@ public class DeclarationsChecker {
         PsiElement nameIdentifier = member.getNameIdentifier();
         boolean hasDeferredType;
         if (member instanceof JetProperty) {
-            hasDeferredType = ((JetProperty) member).getPropertyTypeRef() == null && ClassDescriptorResolver.hasBody((JetProperty) member);
+            hasDeferredType = ((JetProperty) member).getPropertyTypeRef() == null && DescriptorResolver.hasBody((JetProperty) member);
         }
         else {
             assert member instanceof JetFunction;

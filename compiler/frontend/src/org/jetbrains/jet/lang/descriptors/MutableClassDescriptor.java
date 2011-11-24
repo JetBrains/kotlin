@@ -5,7 +5,9 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -43,10 +45,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private JetType superclassType;
     private ClassReceiver implicitReceiver;
 
-//    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
-//        this(trace, containingDeclaration, outerScope, ClassKind.CLASS);
-//    }
-
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration);
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
@@ -66,6 +64,23 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         }
         assert classObjectDescriptor.getKind() == ClassKind.OBJECT;
         this.classObjectDescriptor = classObjectDescriptor;
+
+        // Members of the class object are accessible from the class
+        // The scope must be lazy, because classObjectDescriptor may not by fully built yet
+        scopeForMemberResolution.importScope(new AbstractScopeAdapter() {
+            @NotNull
+            @Override
+            protected JetScope getWorkerScope() {
+                return MutableClassDescriptor.this.classObjectDescriptor.getDefaultType().getMemberScope();
+            }
+
+            @NotNull
+            @Override
+            public ReceiverDescriptor getImplicitReceiver() {
+                return MutableClassDescriptor.this.classObjectDescriptor.getImplicitReceiver();
+            }
+        }
+        );
         return ClassObjectStatus.OK;
     }
 

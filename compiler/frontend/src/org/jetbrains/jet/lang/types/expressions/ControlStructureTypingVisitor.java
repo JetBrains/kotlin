@@ -197,7 +197,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetTypeReference typeReference = loopParameter.getTypeReference();
             VariableDescriptor variableDescriptor;
             if (typeReference != null) {
-                variableDescriptor = context.getClassDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter);
+                variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter);
                 JetType actualParameterType = variableDescriptor.getOutType();
                 if (expectedParameterType != null &&
                         actualParameterType != null &&
@@ -209,7 +209,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (expectedParameterType == null) {
                     expectedParameterType = ErrorUtils.createErrorType("Error");
                 }
-                variableDescriptor = context.getClassDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+                variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType);
             }
             loopScope.addVariableDescriptor(variableDescriptor);
         }
@@ -320,7 +320,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
-                VariableDescriptor variableDescriptor = context.getClassDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter);
+                VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter);
                 if (catchBody != null) {
                     WritableScope catchScope = newWritableScopeImpl(context).setDebugName("Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
