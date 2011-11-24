@@ -1,1 +1,1 @@
-x.cyclicShiftRight(2)
+x.ushr(2)

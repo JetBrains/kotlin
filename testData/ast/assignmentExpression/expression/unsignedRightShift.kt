@@ -1,1 +1,1 @@
-x = (x cyclicShiftRight 2)
+x = (x ushr 2)

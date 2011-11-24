@@ -56,7 +56,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (tokenType == JavaTokenType.XOREQ) secondOp = "xor";
     if (tokenType == JavaTokenType.ANDEQ) secondOp = "and";
     if (tokenType == JavaTokenType.OREQ) secondOp = "or";
-    if (tokenType == JavaTokenType.GTGTGTEQ) secondOp = "cyclicShiftRight";
+    if (tokenType == JavaTokenType.GTGTGTEQ) secondOp = "ushr";
 
     if (!secondOp.isEmpty()) // if not Kotlin operators
       myResult = new AssignmentExpression(
@@ -88,7 +88,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (tokenType == JavaTokenType.XOR) return "xor";
     if (tokenType == JavaTokenType.AND) return "and";
     if (tokenType == JavaTokenType.OR) return "or";
-    if (tokenType == JavaTokenType.GTGTGT) return "cyclicShiftRight";
+    if (tokenType == JavaTokenType.GTGTGT) return "ushr";
     if (tokenType == JavaTokenType.GT) return ">";
     if (tokenType == JavaTokenType.LT) return "<";
     if (tokenType == JavaTokenType.GE) return ">=";
@@ -112,7 +112,7 @@ public class ExpressionVisitor extends StatementVisitor {
     if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT)
       myResult = new DummyMethodCallExpression(
         expressionToExpression(expression.getLOperand()),
-        "cyclicShiftRight",
+        "ushr",
         expressionToExpression(expression.getROperand()));
     else
       myResult =

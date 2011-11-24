@@ -1,1 +1,1 @@
-(1 cyclicShiftRight 2 cyclicShiftRight 3)
+(1 ushr 2 ushr 3)
