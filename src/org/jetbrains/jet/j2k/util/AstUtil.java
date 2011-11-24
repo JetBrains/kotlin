@@ -9,7 +9,10 @@ import java.util.List;
  * @author ignatov
  */
 public class AstUtil {
-  private static String join(final String array[], final String delimiter) {
+  private AstUtil() {
+  }
+
+  private static String join(final String[] array, final String delimiter) {
     StringBuilder buffer = new StringBuilder();
     boolean haveDelimiter = (delimiter != null);
 

@@ -39,7 +39,7 @@ public class IdentifierImpl extends Expression implements Identifier {
     return myIsNullable;
   }
 
-  private String ifNeedQuote(String name) {
+  private static String ifNeedQuote(String name) {
     if (ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$"))
       return quote(name);
     return name;

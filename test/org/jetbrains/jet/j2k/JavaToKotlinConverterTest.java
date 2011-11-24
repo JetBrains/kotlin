@@ -92,18 +92,18 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return suite;
   }
 
-  static void configureFromText(String text) throws IOException {
+  private static void configureFromText(String text) throws IOException {
     configureFromFileText("test.java", text);
   }
 
   @NotNull
-  static String fileToKotlin(String text) throws IOException {
+  private static String fileToKotlin(String text) throws IOException {
     configureFromText(text);
     return prettify(Converter.fileToFile((PsiJavaFile) myFile).toKotlin());
   }
 
   @NotNull
-  static String methodToKotlin(String text) throws IOException {
+  private static String methodToKotlin(String text) throws IOException {
     String result = fileToKotlin("final class C {" + text + "}")
       .replaceAll("class C\\(\\) \\{", "");
     result = result.substring(0, result.lastIndexOf("}"));
@@ -111,7 +111,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  static String statementToKotlin(String text) throws Exception {
+  private static String statementToKotlin(String text) throws Exception {
     String result = methodToKotlin("void main() {" + text + "}");
     int pos = result.lastIndexOf("}");
     result = result.substring(0, pos).replaceFirst("fun main\\(\\) : Unit \\{", "");
@@ -119,7 +119,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  static String expressionToKotlin(String code) throws Exception {
+  private static String expressionToKotlin(String code) throws Exception {
     String result = statementToKotlin("Object o =" + code + "}");
     result = result.replaceFirst("var o : Any\\? =", "");
     return prettify(result);
