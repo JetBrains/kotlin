@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class BytecodeToolwindow extends JPanel {
     private static final int UPDATE_DELAY = 500;
@@ -93,7 +95,9 @@ public class BytecodeToolwindow extends JPanel {
             AnalyzingUtils.checkForSyntacticErrors(file);
             state.compile(file);
         } catch (Exception e) {
-            return e.toString();
+            StringWriter out = new StringWriter(1024);
+            e.printStackTrace(new PrintWriter(out));
+            return out.toString();
         }
 
 
