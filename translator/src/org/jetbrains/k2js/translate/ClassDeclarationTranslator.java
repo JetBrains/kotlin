@@ -106,7 +106,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         JsName localClassName = dummyFunctionScope.declareName(globalClassName.getIdent());
         localToGlobalClassName.put(localClassName, globalClassName);
         JsInvocation classDeclarationExpression =
-                Translation.classTranslator(translationContext()).translateClass(declaration);
+                Translation.translateClassDeclaration(declaration, translationContext());
         return AstUtil.newVar(localClassName, classDeclarationExpression);
     }
 }

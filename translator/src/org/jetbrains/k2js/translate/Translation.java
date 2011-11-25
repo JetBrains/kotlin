@@ -3,12 +3,11 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetWhenExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
+import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
+import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 
 /**
  * @author Talanov Pavel
@@ -36,12 +35,13 @@ public final class Translation {
     @NotNull
     static public JsStatement translateNamespace(@NotNull JetNamespace namespace,
                                                  @NotNull TranslationContext context) {
-        return NamespaceTranslator.translate(context, namespace);
+        return NamespaceTranslator.translateNamespace(namespace, context);
     }
 
     @NotNull
-    static public ClassTranslator classTranslator(@NotNull TranslationContext context) {
-        return ClassTranslator.newInstance(context);
+    static public JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
+                                                         @NotNull TranslationContext context) {
+        return ClassTranslator.translateClass(classDeclaration, context);
     }
 
     @NotNull
@@ -72,6 +72,18 @@ public final class Translation {
     @NotNull
     static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         return WhenTranslator.translateWhenExpression(expression, context);
+    }
+
+    @NotNull
+    static public JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClass classDeclaration,
+                                                                       @NotNull TranslationContext context) {
+        return (new ClassInitializerTranslator(classDeclaration, context)).generateInitializeMethod();
+    }
+
+    @NotNull
+    static public JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull JetNamespace namespace,
+                                                                           @NotNull TranslationContext context) {
+        return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
     }
 
     @NotNull

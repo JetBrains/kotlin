@@ -103,7 +103,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
         JsExpression callee = translateCallee(expression, context);
-        List<JsExpression> arguments = translateArgumentList(expression.getValueArguments(), context);
+        List<JsExpression> arguments = TranslationUtils.translateArgumentList(expression.getValueArguments(), context);
         if (isConstructorInvocation(expression, context)) {
             JsNew constructorCall = new JsNew(callee);
             constructorCall.setArguments(arguments);

@@ -21,13 +21,12 @@ public final class NamespaceTranslator extends AbstractTranslator {
     private final ClassDeclarationTranslator classDeclarationTranslator;
 
     @NotNull
-    public static JsStatement translate(@NotNull TranslationContext context,
-                                        @NotNull JetNamespace namespace) {
-        return (new NamespaceTranslator(context, namespace)).translateNamespace();
+    public static JsStatement translateNamespace(@NotNull JetNamespace namespace, @NotNull TranslationContext context) {
+        return (new NamespaceTranslator(namespace, context)).translateNamespace();
     }
 
-    private NamespaceTranslator(@NotNull TranslationContext context, @NotNull JetNamespace namespace) {
-        super(context);
+    private NamespaceTranslator(@NotNull JetNamespace namespace, @NotNull TranslationContext context) {
+        super(context.newNamespace(namespace));
         this.namespace = namespace;
         this.namespaceName = context.getNameForElement(namespace);
         this.classDeclarationTranslator = new ClassDeclarationTranslator(context, namespace);
@@ -78,9 +77,8 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsObjectLiteral translateNamespaceMemberDeclarations() {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-        propertyList.add(InitializerGenerator.generateInitializeMethod(namespace, translationContext()));
-        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(namespace,
-                translationContext().newNamespace(namespace)));
+        propertyList.add(Translation.generateNamespaceInitializerMethod(namespace, translationContext()));
+        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(namespace, translationContext()));
         return new JsObjectLiteral(propertyList);
     }
 }

@@ -84,7 +84,7 @@ public final class TranslationContext {
     }
 
     @NotNull
-    TranslationContext newClass(@NotNull JetClass declaration) {
+    public TranslationContext newClass(@NotNull JetClass declaration) {
         return newClass(BindingUtils.getClassDescriptor(bindingContext, declaration));
     }
 

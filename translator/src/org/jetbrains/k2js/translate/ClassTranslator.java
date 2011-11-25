@@ -25,46 +25,48 @@ public final class ClassTranslator extends AbstractTranslator {
     private final DeclarationBodyVisitor declarationBodyVisitor = new DeclarationBodyVisitor();
 
     @NotNull
-    public static ClassTranslator newInstance(@NotNull TranslationContext context) {
-        return new ClassTranslator(context);
+    private final JetClass classDeclaration;
+
+    @NotNull
+    static public JsInvocation translateClass(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+        return (new ClassTranslator(classDeclaration, context)).translateClass();
     }
 
-    private ClassTranslator(TranslationContext context) {
-        super(context);
+    private ClassTranslator(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+        super(context.newClass(classDeclaration));
+        this.classDeclaration = classDeclaration;
     }
 
     @NotNull
-    public JsInvocation translateClass(@NotNull JetClass jetClassDeclaration) {
-        JsInvocation jsClassDeclaration = classCreateMethodInvocation(jetClassDeclaration);
-        addSuperclassReferences(jetClassDeclaration, jsClassDeclaration);
-        addClassOwnDeclarations(jetClassDeclaration, jsClassDeclaration);
+    private JsInvocation translateClass() {
+        JsInvocation jsClassDeclaration = classCreateMethodInvocation();
+        addSuperclassReferences(jsClassDeclaration);
+        addClassOwnDeclarations(jsClassDeclaration);
         return jsClassDeclaration;
     }
 
     @NotNull
-    private JsInvocation classCreateMethodInvocation(@NotNull JetClass jetClassDeclaration) {
-        if (jetClassDeclaration.isTrait()) {
+    private JsInvocation classCreateMethodInvocation() {
+        if (classDeclaration.isTrait()) {
             return AstUtil.newInvocation(Namer.traitCreationMethodReference());
         } else {
             return AstUtil.newInvocation(Namer.classCreationMethodReference());
         }
     }
 
-    private void addClassOwnDeclarations(@NotNull JetClass classDeclaration,
-                                         @NotNull JsInvocation jsClassDeclaration) {
-        JsObjectLiteral jsClassDescription = translateClassDeclarations(classDeclaration);
+    private void addClassOwnDeclarations(@NotNull JsInvocation jsClassDeclaration) {
+        JsObjectLiteral jsClassDescription = translateClassDeclarations();
         jsClassDeclaration.getArguments().add(jsClassDescription);
     }
 
-    private void addSuperclassReferences(@NotNull JetClass classDeclaration,
-                                         @NotNull JsInvocation jsClassDeclaration) {
-        for (JsNameRef superClassReference : getSuperclassNameReferences(classDeclaration)) {
+    private void addSuperclassReferences(@NotNull JsInvocation jsClassDeclaration) {
+        for (JsNameRef superClassReference : getSuperclassNameReferences()) {
             jsClassDeclaration.getArguments().add(superClassReference);
         }
     }
 
     @NotNull
-    private List<JsNameRef> getSuperclassNameReferences(@NotNull JetClass classDeclaration) {
+    private List<JsNameRef> getSuperclassNameReferences() {
         List<JsNameRef> superclassReferences = new ArrayList<JsNameRef>();
         List<ClassDescriptor> superclassDescriptors =
                 BindingUtils.getSuperclassDescriptors(translationContext().bindingContext(), classDeclaration);
@@ -106,13 +108,13 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsObjectLiteral translateClassDeclarations(@NotNull JetClass classDeclaration) {
+    private JsObjectLiteral translateClassDeclarations() {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         if (!classDeclaration.isTrait()) {
-            propertyList.add(InitializerGenerator.generateInitializeMethod(classDeclaration, translationContext()));
+            propertyList.add(Translation.generateClassInitializerMethod(classDeclaration, translationContext()));
         }
         propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration,
-                translationContext().newClass(classDeclaration)));
+                translationContext()));
         return new JsObjectLiteral(propertyList);
     }
 }

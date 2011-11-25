@@ -31,6 +31,11 @@ public class BasicClassTest extends TranslationTest {
     }
 
     @Test
+    public void constructorWithPropertiesAsParameters() throws Exception {
+        testFooBoxIsTrue("constructorWithPropertiesAsParameters.kt");
+    }
+
+    @Test
     public void incrementProperty() throws Exception {
         testFunctionOutput("incrementProperty.kt", "foo", "box", "OK");
     }

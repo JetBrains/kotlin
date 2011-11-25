@@ -39,7 +39,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         this.isVariableReassignment = isVariableReassignment(expression);
         this.operationReference = getOverloadedOperationReference(expression.getOperationReference());
         this.right = translateRightExpression();
-        //TODO: decide whether it is harmful to possibly translate left expression more than once
+        //TODO: decide whether it is harmful to possibly translateNamespace left expression more than once
         this.left = translateLeftExpression();
     }
 
