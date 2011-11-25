@@ -113,5 +113,10 @@ public class KotlinLibTest extends TranslationTest {
                 new RhinoFunctionResultChecker("test", true));
     }
 
+    @Test
+    public void array() throws Exception {
+        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("array.js")),
+                new RhinoFunctionResultChecker("test", true));
+    }
 
 }
