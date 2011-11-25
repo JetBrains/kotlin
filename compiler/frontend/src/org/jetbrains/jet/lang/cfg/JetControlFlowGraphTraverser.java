@@ -31,7 +31,7 @@ public class JetControlFlowGraphTraverser<D> {
     }
 
     public void collectInformationFromInstructionGraph(
-            InstructionsMergeStrategy<D> instructionsMergeStrategy,
+            InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             D initialDataValue,
             D initialDataValueForEnterInstruction,
             boolean straightDirection) {
@@ -43,7 +43,7 @@ public class JetControlFlowGraphTraverser<D> {
         changed[0] = true;
         while (changed[0]) {
             changed[0] = false;
-            traverseSubGraph(pseudocode, instructionsMergeStrategy, Collections.<Instruction>emptyList(), straightDirection, changed, false);
+            traverseSubGraph(pseudocode, instructionDataMergeStrategy, Collections.<Instruction>emptyList(), straightDirection, changed, false);
         }
     }
 
@@ -62,7 +62,7 @@ public class JetControlFlowGraphTraverser<D> {
 
     private void traverseSubGraph(
             Pseudocode pseudocode,
-            InstructionsMergeStrategy<D> instructionsMergeStrategy,
+            InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             Collection<Instruction> previousSubGraphInstructions,
             boolean straightDirection,
             boolean[] changed,
@@ -87,7 +87,7 @@ public class JetControlFlowGraphTraverser<D> {
 
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
-                traverseSubGraph(subroutinePseudocode, instructionsMergeStrategy, previousInstructions, straightDirection, changed, true);
+                traverseSubGraph(subroutinePseudocode, instructionDataMergeStrategy, previousInstructions, straightDirection, changed, true);
             }
             Pair<D, D> previousDataValue = dataMap.get(instruction);
 
@@ -99,7 +99,7 @@ public class JetControlFlowGraphTraverser<D> {
                     incomingEdgesData.add(previousData.getSecond());
                 }
             }
-            Pair<D, D> mergedData = instructionsMergeStrategy.execute(instruction, incomingEdgesData);
+            Pair<D, D> mergedData = instructionDataMergeStrategy.execute(instruction, incomingEdgesData);
             if (!mergedData.equals(previousDataValue)) {
                 changed[0] = true;
                 dataMap.put(instruction, mergedData);
@@ -132,7 +132,7 @@ public class JetControlFlowGraphTraverser<D> {
         return dataMap.get(pseudocode.getSinkInstruction()).getFirst();
     }
     
-    interface InstructionsMergeStrategy<D> {
+    interface InstructionDataMergeStrategy<D> {
         Pair<D, D> execute(Instruction instruction, @NotNull Collection<D> incomingEdgesData);
     }
 

@@ -137,8 +137,8 @@ class AnonymousInitializers(var a: String, val b: String) {
 
     {
         <!VAL_REASSIGNMENT!>$i<!> = 13
-        <!NO_BACKING_FIELD!>$j<!> = 30
-        <!VAL_REASSIGNMENT!>j<!> = 34
+        <!NO_BACKING_FIELD, VAL_REASSIGNMENT!>$j<!> = 30
+        j = 34
     }
 
     val k: String

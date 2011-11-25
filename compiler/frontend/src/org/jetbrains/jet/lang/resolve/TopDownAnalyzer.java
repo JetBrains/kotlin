@@ -53,7 +53,7 @@ public class TopDownAnalyzer {
             NamespaceLike owner,
             Collection<? extends JetDeclaration> declarations,
             JetControlFlowDataTraceFactory flowDataTraceFactory,
-            boolean declaredLocally) {
+            boolean processLocalDeclaration) {
 //        context.enableDebugOutput();
         context.debug("Enter");
 
@@ -64,7 +64,7 @@ public class TopDownAnalyzer {
         new OverloadResolver(context).process();
         if (!context.analyzingBootstrapLibrary()) {
             new BodyResolver(context).resolveBehaviorDeclarationBodies();
-            new ControlFlowAnalyzer(context, flowDataTraceFactory, declaredLocally).process();
+            new ControlFlowAnalyzer(context, flowDataTraceFactory, processLocalDeclaration).process();
             new DeclarationsChecker(context).process();
         }
 

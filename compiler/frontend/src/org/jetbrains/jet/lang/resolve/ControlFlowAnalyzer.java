@@ -19,12 +19,12 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
-    private final boolean inLocalDeclaration;
+    private final boolean processLocalDeclaration;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean inLocalDeclaration) {
+    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean processLocalDeclaration) {
         this.context = context;
         this.flowDataTraceFactory = flowDataTraceFactory;
-        this.inLocalDeclaration = inLocalDeclaration;
+        this.processLocalDeclaration = processLocalDeclaration;
     }
 
     public void process() {
@@ -53,7 +53,7 @@ public class ControlFlowAnalyzer {
     
     private void checkClassOrObject(JetClassOrObject klass) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, true, inLocalDeclaration);
+        flowInformationProvider.markUninitializedVariables((JetElement) klass, processLocalDeclaration);
 
         List<JetDeclaration> declarations = klass.getDeclarations();
         for (JetDeclaration declaration : declarations) {
@@ -82,7 +82,7 @@ public class ControlFlowAnalyzer {
 
         flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
 
-        flowInformationProvider.markUninitializedVariables(function.asElement(), false, inLocalDeclaration);
+        flowInformationProvider.markUninitializedVariables(function.asElement(), processLocalDeclaration);
 
         flowInformationProvider.markUnusedVariables(function.asElement());
     }
