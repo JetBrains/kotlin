@@ -14,11 +14,13 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingFieldFromParameter;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
 /**
  * @author Talanov Pavel
@@ -103,15 +105,11 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction generateDefaultGetterFunction(@NotNull PropertyGetterDescriptor descriptor) {
-        JsReturn returnExpression = new JsReturn(backingFieldReference());
+        JsReturn returnExpression = new JsReturn(backingFieldReference(context(), property));
         JsFunction getterFunction =
                 JsFunction.getAnonymousFunctionWithScope(context().getScopeForDescriptor(descriptor));
         getterFunction.setBody(AstUtil.convertToBlock(returnExpression));
         return getterFunction;
-    }
-
-    private JsNameRef backingFieldReference() {
-        return TranslationUtils.backingFieldReference(context(), property);
     }
 
     @NotNull
@@ -128,7 +126,7 @@ public final class PropertyTranslator extends AbstractTranslator {
                 context().getScopeForDescriptor(propertySetterDescriptor));
         JsParameter defaultParameter =
                 new JsParameter(propertyAccessContext(propertySetterDescriptor).enclosingScope().declareTemporary());
-        JsBinaryOperation assignment = assignmentToBackingFieldFromParameter(defaultParameter);
+        JsStatement assignment = assignmentToBackingFieldFromParameter(context(), property, defaultParameter);
         result.setParameters(Arrays.asList(defaultParameter));
         result.setBody(AstUtil.convertToBlock(assignment));
         return result;
@@ -137,12 +135,6 @@ public final class PropertyTranslator extends AbstractTranslator {
     @NotNull
     private TranslationContext propertyAccessContext(@NotNull PropertySetterDescriptor propertySetterDescriptor) {
         return context().newPropertyAccess(propertySetterDescriptor);
-    }
-
-    //TODO: similar code assignment to backing field 1
-    @NotNull
-    private JsBinaryOperation assignmentToBackingFieldFromParameter(@NotNull JsParameter parameter) {
-        return AstUtil.newAssignment(backingFieldReference(), parameter.getName().makeRef());
     }
 
     @NotNull

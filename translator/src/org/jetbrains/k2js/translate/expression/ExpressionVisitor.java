@@ -4,11 +4,8 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -18,9 +15,10 @@ import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
  * @author Talanov Pavel
@@ -102,7 +100,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        JsName jsPropertyName = context.declareLocalName(TranslationUtils.getPropertyName(expression));
+        JsName jsPropertyName = context.declareLocalName(getPropertyName(expression));
         JsExpression jsInitExpression = translateInitializerForProperty(expression, context);
         return AstUtil.newVar(jsPropertyName, jsInitExpression);
     }
@@ -111,26 +109,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
         JsExpression callee = translateCallee(expression, context);
-        List<JsExpression> arguments = TranslationUtils.translateArgumentList(expression.getValueArguments(), context);
-        if (isConstructorInvocation(expression, context)) {
+        List<JsExpression> arguments = translateArgumentList(expression.getValueArguments(), context);
+        if (isConstructorInvocation(context, expression)) {
             JsNew constructorCall = new JsNew(callee);
             constructorCall.setArguments(arguments);
             return constructorCall;
         }
         return AstUtil.newInvocation(callee, arguments);
-    }
-
-    //TODO: move to util
-    private boolean isConstructorInvocation(@NotNull JetCallExpression expression,
-                                            @NotNull TranslationContext context) {
-        JetExpression calleeExpression = expression.getCalleeExpression();
-        assert calleeExpression != null : "JetCallExpression should have not null callee";
-        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context.bindingContext(), calleeExpression);
-        if (resolvedCall == null) {
-            return false;
-        }
-        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
-        return (descriptor instanceof ConstructorDescriptor);
     }
 
     @NotNull
@@ -262,7 +247,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return null;
     }
 
-    //TODO: refactor and possibly move somewhere
     @Override
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
@@ -351,7 +335,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsExpression receiver = translateReceiver(expression, context);
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         JsExpression thenExpression = translateQualifiedExpression(expression, context);
-        return new JsConditional(TranslationUtils.notNullCheck(context, receiver),
+        return new JsConditional(notNullCheck(context, receiver),
                 thenExpression, nullLiteral);
     }
 

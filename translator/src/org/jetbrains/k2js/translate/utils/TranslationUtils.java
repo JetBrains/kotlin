@@ -4,10 +4,14 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.reference.ReferenceProvider;
@@ -94,5 +98,44 @@ public final class TranslationUtils {
                                               @NotNull TranslationContext context) {
         String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
         return context.enclosingScope().findExistingName(backingFieldName);
+    }
+
+    @Nullable
+    public static JsExpression translateInitializerForProperty(@NotNull JetProperty declaration,
+                                                               @NotNull TranslationContext context) {
+        JsExpression jsInitExpression = null;
+        JetExpression initializer = declaration.getInitializer();
+        if (initializer != null) {
+            jsInitExpression = Translation.translateAsExpression(initializer, context);
+        }
+        return jsInitExpression;
+    }
+
+    public static boolean isConstructorInvocation(@NotNull TranslationContext context,
+                                                  @NotNull JetCallExpression expression) {
+        JetExpression calleeExpression = expression.getCalleeExpression();
+        assert calleeExpression != null : "JetCallExpression should have not null callee";
+        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context.bindingContext(), calleeExpression);
+        if (resolvedCall == null) {
+            return false;
+        }
+        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+        return (descriptor instanceof ConstructorDescriptor);
+    }
+
+    @NotNull
+    public static JsStatement assignmentToBackingFieldFromParameter(@NotNull TranslationContext context,
+                                                                    @NotNull PropertyDescriptor descriptor,
+                                                                    @NotNull JsParameter parameter) {
+        JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
+        return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
+    }
+
+    @NotNull
+    public static JsStatement assignmentToBackingFieldFromParameter(@NotNull TranslationContext context,
+                                                                    @NotNull JetProperty property,
+                                                                    @NotNull JsParameter parameter) {
+        return assignmentToBackingFieldFromParameter
+                (context, BindingUtils.getPropertyDescriptor(context.bindingContext(), property), parameter);
     }
 }

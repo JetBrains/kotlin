@@ -99,16 +99,11 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         PropertyDescriptor propertyDescriptor =
                 BindingUtils.getPropertyDescriptorForConstructorParameter(context().bindingContext(), jetParameter);
         if (propertyDescriptor != null) {
-            initializerStatements.add(assignmentToBackingFieldFromParameter(propertyDescriptor, jsParameter));
+            initializerStatements.add
+                    (TranslationUtils.assignmentToBackingFieldFromParameter
+                            (context(), propertyDescriptor, jsParameter));
         }
     }
 
-    //TODO: similar code assignment to backing field 2
-    @NotNull
-    private JsStatement assignmentToBackingFieldFromParameter(@NotNull PropertyDescriptor descriptor,
-                                                              @NotNull JsParameter parameter) {
-        JsNameRef backingFieldReference = TranslationUtils.backingFieldReference(context(), descriptor);
-        return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
-    }
 
 }
