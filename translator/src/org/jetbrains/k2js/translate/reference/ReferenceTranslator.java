@@ -66,7 +66,7 @@ public class ReferenceTranslator extends AbstractTranslator {
             return null;
         }
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
-        return TranslationUtils.getReference(context(), expression, referencedName);
+        return ReferenceProvider.getReference(referencedName, context(), expression);
     }
 
     @Nullable

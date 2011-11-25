@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
@@ -35,14 +34,6 @@ public final class TranslationUtils {
         return AstUtil.equals(expressionToCheck, nullLiteral);
     }
 
-    @NotNull
-    static public JsNameRef getReference(@NotNull TranslationContext context,
-                                         @NotNull JetSimpleNameExpression expression,
-                                         @NotNull JsName referencedName) {
-        return (new ReferenceProvider(context, expression, referencedName)).generateCorrectReference();
-    }
-
-
     @Nullable
     static public JsName getLocalReferencedName(@NotNull TranslationContext context,
                                                 @NotNull String name) {
@@ -69,25 +60,24 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(jetExpression, context);
     }
 
-    //TODO: refactor
     @NotNull
     static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull JetProperty expression) {
         JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
-        if (BindingUtils.belongsToNamespace(context.bindingContext(), expression)) {
-            return context.getNamespaceQualifiedReference(backingFieldName);
-        }
-        return AstUtil.thisQualifiedReference(backingFieldName);
+        return generateReference(context, backingFieldName);
     }
 
     @NotNull
     static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = getBackingFieldName(descriptor.getName(), context);
-        if (BindingUtils.belongsToNamespace(context.bindingContext(), descriptor)) {
-            return context.getNamespaceQualifiedReference(backingFieldName);
-        }
-        return AstUtil.thisQualifiedReference(backingFieldName);
+        return generateReference(context, backingFieldName);
+    }
+
+    @NotNull
+    private static JsNameRef generateReference(@NotNull TranslationContext context,
+                                               @NotNull JsName backingFieldName) {
+        return ReferenceProvider.getReference(backingFieldName, context, true);
     }
 
     @NotNull
@@ -100,7 +90,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    static private JsName getBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
+    static private JsName getBackingFieldName(@NotNull String propertyName,
+                                              @NotNull TranslationContext context) {
         String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
         return context.enclosingScope().findExistingName(backingFieldName);
     }

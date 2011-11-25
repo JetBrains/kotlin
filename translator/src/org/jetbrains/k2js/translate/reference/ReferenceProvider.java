@@ -17,16 +17,29 @@ public final class ReferenceProvider {
     private final TranslationContext context;
     @NotNull
     private final JsName referencedName;
+    private boolean isBackingFieldAccess;
     private boolean requiresThisQualifier;
     private boolean requiresNamespaceQualifier;
 
+    public static JsNameRef getReference(@NotNull JsName referencedName, @NotNull TranslationContext context,
+                                         boolean isBackingFieldAccess) {
+        return (new ReferenceProvider(referencedName, context, isBackingFieldAccess)).generateCorrectReference();
+    }
 
-    public ReferenceProvider(@NotNull TranslationContext context,
-                             @NotNull JetSimpleNameExpression expression,
-                             @NotNull JsName referencedName) {
+
+    public static JsNameRef getReference(@NotNull JsName referencedName, @NotNull TranslationContext context,
+                                         JetSimpleNameExpression expression) {
+        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+        return (new ReferenceProvider(referencedName, context, isBackingFieldAccess))
+                .generateCorrectReference();
+    }
+
+    private ReferenceProvider(@NotNull JsName referencedName, @NotNull TranslationContext context,
+                              boolean isBackingFieldAccess) {
         this.context = context;
         this.referencedName = referencedName;
-        this.requiresThisQualifier = requiresThisQualifier(expression);
+        this.isBackingFieldAccess = isBackingFieldAccess;
+        this.requiresThisQualifier = requiresThisQualifier();
         this.requiresNamespaceQualifier = requiresNamespaceQualifier();
     }
 
@@ -44,10 +57,9 @@ public final class ReferenceProvider {
         return context.namespaceScope().ownsName(referencedName);
     }
 
-    private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression) {
+    private boolean requiresThisQualifier() {
         JsName name = context.enclosingScope().findExistingName(referencedName.getIdent());
         boolean isClassMember = context.classScope().ownsName(name);
-        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
         return isClassMember || isBackingFieldAccess;
     }
 }

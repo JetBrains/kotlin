@@ -15,7 +15,6 @@ import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
-import org.jetbrains.k2js.translate.reference.ReferenceProvider;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 
 /**
@@ -94,13 +93,6 @@ public final class Translation {
     static public JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull JetNamespace namespace,
                                                                            @NotNull TranslationContext context) {
         return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
-    }
-
-    @NotNull
-    static public JsNameRef generateCorrectReference(@NotNull TranslationContext context,
-                                                     @NotNull JetSimpleNameExpression expression,
-                                                     @NotNull JsName referencedName) {
-        return (new ReferenceProvider(context, expression, referencedName)).generateCorrectReference();
     }
 
     public static void generateAst(@NotNull JsProgram result, @NotNull BindingContext bindingContext,

@@ -20,7 +20,6 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
  * @author Talanov Pavel
@@ -94,7 +93,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation resolveAsPropertyGet(@NotNull JetSimpleNameExpression expression) {
         JsName getterName = getNotNullGetterName(expression);
-        JsNameRef getterReference = TranslationUtils.getReference(context(), expression, getterName);
+        JsNameRef getterReference = ReferenceProvider.getReference(getterName, context(), expression);
         return AstUtil.newInvocation(getterReference);
     }
 
@@ -118,7 +117,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation resolveAsPropertySet(@NotNull JetSimpleNameExpression expression) {
         JsName setterName = getNotNullSetterName(expression);
-        JsNameRef setterReference = Translation.generateCorrectReference(context(), expression, setterName);
+        JsNameRef setterReference = ReferenceProvider.getReference(setterName, context(), expression);
         return AstUtil.newInvocation(setterReference);
     }
 
