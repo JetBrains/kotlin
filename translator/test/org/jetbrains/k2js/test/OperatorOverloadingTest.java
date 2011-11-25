@@ -90,5 +90,9 @@ public class OperatorOverloadingTest extends TranslationTest {
         testFooBoxIsTrue("plusAndMinusAsAnExpression.kt");
     }
 
+    @Test
+    public void usingModInCaseModAssignNotAvailable() throws Exception {
+        testFooBoxIsTrue("usingModInCaseModAssignNotAvailable.kt");
+    }
 
 }
