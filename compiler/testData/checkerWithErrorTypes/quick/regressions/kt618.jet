@@ -1,0 +1,28 @@
+namespace lol
+
+class B() {
+    fun plusAssign(other : B) : String {
+        return "s"
+    }
+    fun minusAssign(other : B) : String {
+        return "s"
+    }
+    fun modAssign(other : B) : String {
+        return "s"
+    }
+    fun divAssign(other : B) : String {
+        return "s"
+    }
+    fun timesAssign(other : B) : String {
+        return "s"
+    }
+}
+
+fun main(args : Array<String>) {
+    var c = B()
+    <!TYPE_MISMATCH!>c += B()<!>
+    <!TYPE_MISMATCH!>c *= B()<!>
+    <!TYPE_MISMATCH!>c /= B()<!>
+    <!TYPE_MISMATCH!>c -= B()<!>
+    <!TYPE_MISMATCH!>c %= B()<!>
+}
