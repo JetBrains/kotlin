@@ -1,12 +1,10 @@
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -114,19 +112,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
         final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{context.dataFlowInfo};
         condition.accept(new JetVisitorVoid() {
-
-            @Override
-            public void visitWhenConditionCall(JetWhenConditionCall condition) {
-                JetExpression callSuffixExpression = condition.getCallSuffixExpression();
-//                    JetScope compositeScope = new ScopeWithReceiver(context.scope, subjectType, semanticServices.getTypeChecker());
-                if (callSuffixExpression != null) {
-//                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
-                    assert subjectExpression != null;
-                    JetType selectorReturnType = facade.getSelectorReturnType(new ExpressionReceiver(subjectExpression, subjectType), condition.getOperationTokenNode(), callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
-                    ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression", context);
-//                        context.getServices().checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context), condition);
-                }
-            }
 
             @Override
             public void visitWhenConditionInRange(JetWhenConditionInRange condition) {

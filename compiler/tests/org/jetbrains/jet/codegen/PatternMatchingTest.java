@@ -99,18 +99,19 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, new Tuple2<String, String>(null, "not", "tuple")));
     }
 
-    public void testCall() throws Exception {
-        loadText("fun foo(s: String) = when(s) { .startsWith(\"J\") => \"JetBrains\"; else => \"something\" }");
-        Method foo = generateFunction();
-        try {
-            assertEquals("JetBrains", foo.invoke(null, "Java"));
-            assertEquals("something", foo.invoke(null, "C#"));
-        }
-        catch (Throwable t) {
-            System.out.println(generateToText());
-            t.printStackTrace();
-        }
-    }
+    // Commented for KT-621
+//    public void testCall() throws Exception {
+//        loadText("fun foo(s: String) = when(s) { .startsWith(\"J\") => \"JetBrains\"; else => \"something\" }");
+//        Method foo = generateFunction();
+//        try {
+//            assertEquals("JetBrains", foo.invoke(null, "Java"));
+//            assertEquals("something", foo.invoke(null, "C#"));
+//        }
+//        catch (Throwable t) {
+//            System.out.println(generateToText());
+//            t.printStackTrace();
+//        }
+//    }
 
     public void testCallProperty() throws Exception {
         blackBoxFile("patternMatching/callProperty.jet");

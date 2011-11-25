@@ -2656,30 +2656,6 @@ If finally block is present, its last expression is the value of try expression.
             conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
                                                   StackValue.local(subjectLocal, subjectType), nextEntry);
         }
-        else if (condition instanceof JetWhenConditionCall) {
-            final JetExpression call = ((JetWhenConditionCall) condition).getCallSuffixExpression();
-            if (call instanceof JetCallExpression) {
-                v.load(subjectLocal, subjectType);
-                final DeclarationDescriptor declarationDescriptor = resolveCalleeDescriptor((JetCallExpression) call);
-                if (!(declarationDescriptor instanceof FunctionDescriptor)) {
-                    throw new UnsupportedOperationException("expected function descriptor in when condition with call, found " + declarationDescriptor);
-                }
-                conditionValue = invokeFunction((JetCallExpression) call, declarationDescriptor, StackValue.onStack(subjectType));
-            }
-            else if (call instanceof JetSimpleNameExpression) {
-                final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call);
-                if (descriptor instanceof PropertyDescriptor) {
-                    v.load(subjectLocal, subjectType);
-                    conditionValue = intermediateValueForProperty((PropertyDescriptor) descriptor, false, null);
-                }
-                else {
-                    throw new UnsupportedOperationException("unknown simple name resolve result: " + descriptor);
-                }
-            }
-            else {
-                throw new UnsupportedOperationException("unsupported kind of call suffix");
-            }
-        }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }

@@ -13,16 +13,19 @@ fun foo() : Int {
       1 + <!UNRESOLVED_REFERENCE!>a<!> => 1
       in 1..<!UNRESOLVED_REFERENCE!>a<!> => 1
       !in 1..<!UNRESOLVED_REFERENCE!>a<!> => 1
-      .<!UNRESOLVED_REFERENCE!>a<!> => 1
-      .equals(1).<!UNRESOLVED_REFERENCE!>a<!> => 1
-      <!UNNECESSARY_SAFE_CALL!>?.<!>equals(1) => 1
+      // Commented for KT-621 .<!!UNRESOLVED_REFERENCE!>a<!!> => 1
+      // Commented for KT-621 .equals(1).<!!UNRESOLVED_REFERENCE!>a<!!> => 1
+      // Commented for KT-621 <!UNNECESSARY_SAFE_CALL!!>?.<!!>equals(1) => 1
       else => 1
     }
-    return when (<!USELESS_ELVIS!>x<!>?:null) {
-      <!UNSAFE_CALL!>.<!>foo() => 1
-      .equals(1) => 1
-      ?.equals(1).equals(2) => 1
-    }
+
+    // Commented for KT-621
+    // return when (<!!USELESS_ELVIS!>x<!!>?:null) {
+    //  <!!UNSAFE_CALL!!>.<!!>foo() => 1
+    //  .equals(1) => 1
+    //  ?.equals(1).equals(2) => 1
+    // }
+    return 0
 }
 
 val _type_test : Int = foo() // this is needed to ensure the inferred return type of foo()

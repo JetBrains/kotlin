@@ -22,10 +22,14 @@ JetFile: CallsInWhen.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -33,14 +37,18 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -48,19 +56,53 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace('\n    ')
+          WHEN_ENTRY
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
+                          PsiElement(IDENTIFIER)('a')
+                      PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -68,56 +110,34 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
+                          PsiElement(IDENTIFIER)('a')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      VALUE_ARGUMENT
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('d')
-                  PsiElement(RPAR)(')')
+                          PsiElement(IDENTIFIER)('d')
+                      PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -125,15 +145,19 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('bar')
-                  PsiElement(RBRACE)('}')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      BLOCK
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('bar')
+                      PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -141,18 +165,22 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    PREFIX_EXPRESSION
-                      OPERATION_REFERENCE
-                        PsiElement(EXCL)('!')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('bar')
-                  PsiElement(RBRACE)('}')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      BLOCK
+                        PREFIX_EXPRESSION
+                          OPERATION_REFERENCE
+                            PsiElement(EXCL)('!')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('bar')
+                      PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -160,24 +188,28 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_CALL
-              PsiElement(DOT)('.')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  VALUE_PARAMETER_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(DOUBLE_ARROW)('=>')
-                  PsiWhiteSpace(' ')
-                  BLOCK
-                    PREFIX_EXPRESSION
-                      OPERATION_REFERENCE
-                        PsiElement(EXCL)('!')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('bar')
-                  PsiElement(RBRACE)('}')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiElement(DOT)('.')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      VALUE_PARAMETER_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      PsiElement(DOUBLE_ARROW)('=>')
+                      PsiWhiteSpace(' ')
+                      BLOCK
+                        PREFIX_EXPRESSION
+                          OPERATION_REFERENCE
+                            PsiElement(EXCL)('!')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('bar')
+                      PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')

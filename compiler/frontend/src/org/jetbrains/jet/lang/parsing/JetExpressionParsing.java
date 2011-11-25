@@ -419,7 +419,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             else return false;
         }
-        else return false;
+        else {
+            return false;
+        }
+
         return true;
     }
 
@@ -764,7 +767,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * whenCondition
      *   : expression
-     *   : ("." | "?." postfixExpression typeArguments? valueArguments?
      *   : ("in" | "!in") expression
      *   : ("is" | "!is") isRHS
      *   ;
@@ -793,21 +795,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parsePattern();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
-        } else if (at(DOT) || at(SAFE_ACCESS)) {
-            advance(); // DOT or SAFE_ACCESS
-            PsiBuilder.Marker mark = mark();
-            parsePostfixExpression();
-            if (parseCallSuffix()) {
-                mark.done(CALL_EXPRESSION);
-            }
-            else {
-                mark.drop();
-            }
-            condition.done(WHEN_CONDITION_CALL);
         } else {
             PsiBuilder.Marker expressionPattern = mark();
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
-                error("Expecting an element, is-condition or in-condition");
+                error("Expecting an expression, is-condition or in-condition");
             } else {
                 parseExpression();
             }
