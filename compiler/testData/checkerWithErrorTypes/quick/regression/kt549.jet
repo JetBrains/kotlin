@@ -1,0 +1,18 @@
+//KT-549 type inference failed
+// +JDK
+
+namespace demo
+
+  fun filter<T>(list : Array<T>, filter : fun (T) : Boolean) : java.util.List<T> {
+    val answer = java.util.ArrayList<T>();
+    for (l in list) {
+      if (filter(l)) answer.add(l)
+    }
+    return answer;
+  }
+
+fun main(args : Array<String>) {
+  for (a in filter(args, {it.length > 1})) {
+    System.out?.println("Hello, ${a}!")
+  }
+}
