@@ -124,7 +124,7 @@ public final class PropertyTranslator extends AbstractTranslator {
                 context().getScopeForDescriptor(propertySetterDescriptor));
         JsParameter defaultParameter =
                 new JsParameter(propertyAccessContext(propertySetterDescriptor).enclosingScope().declareTemporary());
-        JsBinaryOperation assignment = assignmentToBackingFieldFromDefaultParameter(defaultParameter);
+        JsBinaryOperation assignment = assignmentToBackingFieldFromParameter(defaultParameter);
         result.setParameters(Arrays.asList(defaultParameter));
         result.setBody(AstUtil.convertToBlock(assignment));
         return result;
@@ -135,9 +135,10 @@ public final class PropertyTranslator extends AbstractTranslator {
         return context().newPropertyAccess(propertySetterDescriptor);
     }
 
+    //TODO: similar code assignment to backing field 1
     @NotNull
-    private JsBinaryOperation assignmentToBackingFieldFromDefaultParameter(@NotNull JsParameter defaultParameter) {
-        return AstUtil.newAssignment(backingFieldReference(), defaultParameter.getName().makeRef());
+    private JsBinaryOperation assignmentToBackingFieldFromParameter(@NotNull JsParameter parameter) {
+        return AstUtil.newAssignment(backingFieldReference(), parameter.getName().makeRef());
     }
 
     @NotNull

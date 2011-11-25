@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
@@ -22,6 +23,8 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
 
     @NotNull
     private final JetClass classDeclaration;
+    @NotNull
+    private final List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
 
     public ClassInitializerTranslator(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
         super(new JsScope(context.getScopeForElement(classDeclaration),
@@ -33,35 +36,27 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     protected JsFunction generateInitializerFunction() {
         JsFunction result = JsFunction.getAnonymousFunctionWithScope(initializerMethodScope);
+        //NOTE: that while we translate constructor parameters we also add property initializer statements
+        // for properties declared as constructor parameters
         result.setParameters(translatePrimaryConstructorParameters());
+        addCallToSuperMethod();
         result.setBody(generateInitializerMethodBody());
         return result;
     }
 
     @NotNull
     private JsBlock generateInitializerMethodBody() {
-
-        List<JsStatement> initializerStatements = generateCallToSuperMethod();
-        //   initializerStatements.addAll(initializersForParameterProperties());
         initializerStatements.addAll(translatePropertyAndAnonymousInitializers(classDeclaration));
         return AstUtil.newBlock(initializerStatements);
     }
 
-    @NotNull
-    private List<JsStatement> initializersForParameterProperties() {
-        return null;
-    }
-
-    @NotNull
-    private List<JsStatement> generateCallToSuperMethod() {
-        List<JsStatement> result = new ArrayList<JsStatement>();
+    private void addCallToSuperMethod() {
         if (BindingUtils.hasAncestorClass(context().bindingContext(), classDeclaration)) {
             JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
             List<JsExpression> arguments = translateArguments();
-            result.add(AstUtil.convertToStatement
+            initializerStatements.add(AstUtil.convertToStatement
                     (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName), arguments)));
         }
-        return result;
     }
 
     @NotNull
@@ -85,11 +80,35 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     List<JsParameter> translatePrimaryConstructorParameters() {
         List<JsParameter> result = new ArrayList<JsParameter>();
-        List<JetParameter> parameters = classDeclaration.getPrimaryConstructorParameters();
-        for (JetParameter parameter : parameters) {
-            JsName parameterName = initializerMethodScope.declareName(parameter.getName());
-            result.add(new JsParameter(parameterName));
+        for (JetParameter jetParameter : classDeclaration.getPrimaryConstructorParameters()) {
+            result.add(translateParameter(jetParameter));
         }
         return result;
     }
+
+    @NotNull
+    private JsParameter translateParameter(@NotNull JetParameter jetParameter) {
+        JsName parameterName = initializerMethodScope.declareName(jetParameter.getName());
+        JsParameter jsParameter = new JsParameter(parameterName);
+        mayBeAddInitializerStatementForProperty(jsParameter, jetParameter);
+        return jsParameter;
+    }
+
+    private void mayBeAddInitializerStatementForProperty(@NotNull JsParameter jsParameter,
+                                                         @NotNull JetParameter jetParameter) {
+        PropertyDescriptor propertyDescriptor =
+                BindingUtils.getPropertyDescriptorForConstructorParameter(context().bindingContext(), jetParameter);
+        if (propertyDescriptor != null) {
+            initializerStatements.add(assignmentToBackingFieldFromParameter(propertyDescriptor, jsParameter));
+        }
+    }
+
+    //TODO: similar code assignment to backing field 2
+    @NotNull
+    private JsStatement assignmentToBackingFieldFromParameter(@NotNull PropertyDescriptor descriptor,
+                                                              @NotNull JsParameter parameter) {
+        JsNameRef backingFieldReference = TranslationUtils.backingFieldReference(context(), descriptor);
+        return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
+    }
+
 }

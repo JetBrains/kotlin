@@ -3,14 +3,17 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Talanov Pavel
  */
+//TODO: think about adding state to translator
 public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
@@ -37,7 +40,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction generateFunctionObject(@NotNull JetFunction jetFunction) {
         JsFunction result = createFunctionObject(jetFunction);
-        result.setParameters(translateParameters(jetFunction.getValueParameters(), result.getScope()));
+        result.setParameters(TranslationUtils.translateParameters
+                (jetFunction.getValueParameters(), result.getScope()));
         result.setBody(translateBody(jetFunction, result.getScope()));
         return result;
     }
@@ -96,16 +100,5 @@ public final class FunctionTranslator extends AbstractTranslator {
             return context().newFunctionLiteral(functionScope);
         }
         throw new AssertionError("Unsupported type of function.");
-    }
-
-    @NotNull
-    private List<JsParameter> translateParameters(@NotNull List<JetParameter> jetParameters,
-                                                  @NotNull JsScope functionScope) {
-        List<JsParameter> jsParameters = new ArrayList<JsParameter>();
-        for (JetParameter jetParameter : jetParameters) {
-            JsName parameterName = functionScope.declareName(jetParameter.getName());
-            jsParameters.add(new JsParameter(parameterName));
-        }
-        return jsParameters;
     }
 }

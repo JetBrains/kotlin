@@ -24,8 +24,7 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     @NotNull
     JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression) {
-        JsExpression result;
-        result = resolveAsPropertyAccess(expression);
+        JsExpression result = resolveAsPropertyAccess(expression);
         if (result != null) {
             return result;
         }

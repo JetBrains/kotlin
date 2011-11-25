@@ -5,10 +5,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +97,17 @@ public final class TranslationUtils {
     static private JsName getBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
         String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
         return context.enclosingScope().findExistingName(backingFieldName);
+    }
+
+    @NotNull
+    static public List<JsParameter> translateParameters(@NotNull List<JetParameter> jetParameters,
+                                                        @NotNull JsScope scopeToDeclareParameters) {
+        List<JsParameter> jsParameters = new ArrayList<JsParameter>();
+        for (JetParameter jetParameter : jetParameters) {
+            JsName parameterName = scopeToDeclareParameters.declareName(jetParameter.getName());
+            jsParameters.add(new JsParameter(parameterName));
+        }
+        return jsParameters;
     }
 
 

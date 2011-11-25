@@ -54,4 +54,9 @@ public class BasicClassTest extends TranslationTest {
     public void propertyAccess() throws Exception {
         testFooBoxIsTrue("propertyAccess.kt");
     }
+
+    @Test
+    public void propertiesAsParametersInitialized() throws Exception {
+        testFooBoxIsTrue("propertiesAsParametersInitialized.kt");
+    }
 }

@@ -112,6 +112,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return AstUtil.newInvocation(callee, arguments);
     }
 
+    //TODO: move to util
     private boolean isConstructorInvocation(@NotNull JetCallExpression expression,
                                             @NotNull TranslationContext context) {
         JetExpression calleeExpression = expression.getCalleeExpression();
