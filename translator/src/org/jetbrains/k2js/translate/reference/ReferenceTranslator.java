@@ -3,9 +3,11 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -16,6 +18,7 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 /**
  * @author Talanov Pavel
  */
+//TODO: implement state
 public class ReferenceTranslator extends AbstractTranslator {
 
     @NotNull
@@ -27,27 +30,42 @@ public class ReferenceTranslator extends AbstractTranslator {
         super(context);
     }
 
+    // TODO: refactor put the checks inside resolvers
     @NotNull
     public JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression) {
-        JsExpression result = resolveAsPropertyAccess(expression);
-        if (result != null) {
-            return result;
-        }
-        result = resolveAsGlobalReference(expression);
-        if (result != null) {
-            return result;
-        }
-        result = resolveAsLocalReference(expression);
-        if (result != null) {
-            return result;
-        }
-        throw new AssertionError("Undefined name in this scope: " + expression.getReferencedName());
+        JsExpression result = resolveAsAliasReference(expression);
+        if (result != null) return result;
 
+        result = resolveAsPropertyAccess(expression);
+        if (result != null) return result;
+
+        result = resolveAsGlobalReference(expression);
+        if (result != null) return result;
+
+        result = resolveAsLocalReference(expression);
+        if (result != null) return result;
+
+        throw new AssertionError("Undefined name in this scope: " + expression.getReferencedName());
+    }
+
+    @Nullable
+    private JsNameRef resolveAsAliasReference(@NotNull JetSimpleNameExpression expression) {
+        DeclarationDescriptor referencedDescriptor =
+                BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), expression);
+        if (referencedDescriptor == null) return null;
+
+        JetDeclaration declaration =
+                BindingUtils.getDeclarationForDescriptor(context().bindingContext(), referencedDescriptor);
+        if (declaration == null) return null;
+
+        JsName alias = context().aliases().get(declaration);
+        if (alias == null) return null;
+
+        return alias.makeRef();
     }
 
     @Nullable
     private JsInvocation resolveAsPropertyAccess(@NotNull JetSimpleNameExpression expression) {
-
         PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
         if (propertyAccessTranslator.canBePropertyGetterCall(expression)) {
             return propertyAccessTranslator.translateAsPropertyGetterCall(expression);

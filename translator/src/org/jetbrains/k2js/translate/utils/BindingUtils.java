@@ -88,6 +88,16 @@ public final class BindingUtils {
         return (JetClass) result;
     }
 
+    @Nullable
+    static public JetDeclaration getDeclarationForDescriptor(@NotNull BindingContext context,
+                                                             @NotNull DeclarationDescriptor descriptor) {
+        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        if (!(result instanceof JetDeclaration)) {
+            return null;
+        }
+        return (JetDeclaration) result;
+    }
+
     @NotNull
     static public List<ClassDescriptor> getSuperclassDescriptors(@NotNull BindingContext context,
                                                                  @NotNull JetClass classDeclaration) {

@@ -1,6 +1,9 @@
 package org.jetbrains.k2js.translate.general;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsProgram;
+import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +12,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Talanov Pavel
@@ -33,10 +39,11 @@ public final class TranslationContext {
 
     @NotNull
     public static TranslationContext rootContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
-                                                 @NotNull Declarations extractor, @NotNull JsBlock block) {
+                                                 @NotNull Declarations extractor) {
         JsScope rootScope = program.getRootScope();
         Scopes scopes = new Scopes(rootScope, rootScope, rootScope);
-        return new TranslationContext(null, program, bindingContext, scopes, extractor, block);
+        return new TranslationContext(null, program, bindingContext,
+                scopes, extractor, new HashMap<JetDeclaration, JsName>());
     }
 
     @NotNull
@@ -50,18 +57,18 @@ public final class TranslationContext {
     @NotNull
     private final Declarations declarations;
     @NotNull
-    private final JsBlock block;
+    private final Map<JetDeclaration, JsName> aliases;
 
 
     private TranslationContext(@Nullable JsName namespaceName, @NotNull JsProgram program,
                                @NotNull BindingContext bindingContext, @NotNull Scopes scopes,
-                               @NotNull Declarations declarations, @NotNull JsBlock block) {
+                               @NotNull Declarations declarations, @NotNull Map<JetDeclaration, JsName> aliases) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namespaceName = namespaceName;
         this.scopes = scopes;
         this.declarations = declarations;
-        this.block = block;
+        this.aliases = aliases;
     }
 
     @NotNull
@@ -74,14 +81,7 @@ public final class TranslationContext {
         JsScope namespaceScope = declarations.getScope(descriptor);
         JsName namespaceName = scopes.enclosingScope.findExistingName(descriptor.getName());
         Scopes newScopes = new Scopes(namespaceScope, namespaceScope, namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
-    }
-
-    @NotNull
-    public TranslationContext newBlock(@NotNull JsBlock newBlock) {
-        Scopes newScopes = new Scopes(new JsScope
-                (scopes.enclosingScope, "Scope for a block"), scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, newBlock);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
     }
 
     @NotNull
@@ -93,7 +93,7 @@ public final class TranslationContext {
     public TranslationContext newClass(@NotNull ClassDescriptor descriptor) {
         JsScope classScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(classScope, classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
     }
 
     @NotNull
@@ -115,14 +115,20 @@ public final class TranslationContext {
     public TranslationContext newFunctionDeclaration(@NotNull FunctionDescriptor descriptor) {
         JsScope functionScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(functionScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
     }
+
+//    @NotNull TranslationContext newAliases(Map<JetDeclaration, JsName> newAliases) {
+//        Map<JetDeclaration, JsName> aliases = new HashMap<JetDeclaration, JsName>(this.aliases);
+//        aliases.putAll(newAliases);
+//        return new TranslationContext(namespaceName, program, bindingContext, scopes, declarations, aliases);
+//    }
 
     // Note: Should be used if and only if scope has no corresponding descriptor
     @NotNull
     public TranslationContext newEnclosingScope(@NotNull JsScope enclosingScope) {
         Scopes newScopes = new Scopes(enclosingScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
     }
 
 
@@ -157,6 +163,11 @@ public final class TranslationContext {
     @NotNull
     public JsScope classScope() {
         return scopes.classScope;
+    }
+
+    @NotNull
+    public Map<JetDeclaration, JsName> aliases() {
+        return aliases;
     }
 
     @NotNull

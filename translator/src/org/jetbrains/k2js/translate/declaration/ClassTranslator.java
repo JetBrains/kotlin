@@ -100,9 +100,10 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
-        //TODO should get a full class name here
-        return context().getNamespaceQualifiedReference
-                (context().getNameForDescriptor(superClassDescriptor));
+        //TODO we actually know that in current implementation superclass must have an alias but
+        // if future it might change
+        return context().aliases().get
+                (BindingUtils.getClassForDescriptor(context().bindingContext(), superClassDescriptor)).makeRef();
     }
 
     @Nullable

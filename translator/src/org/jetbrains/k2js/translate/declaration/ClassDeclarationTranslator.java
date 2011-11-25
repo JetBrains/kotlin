@@ -89,7 +89,14 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         for (JetClass jetClass : getClassDeclarations()) {
             classDeclarations.add(generateDeclaration(jetClass));
         }
+        removeAliases();
         return classDeclarations;
+    }
+
+    private void removeAliases() {
+        for (JetClass jetClass : getClassDeclarations()) {
+            context().aliases().remove(jetClass);
+        }
     }
 
     @NotNull
@@ -105,11 +112,17 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsStatement generateDeclaration(@NotNull JetClass declaration) {
-        JsName globalClassName = context().getNameForElement(declaration);
-        JsName localClassName = dummyFunctionScope.declareName(globalClassName.getIdent());
-        localToGlobalClassName.put(localClassName, globalClassName);
+        JsName localClassName = generateLocalAlias(declaration);
         JsInvocation classDeclarationExpression =
                 Translation.translateClassDeclaration(declaration, context());
         return AstUtil.newVar(localClassName, classDeclarationExpression);
+    }
+
+    private JsName generateLocalAlias(@NotNull JetClass declaration) {
+        JsName globalClassName = context().getNameForElement(declaration);
+        JsName localAlias = dummyFunctionScope.declareName(globalClassName.getIdent());
+        localToGlobalClassName.put(localAlias, globalClassName);
+        context().aliases().put(declaration, localAlias);
+        return localAlias;
     }
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.k2js.utils;
 
+//TODO: find another implementation or steal it!
 /*
  * Copyright 2000 Sun Microsystems, Inc.  All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.

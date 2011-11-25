@@ -93,7 +93,7 @@ public final class Translation {
     public static void generateAst(@NotNull JsProgram result, @NotNull BindingContext bindingContext,
                                    @NotNull Declarations declarations, @NotNull JetNamespace namespace) {
         JsBlock block = result.getFragmentBlock(0);
-        TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations, block);
+        TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations);
         block.addStatement(Translation.translateNamespace(namespace, context));
     }
 
