@@ -79,7 +79,7 @@ public final class TranslationContext {
     @NotNull
     public TranslationContext newNamespace(@NotNull NamespaceDescriptor descriptor) {
         JsScope namespaceScope = declarations.getScope(descriptor);
-        JsName namespaceName = scopes.enclosingScope.findExistingName(descriptor.getName());
+        JsName namespaceName = getNameForDescriptor(descriptor);
         Scopes newScopes = new Scopes(namespaceScope, namespaceScope, namespaceScope);
         return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
     }

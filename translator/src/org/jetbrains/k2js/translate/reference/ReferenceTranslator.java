@@ -50,6 +50,7 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     @Nullable
     private JsNameRef resolveAsAliasReference(@NotNull JetSimpleNameExpression expression) {
+        //TODO: decide if this code is actual
         DeclarationDescriptor referencedDescriptor =
                 BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), expression);
         if (referencedDescriptor == null) return null;

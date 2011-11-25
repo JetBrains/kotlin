@@ -100,11 +100,24 @@ public final class ExtractionVisitor extends DeclarationDescriptorVisitor<Void, 
     @NotNull
     private JsScope extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
                                                 @NotNull JsScope enclosingScope) {
+        JsName name;
         String namespaceName = descriptor.getName();
-        declarations.putName(descriptor, enclosingScope.declareName(namespaceName));
+        name = getNameForNamespace(enclosingScope, namespaceName);
+        declarations.putName(descriptor, name);
         JsScope namespaceScope = new JsScope(enclosingScope, "namespace " + namespaceName);
         declarations.putScope(descriptor, namespaceScope);
         return namespaceScope;
+    }
+
+    @NotNull
+    private JsName getNameForNamespace(@NotNull JsScope enclosingScope, @NotNull String namespaceName) {
+        JsName name;
+        if (namespaceName.equals("")) {
+            name = enclosingScope.declareName("Anonymous");
+        } else {
+            name = enclosingScope.declareName(namespaceName);
+        }
+        return name;
     }
 
     private void visitMemberDeclarations(@NotNull NamespaceDescriptor descriptor, @NotNull JsScope namespaceScope) {

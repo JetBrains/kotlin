@@ -59,4 +59,9 @@ public class BasicClassTest extends TranslationTest {
     public void propertiesAsParametersInitialized() throws Exception {
         testFooBoxIsTrue("propertiesAsParametersInitialized.kt");
     }
+
+    @Test
+    public void classWithoutNamespace() throws Exception {
+        testFunctionOutput("classWithoutNamespace.kt", "Anonymous", "box", true);
+    }
 }
