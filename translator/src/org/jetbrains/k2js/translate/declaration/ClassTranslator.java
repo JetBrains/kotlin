@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.*;
 
 import java.util.ArrayList;
@@ -114,13 +116,21 @@ public final class ClassTranslator extends AbstractTranslator {
         if (!classDeclaration.isTrait()) {
             propertyList.add(Translation.generateClassInitializerMethod(classDeclaration, context()));
         }
-        // propertyList.addAll(translatePropertiesAsConstructorParameters());
+        propertyList.addAll(translatePropertiesAsConstructorParameters());
         propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration, context()));
         return new JsObjectLiteral(propertyList);
     }
-//
-//    @NotNull
-//    private List<JsPropertyInitializer> translatePropertiesAsConstructorParameters() {
-//        List<JsPropertyInitializer>
-//    }
+
+    @NotNull
+    private List<JsPropertyInitializer> translatePropertiesAsConstructorParameters() {
+        List<JsPropertyInitializer> result = new ArrayList<JsPropertyInitializer>();
+        for (JetParameter parameter : classDeclaration.getPrimaryConstructorParameters()) {
+            PropertyDescriptor descriptor =
+                    BindingUtils.getPropertyDescriptorForConstructorParameter(context().bindingContext(), parameter);
+            if (descriptor != null) {
+                result.addAll(PropertyTranslator.translateAccessors(descriptor, context()));
+            }
+        }
+        return result;
+    }
 }
