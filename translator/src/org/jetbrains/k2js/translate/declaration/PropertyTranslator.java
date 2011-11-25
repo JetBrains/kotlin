@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -139,20 +138,6 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsPropertyInitializer translateCustomAccessor(@NotNull JetPropertyAccessor expression) {
-        JsFunction methodBody = translateCustomAccessorBody(expression);
-        // we know that custom getters and setters always have their descriptors
-        return AstUtil.newNamedMethod(context().getNameForElement(expression), methodBody);
+        return Translation.functionTranslator(expression, context()).translateAsMethod();
     }
-
-    @NotNull
-    private JsFunction translateCustomAccessorBody(@NotNull JetPropertyAccessor expression) {
-        JsFunction methodBody = JsFunction.getAnonymousFunctionWithScope(context().getScopeForElement(expression));
-        JetExpression bodyExpression = expression.getBodyExpression();
-        assert bodyExpression != null : "Custom accessor should have a body.";
-        JsBlock methodBodyBlock = AstUtil.convertToBlock(
-                Translation.translateExpression(bodyExpression, context().newPropertyAccess(expression)));
-        methodBody.setBody(methodBodyBlock);
-        return methodBody;
-    }
-
 }

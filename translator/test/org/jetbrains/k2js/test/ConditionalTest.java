@@ -6,6 +6,7 @@ import org.junit.Test;
  * @author Talanov Pavel
  */
 public class ConditionalTest extends AbstractExpressionTest {
+
     final private static String MAIN = "conditional/";
 
     @Override

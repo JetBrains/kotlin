@@ -26,7 +26,7 @@ import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 public final class Translation {
 
     @NotNull
-    static public FunctionTranslator functionTranslator(@NotNull JetFunction function,
+    static public FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
                                                         @NotNull TranslationContext context) {
         return FunctionTranslator.newInstance(function, context);
     }

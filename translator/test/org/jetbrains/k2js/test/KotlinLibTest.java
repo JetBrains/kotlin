@@ -76,6 +76,8 @@ public class KotlinLibTest extends TranslationTest {
                 new RhinoPropertyTypesChecker("foo", propertyToType));
     }
 
+    //
+    // TODO:Refactor calls to function result checker with test
     @Test
     public void namespaceHasDeclaredFunction() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),

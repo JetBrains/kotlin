@@ -17,16 +17,18 @@ import java.util.List;
 public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
-    private final JetFunction functionDeclaration;
+    private final JetDeclarationWithBody functionDeclaration;
     @NotNull
     private final JsFunction functionObject;
 
     @NotNull
-    public static FunctionTranslator newInstance(@NotNull JetFunction function, @NotNull TranslationContext context) {
+    public static FunctionTranslator newInstance(@NotNull JetDeclarationWithBody function,
+                                                 @NotNull TranslationContext context) {
         return new FunctionTranslator(function, context);
     }
 
-    private FunctionTranslator(@NotNull JetFunction functionDeclaration, @NotNull TranslationContext context) {
+    private FunctionTranslator(@NotNull JetDeclarationWithBody functionDeclaration,
+                               @NotNull TranslationContext context) {
         super(context);
         this.functionDeclaration = functionDeclaration;
         this.functionObject = createFunctionObject();
@@ -34,7 +36,8 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     public JsPropertyInitializer translateAsMethod() {
-        JsName functionName = context().getNameForElement(functionDeclaration);
+        assert functionDeclaration instanceof JetElement;
+        JsName functionName = context().getNameForElement((JetElement) functionDeclaration);
         JsFunction function = generateFunctionObject();
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
@@ -53,14 +56,23 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private JsFunction createFunctionObject() {
-        if (functionDeclaration instanceof JetNamedFunction) {
+        if (isDeclaration()) {
             return JsFunction.getAnonymousFunctionWithScope
-                    (context().getScopeForElement(functionDeclaration));
+                    (context().getScopeForElement((JetDeclaration) functionDeclaration));
         }
-        if (functionDeclaration instanceof JetFunctionLiteral) {
+        if (isLiteral()) {
             return new JsFunction(context().enclosingScope());
         }
         throw new AssertionError("Unsupported type of functionDeclaration.");
+    }
+
+    private boolean isLiteral() {
+        return functionDeclaration instanceof JetFunctionLiteral;
+    }
+
+    private boolean isDeclaration() {
+        return (functionDeclaration instanceof JetNamedFunction) ||
+                (functionDeclaration instanceof JetPropertyAccessor);
     }
 
     @NotNull
@@ -101,7 +113,10 @@ public final class FunctionTranslator extends AbstractTranslator {
         if (functionDeclaration instanceof JetNamedFunction) {
             return context().newFunctionDeclaration((JetNamedFunction) functionDeclaration);
         }
-        if (functionDeclaration instanceof JetFunctionLiteral) {
+        if (functionDeclaration instanceof JetPropertyAccessor) {
+            return context().newPropertyAccess((JetPropertyAccessor) functionDeclaration);
+        }
+        if (isLiteral()) {
             return context().newEnclosingScope(functionObject.getScope());
         }
         throw new AssertionError("Unsupported type of functionDeclaration.");
