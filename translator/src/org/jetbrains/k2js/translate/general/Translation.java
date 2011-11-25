@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
-import org.jetbrains.k2js.translate.expression.ExpressionTranslator;
+import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
 import org.jetbrains.k2js.translate.expression.WhenTranslator;
@@ -24,11 +24,6 @@ import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
  *         Goal is to simlify interaction between translators.
  */
 public final class Translation {
-
-    @NotNull
-    static public ExpressionTranslator expressionTranslator(@NotNull TranslationContext context) {
-        return ExpressionTranslator.newInstance(context);
-    }
 
     @NotNull
     static public FunctionTranslator functionTranslator(@NotNull JetFunction function,
@@ -65,7 +60,7 @@ public final class Translation {
 
     @NotNull
     static public JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        return expressionTranslator(context).translate(expression);
+        return expression.accept(new ExpressionVisitor(), context);
     }
 
     @NotNull

@@ -24,8 +24,6 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
-//TODO ClassTranslator needs heavy improvement
-// did some improvement
 public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull

@@ -43,7 +43,6 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @Override
     @NotNull
     public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
-        //TODO:
         return Collections.emptyList();
     }
 

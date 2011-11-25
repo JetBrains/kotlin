@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * @author Talanov Pavel
  */
-//TODO: implement
 public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     @NotNull
