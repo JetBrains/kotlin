@@ -50,7 +50,7 @@ class MyTest() {
         i = <!UNUSED_VALUE!>456<!>;
     }
 
-    fun testWhile(a : Any?, b : Any?) {
+    fun testWhile() {
         var a : Any? = true
         var b : Any? = 34
         while (a is Any) {
