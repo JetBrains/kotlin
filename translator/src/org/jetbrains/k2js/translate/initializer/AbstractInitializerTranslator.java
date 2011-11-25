@@ -35,13 +35,13 @@ public abstract class AbstractInitializerTranslator extends AbstractTranslator {
     @NotNull
     public JsPropertyInitializer generateInitializeMethod() {
         JsPropertyInitializer initializer = new JsPropertyInitializer();
-        initializer.setLabelExpr(translationContext().program().getStringLiteral(Namer.INITIALIZE_METHOD_NAME));
+        initializer.setLabelExpr(context().program().getStringLiteral(Namer.INITIALIZE_METHOD_NAME));
         initializer.setValueExpr(generateInitializerFunction());
         return initializer;
     }
 
     @NotNull
     protected List<JsStatement> translatePropertyAndAnonymousInitializers(@NotNull JetDeclaration declaration) {
-        return visitor.traverse(declaration, translationContext());
+        return visitor.traverse(declaration, context());
     }
 }

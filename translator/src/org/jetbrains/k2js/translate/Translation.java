@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
+import org.jetbrains.k2js.translate.declaration.ClassTranslator;
+import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 

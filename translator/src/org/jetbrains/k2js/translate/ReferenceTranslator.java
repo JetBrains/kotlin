@@ -44,7 +44,7 @@ public class ReferenceTranslator extends AbstractTranslator {
     @Nullable
     private JsInvocation resolveAsPropertyAccess(@NotNull JetSimpleNameExpression expression) {
 
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
         if (propertyAccessTranslator.canBePropertyGetterCall(expression)) {
             return propertyAccessTranslator.translateAsPropertyGetterCall(expression);
         }
@@ -54,15 +54,15 @@ public class ReferenceTranslator extends AbstractTranslator {
     @Nullable
     private JsExpression resolveAsGlobalReference(@NotNull JetSimpleNameExpression expression) {
         DeclarationDescriptor referencedDescriptor =
-                BindingUtils.getDescriptorForReferenceExpression(translationContext().bindingContext(), expression);
+                BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), expression);
         if (referencedDescriptor == null) {
             return null;
         }
-        if (!translationContext().isDeclared(referencedDescriptor)) {
+        if (!context().isDeclared(referencedDescriptor)) {
             return null;
         }
-        JsName referencedName = translationContext().getNameForDescriptor(referencedDescriptor);
-        return TranslationUtils.getReference(translationContext(), expression, referencedName);
+        JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
+        return TranslationUtils.getReference(context(), expression, referencedName);
     }
 
     @Nullable
@@ -70,7 +70,7 @@ public class ReferenceTranslator extends AbstractTranslator {
         String name = expression.getReferencedName();
         assert name != null : "SimpleNameExpression should reference a name";
         JsName localReferencedName = TranslationUtils.getLocalReferencedName
-                (translationContext(), name);
+                (context(), name);
         if (localReferencedName == null) {
             return null;
         }

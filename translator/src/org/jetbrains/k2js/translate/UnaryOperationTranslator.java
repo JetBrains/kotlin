@@ -45,7 +45,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         this.expression = expression;
         this.isPrefix = isPrefix;
         this.isVariableReassignment = isVariableReassignment(expression);
-        this.isStatement = BindingUtils.isStatement(translationContext().bindingContext(), expression);
+        this.isStatement = BindingUtils.isStatement(context().bindingContext(), expression);
         this.baseExpression = translateBaseExpression();
         this.isPropertyAccess = isPropertyAccess(getBaseExpression());
         this.operationReference = getOverloadedOperationReference(expression.getOperationSign());
@@ -120,7 +120,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     @NotNull
     private JsExpression propertyReassignment(@NotNull JsExpression toCallMethodUpon) {
         JetExpression jetBaseExpression = getBaseExpression();
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
         JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(jetBaseExpression);
         assert propertyAccessTranslator.canBePropertyGetterCall(jetBaseExpression) : "Should be a getter call";
         JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
@@ -150,7 +150,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     @NotNull
     private JsExpression translateBaseExpression() {
         JetExpression baseExpression = getBaseExpression();
-        return Translation.translateAsExpression(baseExpression, translationContext());
+        return Translation.translateAsExpression(baseExpression, context());
     }
 
     private JetExpression getBaseExpression() {
@@ -168,7 +168,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     }
 
     public JsBinaryOperation unaryAsBinary(@NotNull JetToken token, @NotNull JsExpression expression) {
-        JsNumberLiteral oneLiteral = translationContext().program().getNumberLiteral(1);
+        JsNumberLiteral oneLiteral = context().program().getNumberLiteral(1);
         if (token.equals(JetTokens.PLUSPLUS)) {
             return new JsBinaryOperation(JsBinaryOperator.ADD, expression, oneLiteral);
         }

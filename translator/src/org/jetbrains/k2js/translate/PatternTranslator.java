@@ -25,7 +25,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translateIsExpression(@NotNull JetIsExpression expression) {
-        JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), translationContext());
+        JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), context());
         JetPattern pattern = getPattern(expression);
         JsExpression resultingExpression = translatePattern(pattern, left);
         if (expression.isNegated()) {
@@ -66,11 +66,11 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
-        return AstUtil.or(TranslationUtils.isNullCheck(translationContext(), expressionToMatch), isCheck);
+        return AstUtil.or(TranslationUtils.isNullCheck(context(), expressionToMatch), isCheck);
     }
 
     private boolean isNullable(JetTypePattern pattern) {
-        return BindingUtils.getTypeByReference(translationContext().bindingContext(),
+        return BindingUtils.getTypeByReference(context().bindingContext(),
                 getTypeReference(pattern)).isNullable();
     }
 
@@ -90,10 +90,10 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsNameRef getClassNameReferenceForTypeReference(@NotNull JetTypeReference typeReference) {
         ClassDescriptor referencedClass = BindingUtils.getClassDescriptorForTypeReference
-                (translationContext().bindingContext(), typeReference);
+                (context().bindingContext(), typeReference);
         //TODO should reference class by full name here
-        JsName className = translationContext().getNameForDescriptor(referencedClass);
-        return translationContext().getNamespaceQualifiedReference(className);
+        JsName className = context().getNameForDescriptor(referencedClass);
+        return context().getNamespaceQualifiedReference(className);
     }
 
     @NotNull
@@ -101,7 +101,7 @@ public final class PatternTranslator extends AbstractTranslator {
         JetExpression patternExpression = pattern.getExpression();
         assert patternExpression != null : "Expression patter should have an expression.";
         JsExpression expressionToMatchAgainst =
-                Translation.translateAsExpression(patternExpression, translationContext());
+                Translation.translateAsExpression(patternExpression, context());
         return AstUtil.equals(expressionToMatch, expressionToMatchAgainst);
     }
 }

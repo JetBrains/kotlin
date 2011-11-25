@@ -89,7 +89,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation resolveAsPropertyGet(@NotNull JetSimpleNameExpression expression) {
         JsName getterName = getNotNullGetterName(expression);
-        JsNameRef getterReference = TranslationUtils.getReference(translationContext(), expression, getterName);
+        JsNameRef getterReference = TranslationUtils.getReference(context(), expression, getterName);
         return AstUtil.newInvocation(getterReference);
     }
 
@@ -113,7 +113,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation resolveAsPropertySet(@NotNull JetSimpleNameExpression expression) {
         JsName setterName = getNotNullSetterName(expression);
-        JsNameRef setterReference = Translation.generateCorrectReference(translationContext(), expression, setterName);
+        JsNameRef setterReference = Translation.generateCorrectReference(context(), expression, setterName);
         return AstUtil.newInvocation(setterReference);
     }
 
@@ -121,7 +121,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     private JsInvocation translateReceiverAndReturnAccessorInvocation
             (@NotNull JetQualifiedExpression qualifiedExpression, @NotNull JsName accessorName) {
         JsExpression qualifier = Translation.translateAsExpression
-                (qualifiedExpression.getReceiverExpression(), translationContext());
+                (qualifiedExpression.getReceiverExpression(), context());
         JsNameRef result = accessorName.makeRef();
         AstUtil.setQualifier(result, qualifier);
         return AstUtil.newInvocation(result);
@@ -162,7 +162,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (getter == null) {
             return null;
         }
-        return translationContext().getNameForDescriptor(getter);
+        return context().getNameForDescriptor(getter);
     }
 
 
@@ -183,13 +183,13 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (setter == null) {
             return null;
         }
-        return translationContext().getNameForDescriptor(setter);
+        return context().getNameForDescriptor(setter);
     }
 
     @Nullable
     private PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression) {
         ResolvedCall<?> resolvedCall =
-                BindingUtils.getResolvedCall(translationContext().bindingContext(), expression);
+                BindingUtils.getResolvedCall(context().bindingContext(), expression);
         if (resolvedCall != null) {
             DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
             if (descriptor instanceof PropertyDescriptor) {

@@ -25,26 +25,26 @@ public class OperationTranslator extends AbstractTranslator {
         if (operationDescriptor == null) {
             return null;
         }
-        if (!translationContext().isDeclared(operationDescriptor)) {
+        if (!context().isDeclared(operationDescriptor)) {
             return null;
         }
-        return translationContext().getNameForDescriptor(operationDescriptor).makeRef();
+        return context().getNameForDescriptor(operationDescriptor).makeRef();
     }
 
     @Nullable
     private DeclarationDescriptor getOperationDescriptor(@NotNull JetSimpleNameExpression expression) {
         return BindingUtils.getDescriptorForReferenceExpression
-                (translationContext().bindingContext(), expression);
+                (context().bindingContext(), expression);
     }
 
     protected boolean isPropertyAccess(@NotNull JetExpression expression) {
-        return Translation.propertyAccessTranslator(translationContext()).canBePropertyAccess(expression);
+        return Translation.propertyAccessTranslator(context()).canBePropertyAccess(expression);
 
     }
 
     protected boolean isVariableReassignment(@NotNull JetExpression expression) {
         return BindingUtils.isVariableReassignment
-                (translationContext().bindingContext(), expression);
+                (context().bindingContext(), expression);
     }
 
 
@@ -56,7 +56,7 @@ public class OperationTranslator extends AbstractTranslator {
         private final JsName variableName;
 
         private TemporaryVariable(@NotNull JsExpression initExpression) {
-            this.variableName = translationContext().enclosingScope().declareTemporary();
+            this.variableName = context().enclosingScope().declareTemporary();
             this.assignmentExpression = AstUtil.newAssignment(variableName.makeRef(), initExpression);
         }
 

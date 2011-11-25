@@ -4,7 +4,9 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 
@@ -62,6 +64,42 @@ public final class TranslationUtils {
             throw new AssertionError("Argument with no expression encountered!");
         }
         return Translation.translateAsExpression(jetExpression, context);
+    }
+
+    //TODO: refactor
+    @NotNull
+    static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
+                                                  @NotNull JetProperty expression) {
+        JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
+        if (BindingUtils.belongsToNamespace(context.bindingContext(), expression)) {
+            return context.getNamespaceQualifiedReference(backingFieldName);
+        }
+        return AstUtil.thisQualifiedReference(backingFieldName);
+    }
+
+    @NotNull
+    static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
+                                                  @NotNull PropertyDescriptor descriptor) {
+        JsName backingFieldName = getBackingFieldName(descriptor.getName(), context);
+        if (BindingUtils.belongsToNamespace(context.bindingContext(), descriptor)) {
+            return context.getNamespaceQualifiedReference(backingFieldName);
+        }
+        return AstUtil.thisQualifiedReference(backingFieldName);
+    }
+
+    @NotNull
+    static public String getPropertyName(@NotNull JetProperty expression) {
+        String propertyName = expression.getName();
+        if (propertyName == null) {
+            throw new AssertionError("Property with no name encountered!");
+        }
+        return propertyName;
+    }
+
+    @NotNull
+    static private JsName getBackingFieldName(@NotNull String propertyName, @NotNull TranslationContext context) {
+        String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
+        return context.enclosingScope().findExistingName(backingFieldName);
     }
 
 

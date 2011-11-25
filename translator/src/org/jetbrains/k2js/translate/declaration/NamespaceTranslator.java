@@ -1,9 +1,13 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.k2js.translate.AbstractTranslator;
+import org.jetbrains.k2js.translate.Namer;
+import org.jetbrains.k2js.translate.Translation;
+import org.jetbrains.k2js.translate.TranslationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +66,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
         addMemberDeclarations(namespaceDeclaration);
         addClassesDeclarations(namespaceDeclaration);
         return AstUtil.newAssignmentStatement
-                (translationContext().getNameForElement(namespace).makeRef(), namespaceDeclaration);
+                (context().getNameForElement(namespace).makeRef(), namespaceDeclaration);
     }
 
     private void addClassesDeclarations(@NotNull JsInvocation namespaceDeclaration) {
@@ -77,8 +81,8 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsObjectLiteral translateNamespaceMemberDeclarations() {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-        propertyList.add(Translation.generateNamespaceInitializerMethod(namespace, translationContext()));
-        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(namespace, translationContext()));
+        propertyList.add(Translation.generateNamespaceInitializerMethod(namespace, context()));
+        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(namespace, context()));
         return new JsObjectLiteral(propertyList);
     }
 }

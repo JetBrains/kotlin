@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.k2js.translate.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public final class ClassTranslator extends AbstractTranslator {
     private List<JsNameRef> getSuperclassNameReferences() {
         List<JsNameRef> superclassReferences = new ArrayList<JsNameRef>();
         List<ClassDescriptor> superclassDescriptors =
-                BindingUtils.getSuperclassDescriptors(translationContext().bindingContext(), classDeclaration);
+                BindingUtils.getSuperclassDescriptors(context().bindingContext(), classDeclaration);
         addAncestorClass(superclassReferences, superclassDescriptors);
         addTraits(superclassReferences, superclassDescriptors);
         return superclassReferences;
@@ -96,8 +97,8 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         //TODO should get a full class name here
-        return translationContext().getNamespaceQualifiedReference
-                (translationContext().getNameForDescriptor(superClassDescriptor));
+        return context().getNamespaceQualifiedReference
+                (context().getNameForDescriptor(superClassDescriptor));
     }
 
     @Nullable
@@ -111,10 +112,15 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsObjectLiteral translateClassDeclarations() {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         if (!classDeclaration.isTrait()) {
-            propertyList.add(Translation.generateClassInitializerMethod(classDeclaration, translationContext()));
+            propertyList.add(Translation.generateClassInitializerMethod(classDeclaration, context()));
         }
-        propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration,
-                translationContext()));
+        // propertyList.addAll(translatePropertiesAsConstructorParameters());
+        propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration, context()));
         return new JsObjectLiteral(propertyList);
     }
+//
+//    @NotNull
+//    private List<JsPropertyInitializer> translatePropertiesAsConstructorParameters() {
+//        List<JsPropertyInitializer>
+//    }
 }

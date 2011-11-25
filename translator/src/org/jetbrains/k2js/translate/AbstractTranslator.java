@@ -21,7 +21,7 @@ public abstract class AbstractTranslator {
     }
 
     @NotNull
-    protected TranslationContext translationContext() {
+    protected TranslationContext context() {
         return context;
     }
 }

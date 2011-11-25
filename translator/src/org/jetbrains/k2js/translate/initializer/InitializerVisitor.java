@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.Translation;
 import org.jetbrains.k2js.translate.TranslationContext;
+import org.jetbrains.k2js.translate.TranslationUtils;
 import org.jetbrains.k2js.translate.TranslatorVisitor;
 
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
     JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
                                          @NotNull TranslationContext context) {
 
-        return AstUtil.newAssignmentStatement(backingFieldReference(property, context), initExpression);
+        return AstUtil.newAssignmentStatement(
+                TranslationUtils.backingFieldReference(context, property), initExpression);
     }
 
     @Override

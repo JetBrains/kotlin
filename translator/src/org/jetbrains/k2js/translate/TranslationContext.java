@@ -186,7 +186,7 @@ public final class TranslationContext {
     }
 
     @NotNull
-    JsName getNameForElement(@NotNull JetElement element) {
+    public JsName getNameForElement(@NotNull JetElement element) {
         DeclarationDescriptor descriptor = getDescriptorForElement(element);
         return getNameForDescriptor(descriptor);
     }

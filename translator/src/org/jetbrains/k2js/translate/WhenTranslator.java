@@ -55,7 +55,7 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
         JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
-                dummyCounterName.makeRef(), translationContext().program().getNumberLiteral(currentEntryNumber));
+                dummyCounterName.makeRef(), context().program().getNumberLiteral(currentEntryNumber));
         currentEntryNumber++;
         return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }
@@ -71,7 +71,7 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsVars generateInitStatement() {
-        return AstUtil.newVar(dummyCounterName, translationContext().program().getNumberLiteral(0));
+        return AstUtil.newVar(dummyCounterName, context().program().getNumberLiteral(0));
     }
 
     @NotNull
@@ -99,7 +99,7 @@ public class WhenTranslator extends AbstractTranslator {
     private JsStatement translateExpressionToExecute(@NotNull JetWhenEntry entry) {
         JetExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
-        return Translation.translateAsStatement(expressionToExecute, translationContext());
+        return Translation.translateAsStatement(expressionToExecute, context());
     }
 
     @NotNull
@@ -146,9 +146,9 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateCallCondition(@NotNull JetWhenConditionCall condition) {
         JsExpression suffixExpression =
-                Translation.translateAsExpression(getSuffixExpression(condition), translationContext());
+                Translation.translateAsExpression(getSuffixExpression(condition), context());
         AstUtil.setQualifier(suffixExpression, expressionToMatch);
-        return AstUtil.equalsTrue(suffixExpression, translationContext().program());
+        return AstUtil.equalsTrue(suffixExpression, context().program());
     }
 
     @NotNull
@@ -166,7 +166,7 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translatePatternCondition(@NotNull JetWhenConditionIsPattern condition) {
-        JsExpression patternMatchExpression = Translation.patternTranslator(translationContext()).
+        JsExpression patternMatchExpression = Translation.patternTranslator(context()).
                 translatePattern(getPattern(condition), expressionToMatch);
         if (condition.isNegated()) {
             return AstUtil.negated(patternMatchExpression);
@@ -185,6 +185,6 @@ public class WhenTranslator extends AbstractTranslator {
     private JsExpression translateExpressionToMatch(@NotNull JetWhenExpression expression) {
         JetExpression subject = expression.getSubjectExpression();
         assert subject != null : "Subject should not be null.";
-        return Translation.translateAsExpression(subject, translationContext());
+        return Translation.translateAsExpression(subject, context());
     }
 }

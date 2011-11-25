@@ -119,7 +119,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
     }
 
     private JsExpression translateLeftExpression() {
-        return Translation.translateAsExpression(expression.getLeft(), translationContext());
+        return Translation.translateAsExpression(expression.getLeft(), context());
     }
 
     @NotNull
@@ -132,7 +132,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
     private JsExpression translateRightExpression() {
         JetExpression rightExpression = expression.getRight();
         assert rightExpression != null : "Binary expression should have a right expression";
-        return Translation.translateAsExpression(rightExpression, translationContext());
+        return Translation.translateAsExpression(rightExpression, context());
     }
 
     @NotNull
@@ -142,7 +142,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     public JsInvocation setterCall(@NotNull JsExpression assignTo) {
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(translationContext());
+        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
         JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(expression.getLeft());
         setterCall.setArguments(assignTo);
         return setterCall;

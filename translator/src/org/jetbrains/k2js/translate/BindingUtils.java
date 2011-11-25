@@ -142,6 +142,22 @@ public final class BindingUtils {
     }
 
     @Nullable
+    static public PropertyDescriptor getPropertyDescriptorForConstructorParameter(@NotNull BindingContext context,
+                                                                                  @NotNull JetParameter parameter) {
+        return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+    }
+
+    @Nullable
+    static public JetProperty getPropertyForDescriptor(@NotNull BindingContext context,
+                                                       @NotNull PropertyDescriptor property) {
+        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, property);
+        if (!(result instanceof JetProperty)) {
+            return null;
+        }
+        return (JetProperty) result;
+    }
+
+    @Nullable
     static public DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
                                                                             @NotNull JetReferenceExpression reference) {
         return context.get(BindingContext.REFERENCE_TARGET, reference);
@@ -164,7 +180,11 @@ public final class BindingUtils {
     }
 
     static public boolean belongsToNamespace(@NotNull BindingContext context, @NotNull JetProperty property) {
-        return getPropertyDescriptor(context, property).getContainingDeclaration() instanceof NamespaceDescriptor;
+        return belongsToNamespace(context, getPropertyDescriptor(context, property));
+    }
+
+    static public boolean belongsToNamespace(@NotNull BindingContext context, @NotNull PropertyDescriptor descriptor) {
+        return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
     }
 
     @Nullable

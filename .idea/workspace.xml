@@ -8,25 +8,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/AbstractInitializerTranslator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/ClassInitializerTranslator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/NamespaceInitializerTranslator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/testFiles/class/cases/constructorWithPropertiesAsParameters.kt" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\org\jetbrains\k2js\translate\ClassInitializerVisitor.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\org\jetbrains\k2js\translate\InitializerGenerator.java" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/PropertyTranslator.java" />
+      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\org\jetbrains\k2js\translate\ClassDeclarationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassDeclarationTranslator.java" />
+      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\org\jetbrains\k2js\translate\ClassTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassTranslator.java" />
+      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\org\jetbrains\k2js\translate\DeclarationBodyVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/DeclarationBodyVisitor.java" />
+      <change type="MOVED" beforePath="C:\Dev\Projects\jet-contrib\k2js\translator\src\org\jetbrains\k2js\translate\NamespaceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/NamespaceTranslator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/AbstractTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/AbstractTranslator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BinaryOperationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BinaryOperationTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassDeclarationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassDeclarationTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationBodyVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationBodyVisitor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionTranslator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/FunctionTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/FunctionTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/OperationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/OperationTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/PatternTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/PatternTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/PropertyAccessTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/PropertyAccessTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ReferenceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ReferenceTranslator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationUtils.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationUtils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/UnaryOperationTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/UnaryOperationTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/WhenTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/WhenTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/AbstractInitializerTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/AbstractInitializerTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/ClassInitializerTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/ClassInitializerTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -58,7 +64,7 @@
   </component>
   <component name="DebuggerManager">
     <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java" line="176" class="org.jetbrains.k2js.translate.BindingUtils" package="org.jetbrains.k2js.translate">
+      <breakpoint url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java" line="196" class="org.jetbrains.k2js.translate.BindingUtils" package="org.jetbrains.k2js.translate">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -72,6 +78,19 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
       <breakpoint url="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/types/expressions/ExpressionTypingVisitorForStatements.java" line="126" class="org.jetbrains.jet.lang.types.expressions.ExpressionTypingVisitorForStatements" package="org.jetbrains.jet.lang.types.expressions">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/PropertyTranslator.java" line="72" class="org.jetbrains.k2js.translate.declaration.PropertyTranslator" package="org.jetbrains.k2js.translate.declaration">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -139,7 +158,7 @@
           <file leaf-file-name="OperationTranslator.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/OperationTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="45" column="0" selection-start="1750" selection-end="1750" vertical-scroll-proportion="0.0">
+                <state line="45" column="0" selection-start="1706" selection-end="1706" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -167,75 +186,19 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="ClassInheritanceTest.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ClassInheritanceTest.java">
+          <file leaf-file-name="DeclarationBodyVisitor.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/DeclarationBodyVisitor.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="37" column="16" selection-start="872" selection-end="872" vertical-scroll-proportion="0.0">
+                <state line="64" column="16" selection-start="2616" selection-end="2616" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="valuePassedToAncestorConstructor.kt" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/inheritance/cases/valuePassedToAncestorConstructor.kt">
+          <file leaf-file-name="TraitTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TraitTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="AbstractInitializerTranslator.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/AbstractInitializerTranslator.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="47" column="66" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="BasicClassTest.java" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="43" column="72" selection-start="1133" selection-end="1133" vertical-scroll-proportion="0.5726375">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="initializationOrder.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/inheritance/out/initializationOrder.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="10" column="36" selection-start="224" selection-end="224" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ClassTranslator.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="35" column="22" selection-start="1318" selection-end="1318" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="PropertyAccessorTest.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/PropertyAccessorTest.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="52" column="16" selection-start="1184" selection-end="1184" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="NamespaceTranslator.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="80" column="85" selection-start="3267" selection-end="3267" vertical-scroll-proportion="0.0">
+                <state line="22" column="16" selection-start="442" selection-end="442" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -244,16 +207,73 @@
           <file leaf-file-name="Translation.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="37" column="72" selection-start="1514" selection-end="1514" vertical-scroll-proportion="0.0">
+                <state line="84" column="5" selection-start="3538" selection-end="3538" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="TranslationContext.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java">
+          <file leaf-file-name="PropertyTranslator.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/PropertyTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="86" column="35" selection-start="3339" selection-end="3339" vertical-scroll-proportion="0.0">
+                <state line="53" column="79" selection-start="1989" selection-end="1989" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#943#966#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="BasicClassTest.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="33" column="16" selection-start="789" selection-end="789" vertical-scroll-proportion="0.33286318">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="BindingUtils.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="196" column="0" selection-start="9178" selection-end="9178" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="PropertyAccessorTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/PropertyAccessorTest.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="32" column="16" selection-start="716" selection-end="716" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="customGetter.js" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/testFiles/propertyAccess/out/customGetter.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="customSetter.js" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/testFiles/propertyAccess/out/customSetter.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="PropertyAccessTranslator.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/PropertyAccessTranslator.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="23" column="19" selection-start="1056" selection-end="1056" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -280,22 +300,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/AbstractInitializerTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceInitializerTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassInitializerTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerGenerator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/NamespaceInitializerTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationUtils.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassDeclarationTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/ClassInitializerTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/AbstractInitializerTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/DeclarationBodyVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/FunctionTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationUtils.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/DeclarationBodyVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/PropertyTranslator.java" />
       </list>
     </option>
   </component>
@@ -404,6 +424,10 @@
               <option name="myItemId" value="propertyAccess" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="out" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -420,112 +444,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="propertyAccess" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="translator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testFiles" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kotlinLib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="translator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testFiles" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="inheritance" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="out" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="translator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testFiles" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="inheritance" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="translator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testFiles" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="class" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="out" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="translator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testFiles" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="class" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -609,7 +527,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="initializer" />
+              <option name="myItemId" value="declaration" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -720,68 +638,6 @@
     </key>
   </component>
   <component name="RunManager" selected="JUnit.All in translator">
-    <configuration default="false" name="OperatorOverloadingTest.unaryOnIntProperty" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="org.jetbrains.k2js.test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="translator" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
-      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.OperatorOverloadingTest" />
-      <option name="METHOD_NAME" value="unaryOnIntProperty" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/translator" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="OperatorOverloadingTest.plusAssignReassign" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="org.jetbrains.k2js.test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="translator" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
-      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.OperatorOverloadingTest" />
-      <option name="METHOD_NAME" value="plusAssignReassign" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/translator" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="false" name="OperatorOverloadingTest.compareTo" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -838,6 +694,70 @@
         <option name="engineId" value="embedded" />
         <option name="fileUrl" value="file://$PROJECT_DIR$/translator/testFiles/operatorOverloading/out/postfixOnProperty.js" />
       </JSDebuggerConfigurationSettings>
+      <method />
+    </configuration>
+    <configuration default="false" name="PropertyAccessorTest.customGetter" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.jetbrains.k2js.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="translator" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
+      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.PropertyAccessorTest" />
+      <option name="METHOD_NAME" value="customGetter" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/translator" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
+      <method />
+    </configuration>
+    <configuration default="false" name="PropertyAccessorTest.customSetter" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.jetbrains.k2js.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="translator" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
+      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.PropertyAccessorTest" />
+      <option name="METHOD_NAME" value="customSetter" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/translator" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
       <method />
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -936,11 +856,11 @@
       </method>
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.OperatorOverloadingTest.unaryOnIntProperty" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.OperatorOverloadingTest.plusAssignReassign" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.OperatorOverloadingTest.compareTo" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.All in translator" />
-      <item index="4" class="java.lang.String" itemvalue="JavaScript Debug.postfixOnProperty.js" />
+      <item index="0" class="java.lang.String" itemvalue="JUnit.OperatorOverloadingTest.compareTo" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.All in translator" />
+      <item index="2" class="java.lang.String" itemvalue="JavaScript Debug.postfixOnProperty.js" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.PropertyAccessorTest.customGetter" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.PropertyAccessorTest.customSetter" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -1000,21 +920,21 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32853025" sideWeight="0.49812934" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32756963" sideWeight="0.4746125" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32756963" sideWeight="0.4703367" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24973261" sideWeight="0.7183908" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28530258" sideWeight="0.7685729" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28530258" sideWeight="0.7621593" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27185398" sideWeight="0.14270444" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27185398" sideWeight="0.15232496" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854405" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32853025" sideWeight="0.4703367" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32853025" sideWeight="0.46606094" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949087" sideWeight="0.49812934" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.728146" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18332443" sideWeight="0.728146" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27185398" sideWeight="0.85355425" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27185398" sideWeight="0.8439337" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3275862" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1058,7 +978,7 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added test for operator overloading." />
+    <option name="LAST_COMMIT_MESSAGE" value="Lots of refactoring and code improvements." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1071,7 +991,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Added tests and support for binary with type RHS expressions." />
     <MESSAGE value="Added support for multiple cases in one when entry." />
     <MESSAGE value="Split expression tests into different categories." />
     <MESSAGE value="Added support for break expressions in while/do while." />
@@ -1096,6 +1015,7 @@
     <MESSAGE value="Refactoring BinaryOperationTranslator." />
     <MESSAGE value="Binary operation overloading for most cases (except contains, compareTo)." />
     <MESSAGE value="Added test for operator overloading." />
+    <MESSAGE value="Lots of refactoring and code improvements." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1105,122 +1025,119 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslatorVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="975" selection-end="975" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ReferenceProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="19" selection-start="394" selection-end="394" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="120" column="0" selection-start="5047" selection-end="5197" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="18" selection-start="3936" selection-end="3936" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ExpressionVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="56" selection-start="4505" selection-end="4505" vertical-scroll-proportion="0.0">
+        <state line="96" column="72" selection-start="4075" selection-end="4075" vertical-scroll-proportion="0.0">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/class/out/classInstantiation.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/class/out/propertyAccess.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/ClassInitializerTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="64" selection-start="1788" selection-end="1788" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2117#2130#0" expanded="true" />
-            <element signature="e#3424#3437#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="84" selection-start="3447" selection-end="3447" vertical-scroll-proportion="0.0">
+        <state line="47" column="72" selection-start="1857" selection-end="1857" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#3127#3140#0" expanded="true" />
+            <element signature="e#3100#3113#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/OperatorOverloadingTest.java">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="16" selection-start="812" selection-end="812" vertical-scroll-proportion="0.0">
+        <state line="84" column="5" selection-start="3538" selection-end="3538" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/inheritance/out/initializationOrder.js">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/DeclarationBodyVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="36" selection-start="224" selection-end="224" vertical-scroll-proportion="0.0">
+        <state line="64" column="16" selection-start="2616" selection-end="2616" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/TranslationContext.java">
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TraitTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="35" selection-start="3339" selection-end="3339" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/ClassTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="22" selection-start="1318" selection-end="1318" vertical-scroll-proportion="0.0">
+        <state line="22" column="16" selection-start="442" selection-end="442" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/PropertyAccessorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="16" selection-start="1184" selection-end="1184" vertical-scroll-proportion="0.0">
+        <state line="32" column="16" selection-start="716" selection-end="716" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/NamespaceTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="85" selection-start="3267" selection-end="3267" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/Translation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="72" selection-start="1514" selection-end="1514" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ClassInheritanceTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="16" selection-start="872" selection-end="872" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/inheritance/cases/valuePassedToAncestorConstructor.kt">
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/propertyAccess/out/customGetter.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/AbstractInitializerTranslator.java">
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/propertyAccess/out/customSetter.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="66" selection-start="1886" selection-end="1886" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/PropertyAccessTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="19" selection-start="1056" selection-end="1056" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/BindingUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="196" column="0" selection-start="9178" selection-end="9178" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/PropertyTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="79" selection-start="1989" selection-end="1989" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#943#966#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="72" selection-start="1133" selection-end="1133" vertical-scroll-proportion="0.5726375">
+        <state line="33" column="16" selection-start="789" selection-end="789" vertical-scroll-proportion="0.33286318">
           <folding />
         </state>
       </provider>

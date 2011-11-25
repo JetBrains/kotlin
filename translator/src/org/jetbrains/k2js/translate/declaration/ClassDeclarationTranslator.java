@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
@@ -7,6 +7,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.k2js.translate.AbstractTranslator;
+import org.jetbrains.k2js.translate.Namer;
+import org.jetbrains.k2js.translate.Translation;
+import org.jetbrains.k2js.translate.TranslationContext;
 import org.jetbrains.k2js.utils.ClassSorter;
 
 import java.util.ArrayList;
@@ -35,11 +39,11 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         super(context);
         this.namespace = namespace;
         this.localToGlobalClassName = new HashMap<JsName, JsName>();
-        this.dummyFunctionScope = new JsScope(translationContext().enclosingScope(), "class declaration function");
+        this.dummyFunctionScope = new JsScope(context().enclosingScope(), "class declaration function");
     }
 
     public void generateDeclarations() {
-        declarationsObject = translationContext().enclosingScope().declareName(Namer.nameForClassesVariable());
+        declarationsObject = context().enclosingScope().declareName(Namer.nameForClassesVariable());
         assert declarationsObject != null;
         declarationsStatement =
                 AstUtil.newAssignmentStatement(declarationsObject.makeRef(), generateDummyFunctionInvocation());
@@ -97,16 +101,16 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
                 classes.add((JetClass) declaration);
             }
         }
-        return ClassSorter.sortUsingInheritanceOrder(classes, translationContext().bindingContext());
+        return ClassSorter.sortUsingInheritanceOrder(classes, context().bindingContext());
     }
 
     @NotNull
     private JsStatement generateDeclaration(@NotNull JetClass declaration) {
-        JsName globalClassName = translationContext().getNameForElement(declaration);
+        JsName globalClassName = context().getNameForElement(declaration);
         JsName localClassName = dummyFunctionScope.declareName(globalClassName.getIdent());
         localToGlobalClassName.put(localClassName, globalClassName);
         JsInvocation classDeclarationExpression =
-                Translation.translateClassDeclaration(declaration, translationContext());
+                Translation.translateClassDeclaration(declaration, context());
         return AstUtil.newVar(localClassName, classDeclarationExpression);
     }
 }

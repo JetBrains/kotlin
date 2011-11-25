@@ -22,6 +22,6 @@ public final class ExpressionTranslator extends AbstractTranslator {
 
     @NotNull
     public JsNode translate(@NotNull JetExpression jetExpression) {
-        return jetExpression.accept(visitor, translationContext());
+        return jetExpression.accept(visitor, context());
     }
 }

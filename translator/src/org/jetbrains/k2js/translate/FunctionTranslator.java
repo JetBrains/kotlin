@@ -23,14 +23,14 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction expression) {
-        JsName functionName = translationContext().getNameForElement(expression);
+    public JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction expression) {
+        JsName functionName = context().getNameForElement(expression);
         JsFunction function = generateFunctionObject(expression);
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
     @NotNull
-    JsFunction translateAsLiteral(@NotNull JetFunctionLiteral expression) {
+    public JsFunction translateAsLiteral(@NotNull JetFunctionLiteral expression) {
         return generateFunctionObject(expression);
     }
 
@@ -45,10 +45,10 @@ public final class FunctionTranslator extends AbstractTranslator {
     private JsFunction createFunctionObject(JetFunction function) {
         if (function instanceof JetNamedFunction) {
             return JsFunction.getAnonymousFunctionWithScope
-                    (translationContext().getScopeForElement(function));
+                    (context().getScopeForElement(function));
         }
         if (function instanceof JetFunctionLiteral) {
-            return new JsFunction(translationContext().enclosingScope());
+            return new JsFunction(context().enclosingScope());
         }
         throw new AssertionError("Unsupported type of function.");
     }
@@ -90,10 +90,10 @@ public final class FunctionTranslator extends AbstractTranslator {
     private TranslationContext functionBodyContext(@NotNull JetFunction function,
                                                    @NotNull JsScope functionScope) {
         if (function instanceof JetNamedFunction) {
-            return translationContext().newFunctionDeclaration((JetNamedFunction) function);
+            return context().newFunctionDeclaration((JetNamedFunction) function);
         }
         if (function instanceof JetFunctionLiteral) {
-            return translationContext().newFunctionLiteral(functionScope);
+            return context().newFunctionLiteral(functionScope);
         }
         throw new AssertionError("Unsupported type of function.");
     }

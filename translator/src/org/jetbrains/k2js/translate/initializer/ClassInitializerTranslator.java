@@ -55,7 +55,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     private List<JsStatement> generateCallToSuperMethod() {
         List<JsStatement> result = new ArrayList<JsStatement>();
-        if (BindingUtils.hasAncestorClass(translationContext().bindingContext(), classDeclaration)) {
+        if (BindingUtils.hasAncestorClass(context().bindingContext(), classDeclaration)) {
             JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
             List<JsExpression> arguments = translateArguments();
             result.add(AstUtil.convertToStatement
@@ -67,7 +67,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     private List<JsExpression> translateArguments() {
         JetDelegatorToSuperCall superCall = getSuperCall();
-        return TranslationUtils.translateArgumentList(superCall.getValueArguments(), translationContext());
+        return TranslationUtils.translateArgumentList(superCall.getValueArguments(), context());
     }
 
     @NotNull
