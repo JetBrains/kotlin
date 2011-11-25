@@ -7,7 +7,7 @@ import java.util.*
 
 fun iarray(vararg a : String) = a // BUG
 
-fun main(vals : IntArray) {
+fun main() {
     val vals = iarray("789", "678", "567")
     val diffs = ArrayList<Int>
     for (i in vals.indices) {
