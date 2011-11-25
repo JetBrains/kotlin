@@ -79,11 +79,10 @@ public class OperatorOverloadingTest extends TranslationTest {
         testFooBoxIsTrue("notOverload.kt");
     }
 
-    //TODO: test fails due to issue KT-618
-//    @Test
-//    public void compareTo() throws Exception {
-//        testFooBoxIsTrue("compareTo.kt");
-//    }
+    @Test
+    public void compareTo() throws Exception {
+        testFooBoxIsTrue("compareTo.kt");
+    }
 
     @Test
     public void plusAndMinusAsAnExpression() throws Exception {

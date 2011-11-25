@@ -130,12 +130,4 @@ public final class TranslationUtils {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
         return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
     }
-
-    @NotNull
-    public static JsStatement assignmentToBackingFieldFromParameter(@NotNull TranslationContext context,
-                                                                    @NotNull JetProperty property,
-                                                                    @NotNull JsParameter parameter) {
-        return assignmentToBackingFieldFromParameter
-                (context, BindingUtils.getPropertyDescriptor(context.bindingContext(), property), parameter);
-    }
 }

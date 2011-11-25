@@ -63,21 +63,22 @@ public final class BindingUtils {
         return getDescriptorForExpression(context, declaration, PropertyDescriptor.class);
     }
 
-    @NotNull
-    static public PropertySetterDescriptor getPropertySetterDescriptorForProperty(@NotNull BindingContext context,
-                                                                                  @NotNull JetProperty property) {
-        PropertySetterDescriptor result = getPropertyDescriptor(context, property).getSetter();
-        assert result != null : "Property should have a setter descriptor";
-        return result;
-    }
-
-    @NotNull
-    static public PropertyGetterDescriptor getPropertyGetterDescriptorForProperty(@NotNull BindingContext context,
-                                                                                  @NotNull JetProperty property) {
-        PropertyGetterDescriptor result = getPropertyDescriptor(context, property).getGetter();
-        assert result != null : "Property should have a getter descriptor";
-        return result;
-    }
+    //TODO: possibly remove
+//    @NotNull
+//    static public PropertySetterDescriptor getPropertySetterDescriptorForProperty(@NotNull BindingContext context,
+//                                                                                  @NotNull JetProperty property) {
+//        PropertySetterDescriptor result = getPropertyDescriptor(context, property).getSetter();
+//        assert result != null : "Property should have a setter descriptor";
+//        return result;
+//    }
+//
+//    @NotNull
+//    static public PropertyGetterDescriptor getPropertyGetterDescriptorForProperty(@NotNull BindingContext context,
+//                                                                                  @NotNull JetProperty property) {
+//        PropertyGetterDescriptor result = getPropertyDescriptor(context, property).getGetter();
+//        assert result != null : "Property should have a getter descriptor";
+//        return result;
+//    }
 
     @NotNull
     static public JetClass getClassForDescriptor(@NotNull BindingContext context,
@@ -177,14 +178,6 @@ public final class BindingUtils {
             }
         }
         return null;
-    }
-
-    static public boolean belongsToNamespace(@NotNull BindingContext context, @NotNull JetProperty property) {
-        return belongsToNamespace(context, getPropertyDescriptor(context, property));
-    }
-
-    static public boolean belongsToNamespace(@NotNull BindingContext context, @NotNull PropertyDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
     }
 
     @Nullable
