@@ -73,7 +73,7 @@ public class DescriptorRenderer implements Renderer {
     }
 
     public String renderType(JetType type) {
-        if (type != null) {
+        if (type == null) {
             return escape("<?>");
         } else {
             return escape(type.toString());
