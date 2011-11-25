@@ -35,6 +35,7 @@ public class VarArgTest extends CodegenTestCase {
         loadText("fun test() = testf(239, 7); fun testf(vararg ts: Int) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
+        System.out.println(main.toString());
         Object res = main.invoke(null);
         assertTrue(((int[])res).length == 2);
         assertTrue(((int[])res)[0] == 239);
