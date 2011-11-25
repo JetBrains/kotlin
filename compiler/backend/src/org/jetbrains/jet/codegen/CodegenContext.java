@@ -10,6 +10,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /*
  * @author max
@@ -38,6 +39,8 @@ public abstract class CodegenContext {
     public  final ObjectOrClosureCodegen closure;
     
     HashMap<JetType,Integer> typeInfoConstants;
+    HashMap<Integer,JetType> reverseTypeInfoConstants;
+    int typeInfoConstantsCount;
     HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
     protected StackValue outerExpression;
@@ -177,13 +180,16 @@ public abstract class CodegenContext {
         if(parentContext != STATIC)
             return parentContext.getTypeInfoConstantIndex(type);
         
-        if(typeInfoConstants == null)
-            typeInfoConstants = new HashMap<JetType, Integer>();
+        if(typeInfoConstants == null) {
+            typeInfoConstants = new LinkedHashMap<JetType, Integer>();
+            reverseTypeInfoConstants = new LinkedHashMap<Integer, JetType>();
+        }
 
         Integer index = typeInfoConstants.get(type);
         if(index == null) {
-            index = typeInfoConstants.size();
+            index = typeInfoConstantsCount++;
             typeInfoConstants.put(type, index);
+            reverseTypeInfoConstants.put(index, type);
         }
         return index;
     }

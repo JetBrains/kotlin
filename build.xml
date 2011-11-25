@@ -20,7 +20,7 @@
 
     <target name="compileRT">
         <mkdir dir="${output}/classes/runtime"/>
-        <javac destdir="${output}/classes/runtime">
+        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source">
             <src path="${basedir}/stdlib/src"/>
             <classpath refid="classpath"/>
         </javac>
@@ -36,7 +36,7 @@
     
     <target name="compile" depends="compileRT">
         <mkdir dir="${output}/classes/compiler"/>
-        <javac destdir="${output}/classes/compiler">
+        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source">
             <src refid="sourcepath"/>
             <classpath refid="classpath"/>
         </javac>

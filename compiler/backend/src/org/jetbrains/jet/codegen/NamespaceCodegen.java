@@ -14,9 +14,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -114,11 +112,12 @@ public class NamespaceCodegen {
     private void generateTypeInfoFields(JetNamespace namespace, CodegenContext context) {
         if(context.typeInfoConstants != null) {
             String jvmClassName = getJVMClassName(namespace.getName());
-            for(Map.Entry<JetType,Integer> e : (context.typeInfoConstants != null ? context.typeInfoConstants : Collections.<JetType,Integer>emptyMap()).entrySet()) {
-                String fieldName = "$typeInfoCache$" + e.getValue();
+            for(int index = 0; index != context.typeInfoConstantsCount; index++) {
+                JetType type = context.reverseTypeInfoConstants.get(index);
+                String fieldName = "$typeInfoCache$" + index;
                 v.newField(null, ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, fieldName, "Ljet/typeinfo/TypeInfo;", null, null);
 
-                MethodVisitor mmv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getCachedTypeInfo$" + e.getValue(), "()Ljet/typeinfo/TypeInfo;", null, null);
+                MethodVisitor mmv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getCachedTypeInfo$" + index, "()Ljet/typeinfo/TypeInfo;", null, null);
                 InstructionAdapter v = new InstructionAdapter(mmv);
                 v.visitFieldInsn(GETSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");
                 v.visitInsn(DUP);
@@ -126,7 +125,7 @@ public class NamespaceCodegen {
                 v.visitJumpInsn(IFNONNULL, end);
 
                 v.pop();
-                generateTypeInfo(context, v, e.getKey(), state.getTypeMapper(), e.getKey());
+                generateTypeInfo(context, v, type, state.getTypeMapper(), type);
                 v.dup();
 
                 v.visitFieldInsn(PUTSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");

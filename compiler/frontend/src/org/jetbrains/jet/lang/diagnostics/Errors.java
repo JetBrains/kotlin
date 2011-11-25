@@ -16,7 +16,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
@@ -374,7 +373,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract member {1}") {
         @Override
         protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
-            return jetClassOrObject.getName();
+            return JetPsiUtil.safeName(jetClassOrObject.getName());
         }
 
         @Override

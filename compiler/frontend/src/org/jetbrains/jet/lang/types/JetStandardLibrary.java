@@ -284,7 +284,7 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public ClassDescriptor getArray() {
+    public ClassDescriptor  getArray() {
         initStdClasses();
         return arrayClass;
     }

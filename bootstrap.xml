@@ -10,6 +10,7 @@
     <echoprop prop="os.version"/>
     <echoprop prop="os.arch"/>
     <echoprop prop="java.home"/>
+    <echoprop prop="java.vendor"/>
     <echoprop prop="java.version"/>
     <echoprop prop="user.name"/>
     <echoprop prop="user.home"/>
