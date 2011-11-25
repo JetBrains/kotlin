@@ -51,7 +51,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @NotNull
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression,
                                                           @NotNull TranslationContext context) {
-        return Arrays.asList(Translation.functionTranslator(context).translateAsMethod(expression));
+        return Arrays.asList(Translation.functionTranslator(expression, context).translateAsMethod());
     }
 
     @Override

@@ -381,7 +381,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression,
                                                  @NotNull TranslationContext context) {
-        return Translation.functionTranslator(context).translateAsLiteral(expression.getFunctionLiteral());
+        return Translation.functionTranslator(expression.getFunctionLiteral(), context).translateAsLiteral();
     }
 
     @Override

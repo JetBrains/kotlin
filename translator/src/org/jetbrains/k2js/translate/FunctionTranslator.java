@@ -3,67 +3,70 @@ package org.jetbrains.k2js.translate;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Talanov Pavel
  */
-//TODO: think about adding state to translator
 public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
-    public static FunctionTranslator newInstance(@NotNull TranslationContext context) {
-        return new FunctionTranslator(context);
+    private final JetFunction functionDeclaration;
+    @NotNull
+    private final JsFunction functionObject;
+
+    @NotNull
+    public static FunctionTranslator newInstance(@NotNull JetFunction function, @NotNull TranslationContext context) {
+        return new FunctionTranslator(function, context);
     }
 
-    private FunctionTranslator(@NotNull TranslationContext context) {
+    private FunctionTranslator(@NotNull JetFunction functionDeclaration, @NotNull TranslationContext context) {
         super(context);
+        this.functionDeclaration = functionDeclaration;
+        this.functionObject = createFunctionObject();
     }
 
     @NotNull
-    public JsPropertyInitializer translateAsMethod(@NotNull JetNamedFunction expression) {
-        JsName functionName = context().getNameForElement(expression);
-        JsFunction function = generateFunctionObject(expression);
+    public JsPropertyInitializer translateAsMethod() {
+        JsName functionName = context().getNameForElement(functionDeclaration);
+        JsFunction function = generateFunctionObject();
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
     @NotNull
-    public JsFunction translateAsLiteral(@NotNull JetFunctionLiteral expression) {
-        return generateFunctionObject(expression);
+    public JsFunction translateAsLiteral() {
+        return generateFunctionObject();
     }
 
     @NotNull
-    private JsFunction generateFunctionObject(@NotNull JetFunction jetFunction) {
-        JsFunction result = createFunctionObject(jetFunction);
-        result.setParameters(TranslationUtils.translateParameters
-                (jetFunction.getValueParameters(), result.getScope()));
-        result.setBody(translateBody(jetFunction, result.getScope()));
-        return result;
+    private JsFunction generateFunctionObject() {
+        functionObject.setParameters(translateParameters(functionDeclaration.getValueParameters(),
+                functionObject.getScope()));
+        functionObject.setBody(translateBody());
+        return functionObject;
     }
 
-    private JsFunction createFunctionObject(JetFunction function) {
-        if (function instanceof JetNamedFunction) {
+    private JsFunction createFunctionObject() {
+        if (functionDeclaration instanceof JetNamedFunction) {
             return JsFunction.getAnonymousFunctionWithScope
-                    (context().getScopeForElement(function));
+                    (context().getScopeForElement(functionDeclaration));
         }
-        if (function instanceof JetFunctionLiteral) {
+        if (functionDeclaration instanceof JetFunctionLiteral) {
             return new JsFunction(context().enclosingScope());
         }
-        throw new AssertionError("Unsupported type of function.");
+        throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
     @NotNull
-    private JsBlock translateBody(@NotNull JetFunction function, @NotNull JsScope functionScope) {
-        JetExpression jetBodyExpression = function.getBodyExpression();
+    private JsBlock translateBody() {
+        JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
         //TODO decide if there are cases where this assert is illegal
         assert jetBodyExpression != null : "Function without body not supported";
-        JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext(function, functionScope));
-        return wrapWithReturnIfNeeded(body, !function.hasBlockBody());
+        JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext());
+        return wrapWithReturnIfNeeded(body, !functionDeclaration.hasBlockBody());
     }
 
     @NotNull
@@ -79,7 +82,7 @@ public final class FunctionTranslator extends AbstractTranslator {
             addReturnToBlockStatement(bodyBlock);
             return bodyBlock;
         }
-        throw new AssertionError("Invalid node as function body");
+        throw new AssertionError("Invalid node as functionDeclaration body");
     }
 
     private void addReturnToBlockStatement(@NotNull JsBlock bodyBlock) {
@@ -91,14 +94,24 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private TranslationContext functionBodyContext(@NotNull JetFunction function,
-                                                   @NotNull JsScope functionScope) {
-        if (function instanceof JetNamedFunction) {
-            return context().newFunctionDeclaration((JetNamedFunction) function);
+    private TranslationContext functionBodyContext() {
+        if (functionDeclaration instanceof JetNamedFunction) {
+            return context().newFunctionDeclaration((JetNamedFunction) functionDeclaration);
         }
-        if (function instanceof JetFunctionLiteral) {
-            return context().newFunctionLiteral(functionScope);
+        if (functionDeclaration instanceof JetFunctionLiteral) {
+            return context().newEnclosingScope(functionObject.getScope());
         }
-        throw new AssertionError("Unsupported type of function.");
+        throw new AssertionError("Unsupported type of functionDeclaration.");
+    }
+
+    @NotNull
+    private List<JsParameter> translateParameters(@NotNull List<JetParameter> jetParameters,
+                                                  @NotNull JsScope functionScope) {
+        List<JsParameter> jsParameters = new ArrayList<JsParameter>();
+        for (JetParameter jetParameter : jetParameters) {
+            JsName parameterName = functionScope.declareName(jetParameter.getName());
+            jsParameters.add(new JsParameter(parameterName));
+        }
+        return jsParameters;
     }
 }

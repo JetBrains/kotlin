@@ -117,11 +117,12 @@ public final class TranslationContext {
         return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
     }
 
-    @NotNull
-    public TranslationContext newFunctionLiteral(@NotNull JsScope correspondingScope) {
-        Scopes newScopes = new Scopes(correspondingScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
-    }
+    //TODO: consider deleting
+//    @NotNull
+//    public TranslationContext newFunctionLiteral(@NotNull JsScope correspondingScope) {
+//        Scopes newScopes = new Scopes(correspondingScope, scopes.classScope, scopes.namespaceScope);
+//        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, block);
+//    }
 
     // Note: Should be used if and only if scope has no corresponding descriptor
     @NotNull

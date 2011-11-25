@@ -25,8 +25,9 @@ public final class Translation {
     }
 
     @NotNull
-    static public FunctionTranslator functionTranslator(@NotNull TranslationContext context) {
-        return FunctionTranslator.newInstance(context);
+    static public FunctionTranslator functionTranslator(@NotNull JetFunction function,
+                                                        @NotNull TranslationContext context) {
+        return FunctionTranslator.newInstance(function, context);
     }
 
     @NotNull
