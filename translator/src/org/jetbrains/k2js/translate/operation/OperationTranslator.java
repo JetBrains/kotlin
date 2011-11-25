@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
@@ -9,6 +9,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
  * @author Talanov Pavel

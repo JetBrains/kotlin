@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.k2js.generate.CodeGenerator;
-import org.jetbrains.k2js.translate.GenerationState;
+import org.jetbrains.k2js.translate.general.GenerationState;
 
 import java.io.File;
 import java.io.IOException;

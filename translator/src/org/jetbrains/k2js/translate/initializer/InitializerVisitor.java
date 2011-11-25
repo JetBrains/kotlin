@@ -5,10 +5,10 @@ import com.google.dart.compiler.backend.js.ast.JsStatement;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.Translation;
-import org.jetbrains.k2js.translate.TranslationContext;
-import org.jetbrains.k2js.translate.TranslationUtils;
-import org.jetbrains.k2js.translate.TranslatorVisitor;
+import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.general.TranslatorVisitor;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

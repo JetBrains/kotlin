@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.general;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
  * @author Talanov Pavel

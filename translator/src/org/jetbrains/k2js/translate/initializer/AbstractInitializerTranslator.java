@@ -6,9 +6,9 @@ import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.k2js.translate.AbstractTranslator;
-import org.jetbrains.k2js.translate.Namer;
-import org.jetbrains.k2js.translate.TranslationContext;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.utils.Namer;
 
 import java.util.List;
 

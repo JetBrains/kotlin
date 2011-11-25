@@ -12,7 +12,11 @@ import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.k2js.translate.*;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.Namer;
 
 import java.util.ArrayList;
 import java.util.List;

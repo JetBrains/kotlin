@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
@@ -9,6 +9,9 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.reference.ReferenceProvider;
 
 import java.util.ArrayList;
 import java.util.List;

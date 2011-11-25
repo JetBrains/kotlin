@@ -1,8 +1,10 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.TranslationContext;
 
 /**
  * @author Talanov Pavel

@@ -1,7 +1,7 @@
 /*
  * @author Talanov Pavel
  */
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.general;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 

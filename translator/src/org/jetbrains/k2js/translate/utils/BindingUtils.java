@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.utils;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
@@ -8,6 +8,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.utils.Namer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,7 @@ public final class OperatorTable {
         return binaryOperatorsMap.containsKey(token);
     }
 
-    static boolean hasCorrespondingFunctionInvocation(@NotNull JetToken token) {
+    public static boolean hasCorrespondingFunctionInvocation(@NotNull JetToken token) {
         return operatorToFunctionNameReference.containsKey(token);
     }
 

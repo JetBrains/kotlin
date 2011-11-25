@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate;
+package org.jetbrains.k2js.translate.general;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
@@ -8,8 +8,15 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
+import org.jetbrains.k2js.translate.expression.ExpressionTranslator;
+import org.jetbrains.k2js.translate.expression.FunctionTranslator;
+import org.jetbrains.k2js.translate.expression.PatternTranslator;
+import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
+import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
+import org.jetbrains.k2js.translate.reference.ReferenceProvider;
+import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 
 /**
  * @author Talanov Pavel

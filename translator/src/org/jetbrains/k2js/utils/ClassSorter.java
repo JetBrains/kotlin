@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.translate.BindingUtils;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
 import java.util.List;

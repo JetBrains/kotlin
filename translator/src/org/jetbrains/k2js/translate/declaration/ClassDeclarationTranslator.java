@@ -7,10 +7,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.k2js.translate.AbstractTranslator;
-import org.jetbrains.k2js.translate.Namer;
-import org.jetbrains.k2js.translate.Translation;
-import org.jetbrains.k2js.translate.TranslationContext;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.utils.Namer;
 import org.jetbrains.k2js.utils.ClassSorter;
 
 import java.util.ArrayList;
