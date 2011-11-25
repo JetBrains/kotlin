@@ -37,7 +37,7 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testInrange() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("array list", foo.invoke(null, 239));
         assertEquals("digit", foo.invoke(null, 0));
@@ -49,13 +49,13 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testIs() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 
     public void testRange() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("array list", foo.invoke(null, 239));
         assertEquals("digit", foo.invoke(null, 0));
@@ -67,7 +67,7 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testRangeChar() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("digit", foo.invoke(null, '0'));
         assertEquals("something", foo.invoke(null, 'A'));
@@ -99,18 +99,19 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, new Tuple2<String, String>(null, "not", "tuple")));
     }
 
-    public void testCall() throws Exception {
-        loadText("fun foo(s: String) = when(s) { .startsWith(\"J\") => \"JetBrains\"; else => \"something\" }");
-        Method foo = generateFunction();
-        try {
-            assertEquals("JetBrains", foo.invoke(null, "Java"));
-            assertEquals("something", foo.invoke(null, "C#"));
-        }
-        catch (Throwable t) {
-            System.out.println(generateToText());
-            t.printStackTrace();
-        }
-    }
+    // Commented for KT-621
+//    public void testCall() throws Exception {
+//        loadText("fun foo(s: String) = when(s) { .startsWith(\"J\") => \"JetBrains\"; else => \"something\" }");
+//        Method foo = generateFunction();
+//        try {
+//            assertEquals("JetBrains", foo.invoke(null, "Java"));
+//            assertEquals("something", foo.invoke(null, "C#"));
+//        }
+//        catch (Throwable t) {
+//            System.out.println(generateToText());
+//            t.printStackTrace();
+//        }
+//    }
 
     public void testCallProperty() throws Exception {
         blackBoxFile("patternMatching/callProperty.jet");

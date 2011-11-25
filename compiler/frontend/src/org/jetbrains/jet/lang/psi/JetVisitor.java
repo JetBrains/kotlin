@@ -356,10 +356,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitWhenConditionCall(JetWhenConditionCall condition, D data) {
-        return visitJetElement(condition, data);
-    }
-
     public R visitWhenConditionIsPattern(JetWhenConditionIsPattern condition, D data) {
         return visitJetElement(condition, data);
     }

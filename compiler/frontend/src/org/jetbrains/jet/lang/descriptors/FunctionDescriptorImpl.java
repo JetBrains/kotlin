@@ -120,7 +120,6 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     }
 
     @Override
-    @NotNull
     public JetType getReturnType() {
         return unsubstitutedReturnType;
     }

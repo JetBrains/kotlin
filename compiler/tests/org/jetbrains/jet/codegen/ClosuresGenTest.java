@@ -6,7 +6,7 @@ package org.jetbrains.jet.codegen;
 public class ClosuresGenTest extends CodegenTestCase {
     public void testSimplestClosure() throws Exception {
         blackBoxFile("classes/simplestClosure.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testSimplestClosureAndBoxing() throws Exception {
@@ -27,7 +27,7 @@ public class ClosuresGenTest extends CodegenTestCase {
 
     public void testEnclosingLocalVariable() throws Exception {
         blackBoxFile("classes/enclosingLocalVariable.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testDoubleEnclosedLocalVariable() throws Exception {

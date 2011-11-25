@@ -23,11 +23,21 @@ class Luhny() {
 
     fun process(it : Char) {
         buffer.addLast(it)
-        when (it) {
-            .isDigit() => digits.addLast(it.int - '0'.int)
-            ' ', '-'   => {}
-            else       => printAll()
+
+        // Commented for KT-621
+        // when (it) {
+        //     .isDigit() => digits.addLast(it.int - '0'.int)
+        //     ' ', '-'   => {}
+        //     else       => printAll()
+        // }
+
+        if (it.isDigit()) {
+            digits.addLast(it.int - '0'.int)
+        } else if (it == ' ' || it == '-') {
+        } else {
+            printAll()
         }
+
         if (digits.size() > 16)
           printOneDigit()
         check()

@@ -24,14 +24,25 @@ class Luhny() {
 
     fun charIn(it : Char) {
         buffer.push(it)
-        when (it) {
-            .isDigit() => digits.push(it.int - '0'.int)
-            ' ', '-' => {}
-            else => {
-                    printAll()
-                    digits.clear()
-            }
+
+        // Commented for KT-621
+        // when (it) {
+        //   .isDigit() => digits.push(it.int - '0'.int)
+        //   ' ', '-' => {}
+        //   else => {
+        //           printAll()
+        //           digits.clear()
+        //   }
+        // }
+
+        if (it.isDigit()) {
+            digits.push(it.int - '0'.int)
+        } else if (it == ' ' || it == '-') {
+        } else {
+            printAll()
+            digits.clear()
         }
+
         if (digits.size() > 16)
           printOneDigit()
         check()

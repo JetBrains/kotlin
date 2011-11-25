@@ -162,6 +162,22 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertIntersection("Int?", "Int?", "Int?");
         assertIntersection("Int", "Int?", "Int");
         assertIntersection("Int", "Int", "Int?");
+
+        assertIntersection("Int", "Any", "Int");
+        assertIntersection("Int", "Int", "Any");
+
+        assertIntersection("Int", "Any", "Int?");
+        assertIntersection("Int", "Int?", "Any");
+        assertIntersection("Int", "Any?", "Int");
+        assertIntersection("Int", "Int", "Any?");
+
+        assertIntersection("Nothing", "Nothing", "Nothing");
+        assertIntersection("Nothing?", "Nothing?", "Nothing?");
+        assertIntersection("Nothing", "Nothing", "Nothing?");
+        assertIntersection("Nothing", "Nothing?", "Nothing");
+
+        assertIntersection("Nothing?", "String?", "Nothing?");
+        assertIntersection("Nothing?", "Nothing?", "String?");
     }
 
     public void testBasicSubtyping() throws Exception {

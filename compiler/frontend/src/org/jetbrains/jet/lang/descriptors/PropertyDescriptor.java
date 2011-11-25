@@ -113,7 +113,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return expectedThisObject;
     }
 
-    @NotNull
     @Override
     public JetType getReturnType() {
         return getOutType();

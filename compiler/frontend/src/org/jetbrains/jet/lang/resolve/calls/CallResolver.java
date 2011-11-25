@@ -39,6 +39,8 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  * @author abreslav
  */
 public class CallResolver {
+    private static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
+
     private final JetSemanticServices semanticServices;
     private final OverloadingConflictResolver overloadingConflictResolver;
     private final DataFlowInfo dataFlowInfo;
@@ -412,7 +414,7 @@ public class CallResolver {
                         constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
                     }
 
-                    TypeSubstitutor substituteUnknown = ConstraintSystemImpl.makeConstantSubstitutor(candidate.getTypeParameters(), ErrorUtils.createErrorType("Unknown"));
+                    TypeSubstitutor substituteDontCare = ConstraintSystemImpl.makeConstantSubstitutor(candidate.getTypeParameters(), DONT_CARE);
 
                     for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
                         ResolvedValueArgument valueArgument = entry.getValue();
@@ -428,7 +430,7 @@ public class CallResolver {
                             // We'll type check the arguments later, with the inferred types expected
                             TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(temporaryTrace);
                             ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, traceForUnknown);
-                            JetType type = temporaryServices.getType(scope, expression, substituteUnknown.substitute(valueParameterDescriptor.getOutType(), Variance.INVARIANT));
+                            JetType type = temporaryServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getOutType(), Variance.INVARIANT));
                             if (type != null) {
                                 constraintSystem.addSubtypingConstraint(type, effectiveExpectedType);
                             }
@@ -439,10 +441,10 @@ public class CallResolver {
                     }
 
                     // Error is already reported if something is missing
-                    ReceiverDescriptor receiverParameter = candidateCall.getReceiverArgument();
-                    ReceiverDescriptor candidateReceiver = candidate.getReceiverParameter();
-                    if (receiverParameter.exists() && candidateReceiver.exists()) {
-                        constraintSystem.addSubtypingConstraint(receiverParameter.getType(), candidateReceiver.getType());
+                    ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
+                    ReceiverDescriptor receiverParameter = candidate.getReceiverParameter();
+                    if (receiverArgument.exists() && receiverParameter.exists()) {
+                        constraintSystem.addSubtypingConstraint(receiverArgument.getType(), receiverParameter.getType());
                     }
 
                     if (expectedType != NO_EXPECTED_TYPE) {

@@ -17,7 +17,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testIf() throws Exception {
         loadFile();
 
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(15, main.invoke(null, true));
         assertEquals(20, main.invoke(null, false));
@@ -26,7 +26,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testSingleBranchIf() throws Exception {
         loadFile();
 
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(15, main.invoke(null, true));
         assertEquals(20, main.invoke(null, false));
@@ -47,7 +47,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
         loadFile(name);
 
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(6, main.invoke(null, 3));
         assertEquals(120, main.invoke(null, 5));
@@ -55,7 +55,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testContinue() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(3, main.invoke(null, 4));
         assertEquals(7, main.invoke(null, 5));
@@ -63,7 +63,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testIfNoElse() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, 5, true));
         assertEquals(10, main.invoke(null, 5, false));
@@ -78,7 +78,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testFor() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("IntelliJ IDEA", main.invoke(null, args));
@@ -86,7 +86,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testIfBlock() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("TTT", main.invoke(null, args));
@@ -96,7 +96,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForInArray() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
         assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
@@ -126,7 +126,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testTryCatch() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("no message", main.invoke(null, "0"));
         assertEquals("For input string: \"a\"", main.invoke(null, "a"));
@@ -134,7 +134,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testTryFinally() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         StringBuilder sb = new StringBuilder();
         main.invoke(null, sb, "9");
@@ -187,8 +187,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testCompareToNonnullableEq() throws Exception {
         loadText("fun foo(a: String?, b: String): Boolean = a == b || b == a");
-        String text = generateToText();
-        System.out.println(text);
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(false, main.invoke(null, null, "lala"));
         assertEquals(true, main.invoke(null, "papa", "papa"));
@@ -197,7 +196,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testCompareToNonnullableNotEq() throws Exception {
         loadText("fun foo(a: String?, b: String): Boolean = a != b");
         String text = generateToText();
-        System.out.println(text);
+//        System.out.println(text);
         assertTrue(text.contains("IXOR"));
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
@@ -210,7 +209,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testKt416() throws Exception {
         blackBoxFile("regressions/kt416.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt513() throws Exception {

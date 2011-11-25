@@ -1,4 +1,5 @@
 //KT-235 Illegal assignment return type
+// +JDK
 
 namespace kt235
 

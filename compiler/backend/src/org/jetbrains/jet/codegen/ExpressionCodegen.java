@@ -2068,14 +2068,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return type;
     }
 
-    private void generateNewArray(JetCallExpression expression, JetType arrayType) {
+    public void generateNewArray(JetCallExpression expression, JetType arrayType) {
         List<? extends ValueArgument> args = expression.getValueArguments();
 
         boolean isArray = state.getStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor());
         if(isArray) {
-            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
-                throw new CompilationException("array constructor of non-nullable type requires two arguments");
-            }
+//            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
+//                throw new CompilationException("array constructor of non-nullable type requires two arguments");
+//            }
         }
         else {
             if (args.size() != 1) {
@@ -2445,18 +2445,28 @@ If finally block is present, its last expression is the value of try expression.
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
+    public boolean hasTypeInfoForInstanceOf(JetType type) {
+        DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if(declarationDescriptor instanceof TypeParameterDescriptor)
+            return true;
+
+        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor.getOriginal();
+        if(classDescriptor.equals(state.getStandardLibrary().getArray())) {
+            return hasTypeInfoForInstanceOf(type.getArguments().get(0).getType());
+        }
+
+        for(TypeParameterDescriptor proj : classDescriptor.getTypeConstructor().getParameters()) {
+            if(proj.isReified()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        boolean javaClass = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor) instanceof PsiClass;
-        if (!javaClass && (jetType.getArguments().size() > 0 || !(descriptor instanceof ClassDescriptor))) {
-            generateTypeInfo(jetType);
-            expressionToGen.put(OBJECT_TYPE, v);
-            if (leaveExpressionOnStack) {
-                v.dupX1();
-            }
-            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
-        }
-        else {
+        if (!hasTypeInfoForInstanceOf(jetType)) {
             expressionToGen.put(OBJECT_TYPE, v);
             if (leaveExpressionOnStack) {
                 v.dup();
@@ -2478,6 +2488,14 @@ If finally block is present, its last expression is the value of try expression.
             else {
                 v.instanceOf(type);
             }
+        }
+        else {
+            generateTypeInfo(jetType);
+            expressionToGen.put(OBJECT_TYPE, v);
+            if (leaveExpressionOnStack) {
+                v.dupX1();
+            }
+            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
         }
     }
 
@@ -2655,30 +2673,6 @@ If finally block is present, its last expression is the value of try expression.
             JetPattern pattern = patternCondition.getPattern();
             conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
                                                   StackValue.local(subjectLocal, subjectType), nextEntry);
-        }
-        else if (condition instanceof JetWhenConditionCall) {
-            final JetExpression call = ((JetWhenConditionCall) condition).getCallSuffixExpression();
-            if (call instanceof JetCallExpression) {
-                v.load(subjectLocal, subjectType);
-                final DeclarationDescriptor declarationDescriptor = resolveCalleeDescriptor((JetCallExpression) call);
-                if (!(declarationDescriptor instanceof FunctionDescriptor)) {
-                    throw new UnsupportedOperationException("expected function descriptor in when condition with call, found " + declarationDescriptor);
-                }
-                conditionValue = invokeFunction((JetCallExpression) call, declarationDescriptor, StackValue.onStack(subjectType));
-            }
-            else if (call instanceof JetSimpleNameExpression) {
-                final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call);
-                if (descriptor instanceof PropertyDescriptor) {
-                    v.load(subjectLocal, subjectType);
-                    conditionValue = intermediateValueForProperty((PropertyDescriptor) descriptor, false, null);
-                }
-                else {
-                    throw new UnsupportedOperationException("unknown simple name resolve result: " + descriptor);
-                }
-            }
-            else {
-                throw new UnsupportedOperationException("unsupported kind of call suffix");
-            }
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");

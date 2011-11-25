@@ -11,7 +11,7 @@ public class ObjectGenTest extends CodegenTestCase {
 
     public void testObjectLiteral() throws Exception {
         blackBoxFile("objects/objectLiteral.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testMethodOnObject() throws Exception {
