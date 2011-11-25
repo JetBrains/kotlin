@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Talanov Pavel
  */
-public final class PropertyAccessorTest extends TranslationTest {
+public final class PropertyAccessTest extends TranslationTest {
 
     final private static String MAIN = "propertyAccess/";
 
@@ -60,9 +60,15 @@ public final class PropertyAccessorTest extends TranslationTest {
     }
 
     //TODO test
-//    @Test
-//    public void namespaceCustomAccessors() throws Exception {
-//        testFooBoxIsTrue("namespaceCustomAccessors.kt");
-//    }
+    @Test
+    public void namespaceCustomAccessors() throws Exception {
+        testFooBoxIsTrue("namespaceCustomAccessors.kt");
+    }
+
+
+    @Test
+    public void classUsesNamespaceProperties() throws Exception {
+        testFooBoxIsTrue("classUsesNamespaceProperties.kt");
+    }
 
 }
