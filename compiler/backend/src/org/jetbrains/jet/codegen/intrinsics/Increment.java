@@ -5,6 +5,7 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -23,7 +24,10 @@ public class Increment implements IntrinsicMethod {
 
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        final JetExpression operand = arguments.get(0);
+        JetExpression operand = arguments.get(0);
+        while(operand instanceof JetParenthesizedExpression) {
+            operand = ((JetParenthesizedExpression)operand).getExpression();
+        }
         if (operand instanceof JetReferenceExpression) {
             final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
             if (index >= 0 && JetTypeMapper.isIntPrimitive(expectedType)) {
@@ -32,6 +36,7 @@ public class Increment implements IntrinsicMethod {
             }
         }
         StackValue value = codegen.genQualified(receiver, operand);
+        value. dupReceiver(v);
         value. dupReceiver(v);
         value.put(expectedType, v);
         if (expectedType == Type.LONG_TYPE) {
@@ -44,10 +49,11 @@ public class Increment implements IntrinsicMethod {
             v.dconst(myDelta);
         }
         else {
-            v.aconst(myDelta);
+            v.iconst(myDelta);
         }
         v.add(expectedType);
         value.store(v);
-        return value;
+        value.put(expectedType, v);
+        return StackValue.onStack(expectedType);
     }
 }
