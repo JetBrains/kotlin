@@ -64,7 +64,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testFieldPropertyAccess() throws Exception {
         loadFile("properties/fieldPropertyAccess.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method method = generateFunction();
         assertEquals(1, method.invoke(null));
         assertEquals(2, method.invoke(null));

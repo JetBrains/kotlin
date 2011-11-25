@@ -37,7 +37,7 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testInrange() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("array list", foo.invoke(null, 239));
         assertEquals("digit", foo.invoke(null, 0));
@@ -49,13 +49,13 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testIs() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 
     public void testRange() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("array list", foo.invoke(null, 239));
         assertEquals("digit", foo.invoke(null, 0));
@@ -67,7 +67,7 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testRangeChar() throws Exception {
         loadFile();
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("digit", foo.invoke(null, '0'));
         assertEquals("something", foo.invoke(null, 'A'));

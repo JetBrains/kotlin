@@ -8,12 +8,12 @@ public class TraitsTest  extends CodegenTestCase {
 
     public void testSimple () throws Exception {
         blackBoxFile("traits/simple.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testWithRequired () throws Exception {
         blackBoxFile("traits/withRequired.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testMultiple () throws Exception {
