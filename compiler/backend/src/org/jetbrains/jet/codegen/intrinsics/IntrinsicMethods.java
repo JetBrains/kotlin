@@ -15,7 +15,6 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
-import sun.tools.tree.NewArrayExpression;
 
 import java.util.*;
 
@@ -87,7 +86,7 @@ public class IntrinsicMethods {
         declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, new StringPlus());
         declareOverload(myStdLib.getLibraryScope().getFunctions("Array"), 1, new NewArray());
-        declareOverload(myStdLib.getLibraryScope().getFunctions("npe"), 0, new NPE());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
 
         declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT);
         declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT);

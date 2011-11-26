@@ -42,7 +42,7 @@ fun Any?.equals(other : Any?) : Boolean// = this === other
 // Returns "null" for null
 fun Any?.toString() : String// = this === other
 
-fun <T : Any> T?.npe() : T
+fun <T : Any> T?.sure() : T
 
 fun String?.plus(other: Any?) : String
 

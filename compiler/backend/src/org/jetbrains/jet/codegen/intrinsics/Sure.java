@@ -13,11 +13,11 @@ import java.util.List;
 /**
  * @author alex.tkachman
  */
-public class NPE implements IntrinsicMethod {
+public class Sure implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         receiver.put(JetTypeMapper.TYPE_OBJECT, v);
-        v.invokestatic("jet/runtime/Intrinsics", "npe", "(Ljava/lang/Object;)Ljava/lang/Object;");
+        v.invokestatic("jet/runtime/Intrinsics", "sure", "(Ljava/lang/Object;)Ljava/lang/Object;");
         StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(expectedType, v);
         return StackValue.onStack(expectedType);
     }
