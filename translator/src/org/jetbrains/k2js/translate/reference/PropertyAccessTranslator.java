@@ -7,7 +7,6 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
@@ -15,7 +14,6 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
@@ -169,7 +167,6 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         return context().getNameForDescriptor(getter);
     }
 
-
     @NotNull
     private JsName getNotNullSetterName(@NotNull JetSimpleNameExpression selectorExpression) {
         JsName setterName = getNullableSetterName(selectorExpression);
@@ -192,15 +189,6 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
 
     @Nullable
     private PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression) {
-        ResolvedCall<?> resolvedCall =
-                BindingUtils.getResolvedCall(context().bindingContext(), expression);
-        if (resolvedCall != null) {
-            DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
-            if (descriptor instanceof PropertyDescriptor) {
-                return (PropertyDescriptor) descriptor;
-            }
-        }
-        return null;
+        return BindingUtils.getPropertyDescriptorForSimpleName(context().bindingContext(), expression);
     }
-
 }

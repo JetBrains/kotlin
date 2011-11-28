@@ -48,9 +48,18 @@ public final class ReferenceProvider {
         if (requiresNamespaceQualifier) {
             return context.getNamespaceQualifiedReference(referencedName);
         } else if (requiresThisQualifier) {
-            return AstUtil.thisQualifiedReference(referencedName);
+            return thisQualifiedReference();
         }
         return referencedName.makeRef();
+    }
+
+    private JsNameRef thisQualifiedReference() {
+        if (!context.hasAliasForThis()) {
+            return AstUtil.thisQualifiedReference(referencedName);
+        }
+        JsNameRef reference = referencedName.makeRef();
+        AstUtil.setQualifier(reference, context.getAliasForThis());
+        return reference;
     }
 
     private boolean requiresNamespaceQualifier() {

@@ -380,6 +380,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,
                                       @NotNull TranslationContext context) {
+        if (context.hasAliasForThis()) {
+            return context.getAliasForThis();
+        }
         return new JsThisRef();
     }
 

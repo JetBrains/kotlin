@@ -190,6 +190,29 @@ public final class BindingUtils {
         return null;
     }
 
+
+    //TODO: refactor
+    @Nullable
+    public static PropertyDescriptor getPropertyDescriptorForSimpleName(@NotNull BindingContext context,
+                                                                        @NotNull JetSimpleNameExpression expression) {
+        ResolvedCall<?> resolvedCall =
+                BindingUtils.getResolvedCall(context, expression);
+        if (resolvedCall != null) {
+            DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+            if (descriptor instanceof PropertyDescriptor) {
+                return (PropertyDescriptor) descriptor;
+            }
+            if (descriptor instanceof VariableAsFunctionDescriptor) {
+                VariableAsFunctionDescriptor functionVariable = (VariableAsFunctionDescriptor) descriptor;
+                VariableDescriptor variableDescriptor = functionVariable.getVariableDescriptor();
+                if (variableDescriptor instanceof PropertyDescriptor) {
+                    return (PropertyDescriptor) variableDescriptor;
+                }
+            }
+        }
+        return null;
+    }
+
     @Nullable
     static public ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
                                                   @NotNull JetExpression expression) {

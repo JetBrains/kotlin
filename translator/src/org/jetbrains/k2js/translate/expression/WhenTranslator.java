@@ -140,32 +140,13 @@ public class WhenTranslator extends AbstractTranslator {
         if (condition instanceof JetWhenConditionIsPattern) {
             return translatePatternCondition((JetWhenConditionIsPattern) condition);
         }
-        if (condition instanceof JetWhenConditionCall) {
-            return translateCallCondition((JetWhenConditionCall) condition);
-        }
         throw new AssertionError("Unsupported when condition " + condition.getClass());
-    }
-
-    @NotNull
-    private JsExpression translateCallCondition(@NotNull JetWhenConditionCall condition) {
-        JsExpression suffixExpression =
-                Translation.translateAsExpression(getSuffixExpression(condition), context());
-        AstUtil.setQualifier(suffixExpression, expressionToMatch);
-        return AstUtil.equalsTrue(suffixExpression, context().program());
-    }
-
-    @NotNull
-    private JetExpression getSuffixExpression(@NotNull JetWhenConditionCall condition) {
-        JetExpression suffixExpression = condition.getCallSuffixExpression();
-        assert suffixExpression != null : "When call condition should have suffix expression";
-        return suffixExpression;
     }
 
     @NotNull
     private JsBlock addDummyBreak(@NotNull JsStatement statement) {
         return AstUtil.newBlock(statement, new JsBreak());
     }
-
 
     @NotNull
     private JsExpression translatePatternCondition(@NotNull JetWhenConditionIsPattern condition) {

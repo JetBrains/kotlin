@@ -42,9 +42,15 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
+    //TODO: consider refactoring
     @NotNull
-    public JsFunction translateAsLiteral() {
-        return generateFunctionObject();
+    public JsExpression translateAsLiteral() {
+        JsName aliasForThis = context().enclosingScope().declareName("that");
+        context().setAliasForThis(aliasForThis);
+        JsFunction function = generateFunctionObject();
+        context().removeAliasForThis();
+        JsExpression assignThatToThis = AstUtil.newAssignment(aliasForThis.makeRef(), new JsThisRef());
+        return AstUtil.newSequence(assignThatToThis, function);
     }
 
     @NotNull

@@ -22,6 +22,7 @@ import java.util.Map;
 public final class TranslationContext {
 
 
+    // TODO: extract different parts of this classes into separate classes
     private static class Scopes {
         public Scopes(@NotNull JsScope enclosingScope, @NotNull JsScope functionScope, @NotNull JsScope namespaceScope) {
             this.enclosingScope = enclosingScope;
@@ -43,7 +44,7 @@ public final class TranslationContext {
         JsScope rootScope = program.getRootScope();
         Scopes scopes = new Scopes(rootScope, rootScope, rootScope);
         return new TranslationContext(null, program, bindingContext,
-                scopes, extractor, new HashMap<JetDeclaration, JsName>());
+                scopes, extractor, new HashMap<JetDeclaration, JsName>(), null);
     }
 
     @NotNull
@@ -58,17 +59,21 @@ public final class TranslationContext {
     private final Declarations declarations;
     @NotNull
     private final Map<JetDeclaration, JsName> aliases;
+    @Nullable
+    private JsName aliasForThis;
 
 
     private TranslationContext(@Nullable JsName namespaceName, @NotNull JsProgram program,
                                @NotNull BindingContext bindingContext, @NotNull Scopes scopes,
-                               @NotNull Declarations declarations, @NotNull Map<JetDeclaration, JsName> aliases) {
+                               @NotNull Declarations declarations, @NotNull Map<JetDeclaration, JsName> aliases,
+                               @Nullable JsName aliasForThis) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namespaceName = namespaceName;
         this.scopes = scopes;
         this.declarations = declarations;
         this.aliases = aliases;
+        this.aliasForThis = aliasForThis;
     }
 
     @NotNull
@@ -81,7 +86,8 @@ public final class TranslationContext {
         JsScope namespaceScope = declarations.getScope(descriptor);
         JsName namespaceName = getNameForDescriptor(descriptor);
         Scopes newScopes = new Scopes(namespaceScope, namespaceScope, namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
+        return new TranslationContext(namespaceName, program, bindingContext, newScopes,
+                declarations, aliases, aliasForThis);
     }
 
     @NotNull
@@ -93,7 +99,8 @@ public final class TranslationContext {
     public TranslationContext newClass(@NotNull ClassDescriptor descriptor) {
         JsScope classScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(classScope, classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
+        return new TranslationContext(namespaceName, program, bindingContext,
+                newScopes, declarations, aliases, aliasForThis);
     }
 
     @NotNull
@@ -115,7 +122,8 @@ public final class TranslationContext {
     public TranslationContext newFunctionDeclaration(@NotNull FunctionDescriptor descriptor) {
         JsScope functionScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(functionScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
+        return new TranslationContext(namespaceName, program, bindingContext,
+                newScopes, declarations, aliases, aliasForThis);
     }
 
 //    @NotNull TranslationContext newAliases(Map<JetDeclaration, JsName> newAliases) {
@@ -128,7 +136,8 @@ public final class TranslationContext {
     @NotNull
     public TranslationContext newEnclosingScope(@NotNull JsScope enclosingScope) {
         Scopes newScopes = new Scopes(enclosingScope, scopes.classScope, scopes.namespaceScope);
-        return new TranslationContext(namespaceName, program, bindingContext, newScopes, declarations, aliases);
+        return new TranslationContext(namespaceName, program, bindingContext,
+                newScopes, declarations, aliases, aliasForThis);
     }
 
 
@@ -202,6 +211,24 @@ public final class TranslationContext {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         assert descriptor != null : "Element should have a descriptor";
         return descriptor;
+    }
+
+    @NotNull
+    public JsNameRef getAliasForThis() {
+        assert aliasForThis != null : "Alias is null. Use hasAliasForThis function to check.";
+        return aliasForThis.makeRef();
+    }
+
+    public void setAliasForThis(@NotNull JsName alias) {
+        aliasForThis = alias;
+    }
+
+    public void removeAliasForThis() {
+        aliasForThis = null;
+    }
+
+    public boolean hasAliasForThis() {
+        return (aliasForThis != null);
     }
 
     public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {

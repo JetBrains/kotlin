@@ -36,6 +36,8 @@ public class KotlinLibTest extends TranslationTest {
         });
     }
 
+    //TODO: refactor
+
     @Test
     public void classObjectHasCreateMethod() throws Exception {
         final Map<String, Class<? extends Scriptable>> propertyToType
