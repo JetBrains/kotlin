@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -88,6 +89,13 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         if (property.getPropertyTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getOutType();
             JetType initializerType = facade.getType(initializer, context.replaceExpectedType(outType).replaceScope(scope));
+        }
+        
+        {
+            VariableDescriptor olderVariable = scope.getVariable(propertyDescriptor.getName());
+            if (olderVariable != null && DescriptorUtils.isLocal(propertyDescriptor.getContainingDeclaration(), olderVariable)) {
+                context.trace.report(Errors.NAME_SHADOWING.on(propertyDescriptor, context.trace.getBindingContext()));
+            }
         }
 
         scope.addVariableDescriptor(propertyDescriptor);
