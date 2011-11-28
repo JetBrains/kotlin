@@ -179,7 +179,7 @@ fun declarations(a: Any?) {
     }
 }
 fun vars(a: Any?) {
-    var <!UNUSED_VARIABLE!>b<!>: Int = 0
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!>: Int = 0
     if (a is Int) {
         b = <!UNUSED_VALUE!>a<!>
     }

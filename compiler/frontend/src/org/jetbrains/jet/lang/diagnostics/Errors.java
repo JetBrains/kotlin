@@ -145,6 +145,7 @@ public interface Errors {
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
     PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> UNUSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is never used", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is assigned but never accessed", NAME);
     PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = new PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor>(WARNING, "The value ''{0}'' assigned to ''{1}'' is never used", NAME) {
         @Override
         protected String makeMessageForA(@NotNull JetElement element) {
