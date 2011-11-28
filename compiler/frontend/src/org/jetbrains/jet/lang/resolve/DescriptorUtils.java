@@ -123,4 +123,35 @@ public class DescriptorUtils {
         }
         return NO_RECEIVER;
     }
+
+    /**
+     * The primary case for local extensions is the following:
+     *
+     * I had a locally declared extension function or a local variable of function type called foo
+     * And I called it on my x
+     * Now, someone added function foo() to the class of x
+     * My code should not change
+     *
+     * thus
+     *
+     * local extension prevail over members (and members prevail over all non-local extensions)
+     */
+    public static boolean isLocal(DeclarationDescriptor containerOfTheCurrentLocality, DeclarationDescriptor candidate) {
+        if (candidate instanceof ValueParameterDescriptor) {
+            return true;
+        }
+        DeclarationDescriptor parent = candidate.getContainingDeclaration();
+        if (!(parent instanceof FunctionDescriptor)) {
+            return false;
+        }
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) parent;
+        DeclarationDescriptor current = containerOfTheCurrentLocality;
+        while (current != null) {
+            if (current == functionDescriptor) {
+                return true;
+            }
+            current = current.getContainingDeclaration();
+        }
+        return false;
+    }
 }

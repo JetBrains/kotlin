@@ -5,12 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastService;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -36,44 +35,13 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             Collection<ResolvedCallImpl<D>> allDescriptors, DeclarationDescriptor containerOfTheCurrentLocality, Collection<ResolvedCallImpl<D>> local, Collection<ResolvedCallImpl<D>> nonlocal) {
 
         for (ResolvedCallImpl<D> resolvedCall : allDescriptors) {
-            if (isLocal(containerOfTheCurrentLocality, resolvedCall.getCandidateDescriptor())) {
+            if (DescriptorUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getCandidateDescriptor())) {
                 local.add(resolvedCall);
             }
             else {
                 nonlocal.add(resolvedCall);
             }
         }
-    }
-
-    /**
-     * The primary case for local extensions is the following:
-     *
-     * I had a locally declared extension function or a local variable of function type called foo
-     * And I called it on my x
-     * Now, someone added function foo() to the class of x
-     * My code should not change
-     *
-     * thus
-     *
-     * local extension prevail over members (and members prevail over all non-local extensions)
-     */
-    private static boolean isLocal(DeclarationDescriptor containerOfTheCurrentLocality, DeclarationDescriptor candidate) {
-        if (candidate instanceof ValueParameterDescriptor) {
-            return true;
-        }
-        DeclarationDescriptor parent = candidate.getContainingDeclaration();
-        if (!(parent instanceof FunctionDescriptor)) {
-            return false;
-        }
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) parent;
-        DeclarationDescriptor current = containerOfTheCurrentLocality;
-        while (current != null) {
-            if (current == functionDescriptor) {
-                return true;
-            }
-            current = current.getContainingDeclaration();
-        }
-        return false;
     }
 
     @Nullable
