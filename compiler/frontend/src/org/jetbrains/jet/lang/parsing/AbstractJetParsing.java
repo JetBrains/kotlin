@@ -110,6 +110,16 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         myBuilder.advanceLexer();
     }
 
+    protected void advanceAt(IElementType current) {
+        assert _at(current);
+        myBuilder.advanceLexer();
+    }
+
+    protected void advanceAtSet(IElementType... tokens) {
+        assert _atSet(tokens);
+        myBuilder.advanceLexer();
+    }
+
     protected IElementType tt() {
         return myBuilder.getTokenType();
     }
