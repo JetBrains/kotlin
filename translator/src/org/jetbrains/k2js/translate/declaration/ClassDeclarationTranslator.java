@@ -95,7 +95,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     private void removeAliases() {
         for (JetClass jetClass : getClassDeclarations()) {
-            context().aliases().remove(jetClass);
+            context().aliaser().removeAliasForDeclaration(jetClass);
         }
     }
 
@@ -122,7 +122,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         JsName globalClassName = context().getNameForElement(declaration);
         JsName localAlias = dummyFunctionScope.declareName(globalClassName.getIdent());
         localToGlobalClassName.put(localAlias, globalClassName);
-        context().aliases().put(declaration, localAlias);
+        context().aliaser().setAliasForDeclaration(declaration, localAlias);
         return localAlias;
     }
 }

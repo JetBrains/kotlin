@@ -59,10 +59,11 @@ public class ReferenceTranslator extends AbstractTranslator {
                 BindingUtils.getDeclarationForDescriptor(context().bindingContext(), referencedDescriptor);
         if (declaration == null) return null;
 
-        JsName alias = context().aliases().get(declaration);
-        if (alias == null) return null;
+        if (!context().aliaser().hasAliasForDeclaration(declaration)) {
+            return null;
+        }
 
-        return alias.makeRef();
+        return context().aliaser().getAliasForDeclaration(declaration);
     }
 
     @Nullable

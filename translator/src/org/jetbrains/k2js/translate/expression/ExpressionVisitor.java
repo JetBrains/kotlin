@@ -100,7 +100,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        JsName jsPropertyName = context.declareLocalName(getPropertyName(expression));
+        JsName jsPropertyName = context.enclosingScope().declareName(getPropertyName(expression));
         JsExpression jsInitExpression = translateInitializerForProperty(expression, context);
         return AstUtil.newVar(jsPropertyName, jsInitExpression);
     }
@@ -380,8 +380,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,
                                       @NotNull TranslationContext context) {
-        if (context.hasAliasForThis()) {
-            return context.getAliasForThis();
+        if (context.aliaser().hasAliasForThis()) {
+            return context.aliaser().getAliasForThis();
         }
         return new JsThisRef();
     }

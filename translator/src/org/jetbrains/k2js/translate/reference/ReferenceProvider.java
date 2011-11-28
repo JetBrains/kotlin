@@ -54,11 +54,11 @@ public final class ReferenceProvider {
     }
 
     private JsNameRef thisQualifiedReference() {
-        if (!context.hasAliasForThis()) {
+        if (!context.aliaser().hasAliasForThis()) {
             return AstUtil.thisQualifiedReference(referencedName);
         }
         JsNameRef reference = referencedName.makeRef();
-        AstUtil.setQualifier(reference, context.getAliasForThis());
+        AstUtil.setQualifier(reference, context.aliaser().getAliasForThis());
         return reference;
     }
 

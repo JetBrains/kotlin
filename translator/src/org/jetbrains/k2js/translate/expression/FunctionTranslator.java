@@ -46,9 +46,9 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translateAsLiteral() {
         JsName aliasForThis = context().enclosingScope().declareName("that");
-        context().setAliasForThis(aliasForThis);
+        context().aliaser().setAliasForThis(aliasForThis);
         JsFunction function = generateFunctionObject();
-        context().removeAliasForThis();
+        context().aliaser().removeAliasForThis();
         JsExpression assignThatToThis = AstUtil.newAssignment(aliasForThis.makeRef(), new JsThisRef());
         return AstUtil.newSequence(assignThatToThis, function);
     }
