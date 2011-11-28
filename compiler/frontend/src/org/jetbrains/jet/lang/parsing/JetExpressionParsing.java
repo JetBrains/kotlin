@@ -275,7 +275,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         precedence.parseHigherPrecedence(this);
 
-        while (!breakedWithNewLine() && atSet(precedence.getOperations())) {
+        while (!interruptedWithNewLine() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
 
             parseOperationReference();
@@ -331,7 +331,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker expression = mark();
         parseAtomicExpression();
         while (true) {
-            if (breakedWithNewLine()) {
+            if (interruptedWithNewLine()) {
                 break;
             }
             else if (at(LBRACKET)) {
@@ -1708,7 +1708,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         return myJetParsing.create(builder);
     }
 
-    private boolean breakedWithNewLine() {
+    private boolean interruptedWithNewLine() {
         return !ALLOW_NEWLINE_OPERATIONS.contains(tt()) && myBuilder.newlineBeforeCurrentToken();
     }
 }

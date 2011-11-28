@@ -18,7 +18,6 @@ whenEntry
 
 whenCondition
   : expression
-  : ("." | "?.") postfixUnaryExpression typeArguments? valueArguments?
   : ("in" | "!in") expression
   : ("is" | "!is") isRHS
   ;
