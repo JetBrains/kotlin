@@ -126,7 +126,7 @@ public class StatementVisitor extends ElementVisitor {
       ) {
       final Expression end = expressionToExpression(((PsiBinaryExpression) condition).getROperand());
       final Expression endExpression = operationTokenType == JavaTokenType.LT ?
-        new BinaryExpression(end, new IdentifierImpl("1"), "-"):
+        new BinaryExpression(end, new IdentifierImpl("1"), "-") :
         end;
       myResult = new ForeachWithRangeStatement(
         new IdentifierImpl(firstChild.getName()),

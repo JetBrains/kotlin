@@ -211,10 +211,12 @@ public class ExpressionVisitor extends StatementVisitor {
   private static Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
     final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
     final PsiMethod constructor = expression.resolveMethod();
-    if (constructor == null || isConstructorPrimary(constructor)) {
+    PsiJavaCodeReferenceElement classReference = expression.getClassOrAnonymousClassReference();
+    final boolean isNotConvertedClass = classReference != null && !Converter.getClassIdentifiers().contains(classReference.getQualifiedName());
+    if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
       return new NewClassExpression(
         expressionToExpression(expression.getQualifier()),
-        elementToElement(expression.getClassOrAnonymousClassReference()),
+        elementToElement(classReference),
         elementToElement(expression.getArgumentList()),
         anonymousClass != null ? anonymousClassToAnonymousClass(anonymousClass) : null
       );
@@ -336,7 +338,7 @@ public class ExpressionVisitor extends StatementVisitor {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
-        return !Converter.isConstructorPrimary((PsiMethod) context);
+        return !isConstructorPrimary((PsiMethod) context);
       context = context.getContext();
     }
     return false;
@@ -346,7 +348,7 @@ public class ExpressionVisitor extends StatementVisitor {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
-        return Converter.isConstructorPrimary((PsiMethod) context);
+        return isConstructorPrimary((PsiMethod) context);
       context = context.getContext();
     }
     return false;
@@ -415,12 +417,5 @@ public class ExpressionVisitor extends StatementVisitor {
       expressionsToExpressionList(expression.getOperands()),
       getOperatorString(expression.getOperationTokenType())
     );
-  }
-}
-
-class Test {
-  void test() {
-    char c1 = 'c';
-    Character c2 = 'C';
   }
 }

@@ -2,7 +2,6 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.List;
@@ -85,7 +84,7 @@ public class ElementVisitor extends JavaElementVisitor {
   public void visitParameterList(PsiParameterList list) {
     super.visitParameterList(list);
     myResult = new ParameterList(
-      Converter.parametersToParameterList(list.getParameters())
+      parametersToParameterList(list.getParameters())
     );
   }
 }

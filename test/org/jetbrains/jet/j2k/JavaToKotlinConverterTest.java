@@ -8,6 +8,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.visitors.ClassVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,9 +97,16 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     configureFromFileText("test.java", text);
   }
 
+  private static void setClassIdentifiers() {
+    ClassVisitor c = new ClassVisitor();
+    myFile.accept(c);
+    Converter.setClassIdentifiers(c.getClassIdentifiers());
+  }
+
   @NotNull
   private static String fileToKotlin(String text) throws IOException {
     configureFromText(text);
+    setClassIdentifiers();
     return prettify(Converter.fileToFile((PsiJavaFile) myFile).toKotlin());
   }
 

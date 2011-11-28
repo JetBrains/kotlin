@@ -16,6 +16,20 @@ import java.util.*;
  * @author ignatov
  */
 public class Converter {
+  private static Set<String> ourClassIdentifiers = new HashSet<String>();
+
+  public static void setClassIdentifiers(Set<String> identifiers) {
+    ourClassIdentifiers = identifiers;
+  }
+
+  public static Set<String> getClassIdentifiers() {
+    return new HashSet<String>(ourClassIdentifiers);
+  }
+
+  public static void clearClassIdentifiers() {
+    ourClassIdentifiers.clear();
+  }
+
   @NotNull
   public static File fileToFile(@NotNull PsiJavaFile javaFile) {
     final PsiImportList importList = javaFile.getImportList();
@@ -122,7 +136,7 @@ public class Converter {
       for (final Member m : members) {
         // and modify secondaries
         if (m.getKind() == INode.Kind.CONSTRUCTOR) {
-          Function f = (Function)m;
+          Function f = (Function) m;
           if (!((Constructor) f).isPrimary()) {
             for (Field fo : finalOrWithEmptyInitializer) {
               String init = getDefaultInitializer(fo);
@@ -277,7 +291,7 @@ public class Converter {
     if (method.getParent() instanceof PsiClass) {
       final PsiModifierList parentModifierList = ((PsiClass) method.getParent()).getModifierList();
       if (parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL))
-          modifiers.add(Modifier.NOT_OPEN);
+        modifiers.add(Modifier.NOT_OPEN);
     }
 
     if (method.isConstructor()) { // TODO: simplify
