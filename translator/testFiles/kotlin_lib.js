@@ -458,3 +458,8 @@ Kotlin.Array = Class.create({
         this.array[index] = value;
     }
 })
+
+Kotlin.Class = Class
+Kotlin.Namespace = Namespace
+Kotlin.Trait = Trait
+Kotlin.isType = isType

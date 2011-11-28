@@ -7,7 +7,6 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -55,15 +54,11 @@ public class ReferenceTranslator extends AbstractTranslator {
                 BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), expression);
         if (referencedDescriptor == null) return null;
 
-        JetDeclaration declaration =
-                BindingUtils.getDeclarationForDescriptor(context().bindingContext(), referencedDescriptor);
-        if (declaration == null) return null;
-
-        if (!context().aliaser().hasAliasForDeclaration(declaration)) {
+        if (!context().aliaser().hasAliasForDeclaration(referencedDescriptor)) {
             return null;
         }
 
-        return context().aliaser().getAliasForDeclaration(declaration);
+        return context().aliaser().getAliasForDeclaration(referencedDescriptor);
     }
 
     @Nullable

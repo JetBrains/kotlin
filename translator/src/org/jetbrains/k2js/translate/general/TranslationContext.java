@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.Namer;
 
 /**
  * @author Talanov Pavel
@@ -40,7 +41,7 @@ public final class TranslationContext {
         JsScope rootScope = program.getRootScope();
         Scopes scopes = new Scopes(rootScope, rootScope, rootScope);
         return new TranslationContext(null, program, bindingContext,
-                scopes, extractor, new Aliaser());
+                scopes, extractor, Aliaser.aliasesForStandardClasses(), Namer.newInstance(rootScope));
     }
 
     @NotNull
@@ -55,17 +56,21 @@ public final class TranslationContext {
     private final Declarations declarations;
     @NotNull
     private final Aliaser aliaser;
+    @NotNull
+    private final Namer namer;
 
 
     private TranslationContext(@Nullable JsName namespaceName, @NotNull JsProgram program,
                                @NotNull BindingContext bindingContext, @NotNull Scopes scopes,
-                               @NotNull Declarations declarations, @NotNull Aliaser aliaser) {
+                               @NotNull Declarations declarations, @NotNull Aliaser aliaser,
+                               @NotNull Namer namer) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namespaceName = namespaceName;
         this.scopes = scopes;
         this.declarations = declarations;
         this.aliaser = aliaser;
+        this.namer = namer;
     }
 
     @NotNull
@@ -79,7 +84,7 @@ public final class TranslationContext {
         JsName namespaceName = getNameForDescriptor(descriptor);
         Scopes newScopes = new Scopes(namespaceScope, namespaceScope, namespaceScope);
         return new TranslationContext(namespaceName, program, bindingContext, newScopes,
-                declarations, new Aliaser());
+                declarations, aliaser, namer);
     }
 
     @NotNull
@@ -92,7 +97,7 @@ public final class TranslationContext {
         JsScope classScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(classScope, classScope, scopes.namespaceScope);
         return new TranslationContext(namespaceName, program, bindingContext,
-                newScopes, declarations, aliaser);
+                newScopes, declarations, aliaser, namer);
     }
 
     @NotNull
@@ -115,26 +120,21 @@ public final class TranslationContext {
         JsScope functionScope = declarations.getScope(descriptor);
         Scopes newScopes = new Scopes(functionScope, scopes.classScope, scopes.namespaceScope);
         return new TranslationContext(namespaceName, program, bindingContext,
-                newScopes, declarations, aliaser);
+                newScopes, declarations, aliaser, namer);
     }
-
-//    @NotNull TranslationContext newAliases(Map<JetDeclaration, JsName> newAliases) {
-//        Map<JetDeclaration, JsName> aliases = new HashMap<JetDeclaration, JsName>(this.aliases);
-//        aliases.putAll(newAliases);
-//        return new TranslationContext(namespaceName, program, bindingContext, scopes, declarations, aliases);
-//    }
 
     // Note: Should be used if and only if scope has no corresponding descriptor
     @NotNull
     public TranslationContext newEnclosingScope(@NotNull JsScope enclosingScope) {
         Scopes newScopes = new Scopes(enclosingScope, scopes.classScope, scopes.namespaceScope);
         return new TranslationContext(namespaceName, program, bindingContext,
-                newScopes, declarations, aliaser);
+                newScopes, declarations, aliaser, namer);
     }
 
 
+    //TODO: move to namer
     @NotNull
-    public JsNameRef getNamespaceQualifiedReference(JsName name) {
+    public JsNameRef getNamespaceQualifiedReference(@NotNull JsName name) {
         if (namespaceName != null) {
             return AstUtil.newNameRef(namespaceName.makeRef(), name);
         }
@@ -200,7 +200,13 @@ public final class TranslationContext {
         return declarations.isDeclared(descriptor);
     }
 
+    @NotNull
     public Aliaser aliaser() {
         return aliaser;
+    }
+
+    @NotNull
+    public Namer namer() {
+        return namer;
     }
 }

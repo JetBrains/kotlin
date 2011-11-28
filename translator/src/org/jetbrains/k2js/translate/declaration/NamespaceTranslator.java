@@ -57,7 +57,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
     private JsInvocation namespaceCreateMethodInvocation() {
-        return AstUtil.newInvocation(Namer.namespaceCreationMethodReference());
+        return AstUtil.newInvocation(context().namer().namespaceCreationMethodReference());
     }
 
     @NotNull

@@ -4,18 +4,26 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Aliaser {
+
+    static public Aliaser aliasesForStandardClasses() {
+        Aliaser result = new Aliaser();
+        //result.setAliasForDescriptor();
+        return result;
+    }
+
+
     @NotNull
-    private final Map<JetDeclaration, JsName> aliases = new HashMap<JetDeclaration, JsName>();
+    private final Map<DeclarationDescriptor, JsName> aliases = new HashMap<DeclarationDescriptor, JsName>();
     @Nullable
     private JsName aliasForThis = null;
 
-    public Aliaser() {
+    private Aliaser() {
     }
 
     @NotNull
@@ -36,23 +44,23 @@ public class Aliaser {
         return (aliasForThis != null);
     }
 
-    public boolean hasAliasForDeclaration(@NotNull JetDeclaration declaration) {
+    public boolean hasAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
         return aliases.containsKey(declaration);
     }
 
     @NotNull
-    public JsNameRef getAliasForDeclaration(@NotNull JetDeclaration declaration) {
+    public JsNameRef getAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
         JsName alias = aliases.get(declaration);
         assert alias != null : "Use has alias for declaration to check.";
         return alias.makeRef();
     }
 
-    public void setAliasForDeclaration(@NotNull JetDeclaration declaration, @NotNull JsName alias) {
+    public void setAliasForDescriptor(@NotNull DeclarationDescriptor declaration, @NotNull JsName alias) {
         assert (!hasAliasForDeclaration(declaration)) : "This declaration already has an alias!";
         aliases.put(declaration, alias);
     }
 
-    public void removeAliasForDeclaration(@NotNull JetDeclaration declaration) {
+    public void removeAliasForDescriptor(@NotNull DeclarationDescriptor declaration) {
         assert (hasAliasForDeclaration(declaration)) : "This declaration does not has an alias!";
         aliases.remove(declaration);
     }

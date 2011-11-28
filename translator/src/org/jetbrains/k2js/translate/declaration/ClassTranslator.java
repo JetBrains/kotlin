@@ -16,7 +16,6 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.Namer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +52,9 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation classCreateMethodInvocation() {
         if (classDeclaration.isTrait()) {
-            return AstUtil.newInvocation(Namer.traitCreationMethodReference());
+            return AstUtil.newInvocation(context().namer().traitCreationMethodReference());
         } else {
-            return AstUtil.newInvocation(Namer.classCreationMethodReference());
+            return AstUtil.newInvocation(context().namer().classCreationMethodReference());
         }
     }
 
@@ -102,8 +101,7 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         //TODO we actually know that in current implementation superclass must have an alias but
         // if future it might change
-        return context().aliaser().getAliasForDeclaration(
-                BindingUtils.getClassForDescriptor(context().bindingContext(), superClassDescriptor));
+        return context().aliaser().getAliasForDeclaration(superClassDescriptor);
     }
 
     @Nullable

@@ -8,7 +8,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.k2js.translate.utils.Namer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +51,9 @@ public final class OperatorTable {
         binaryOperatorsMap.put(JetTokens.PERCEQ, JsBinaryOperator.ASG_MOD);
     }
 
+    //TODO: resolve
     static {
-        operatorToFunctionNameReference.put(JetTokens.IS_KEYWORD, Namer.isOperationReference());
+        //operatorToFunctionNameReference.put(JetTokens.IS_KEYWORD, Namer.isOperationReference());
     }
 
     public static boolean hasCorrespondingBinaryOperator(@NotNull JetToken token) {

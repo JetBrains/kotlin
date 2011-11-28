@@ -4,12 +4,14 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.Namer;
 import org.jetbrains.k2js.utils.ClassSorter;
 
@@ -95,7 +97,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     private void removeAliases() {
         for (JetClass jetClass : getClassDeclarations()) {
-            context().aliaser().removeAliasForDeclaration(jetClass);
+            ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context().bindingContext(), jetClass);
+            context().aliaser().removeAliasForDescriptor(descriptor);
         }
     }
 
@@ -118,11 +121,13 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         return AstUtil.newVar(localClassName, classDeclarationExpression);
     }
 
+    @NotNull
     private JsName generateLocalAlias(@NotNull JetClass declaration) {
         JsName globalClassName = context().getNameForElement(declaration);
         JsName localAlias = dummyFunctionScope.declareName(globalClassName.getIdent());
         localToGlobalClassName.put(localAlias, globalClassName);
-        context().aliaser().setAliasForDeclaration(declaration, localAlias);
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context().bindingContext(), declaration);
+        context().aliaser().setAliasForDescriptor(descriptor, localAlias);
         return localAlias;
     }
 }

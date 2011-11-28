@@ -35,7 +35,7 @@ public abstract class AbstractInitializerTranslator extends AbstractTranslator {
     @NotNull
     public JsPropertyInitializer generateInitializeMethod() {
         JsPropertyInitializer initializer = new JsPropertyInitializer();
-        initializer.setLabelExpr(context().program().getStringLiteral(Namer.INITIALIZE_METHOD_NAME));
+        initializer.setLabelExpr(Namer.initializeMethodReference());
         initializer.setValueExpr(generateInitializerFunction());
         return initializer;
     }
