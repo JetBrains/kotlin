@@ -1,5 +1,5 @@
 namespace demo
-import std.java.compatibility.*
+import std.compatibility.*
 open class Test() {
 open fun test() : Unit {
 var i : Int? = 10
