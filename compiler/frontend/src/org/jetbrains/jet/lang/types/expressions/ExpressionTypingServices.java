@@ -218,13 +218,13 @@ public class ExpressionTypingServices {
                         final boolean[] mismatch = new boolean[1];
                         ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
                         newContext = createContext(newContext, errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
-                        result = blockLevelVisitor.getType(statementExpression, newContext);
+                        result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
                         if (mismatch[0]) {
                             TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
                             mismatch[0] = false;
                             ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
                             newContext = createContext(newContext, interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE, context.expectedReturnType);
-                            result = blockLevelVisitor.getType(statementExpression, newContext);
+                            result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
                             if (mismatch[0]) {
                                 temporaryTraceExpectingUnit.commit();
                             }
@@ -238,11 +238,11 @@ public class ExpressionTypingServices {
                     }
                     else {
                         newContext = createContext(newContext, trace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
-                        result = blockLevelVisitor.getType(statementExpression, newContext);
+                        result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
                     }
                 }
                 else {
-                    result = blockLevelVisitor.getType(statementExpression, newContext);
+                    result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
                     if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT) {
                         boolean mightBeUnit = false;
                         if (statementExpression instanceof JetDeclaration) {
@@ -264,7 +264,7 @@ public class ExpressionTypingServices {
                 }
             }
             else {
-                result = blockLevelVisitor.getType(statementExpression, newContext);
+                result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
             }
 
             DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();

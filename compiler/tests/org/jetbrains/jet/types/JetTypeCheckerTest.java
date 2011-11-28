@@ -113,7 +113,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("if (true) 1 else '1'", "Any");
 
         assertType("if (true) else '1'", "Unit");
-        assertType("if (true) else a = 0", "Unit");
+        assertType("if (true) else { var a = 0; a = 1 }", "Unit");
     }
 
     public void testWhen() throws Exception {

@@ -9,8 +9,8 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -18,7 +18,10 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -31,10 +34,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     protected ControlStructureTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
-    }
-
-    private JetType getTypeWithNewScopeAndDataFlowInfo(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull DataFlowInfo newDataFlowInfo, @NotNull ExpressionTypingContext context) {
-        return facade.getType(expression, context.replaceScope(scope).replaceDataFlowInfo(newDataFlowInfo));
     }
 
     private void checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
@@ -60,30 +59,29 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression thenBranch = expression.getThen();
 
         WritableScopeImpl thenScope = newWritableScopeImpl(context).setDebugName("Then scope");
+        WritableScopeImpl elseScope = newWritableScopeImpl(context).setDebugName("Else scope");
         DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, thenScope, context);
         DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
 
         if (elseBranch == null) {
             if (thenBranch != null) {
-                JetType type = getTypeWithNewScopeAndDataFlowInfo(thenScope, thenBranch, thenInfo, context);
+                JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(thenInfo));
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     facade.setResultingDataFlowInfo(elseInfo);
-//                        resultScope = elseScope;
                 }
                 return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
             }
             return null;
         }
         if (thenBranch == null) {
-            JetType type = getTypeWithNewScopeAndDataFlowInfo(context.scope, elseBranch, elseInfo, context);
+            JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(elseInfo));
             if (type != null && JetStandardClasses.isNothing(type)) {
                 facade.setResultingDataFlowInfo(thenInfo);
-//                    resultScope = thenScope;
             }
             return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
         }
-        JetType thenType = getTypeWithNewScopeAndDataFlowInfo(thenScope, thenBranch, thenInfo, contextWithExpectedType);
-        JetType elseType = getTypeWithNewScopeAndDataFlowInfo(context.scope, elseBranch, elseInfo, contextWithExpectedType);
+        JetType thenType = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, contextWithExpectedType.replaceDataFlowInfo(thenInfo));
+        JetType elseType = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, contextWithExpectedType.replaceDataFlowInfo(elseInfo));
 
         JetType result;
         if (thenType == null) {
@@ -117,7 +115,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in while's condition");
             DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
-            getTypeWithNewScopeAndDataFlowInfo(scopeToExtend, body, conditionInfo, context);
+            context.getServices().getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
         }
         if (!containsBreak(expression, context)) {
             facade.setResultingDataFlowInfo(DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context));
@@ -216,7 +214,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression body = expression.getBody();
         if (body != null) {
-            facade.getType(body, context.replaceScope(loopScope));
+            context.getServices().getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context);
         }
 
         return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
