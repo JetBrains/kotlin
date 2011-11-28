@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
@@ -39,7 +40,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         //NOTE: that while we translate constructor parameters we also add property initializer statements
         // for properties declared as constructor parameters
         result.setParameters(translatePrimaryConstructorParameters());
-        addCallToSuperMethod();
+        mayBeAddCallToSuperMethod();
         result.setBody(generateInitializerMethodBody());
         return result;
     }
@@ -50,22 +51,27 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         return AstUtil.newBlock(initializerStatements);
     }
 
-    private void addCallToSuperMethod() {
+    private void mayBeAddCallToSuperMethod() {
         if (BindingUtils.hasAncestorClass(context().bindingContext(), classDeclaration)) {
-            JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
-            List<JsExpression> arguments = translateArguments();
-            initializerStatements.add(AstUtil.convertToStatement
-                    (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName), arguments)));
+            JetDelegatorToSuperCall superCall = getSuperCall();
+            if (superCall == null) return;
+            addCallToSuperMethod(superCall);
         }
     }
 
-    @NotNull
-    private List<JsExpression> translateArguments() {
-        JetDelegatorToSuperCall superCall = getSuperCall();
-        return TranslationUtils.translateArgumentList(superCall.getValueArguments(), context());
+    private void addCallToSuperMethod(@NotNull JetDelegatorToSuperCall superCall) {
+        JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
+        List<JsExpression> arguments = translateArguments(superCall);
+        initializerStatements.add(AstUtil.convertToStatement
+                (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName), arguments)));
     }
 
     @NotNull
+    private List<JsExpression> translateArguments(@NotNull JetDelegatorToSuperCall superCall) {
+        return TranslationUtils.translateArgumentList(superCall.getValueArguments(), context());
+    }
+
+    @Nullable
     private JetDelegatorToSuperCall getSuperCall() {
         JetDelegatorToSuperCall result = null;
         for (JetDelegationSpecifier specifier : classDeclaration.getDelegationSpecifiers()) {
@@ -73,7 +79,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
                 result = (JetDelegatorToSuperCall) specifier;
             }
         }
-        assert result != null : "Class must call ancestor's constructor.";
+        //assert result != null : "Class must call ancestor's constructor.";
         return result;
     }
 
