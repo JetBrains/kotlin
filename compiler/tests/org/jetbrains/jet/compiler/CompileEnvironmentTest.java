@@ -51,7 +51,7 @@ public class CompileEnvironmentTest extends TestCase {
         assertTrue(entries.contains("Smoke/namespace.class"));
     }
 
-    public void testSmokeWithCompiler() throws IOException {
+    public void testSmokeWithCompilerJar() throws IOException {
         File tempFile = File.createTempFile("compilerTest", "compilerTest");
         try {
             KotlinCompiler.main(Arrays.asList("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts", "-jar", tempFile.getAbsolutePath()).toArray(new String[0]));
@@ -76,6 +76,31 @@ public class CompileEnvironmentTest extends TestCase {
         }
     }
     
+    private static void delete(File file) {
+        if(file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                delete(child);
+            }
+        }
+
+        file.delete();
+    }
+    
+    public void testSmokeWithCompilerOutput() throws IOException {
+        File tempFile = File.createTempFile("compilerTest", "compilerTest");
+        tempFile.delete();
+        tempFile = new File(tempFile.getAbsolutePath());
+        tempFile.mkdir();
+        try {
+            KotlinCompiler.main(Arrays.asList("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output", tempFile.getAbsolutePath()).toArray(new String[0]));
+            assertEquals(1, tempFile.listFiles().length);
+            assertEquals(1, tempFile.listFiles()[0].listFiles().length);
+        }
+        finally {
+            delete(tempFile);
+        }
+    }
+
     private List<String> listEntries(JarInputStream is) throws IOException {
         List<String> entries = new ArrayList<String>();
         while (true) {

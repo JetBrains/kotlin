@@ -230,6 +230,17 @@ public class CompileEnvironment {
        return new File(PathManager.getResourceRoot(CompileEnvironment.class, "/org/jetbrains/jet/compiler/CompileEnvironment.class")).getParentFile().getParentFile().getParent();
     }
 
+    private static final List<String> sanitized = Arrays.asList("kotlin/", "std/");
+    public static boolean skipFile(String name) {
+        boolean skip = false;
+        for (String prefix : sanitized) {
+            if(name.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable String mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
@@ -240,18 +251,9 @@ public class CompileEnvironment {
                 mainAttributes.putValue("Main-Class", mainClass);
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
-            List<String> sanitized = Arrays.asList("kotlin/", "std/");
             try {
                 for (String file : factory.files()) {
-                    boolean skip = false;
-                    for (String prefix : sanitized) {
-                        if(file.startsWith(prefix)) {
-                            skip = true;
-                            break;
-                        }
-                    }
-
-                    if(!skip) {
+                    if(!skipFile(file)) {
                         stream.putNextEntry(new JarEntry(file));
                         stream.write(factory.asBytes(file));
                     }
@@ -321,6 +323,7 @@ public class CompileEnvironment {
     public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
+        session.addStdLibSources();
 
         String mainClass = null;
         for (JetNamespace namespace : session.getSourceFileNamespaces()) {
@@ -352,11 +355,13 @@ public class CompileEnvironment {
     private static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
         List<String> files = factory.files();
         for (String file : files) {
-            File target = new File(outputDir, file);
-            try {
-                FileUtil.writeToFile(target, factory.asBytes(file));
-            } catch (IOException e) {
-                throw new CompileEnvironmentException(e);
+            if(!skipFile(file)) {
+                File target = new File(outputDir, file);
+                try {
+                    FileUtil.writeToFile(target, factory.asBytes(file));
+                } catch (IOException e) {
+                    throw new CompileEnvironmentException(e);
+                }
             }
         }
     }
