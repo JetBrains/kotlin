@@ -216,7 +216,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression body = expression.getBody();
         if (body != null) {
-            facade.getType(body, context.replaceScope(loopScope));
+            ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(loopScope);
+            blockLevelVisitor.getType(body, context.replaceScope(loopScope));
         }
 
         return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
