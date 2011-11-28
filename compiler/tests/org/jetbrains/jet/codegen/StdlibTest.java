@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -30,8 +31,8 @@ public class StdlibTest extends CodegenTestCase {
 
         session.addSources(myFile.getVirtualFile());
         try {
-            session.addSources(addStdLib());
-        } catch (IOException e) {
+            session.addStdLibSources();
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
 
@@ -45,9 +46,9 @@ public class StdlibTest extends CodegenTestCase {
     protected ClassFileFactory generateClassesInFile() {
         try {
             CompileSession session = new CompileSession(myEnvironment);
-
+            CompileEnvironment.initializeKotlinRuntime(myEnvironment);
             session.addSources(myFile.getVirtualFile());
-            session.addSources(addStdLib());
+            session.addStdLibSources();
 
             if (!session.analyze(System.out)) {
                 return null;
@@ -57,16 +58,9 @@ public class StdlibTest extends CodegenTestCase {
         } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private VirtualFile addStdLib() throws IOException {
-        String text = FileUtil.loadFile(new File(JetParsingTest.getTestDataDir() + "/../../stdlib/ktSrc/StandardLibrary.kt"), CharsetToolkit.UTF8).trim();
-        text = StringUtil.convertLineSeparators(text);
-        PsiFile stdLibFile = createFile("StandardLibrary.kt", text);
-        return stdLibFile.getVirtualFile();
     }
 
     public void testInputStreamIterator () {
@@ -84,5 +78,17 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testKt528 () {
         blackBoxFile("regressions/kt528.kt");
+    }
+
+    public void testCollectionSize () throws Exception {
+        loadText("import std.util.*; fun box() = if(java.util.Arrays.asList(0, 1, 2)?.size == 3) \"OK\" else \"fail\"");
+//        System.out.println(generateToText());
+        blackBox();
+    }
+
+    public void testCollectionEmpty () throws Exception {
+        loadText("import std.util.*; fun box() = if(java.util.Arrays.asList(0, 1, 2)?.empty ?: false) \"OK\" else \"fail\"");
+//        System.out.println(generateToText());
+        blackBox();
     }
 }

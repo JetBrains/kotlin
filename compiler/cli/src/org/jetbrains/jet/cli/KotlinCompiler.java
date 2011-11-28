@@ -23,6 +23,8 @@ public class KotlinCompiler {
         public String src;
         @Argument(value = "module", description = "module to compile")
         public String module;
+        @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
+        public boolean includeRuntime;
     }
 
     public static void main(String[] args) {
@@ -32,7 +34,7 @@ public class KotlinCompiler {
             Args.parse(arguments, args);
         }
         catch (Throwable t) {
-            System.out.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] -src <filename or dirname>");
+            System.out.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
             t.printStackTrace();
             return;
         }
@@ -47,11 +49,11 @@ public class KotlinCompiler {
             }
 
             if (arguments.module != null) {
-                environment.compileModuleScript(arguments.module);
+                environment.compileModuleScript(arguments.module, arguments.jar, arguments.includeRuntime);
                 return;
             }
             else {
-                environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir);
+                environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
         } catch (CompileEnvironmentException e) {
             System.out.println(e.getMessage());

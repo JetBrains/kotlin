@@ -5,7 +5,9 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.modules.IModuleBuilder;
@@ -22,6 +24,8 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.*;
 
@@ -53,14 +57,18 @@ public class CompileEnvironment {
     }
 
     public boolean initializeKotlinRuntime() {
+        return initializeKotlinRuntime(myEnvironment);
+    }
+
+    public static boolean initializeKotlinRuntime(JetCoreEnvironment environment) {
         final File unpackedRuntimePath = getUnpackedRuntimePath();
         if (unpackedRuntimePath != null) {
-            myEnvironment.addToClasspath(unpackedRuntimePath);
+            environment.addToClasspath(unpackedRuntimePath);
         }
         else {
             final File runtimeJarPath = getRuntimeJarPath();
             if (runtimeJarPath != null && runtimeJarPath.exists()) {
-                myEnvironment.addToClasspath(runtimeJarPath);
+                environment.addToClasspath(runtimeJarPath);
             }
             else {
                 return false;
@@ -147,7 +155,7 @@ public class CompileEnvironment {
         return null;
     }
 
-    public void compileModuleScript(String moduleFile) {
+    public void compileModuleScript(String moduleFile, String jarPath, boolean jarRuntime) {
         final IModuleSetBuilder moduleSetBuilder = loadModuleScript(moduleFile);
         if (moduleSetBuilder == null) {
             return;
@@ -156,9 +164,9 @@ public class CompileEnvironment {
         final String directory = new File(moduleFile).getParent();
         for (IModuleBuilder moduleBuilder : moduleSetBuilder.getModules()) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
-            final String path = new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+            final String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
             try {
-                writeToJar(moduleFactory, new FileOutputStream(path), null, true);
+                writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
             } catch (FileNotFoundException e) {
                 throw new CompileEnvironmentException("Invalid jar path " + path, e);
             }
@@ -168,25 +176,7 @@ public class CompileEnvironment {
     public IModuleSetBuilder loadModuleScript(String moduleFile) {
         CompileSession scriptCompileSession = new CompileSession(myEnvironment);
         scriptCompileSession.addSources(moduleFile);
-
-        URL url = CompileEnvironment.class.getClassLoader().getResource("ModuleBuilder.kt");
-        if (url != null) {
-            String path = url.getPath();
-            if (path.startsWith("file:")) {
-                path = path.substring(5);
-            }
-            final VirtualFile vFile = myEnvironment.getJarFileSystem().findFileByPath(path);
-            if (vFile == null) {
-                throw new CompileEnvironmentException("Couldn't load ModuleBuilder.kt from runtime jar: "+ url);
-            }
-            scriptCompileSession.addSources(vFile);
-        }
-        else {
-            // building from source
-            final String homeDirectory = getHomeDirectory();
-            final File file = new File(homeDirectory, "stdlib/ktSrc/ModuleBuilder.kt");
-            scriptCompileSession.addSources(myEnvironment.getLocalFileSystem().findFileByPath(file.getPath()));
-        }
+        scriptCompileSession.addStdLibSources();
 
         if (!scriptCompileSession.analyze(myErrorStream)) {
             return null;
@@ -223,6 +213,7 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(IModuleBuilder moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
+        moduleCompileSession.addStdLibSources();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             moduleCompileSession.addSources(new File(directory, sourceFile).getPath());
         }
@@ -249,10 +240,21 @@ public class CompileEnvironment {
                 mainAttributes.putValue("Main-Class", mainClass);
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
+            List<String> sanitized = Arrays.asList("kotlin/", "std/");
             try {
                 for (String file : factory.files()) {
-                    stream.putNextEntry(new JarEntry(file));
-                    stream.write(factory.asBytes(file));
+                    boolean skip = false;
+                    for (String prefix : sanitized) {
+                        if(file.startsWith(prefix)) {
+                            skip = true;
+                            break;
+                        }
+                    }
+
+                    if(!skip) {
+                        stream.putNextEntry(new JarEntry(file));
+                        stream.write(factory.asBytes(file));
+                    }
                 }
                 if (includeRuntime) {
                     writeRuntimeToJar(stream);
@@ -316,7 +318,7 @@ public class CompileEnvironment {
         }
     }
 
-    public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir) {
+    public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
 
@@ -334,7 +336,7 @@ public class CompileEnvironment {
         ClassFileFactory factory = session.generate();
         if (jar != null) {
             try {
-                writeToJar(factory, new FileOutputStream(jar), mainClass, true);
+                writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
             } catch (FileNotFoundException e) {
                 throw new CompileEnvironmentException("Invalid jar path " + jar, e);
             }
@@ -358,5 +360,4 @@ public class CompileEnvironment {
             }
         }
     }
-
 }

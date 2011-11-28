@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,22 @@ public class CompileSession {
             return;
         }
 
-        addSources(vFile);
+        addSources(new File(path));
+    }
+
+    private void addSources(File file) {
+        if(file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                addSources(child);
+            }
+        }
+        else {
+            VirtualFile fileByPath = myEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
+            PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(fileByPath);
+            if(psiFile instanceof JetFile) {
+                mySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
+            }
+        }
     }
 
     public void addSources(VirtualFile vFile) {
@@ -63,13 +79,6 @@ public class CompileSession {
             if (psiFile instanceof JetFile) {
                 mySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
             }
-        }
-    }
-
-    public void addLibrarySources(VirtualFile vFile) {
-        PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
-        if (psiFile instanceof JetFile) {
-            myLibrarySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
         }
     }
 
@@ -103,5 +112,23 @@ public class CompileSession {
         GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.TEXT);
         generationState.compileCorrectNamespaces(myBindingContext, mySourceFileNamespaces);
         return generationState.createText();
+    }
+
+    public boolean addStdLibSources() {
+        final File unpackedRuntimePath = CompileEnvironment.getUnpackedRuntimePath();
+        if (unpackedRuntimePath != null) {
+            addSources(new File(unpackedRuntimePath, "../../../stdlib/ktSrc").getAbsoluteFile());
+        }
+        else {
+            final File runtimeJarPath = CompileEnvironment.getRuntimeJarPath();
+            if (runtimeJarPath != null && runtimeJarPath.exists()) {
+                // todo
+                throw new UnsupportedOperationException("Loading of stdlib sources from jar");
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
     }
 }

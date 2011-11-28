@@ -1,15 +1,5 @@
 namespace std
 
-namespace util {
-    import java.util.*
-
-    val <T> Collection<T>.size : Int
-        get() = size()
-
-    val <T> Collection<T>.empty : Boolean
-        get() = isEmpty()
-}
-
 namespace io {
     import java.io.*
     import java.nio.charset.*

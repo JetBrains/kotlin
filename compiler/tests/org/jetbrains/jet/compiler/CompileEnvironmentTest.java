@@ -3,20 +3,20 @@ package org.jetbrains.jet.compiler;
 import jet.modules.IModuleBuilder;
 import jet.modules.IModuleSetBuilder;
 import junit.framework.TestCase;
+import org.jetbrains.jet.cli.KotlinCompiler;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class CompileEnvironmentTest extends TestCase {
     private CompileEnvironment environment;
@@ -51,6 +51,31 @@ public class CompileEnvironmentTest extends TestCase {
         assertTrue(entries.contains("Smoke/namespace.class"));
     }
 
+    public void testSmokeWithCompiler() throws IOException {
+        File tempFile = File.createTempFile("compilerTest", "compilerTest");
+        try {
+            KotlinCompiler.main(Arrays.asList("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts", "-jar", tempFile.getAbsolutePath()).toArray(new String[0]));
+            FileInputStream fileInputStream = new FileInputStream(tempFile);
+            try {
+                JarInputStream is = new JarInputStream(fileInputStream);
+                try {
+                    final List<String> entries = listEntries(is);
+                    assertTrue(entries.contains("Smoke/namespace.class"));
+                    assertEquals(1, entries.size());
+                }
+                finally {
+                    is.close();
+                }
+            }
+            finally {
+                fileInputStream.close();
+            }
+        }
+        finally {
+            tempFile.delete();
+        }
+    }
+    
     private List<String> listEntries(JarInputStream is) throws IOException {
         List<String> entries = new ArrayList<String>();
         while (true) {
