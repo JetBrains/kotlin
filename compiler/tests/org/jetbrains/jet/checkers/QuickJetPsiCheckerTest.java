@@ -47,7 +47,7 @@ public class QuickJetPsiCheckerTest extends JetLiteFixture {
 
         BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(importingStrategy), jetFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
 
-        CheckerTestUtil.diagnosticsDiff(diagnosedRanges, bindingContext.getDiagnostics(), new CheckerTestUtil.DiagnosticDiffCallbacks() {
+        CheckerTestUtil.diagnosticsDiff(diagnosedRanges, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile), new CheckerTestUtil.DiagnosticDiffCallbacks() {
             @Override
             public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
                 String message = "Missing " + type + DiagnosticUtils.atLocation(myFile, new TextRange(expectedStart, expectedEnd));
@@ -61,14 +61,14 @@ public class QuickJetPsiCheckerTest extends JetLiteFixture {
             }
         });
 
-        String actualText = CheckerTestUtil.addDiagnosticMarkersToText(jetFile, bindingContext).toString();
+        String actualText = CheckerTestUtil.addDiagnosticMarkersToText(jetFile, bindingContext, AnalyzingUtils.getSyntaxErrorRanges(jetFile)).toString();
 
         assertEquals(expectedText, actualText);
         
 //        convert(new File(myFullDataPath + "/../../checker/"), new File(myFullDataPath));
     }
 
-//    private void convert(File src, File dest) throws IOException {
+    //    private void convert(File src, File dest) throws IOException {
 //        File[] files = src.listFiles();
 //        for (File file : files) {
 //            try {

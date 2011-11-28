@@ -6,11 +6,12 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.checkers.CheckerTestUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -30,8 +32,9 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         assert editor != null && psiFile != null;
 
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+        List<TextRange> syntaxError = AnalyzingUtils.getSyntaxErrorRanges(psiFile);
 
-        String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, bindingContext).toString();
+        String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, bindingContext, syntaxError).toString();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(result), new ClipboardOwner() {

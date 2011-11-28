@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
@@ -44,6 +45,22 @@ public class AnalyzingUtils {
                 throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + DiagnosticUtils.atLocation(element));
             }
         });
+    }
+    
+    public static List<TextRange> getSyntaxErrorRanges(@NotNull PsiElement root) {
+        final ArrayList<TextRange> r = new ArrayList<TextRange>();
+        root.acceptChildren(new PsiElementVisitor() {
+            @Override
+            public void visitElement(PsiElement element) {
+                element.acceptChildren(this);
+            }
+
+            @Override
+            public void visitErrorElement(PsiErrorElement element) {
+                r.add(element.getTextRange());
+            }
+        });
+        return r;
     }
 
     public static void throwExceptionOnErrors(BindingContext bindingContext) {

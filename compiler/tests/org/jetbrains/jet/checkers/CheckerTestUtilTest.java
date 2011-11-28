@@ -1,6 +1,7 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -82,12 +83,12 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
         public void test(PsiFile psiFile) {
             BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), (JetFile) psiFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
-            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, bindingContext).toString();
+            String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile)).toString();
 
             List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
 
-            List<Diagnostic> diagnostics = Lists.newArrayList(bindingContext.getDiagnostics());
+            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile);
             Collections.sort(diagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
 
             makeTestData(diagnostics, diagnosedRanges);
