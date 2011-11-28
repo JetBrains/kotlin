@@ -47,6 +47,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     else if (javaFile.getParent().endsWith("/method")) actual = methodToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/class")) actual = fileToKotlin(javaCode);
     else if (javaFile.getParent().endsWith("/file")) actual = fileToKotlin(javaCode);
+    else if (javaFile.getParent().endsWith("/comp")) actual = fileToFileWithCompatibilityImport(javaCode);
 
     assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression";
 
@@ -100,7 +101,15 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   private static void setClassIdentifiers() {
     ClassVisitor c = new ClassVisitor();
     myFile.accept(c);
+    Converter.clearClassIdentifiers();
     Converter.setClassIdentifiers(c.getClassIdentifiers());
+  }
+
+  @NotNull
+  private static String fileToFileWithCompatibilityImport(String text) throws IOException {
+    configureFromText(text);
+    setClassIdentifiers();
+    return prettify(Converter.fileToFileWithCompatibilityImport((PsiJavaFile) myFile).toKotlin());
   }
 
   @NotNull
