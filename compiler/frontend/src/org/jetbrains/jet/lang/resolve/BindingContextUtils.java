@@ -13,6 +13,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCR
 
 /**
  * @author abreslav
+ * @author svtk
  */
 public class BindingContextUtils {
     private BindingContextUtils() {

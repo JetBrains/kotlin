@@ -16,7 +16,7 @@ fun t1(b : Boolean) {
     }
     doSmth(<!UNINITIALIZED_VARIABLE!>u<!>)
 
-    var r: String
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>r<!>: String
     if (b) {
         r = "s"
     }
@@ -63,10 +63,10 @@ fun t4(a: A, val b: A, var c: A) {
 // reassigned vals
 
 fun t1() {
-    val <!UNUSED_VARIABLE!>a<!> : Int = 1
+    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!> : Int = 1
     <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>2<!>
 
-    var <!UNUSED_VARIABLE!>b<!> : Int = 1
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!> : Int = 1
     b = <!UNUSED_VALUE!>3<!>
 }
 
@@ -137,8 +137,8 @@ class AnonymousInitializers(var a: String, val b: String) {
 
     {
         <!VAL_REASSIGNMENT!>$i<!> = 13
-        <!NO_BACKING_FIELD!>$j<!> = 30
-        <!VAL_REASSIGNMENT!>j<!> = 34
+        <!NO_BACKING_FIELD, VAL_REASSIGNMENT!>$j<!> = 30
+        j = 34
     }
 
     val k: String

@@ -487,7 +487,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testTupleLiteral() throws Exception {
         loadText("fun foo() = (1, \"foo\")");
 //        System.out.println(generateToText());
-        final Method main = generateFunction();
+        final Method main = generateFunction("foo");
         Tuple2 tuple2 = (Tuple2) main.invoke(null);
         assertEquals(1, tuple2._1);
         assertEquals("foo", tuple2._2);

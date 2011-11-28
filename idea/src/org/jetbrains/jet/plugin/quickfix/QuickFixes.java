@@ -78,9 +78,6 @@ public class QuickFixes {
         add(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createRemoveModifierFromListFactory(JetTokens.OVERRIDE_KEYWORD));
         add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD, new JetToken[] {JetTokens.OPEN_KEYWORD}));
 
-        add(Errors.VAL_WITH_SETTER, ChangeVariableMutabilityFix.createFactory());
-        add(Errors.VAL_REASSIGNMENT, ChangeVariableMutabilityFix.createFromSimpleNameFactory());
-
         add(Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
         add(Errors.USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
 
@@ -120,5 +117,9 @@ public class QuickFixes {
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actionMap.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
         actionMap.put(Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
+
+        ChangeVariableMutabilityFix changeVariableMutabilityFix = new ChangeVariableMutabilityFix();
+        actionMap.put(Errors.VAL_WITH_SETTER, changeVariableMutabilityFix);
+        actionMap.put(Errors.VAL_REASSIGNMENT, changeVariableMutabilityFix);
     }
 }

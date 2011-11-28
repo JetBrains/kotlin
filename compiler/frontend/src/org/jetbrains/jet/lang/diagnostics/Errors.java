@@ -144,7 +144,8 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
-    PsiElementOnlyDiagnosticFactory1<JetProperty, DeclarationDescriptor> UNUSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is never used", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> UNUSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is never used", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is assigned but never accessed", NAME);
     PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = new PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor>(WARNING, "The value ''{0}'' assigned to ''{1}'' is never used", NAME) {
         @Override
         protected String makeMessageForA(@NotNull JetElement element) {
@@ -158,17 +159,7 @@ public interface Errors {
         }
     };
 
-    PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]> VAL_REASSIGNMENT = new PsiElementOnlyDiagnosticFactory2<JetExpression, DeclarationDescriptor, JetProperty[]>(ERROR, "Val can not be reassigned", NAME) {
-        @NotNull
-        @Override
-        public DiagnosticWithPsiElement<JetExpression> on(@NotNull JetExpression elementToBlame, @NotNull ASTNode nodeToMark, @NotNull DeclarationDescriptor declarationDescriptor, @NotNull JetProperty[] property) {
-            DiagnosticWithPsiElement<JetExpression> diagnostic = super.on(elementToBlame, nodeToMark, declarationDescriptor, property);
-            if (property.length == 1) {
-                return diagnostic.add(DiagnosticParameters.PROPERTY, property[0]);
-            }
-            return diagnostic;
-        }
-    };
+    PsiElementOnlyDiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Val can not be reassigned", NAME);
     SimplePsiElementOnlyDiagnosticFactory<JetExpression> VARIABLE_EXPECTED = new SimplePsiElementOnlyDiagnosticFactory<JetExpression>(ERROR, "Variable expected");
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Initialization using backing field required", NAME);

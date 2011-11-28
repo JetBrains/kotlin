@@ -87,6 +87,11 @@ public class JetPsiFactory {
         return function.getBodyExpression();
     }
 
+    public static JetParameter createParameter(Project project, String name, String type) {
+        JetNamedFunction function = createFunction(project, "fun foo(" + name + " : " + type + ") {}");
+        return function.getValueParameters().get(0);
+    }
+
     public static JetNamespace createNamespace(Project project, String text) {
         JetFile file = createFile(project, text);
         return file.getRootNamespace();
@@ -96,7 +101,7 @@ public class JetPsiFactory {
         JetNamespace namespace = createNamespace(project, "import " + classPath);
         return namespace.getImportDirectives().iterator().next();
     }
-    
+
     public static PsiElement createPrimaryConstructor(Project project) {
         JetClass aClass = createClass(project, "class A()");
         return aClass.findElementAt(7).getParent();

@@ -88,7 +88,7 @@ public class JetPsiChecker implements Annotator {
                         }
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
                             annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
-                            if (diagnostic.getFactory() == Errors.UNUSED_VARIABLE) {
+                            if (diagnostic.getFactory() == Errors.UNUSED_VARIABLE || diagnostic.getFactory() == Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE) {
                                 annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                             }
                         }

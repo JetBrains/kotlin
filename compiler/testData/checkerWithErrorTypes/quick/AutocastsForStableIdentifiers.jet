@@ -17,7 +17,7 @@ class AClass() {
 val x : Any? = 1
 
 fun Any?.vars(a: Any?) : Int {
-    var <!UNUSED_VARIABLE!>b<!>: Int = 0
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!>: Int = 0
     if (ns.y is Int) {
         b = <!UNUSED_VALUE!>ns.y<!>
     }
@@ -74,7 +74,7 @@ trait T {}
 
 open class C {
     fun foo() {
-       var <!UNUSED_VARIABLE!>t<!> : T? = null
+       var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>t<!> : T? = null
        if (this is T) {
           t = <!UNUSED_VALUE!>this<!>
        }
