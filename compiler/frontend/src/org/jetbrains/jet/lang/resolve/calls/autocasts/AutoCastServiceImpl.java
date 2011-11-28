@@ -18,11 +18,13 @@ public class AutoCastServiceImpl implements AutoCastService {
         this.bindingContext = bindingContext;
     }
 
+    @NotNull
     @Override
-    public List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor) {
+    public List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor) {
         return AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverDescriptor);
     }
 
+    @NotNull
     @Override
     public DataFlowInfo getDataFlowInfo() {
         return dataFlowInfo;

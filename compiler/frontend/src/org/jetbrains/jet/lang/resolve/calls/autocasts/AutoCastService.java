@@ -11,6 +11,7 @@ import java.util.List;
 */
 public interface AutoCastService {
     AutoCastService NO_AUTO_CASTS = new AutoCastService() {
+        @NotNull
         @Override
         public DataFlowInfo getDataFlowInfo() {
             return DataFlowInfo.EMPTY;
@@ -21,13 +22,17 @@ public interface AutoCastService {
             return !receiver.getType().isNullable();
         }
 
+        @NotNull
         @Override
-        public List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor) {
+        public List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor) {
             return Collections.singletonList(receiverDescriptor);
         }
     };
 
-    List<ReceiverDescriptor> getVariantsForReceiver(ReceiverDescriptor receiverDescriptor);
+    @NotNull
+    List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor);
+
+    @NotNull
     DataFlowInfo getDataFlowInfo();
 
     boolean isNotNull(@NotNull ReceiverDescriptor receiver);

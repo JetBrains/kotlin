@@ -29,4 +29,9 @@ public class ExpressionValueArgument implements ResolvedValueArgument {
         if (expression == null) return Collections.emptyList();
         return Collections.singletonList(expression);
     }
+
+    @Override
+    public String toString() {
+        return expression.getText();
+    }
 }
