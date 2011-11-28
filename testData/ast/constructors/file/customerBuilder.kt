@@ -1,5 +1,11 @@
 namespace org.test.customer
 open class Customer(first : String?, last : String?) {
+{
+doSmthBefore()
+$_firstName = first
+$_lastName = last
+doSmthAfter()
+}
 public val _firstName : String?
 public val _lastName : String?
 open public fun getFirstName() : String? {
@@ -11,12 +17,6 @@ return _lastName
 open private fun doSmthBefore() : Unit {
 }
 open private fun doSmthAfter() : Unit {
-}
-{
-doSmthBefore()
-$_firstName = first
-$_lastName = last
-doSmthAfter()
 }
 }
 open class CustomerBuilder() {

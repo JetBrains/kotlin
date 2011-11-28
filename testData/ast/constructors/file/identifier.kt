@@ -1,4 +1,8 @@
 public open class Identifier(myName : String?, myHasDollar : Boolean) {
+{
+$myName = myName
+$myHasDollar = myHasDollar
+}
 private val myName : String?
 private var myHasDollar : Boolean
 private var myNullable : Boolean = true
@@ -20,10 +24,6 @@ val __ = Identifier(name, hasDollar)
 __.myNullable = isNullable
 return __
 }
-}
-{
-$myName = myName
-$myHasDollar = myHasDollar
 }
 }
 public open class User() {

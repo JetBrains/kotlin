@@ -30,8 +30,8 @@ public class Enum extends Class {
   public String toKotlin() {
     return modifiersToKotlin() + "enum" + SPACE + myName.toKotlin() + primaryConstructorSignatureToKotlin() +
       typeParametersToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
-      AstUtil.joinNodes(membersExceptConstructors(), N) + N +
       primaryConstructorBodyToKotlin() + N +
+      AstUtil.joinNodes(membersExceptConstructors(), N) + N +
       "}";
   }
 }

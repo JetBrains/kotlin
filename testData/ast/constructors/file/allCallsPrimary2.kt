@@ -1,4 +1,9 @@
 open class C(arg1 : Int) {
+{
+$myArg1 = arg1
+$myArg2 = 0
+$myArg3 = 0
+}
 val myArg1 : Int
 var myArg2 : Int
 var myArg3 : Int
@@ -15,11 +20,6 @@ __.myArg2 = arg2
 __.myArg3 = 0
 return __
 }
-}
-{
-$myArg1 = arg1
-$myArg2 = 0
-$myArg3 = 0
 }
 }
 public open class User() {

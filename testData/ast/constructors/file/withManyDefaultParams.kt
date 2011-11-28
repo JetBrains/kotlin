@@ -1,4 +1,14 @@
 public open class Test(myName : String?, a : Boolean, b : Double, c : Float, d : Long, e : Int, f : Short, g : Char) {
+{
+$myName = myName
+$a = a
+$b = b
+$c = c
+$d = d
+$e = e
+$f = f
+$g = g
+}
 private val myName : String?
 private var a : Boolean
 private var b : Double
@@ -19,16 +29,6 @@ return __
 open fun foo(n : String?) : String? {
 return ""
 }
-}
-{
-$myName = myName
-$a = a
-$b = b
-$c = c
-$d = d
-$e = e
-$f = f
-$g = g
 }
 }
 public open class User() {
