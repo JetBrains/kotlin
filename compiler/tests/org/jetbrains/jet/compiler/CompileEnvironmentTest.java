@@ -76,14 +76,15 @@ public class CompileEnvironmentTest extends TestCase {
         }
     }
     
-    private static void delete(File file) {
+    private static boolean delete(File file) {
+        boolean success = true;
         if(file.isDirectory()) {
             for (File child : file.listFiles()) {
-                delete(child);
+                success = success && delete(child);
             }
         }
 
-        file.delete();
+        return file.delete() && success;
     }
     
     public void testSmokeWithCompilerOutput() throws IOException {
@@ -101,7 +102,7 @@ public class CompileEnvironmentTest extends TestCase {
         }
     }
 
-    private List<String> listEntries(JarInputStream is) throws IOException {
+    private static List<String> listEntries(JarInputStream is) throws IOException {
         List<String> entries = new ArrayList<String>();
         while (true) {
             final JarEntry jarEntry = is.getNextJarEntry();
