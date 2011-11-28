@@ -651,7 +651,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, context);
     }
 
-    protected void checkLValue(BindingTrace trace, JetExpression expression) {
+    public void checkLValue(BindingTrace trace, JetExpression expression) {
         checkLValue(trace, expression, false);
     }
 
@@ -685,8 +685,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else if (OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)) {
-            result = getTypeForBinaryCall(context.scope, OperatorConventions.BINARY_OPERATION_NAMES.get(operationType), context, expression);
-        }
+                    result = getTypeForBinaryCall(context.scope, OperatorConventions.BINARY_OPERATION_NAMES.get(operationType), context, expression);
+}
         else if (operationType == JetTokens.EQ) {
             result = visitAssignment(expression, contextWithExpectedType);
         }
@@ -706,74 +706,77 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
         }
-        else if (OperatorConventions.EQUALS_OPERATIONS.contains(operationType)) {
-            String name = "equals";
-            if (right != null) {
-                ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
-                OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
-                        receiver, "equals",
-                        Collections.singletonList(JetStandardClasses.getNullableAnyType()));
-                if (resolutionResults.isSuccess()) {
-                    FunctionDescriptor equals = resolutionResults.getResult().getResultingDescriptor();
-                    context.trace.record(REFERENCE_TARGET, operationSign, equals);
-                    if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
-                        ensureNonemptyIntersectionOfOperandTypes(expression, context);
-                    }
-                }
-                else {
-                    if (resolutionResults.isAmbiguity()) {
-                        context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResults.getResults()));
+        else {
+            JetType booleanType = context.semanticServices.getStandardLibrary().getBooleanType();
+            if (OperatorConventions.EQUALS_OPERATIONS.contains(operationType)) {
+                String name = "equals";
+                if (right != null) {
+                    ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
+                    OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
+                            receiver, "equals",
+                            Collections.singletonList(JetStandardClasses.getNullableAnyType()));
+                    if (resolutionResults.isSuccess()) {
+                        FunctionDescriptor equals = resolutionResults.getResult().getResultingDescriptor();
+                        context.trace.record(REFERENCE_TARGET, operationSign, equals);
+                        if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
+                            ensureNonemptyIntersectionOfOperandTypes(expression, context);
+                        }
                     }
                     else {
-                        context.trace.report(EQUALS_MISSING.on(operationSign));
+                        if (resolutionResults.isAmbiguity()) {
+                            context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResults.getResults()));
+                        }
+                        else {
+                            context.trace.report(EQUALS_MISSING.on(operationSign));
+                        }
+                    }
+                }
+                result = booleanType;
+            }
+            else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
+                ensureNonemptyIntersectionOfOperandTypes(expression, context);
+
+                // TODO : Check comparison pointlessness
+                result = booleanType;
+            }
+            else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
+                if (right == null) {
+                    result = ErrorUtils.createErrorType("No right argument"); // TODO
+                    return null;
+                }
+                checkInExpression(expression, expression.getOperationReference(), expression.getLeft(), expression.getRight(), context);
+                result = booleanType;
+            }
+            else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
+                JetType leftType = facade.getType(left, context.replaceScope(context.scope));
+                WritableScopeImpl leftScope = newWritableScopeImpl(context).setDebugName("Left scope of && or ||");
+                DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
+                WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl(context).setDebugName("Right scope of && or ||");
+                JetType rightType = right == null ? null : facade.getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope));
+                if (leftType != null && !isBoolean(context.semanticServices, leftType)) {
+                    context.trace.report(TYPE_MISMATCH.on(left, booleanType, leftType));
+                }
+                if (rightType != null && !isBoolean(context.semanticServices, rightType)) {
+                    context.trace.report(TYPE_MISMATCH.on(right, booleanType, rightType));
+                }
+                result = booleanType;
+            }
+            else if (operationType == JetTokens.ELVIS) {
+                JetType leftType = facade.getType(left, context.replaceScope(context.scope));
+                JetType rightType = right == null ? null : facade.getType(right, contextWithExpectedType.replaceScope(context.scope));
+                if (leftType != null) {
+                    if (!leftType.isNullable()) {
+                        context.trace.report(USELESS_ELVIS.on(expression, left, leftType));
+                    }
+                    if (rightType != null) {
+                        DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
+                        return TypeUtils.makeNullableAsSpecified(CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable());
                     }
                 }
             }
-            result = context.semanticServices.getStandardLibrary().getBooleanType();
-        }
-        else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
-            ensureNonemptyIntersectionOfOperandTypes(expression, context);
-
-            // TODO : Check comparison pointlessness
-            result = context.semanticServices.getStandardLibrary().getBooleanType();
-        }
-        else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
-            if (right == null) {
-                result = ErrorUtils.createErrorType("No right argument"); // TODO
-                return null;
+            else {
+                context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             }
-            checkInExpression(expression, expression.getOperationReference(), expression.getLeft(), expression.getRight(), context);
-            result = context.semanticServices.getStandardLibrary().getBooleanType();
-        }
-        else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
-            JetType leftType = facade.getType(left, context.replaceScope(context.scope));
-            WritableScopeImpl leftScope = newWritableScopeImpl(context).setDebugName("Left scope of && or ||");
-            DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
-            WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl(context).setDebugName("Right scope of && or ||");
-            JetType rightType = right == null ? null : facade.getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope));
-            if (leftType != null && !isBoolean(context.semanticServices, leftType)) {
-                context.trace.report(TYPE_MISMATCH.on(left, context.semanticServices.getStandardLibrary().getBooleanType(), leftType));
-            }
-            if (rightType != null && !isBoolean(context.semanticServices, rightType)) {
-                context.trace.report(TYPE_MISMATCH.on(right, context.semanticServices.getStandardLibrary().getBooleanType(), rightType));
-            }
-            result = context.semanticServices.getStandardLibrary().getBooleanType();
-        }
-        else if (operationType == JetTokens.ELVIS) {
-            JetType leftType = facade.getType(left, context.replaceScope(context.scope));
-            JetType rightType = right == null ? null : facade.getType(right, contextWithExpectedType.replaceScope(context.scope));
-            if (leftType != null) {
-                if (!leftType.isNullable()) {
-                    context.trace.report(USELESS_ELVIS.on(expression, left, leftType));
-                }
-                if (rightType != null) {
-                    DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
-                    return TypeUtils.makeNullableAsSpecified(CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable());
-                }
-            }
-        }
-        else {
-            context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
         }
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
@@ -842,7 +845,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    protected JetType getTypeForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
+    public JetType getTypeForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
         FunctionDescriptor functionDescriptor = context.replaceScope(scope).resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, binaryExpression),

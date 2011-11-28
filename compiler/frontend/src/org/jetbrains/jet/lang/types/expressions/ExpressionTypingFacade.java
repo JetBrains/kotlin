@@ -14,4 +14,7 @@ public interface ExpressionTypingFacade {
 
     @Nullable
     JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context);
+
+    @Nullable
+    JetType getTypeForStatement(@NotNull JetExpression expression, ExpressionTypingContext context);
 }

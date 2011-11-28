@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.ELSE_MISPLACED_IN_WHEN;
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 
 /**
@@ -21,36 +22,33 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
  */
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, ExpressionTypingContext> implements ExpressionTypingInternals {
 
-    private static Function<ExpressionTypingInternals, BasicExpressionTypingVisitor> BASIC_FACTORY = new Function<ExpressionTypingInternals, BasicExpressionTypingVisitor>() {
-        @Override
-        public BasicExpressionTypingVisitor fun(ExpressionTypingInternals facade) {
-            return  new BasicExpressionTypingVisitor(facade);
-        }
-    };
+    private static ExpressionTypingVisitorDispatcher BASIC_DISPATCHER = new ExpressionTypingVisitorDispatcher(null);
 
     @NotNull
     public static ExpressionTypingFacade create() {
-        return new ExpressionTypingVisitorDispatcher(BASIC_FACTORY);
+        return BASIC_DISPATCHER;
     }
 
     @NotNull
     public static ExpressionTypingInternals createForBlock(final WritableScope writableScope) {
-        return new ExpressionTypingVisitorDispatcher(new Function<ExpressionTypingInternals, BasicExpressionTypingVisitor>() {
-                @Override
-                public BasicExpressionTypingVisitor fun(ExpressionTypingInternals facade) {
-                    return  new ExpressionTypingVisitorForStatements(facade, writableScope);
-                }
-            });
+        return new ExpressionTypingVisitorDispatcher(writableScope);
     }
 
     private final BasicExpressionTypingVisitor basic;
+    private final ExpressionTypingVisitorForStatements statements;
     private final ClosureExpressionsTypingVisitor closures = new ClosureExpressionsTypingVisitor(this);
     private final ControlStructureTypingVisitor controlStructures = new ControlStructureTypingVisitor(this);
     private final PatternMatchingTypingVisitor patterns = new PatternMatchingTypingVisitor(this);
     protected DataFlowInfo resultDataFlowInfo;
 
-    private ExpressionTypingVisitorDispatcher(Function<ExpressionTypingInternals, BasicExpressionTypingVisitor> factoryForBasic) {
-        this.basic = factoryForBasic.fun(this);
+    private ExpressionTypingVisitorDispatcher(WritableScope writableScope) {
+        this.basic = new BasicExpressionTypingVisitor(this);
+        if (writableScope != null) {
+            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic);
+        }
+        else {
+            this.statements = null;
+        }
     }
 
     @Override
@@ -87,12 +85,23 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
     @Override
     @Nullable
     public final JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context) {
+        return getType(expression, context, this);
+    }
+
+    @Override
+    @Nullable
+    public final JetType getTypeForStatement(@NotNull JetExpression expression, ExpressionTypingContext context) {
+        return getType(expression, context, statements);
+    }
+
+    @Nullable
+    private JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetType, ExpressionTypingContext> visitor) {
         if (context.trace.get(BindingContext.PROCESSED, expression)) {
             return context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
         }
         JetType result;
         try {
-            result = expression.accept(this, context);
+            result = expression.accept(visitor, context);
             // Some recursive definitions (object expressions) must put their types in the cache manually:
             if (context.trace.get(BindingContext.PROCESSED, expression)) {
                 return context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
@@ -115,10 +124,10 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
             context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
         }
         context.trace.record(BindingContext.PROCESSED, expression);
-        return result;
-    }
+        return result;        
+    }  
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public JetType visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext data) {

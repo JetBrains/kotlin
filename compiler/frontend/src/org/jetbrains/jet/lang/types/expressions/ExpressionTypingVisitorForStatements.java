@@ -27,12 +27,14 @@ import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.get
 /**
  * @author abreslav
  */
-public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingVisitor {
+public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
     private final WritableScope scope;
+    private final BasicExpressionTypingVisitor basic;
 
-    public ExpressionTypingVisitorForStatements(@NotNull ExpressionTypingInternals facade, @NotNull WritableScope scope) {
+    public ExpressionTypingVisitorForStatements(@NotNull ExpressionTypingInternals facade, @NotNull WritableScope scope, BasicExpressionTypingVisitor basic) {
         super(facade);
         this.scope = scope;
+        this.basic = basic;
     }
 
     @Nullable
@@ -126,6 +128,22 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
     }
 
     @Override
+    public JetType visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        IElementType operationType = operationSign.getReferencedNameElementType();
+        JetType result;
+        if (operationType == JetTokens.EQ) {
+            result = visitAssignment(expression, contextWithExpectedType);
+        }
+        else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
+            result = visitAssignmentOperation(expression, contextWithExpectedType);
+        }
+        else {
+            return facade.getType(expression, contextWithExpectedType);
+        }
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
+    }
+
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceExpectedReturnType(TypeUtils.NO_EXPECTED_TYPE);
         // If there's += (or similar op) defined as such, we just call it.
@@ -134,7 +152,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         String name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
 
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(context.trace);
-        JetType assignmentOperationType = getTypeForBinaryCall(scope, name, context.replaceBindingTrace(temporaryBindingTrace), expression);
+        JetType assignmentOperationType = basic.getTypeForBinaryCall(scope, name, context.replaceBindingTrace(temporaryBindingTrace), expression);
 
         JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
         // If there isn't, we call plus (or like) and then assign
@@ -145,7 +163,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
                 JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
                 resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), operationSign, context);
             }
-            assignmentOperationType = getTypeForBinaryCall(scope, counterpartName, context, expression);
+            assignmentOperationType = basic.getTypeForBinaryCall(scope, counterpartName, context, expression);
             if (assignmentOperationType != null) {
                 context.trace.record(VARIABLE_REASSIGNMENT, expression);
                 ExpressionTypingUtils.checkWrappingInRef(expression.getLeft(), context);
@@ -155,7 +173,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
             temporaryBindingTrace.commit();
             checkReassignment(expression, context, assignmentOperationType, left);
         }
-        checkLValue(context.trace, expression.getLeft());
+        basic.checkLValue(context.trace, expression.getLeft());
         return checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType);
     }
 
@@ -176,7 +194,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         }
     }
 
-    @Override
+
     protected JetType visitAssignment(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceExpectedReturnType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
@@ -184,7 +202,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
             JetType assignmentType = resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
-            checkLValue(context.trace, arrayAccessExpression);
+            basic.checkLValue(context.trace, arrayAccessExpression);
             return checkAssignmentType(assignmentType, expression, contextWithExpectedType);
         }
         JetType leftType = facade.getType(expression.getLeft(), context.replaceScope(scope));
@@ -192,7 +210,7 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
             JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
         }
         if (leftType != null) { //if leftType == null, some another error has been generated
-            checkLValue(context.trace, expression.getLeft());
+            basic.checkLValue(context.trace, expression.getLeft());
         }
         if (left instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression simpleName = (JetSimpleNameExpression) left;
@@ -235,6 +253,11 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
 //            context.trace.record(REFERENCE_TARGET, operationSign, setFunctionDescriptor);
 //        }
         return setFunctionDescriptor.getReturnType();
+    }
+
+    @Override
+    public JetType visitExpression(JetExpression expression, ExpressionTypingContext context) {
+        return facade.getType(expression, context);
     }
 
     @Override
