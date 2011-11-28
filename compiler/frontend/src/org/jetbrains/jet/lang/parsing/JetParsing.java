@@ -124,9 +124,11 @@ public class JetParsing extends AbstractJetParsing {
             parseNamespaceName();
 
             if (at(LBRACE)) {
+                // Because it's blocked namespace and it will be parsed as one of top level objects
                 firstEntry.rollbackTo();
                 return;
             }
+
             firstEntry.drop();
 
             consumeIf(SEMICOLON);
@@ -134,6 +136,7 @@ public class JetParsing extends AbstractJetParsing {
             firstEntry.rollbackTo();
         }
 
+        // TODO: Duplicate with parsing imports in parseToplevelDeclarations
         while (at(IMPORT_KEYWORD)) {
             parseImportDirective();
         }

@@ -1,0 +1,11 @@
+fun test() {
+    val str = ""
+
+    str
+
+        .length
+
+    str
+
+        ?.length
+}
