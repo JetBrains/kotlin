@@ -15,8 +15,8 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiElement> {
     public class SimpleRedeclarationDiagnostic extends DiagnosticWithPsiElementImpl<PsiElement> implements RedeclarationDiagnostic {
 
-        public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name) {
-            super(RedeclarationDiagnosticFactory.INSTANCE, ERROR, "Redeclaration: " + name, psiElement);
+        public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {
+            super(factory, factory.severity, factory.makeMessage(name), psiElement);
         }
     }
 
@@ -24,11 +24,13 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
         
         private final DeclarationDescriptor duplicatingDescriptor;
         private final BindingContext contextToResolveToDeclaration;
+        private final RedeclarationDiagnosticFactory factory;
         private PsiElement element;
 
-        public RedeclarationDiagnosticWithDeferredResolution(@NotNull DeclarationDescriptor duplicatingDescriptor, @NotNull BindingContext contextToResolveToDeclaration) {
+        public RedeclarationDiagnosticWithDeferredResolution(@NotNull DeclarationDescriptor duplicatingDescriptor, @NotNull BindingContext contextToResolveToDeclaration, RedeclarationDiagnosticFactory factory) {
             this.duplicatingDescriptor = duplicatingDescriptor;
             this.contextToResolveToDeclaration = contextToResolveToDeclaration;
+            this.factory = factory;
         }
 
         private PsiElement resolve() {
@@ -60,19 +62,19 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
         @NotNull
         @Override
         public DiagnosticFactory getFactory() {
-            return Errors.REDECLARATION;
+            return factory;
         }
 
         @NotNull
         @Override
         public String getMessage() {
-            return "Redeclaration: " + duplicatingDescriptor.getName();
+            return factory.makeMessage(duplicatingDescriptor.getName());
         }
 
         @NotNull
         @Override
         public Severity getSeverity() {
-            return ERROR;
+            return factory.severity;
         }
 
         @Override

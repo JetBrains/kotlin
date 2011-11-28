@@ -6,9 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.TaskPrioritizers;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -211,6 +214,16 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 }
                 variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType);
             }
+
+            {
+                // http://youtrack.jetbrains.net/issue/KT-527
+
+                VariableDescriptor olderVariable = context.scope.getVariable(variableDescriptor.getName());
+                if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
+                    context.trace.report(Errors.NAME_SHADOWING.on(variableDescriptor, context.trace.getBindingContext()));
+                }
+            }
+
             loopScope.addVariableDescriptor(variableDescriptor);
         }
 

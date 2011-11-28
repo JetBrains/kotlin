@@ -11,17 +11,28 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 * @author abreslav
 */
 public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
+    
+    private final String name;
+    final Severity severity;
+    private final String messagePrefix;
 
-    public static final RedeclarationDiagnosticFactory INSTANCE = new RedeclarationDiagnosticFactory();
+    public static final RedeclarationDiagnosticFactory REDECLARATION = new RedeclarationDiagnosticFactory(
+            "REDECLARATION", Severity.ERROR, "Redeclaration: ");
+    public static final RedeclarationDiagnosticFactory NAME_SHADOWING = new RedeclarationDiagnosticFactory(
+            "NAME_SHADOWING", Severity.WARNING, "Name shadowed: ");
 
-    public RedeclarationDiagnosticFactory() {}
+    public RedeclarationDiagnosticFactory(String name, Severity severity, String messagePrefix) {
+        this.name = name;
+        this.severity = severity;
+        this.messagePrefix = messagePrefix;
+    }
 
     public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
-        return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement, name);
+        return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement, name, this);
     }
 
     public Diagnostic on(DeclarationDescriptor duplicatingDescriptor, BindingContext contextToResolveToDeclaration) {
-        return new RedeclarationDiagnostic.RedeclarationDiagnosticWithDeferredResolution(duplicatingDescriptor, contextToResolveToDeclaration);
+        return new RedeclarationDiagnostic.RedeclarationDiagnosticWithDeferredResolution(duplicatingDescriptor, contextToResolveToDeclaration, this);
     }
 
     @NotNull
@@ -40,7 +51,11 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
     @NotNull
     @Override
     public String getName() {
-        return "REDECLARATION";
+        return name;
+    }
+    
+    public String makeMessage(String identifier) {
+        return messagePrefix + identifier;
     }
 
     @Override

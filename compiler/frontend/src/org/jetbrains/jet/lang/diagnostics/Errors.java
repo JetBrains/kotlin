@@ -44,7 +44,10 @@ public interface Errors {
         }
     };
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = new UnresolvedReferenceDiagnosticFactory("Unresolved reference");
-    RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
+
+    RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.REDECLARATION;
+    RedeclarationDiagnosticFactory NAME_SHADOWING = RedeclarationDiagnosticFactory.NAME_SHADOWING;
+
     PsiElementOnlyDiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
     ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>> INCOMPATIBLE_MODIFIERS = new ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>>(ERROR, "Incompatible modifiers: ''{0}''") {
         @Override
