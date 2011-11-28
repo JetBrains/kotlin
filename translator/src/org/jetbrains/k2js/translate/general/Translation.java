@@ -2,7 +2,9 @@ package org.jetbrains.k2js.translate.general;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.declarations.Declarations;
@@ -16,6 +18,7 @@ import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
  * @author Talanov Pavel
@@ -90,11 +93,16 @@ public final class Translation {
         return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
     }
 
-    public static void generateAst(@NotNull JsProgram result, @NotNull BindingContext bindingContext,
-                                   @NotNull Declarations declarations, @NotNull JetNamespace namespace) {
+    public static JsProgram generateAst(@NotNull BindingContext bindingContext,
+                                        @NotNull JetNamespace namespace, @NotNull Project project) {
+        //TODO hardcoded
+        JsProgram result = new JsProgram("main");
+        NamespaceDescriptor descriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
+        Declarations declarations = Declarations.extractDeclarations(descriptor, result.getRootScope());
         JsBlock block = result.getFragmentBlock(0);
-        TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations);
+        TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations, project);
         block.addStatement(Translation.translateNamespace(namespace, context));
+        return result;
     }
 
 

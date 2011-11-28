@@ -5,11 +5,13 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.Namer;
@@ -37,11 +39,14 @@ public final class TranslationContext {
 
     @NotNull
     public static TranslationContext rootContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
-                                                 @NotNull Declarations extractor) {
+                                                 @NotNull Declarations extractor, @NotNull Project project) {
         JsScope rootScope = program.getRootScope();
         Scopes scopes = new Scopes(rootScope, rootScope, rootScope);
+        Namer namer = Namer.newInstance(rootScope);
+        Aliaser aliaser = Aliaser.aliasesForStandardClasses
+                (JetStandardLibrary.getJetStandardLibrary(project), namer);
         return new TranslationContext(null, program, bindingContext,
-                scopes, extractor, Aliaser.aliasesForStandardClasses(), Namer.newInstance(rootScope));
+                scopes, extractor, aliaser, namer);
     }
 
     @NotNull

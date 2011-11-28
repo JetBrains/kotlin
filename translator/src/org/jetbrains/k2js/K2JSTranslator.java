@@ -73,7 +73,7 @@ public class K2JSTranslator {
         }
 
         Project project = environment.getProject();
-        GenerationState generationState = new GenerationState();
+        GenerationState generationState = new GenerationState(project);
         List<JetNamespace> namespaces = Lists.newArrayList();
         if (vFile.isDirectory()) {
             File dir = new File(vFile.getPath());

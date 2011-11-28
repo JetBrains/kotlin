@@ -121,6 +121,11 @@ public final class Namer {
     }
 
     @NotNull
+    public JsName declareStandardClass(@NotNull String name) {
+        return kotlinScope.declareName(name);
+    }
+
+    @NotNull
     public JsNameRef isOperationReference() {
         return kotlin(AstUtil.newQualifiedNameRef("isType"));
     }
