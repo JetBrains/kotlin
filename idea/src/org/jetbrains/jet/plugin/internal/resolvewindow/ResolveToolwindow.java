@@ -43,6 +43,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
+/*
+ * @author abreslav
+ */
 public class ResolveToolwindow extends JPanel {
     public static class Factory implements ToolWindowFactory {
         @Override
@@ -111,11 +114,8 @@ public class ResolveToolwindow extends JPanel {
                 }
                 else {
                     PsiElement start = PsiUtilCore.getElementAtOffset(psiFile, startOffset);
-                    System.out.println("start = " + start.getText());
                     PsiElement end = PsiUtilCore.getElementAtOffset(psiFile, endOffset - 1);
-                    System.out.println("end = " + end.getText());
                     elementAtOffset = PsiTreeUtil.findCommonParent(start, end);
-                    System.out.println("elementAtOffset = " + elementAtOffset.getText());
                 }
 
                 PsiElement currentElement = elementAtOffset;
