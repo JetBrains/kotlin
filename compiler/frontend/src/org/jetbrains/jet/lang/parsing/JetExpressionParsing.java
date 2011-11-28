@@ -178,7 +178,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
     }
 
+    public static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(DOT, SAFE_ACCESS);
+
     public static final TokenSet ALL_OPERATIONS;
+
     static {
         Set<IElementType> operations = new HashSet<IElementType>();
         Precedence[] values = Precedence.values();
@@ -272,7 +275,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         precedence.parseHigherPrecedence(this);
 
-        while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
+        while (!interruptedWithNewLine() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
 
             parseOperationReference();
@@ -328,7 +331,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker expression = mark();
         parseAtomicExpression();
         while (true) {
-            if (myBuilder.newlineBeforeCurrentToken()) {
+            if (interruptedWithNewLine()) {
                 break;
             }
             else if (at(LBRACKET)) {
@@ -1703,5 +1706,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
     @Override
     protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
         return myJetParsing.create(builder);
+    }
+
+    private boolean interruptedWithNewLine() {
+        return !ALLOW_NEWLINE_OPERATIONS.contains(tt()) && myBuilder.newlineBeforeCurrentToken();
     }
 }

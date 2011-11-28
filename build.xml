@@ -9,6 +9,11 @@
         <pathelement path="${output}/classes/runtime"/>
     </path>
 
+    <path id="classpath.kotlin">
+        <path refid="classpath"/>
+        <pathelement path="${output}/classes/compiler"/>
+    </path>
+
     <path id="sourcepath">
         <dirset dir="${basedir}/compiler">
             <include name="frontend/src"/>
@@ -26,9 +31,21 @@
         </javac>
     </target>
 
-    <target name="jarRT" depends="compileRT">
+    <target name="compileStdlib" depends="compile">
+        <mkdir dir="${output}/classes/stdlib"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+            <classpath refid="classpath.kotlin"/>
+            <arg value="-src"/>
+            <arg value="${basedir}/stdlib/ktSrc"/>
+            <arg value="-output"/>
+            <arg value="${basedir}/classes/stdlib"/>
+        </java>
+    </target>
+
+    <target name="jarRT" depends="compileStdlib">
         <jar destfile="${output}/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
+            <fileset dir="${output}/classes/stdlib"/>
             <fileset dir="${basedir}/stdlib/ktSrc"/>
         </jar>
     </target>
@@ -49,7 +66,11 @@
         </jar>
     </target>
 
-    <target name="dist" depends="jarRT,jar">
+    <target name="clean">
+        <delete dir="${output}"/>
+    </target>
+
+    <target name="dist" depends="clean,jarRT,jar">
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="${output.name}/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
             <zipfileset prefix="${output.name}/lib" dir="${basedir}/ideaSDK"/>

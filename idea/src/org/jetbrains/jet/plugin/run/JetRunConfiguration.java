@@ -13,7 +13,6 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,28 +142,35 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
-        final JavaCommandLineState state = new MyJavaCommandLineState(executionEnvironment);
+        final JavaCommandLineState state = new MyJavaCommandLineState(this, executionEnvironment);
         state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
         return state;
     }
 
     private class MyJavaCommandLineState extends JavaCommandLineState {
-        protected MyJavaCommandLineState(@NotNull ExecutionEnvironment environment) {
+
+        private final JetRunConfiguration myConfiguration;
+
+        public MyJavaCommandLineState(@NotNull final JetRunConfiguration configuration,
+                                               final ExecutionEnvironment environment) {
             super(environment);
+            myConfiguration = configuration;
         }
 
-        @Override
         protected JavaParameters createJavaParameters() throws ExecutionException {
             final JavaParameters params = new JavaParameters();
-            final int classPathType = JavaParametersUtil.getClasspathType(getConfigurationModule(), MAIN_CLASS_NAME, false);
-            JavaParametersUtil.configureModule(getConfigurationModule(), params, classPathType, null);
-            params.setMainClass(MAIN_CLASS_NAME);
-            if (!StringUtil.isEmpty(WORKING_DIRECTORY)) {
-                params.setWorkingDirectory(WORKING_DIRECTORY);
-            }
-            params.setupEnvs(myEnvs, PASS_PARENT_ENVS);
-            params.getVMParametersList().addParametersString(VM_PARAMETERS);
-            params.getProgramParametersList().addParametersString(PROGRAM_PARAMETERS);
+            final RunConfigurationModule module = myConfiguration.getConfigurationModule();
+
+            final int classPathType = JavaParametersUtil.getClasspathType(module,
+                                                                          myConfiguration.MAIN_CLASS_NAME,
+                                                                          false);
+            final String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH
+                                                                                : null;
+            JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
+            JavaParametersUtil.configureConfiguration(params, myConfiguration);
+
+            params.setMainClass(myConfiguration.MAIN_CLASS_NAME);
+
             return params;
         }
     }
