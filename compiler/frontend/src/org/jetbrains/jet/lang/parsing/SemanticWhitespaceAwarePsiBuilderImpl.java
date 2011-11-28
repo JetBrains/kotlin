@@ -25,12 +25,11 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     @Override
     public boolean newlineBeforeCurrentToken() {
-
         if (!newlinesEnabled.peek()) return false;
 
         if (eof()) return true;
 
-        // TODO: maybe, memorize this somehow?
+        // TODO: maybe, memoize this somehow?
         for (int i = 1; i <= getCurrentOffset(); i++) {
             IElementType previousToken = rawLookup(-i);
 
@@ -51,8 +50,9 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
             assert previousTokenEnd < getOriginalText().length();
 
             for (int j = previousTokenStart; j < previousTokenEnd; j++) {
-                if (getOriginalText().charAt(j) == '\n')
+                if (getOriginalText().charAt(j) == '\n') {
                     return true;
+                }
             }
         }
 
