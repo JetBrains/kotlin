@@ -42,13 +42,6 @@ public class ReplaceSafeCallWithDotCall extends JetIntentionAction<JetElement> {
 
             element.replace(newElement);
         }
-        else if (element instanceof JetWhenConditionCall) {
-            JetWhenConditionCall newElement = (JetWhenConditionCall) element;
-            JetDotQualifiedExpression callExpression = (JetDotQualifiedExpression) JetPsiFactory.createExpression(project, "x.foo");
-            CodeEditUtil.replaceChild(newElement.getNode(), newElement.getOperationTokenNode(), callExpression.getOperationTokenNode());
-
-            element.replace(newElement);
-        }
     }
 
     public static JetIntentionActionFactory<JetElement> createFactory() {

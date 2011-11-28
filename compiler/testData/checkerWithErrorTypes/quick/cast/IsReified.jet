@@ -1,0 +1,3 @@
+class MyList<T>
+
+fun ff(a: Any) = a is MyList<String>

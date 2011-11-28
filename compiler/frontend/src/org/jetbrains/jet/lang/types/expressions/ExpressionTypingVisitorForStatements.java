@@ -20,11 +20,12 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE_REASSIGNMENT;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.getExpressionReceiver;
 
 /**
-* @author abreslav
-*/
+ * @author abreslav
+ */
 public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingVisitor {
     private final WritableScope scope;
 
@@ -138,15 +139,33 @@ public class ExpressionTypingVisitorForStatements extends BasicExpressionTypingV
             }
             assignmentOperationType = getTypeForBinaryCall(scope, counterpartName, context, expression);
             if (assignmentOperationType != null) {
-                context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
+                context.trace.record(VARIABLE_REASSIGNMENT, expression);
                 ExpressionTypingUtils.checkWrappingInRef(expression.getLeft(), context);
             }
         }
         else {
             temporaryBindingTrace.commit();
+            checkReassignment(expression, context, assignmentOperationType, left);
         }
         checkLValue(context.trace, expression.getLeft());
         return checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType);
+    }
+
+    private void checkReassignment(@NotNull JetBinaryExpression expression, @NotNull ExpressionTypingContext context,
+                                   @NotNull JetType assignmentOperationType, @Nullable JetExpression left) {
+        if (left == null) return;
+        JetType leftType = facade.getType(left, context.replaceScope(scope));
+        if (leftType == null) return;
+        boolean isUnit = context.semanticServices.getTypeChecker().
+                isSubtypeOf(assignmentOperationType, JetStandardClasses.getUnitType());
+        if (isUnit) return;
+
+        if (context.semanticServices.getTypeChecker().isSubtypeOf(assignmentOperationType, leftType)) {
+            context.trace.record(VARIABLE_REASSIGNMENT, expression);
+        }
+        else {
+            context.trace.report(TYPE_MISMATCH.on(expression, leftType, assignmentOperationType));
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -113,6 +114,7 @@ public class GenerationState {
                 }
                 catch (Throwable e) {
                     errorHandler.reportException(e, namespace.getContainingFile().getVirtualFile().getUrl());
+                    DiagnosticUtils.throwIfRunningOnServer(e);
                 }
             }
         }

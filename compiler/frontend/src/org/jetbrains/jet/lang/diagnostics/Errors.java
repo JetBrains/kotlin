@@ -279,7 +279,10 @@ public interface Errors {
     ParameterizedDiagnosticFactory2<JetType, Integer> TYPE_MISMATCH_IN_TUPLE_PATTERN = ParameterizedDiagnosticFactory2.create(ERROR, "Type mismatch: subject is of type {0} but the pattern is of type Tuple{1}"); // TODO: message
     ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH_IN_BINDING_PATTERN = ParameterizedDiagnosticFactory2.create(ERROR, "{0} must be a supertype of {1}. Use 'is' to match against {0}");
     ParameterizedDiagnosticFactory2<JetType, JetType> INCOMPATIBLE_TYPES = ParameterizedDiagnosticFactory2.create(ERROR, "Incompatible types: {0} and {1}");
-    
+
+    ParameterizedDiagnosticFactory1<JetType> CANNOT_CHECK_FOR_ERASED = ParameterizedDiagnosticFactory1.create(ERROR, "Cannot check for instance of erased type: {0}");
+    ParameterizedDiagnosticFactory2<JetType, JetType> UNCHECKED_CAST = ParameterizedDiagnosticFactory2.create(WARNING, "Unchecked cast: {0} to {1}");
+
     ParameterizedDiagnosticFactory3<TypeParameterDescriptor, ClassDescriptor, Collection<JetType>> INCONSISTENT_TYPE_PARAMETER_VALUES = new ParameterizedDiagnosticFactory3<TypeParameterDescriptor, ClassDescriptor, Collection<JetType>>(ERROR, "Type parameter {0} of {1} has inconsistent values: {2}") {
         @Override
         protected String makeMessageForA(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
@@ -361,7 +364,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract member {1}") {
         @Override
         protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
-            return jetClassOrObject.getName();
+            return JetPsiUtil.safeName(jetClassOrObject.getName());
         }
 
         @Override

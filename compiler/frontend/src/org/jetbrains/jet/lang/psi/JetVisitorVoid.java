@@ -354,10 +354,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitWhenConditionCall(JetWhenConditionCall condition) {
-        visitJetElement(condition);
-    }
-
     public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
         visitJetElement(condition);
     }

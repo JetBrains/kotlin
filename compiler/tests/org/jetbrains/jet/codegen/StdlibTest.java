@@ -71,7 +71,7 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testInputStreamIterator () {
         blackBoxFile("inputStreamIterator.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt533 () {

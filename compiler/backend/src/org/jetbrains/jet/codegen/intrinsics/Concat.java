@@ -26,7 +26,7 @@ public class Concat implements IntrinsicMethod {
             codegen.invokeAppend(arguments.get(1));
         }
         
-        v.invokevirtual(ExpressionCodegen.CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+        v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
         return StackValue.onStack(Type.getObjectType("java/lang/String"));
     }
 }

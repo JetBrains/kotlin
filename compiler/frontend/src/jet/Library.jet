@@ -42,9 +42,7 @@ fun Any?.equals(other : Any?) : Boolean// = this === other
 // Returns "null" for null
 fun Any?.toString() : String// = this === other
 
-// fun <T> array(vararg elements : T) : Array<T>
-
-// fun array(vararg elements : Int) : IntArray
+fun <T : Any> T?.sure() : T
 
 fun String?.plus(other: Any?) : String
 
@@ -105,7 +103,9 @@ trait Iterable<out T> {
   fun iterator() : Iterator<T>
 }
 
-class Array<T>(val size : Int, init : fun(Int) : T = null ) {
+fun Array<T>(val size : Int) : Array<T?>
+
+class Array<T>(val size : Int, init : fun(Int) : T) {
   fun get(index : Int) : T
   fun set(index : Int, value : T) : Unit
 

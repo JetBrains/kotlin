@@ -1,4 +1,5 @@
 //KT-235 Illegal assignment return type
+// +JDK
 
 namespace kt235
 
@@ -16,7 +17,7 @@ fun main(args: Array<String>) {
        <!EXPECTED_TYPE_MISMATCH!>x = 2<!>  //the same
     }
     val array1 = MyArray1()
-    val <!UNUSED_VARIABLE!>x<!> = { (): String =>
+    val <!UNUSED_VARIABLE!>i<!> = { (): String =>
        <!EXPECTED_TYPE_MISMATCH!>array1[2] = 23<!>
     }
 

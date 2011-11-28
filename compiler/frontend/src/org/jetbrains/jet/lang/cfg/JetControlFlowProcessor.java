@@ -62,10 +62,6 @@ public class JetControlFlowProcessor {
     private class CFPVisitor extends JetVisitorVoid {
         private final boolean inCondition;
         private final JetVisitorVoid conditionVisitor = new JetVisitorVoid() {
-            @Override
-            public void visitWhenConditionCall(JetWhenConditionCall condition) {
-                value(condition.getCallSuffixExpression(), CFPVisitor.this.inCondition); // TODO : inCondition?
-            }
 
             @Override
             public void visitWhenConditionInRange(JetWhenConditionInRange condition) {

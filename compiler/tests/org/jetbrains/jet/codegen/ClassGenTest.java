@@ -49,7 +49,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testNewInstanceExplicitConstructor() throws Exception {
         loadFile("classes/newInstanceDefaultConstructor.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method method = generateFunction("test");
         final Integer returnValue = (Integer) method.invoke(null);
         assertEquals(610, returnValue.intValue());
@@ -149,7 +149,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
         final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
         assertInstanceOf(north.get(null), direction);
@@ -170,36 +170,36 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testKt48 () throws Exception {
         blackBoxFile("regressions/kt48.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt309 () throws Exception {
         loadText("fun box() = null");
         final Method method = generateFunction("box");
         assertEquals(method.getReturnType().getName(), "java.lang.Object");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt343 () throws Exception {
         blackBoxFile("regressions/kt343.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt344 () throws Exception {
         loadFile("regressions/kt344.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 
     public void testKt508 () throws Exception {
         loadFile("regressions/kt508.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 
     public void testKt504 () throws Exception {
         loadFile("regressions/kt504.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 
@@ -209,7 +209,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testKt496 () throws Exception {
         blackBoxFile("regressions/kt496.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt500 () throws Exception {

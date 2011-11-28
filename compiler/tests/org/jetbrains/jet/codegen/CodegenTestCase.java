@@ -7,10 +7,12 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
+import org.junit.Assert;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +159,21 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     protected Method generateFunction() {
         Class aClass = generateNamespaceClass();
         try {
-            return aClass.getMethods()[0];
+            Method r = null;
+            for (Method method : aClass.getMethods()) {
+                if (method.getDeclaringClass().equals(Object.class)) {
+                    continue;
+                }
+
+                if (r != null) {
+                    throw new AssertionError("more then one public method in class " + aClass);
+                }
+
+                r = method;
+            }
+            if (r == null)
+                throw new AssertionError();
+            return r;
         } catch (Error e) {
             System.out.println(generateToText());
             throw e;

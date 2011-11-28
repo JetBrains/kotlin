@@ -10,7 +10,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testPlus() throws Exception {
         loadText("fun f(a: Int, b: Int): Int { return a + b }");
 
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
 
         final Method main = generateFunction();
         final int returnValue = (Integer) main.invoke(null, 37, 5);
@@ -20,7 +20,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testGt() throws Exception {
         loadText("fun foo(f: Int): Boolean { if (f > 0) return true; return false; }");
 
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, 1));
         assertEquals(false, main.invoke(null, 0));
@@ -57,7 +57,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testLong() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = a + b");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         long arg = (long) Integer.MAX_VALUE;
         long expected = 2 * (long) Integer.MAX_VALUE;
@@ -66,7 +66,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testLongCmp() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffff else 0xfffffffe");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(0xffffffffL, main.invoke(null, 1, 1));
         assertEquals(0xfffffffeL, main.invoke(null, 1, 0));
@@ -132,7 +132,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testDoubleToInt() throws Exception {
         loadText("fun foo(a: Double): Int = a.int");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(1, main.invoke(null, 1.0));
     }
@@ -216,7 +216,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testBitInv() throws Exception {
         loadText("fun foo(a: Int): Int = a.inv()");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(0xffff0000, main.invoke(null, 0x0000ffff));
     }
@@ -249,14 +249,14 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testDecrementAsStatement() throws Exception {
         loadFile("bottles.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         main.invoke(null);  // ensure no exception
     }
 
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(expected, main.invoke(null, arg1, arg2));
     }

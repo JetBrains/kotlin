@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -17,8 +18,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.ensureBooleanResultWithCustomSubject;
@@ -112,19 +112,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
         final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{context.dataFlowInfo};
         condition.accept(new JetVisitorVoid() {
-
-            @Override
-            public void visitWhenConditionCall(JetWhenConditionCall condition) {
-                JetExpression callSuffixExpression = condition.getCallSuffixExpression();
-//                    JetScope compositeScope = new ScopeWithReceiver(context.scope, subjectType, semanticServices.getTypeChecker());
-                if (callSuffixExpression != null) {
-//                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
-                    assert subjectExpression != null;
-                    JetType selectorReturnType = facade.getSelectorReturnType(new ExpressionReceiver(subjectExpression, subjectType), condition.getOperationTokenNode(), callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
-                    ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression", context);
-//                        context.getServices().checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context), condition);
-                }
-            }
 
             @Override
             public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
@@ -245,6 +232,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
 
+            /*
+             * (a: SubjectType) is Type
+             */
             private void checkTypeCompatibility(@Nullable JetType type, @NotNull JetType subjectType, @NotNull JetElement reportErrorOn) {
                 // TODO : Take auto casts into account?
                 if (type == null) {
@@ -253,6 +243,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (TypeUtils.intersect(context.semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
 //                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
                     context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
+                    return;
+                }
+                
+                if (BasicExpressionTypingVisitor.isCastErased(subjectType, type)) {
+                    context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(reportErrorOn, type));
                 }
             }
 
