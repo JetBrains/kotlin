@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -21,7 +22,9 @@ public class AutoCastServiceImpl implements AutoCastService {
     @NotNull
     @Override
     public List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor) {
-        return AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverDescriptor);
+        List<ReceiverDescriptor> variants = Lists.newArrayList(AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverDescriptor));
+        variants.add(receiverDescriptor);
+        return variants;
     }
 
     @NotNull
