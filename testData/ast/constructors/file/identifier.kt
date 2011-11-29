@@ -3,8 +3,8 @@ public open class Identifier(myName : String?, myHasDollar : Boolean) {
 $myName = myName
 $myHasDollar = myHasDollar
 }
-private val myName : String?
-private var myHasDollar : Boolean
+private val myName : String? = null
+private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 open public fun getName() : String? {
 return myName

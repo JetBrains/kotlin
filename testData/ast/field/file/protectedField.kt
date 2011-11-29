@@ -1,3 +1,3 @@
 open class C() {
-protected var f : Foo?
+protected var f : Foo? = null
 }

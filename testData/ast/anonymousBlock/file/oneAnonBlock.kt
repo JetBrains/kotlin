@@ -1,5 +1,5 @@
 open class Test() {
-var str : String?
+var str : String? = null
 {
 str = "Ola"
 }

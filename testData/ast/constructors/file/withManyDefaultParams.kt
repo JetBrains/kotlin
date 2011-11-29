@@ -9,14 +9,14 @@ $e = e
 $f = f
 $g = g
 }
-private val myName : String?
-private var a : Boolean
-private var b : Double
-private var c : Float
-private var d : Long
-private var e : Int
-private var f : Short
-private var g : Char
+private val myName : String? = null
+private var a : Boolean = false
+private var b : Double = 0.dbl
+private var c : Float = 0.flt
+private var d : Long = 0
+private var e : Int = 0
+private var f : Short = 0
+private var g : Char = ' '
 class object {
 open public fun init() : Test {
 val __ = Test(null, false, 0.dbl, 0.flt, 0, 0, 0, ' ')

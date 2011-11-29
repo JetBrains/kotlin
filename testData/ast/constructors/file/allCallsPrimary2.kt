@@ -4,9 +4,9 @@ $myArg1 = arg1
 $myArg2 = 0
 $myArg3 = 0
 }
-val myArg1 : Int
-var myArg2 : Int
-var myArg3 : Int
+val myArg1 : Int = 0
+var myArg2 : Int = 0
+var myArg3 : Int = 0
 class object {
 open fun init(arg1 : Int, arg2 : Int, arg3 : Int) : C {
 val __ = C(arg1)

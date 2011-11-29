@@ -1,5 +1,5 @@
 class T() {
-var a : String?
-var b : String?
+var a : String? = null
+var b : String? = null
 var c : String? = "abc"
 }

@@ -1,6 +1,6 @@
 open class Base() {
-private var myFirst : String?
+private var myFirst : String? = null
 }
 open class Child() : Base() {
-private var mySecond : String?
+private var mySecond : String? = null
 }

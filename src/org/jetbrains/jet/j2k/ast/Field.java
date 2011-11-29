@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.j2k.Converter.getDefaultInitializer;
+
 /**
  * @author ignatov
  */
@@ -65,7 +67,7 @@ public class Field extends Member {
     String modifier = modifiersToKotlin();
 
     if (myInitializer.isEmpty())
-      return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
+      return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE + EQUAL + SPACE + getDefaultInitializer(this);
 
     return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE +
       EQUAL + SPACE + myInitializer.toKotlin();

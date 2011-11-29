@@ -1,4 +1,4 @@
 enum E {
 I
-private var name : String?
+private var name : String? = null
 }

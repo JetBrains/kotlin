@@ -1,5 +1,5 @@
 abstract open class Shape() {
-public var color : String?
+public var color : String? = null
 open public fun setColor(c : String?) : Unit {
 color = c
 }

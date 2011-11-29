@@ -215,7 +215,7 @@ public class Converter {
   }
 
   @NotNull
-  private static String getDefaultInitializer(@NotNull Field f) {
+  public static String getDefaultInitializer(@NotNull Field f) {
     if (f.getType().isNullable())
       return "null";
     else {

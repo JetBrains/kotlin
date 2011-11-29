@@ -3,8 +3,8 @@ public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
 $myName = myName
 $myHasDollar = myHasDollar
 }
-private val myName : T?
-private var myHasDollar : Boolean
+private val myName : T? = null
+private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 open public fun getName() : T? {
 return myName

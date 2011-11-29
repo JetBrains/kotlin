@@ -6,8 +6,8 @@ $_firstName = first
 $_lastName = last
 doSmthAfter()
 }
-public val _firstName : String?
-public val _lastName : String?
+public val _firstName : String? = null
+public val _lastName : String? = null
 open public fun getFirstName() : String? {
 return _firstName
 }

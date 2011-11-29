@@ -4,5 +4,5 @@ open class One<T, K>(name : T?, second : K?) : Base<T?>(name) {
 {
 $mySecond = second
 }
-private var mySecond : K?
+private var mySecond : K? = null
 }
