@@ -20,7 +20,7 @@ public class JetWhenExpression extends JetExpression {
         return findChildrenByType(JetNodeTypes.WHEN_ENTRY);
     }
 
-    @Nullable @IfNotParsed
+    @Nullable
     public JetExpression getSubjectExpression() {
         return findChildByClass(JetExpression.class);
     }

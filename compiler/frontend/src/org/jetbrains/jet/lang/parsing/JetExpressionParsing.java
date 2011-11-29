@@ -670,7 +670,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * when
-     *   : "when" "(" (modifiers "val" SimpleName "=")? element ")" "{"
+     *   : "when" ("(" (modifiers "val" SimpleName "=")? element ")")? "{"
      *         whenEntry*
      *     "}"
      *   ;
@@ -682,22 +682,26 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // WHEN_KEYWORD
 
+        // Parse condition
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting '('");
+        if (at(LPAR)) {
+            advanceAt(LPAR);
 
-        int valPos = matchTokenStreamPredicate(new FirstBefore(new At(VAL_KEYWORD), new AtSet(RPAR, LBRACE, RBRACE, SEMICOLON, EQ)));
-        if (valPos >= 0) {
-            PsiBuilder.Marker property = mark();
-            myJetParsing.parseModifierList(MODIFIER_LIST, true);
-            myJetParsing.parseProperty(true);
-            property.done(PROPERTY);
-        } else {
-            parseExpression();
+            int valPos = matchTokenStreamPredicate(new FirstBefore(new At(VAL_KEYWORD), new AtSet(RPAR, LBRACE, RBRACE, SEMICOLON, EQ)));
+            if (valPos >= 0) {
+                PsiBuilder.Marker property = mark();
+                myJetParsing.parseModifierList(MODIFIER_LIST, true);
+                myJetParsing.parseProperty(true);
+                property.done(PROPERTY);
+            } else {
+                parseExpression();
+            }
+
+            expect(RPAR, "Expecting ')'");
         }
-
-        expect(RPAR, "Expecting ')'");
         myBuilder.restoreNewlinesState();
 
+        // Parse when block
         myBuilder.enableNewlines();
         expect(LBRACE, "Expecting '{'");
 

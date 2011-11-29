@@ -5,7 +5,7 @@ bq. See [Pattern matching]
 */
 
 when
-  : "when" "(" (modifiers "val" SimpleName "=")? expression ")" "{"
+  : "when" ("(" (modifiers "val" SimpleName "=")? expression ")")? "{"
         whenEntry*
     "}"
   ;
