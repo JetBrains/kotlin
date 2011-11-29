@@ -1,4 +1,4 @@
-namespace return
+namespace <!SYNTAX!>return<!>
 
 class A {
     fun outer() {

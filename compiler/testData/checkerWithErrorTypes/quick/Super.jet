@@ -32,7 +32,7 @@ class A<E>() : C(), T {
         super<<!NOT_A_SUPERTYPE!>E<!>>.bar()
         super<<!NOT_A_SUPERTYPE!>E<!>>@A.bar()
         super<<!NOT_A_SUPERTYPE!>Int<!>>.foo()
-        super<>.foo()
+        super<<!SYNTAX!><!>>.foo()
         super<<!NOT_A_SUPERTYPE!>fun() : Unit<!>>.foo()
         super<<!NOT_A_SUPERTYPE!>()<!>>.foo()
         super<T><!UNRESOLVED_REFERENCE!>@B<!>.foo()

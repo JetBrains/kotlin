@@ -220,4 +220,9 @@ public class ControlStructuresTest extends CodegenTestCase {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt434.jet");
     }
+
+    public void testQuicksort() throws Exception {
+        blackBoxFile("controlStructures/quicksort.jet");
+//        System.out.println(generateToText());
+    }
 }

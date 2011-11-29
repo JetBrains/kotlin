@@ -25,4 +25,9 @@ public class ExpressionReceiver extends AbstractReceiverDescriptor implements Re
     public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitExpressionReceiver(this, data);
     }
+
+    @Override
+    public String toString() {
+        return getType() + " {" + expression + ": " + expression.getText() + "}";
+    }
 }

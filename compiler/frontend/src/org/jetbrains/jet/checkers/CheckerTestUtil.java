@@ -2,8 +2,13 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.*;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.*;
@@ -31,6 +36,15 @@ public class CheckerTestUtil {
     };
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!\\w+(,\\s*\\w+)*!>)|(<!>)");
     private static final Pattern INDIVIDUAL_DIAGNOSTIC_PATTERN = Pattern.compile("\\w+");
+
+    public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, PsiElement root) {
+        ArrayList<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
+        diagnostics.addAll(bindingContext.getDiagnostics());
+        for (TextRange textRange : AnalyzingUtils.getSyntaxErrorRanges(root)) {
+            diagnostics.add(new SyntaxErrorDiagnostic(textRange));
+        }
+        return diagnostics;
+    }
 
     public interface DiagnosticDiffCallbacks {
         void missingDiagnostic(String type, int expectedStart, int expectedEnd);
@@ -144,7 +158,7 @@ public class CheckerTestUtil {
                 Matcher diagnosticTypeMatcher = INDIVIDUAL_DIAGNOSTIC_PATTERN.matcher(matchedText);
                 DiagnosedRange range = new DiagnosedRange(effectiveOffset);
                 while (diagnosticTypeMatcher.find()) {
-                    range.addDiagnostic(diagnosticTypeMatcher.group());                    
+                    range.addDiagnostic(diagnosticTypeMatcher.group());
                 }
                 opened.push(range);
                 result.add(range);
@@ -158,9 +172,17 @@ public class CheckerTestUtil {
         return matcher.replaceAll("");
     }
     
-    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, BindingContext bindingContext) {
-        Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
+    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, BindingContext bindingContext, List<TextRange> syntaxErrors) {
+        Collection<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
+        diagnostics.addAll(bindingContext.getDiagnostics());
+        for (TextRange syntaxError : syntaxErrors) {
+            diagnostics.add(new SyntaxErrorDiagnostic(syntaxError));
+        }
 
+        return addDiagnosticMarkersToText(psiFile, diagnostics);
+    }
+
+    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, Collection<Diagnostic> diagnostics) {
         StringBuffer result = new StringBuffer();
         String text = psiFile.getText();
         if (!diagnostics.isEmpty()) {
@@ -193,6 +215,14 @@ public class CheckerTestUtil {
                 }
                 result.append(c);
             }
+            
+            if (currentDescriptor != null) {
+                assert currentDescriptor.start == text.length();
+                assert currentDescriptor.end == text.length();
+                openDiagnosticsString(result, currentDescriptor);
+                opened.push(currentDescriptor);
+            }
+            
             while (!opened.isEmpty() && text.length() == opened.peek().end) {
                 closeDiagnosticString(result);
                 opened.pop();
@@ -223,6 +253,55 @@ public class CheckerTestUtil {
         result.append("<!>");
     }
 
+    private static class SyntaxErrorDiagnosticFactory implements DiagnosticFactory {
+        private static final SyntaxErrorDiagnosticFactory instance = new SyntaxErrorDiagnosticFactory();
+
+        @NotNull
+        @Override
+        public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
+            return ((SyntaxErrorDiagnostic) diagnostic).textRange;
+        }
+
+        @NotNull
+        @Override
+        public PsiFile getPsiFile(@NotNull Diagnostic diagnostic) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "SYNTAX";
+        }
+    }
+
+    public static class SyntaxErrorDiagnostic implements Diagnostic {
+
+        private final TextRange textRange;
+
+        public SyntaxErrorDiagnostic(TextRange textRange) {
+            this.textRange = textRange;
+        }
+
+        @NotNull
+        @Override
+        public DiagnosticFactory getFactory() {
+            return SyntaxErrorDiagnosticFactory.instance;
+        }
+
+        @NotNull
+        @Override
+        public String getMessage() {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Severity getSeverity() {
+            throw new IllegalStateException();
+        }
+    }
+    
     private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(Collection<Diagnostic> diagnostics) {
         List<Diagnostic> list = Lists.newArrayList(diagnostics);
         Collections.sort(list, DIAGNOSTIC_COMPARATOR);
@@ -281,6 +360,10 @@ public class CheckerTestUtil {
 
         public List<Diagnostic> getDiagnostics() {
             return diagnostics;
+        }
+
+        public TextRange getTextRange() {
+            return new TextRange(start, end);
         }
     }
 

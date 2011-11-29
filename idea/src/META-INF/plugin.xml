@@ -61,5 +61,8 @@
       <toolWindow id="CodeWindow"
                   factoryClass="org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow$Factory"
                   anchor="right"/>
+      <toolWindow id="ResolveWindow"
+                  factoryClass="org.jetbrains.jet.plugin.internal.resolvewindow.ResolveToolwindow$Factory"
+                  anchor="right"/>
   </extensions>
 </idea-plugin>

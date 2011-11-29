@@ -19,4 +19,9 @@ public class DefaultValueArgument implements ResolvedValueArgument {
     public List<JetExpression> getArgumentExpressions() {
         return Collections.emptyList(); //throw new UnsupportedOperationException("Look into the default value of the parameter");
     }
+
+    @Override
+    public String toString() {
+        return "|DEFAULT|";
+    }
 }

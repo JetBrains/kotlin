@@ -27,4 +27,9 @@ public class ExtensionReceiver extends AbstractReceiverDescriptor implements Thi
     public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitExtensionReceiver(this, data);
     }
+
+    @Override
+    public String toString() {
+        return getType() + "Ext{" + descriptor + "}";
+    }
 }

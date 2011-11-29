@@ -32,4 +32,9 @@ public class AutoCastReceiver extends AbstractReceiverDescriptor {
     public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
         return original.accept(visitor, data);
     }
+
+    @Override
+    public String toString() {
+        return "(" + original + " as " + getType() + ")";
+    }
 }

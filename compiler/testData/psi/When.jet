@@ -70,3 +70,14 @@ fun foo() {
     is a.a @ (val b, b) => c
   }
 }
+
+fun whenWithoutCondition(i : Int) {
+  val j = 12
+  when {
+    3 => -1
+    i == 3 => -1
+    j < i, j == i => -1
+    i is Int => 1
+    else => 2
+  }
+}

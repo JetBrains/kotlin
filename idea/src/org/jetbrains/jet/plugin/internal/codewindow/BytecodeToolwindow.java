@@ -208,7 +208,7 @@ public class BytecodeToolwindow extends JPanel {
         }
     }
     
-    private static class Location {
+    public static class Location {
         final Editor editor;
         final long modificationStamp;
         final int startOffset;
@@ -223,6 +223,22 @@ public class BytecodeToolwindow extends JPanel {
 
         public static Location fromEditor(Editor editor) {
             return new Location(editor);
+        }
+
+        public Editor getEditor() {
+            return editor;
+        }
+
+        public long getModificationStamp() {
+            return modificationStamp;
+        }
+
+        public int getStartOffset() {
+            return startOffset;
+        }
+
+        public int getEndOffset() {
+            return endOffset;
         }
 
         @Override
