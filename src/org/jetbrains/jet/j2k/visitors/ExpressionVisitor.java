@@ -274,10 +274,15 @@ public class ExpressionVisitor extends StatementVisitor {
   @Override
   public void visitPrefixExpression(PsiPrefixExpression expression) {
     super.visitPrefixExpression(expression);
-    myResult = new PrefixOperator(
-      getOperatorString(expression.getOperationSign().getTokenType()),
-      expressionToExpression(expression.getOperand())
-    );
+    if (expression.getOperationTokenType() == JavaTokenType.TILDE)
+      myResult = new DummyMethodCallExpression(
+        new ParenthesizedExpression(expressionToExpression(expression.getOperand())), "inv", Expression.EMPTY_EXPRESSION
+      );
+    else
+      myResult = new PrefixOperator(
+        getOperatorString(expression.getOperationSign().getTokenType()),
+        expressionToExpression(expression.getOperand())
+      );
   }
 
   @Override
