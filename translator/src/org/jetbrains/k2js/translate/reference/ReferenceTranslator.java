@@ -77,6 +77,7 @@ public class ReferenceTranslator extends AbstractTranslator {
         if (referencedDescriptor == null) {
             return null;
         }
+        //TODO: think about the places where we should check for original descriptors
         if (!context().isDeclared(referencedDescriptor)) {
             return null;
         }

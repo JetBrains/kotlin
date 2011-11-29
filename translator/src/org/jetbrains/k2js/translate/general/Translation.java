@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
@@ -98,7 +99,9 @@ public final class Translation {
         //TODO hardcoded
         JsProgram result = new JsProgram("main");
         NamespaceDescriptor descriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
-        Declarations declarations = Declarations.extractDeclarations(descriptor, result.getRootScope());
+        Declarations declarations = Declarations.newInstance(result.getRootScope());
+        declarations.extractStandardLibrary(JetStandardLibrary.getJetStandardLibrary(project));
+        declarations.extractDeclarations(descriptor);
         JsBlock block = result.getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations, project);
         block.addStatement(Translation.translateNamespace(namespace, context));
