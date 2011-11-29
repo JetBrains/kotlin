@@ -286,7 +286,7 @@ public class Converter {
   @NotNull
   private static Function methodToFunction(@NotNull PsiMethod method, boolean notEmpty) {
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
-    final Type type = typeToType(method.getReturnType());
+    final Type returnType = typeToType(method.getReturnType());
     final Block body = blockToBlock(method.getBody(), notEmpty);
     final Element params = elementToElement(method.getParameterList());
     final List<Element> typeParameters = elementsToElementList(method.getTypeParameters());
@@ -307,7 +307,7 @@ public class Converter {
       return new Constructor(
         identifier,
         modifiers,
-        type,
+        returnType,
         typeParameters,
         params,
         new Block(removeEmpty(body.getStatements()), false),
@@ -317,7 +317,7 @@ public class Converter {
     return new Function(
       identifier,
       modifiers,
-      type,
+      returnType,
       typeParameters,
       params,
       body

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,17 +47,34 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
 
   @Override
   public Type visitClassType(PsiClassType classType) {
-    String classTypeName = createQualifiedName(classType);
-    if (classTypeName.isEmpty())
-      classTypeName = getClassTypeName(classType);
-    List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
+    final IdentifierImpl identifier = constructClassTypeIdentifier(classType);
+    final List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
 
-    final IdentifierImpl identifier = new IdentifierImpl(classTypeName);
     if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0)
       myResult = new ClassType(identifier, resolvedClassTypeParams);
     else
       myResult = new ClassType(identifier, typesToTypeList(classType.getParameters()));
     return super.visitClassType(classType);
+  }
+
+  @NotNull
+  private static IdentifierImpl constructClassTypeIdentifier(@NotNull PsiClassType classType) {
+    final PsiClass psiClass = classType.resolve();
+    if (psiClass != null) {
+      String qualifiedName = psiClass.getQualifiedName();
+      if (qualifiedName != null) {
+        if (qualifiedName.equals("java.lang.Iterable"))
+          return new IdentifierImpl("java.lang.Iterable");
+        if (qualifiedName.equals("java.util.Iterator"))
+          return new IdentifierImpl("java.util.Iterator");
+      }
+    }
+    final String classTypeName = createQualifiedName(classType);
+
+    if (classTypeName.isEmpty())
+      return new IdentifierImpl(getClassTypeName(classType));
+
+    return new IdentifierImpl(classTypeName);
   }
 
   @NotNull
@@ -134,5 +152,17 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   @Override
   public Type visitDisjunctionType(PsiDisjunctionType disjunctionType) {
     return super.visitDisjunctionType(disjunctionType);
+  }
+}
+
+class Test implements Iterable<String> {
+  @Override
+  public Iterator<String> iterator() {
+    return null;
+  }
+
+  public Iterator<String> push(Iterator<String> i) {
+    Iterator<String> j = i;
+    return j;
   }
 }
