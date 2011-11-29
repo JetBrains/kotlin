@@ -155,6 +155,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return genQualified(receiver, expression.getBaseExpression());
     }
 
+    private static boolean isEmptyExpression(JetElement expr) {
+        if(expr == null)
+            return true;
+        if(expr instanceof JetBlockExpression) {
+            JetBlockExpression blockExpression = (JetBlockExpression) expr;
+            List<JetElement> statements = blockExpression.getStatements();
+            if(statements.size() == 0 || statements.size() == 1 && isEmptyExpression(statements.get(0))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
         Type asmType = expressionType(expression);
@@ -167,27 +180,36 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             throw new CompilationException();
         }
 
-        if (thenExpression == null) {
+        if (isEmptyExpression(thenExpression)) {
+            if (isEmptyExpression(elseExpression)) {
+                condition.put(asmType, v);
+                return StackValue.onStack(asmType);
+            }
             return generateSingleBranchIf(condition, elseExpression, false);
         }
-
-        if (elseExpression == null) {
-            return generateSingleBranchIf(condition, thenExpression, true);
+        else {
+            if (isEmptyExpression(elseExpression)) {
+                return generateSingleBranchIf(condition, thenExpression, true);
+            }
         }
 
 
         Label elseLabel = new Label();
         condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
+        Label end = continueLabel == null ? new Label() : continueLabel;
+
         gen(thenExpression, asmType);
 
-        Label endLabel = new Label();
-        v.goTo(endLabel);
+        v.goTo(end);
         v.mark(elseLabel);
 
         gen(elseExpression, asmType);
 
-        v.mark(endLabel);
+        if(end != continueLabel)
+            v.mark(end);
+        else
+            v.goTo(end);
 
         return StackValue.onStack(asmType);
     }
@@ -198,8 +220,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         myContinueTargets.push(condition);
         v.mark(condition);
 
-        Label end = new Label();
+        Label end = continueLabel != null ? continueLabel : new Label();
         myBreakTargets.push(end);
+
+        Label savedContinueLabel = continueLabel;
+        continueLabel = condition;
 
         final StackValue conditionValue = gen(expression.getCondition());
         conditionValue.condJump(end, true, v);
@@ -207,7 +232,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         gen(expression.getBody(), Type.VOID_TYPE);
         v.goTo(condition);
 
-        v.mark(end);
+        continueLabel = savedContinueLabel;
+        if(end != continueLabel)
+            v.mark(end);
         myBreakTargets.pop();
         myContinueTargets.pop();
 
@@ -519,13 +546,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
-        Label endLabel = new Label();
+        Label end = continueLabel != null ? continueLabel : new Label();
 
-        condition.condJump(endLabel, inverse, v);
+        condition.condJump(end, inverse, v);
 
         gen(expression, Type.VOID_TYPE);
 
-        v.mark(endLabel);
+        if(continueLabel != end)
+            v.mark(end);
         return StackValue.none();
     }
 
@@ -655,6 +683,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(Type.getObjectType(closure.getClassname()));
     }
 
+    private Label continueLabel;
+    
     private StackValue generateBlock(List<JetElement> statements) {
         Label blockStart = new Label();
         v.mark(blockStart);
@@ -671,9 +701,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         StackValue answer = StackValue.none();
+        Label savedContinueLabel = continueLabel;
+        continueLabel = null;
         for (int i = 0, statementsSize = statements.size(); i < statementsSize; i++) {
             JetElement statement = statements.get(i);
             if (i == statements.size() - 1 /*&& statement instanceof JetExpression && !bindingContext.get(BindingContext.STATEMENT, statement)*/) {
+                continueLabel = savedContinueLabel;
                 answer = gen(statement);
             }
             else {

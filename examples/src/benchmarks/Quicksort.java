@@ -30,6 +30,8 @@ public class Quicksort {
     }
 
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+
         // Sample data
         int[] a = new int[100000000];
         for (int i = 0; i < a.length; i++) {
@@ -37,8 +39,6 @@ public class Quicksort {
             if (i % 3 == 0)
                 a[i] = -a[i];
         }
-
-        long start = System.currentTimeMillis();
 
         quicksort(a);
 
