@@ -160,6 +160,7 @@ public class ExpressionVisitor extends StatementVisitor {
 
     final Object value = expression.getValue();
     String text = expression.getText();
+    boolean isQuotingNeeded = true;
 
     final PsiType type = expression.getType();
     if (type != null) {
@@ -172,8 +173,13 @@ public class ExpressionVisitor extends StatementVisitor {
         text = text.replace("L", "").replace("l", "");
       if (canonicalTypeStr.equals("int") || canonicalTypeStr.equals("java.lang.Integer")) // need for hex support
         text = value != null ? value.toString() : text;
+
+      if (canonicalTypeStr.equals("java.lang.String"))
+        isQuotingNeeded = false;
+      if (canonicalTypeStr.equals("char") || canonicalTypeStr.equals("java.lang.Character"))
+        isQuotingNeeded = false;
     }
-    myResult = new LiteralExpression(new IdentifierImpl(text));
+    myResult = new LiteralExpression(new IdentifierImpl(text, false, false, isQuotingNeeded));
   }
 
   @Override

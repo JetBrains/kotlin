@@ -9,6 +9,7 @@ public class IdentifierImpl extends Expression implements Identifier {
   private final String myName;
   private boolean myHasDollar = false;
   private boolean myIsNullable = true;
+  private boolean myQuotingNeeded = true;
 
   public IdentifierImpl(String name) {
     myName = name;
@@ -25,6 +26,11 @@ public class IdentifierImpl extends Expression implements Identifier {
     myIsNullable = isNullable;
   }
 
+  public IdentifierImpl(String name, boolean hasDollar, boolean isNullable, boolean quotingNeeded) {
+    this(name, hasDollar,  isNullable);
+    myQuotingNeeded = quotingNeeded;
+  }
+
   @Override
   public boolean isEmpty() {
     return myName.length() == 0;
@@ -39,17 +45,17 @@ public class IdentifierImpl extends Expression implements Identifier {
     return myIsNullable;
   }
 
-  private static String ifNeedQuote(String name) {
-    if (ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$"))
-      return quote(name);
-    return name;
+  private String ifNeedQuote() {
+    if (myQuotingNeeded && (ONLY_KOTLIN_KEYWORDS.contains(myName) || myName.contains("$")))
+      return quote(myName);
+    return myName;
   }
 
   @NotNull
   @Override
   public String toKotlin() {
     if (myHasDollar)
-      return DOLLAR + ifNeedQuote(myName);
-    return ifNeedQuote(myName);
+      return DOLLAR + ifNeedQuote();
+    return ifNeedQuote();
   }
 }
