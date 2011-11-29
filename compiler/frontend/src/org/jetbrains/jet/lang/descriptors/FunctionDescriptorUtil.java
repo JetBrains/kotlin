@@ -83,10 +83,10 @@ public class FunctionDescriptorUtil {
         return parameterScope;
     }
 
-    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType) {
+    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType, @NotNull ReceiverDescriptor expectedThisObject) {
         assert JetStandardClasses.isFunctionType(functionType);
         functionDescriptor.initialize(JetStandardClasses.getReceiverType(functionType),
-                                      ReceiverDescriptor.NO_RECEIVER,
+                                      expectedThisObject,
                                       Collections.<TypeParameterDescriptor>emptyList(),
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
                                       JetStandardClasses.getReturnTypeFromFunctionType(functionType),

@@ -14,7 +14,7 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
         JetType outType = variableDescriptor.getOutType();
         assert outType != null;
         VariableAsFunctionDescriptor result = new VariableAsFunctionDescriptor(variableDescriptor);
-        FunctionDescriptorUtil.initializeFromFunctionType(result, outType);
+        FunctionDescriptorUtil.initializeFromFunctionType(result, outType, variableDescriptor.getExpectedThisObject());
         return result;
     }
 
