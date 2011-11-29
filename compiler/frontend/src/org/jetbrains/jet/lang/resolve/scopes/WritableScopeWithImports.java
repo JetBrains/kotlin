@@ -31,7 +31,36 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         this.redeclarationHandler = redeclarationHandler;
     }
 
+
+
+    private LockLevel lockLevel = LockLevel.WRITING;
+
+    @Override
+    public void changeLockLevel(LockLevel lockLevel) {
+        if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
+            throw new IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel);
+        }
+        this.lockLevel = lockLevel;
+    }
+
+    protected void checkMayRead() {
+        if (lockLevel != LockLevel.READING && lockLevel != LockLevel.BOTH) {
+            throw new IllegalStateException("cannot read with lock level " + lockLevel);
+        }
+    }
+
+    protected void checkMayWrite() {
+        if (lockLevel != LockLevel.WRITING && lockLevel != LockLevel.BOTH) {
+            throw new IllegalStateException("cannot write with lock level " + lockLevel);
+        }
+    }
+
+
+
+
     public WritableScopeWithImports setDebugName(@NotNull String debugName) {
+        checkMayWrite();
+
         assert this.debugName == null : this.debugName;
         this.debugName = debugName;
         return this;
@@ -47,12 +76,16 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public void importScope(@NotNull JetScope imported) {
+        checkMayWrite();
+
         getImports().add(0, imported);
         currentIndividualImportScope = null;
     }
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+        checkMayRead();
+
         super.getImplicitReceiversHierarchy(result);
         // Imported scopes come with their receivers
         // Example: class member resolution scope imports a scope of it's class object
@@ -67,6 +100,8 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public VariableDescriptor getVariable(@NotNull String name) {
+        checkMayRead();
+
         // Meaningful lookup goes here
         for (JetScope imported : getImports()) {
             VariableDescriptor importedDescriptor = imported.getVariable(name);
@@ -80,6 +115,8 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        checkMayRead();
+
         if (getImports().isEmpty()) {
             return Collections.emptySet();
         }
@@ -92,6 +129,8 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
+        checkMayRead();
+
         for (JetScope imported : getImports()) {
             ClassifierDescriptor importedClassifier = imported.getClassifier(name);
             if (importedClassifier != null) {
@@ -103,6 +142,8 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
+        checkMayRead();
+
         for (JetScope imported : getImports()) {
             NamespaceDescriptor importedDescriptor = imported.getNamespace(name);
             if (importedDescriptor != null) {
@@ -115,6 +156,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     private WritableScope getCurrentIndividualImportScope() {
         if (currentIndividualImportScope == null) {
             WritableScopeImpl writableScope = new WritableScopeImpl(EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING).setDebugName("Individual import scope");
+            writableScope.changeLockLevel(LockLevel.BOTH);
             importScope(writableScope);
             currentIndividualImportScope = writableScope;
         }
@@ -123,12 +165,16 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
+        checkMayWrite();
+
         getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor);
     }
     
     
     @Override
     public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
+        checkMayWrite();
+
         getCurrentIndividualImportScope().addNamespaceAlias(aliasName, namespaceDescriptor);
     }
     

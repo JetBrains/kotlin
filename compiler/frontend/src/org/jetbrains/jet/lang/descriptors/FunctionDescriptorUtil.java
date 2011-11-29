@@ -80,6 +80,7 @@ public class FunctionDescriptorUtil {
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
         }
         parameterScope.addLabeledDeclaration(descriptor);
+        parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
         return parameterScope;
     }
 

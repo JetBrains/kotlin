@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
@@ -49,6 +50,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
             assert classDescriptor instanceof ClassifierDescriptor;
             scope.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
+            scope.changeLockLevel(WritableScope.LockLevel.READING);
             return scope;
         }
 

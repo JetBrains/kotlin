@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -42,7 +43,9 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static WritableScopeImpl newWritableScopeImpl(ExpressionTypingContext context) {
-        return new WritableScopeImpl(context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace));
+        WritableScopeImpl scope = new WritableScopeImpl(context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace));
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        return scope;
     }
 
     public static boolean isBoolean(@NotNull JetSemanticServices semanticServices, @NotNull JetType type) {
