@@ -49,11 +49,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         super(containingDeclaration);
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup");
-        this.scopeForMemberLookup.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution");
-        this.scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution");
-        this.scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.kind = kind;
     }
 
@@ -183,7 +180,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
             this.typeParameters.add(typeParameterDescriptor);
             scopeForSupertypeResolution.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,14 +343,5 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
             implicitReceiver = new ClassReceiver(this);
         }
         return implicitReceiver;
-    }
-    
-    public void lockScopes() {
-        scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
-        scopeForMemberLookup.changeLockLevel(WritableScope.LockLevel.READING);
-        scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);
-        if (classObjectDescriptor != null) {
-            classObjectDescriptor.lockScopes();
-        }
     }
 }

@@ -55,22 +55,17 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void importScope(@NotNull JetScope imported) {
-        checkMayWrite();
         super.importScope(imported);
     }
 
     @Override
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
-        checkMayWrite();
-
         allDescriptors.add(classifierDescriptor);
         super.importClassifierAlias(importedClassifierName, classifierDescriptor);
     }
 
     @Override
     public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
-        checkMayWrite();
-
         allDescriptors.add(namespaceDescriptor);
         super.importNamespaceAlias(aliasName, namespaceDescriptor);
     }
@@ -78,8 +73,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        checkMayRead();
-
         if (!allDescriptorsDone) {
             allDescriptorsDone = true;
             allDescriptors.addAll(getWorkerScope().getAllDescriptors());
@@ -101,8 +94,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull String labelName) {
-        checkMayRead();
-
         Collection<DeclarationDescriptor> superResult = super.getDeclarationsByLabel(labelName);
         Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(labelName);
@@ -117,8 +108,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        checkMayWrite();
-
         Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         String name = descriptor.getName();
         assert name != null;
@@ -148,8 +137,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor) {
-        checkMayWrite();
-
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor existingDescriptor = variableClassOrNamespaceDescriptors.get(variableDescriptor.getName());
         if (existingDescriptor != null) {
@@ -162,8 +149,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public VariableDescriptor getVariable(@NotNull String name) {
-        checkMayRead();
-
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
         if (descriptor instanceof VariableDescriptor) {
@@ -187,8 +172,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-        checkMayWrite();
-
         getFunctionGroups().put(functionDescriptor.getName(), functionDescriptor);
         allDescriptors.add(functionDescriptor);
     }
@@ -196,8 +179,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     @NotNull
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-        checkMayRead();
-
         Set<FunctionDescriptor> result = Sets.newLinkedHashSet(getFunctionGroups().get(name));
 
         result.addAll(getWorkerScope().getFunctions(name));
@@ -209,23 +190,17 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addTypeParameterDescriptor(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        checkMayWrite();
-
         String name = typeParameterDescriptor.getName();
         addClassifierAlias(name, typeParameterDescriptor);
     }
 
     @Override
     public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
-        checkMayWrite();
-
         addClassifierAlias(classDescriptor.getName(), classDescriptor);
     }
 
     @Override
     public void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor) {
-        checkMayWrite();
-
         checkForRedeclaration(name, classifierDescriptor);
         getVariableClassOrNamespaceDescriptors().put(name, classifierDescriptor);
         allDescriptors.add(classifierDescriptor);
@@ -233,8 +208,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor) {
-        checkMayWrite();
-
         checkForRedeclaration(name, namespaceDescriptor);
         getNamespaceAliases().put(name, namespaceDescriptor);
         allDescriptors.add(namespaceDescriptor);
@@ -249,8 +222,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        checkMayRead();
-
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
         if (descriptor instanceof ClassifierDescriptor) return (ClassifierDescriptor) descriptor;
@@ -263,8 +234,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        checkMayWrite();
-
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor oldValue = variableClassOrNamespaceDescriptors.put(namespaceDescriptor.getName(), namespaceDescriptor);
         if (oldValue != null) {
@@ -275,8 +244,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public NamespaceDescriptor getDeclaredNamespace(@NotNull String name) {
-        checkMayRead();
-
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor namespaceDescriptor = variableClassOrNamespaceDescriptors.get(name);
         if (namespaceDescriptor instanceof NamespaceDescriptor) return (NamespaceDescriptor) namespaceDescriptor;
@@ -285,8 +252,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        checkMayRead();
-
         NamespaceDescriptor declaredNamespace = getDeclaredNamespace(name);
         if (declaredNamespace != null) return declaredNamespace;
 
@@ -301,8 +266,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        checkMayRead();
-
         if (implicitReceiver == null) {
             return super.getImplicitReceiver();
         }
@@ -311,8 +274,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver) {
-        checkMayWrite();
-
         if (this.implicitReceiver != null) {
             throw new UnsupportedOperationException("Receiver redeclared");
         }
@@ -321,8 +282,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        checkMayRead();
-
         if (implicitReceiver != null && implicitReceiver.exists()) {
             result.add(implicitReceiver);
         }
@@ -344,8 +303,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             throw new IllegalStateException();
         }
         
-        checkMayWrite();
-
         getPropertyDescriptorsByFieldNames().put(fieldName, propertyDescriptor);
     }
 
@@ -355,16 +312,12 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             throw new IllegalStateException();
         }
 
-        checkMayRead();
-
         PropertyDescriptor descriptor = getPropertyDescriptorsByFieldNames().get(fieldName);
         if (descriptor != null) return descriptor;
         return super.getPropertyByFieldReference(fieldName);
     }
 
     public List<VariableDescriptor> getDeclaredVariables() {
-        checkMayRead();
-
         List<VariableDescriptor> result = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : getVariableClassOrNamespaceDescriptors().values()) {
             if (descriptor instanceof VariableDescriptor) {
@@ -381,8 +334,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public WritableScopeImpl setDebugName(@NotNull String debugName) {
-        checkMayWrite();
-
         super.setDebugName(debugName);
         return this;
     }

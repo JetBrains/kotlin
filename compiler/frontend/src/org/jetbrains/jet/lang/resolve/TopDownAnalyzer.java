@@ -60,7 +60,6 @@ public class TopDownAnalyzer {
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
         new DeclarationResolver(context).process();
         new DelegationResolver(context).process();
-        lockClasses(context);
         new OverrideResolver(context).process();
         new OverloadResolver(context).process();
         if (!context.analyzingBootstrapLibrary()) {
@@ -71,15 +70,6 @@ public class TopDownAnalyzer {
 
         context.debug("Exit");
         context.printDebugOutput(System.out);
-    }
-
-    private static void lockClasses(TopDownAnalysisContext context) {
-        for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
-            mutableClassDescriptor.lockScopes();
-        }
-        for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
-            mutableClassDescriptor.lockScopes();
-        }
     }
 
     public static void processStandardLibraryNamespace(

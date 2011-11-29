@@ -545,7 +545,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), semanticServices, JetTestUtils.DUMMY_TRACE);
         writableScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         writableScope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
-        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return writableScope;
     }
 
@@ -642,7 +641,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             trace.record(BindingContext.CLASS, classElement, classDescriptor);
 
             final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace));
-            parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             // This call has side-effects on the parameterScope (fills it in)
             List<TypeParameterDescriptor> typeParameters
@@ -662,7 +660,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
             final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace));
-            memberDeclarations.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             List<JetDeclaration> declarations = classElement.getDeclarations();
             for (JetDeclaration declaration : declarations) {

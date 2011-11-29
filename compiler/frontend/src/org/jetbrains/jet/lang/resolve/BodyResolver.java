@@ -382,8 +382,6 @@ public class BodyResolver {
         }
 
         constructorScope.addLabeledDeclaration(descriptor); // TODO : Labels for constructors?!
-        
-        constructorScope.changeLockLevel(WritableScope.LockLevel.READING);
 
         return constructorScope;
     }
@@ -444,7 +442,6 @@ public class BodyResolver {
         if (receiver.exists()) {
             result.setImplicitReceiver(receiver);
         }
-        result.changeLockLevel(WritableScope.LockLevel.READING);
         return result;
     }
 
@@ -453,7 +450,6 @@ public class BodyResolver {
 
         WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
-        accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
 
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
