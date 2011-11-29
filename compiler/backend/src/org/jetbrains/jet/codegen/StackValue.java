@@ -256,6 +256,14 @@ public abstract class StackValue {
         return new ThisOuter(codegen, descriptor);
     }
 
+    public static StackValue postIncrement(int index, int increment) {
+        return new PostIncrement(index, increment);
+    }
+
+    public static StackValue preIncrement(int index, int increment) {
+        return new PreIncrement(index, increment);
+    }
+
     private static class None extends StackValue {
         public static None INSTANCE = new None();
         private None() {
@@ -961,6 +969,46 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             codegen.generateThisOrOuter(descriptor);
+        }
+    }
+
+    private static class PostIncrement extends StackValue {
+        private int index;
+        private int increment;
+
+        public PostIncrement(int index, int increment) {
+            super(Type.INT_TYPE);
+            this.index = index;
+            this.increment = increment;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            if(!type.equals(Type.VOID_TYPE)) {
+                v.load(index, Type.INT_TYPE);
+                coerce(type, v);
+            }
+            v.iinc(index, increment);
+        }
+    }
+
+    private static class PreIncrement extends StackValue {
+        private int index;
+        private int increment;
+
+        public PreIncrement(int index, int increment) {
+            super(Type.INT_TYPE);
+            this.index = index;
+            this.increment = increment;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            v.iinc(index, increment);
+            if(!type.equals(Type.VOID_TYPE)) {
+                v.load(index, Type.INT_TYPE);
+                coerce(type, v);
+            }
         }
     }
 }

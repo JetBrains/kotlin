@@ -1905,8 +1905,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (isNumberPrimitive(cls) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
                 receiver.put(receiver.type, v);
-                gen(expression.getBaseExpression(), asmType);                               // old value
-                generateIncrement(op, asmType, expression.getBaseExpression(), receiver);   // increment in-place
+                JetExpression operand = expression.getBaseExpression();
+                if (operand instanceof JetReferenceExpression) {
+                    final int index = indexOfLocal((JetReferenceExpression) operand);
+                    if (index >= 0 && JetTypeMapper.isIntPrimitive(asmType)) {
+                        int increment = op.getName().equals("inc") ? 1 : -1;
+                        return StackValue.postIncrement(index, increment);
+                    }
+                }
+                gen(operand, asmType);                               // old value
+                generateIncrement(op, asmType, operand, receiver);   // increment in-place
                 return StackValue.onStack(asmType);                                         // old value
             }
         }
