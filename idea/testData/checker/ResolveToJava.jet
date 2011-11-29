@@ -7,7 +7,7 @@ import java.lang.Comparable as Com
 
 val l : List<in Int> = ArrayList<Int>()
 
-fun test(l : java.util.List<Int>) {
+fun test(<warning>l</warning> : java.util.List<Int>) {
   val <warning>x</warning> : java.<error>List</error>
   val <warning>y</warning> : java.util.List<Int>
   val <warning>b</warning> : java.lang.Object

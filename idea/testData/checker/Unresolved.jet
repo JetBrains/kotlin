@@ -28,4 +28,4 @@ fun testUnresolved() {
     }
 }
 
-fun foo1(i: Int) {}
+fun foo1(<warning>i</warning>: Int) {}

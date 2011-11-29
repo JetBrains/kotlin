@@ -1,19 +1,19 @@
 namespace lol
 
 class B() {
-    fun plusAssign(other : B) : String {
+    fun plusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    fun minusAssign(other : B) : String {
+    fun minusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    fun modAssign(other : B) : String {
+    fun modAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    fun divAssign(other : B) : String {
+    fun divAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    fun timesAssign(other : B) : String {
+    fun timesAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
 }

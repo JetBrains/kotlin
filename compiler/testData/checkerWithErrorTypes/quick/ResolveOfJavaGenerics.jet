@@ -1,7 +1,7 @@
 // +JDK
 
 // Fixpoint generic in Java: Enum<T extends Enum<T>>
-fun test(a : annotation.RetentionPolicy) {
+fun test(<!UNUSED_PARAMETER!>a<!> : annotation.RetentionPolicy) {
 
 }
 
@@ -9,14 +9,14 @@ fun test() {
   java.util.Collections.emptyList()
 }
 
-fun test(a : java.lang.Comparable<Int>) {
+fun test(<!UNUSED_PARAMETER!>a<!> : java.lang.Comparable<Int>) {
 
 }
 
-fun test(a : java.util.ArrayList<Int>) {
+fun test(<!UNUSED_PARAMETER!>a<!> : java.util.ArrayList<Int>) {
 
 }
 
-fun test(a : java.lang.Class<Int>) {
+fun test(<!UNUSED_PARAMETER!>a<!> : java.lang.Class<Int>) {
 
 }

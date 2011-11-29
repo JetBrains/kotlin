@@ -9,7 +9,7 @@ fun f() {
     }
     )
 }
-fun invoker(gen : fun() : Int) : Int  = 0
+fun invoker(<!UNUSED_PARAMETER!>gen<!> : fun() : Int) : Int  = 0
 
 //more tests
 fun t1() {

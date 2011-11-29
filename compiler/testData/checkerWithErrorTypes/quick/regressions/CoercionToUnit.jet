@@ -1,4 +1,4 @@
-fun foo(u : Unit) : Int = 1
+fun foo(<!UNUSED_PARAMETER!>u<!> : Unit) : Int = 1
 
 fun test() : Int {
     foo(<!TYPE_MISMATCH!>1<!>)

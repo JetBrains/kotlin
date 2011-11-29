@@ -34,8 +34,10 @@ sink:
 fun doSmth(i: Int) {}
 ---------------------
 l0:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>        NEXT:[v(i: Int)]      PREV:[]
+    v(i: Int)      NEXT:[w(i)]           PREV:[<START>]
+    w(i)           NEXT:[read (Unit)]    PREV:[v(i: Int)]
+    read (Unit)    NEXT:[<END>]          PREV:[w(i)]
 l1:
     <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:

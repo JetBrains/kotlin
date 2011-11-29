@@ -2,6 +2,6 @@
 
 inline fun run1<T>(body : fun() : T) : T = body()
 
-fun main1(args : Array<String>) {
+fun main1(<!UNUSED_PARAMETER!>args<!> : Array<String>) {
     run1 @l{ 1 } // should not be an error
 }

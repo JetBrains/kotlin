@@ -7,7 +7,7 @@ open class B() {
 
 class C() : B() {
     var x = 4
-    fun foo(c: C) {
+    fun foo(<!UNUSED_PARAMETER!>c<!>: C) {
         this.x = 34
         this.b = 123
         super.b = 23
@@ -17,7 +17,7 @@ class C() : B() {
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
-    fun foo1(c: C) {
+    fun foo1(<!UNUSED_PARAMETER!>c<!>: C) {
         <!VAL_REASSIGNMENT!>super.c<!> = 34
     }
 
@@ -36,7 +36,7 @@ class D() {
     }
 }
 
-fun cannotBe(var i: Int) {
+fun cannotBe(var <!UNUSED_PARAMETER!>i<!>: Int) {
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
     <!VARIABLE_EXPECTED!>()<!> = ();
 
@@ -47,18 +47,18 @@ fun cannotBe(var i: Int) {
 }
 
 fun canBe(var i: Int, val j: Int) {
-    (i: Int) = 36
-    (@label i) = 34
+    (i: Int) = <!UNUSED_VALUE!>36<!>
+    (@label i) = <!UNUSED_VALUE!>34<!>
 
-    (<!VAL_REASSIGNMENT!>j<!>: Int) = 36
-    (@label j) = 34 //repeat for j
+    (<!VAL_REASSIGNMENT!>j<!>: Int) = <!UNUSED_VALUE!>36<!>
+    (@label j) = <!UNUSED_VALUE!>34<!> //repeat for j
 
     val a = A()
     (@ a.a) = 3894
 }
 
 fun canBe2(val j: Int) {
-    (@label <!VAL_REASSIGNMENT!>j<!>) = 34
+    (@label <!VAL_REASSIGNMENT!>j<!>) = <!UNUSED_VALUE!>34<!>
 }
 
 class A() {

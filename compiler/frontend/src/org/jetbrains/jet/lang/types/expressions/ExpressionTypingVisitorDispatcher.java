@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -14,7 +13,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.ELSE_MISPLACED_IN_WHEN;
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 
 /**
@@ -22,11 +20,9 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
  */
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, ExpressionTypingContext> implements ExpressionTypingInternals {
 
-    private static ExpressionTypingVisitorDispatcher BASIC_DISPATCHER = new ExpressionTypingVisitorDispatcher(null);
-
     @NotNull
     public static ExpressionTypingFacade create() {
-        return BASIC_DISPATCHER;
+        return new ExpressionTypingVisitorDispatcher(null);
     }
 
     @NotNull

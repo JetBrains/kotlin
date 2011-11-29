@@ -1,6 +1,6 @@
 namespace example;
 
-fun any(a : Any) {}
+fun any(<!UNUSED_PARAMETER!>a<!> : Any) {}
 
 fun notAnExpression() {
     any(<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) // not an expression

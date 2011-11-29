@@ -51,7 +51,7 @@ fun main(args : Array<String>) {
 
 fun f() : fun Int.() : Unit = {}
 
-fun main1(args : Array<String>) {
+fun main1() {
     1.{Int.() => 1}();
     {1}()
     {(x : Int) => x}(1)

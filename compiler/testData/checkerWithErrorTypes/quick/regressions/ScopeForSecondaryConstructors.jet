@@ -8,7 +8,7 @@ class Foo(var bar : Int, var barr : Int, var barrr : Int) {
     }
 
     this(var bar : Int) : this(1, 1, 1) {
-      bar = 1
+      bar = <!UNUSED_VALUE!>1<!>
       this.bar
       1 : Int
       val <!UNUSED_VARIABLE!>a<!> : Int =1

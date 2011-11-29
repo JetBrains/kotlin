@@ -1,13 +1,13 @@
 class A() {
-  fun equals(a : Any?) : Boolean = false
+  fun equals(<warning>a</warning> : Any?) : Boolean = false
 }
 
 class B() {
-  fun equals(a : Any?) : Boolean? = false
+  fun equals(<warning>a</warning> : Any?) : Boolean? = false
 }
 
 class C() {
-  fun equals(a : Any?) : Int = 0
+  fun equals(<warning>a</warning> : Any?) : Int = 0
 }
 
 fun f(): Unit {

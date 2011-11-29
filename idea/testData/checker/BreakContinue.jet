@@ -1,6 +1,6 @@
 class C {
 
-    fun f (a : Boolean, b : Boolean) {
+    fun f (<warning>a</warning> : Boolean, <warning>b</warning> : Boolean) {
         @b (while (true)
           @a {
             <error>break@f</error>

@@ -45,7 +45,7 @@ fun t3() : Any {
   <error>1</error>
 }
 
-fun t4(a : Boolean) : Int {
+fun t4(<warning>a</warning> : Boolean) : Int {
   do {
     return 1
   }
@@ -53,7 +53,7 @@ fun t4(a : Boolean) : Int {
   <error>1</error>
 }
 
-fun t4break(a : Boolean) : Int {
+fun t4break(<warning>a</warning> : Boolean) : Int {
   do {
     break
   }

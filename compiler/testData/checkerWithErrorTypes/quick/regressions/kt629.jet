@@ -4,7 +4,7 @@ namespace kt629
 
 class A() {
     var p = "yeah"
-    fun mod(other : A) : A {
+    fun mod(<!UNUSED_PARAMETER!>other<!> : A) : A {
         return A();
     }
 }

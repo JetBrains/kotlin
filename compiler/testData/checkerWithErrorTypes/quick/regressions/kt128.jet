@@ -1,6 +1,6 @@
 // KT-128 Support passing only the last closure if all the other parameters have default values
 
-fun div(c : String = "", f : fun()) {}
+fun div(<!UNUSED_PARAMETER!>c<!> : String = "", <!UNUSED_PARAMETER!>f<!> : fun()) {}
 fun f() {
     div { // Nothing passed, but could have been...
       // ...

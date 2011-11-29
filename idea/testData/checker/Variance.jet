@@ -19,17 +19,17 @@ fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
 
 //Arrays copy example
 class Array<T>(val length : Int, val t : T) {
-    fun get(index : Int) : T { return t }
-    fun set(index : Int, value : T) { /* ... */ }
+    fun get(<warning>index</warning> : Int) : T { return t }
+    fun set(<warning>index</warning> : Int, <warning>value</warning> : T) { /* ... */ }
 }
 
-fun copy1(from : Array<Any>, to : Array<Any>) {}
+fun copy1(<warning>from</warning> : Array<Any>, <warning>to</warning> : Array<Any>) {}
 
-fun copy2(from : Array<out Any>, to : Array<in Any>) {}
+fun copy2(<warning>from</warning> : Array<out Any>, <warning>to</warning> : Array<in Any>) {}
 
-fun <T> copy3(from : Array<out T>, to : Array<in T>) {}
+fun <T> copy3(<warning>from</warning> : Array<out T>, <warning>to</warning> : Array<in T>) {}
 
-fun copy4(from : Array<out Number>, to : Array<in Int>) {}
+fun copy4(<warning>from</warning> : Array<out Number>, <warning>to</warning> : Array<in Int>) {}
 
 fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
     copy1(<error>ints</error>, any)

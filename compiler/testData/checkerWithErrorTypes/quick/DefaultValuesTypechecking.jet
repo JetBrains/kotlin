@@ -1,5 +1,5 @@
 val x = ""
 
-fun bar(x : Int = <!TYPE_MISMATCH!>""<!>, y : Int = <!TYPE_MISMATCH!>x<!>, z : String = <!UNRESOLVED_REFERENCE!>y<!>) {
+fun bar(<!UNUSED_PARAMETER!>x<!> : Int = <!TYPE_MISMATCH!>""<!>, <!UNUSED_PARAMETER!>y<!> : Int = <!TYPE_MISMATCH!>x<!>, <!UNUSED_PARAMETER!>z<!> : String = <!UNRESOLVED_REFERENCE!>y<!>) {
 
 }

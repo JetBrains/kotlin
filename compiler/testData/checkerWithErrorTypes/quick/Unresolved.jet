@@ -28,4 +28,4 @@ fun testUnresolved() {
     }
 }
 
-fun foo1(i: Int) {}
+fun foo1(<!UNUSED_PARAMETER!>i<!>: Int) {}

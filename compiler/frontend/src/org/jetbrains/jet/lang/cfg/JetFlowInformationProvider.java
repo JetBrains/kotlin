@@ -19,6 +19,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.util.*;
 
@@ -68,7 +69,7 @@ public class JetFlowInformationProvider {
             }
         };
         JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(wrappedTrace);
-        new JetControlFlowProcessor(trace, instructionsGenerator).generate(declaration, bodyExpression);
+        new JetControlFlowProcessor(trace, instructionsGenerator).generate(declaration);
         wrappedTrace.close();
     }
 
@@ -479,13 +480,27 @@ public class JetFlowInformationProvider {
                         } 
                         else if (instruction instanceof VariableDeclarationInstruction) {
                             JetDeclaration element = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
-                            if (element instanceof JetProperty) {
+                            if (element instanceof JetNamedDeclaration) {
                                 PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
                                 PsiElement elementToMark = nameIdentifier != null ? nameIdentifier : element;
                                 if (enterData.get(variableDescriptor) == VariableStatus.UNUSED) {
-                                    trace.report(Errors.UNUSED_VARIABLE.on((JetNamedDeclaration) element, elementToMark, variableDescriptor));
+                                    if (element instanceof JetProperty) {
+                                        trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, elementToMark, variableDescriptor));
+                                    }
+                                    else if (element instanceof JetParameter) {
+                                        PsiElement psiElement = element.getParent().getParent();
+                                        if (psiElement instanceof JetFunction) {
+                                            boolean isMain = (psiElement instanceof JetNamedFunction) && JetMainDetector.isMain((JetNamedFunction) psiElement);
+                                            DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
+                                            assert descriptor instanceof FunctionDescriptor;
+                                            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                                            if (!isMain && !functionDescriptor.getModality().isOverridable() && functionDescriptor.getOverriddenDescriptors().isEmpty()) {
+                                                trace.report(Errors.UNUSED_PARAMETER.on((JetParameter) element, elementToMark, variableDescriptor));
+                                            }
+                                        }
+                                    }
                                 }
-                                else if (enterData.get(variableDescriptor) == VariableStatus.WRITTEN) {
+                                else if (enterData.get(variableDescriptor) == VariableStatus.WRITTEN && element instanceof JetProperty) {
                                     trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, elementToMark, variableDescriptor));
                                 }
                             }
