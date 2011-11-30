@@ -59,10 +59,15 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
         this.redeclarationHandler = redeclarationHandler;
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup");
+        this.scopeForMemberLookup.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution");
+        this.scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution");
+        this.scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForAnyConstructor = new WritableScopeImpl(scopeForMemberResolution, this, redeclarationHandler).setDebugName("AnyConstrutor");
+        this.scopeForAnyConstructor.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForPrimaryConstructor = new WritableScopeImpl(scopeForAnyConstructor, this, redeclarationHandler).setDebugName("PrimaryConstructor");
+        this.scopeForPrimaryConstructor.changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopesForConstructors = new HashMap<ConstructorDescriptor, WritableScope>();
         this.kind = kind;
     }
@@ -151,6 +156,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         }
 
         scope.addLabeledDeclaration(constructorDescriptor); // TODO : Labels for constructors?!
+        
+        scope.changeLockLevel(WritableScope.LockLevel.READING);
     }
 
     @Override
@@ -212,6 +219,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
             this.typeParameters.add(typeParameterDescriptor);
             scopeForSupertypeResolution.addTypeParameterDescriptor(typeParameterDescriptor);
         }
+        scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -385,6 +393,21 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
             implicitReceiver = new ClassReceiver(this);
         }
         return implicitReceiver;
+    }
+    
+    public void lockScopes() {
+        scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
+        scopeForMemberLookup.changeLockLevel(WritableScope.LockLevel.READING);
+        scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);
+        scopeForAnyConstructor.changeLockLevel(WritableScope.LockLevel.READING);
+        scopeForPrimaryConstructor.changeLockLevel(WritableScope.LockLevel.READING);
+        for (WritableScope scope : scopesForConstructors.values()) {
+            scope.changeLockLevel(WritableScope.LockLevel.READING);
+        }
+        
+        if (classObjectDescriptor != null) {
+            classObjectDescriptor.lockScopes();
+        }
     }
 
 }

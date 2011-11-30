@@ -9,6 +9,14 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
  * @author abreslav
  */
 public interface WritableScope extends JetScope {
+    enum LockLevel {
+        WRITING,
+        BOTH,
+        READING,
+    }
+
+    void changeLockLevel(LockLevel lockLevel);
+
     void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor);
 
     void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor);

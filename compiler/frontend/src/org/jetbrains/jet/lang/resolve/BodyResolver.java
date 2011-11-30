@@ -423,6 +423,7 @@ public class BodyResolver {
                 declaringScope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter());
         WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+        accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
 
         return accessorScope;
     }

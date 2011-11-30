@@ -140,6 +140,7 @@ public class ExpressionTypingServices {
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
         WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace)).setDebugName("getBlockReturnedType");
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
     }
 

@@ -194,6 +194,8 @@ public class JetStandardClasses {
 
     static {
         WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
+        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
         STANDARD_CLASSES = writableScope;
         writableScope.addClassifierAlias("Unit", getTuple(0));
 
