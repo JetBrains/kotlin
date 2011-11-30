@@ -78,7 +78,7 @@ public final class Declarations {
     }
 
     /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull JsScope scope) {
-        assert !descriptorToScopeMap.containsKey(descriptor) : "Already contains that key!";
+//        assert !descriptorToScopeMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToScopeMap.put(descriptor, scope);
     }
 
@@ -89,7 +89,7 @@ public final class Declarations {
     }
 
     /*package*/ void putQualifier(@NotNull DeclarationDescriptor descriptor, @Nullable JsNameRef qualifier) {
-        assert !descriptorToQualifierMap.containsKey(descriptor) : "Already contains that key!";
+//        assert !descriptorToQualifierMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToQualifierMap.put(descriptor, qualifier);
     }
 }

@@ -124,9 +124,9 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     @NotNull
     private JsExpression propertyReassignment(@NotNull JsExpression toCallMethodUpon) {
         JetExpression jetBaseExpression = getBaseExpression();
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
-        JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(jetBaseExpression);
-        assert propertyAccessTranslator.canBePropertyGetterCall(jetBaseExpression) : "Should be a getter call";
+        JsInvocation setterCall =
+                PropertyAccessTranslator.translateAsPropertySetterCall(jetBaseExpression, context());
+        assert PropertyAccessTranslator.canBePropertyGetterCall(jetBaseExpression, context()) : "Should be a getter call";
         JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
         setterCall.setArguments(overloadedMethodCallOnPropertyGetter);
         return setterCall;

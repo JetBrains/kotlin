@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -18,152 +17,189 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.PsiUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
  * @author Talanov Pavel
  */
-//TODO ask for code review. Class has messy code.
+//TODO Refactor.
 public final class PropertyAccessTranslator extends AbstractTranslator {
 
     private static String MESSAGE = "Cannot be accessor call. Use canBeProperty*Call to ensure this method " +
             "can be called safely.";
 
     @NotNull
-    public static PropertyAccessTranslator newInstance(@NotNull TranslationContext context) {
-        return new PropertyAccessTranslator(context);
-    }
-
-    private PropertyAccessTranslator(@NotNull TranslationContext context) {
-        super(context);
-    }
-
-
-    //TODO: ask if these methods can be more clear
-    public boolean canBePropertyGetterCall(@NotNull JetExpression expression) {
-        if (expression instanceof JetQualifiedExpression) {
-            JetSimpleNameExpression selector = getNullableSelector((JetQualifiedExpression) expression);
-            if (selector == null) {
-                return false;
-            }
-            return (getNullableGetterName(selector) != null);
-        }
-        if (expression instanceof JetSimpleNameExpression) {
-            return (getNullableGetterName((JetSimpleNameExpression) expression) != null);
-        }
-        return false;
-    }
-
-    public boolean canBePropertyAccess(@NotNull JetExpression expression) {
-        return canBePropertyGetterCall(expression);
-    }
-
-    //TODO: delete?
-    public boolean canBePropertySetterCall(@NotNull JetExpression expression) {
-        if (expression instanceof JetQualifiedExpression) {
-            JetSimpleNameExpression selector = getNullableSelector((JetQualifiedExpression) expression);
-            if (selector == null) {
-                return false;
-            }
-            return (getNullableSetterName(selector) != null);
-        }
-        if (expression instanceof JetSimpleNameExpression) {
-            return (getNullableSetterName((JetSimpleNameExpression) expression) != null);
-        }
-        return false;
+    public static JsInvocation translateAsPropertySetterCall(@NotNull JetQualifiedExpression expression,
+                                                             @NotNull TranslationContext context) {
+        return (new PropertyAccessTranslator(expression, context))
+                .translateAsPropertySetterCall();
     }
 
     @NotNull
-    public JsInvocation translateAsPropertyGetterCall(@NotNull JetExpression expression) {
+    public static JsInvocation translateAsPropertySetterCall(@NotNull JetSimpleNameExpression expression,
+                                                             @NotNull TranslationContext context) {
+        return (new PropertyAccessTranslator(expression, context))
+                .translateAsPropertySetterCall();
+    }
+
+    @NotNull
+    public static JsInvocation translateAsPropertySetterCall(@NotNull JetExpression expression,
+                                                             @NotNull TranslationContext context) {
         if (expression instanceof JetQualifiedExpression) {
-            return resolveAsPropertyGet((JetQualifiedExpression) expression);
+            return translateAsPropertySetterCall((JetQualifiedExpression) expression, context);
         }
         if (expression instanceof JetSimpleNameExpression) {
-            return resolveAsPropertyGet((JetSimpleNameExpression) expression);
+            return translateAsPropertySetterCall((JetSimpleNameExpression) expression, context);
         }
         throw new AssertionError(MESSAGE);
     }
 
     @NotNull
-    private JsInvocation resolveAsPropertyGet(@NotNull JetQualifiedExpression expression) {
-        JsName getterName = getNotNullGetterName(getNotNullSelector(expression));
-        return translateReceiverAndReturnAccessorInvocation(expression, getterName);
+    public static JsInvocation translateAsPropertyGetterCall(@NotNull JetQualifiedExpression expression,
+                                                             @NotNull TranslationContext context) {
+        return (new PropertyAccessTranslator(expression, context))
+                .translateAsPropertyGetterCall();
     }
 
     @NotNull
-    private JsInvocation resolveAsPropertyGet(@NotNull JetSimpleNameExpression expression) {
-        JsName getterName = getNotNullGetterName(expression);
-        JsNameRef getterReference = getAccessorReference(getterName);
-        return AstUtil.newInvocation(getterReference);
+    public static JsInvocation translateAsPropertyGetterCall(@NotNull JetSimpleNameExpression expression,
+                                                             @NotNull TranslationContext context) {
+        return (new PropertyAccessTranslator(expression, context))
+                .translateAsPropertyGetterCall();
     }
 
     @NotNull
-    private JsNameRef getAccessorReference(@NotNull JsName getterName) {
-        return TranslationUtils.getThisQualifiedNameReference(context(), getterName);
-    }
-
-    @NotNull
-    public JsInvocation translateAsPropertySetterCall(@NotNull JetExpression expression) {
-        if (expression instanceof JetDotQualifiedExpression) {
-            return resolveAsPropertySet((JetDotQualifiedExpression) expression);
+    public static JsInvocation translateAsPropertyGetterCall(@NotNull JetExpression expression,
+                                                             @NotNull TranslationContext context) {
+        if (expression instanceof JetQualifiedExpression) {
+            return translateAsPropertyGetterCall((JetQualifiedExpression) expression, context);
         }
         if (expression instanceof JetSimpleNameExpression) {
-            return resolveAsPropertySet((JetSimpleNameExpression) expression);
+            return translateAsPropertyGetterCall((JetSimpleNameExpression) expression, context);
         }
         throw new AssertionError(MESSAGE);
     }
 
-    @NotNull
-    private JsInvocation resolveAsPropertySet(@NotNull JetDotQualifiedExpression dotQualifiedExpression) {
-        JsName setterName = getNotNullSetterName(getNotNullSelector(dotQualifiedExpression));
-        return translateReceiverAndReturnAccessorInvocation(dotQualifiedExpression, setterName);
+    public static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
+                                                  @NotNull TranslationContext context) {
+        JetSimpleNameExpression selector = PsiUtils.getSelectorAsSimpleName(expression);
+        if (selector == null) {
+            return false;
+        }
+        return canBePropertyGetterCall(selector, context);
     }
 
-    @NotNull
-    private JsInvocation resolveAsPropertySet(@NotNull JetSimpleNameExpression expression) {
-        JsName setterName = getNotNullSetterName(expression);
-        JsNameRef setterReference = getAccessorReference(setterName);
-        return AstUtil.newInvocation(setterReference);
+    public static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
+                                                  @NotNull TranslationContext context) {
+        return (BindingUtils.getPropertyDescriptorForSimpleName(context.bindingContext(), expression) != null);
     }
 
-    @NotNull
-    private JsInvocation translateReceiverAndReturnAccessorInvocation
-            (@NotNull JetQualifiedExpression qualifiedExpression, @NotNull JsName accessorName) {
-        JsExpression qualifier = Translation.translateAsExpression
-                (qualifiedExpression.getReceiverExpression(), context());
-        JsNameRef result = accessorName.makeRef();
-        AstUtil.setQualifier(result, qualifier);
-        return AstUtil.newInvocation(result);
+    public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
+                                                  @NotNull TranslationContext context) {
+        if (expression instanceof JetQualifiedExpression) {
+            return canBePropertyGetterCall((JetQualifiedExpression) expression, context);
+        }
+        if (expression instanceof JetSimpleNameExpression) {
+            return canBePropertyGetterCall((JetSimpleNameExpression) expression, context);
+        }
+        return false;
     }
 
+    public static boolean canBePropertyAccess(@NotNull JetExpression expression,
+                                              @NotNull TranslationContext context) {
+        return canBePropertyGetterCall(expression, context);
+    }
+
+
+    @NotNull
+    private final JetSimpleNameExpression expression;
     @Nullable
-    private JetSimpleNameExpression getNullableSelector(@NotNull JetQualifiedExpression expression) {
-        JetExpression selectorExpression = expression.getSelectorExpression();
-        assert selectorExpression != null : "Selector should not be null.";
-        if (!(selectorExpression instanceof JetSimpleNameExpression)) {
-            return null;
+    private final JetExpression qualifier;
+    @NotNull
+    private final PropertyDescriptor propertyDescriptor;
+
+    private PropertyAccessTranslator(@NotNull JetSimpleNameExpression simpleName,
+                                     @NotNull TranslationContext context) {
+        super(context);
+        this.expression = simpleName;
+        this.qualifier = null;
+        this.propertyDescriptor = getNotNullPropertyDescriptor();
+    }
+
+    private PropertyAccessTranslator(@NotNull JetQualifiedExpression qualifiedExpression,
+                                     @NotNull TranslationContext context) {
+        super(context);
+        this.expression = getNotNullSelector(qualifiedExpression);
+        this.qualifier = qualifiedExpression.getReceiverExpression();
+        this.propertyDescriptor = getNotNullPropertyDescriptor();
+    }
+
+    @NotNull
+    public JsInvocation translateAsPropertyGetterCall() {
+        JsName getterName = getNotNullGetterName();
+        return qualifiedAccessorInvocation(getterName);
+    }
+
+    @NotNull
+    private JsInvocation qualifiedAccessorInvocation(@NotNull JsName accessorName) {
+        JsNameRef accessorReference = accessorName.makeRef();
+        AstUtil.setQualifier(accessorReference, translateQualifier());
+        return AstUtil.newInvocation(accessorReference);
+    }
+
+    @NotNull
+    private JsExpression defaultQualifier() {
+        if (BindingUtils.isOwnedByClass(propertyDescriptor)) {
+            return TranslationUtils.getThisQualifier(context());
         }
-        return (JetSimpleNameExpression) selectorExpression;
+        assert BindingUtils.isOwnedByNamespace(propertyDescriptor)
+                : "Property can be a member of class or a namespace.";
+        //NOTE: qualifier for descriptor and it's accessor should be equal
+        return context().declarations().getQualifier(propertyDescriptor);
+    }
+
+    @NotNull
+    public JsInvocation translateAsPropertySetterCall() {
+        JsName setterName = getNotNullSetterName();
+        return qualifiedAccessorInvocation(setterName);
+    }
+
+    @NotNull
+    private JsExpression translateQualifier() {
+        if (qualifier != null) {
+            return Translation.translateAsExpression(qualifier, context());
+        }
+        return defaultQualifier();
     }
 
 
     @NotNull
-    private JetSimpleNameExpression getNotNullSelector(@NotNull JetQualifiedExpression expression) {
-        JetSimpleNameExpression selectorExpression = getNullableSelector(expression);
+    private static JetSimpleNameExpression getNotNullSelector(@NotNull JetQualifiedExpression qualifiedExpression) {
+        JetSimpleNameExpression selectorExpression = PsiUtils.getSelectorAsSimpleName(qualifiedExpression);
         assert selectorExpression != null : MESSAGE;
         return selectorExpression;
     }
 
     @NotNull
-    private JsName getNotNullGetterName(@NotNull JetSimpleNameExpression selectorExpression) {
-        JsName getterName = getNullableGetterName(selectorExpression);
+    private JsName getNotNullGetterName() {
+        JsName getterName = getNullableGetterName();
         assert getterName != null : MESSAGE;
         return getterName;
     }
 
     @Nullable
-    private JsName getNullableGetterName(@NotNull JetSimpleNameExpression expression) {
-        PropertyDescriptor property = getPropertyDescriptor(expression);
+    private JsName getNullableGetterName() {
+        PropertyGetterDescriptor getter = getGetterDescriptor();
+
+        if (getter == null) return null;
+
+        return context().getNameForDescriptor(getter);
+    }
+
+    @Nullable
+    private PropertyGetterDescriptor getGetterDescriptor() {
+        PropertyDescriptor property = getNullablePropertyDescriptor();
         if (property == null) {
             return null;
         }
@@ -171,19 +207,19 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (getter == null) {
             return null;
         }
-        return context().getNameForDescriptor(getter);
+        return getter;
     }
 
     @NotNull
-    private JsName getNotNullSetterName(@NotNull JetSimpleNameExpression selectorExpression) {
-        JsName setterName = getNullableSetterName(selectorExpression);
+    private JsName getNotNullSetterName() {
+        JsName setterName = getNullableSetterName();
         assert setterName != null : MESSAGE;
         return setterName;
     }
 
     @Nullable
-    private JsName getNullableSetterName(@NotNull JetSimpleNameExpression expression) {
-        PropertyDescriptor property = getPropertyDescriptor(expression);
+    private JsName getNullableSetterName() {
+        PropertyDescriptor property = getNullablePropertyDescriptor();
         if (property == null) {
             return null;
         }
@@ -195,7 +231,14 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression) {
+    private PropertyDescriptor getNullablePropertyDescriptor() {
         return BindingUtils.getPropertyDescriptorForSimpleName(context().bindingContext(), expression);
+    }
+
+    @NotNull
+    private PropertyDescriptor getNotNullPropertyDescriptor() {
+        PropertyDescriptor propertyDescriptor = getNullablePropertyDescriptor();
+        assert propertyDescriptor != null;
+        return propertyDescriptor;
     }
 }

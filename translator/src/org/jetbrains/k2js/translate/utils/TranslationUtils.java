@@ -152,14 +152,13 @@ public final class TranslationUtils {
     public static JsNameRef getThisQualifiedNameReference(@NotNull TranslationContext context,
                                                           @NotNull JsName name) {
         JsExpression qualifier = getThisQualifier(context);
-
         JsNameRef reference = name.makeRef();
         AstUtil.setQualifier(reference, qualifier);
         return reference;
     }
 
     @NotNull
-    private static JsExpression getThisQualifier(@NotNull TranslationContext context) {
+    public static JsExpression getThisQualifier(@NotNull TranslationContext context) {
         JsExpression qualifier;
         if (context.aliaser().hasAliasForThis()) {
             qualifier = context.aliaser().getAliasForThis();

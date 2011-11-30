@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
@@ -38,9 +37,9 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translateSimpleName() {
+        tryResolveAsPropertyAccess();
         tryResolveAsThisQualifiedExpression();
         tryResolveAsAliasReference();
-        tryResolveAsPropertyAccess();
         tryResolveAsGlobalReference();
         tryResolveAsLocalReference();
         if (result != null) {
@@ -62,7 +61,12 @@ public class ReferenceTranslator extends AbstractTranslator {
 
         if (!requiresThisQualifier(simpleName, referencedName)) return;
 
-        result = TranslationUtils.getThisQualifiedNameReference(context(), referencedName);
+        if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
+            result = TranslationUtils.getThisQualifiedNameReference(context(), referencedName);
+        }
+        if (BindingUtils.isOwnedByNamespace(referencedDescriptor)) {
+            result = TranslationUtils.getQualifiedReference(context(), referencedDescriptor);
+        }
     }
 
     private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression,
@@ -94,11 +98,9 @@ public class ReferenceTranslator extends AbstractTranslator {
     private void tryResolveAsPropertyAccess() {
         if (alreadyResolved()) return;
 
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
+        if (!PropertyAccessTranslator.canBePropertyGetterCall(simpleName, context())) return;
 
-        if (!propertyAccessTranslator.canBePropertyGetterCall(simpleName)) return;
-
-        result = propertyAccessTranslator.translateAsPropertyGetterCall(simpleName);
+        result = PropertyAccessTranslator.translateAsPropertyGetterCall(simpleName, context());
     }
 
     private void tryResolveAsGlobalReference() {

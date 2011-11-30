@@ -258,9 +258,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     private JsExpression translateQualifiedExpression(@NotNull JetQualifiedExpression expression,
                                                       @NotNull TranslationContext context) {
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context);
-        if (propertyAccessTranslator.canBePropertyGetterCall(expression)) {
-            return propertyAccessTranslator.translateAsPropertyGetterCall(expression);
+        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
+            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, context);
         }
         return translateAsQualifiedAccess(expression, context);
     }

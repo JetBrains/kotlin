@@ -10,8 +10,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
@@ -42,7 +42,7 @@ public class OperationTranslator extends AbstractTranslator {
     }
 
     protected boolean isPropertyAccess(@NotNull JetExpression expression) {
-        return Translation.propertyAccessTranslator(context()).canBePropertyAccess(expression);
+        return PropertyAccessTranslator.canBePropertyAccess(expression, context());
 
     }
 

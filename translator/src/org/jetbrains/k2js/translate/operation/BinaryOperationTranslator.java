@@ -145,8 +145,8 @@ public final class BinaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     public JsInvocation setterCall(@NotNull JsExpression assignTo) {
-        PropertyAccessTranslator propertyAccessTranslator = Translation.propertyAccessTranslator(context());
-        JsInvocation setterCall = propertyAccessTranslator.translateAsPropertySetterCall(expression.getLeft());
+        JsInvocation setterCall =
+                PropertyAccessTranslator.translateAsPropertySetterCall(expression.getLeft(), context());
         setterCall.setArguments(assignTo);
         return setterCall;
     }

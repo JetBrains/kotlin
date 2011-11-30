@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public final class BindingUtils {
         return (JetClass) result;
     }
 
+    //TODO: delete?
     @Nullable
     static public JetDeclaration getDeclarationForDescriptor(@NotNull BindingContext context,
                                                              @NotNull DeclarationDescriptor descriptor) {
@@ -174,9 +176,8 @@ public final class BindingUtils {
         return context.get(BindingContext.REFERENCE_TARGET, reference);
     }
 
-    //TODO better implementation?
     static private boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
-        return !superClassDescriptor.getName().equals("Any");
+        return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
 
     //TODO move unrelated utils to other class
@@ -190,8 +191,16 @@ public final class BindingUtils {
         return null;
     }
 
+    static public boolean isOwnedByNamespace(@NotNull DeclarationDescriptor descriptor) {
+        return (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor);
+    }
 
-    //TODO: refactor
+    static public boolean isOwnedByClass(@NotNull DeclarationDescriptor descriptor) {
+        return (descriptor.getContainingDeclaration() instanceof ClassDescriptor);
+    }
+
+
+    //TODO: refactor, check with getDescriptorForReferenceExpression
     @Nullable
     public static PropertyDescriptor getPropertyDescriptorForSimpleName(@NotNull BindingContext context,
                                                                         @NotNull JetSimpleNameExpression expression) {
@@ -224,4 +233,5 @@ public final class BindingUtils {
         assert result != null;
         return result;
     }
+
 }
