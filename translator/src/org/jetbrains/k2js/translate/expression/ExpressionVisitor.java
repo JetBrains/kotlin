@@ -14,6 +14,7 @@ import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
+import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
@@ -142,7 +143,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
                                             @NotNull TranslationContext context) {
-        return Translation.referenceTranslator(context).translateSimpleName(expression);
+        return ReferenceTranslator.translateSimpleName(expression, context);
     }
 
 

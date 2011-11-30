@@ -18,6 +18,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
  * @author Talanov Pavel
@@ -57,6 +58,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         return canBePropertyGetterCall(expression);
     }
 
+    //TODO: delete?
     public boolean canBePropertySetterCall(@NotNull JetExpression expression) {
         if (expression instanceof JetQualifiedExpression) {
             JetSimpleNameExpression selector = getNullableSelector((JetQualifiedExpression) expression);
@@ -91,8 +93,13 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation resolveAsPropertyGet(@NotNull JetSimpleNameExpression expression) {
         JsName getterName = getNotNullGetterName(expression);
-        JsNameRef getterReference = ReferenceProvider.getReference(getterName, context(), expression);
+        JsNameRef getterReference = getAccessorReference(getterName);
         return AstUtil.newInvocation(getterReference);
+    }
+
+    @NotNull
+    private JsNameRef getAccessorReference(@NotNull JsName getterName) {
+        return TranslationUtils.getThisQualifiedNameReference(context(), getterName);
     }
 
     @NotNull
@@ -115,7 +122,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation resolveAsPropertySet(@NotNull JetSimpleNameExpression expression) {
         JsName setterName = getNotNullSetterName(expression);
-        JsNameRef setterReference = ReferenceProvider.getReference(setterName, context(), expression);
+        JsNameRef setterReference = getAccessorReference(setterName);
         return AstUtil.newInvocation(setterReference);
     }
 

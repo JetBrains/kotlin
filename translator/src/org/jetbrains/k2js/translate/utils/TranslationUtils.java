@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -14,7 +15,6 @@ import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
-import org.jetbrains.k2js.translate.reference.ReferenceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,20 +68,14 @@ public final class TranslationUtils {
     static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull JetProperty expression) {
         JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
-        return generateReference(context, backingFieldName);
+        return getThisQualifiedNameReference(context, backingFieldName);
     }
 
     @NotNull
     static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = getBackingFieldName(descriptor.getName(), context);
-        return generateReference(context, backingFieldName);
-    }
-
-    @NotNull
-    private static JsNameRef generateReference(@NotNull TranslationContext context,
-                                               @NotNull JsName backingFieldName) {
-        return ReferenceProvider.getReference(backingFieldName, context, true);
+        return getThisQualifiedNameReference(context, backingFieldName);
     }
 
     @NotNull
@@ -129,5 +123,49 @@ public final class TranslationUtils {
                                                                     @NotNull JsParameter parameter) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
         return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
+    }
+
+
+    public static boolean hasQualifier(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
+        return context.declarations().hasQualifier(descriptor);
+    }
+
+    @NotNull
+    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
+                                                  @NotNull DeclarationDescriptor descriptor) {
+        JsName name = context.declarations().getName(descriptor);
+        JsNameRef reference = name.makeRef();
+        if (hasQualifier(context, descriptor)) {
+            JsNameRef qualifier = getQualifier(context, descriptor);
+            AstUtil.setQualifier(reference, qualifier);
+        }
+        return reference;
+    }
+
+    @NotNull
+    private static JsNameRef getQualifier(@NotNull TranslationContext context,
+                                          @NotNull DeclarationDescriptor descriptor) {
+        return context.declarations().getQualifier(descriptor);
+    }
+
+    @NotNull
+    public static JsNameRef getThisQualifiedNameReference(@NotNull TranslationContext context,
+                                                          @NotNull JsName name) {
+        JsExpression qualifier = getThisQualifier(context);
+
+        JsNameRef reference = name.makeRef();
+        AstUtil.setQualifier(reference, qualifier);
+        return reference;
+    }
+
+    @NotNull
+    private static JsExpression getThisQualifier(@NotNull TranslationContext context) {
+        JsExpression qualifier;
+        if (context.aliaser().hasAliasForThis()) {
+            qualifier = context.aliaser().getAliasForThis();
+        } else {
+            qualifier = new JsThisRef();
+        }
+        return qualifier;
     }
 }

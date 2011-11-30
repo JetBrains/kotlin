@@ -18,7 +18,6 @@ import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
-import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
@@ -57,10 +56,10 @@ public final class Translation {
         return PatternTranslator.newInstance(context);
     }
 
-    @NotNull
-    static public ReferenceTranslator referenceTranslator(@NotNull TranslationContext context) {
-        return ReferenceTranslator.newInstance(context);
-    }
+//    @NotNull
+//    static public ReferenceTranslator referenceTranslator(@NotNull TranslationContext context) {
+//        return ReferenceTranslator.translateSimpleName(context);
+//    }
 
     @NotNull
     static public JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {

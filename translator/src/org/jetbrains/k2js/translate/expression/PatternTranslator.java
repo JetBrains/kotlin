@@ -98,7 +98,8 @@ public final class PatternTranslator extends AbstractTranslator {
                 (context().bindingContext(), typeReference);
         //TODO should reference class by full name here
         JsName className = context().getNameForDescriptor(referencedClass);
-        return context().getNamespaceQualifiedReference(className);
+        assert TranslationUtils.hasQualifier(context(), referencedClass);
+        return TranslationUtils.getQualifiedReference(context(), referencedClass);
     }
 
     @NotNull

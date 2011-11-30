@@ -62,8 +62,19 @@ public final class Declarations {
         return name;
     }
 
-    public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {
+    public boolean hasDeclaredName(@NotNull DeclarationDescriptor descriptor) {
         return descriptorToNameMap.containsKey(descriptor.getOriginal());
+    }
+
+    public boolean hasQualifier(@NotNull DeclarationDescriptor descriptor) {
+        return (descriptorToQualifierMap.get(descriptor) != null);
+    }
+
+    @NotNull
+    public JsNameRef getQualifier(@NotNull DeclarationDescriptor descriptor) {
+        JsNameRef qualifier = descriptorToQualifierMap.get(descriptor);
+        assert qualifier != null : "Cannot be null. Use hasQualifier to check.";
+        return qualifier;
     }
 
     /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull JsScope scope) {
@@ -71,8 +82,9 @@ public final class Declarations {
         descriptorToScopeMap.put(descriptor, scope);
     }
 
+    //TODO: decide what to do about function overriding
     /*package*/ void putName(@NotNull DeclarationDescriptor descriptor, @NotNull JsName name) {
-        assert !descriptorToNameMap.containsKey(descriptor) : "Already contains that key!";
+//        assert !descriptorToNameMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToNameMap.put(descriptor, name);
     }
 

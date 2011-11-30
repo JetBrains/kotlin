@@ -74,7 +74,9 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     public Void visitConstructorDescriptor(@NotNull ConstructorDescriptor descriptor,
                                            @NotNull DeclarationContext context) {
         JsName alreadyDeclaredClassName = declarations.getName(descriptor.getContainingDeclaration());
+        //already defined in
         declarations.putName(descriptor, alreadyDeclaredClassName);
+        declarations.putQualifier(descriptor, context.getQualifier());
         return null;
     }
 
@@ -108,7 +110,7 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     @Override
     public Void visitNamespaceDescriptor(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
         DeclarationContext namespaceContext = extractNamespaceDeclaration(descriptor, context);
-        visitMemberDeclarations(descriptor, namespaceContext);
+        declareMembers(descriptor, namespaceContext);
         return null;
     }
 
@@ -129,7 +131,7 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
         return name;
     }
 
-    private void visitMemberDeclarations(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
+    private void declareMembers(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getMemberScope().getAllDescriptors()) {
             memberDescriptor.accept(this, context);
