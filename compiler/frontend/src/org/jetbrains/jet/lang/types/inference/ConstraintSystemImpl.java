@@ -267,9 +267,15 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         @Override
         public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-            // If some of the types is an unknown, the constraint is already generated, and we should carry on
+            // If some of the types is an unknown, the constraint must be generated, and we should carry on
             // otherwise there can be no solution, and we should fail
-            return someUnknown(getTypeValueFor(subtype), getTypeValueFor(supertype));
+            TypeValue subTypeValue = getTypeValueFor(subtype);
+            TypeValue superTypeValue = getTypeValueFor(supertype);
+            boolean someUnknown = someUnknown(subTypeValue, superTypeValue);
+            if (someUnknown) {
+                addSubtypingConstraintOnTypeValues(subTypeValue, superTypeValue);
+            }
+            return someUnknown;
         }
 
         private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {
