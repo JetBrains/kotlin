@@ -1,9 +1,11 @@
 JetFile: NamespaceBlockFirst.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     NAMESPACE
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foobar')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')

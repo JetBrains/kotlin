@@ -4,15 +4,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -115,10 +113,22 @@ public class CodegenUtil {
         if (parent != null) {
             String parentFQName = getFQName(parent);
             if (parentFQName.length() > 0) {
-                return parentFQName + "." + jetNamespace.getName();
+                return parentFQName + "." + getFQName(jetNamespace.getHeader());
             }
         }
-        return jetNamespace.getName(); // TODO: Must include module root namespace
+        return getFQName(jetNamespace.getHeader()); // TODO: Must include module root namespace
+    }
+
+    private static String getFQName(JetNamespaceHeader header) {
+        StringBuilder builder = new StringBuilder();
+        for (Iterator<JetSimpleNameExpression> iterator = header.getParentNamespaceNames().iterator(); iterator.hasNext(); ) {
+            JetSimpleNameExpression nameExpression = iterator.next();
+            builder.append(nameExpression.getReferencedName());
+            builder.append(".");
+        }
+//        PsiElement nameIdentifier = header.getNameIdentifier();
+        builder.append(header.getName());
+        return builder.toString();
     }
 
     public static String getFQName(JetClass jetClass) {

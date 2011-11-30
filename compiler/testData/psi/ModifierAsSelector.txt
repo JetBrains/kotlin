@@ -2,6 +2,8 @@ JetFile: ModifierAsSelector.jet
   PsiComment(EOL_COMMENT)('// JET-1')
   PsiWhiteSpace('\n\n')
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')

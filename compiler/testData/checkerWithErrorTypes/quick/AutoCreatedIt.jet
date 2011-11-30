@@ -15,18 +15,18 @@ fun text() {
     bar2 <!TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>it<!> => it}<!>
 }
 
-fun bar(f : fun (Int, Int) : Int) {}
-fun bar1(f : fun (Int) : Int) {}
-fun bar2(f : fun () : Int) {}
+fun bar(<!UNUSED_PARAMETER!>f<!> : fun (Int, Int) : Int) {}
+fun bar1(<!UNUSED_PARAMETER!>f<!> : fun (Int) : Int) {}
+fun bar2(<!UNUSED_PARAMETER!>f<!> : fun () : Int) {}
 
-fun String.to(dest : String) {
+fun String.to(<!UNUSED_PARAMETER!>dest<!> : String) {
 
 }
 
-fun String.on(predicate : fun (s : URI) : Boolean) : URI {
+fun String.on(<!UNUSED_PARAMETER!>predicate<!> : fun (s : URI) : Boolean) : URI {
     return URI(this)
 }
 
 class URI(val body : Any) {
-    fun to(dest : String) {}
+    fun to(<!UNUSED_PARAMETER!>dest<!> : String) {}
 }

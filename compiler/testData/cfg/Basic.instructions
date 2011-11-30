@@ -31,8 +31,10 @@ fun f(a : Boolean) : Unit {
 }
 ---------------------
 l0:
-    <START>             NEXT:[r(1)]                       PREV:[]
-    r(1)                NEXT:[r(a)]                       PREV:[<START>]
+    <START>             NEXT:[v(a : Boolean)]             PREV:[]
+    v(a : Boolean)      NEXT:[w(a)]                       PREV:[<START>]
+    w(a)                NEXT:[r(1)]                       PREV:[v(a : Boolean)]
+    r(1)                NEXT:[r(a)]                       PREV:[w(a)]
     r(a)                NEXT:[r(2)]                       PREV:[r(1)]
     r(2)                NEXT:[r(lng)]                     PREV:[r(a)]
     r(lng)              NEXT:[r(2.lng)]                   PREV:[r(2)]
@@ -92,14 +94,18 @@ sink:
 fun foo(a : Boolean, b : Int) : Unit {}
 ---------------------
 l0:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>           NEXT:[v(a : Boolean)]    PREV:[]
+    v(a : Boolean)    NEXT:[w(a)]              PREV:[<START>]
+    w(a)              NEXT:[v(b : Int)]        PREV:[v(a : Boolean)]
+    v(b : Int)        NEXT:[w(b)]              PREV:[w(a)]
+    w(b)              NEXT:[read (Unit)]       PREV:[v(b : Int)]
+    read (Unit)       NEXT:[<END>]             PREV:[w(b)]
 l1:
-    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+    <END>             NEXT:[<SINK>]            PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]               PREV:[]
+    <ERROR>           NEXT:[]                  PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<END>]
+    <SINK>            NEXT:[]                  PREV:[<END>]
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
@@ -118,12 +124,14 @@ sink:
 fun flfun(f : fun () : Any) : Unit {}
 ---------------------
 l0:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>                NEXT:[v(f : fun () : Any)]    PREV:[]
+    v(f : fun () : Any)    NEXT:[w(f)]                   PREV:[<START>]
+    w(f)                   NEXT:[read (Unit)]            PREV:[v(f : fun () : Any)]
+    read (Unit)            NEXT:[<END>]                  PREV:[w(f)]
 l1:
-    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+    <END>                  NEXT:[<SINK>]                 PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]               PREV:[]
+    <ERROR>                NEXT:[]                       PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<END>]
+    <SINK>                 NEXT:[]                       PREV:[<END>]
 =====================

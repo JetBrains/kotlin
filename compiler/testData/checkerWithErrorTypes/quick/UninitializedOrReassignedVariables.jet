@@ -1,7 +1,7 @@
 namespace uninitialized_reassigned_variables
 
-fun doSmth(s: String) {}
-fun doSmth(i: Int) {}
+fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
+fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {}
 
 // ------------------------------------------------
 // uninitialized variables
@@ -54,9 +54,9 @@ fun t2() {
 class A() {}
 
 fun t4(a: A, val b: A, var c: A) {
-    <!VAL_REASSIGNMENT!>a<!> = A()
-    <!VAL_REASSIGNMENT!>b<!> = A()
-    c = A()
+    <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>A()<!>
+    <!VAL_REASSIGNMENT!>b<!> = <!UNUSED_VALUE!>A()<!>
+    c = <!UNUSED_VALUE!>A()<!>
 }
 
 // ------------------------------------------------
@@ -191,7 +191,7 @@ class AnonymousInitializers(var a: String, val b: String) {
 }
 
 fun reassignFunParams(val a: Int) {
-    <!VAL_REASSIGNMENT!>a<!> = 1
+    <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>1<!>
 }
 
 open class Open(a: Int, w: Int) {}

@@ -73,9 +73,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         @Nullable
         public abstract KnownType getValue();
+        
+        public abstract boolean equate(TypeValue other);
     }
 
-    private static class UnknownType extends TypeValue {
+    private class UnknownType extends TypeValue {
 
         private final TypeParameterDescriptor typeParameterDescriptor;
         private final Variance positionVariance;
@@ -85,6 +87,24 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         private UnknownType(TypeParameterDescriptor typeParameterDescriptor, Variance positionVariance) {
             this.typeParameterDescriptor = typeParameterDescriptor;
             this.positionVariance = positionVariance;
+        }
+
+        @Override
+        public void addUpperBound(@NotNull TypeValue bound) {
+            addBound(bound, getLowerBounds());
+            super.addUpperBound(bound);
+        }
+
+        @Override
+        public void addLowerBound(@NotNull TypeValue bound) {
+            addBound(bound, getUpperBounds());
+            super.addLowerBound(bound);
+        }
+
+        private void addBound(TypeValue bound, Set<TypeValue> oppositeBounds) {
+            if (oppositeBounds.contains(bound)) {
+                this.equate(bound);
+            }
         }
 
         @NotNull
@@ -139,6 +159,18 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return value;
         }
 
+        @Override
+        public boolean equate(TypeValue other) {
+            if (other instanceof KnownType) {
+                KnownType knownType = (KnownType) other;
+                return setValue(knownType);
+            }
+
+            assert other instanceof UnknownType;
+            mergeUnknowns((UnknownType) other, this);
+            return true;
+        }
+
         public boolean setValue(@NotNull KnownType value) {
             if (this.value != null) {
                 // If we have already assigned a value to this unknown,
@@ -185,6 +217,15 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         @Override
         public String toString() {
             return type.toString();
+        }
+
+        @Override
+        public boolean equate(TypeValue other) {
+            if (other instanceof KnownType) {
+                KnownType knownType = (KnownType) other;
+                return TypeUtils.equalTypes(type, knownType.getType());
+            }
+            return other.equate(this);
         }
     }
 
@@ -233,25 +274,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             TypeValue aValue = getTypeValueFor(a);
             TypeValue bValue = getTypeValueFor(b);
 
-            if (aValue instanceof UnknownType) {
-                UnknownType aUnknown = (UnknownType) aValue;
-                if (bValue instanceof UnknownType) {
-                    UnknownType bUnknown = (UnknownType) bValue;
-                    mergeUnknowns(aUnknown, bUnknown);
-                }
-                else {
-                    if (!aUnknown.setValue((KnownType) bValue)) return false;
-                }
-            }
-            else if (bValue instanceof UnknownType) {
-                UnknownType bUnknown = (UnknownType) bValue;
-                if (!bUnknown.setValue((KnownType) aValue)) return false;
-            }
-            else {
-              return TypeUtils.equalTypes(a, b);
-            }
-
-            return true;
+            return aValue.equate(bValue);
         }
 
         @Override
@@ -267,9 +290,15 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         @Override
         public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-            // If some of the types is an unknown, the constraint is already generated, and we should carry on
+            // If some of the types is an unknown, the constraint must be generated, and we should carry on
             // otherwise there can be no solution, and we should fail
-            return someUnknown(getTypeValueFor(subtype), getTypeValueFor(supertype));
+            TypeValue subTypeValue = getTypeValueFor(subtype);
+            TypeValue superTypeValue = getTypeValueFor(supertype);
+            boolean someUnknown = someUnknown(subTypeValue, superTypeValue);
+            if (someUnknown) {
+                addSubtypingConstraintOnTypeValues(subTypeValue, superTypeValue);
+            }
+            return someUnknown;
         }
 
         private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {

@@ -35,26 +35,30 @@ public class JetControlFlowProcessor {
         this.trace = trace;
     }
 
-    public void generate(@NotNull JetDeclaration subroutineElement, @NotNull JetExpression body) {
-        generateSubroutineControlFlow(subroutineElement, Collections.singletonList(body));
-    }
-
-    public void generateSubroutineControlFlow(@NotNull JetDeclaration subroutineElement, @NotNull List<? extends JetElement> body) {
-        builder.enterSubroutine(subroutineElement);
-        for (JetElement statement : body) {
-            statement.accept(new CFPVisitor(false));
+    public void generate(@NotNull JetDeclaration subroutine) {
+        builder.enterSubroutine(subroutine);
+        if (subroutine instanceof JetDeclarationWithBody) {
+            JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
+            CFPVisitor cfpVisitor = new CFPVisitor(false);
+            List<JetParameter> valueParameters = declarationWithBody.getValueParameters();
+            for (JetParameter valueParameter : valueParameters) {
+                valueParameter.accept(cfpVisitor);
+            }
+            JetExpression bodyExpression = declarationWithBody.getBodyExpression();
+            if (bodyExpression != null) {
+                bodyExpression.accept(cfpVisitor);
+            }
         }
-        builder.exitSubroutine(subroutineElement);
+        else {
+            subroutine.accept(new CFPVisitor(false));
+        }
+        builder.exitSubroutine(subroutine);
     }
 
-    private void processLocalDeclaration(@NotNull JetDeclaration subroutineElement, @NotNull JetExpression body) {
-        processLocalDeclaration(subroutineElement, Collections.singletonList(body));
-    }
-
-    private void processLocalDeclaration(@NotNull JetDeclaration subroutineElement, @NotNull List<? extends JetElement> body) {
+    private void processLocalDeclaration(@NotNull JetDeclaration subroutine) {
         Label afterDeclaration = builder.createUnboundLabel();
         builder.nondeterministicJump(afterDeclaration);
-        generateSubroutineControlFlow(subroutineElement, body);
+        generate(subroutine);
         builder.bindLabel(afterDeclaration);
     }
 
@@ -570,6 +574,12 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitParameter(JetParameter parameter) {
+            builder.declare(parameter);
+            builder.write(parameter, parameter);
+        }
+
+        @Override
         public void visitBlockExpression(JetBlockExpression expression) {
             List<JetElement> statements = expression.getStatements();
             for (JetElement statement : statements) {
@@ -582,20 +592,13 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitNamedFunction(JetNamedFunction function) {
-            JetExpression bodyExpression = function.getBodyExpression();
-            if (bodyExpression != null) {
-                processLocalDeclaration(function, bodyExpression);
-            }
+            processLocalDeclaration(function);
         }
 
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-            JetBlockExpression bodyExpression = functionLiteral.getBodyExpression();
-            if (bodyExpression != null) {
-                List<JetElement> statements = bodyExpression.getStatements();
-                processLocalDeclaration(functionLiteral, statements);
-            }
+            processLocalDeclaration(functionLiteral);
             builder.read(expression);
         }
 

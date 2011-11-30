@@ -1,5 +1,7 @@
 JetFile: TypeConstraints.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     CLASS
       PsiElement(class)('class')
       PsiWhiteSpace(' ')

@@ -1,0 +1,8 @@
+// KT-174 Nullability info for extension function receivers
+// +JDK
+trait Tree {}
+
+fun Any?.TreeValue() : Tree {
+  if (this is Tree) return this
+    throw Exception()
+}

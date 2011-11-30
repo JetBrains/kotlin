@@ -86,8 +86,8 @@ class MyTest() {
         }
     }
 
-    fun doSmth(s: String) {}
-    fun doSmth(a: Any) {}
+    fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
+    fun doSmth(<!UNUSED_PARAMETER!>a<!>: Any) {}
 }
 
 fun testInnerFunctions() {
@@ -139,4 +139,4 @@ fun testBackingFieldsNotMarked() {
     }
 }
 
-fun doSmth(i : Int) {}
+fun doSmth(<!UNUSED_PARAMETER!>i<!> : Int) {}

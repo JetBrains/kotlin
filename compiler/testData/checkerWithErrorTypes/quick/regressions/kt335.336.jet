@@ -9,7 +9,7 @@ fun <T : java.lang.Comparable<T>> List<T>.sort() {
   Collections.sort(this) // Error here
 }
 
-fun <T> List<T>.plus(other : List<T>) : List<T> {
+fun <T> List<T>.plus(<!UNUSED_PARAMETER!>other<!> : List<T>) : List<T> {
   val result = ArrayList(this)
   return result
 }

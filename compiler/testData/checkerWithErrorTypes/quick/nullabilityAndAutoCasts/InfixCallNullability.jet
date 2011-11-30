@@ -1,11 +1,11 @@
 class A() {
-  fun plus(i : Int) {}
+  fun plus(<!UNUSED_PARAMETER!>i<!> : Int) {}
   fun minus() {}
-   fun contains(a : Any?) : Boolean = true
+   fun contains(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean = true
 }
 
-fun A.div(i : Int) {}
-fun A?.times(i : Int) {}
+fun A.div(<!UNUSED_PARAMETER!>i<!> : Int) {}
+fun A?.times(<!UNUSED_PARAMETER!>i<!> : Int) {}
 
 fun test(x : Int?, a : A?) {
     x<!UNSAFE_CALL!>.<!>plus(1)

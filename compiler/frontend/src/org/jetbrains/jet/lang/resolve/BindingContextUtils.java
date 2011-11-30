@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -42,6 +43,9 @@ public class BindingContextUtils {
         }
         if (descriptor instanceof VariableDescriptor) {
             return (VariableDescriptor) descriptor;
+        }
+        if (descriptor instanceof VariableAsFunctionDescriptor) {
+            return ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         }
         return null;
     }

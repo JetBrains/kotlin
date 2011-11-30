@@ -388,8 +388,10 @@ fun t8(a : Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(1)]                 PREV:[]
-    r(1)           NEXT:[r(a)]                 PREV:[<START>]
+    <START>        NEXT:[v(a : Int)]           PREV:[]
+    v(a : Int)     NEXT:[w(a)]                 PREV:[<START>]
+    w(a)           NEXT:[r(1)]                 PREV:[v(a : Int)]
+    r(1)           NEXT:[r(a)]                 PREV:[w(a)]
     r(a)           NEXT:[r(..)]                PREV:[r(1)]
     r(..)          NEXT:[r(1..a)]              PREV:[r(a)]
     r(1..a)        NEXT:[v(i)]                 PREV:[r(..)]
@@ -439,8 +441,10 @@ fun t9(a : Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(1)]                    PREV:[]
-    r(1)           NEXT:[r(a)]                    PREV:[<START>]
+    <START>        NEXT:[v(a : Int)]              PREV:[]
+    v(a : Int)     NEXT:[w(a)]                    PREV:[<START>]
+    w(a)           NEXT:[r(1)]                    PREV:[v(a : Int)]
+    r(1)           NEXT:[r(a)]                    PREV:[w(a)]
     r(a)           NEXT:[r(..)]                   PREV:[r(1)]
     r(..)          NEXT:[r(1..a)]                 PREV:[r(a)]
     r(1..a)        NEXT:[v(i)]                    PREV:[r(..)]
@@ -489,8 +493,10 @@ fun t10(a : Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(1)]                    PREV:[]
-    r(1)           NEXT:[r(a)]                    PREV:[<START>]
+    <START>        NEXT:[v(a : Int)]              PREV:[]
+    v(a : Int)     NEXT:[w(a)]                    PREV:[<START>]
+    w(a)           NEXT:[r(1)]                    PREV:[v(a : Int)]
+    r(1)           NEXT:[r(a)]                    PREV:[w(a)]
     r(a)           NEXT:[r(..)]                   PREV:[r(1)]
     r(..)          NEXT:[r(1..a)]                 PREV:[r(a)]
     r(1..a)        NEXT:[v(i)]                    PREV:[r(..)]
@@ -747,8 +753,10 @@ fun doSmth(i: Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>        NEXT:[v(i: Int)]      PREV:[]
+    v(i: Int)      NEXT:[w(i)]           PREV:[<START>]
+    w(i)           NEXT:[read (Unit)]    PREV:[v(i: Int)]
+    read (Unit)    NEXT:[<END>]          PREV:[w(i)]
 l1:
     <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:

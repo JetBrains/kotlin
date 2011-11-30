@@ -1,4 +1,4 @@
-fun foo(u : Unit) : Int = 1
+fun foo(<warning>u</warning> : Unit) : Int = 1
 
 fun test() : Int {
     foo(<error>1</error>)

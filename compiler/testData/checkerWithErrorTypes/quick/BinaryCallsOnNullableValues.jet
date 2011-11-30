@@ -1,13 +1,13 @@
 class A() {
-  fun equals(a : Any?) : Boolean = false
+  fun equals(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean = false
 }
 
 class B() {
-  fun equals(a : Any?) : Boolean? = false
+  fun equals(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean? = false
 }
 
 class C() {
-  fun equals(a : Any?) : Int = 0
+  fun equals(<!UNUSED_PARAMETER!>a<!> : Any?) : Int = 0
 }
 
 fun f(): Unit {

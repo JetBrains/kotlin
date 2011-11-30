@@ -160,7 +160,7 @@ abstract class B3(i: Int) {
     this(): this(1)
 }
 
-fun foo(a: B3) {
+fun foo(<warning>a</warning>: B3) {
     val <warning>a</warning> = <error>B3()</error>
     val <warning>b</warning> = <error>B1(2, "s")</error>
 }

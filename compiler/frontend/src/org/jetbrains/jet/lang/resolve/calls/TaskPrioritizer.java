@@ -64,20 +64,8 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             scope = explicitReceiver.getType().getMemberScope();
             explicitReceiver = NO_RECEIVER;
         }
-        doComputeTasks(scope, explicitReceiver, call, name, result, AutoCastService.NO_AUTO_CASTS);
+        doComputeTasks(scope, explicitReceiver, call, name, result, new AutoCastServiceImpl(dataFlowInfo, bindingContext));
 
-        List<ReceiverDescriptor> receivers;
-        if (explicitReceiver.exists()) {
-            receivers = Collections.singletonList(explicitReceiver);
-        }
-        else {
-            receivers = Lists.newArrayList();
-            scope.getImplicitReceiversHierarchy(receivers);
-        }
-        for (ReceiverDescriptor receiverToCast : receivers) {
-            assert receiverToCast.exists();
-            doComputeTasks(scope, receiverToCast, call, name, result, new AutoCastServiceImpl(dataFlowInfo, bindingContext));
-        }
         return result;
     }
 
@@ -87,7 +75,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         scope.getImplicitReceiversHierarchy(implicitReceivers);
         if (receiver.exists()) {
             List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
-
+            
             Collection<ResolvedCallImpl<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, getExtensionsByName(scope, name));
             List<ResolvedCallImpl<D>> nonlocals = Lists.newArrayList();
             List<ResolvedCallImpl<D>> locals = Lists.newArrayList();

@@ -1,5 +1,7 @@
 JetFile: ImportSoftKW.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')

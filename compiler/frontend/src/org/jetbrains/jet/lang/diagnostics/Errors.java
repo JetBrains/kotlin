@@ -147,8 +147,9 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
-    PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> UNUSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is never used", NAME);
-    PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' is assigned but never accessed", NAME);
+    UnusedElementDiagnosticFactory<JetProperty, VariableDescriptor> UNUSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, "Variable ''{0}'' is never used", NAME);
+    UnusedElementDiagnosticFactory<JetParameter, VariableDescriptor> UNUSED_PARAMETER = UnusedElementDiagnosticFactory.create(WARNING, "Parameter ''{0}'' is never used", NAME);
+    UnusedElementDiagnosticFactory<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, "Variable ''{0}'' is assigned but never accessed", NAME);
     PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = new PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor>(WARNING, "The value ''{0}'' assigned to ''{1}'' is never used", NAME) {
         @Override
         protected String makeMessageForA(@NotNull JetElement element) {

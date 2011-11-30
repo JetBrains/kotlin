@@ -1,23 +1,23 @@
 JetFile: NamespaceModifiers.jet
   NAMESPACE
-    MODIFIER_LIST
-      PsiElement(public)('public')
+    NAMESPACE_HEADER
+      MODIFIER_LIST
+        PsiElement(public)('public')
+        PsiWhiteSpace(' ')
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
-      ANNOTATION
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
-    PsiWhiteSpace(' ')
-    PsiElement(namespace)('namespace')
-    PsiWhiteSpace(' ')
-    NAMESPACE_NAME
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('name')
-    PsiElement(SEMICOLON)(';')
+      PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
     NAMESPACE
       MODIFIER_LIST
@@ -31,9 +31,9 @@ JetFile: NamespaceModifiers.jet
                     PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')
@@ -48,9 +48,9 @@ JetFile: NamespaceModifiers.jet
           MODIFIER_LIST
             PsiElement(private)('private')
           PsiWhiteSpace(' ')
-          PsiElement(namespace)('namespace')
-          PsiWhiteSpace(' ')
-          NAMESPACE_NAME
+          NAMESPACE_HEADER
+            PsiElement(namespace)('namespace')
+            PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(LBRACE)('{')

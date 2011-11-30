@@ -18,7 +18,7 @@ val g : fun() : Unit = <!TYPE_MISMATCH!>{ (): Int => 42 }<!>
 val h : fun() : Unit = { doSmth() }
 
 fun doSmth(): Int = 42
-fun doSmth(a: String) {}
+fun doSmth(<!UNUSED_PARAMETER!>a<!>: String) {}
 
 val testIt : fun(Any) : Unit = {
     if (it is String) {

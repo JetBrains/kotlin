@@ -40,7 +40,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         doTest(new TheTest("Missing TYPE_MISMATCH at 56 to 57") {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnostics.remove(0);
+                diagnostics.remove(1);
             }
         });
     }
@@ -49,7 +49,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         doTest(new TheTest("Unexpected TYPE_MISMATCH at 56 to 57") {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(0);
+                diagnosedRanges.remove(1);
             }
         });
     }
@@ -58,7 +58,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         doTest(new TheTest("Unexpected TYPE_MISMATCH at 56 to 57", "Missing UNRESOLVED_REFERENCE at 166 to 168") {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(0);
+                diagnosedRanges.remove(1);
                 diagnostics.remove(diagnostics.size() - 1);
             }
         });
@@ -68,7 +68,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         doTest(new TheTest("Unexpected NONE_APPLICABLE at 122 to 123", "Missing TYPE_MISMATCH at 161 to 169") {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(3);
+                diagnosedRanges.remove(4);
                 diagnostics.remove(diagnostics.size() - 3);
             }
         });

@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class JetAnnotatedExpression extends JetExpression {
         return visitor.visitAnnotatedExpression(this, data);
     }
 
+    @Nullable
     public JetExpression getBaseExpression() {
         return findChildByClass(JetExpression.class);
     }

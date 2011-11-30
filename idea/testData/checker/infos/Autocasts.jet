@@ -216,7 +216,7 @@ fun declarationInsidePattern(x: (Any, Any)): String = when(x) { is (val a is Str
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {
     a.<error descr="Unresolved reference: compareTo">compareTo</error>("")
-    a.toString()
+    <info descr="Automatically cast to Any">a</info>.toString()
   }
   if (a is Int || a is String) {
     a.<error descr="Unresolved reference: compareTo">compareTo</error>("")

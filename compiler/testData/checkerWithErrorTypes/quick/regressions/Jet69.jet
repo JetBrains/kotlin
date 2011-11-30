@@ -1,6 +1,6 @@
 class Command() {}
 
-fun parse(cmd: String): Command? { return null  }
+fun parse(<!UNUSED_PARAMETER!>cmd<!>: String): Command? { return null  }
 
 fun Any.equals(other : Any?) : Boolean = this === other
 

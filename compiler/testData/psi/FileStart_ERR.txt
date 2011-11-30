@@ -1,12 +1,15 @@
 JetFile: FileStart_ERR.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(DIV)('/')
     NAMESPACE
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
-        PsiElement(IDENTIFIER)('foo')
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
         PsiElement(IDENTIFIER)('bar')
       PsiErrorElement:A namespace block in '{...}' expected

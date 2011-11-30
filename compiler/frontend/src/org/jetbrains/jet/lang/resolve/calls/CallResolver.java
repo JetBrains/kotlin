@@ -185,7 +185,7 @@ public class CallResolver {
                 }
                 
                 FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(scope.getContainingDeclaration(), "[for expression " + calleeExpression.getText() + "]");
-                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType);
+                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER);
                 ResolvedCallImpl<FunctionDescriptor> resolvedCall = ResolvedCallImpl.<FunctionDescriptor>create(functionDescriptor);
                 resolvedCall.setReceiverArgument(call.getExplicitReceiver());
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(

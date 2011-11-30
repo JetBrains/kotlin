@@ -47,7 +47,7 @@ fun t3() : Any {
   <!UNREACHABLE_CODE!>1<!>
 }
 
-fun t4(a : Boolean) : Int {
+fun t4(<!UNUSED_PARAMETER!>a<!> : Boolean) : Int {
   do {
     return 1
   }
@@ -55,7 +55,7 @@ fun t4(a : Boolean) : Int {
   <!UNREACHABLE_CODE!>1<!>
 }
 
-fun t4break(a : Boolean) : Int {
+fun t4break(<!UNUSED_PARAMETER!>a<!> : Boolean) : Int {
   do {
     break
   }
@@ -162,7 +162,7 @@ fun nullIsNotNothing() : Unit {
     fail()
 }
 
-fun returnInWhile(a: Int) {
+fun returnInWhile(<!UNUSED_PARAMETER!>a<!>: Int) {
     do {return}
     while (<!UNREACHABLE_CODE!>1 > a<!>)
 }

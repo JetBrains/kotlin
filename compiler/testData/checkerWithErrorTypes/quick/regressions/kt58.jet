@@ -88,5 +88,5 @@ fun t7() : Int {
     }
 }
 
-fun doSmth(i: Int) {
+fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {
 }

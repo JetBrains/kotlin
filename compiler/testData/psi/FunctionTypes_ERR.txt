@@ -1,5 +1,7 @@
 JetFile: FunctionTypes_ERR.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     TYPEDEF
       PsiElement(type)('type')
       PsiWhiteSpace(' ')

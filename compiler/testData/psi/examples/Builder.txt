@@ -1,5 +1,7 @@
 JetFile: Builder.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')

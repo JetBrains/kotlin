@@ -2,6 +2,8 @@ JetFile: MutableArray.jet
   PsiComment(DOC_COMMENT)('/**\n  These declarations are "shallow" in the sense that they are not really compiled, only the type-checker uses them\n*/')
   PsiWhiteSpace('\n\n')
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     CLASS
       MODIFIER_LIST
         PsiElement(open)('open')
