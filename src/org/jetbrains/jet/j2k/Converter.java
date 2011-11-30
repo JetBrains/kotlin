@@ -292,7 +292,7 @@ public class Converter {
     final List<Element> typeParameters = elementsToElementList(method.getTypeParameters());
 
     final Set<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
-    if (method.getHierarchicalMethodSignature().getSuperSignatures().size() > 0)
+    if (isOverrideAnyMethodExceptMethodsFromObject(method))
       modifiers.add(Modifier.OVERRIDE);
     if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
       modifiers.remove(Modifier.ABSTRACT);
@@ -322,6 +322,17 @@ public class Converter {
       params,
       body
     );
+  }
+
+  private static boolean isOverrideAnyMethodExceptMethodsFromObject(@NotNull PsiMethod method) {
+    int counter = 0;
+    for (HierarchicalMethodSignature s : method.getHierarchicalMethodSignature().getSuperSignatures()) {
+      PsiClass containingClass = s.getMethod().getContainingClass();
+      String qualifiedName = containingClass != null ? containingClass.getQualifiedName() : "";
+      if (qualifiedName != null && !qualifiedName.equals("java.lang.Object"))
+        counter++;
+    }
+    return counter > 0;
   }
 
   @NotNull
