@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +15,8 @@ import java.util.Map;
 public final class Intrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, Intrinsic> descriptorToIntrinsicMap =
-            new HashMap<FunctionDescriptor, Intrinsic>();
+    private final Map<DeclarationDescriptor, Intrinsic> descriptorToIntrinsicMap =
+            new HashMap<DeclarationDescriptor, Intrinsic>();
 
     public static Intrinsics standardLibraryIntrinsics(@NotNull JetStandardLibrary library) {
         return new Intrinsics(library);
@@ -28,13 +29,13 @@ public final class Intrinsics {
         }
     }
 
-    /*package*/ void declareIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    /*package*/ void declareIntrinsic(@NotNull DeclarationDescriptor descriptor) {
         //TODO: this is a hack
-//        addBinaryIntrinsics(descriptor);
+        descriptorToIntrinsicMap.put(descriptor, null);
+        addBinaryIntrinsics(descriptor);
 //        addUnaryIntrinsics(descriptor);
 //        addAssignmentIntrinsics(descriptor);
 //        addEqualsIntrinsics(descriptor);
-        descriptorToIntrinsicMap.put(descriptor, null);
     }
 
     //    private void addEqualsIntrinsics(FunctionDescriptor descriptor) {
@@ -53,16 +54,14 @@ public final class Intrinsics {
 //        }
 //    }
 //
-//    private void addBinaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
-//        String functionName = descriptor.getName();
-//        if (OperatorConventions.BINARY_OPERATION_NAMES.containsValue(functionName)) {
-//            JetToken token = OperatorConventions.getTokenForMethodName(functionName);
-////            BinaryOperationIntrinsic binaryOperationIntrinsic =
-////                    new BinaryOperationIntrinsic(OperatorTable.getBinaryOperator(token));
-////            descriptorToIntrinsicMap.put(descriptor, binaryOperationIntrinsic);
-//        }
-//    }
-//
+    private void addBinaryIntrinsics(@NotNull DeclarationDescriptor descriptor) {
+        String functionName = descriptor.getName();
+        if (OperatorConventions.BINARY_OPERATION_NAMES.containsValue(functionName)) {
+            descriptorToIntrinsicMap.put(descriptor, BinaryOperationIntrinsic.INSTANCE);
+        }
+    }
+
+    //
 //    private void addAssignmentIntrinsics(@NotNull FunctionDescriptor descriptor) {
 //        String functionName = descriptor.getName();
 //        if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsValue(functionName)) {
@@ -77,5 +76,11 @@ public final class Intrinsics {
             return descriptorToIntrinsicMap.containsKey(functionDescriptor);
         }
         return false;
+    }
+
+    public Intrinsic getIntrinsic(@NotNull DeclarationDescriptor descriptor) {
+        Intrinsic intrinsic = descriptorToIntrinsicMap.get(descriptor);
+//        assert intrinsic != null;
+        return intrinsic;
     }
 }

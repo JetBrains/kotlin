@@ -5,15 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 
-import java.util.List;
-
 /**
  * @author Talanov Pavel
  */
 public interface Intrinsic {
 
     @NotNull
-    public JsExpression apply(@NotNull JetExpression receiver, @NotNull List<JetExpression> arguments,
+    public JsExpression apply(@NotNull JetExpression expression,
                               @NotNull TranslationContext context);
 
 }

@@ -11,7 +11,7 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
-import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
+import org.jetbrains.k2js.translate.operation.OperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
@@ -94,7 +94,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBinaryExpression(@NotNull JetBinaryExpression expression,
                                         @NotNull TranslationContext context) {
-        return BinaryOperationTranslator.translate(expression, context);
+        return OperationTranslator.translate(expression, context);
     }
 
     @Override

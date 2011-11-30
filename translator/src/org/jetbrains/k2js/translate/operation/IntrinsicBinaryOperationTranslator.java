@@ -12,8 +12,15 @@ import org.jetbrains.k2js.translate.general.TranslationContext;
  */
 public final class IntrinsicBinaryOperationTranslator extends BinaryOperationTranslator {
 
-    protected IntrinsicBinaryOperationTranslator(@NotNull JetBinaryExpression expression,
-                                                 @NotNull TranslationContext context) {
+
+    @NotNull
+    public static JsExpression translate(@NotNull JetBinaryExpression expression,
+                                         @NotNull TranslationContext context) {
+        return (new IntrinsicBinaryOperationTranslator(expression, context)).translate();
+    }
+
+    private IntrinsicBinaryOperationTranslator(@NotNull JetBinaryExpression expression,
+                                               @NotNull TranslationContext context) {
         super(expression, context);
     }
 

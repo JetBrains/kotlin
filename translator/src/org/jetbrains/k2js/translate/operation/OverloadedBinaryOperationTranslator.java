@@ -14,11 +14,16 @@ import org.jetbrains.k2js.translate.general.TranslationContext;
 public final class OverloadedBinaryOperationTranslator extends BinaryOperationTranslator {
 
     @NotNull
+    public static JsExpression translate(@NotNull JetBinaryExpression expression,
+                                         @NotNull TranslationContext context) {
+        return (new OverloadedBinaryOperationTranslator(expression, context)).translate();
+    }
+
+    @NotNull
     private final JsNameRef operationReference;
 
-
-    protected OverloadedBinaryOperationTranslator(@NotNull JetBinaryExpression expression,
-                                                  @NotNull TranslationContext context) {
+    private OverloadedBinaryOperationTranslator(@NotNull JetBinaryExpression expression,
+                                                @NotNull TranslationContext context) {
         super(expression, context);
         JsNameRef overloadedOperationReference = getOverloadedOperationReference(expression.getOperationReference());
         assert overloadedOperationReference != null;

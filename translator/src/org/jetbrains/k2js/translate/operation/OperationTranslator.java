@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.k2js.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
@@ -25,18 +26,40 @@ public class OperationTranslator extends AbstractTranslator {
     @NotNull
     static public JsExpression translate(@NotNull JetBinaryExpression expression,
                                          @NotNull TranslationContext context) {
-        //TODO: move to translation
+        JsExpression result = tryToApplyIntrinsic(expression, context);
+        if (result != null) return result;
+
         if (ArrayAccessTranslator.canBeArraySetterCall(expression)) {
             return ArrayAccessTranslator.translateAsArraySetterCall(expression, context);
         }
+        return translateAsBinary(expression, context);
+    }
 
-        BinaryOperationTranslator translator;
+    @NotNull
+    private static JsExpression translateAsBinary(@NotNull JetBinaryExpression expression,
+                                                  @NotNull TranslationContext context) {
         if (TranslationUtils.isIntrinsicOperation(context, expression.getOperationReference())) {
-            translator = new IntrinsicBinaryOperationTranslator(expression, context);
+            return IntrinsicBinaryOperationTranslator.translate(expression, context);
         } else {
-            translator = new OverloadedBinaryOperationTranslator(expression, context);
+            return OverloadedBinaryOperationTranslator.translate(expression, context);
         }
-        return translator.translate();
+    }
+
+    @Nullable
+    private static JsExpression tryToApplyIntrinsic(@NotNull JetBinaryExpression expression,
+                                                    @NotNull TranslationContext context) {
+        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression
+                (context.bindingContext(), expression.getOperationReference());
+        if (descriptor == null) {
+            return null;
+        }
+        if (!context.intrinsics().hasDescriptor(descriptor)) {
+            return null;
+        }
+        //TODO: should be no nulls here
+        Intrinsic intrinsic = context.intrinsics().getIntrinsic(descriptor);
+        if (intrinsic == null) return null;
+        return intrinsic.apply(expression, context);
     }
 
     protected OperationTranslator(@NotNull TranslationContext context) {
