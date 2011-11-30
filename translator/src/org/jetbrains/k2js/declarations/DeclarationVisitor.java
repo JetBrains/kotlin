@@ -19,14 +19,6 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
         this.declarations = declarations;
     }
 
-    @Override
-    public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @NotNull DeclarationContext context) {
-        DeclarationContext classContext = declareClass(descriptor, context);
-        declareClassConstructor(descriptor, context);
-        declareClassMembers(descriptor, classContext);
-        return null;
-    }
-
     @NotNull
     private DeclarationContext declareClass(@NotNull ClassDescriptor descriptor,
                                             @NotNull DeclarationContext context) {
@@ -55,6 +47,15 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     private JsName declareName(@NotNull DeclarationDescriptor descriptor,
                                @NotNull DeclarationContext context) {
         return declareName(descriptor, context, descriptor.getName());
+    }
+
+
+    @Override
+    public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @NotNull DeclarationContext context) {
+        DeclarationContext classContext = declareClass(descriptor, context);
+        declareClassConstructor(descriptor, context);
+        declareClassMembers(descriptor, classContext);
+        return null;
     }
 
     private void declareClassMembers(@NotNull ClassDescriptor descriptor, @NotNull DeclarationContext context) {

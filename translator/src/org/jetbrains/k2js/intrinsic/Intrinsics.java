@@ -73,7 +73,7 @@ public final class Intrinsics {
 
     public boolean isIntrinsic(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof FunctionDescriptor) {
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor.getOriginal();
             return descriptorToIntrinsicMap.containsKey(functionDescriptor);
         }
         return false;

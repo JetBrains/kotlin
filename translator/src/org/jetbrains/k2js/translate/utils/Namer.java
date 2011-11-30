@@ -121,6 +121,11 @@ public final class Namer {
     }
 
     @NotNull
+    public JsNameRef kotlinObject() {
+        return kotlinName.makeRef();
+    }
+
+    @NotNull
     public JsName declareStandardClass(@NotNull String name) {
         return kotlinScope.declareName(name);
     }

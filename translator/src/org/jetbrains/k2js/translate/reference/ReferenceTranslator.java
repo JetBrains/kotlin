@@ -36,6 +36,7 @@ public class ReferenceTranslator extends AbstractTranslator {
     }
 
     @NotNull
+    //TODO: make this process simpler and clearer
     public JsExpression translateSimpleName() {
         tryResolveAsPropertyAccess();
         tryResolveAsThisQualifiedExpression();

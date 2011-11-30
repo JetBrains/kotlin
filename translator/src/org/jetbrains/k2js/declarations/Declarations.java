@@ -39,11 +39,13 @@ public final class Declarations {
     }
 
     //TODO: provide a mechanism to do intrinsics
-    public void extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary) {
+    public void extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary,
+                                       @NotNull JsNameRef standardLibraryObjectName) {
         DeclarationVisitor visitor = new DeclarationVisitor(this);
         for (DeclarationDescriptor descriptor :
                 standardLibrary.getLibraryScope().getAllDescriptors()) {
-            descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, null));
+            descriptor.accept(visitor, DeclarationContext.rootContext(rootScope,
+                    standardLibraryObjectName));
         }
     }
 
@@ -66,12 +68,12 @@ public final class Declarations {
     }
 
     public boolean hasQualifier(@NotNull DeclarationDescriptor descriptor) {
-        return (descriptorToQualifierMap.get(descriptor) != null);
+        return (descriptorToQualifierMap.get(descriptor.getOriginal()) != null);
     }
 
     @NotNull
     public JsNameRef getQualifier(@NotNull DeclarationDescriptor descriptor) {
-        JsNameRef qualifier = descriptorToQualifierMap.get(descriptor);
+        JsNameRef qualifier = descriptorToQualifierMap.get(descriptor.getOriginal());
         assert qualifier != null : "Cannot be null. Use hasQualifier to check.";
         return qualifier;
     }

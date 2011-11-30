@@ -104,6 +104,7 @@ public final class BinaryOperationTranslator extends OperationTranslator {
         }
     }
 
+    //TODO: refactor
     @NotNull
     private JsExpression asBinaryOperation() {
         if (isPropertyOnTheLeft && OperatorTable.isAssignment(getOperationToken())) {
