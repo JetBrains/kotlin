@@ -250,7 +250,8 @@ public class CompileTimeConstantResolver {
         if (error != null) {
             return error;
         }
-        return new StringValue(unescapedText);
+
+        return new StringValue(unescapedText.substring(3, unescapedText.length() - 3));
     }
 
     @NotNull
