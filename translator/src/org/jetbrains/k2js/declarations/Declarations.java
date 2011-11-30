@@ -41,11 +41,10 @@ public final class Declarations {
     //TODO: provide a mechanism to do intrinsics
     public void extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary) {
         DeclarationVisitor visitor = new DeclarationVisitor(this);
-//        for (DeclarationDescriptor descriptor :
-//                standardLibrary.getLibraryScope().getAllDescriptors()) {
-//            descriptor.accept(visitor, rootScope);
-//        }
-        // standardLibrary.getArray().accept(visitor, rootScope);
+        for (DeclarationDescriptor descriptor :
+                standardLibrary.getLibraryScope().getAllDescriptors()) {
+            descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, null));
+        }
     }
 
     @NotNull

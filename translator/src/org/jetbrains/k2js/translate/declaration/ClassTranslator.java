@@ -100,7 +100,7 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         //TODO we actually know that in current implementation superclass must have an alias but
-        // if future it might change
+        // in future it might change
         return context().aliaser().getAliasForDeclaration(superClassDescriptor);
     }
 

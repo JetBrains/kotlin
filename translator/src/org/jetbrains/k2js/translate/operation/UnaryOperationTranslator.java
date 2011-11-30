@@ -107,7 +107,6 @@ public final class UnaryOperationTranslator extends OperationTranslator {
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
     }
 
-    //TODO: should modify this for properties
     @NotNull
     private JsExpression variableReassignment(@NotNull JsExpression toCallMethodUpon) {
         if (isPropertyAccess) {

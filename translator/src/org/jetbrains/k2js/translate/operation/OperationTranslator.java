@@ -29,6 +29,9 @@ public class OperationTranslator extends AbstractTranslator {
         if (operationDescriptor == null) {
             return null;
         }
+        if (context().intrinsics().isIntrinsic(operationDescriptor)) {
+            return null;
+        }
         if (!context().isDeclared(operationDescriptor)) {
             return null;
         }

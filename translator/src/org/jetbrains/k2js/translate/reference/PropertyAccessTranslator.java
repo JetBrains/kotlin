@@ -23,7 +23,6 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 /**
  * @author Talanov Pavel
  */
-//TODO Refactor.
 public final class PropertyAccessTranslator extends AbstractTranslator {
 
     private static String MESSAGE = "Cannot be accessor call. Use canBeProperty*Call to ensure this method " +
@@ -219,6 +218,15 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
 
     @Nullable
     private JsName getNullableSetterName() {
+        PropertySetterDescriptor setter = getSetterDescriptor();
+
+        if (setter == null) return null;
+
+        return context().getNameForDescriptor(setter);
+    }
+
+    @Nullable
+    private PropertySetterDescriptor getSetterDescriptor() {
         PropertyDescriptor property = getNullablePropertyDescriptor();
         if (property == null) {
             return null;
@@ -227,7 +235,7 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (setter == null) {
             return null;
         }
-        return context().getNameForDescriptor(setter);
+        return setter;
     }
 
     @Nullable

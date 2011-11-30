@@ -45,6 +45,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     //TODO: consider refactoring
     @NotNull
     public JsExpression translateAsLiteral() {
+        //TODO: provide a way not to pollute global namespace
         JsName aliasForThis = context().enclosingScope().declareName("that");
         context().aliaser().setAliasForThis(aliasForThis);
         JsFunction function = generateFunctionObject();

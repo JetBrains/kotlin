@@ -61,9 +61,9 @@ public final class BinaryOperationTranslator extends OperationTranslator {
     private JsExpression asCompareToOverload() {
         JetToken operationToken = getOperationToken();
         assert (OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken));
-        JsNumberLiteral zetoLiteral = program().getNumberLiteral(0);
+        JsNumberLiteral zeroLiteral = program().getNumberLiteral(0);
         JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(operationToken);
-        return new JsBinaryOperation(correspondingOperator, overloadedMethodInvocation(), zetoLiteral);
+        return new JsBinaryOperation(correspondingOperator, overloadedMethodInvocation(), zeroLiteral);
     }
 
     private boolean isOverloadedCall() {

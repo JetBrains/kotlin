@@ -13,6 +13,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 
+//TODO: rework this class and the outer API
 public final class GenerationState {
 
     @NotNull

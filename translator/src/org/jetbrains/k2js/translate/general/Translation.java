@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.k2js.declarations.Declarations;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
@@ -56,17 +55,20 @@ public final class Translation {
     }
 
     @NotNull
-    static public JsExpression translateAsExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+    static public JsExpression translateAsExpression(@NotNull JetExpression expression,
+                                                     @NotNull TranslationContext context) {
         return AstUtil.convertToExpression(translateExpression(expression, context));
     }
 
     @NotNull
-    static public JsStatement translateAsStatement(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+    static public JsStatement translateAsStatement(@NotNull JetExpression expression,
+                                                   @NotNull TranslationContext context) {
         return AstUtil.convertToStatement(translateExpression(expression, context));
     }
 
     @NotNull
-    static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
+    static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
+                                                 @NotNull TranslationContext context) {
         return WhenTranslator.translateWhenExpression(expression, context);
     }
 
@@ -84,16 +86,15 @@ public final class Translation {
 
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
                                         @NotNull JetNamespace namespace, @NotNull Project project) {
-        //TODO hardcoded
-        JsProgram result = new JsProgram("main");
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         NamespaceDescriptor descriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
-        Declarations declarations = Declarations.newInstance(result.getRootScope());
-        declarations.extractStandardLibrary(JetStandardLibrary.getJetStandardLibrary(project));
-        declarations.extractDeclarations(descriptor);
-        JsBlock block = result.getFragmentBlock(0);
-        TranslationContext context = TranslationContext.rootContext(result, bindingContext, declarations, project);
+        StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
+        staticContext.getDeclarations().extractStandardLibrary(standardLibrary);
+        staticContext.getDeclarations().extractDeclarations(descriptor);
+        JsBlock block = staticContext.getProgram().getFragmentBlock(0);
+        TranslationContext context = TranslationContext.rootContext(staticContext);
         block.addStatement(Translation.translateNamespace(namespace, context));
-        return result;
+        return context.program();
     }
 
 
