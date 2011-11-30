@@ -1,6 +1,8 @@
 package org.jetbrains.jet.j2k;
 
 import com.intellij.psi.*;
+import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
@@ -439,8 +441,18 @@ public class Converter {
   public static Parameter parameterToParameter(@NotNull PsiParameter parameter) {
     return new Parameter(
       new IdentifierImpl(parameter.getName()), // TODO: remove
-      typeToType(parameter.getType())
+      typeToType(parameter.getType()),
+      isReadOnly(parameter)
     );
+  }
+
+  private static boolean isReadOnly(PsiParameter parameter) {
+    for (PsiReference r : (ReferencesSearch.search(parameter))) {
+        if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
+          return false;
+        }
+      }
+    return true;
   }
 
   @NotNull
