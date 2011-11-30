@@ -2,6 +2,7 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class ElementVisitor extends JavaElementVisitor {
     myResult = new LocalVariable(
       new IdentifierImpl(variable.getName()), // TODO
       modifiersListToModifiersSet(variable.getModifierList()),
-      typeToType(variable.getType()),
+      typeToType(variable.getType(), Converter.isNotNull(variable.getModifierList())),
       expressionToExpression(variable.getInitializer())
     );
   }
