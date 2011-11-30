@@ -100,7 +100,7 @@ public class BodyResolver {
         final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
-                : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
+                : getInnerScopeForConstructor(primaryConstructor);
         final ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
@@ -267,7 +267,7 @@ public class BodyResolver {
         if (jetClassOrObject.hasPrimaryConstructor()) {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
-            final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
+            final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor);
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
@@ -293,7 +293,7 @@ public class BodyResolver {
 
     private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
         if (!context.completeAnalysisNeeded(declaration)) return;
-        final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
+        final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor);
 
         final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
 
@@ -366,24 +366,9 @@ public class BodyResolver {
     }
 
     @NotNull
-    private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope, boolean primary) {
-        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Inner scope for constructor");
-        for (PropertyDescriptor propertyDescriptor : ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getProperties()) {
-            constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
-        }
-
-//        constructorScope.setImplicitReceiver(new ClassReceiver(descriptor.getContainingDeclaration()));
-
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            JetParameter parameter = (JetParameter) context.getTrace().getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
-            if (parameter.getValOrVarNode() == null || !primary) {
-                constructorScope.addVariableDescriptor(valueParameterDescriptor);
-            }
-        }
-
-        constructorScope.addLabeledDeclaration(descriptor); // TODO : Labels for constructors?!
-
-        return constructorScope;
+    private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor) {
+        MutableClassDescriptor mutableClassDescriptor = (MutableClassDescriptor) descriptor.getContainingDeclaration();
+        return mutableClassDescriptor.getScopeForConstructor(descriptor);
     }
 
     private void resolvePropertyDeclarationBodies() {
@@ -399,18 +384,16 @@ public class BodyResolver {
                 final PropertyDescriptor propertyDescriptor = this.context.getProperties().get(property);
                 assert propertyDescriptor != null;
 
-                JetScope declaringScope = this.context.getDeclaringScopes().get(property);
-
                 JetExpression initializer = property.getInitializer();
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor != null) {
-                        JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-                        resolvePropertyInitializer(property, propertyDescriptor, initializer, scope);
+                        JetScope declaringScopeForPropertyInitializer = this.context.getDeclaringScopes().get(property);
+                        resolvePropertyInitializer(property, propertyDescriptor, initializer, declaringScopeForPropertyInitializer);
                     }
                 }
 
-                resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
+                resolvePropertyAccessors(property, propertyDescriptor);
                 processed.add(property);
             }
         }
@@ -429,37 +412,35 @@ public class BodyResolver {
                 resolvePropertyInitializer(property, propertyDescriptor, initializer, declaringScope);
             }
 
-            resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
+            resolvePropertyAccessors(property, propertyDescriptor);
         }
     }
+    
+    private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, PropertyDescriptor propertyDescriptor) {
+        JetScope declaringScope = context.getDeclaringScopes().get(accessor);
 
-    private JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull PropertyDescriptor propertyDescriptor) {
-        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Property declaration inner scope");
-        for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
-            result.addTypeParameterDescriptor(typeParameterDescriptor);
-        }
-        ReceiverDescriptor receiver = propertyDescriptor.getReceiverParameter();
-        if (receiver.exists()) {
-            result.setImplicitReceiver(receiver);
-        }
-        return result;
-    }
-
-    private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, JetScope declaringScope) {
-        ObservableBindingTrace fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
-
-        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
+        JetScope propertyDeclarationInnerScope = context.getDescriptorResolver().getPropertyDeclarationInnerScope(
+                declaringScope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter());
+        WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+
+        return accessorScope;
+    }
+
+    private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
+        ObservableBindingTrace fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         if (getter != null && getterDescriptor != null) {
+            JetScope accessorScope = makeScopeForPropertyAccessor(getter, propertyDescriptor);
             resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
         }
 
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         if (setter != null && setterDescriptor != null) {
+            JetScope accessorScope = makeScopeForPropertyAccessor(setter, propertyDescriptor);
             resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
     }
@@ -485,7 +466,7 @@ public class BodyResolver {
         //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
         JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getOutType() : NO_EXPECTED_TYPE;
-        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, expectedTypeForInitializer);
+        JetType type = typeInferrer.getType(context.getDescriptorResolver().getPropertyDeclarationInnerScope(scope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter()), initializer, expectedTypeForInitializer);
 //
 //        JetType expectedType = propertyDescriptor.getInType();
 //        if (expectedType == null) {

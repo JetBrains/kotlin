@@ -67,13 +67,15 @@ public class DeclarationResolver {
             WritableScope namespaceScope = entry.getValue();
             NamespaceLike namespaceDescriptor = context.getNamespaceDescriptors().get(namespace);
 
-            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceDescriptor);
+            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, namespaceDescriptor);
         }
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
-            resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(), classDescriptor);
+            resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
+                    classDescriptor.getScopeForPropertyIntiailizer(), classDescriptor.getScopeForMemberResolution(),
+                    classDescriptor);
 //            processPrimaryConstructor(classDescriptor, jetClass);
 //            for (JetSecondaryConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
 //                processSecondaryConstructor(classDescriptor, jetConstructor);
@@ -83,29 +85,41 @@ public class DeclarationResolver {
             JetObjectDeclaration object = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
-            resolveFunctionAndPropertyHeaders(object.getDeclarations(), classDescriptor.getScopeForMemberResolution(), classDescriptor);
+            resolveFunctionAndPropertyHeaders(object.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
+                    classDescriptor.getScopeForPropertyIntiailizer(), classDescriptor.getScopeForMemberResolution(),
+                    classDescriptor);
         }
 
         // TODO : Extensions
     }
 
-    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations, final @NotNull JetScope scope, final @NotNull NamespaceLike namespaceLike) {
+    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations,
+            final @NotNull JetScope scopeForFunctions,
+            final @NotNull JetScope scopeForPropertyInitializers, final @NotNull JetScope scopeForPropertyAccessors,
+            final @NotNull NamespaceLike namespaceLike)
+    {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
-                    FunctionDescriptorImpl functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(namespaceLike, scope, function);
+                    FunctionDescriptorImpl functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(namespaceLike, scopeForFunctions, function);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
-                    context.getDeclaringScopes().put(function, scope);
+                    context.getDeclaringScopes().put(function, scopeForFunctions);
                 }
 
                 @Override
                 public void visitProperty(JetProperty property) {
-                    PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolvePropertyDescriptor(namespaceLike, scope, property);
+                    PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolvePropertyDescriptor(namespaceLike, scopeForPropertyInitializers, property);
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
-                    context.getDeclaringScopes().put(property, scope);
+                    context.getDeclaringScopes().put(property, scopeForPropertyInitializers);
+                    if (property.getGetter() != null) {
+                        context.getDeclaringScopes().put(property.getGetter(), scopeForPropertyAccessors);
+                    }
+                    if (property.getSetter() != null) {
+                        context.getDeclaringScopes().put(property.getSetter(), scopeForPropertyAccessors);
+                    }
                 }
 
                 @Override
@@ -150,7 +164,7 @@ public class DeclarationResolver {
             }
         }
         if (constructorDescriptor != null) {
-            classDescriptor.setPrimaryConstructor(constructorDescriptor);
+            classDescriptor.setPrimaryConstructor(constructorDescriptor, context.getTrace());
         }
     }
 
@@ -163,7 +177,7 @@ public class DeclarationResolver {
                 classDescriptor.getScopeForMemberResolution(),
                 classDescriptor,
                 constructor);
-        classDescriptor.addConstructor(constructorDescriptor);
+        classDescriptor.addConstructor(constructorDescriptor, context.getTrace());
         context.getConstructors().put(constructor, constructorDescriptor);
         context.getDeclaringScopes().put(constructor, classDescriptor.getScopeForMemberLookup());
     }

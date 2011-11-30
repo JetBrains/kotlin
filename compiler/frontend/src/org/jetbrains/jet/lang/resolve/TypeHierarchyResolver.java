@@ -147,7 +147,7 @@ public class TypeHierarchyResolver {
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                                      Modality.FINAL, Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
-                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
+                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, context.getTrace());
                     if (object != null) {
                         context.getTrace().record(CONSTRUCTOR, object, constructorDescriptor);
                     }

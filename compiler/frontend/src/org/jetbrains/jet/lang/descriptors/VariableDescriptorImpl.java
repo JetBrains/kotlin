@@ -30,6 +30,15 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
         this.outType = outType;
     }
 
+    protected VariableDescriptorImpl(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull String name
+    )
+    {
+        super(containingDeclaration, annotations, name);
+    }
+
     @Override
     public JetType getOutType() {
         return outType;

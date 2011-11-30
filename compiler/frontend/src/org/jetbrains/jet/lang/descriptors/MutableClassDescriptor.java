@@ -5,10 +5,13 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -34,10 +37,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private Modality modality;
     private Visibility visibility;
     private TypeConstructor typeConstructor;
+    private final RedeclarationHandler redeclarationHandler;
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
+    private final WritableScope scopeForAnyConstructor;
+    private final Map<ConstructorDescriptor, WritableScope> scopesForConstructors;
+    // for primary constructor and property initializers
+    private final WritableScope scopeForPrimaryConstructor;
+
     private MutableClassDescriptor classObjectDescriptor;
     private JetType classObjectType;
     private JetType defaultType;
@@ -48,9 +57,13 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration);
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
+        this.redeclarationHandler = redeclarationHandler;
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup");
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution");
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution");
+        this.scopeForAnyConstructor = new WritableScopeImpl(scopeForMemberResolution, this, redeclarationHandler).setDebugName("AnyConstrutor");
+        this.scopeForPrimaryConstructor = new WritableScopeImpl(scopeForAnyConstructor, this, redeclarationHandler).setDebugName("PrimaryConstructor");
+        this.scopesForConstructors = new HashMap<ConstructorDescriptor, WritableScope>();
         this.kind = kind;
     }
 
@@ -100,10 +113,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         return classObjectDescriptor;
     }
 
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
         assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
         this.primaryConstructor = constructorDescriptor;
-        addConstructor(constructorDescriptor);
+        addConstructor(constructorDescriptor, trace);
     }
 
     @Override
@@ -112,7 +125,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         return primaryConstructor;
     }
 
-    public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+    public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
         assert constructorDescriptor.getContainingDeclaration() == this;
 //        assert constructorDescriptor.getTypeParameters().size() == getTypeConstructor().getValueParameters().size();
         constructors.add(constructorDescriptor);
@@ -120,6 +133,24 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 //            constructorDescriptor.getTypeParameters().addAll(typeParameters);
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
         }
+
+        WritableScope scope = constructorDescriptor.isPrimary() ?
+                scopeForPrimaryConstructor :
+                new WritableScopeImpl(scopeForAnyConstructor, this, redeclarationHandler).setDebugName("SecondaryConstructor");
+
+        WritableScope old = scopesForConstructors.put(constructorDescriptor, scope);
+        if (old != null) {
+            throw new IllegalStateException();
+        }
+
+        for (ValueParameterDescriptor valueParameterDescriptor : constructorDescriptor.getValueParameters()) {
+            JetParameter parameter = (JetParameter) trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
+            if (parameter.getValOrVarNode() == null || !constructorDescriptor.isPrimary()) {
+                scope.addVariableDescriptor(valueParameterDescriptor);
+            }
+        }
+
+        scope.addLabeledDeclaration(constructorDescriptor); // TODO : Labels for constructors?!
     }
 
     @Override
@@ -128,6 +159,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         callableMembers.add(propertyDescriptor);
         scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
         scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
+        scopeForAnyConstructor.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
     }
 
     @Override
@@ -257,6 +289,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public JetScope getScopeForMemberResolution() {
         return scopeForMemberResolution;
     }
+    
+    @NotNull
+    public JetScope getScopeForConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+        return scopesForConstructors.get(constructorDescriptor);
+    }
+
+    @NotNull
+    public JetScope getScopeForPropertyIntiailizer() {
+        return scopeForPrimaryConstructor;
+    }
 
     @NotNull
     @Override
@@ -344,4 +386,5 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         }
         return implicitReceiver;
     }
+
 }
