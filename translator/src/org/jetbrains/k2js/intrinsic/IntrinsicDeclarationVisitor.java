@@ -30,7 +30,7 @@ public final class IntrinsicDeclarationVisitor extends DeclarationDescriptorVisi
 
     @Override
     public Void visitFunctionDescriptor(@NotNull FunctionDescriptor descriptor, @Nullable Void nothing) {
-        if (!intrinsics.isIntrinsic(descriptor)) {
+        if (!intrinsics.hasDescriptor(descriptor)) {
             intrinsics.declareIntrinsic(descriptor);
         }
         return null;

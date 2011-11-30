@@ -27,7 +27,7 @@ public final class ArrayAccessTranslator extends AbstractTranslator {
 
 
     public static boolean canBeArraySetterCall(@NotNull JetBinaryExpression expression) {
-        //TODO: move unsafe cat to util
+        //TODO: move unsafe call to util
         return (OperatorTable.isAssignment((JetToken) expression.getOperationToken())
                 && (expression.getLeft() instanceof JetArrayAccessExpression));
     }

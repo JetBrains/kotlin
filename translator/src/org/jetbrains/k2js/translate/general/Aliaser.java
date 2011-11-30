@@ -16,7 +16,7 @@ public class Aliaser {
     static public Aliaser aliasesForStandardClasses(@NotNull JetStandardLibrary standardLibrary,
                                                     @NotNull Namer namer) {
         Aliaser result = new Aliaser();
-        result.setAliasForDescriptor(standardLibrary.getArray(), namer.declareStandardClass("Array"));
+        // result.setAliasForDescriptor(standardLibrary.getArray(), namer.declareStandardClass("Array"));
         return result;
     }
 

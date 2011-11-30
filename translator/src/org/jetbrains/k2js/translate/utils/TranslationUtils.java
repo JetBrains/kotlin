@@ -8,10 +8,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
@@ -25,28 +22,28 @@ import java.util.List;
 public final class TranslationUtils {
 
     @NotNull
-    static public JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
+    public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
                                                  @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         return AstUtil.notEqual(expressionToCheck, nullLiteral);
     }
 
     @NotNull
-    static public JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
+    public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
                                                 @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         return AstUtil.equals(expressionToCheck, nullLiteral);
     }
 
     @Nullable
-    static public JsName getLocalReferencedName(@NotNull TranslationContext context,
+    public static JsName getLocalReferencedName(@NotNull TranslationContext context,
                                                 @NotNull String name) {
         return context.enclosingScope().findExistingName(name);
     }
 
 
     @NotNull
-    static public List<JsExpression> translateArgumentList(@NotNull List<? extends ValueArgument> jetArguments,
+    public static List<JsExpression> translateArgumentList(@NotNull List<? extends ValueArgument> jetArguments,
                                                            @NotNull TranslationContext context) {
         List<JsExpression> jsArguments = new ArrayList<JsExpression>();
         for (ValueArgument argument : jetArguments) {
@@ -56,7 +53,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    static public JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
+    public static JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
         JetExpression jetExpression = argument.getArgumentExpression();
         if (jetExpression == null) {
             throw new AssertionError("Argument with no expression encountered!");
@@ -65,21 +62,21 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
+    public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull JetProperty expression) {
         JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
         return getThisQualifiedNameReference(context, backingFieldName);
     }
 
     @NotNull
-    static public JsNameRef backingFieldReference(@NotNull TranslationContext context,
+    public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = getBackingFieldName(descriptor.getName(), context);
         return getThisQualifiedNameReference(context, backingFieldName);
     }
 
     @NotNull
-    static public String getPropertyName(@NotNull JetProperty expression) {
+    public static String getPropertyName(@NotNull JetProperty expression) {
         String propertyName = expression.getName();
         if (propertyName == null) {
             throw new AssertionError("Property with no name encountered!");
@@ -176,5 +173,15 @@ public final class TranslationUtils {
             result.add(Translation.translateAsExpression(expression, context));
         }
         return result;
+    }
+
+    public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
+                                               @NotNull JetReferenceExpression expression) {
+        DeclarationDescriptor descriptor =
+                BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
+
+        if (descriptor == null) return true;
+
+        return (context.intrinsics().hasDescriptor(descriptor));
     }
 }

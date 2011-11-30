@@ -7,17 +7,37 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
  * @author Talanov Pavel
  */
 public class OperationTranslator extends AbstractTranslator {
+
+    @NotNull
+    static public JsExpression translate(@NotNull JetBinaryExpression expression,
+                                         @NotNull TranslationContext context) {
+        //TODO: move to translation
+        if (ArrayAccessTranslator.canBeArraySetterCall(expression)) {
+            return ArrayAccessTranslator.translateAsArraySetterCall(expression, context);
+        }
+
+        BinaryOperationTranslator translator;
+        if (TranslationUtils.isIntrinsicOperation(context, expression.getOperationReference())) {
+            translator = new IntrinsicBinaryOperationTranslator(expression, context);
+        } else {
+            translator = new OverloadedBinaryOperationTranslator(expression, context);
+        }
+        return translator.translate();
+    }
 
     protected OperationTranslator(@NotNull TranslationContext context) {
         super(context);
@@ -29,7 +49,7 @@ public class OperationTranslator extends AbstractTranslator {
         if (operationDescriptor == null) {
             return null;
         }
-        if (context().intrinsics().isIntrinsic(operationDescriptor)) {
+        if (context().intrinsics().hasDescriptor(operationDescriptor)) {
             return null;
         }
         if (!context().isDeclared(operationDescriptor)) {
