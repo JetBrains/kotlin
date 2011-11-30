@@ -8,10 +8,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class JetKeywordToken extends JetToken {
 
+    /**
+     * Generate soft keyword (identifier that has a keyword meaning only in some contexts)
+     */
     public static JetKeywordToken keyword(String value) {
         return new JetKeywordToken(value, false);
     }
 
+    /**
+     * Generate keyword (identifier that has a keyword meaning in all possible contexts)
+     */
     public static JetKeywordToken softKeyword(String value) {
         return new JetKeywordToken(value, true);
     }
@@ -28,6 +34,7 @@ public class JetKeywordToken extends JetToken {
     public String getValue() {
         return myValue;
     }
+
 
     public boolean isSoft() {
         return myIsSoft;
