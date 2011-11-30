@@ -1,8 +1,8 @@
 enum Color implements Runnable {
- WHITE, BLACK, RED, YELLOW, BLUE;
+  WHITE, BLACK, RED, YELLOW, BLUE;
 
- public void run() {
+  public void run() {
    System.out.println("name()=" + name() +
        ", toString()=" + toString());
- }
+  }
 }

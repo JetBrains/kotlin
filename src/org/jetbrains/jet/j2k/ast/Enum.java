@@ -28,10 +28,12 @@ public class Enum extends Class {
   @NotNull
   @Override
   public String toKotlin() {
-    return modifiersToKotlin() + "enum" + SPACE + myName.toKotlin() + primaryConstructorSignatureToKotlin() +
+    return modifiersToKotlin() + "enum class" + SPACE + myName.toKotlin() + primaryConstructorSignatureToKotlin() +
       typeParametersToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
       primaryConstructorBodyToKotlin() + N +
       AstUtil.joinNodes(membersExceptConstructors(), N) + N +
+      "public fun name()  : String { return \"\" }" + N + // TODO : remove hack
+      "public fun order() : Int { return 0 }" + N +
       "}";
   }
 }
