@@ -13,6 +13,7 @@ import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
+import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -189,9 +190,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private JsExpression translateConditionExpression(@Nullable JetExpression expression,
                                                       @NotNull TranslationContext context) {
         JsExpression jsCondition = translateNullableExpression(expression, context);
-        if (jsCondition == null) {
-            throw new AssertionError("Empty condition!");
-        }
+        assert (jsCondition != null) : "Condition should not be empty";
         return AstUtil.convertToExpression(jsCondition);
     }
 
@@ -383,6 +382,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return context.aliaser().getAliasForThis();
         }
         return new JsThisRef();
+    }
+
+    @Override
+    @NotNull
+    public JsInvocation visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression,
+                                                   @NotNull TranslationContext context) {
+        return ArrayAccessTranslator.translateAsArrayGetterCall(expression, context);
     }
 
 

@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 
 /**
@@ -48,6 +49,9 @@ public final class BinaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     JsExpression translate() {
+        if (ArrayAccessTranslator.canBeArraySetterCall(expression)) {
+            return ArrayAccessTranslator.translateAsArraySetterCall(expression, context());
+        }
         if (isCompareTo()) {
             return asCompareToOverload();
         }

@@ -17,4 +17,9 @@ public class StandardClassesTest extends TranslationTest {
     public void array() throws Exception {
         testFooBoxIsTrue("array.kt");
     }
+
+    @Test
+    public void arrayAccess() throws Exception {
+        testFooBoxIsTrue("arrayAccess.kt");
+    }
 }

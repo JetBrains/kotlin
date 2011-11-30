@@ -167,4 +167,14 @@ public final class TranslationUtils {
         }
         return qualifier;
     }
+
+    @NotNull
+    public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
+                                                             @NotNull List<JetExpression> expressions) {
+        List<JsExpression> result = new ArrayList<JsExpression>();
+        for (JetExpression expression : expressions) {
+            result.add(Translation.translateAsExpression(expression, context));
+        }
+        return result;
+    }
 }

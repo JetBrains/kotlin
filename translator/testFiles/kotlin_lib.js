@@ -452,10 +452,10 @@ Kotlin.Array = Class.create({
         this.array = [];
     },
     get:function (index) {
-        return this.array[index];
+        return (this.array)[index];
     },
     set:function (index, value) {
-        this.array[index] = value;
+        (this.array)[index] = value;
     }
 })
 
