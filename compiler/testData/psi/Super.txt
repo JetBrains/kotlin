@@ -2,6 +2,8 @@ JetFile: Super.jet
   PsiComment(EOL_COMMENT)('// KT-156 Fix the this<Super> syntax')
   PsiWhiteSpace('\n')
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     FUN
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')

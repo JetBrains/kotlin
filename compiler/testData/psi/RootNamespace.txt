@@ -1,12 +1,13 @@
 JetFile: RootNamespace.jet
   NAMESPACE
-    PsiElement(namespace)('namespace')
-    PsiWhiteSpace(' ')
-    NAMESPACE_NAME
-      PsiElement(IDENTIFIER)('foo')
+    NAMESPACE_HEADER
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
-    PsiElement(SEMICOLON)(';')
+      PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
     CLASS
       PsiElement(class)('class')
@@ -16,10 +17,11 @@ JetFile: RootNamespace.jet
       TYPE_PARAMETER_LIST
         <empty list>
     NAMESPACE
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
-        PsiElement(IDENTIFIER)('foo')
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
         PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')

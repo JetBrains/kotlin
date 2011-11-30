@@ -39,18 +39,23 @@ public class JetNamespace extends JetNamedDeclaration {
     }
 
     public String getName() {
-        PsiElement nameIdentifier = getNameIdentifier();
-        return nameIdentifier != null ? nameIdentifier.getText() : "";
+        String name = super.getName();
+        return name == null ? "" : name;
+    }
+
+    @NotNull
+    public JetNamespaceHeader getHeader() {
+        return (JetNamespaceHeader) findChildByType(JetNodeTypes.NAMESPACE_HEADER);
     }
 
     @Override
     public PsiElement getNameIdentifier() {
-        return findChildByType(JetNodeTypes.NAMESPACE_NAME);
+        return getHeader().getNameIdentifier();
     }
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        throw new UnsupportedOperationException(); // TODO
+        throw new UnsupportedOperationException();
     }
 
 }

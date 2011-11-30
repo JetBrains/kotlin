@@ -115,17 +115,18 @@ public class JetParsing extends AbstractJetParsing {
          *   : modifiers "namespace" SimpleName{"."} SEMI?
          *   ;
          */
+        PsiBuilder.Marker namespaceHeader = mark();
         PsiBuilder.Marker firstEntry = mark();
         parseModifierList(MODIFIER_LIST, true);
 
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
-
             parseNamespaceName();
 
             if (at(LBRACE)) {
                 // Because it's blocked namespace and it will be parsed as one of top level objects
                 firstEntry.rollbackTo();
+                namespaceHeader.done(NAMESPACE_HEADER);
                 return;
             }
 
@@ -135,6 +136,7 @@ public class JetParsing extends AbstractJetParsing {
         } else {
             firstEntry.rollbackTo();
         }
+        namespaceHeader.done(NAMESPACE_HEADER);
 
         // TODO: Duplicate with parsing imports in parseToplevelDeclarations
         while (at(IMPORT_KEYWORD)) {
@@ -145,12 +147,18 @@ public class JetParsing extends AbstractJetParsing {
     /* SimpleName{"."} */
     private void parseNamespaceName() {
         PsiBuilder.Marker nsName = mark();
-        expect(IDENTIFIER, "Expecting qualified name", NAMESPACE_NAME_RECOVERY_SET);
-        while (!eol() && at(DOT)) {
-            advance(); // DOT
+        while (true) {
             expect(IDENTIFIER, "Namespace name must be a '.'-separated identifier list", NAMESPACE_NAME_RECOVERY_SET);
+            if (at(DOT)) {
+                nsName.done(REFERENCE_EXPRESSION);
+                advance(); // DOT
+                nsName = mark();
+            }
+            else {
+                nsName.drop();
+                break;
+            }
         }
-        nsName.done(NAMESPACE_NAME);
     }
 
     /*
@@ -378,6 +386,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private JetNodeType parseNamespaceBlock() {
         assert _at(NAMESPACE_KEYWORD);
+        PsiBuilder.Marker namespaceHeader = mark();
         advance(); // NAMESPACE_KEYWORD
 
         if (at(LBRACE)) {
@@ -386,6 +395,7 @@ public class JetParsing extends AbstractJetParsing {
         else {
             parseNamespaceName();
         }
+        namespaceHeader.done(NAMESPACE_HEADER);
 
         if (!at(LBRACE)) {
             error("A namespace block in '{...}' expected");

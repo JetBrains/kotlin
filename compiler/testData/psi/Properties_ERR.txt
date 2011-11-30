@@ -1,5 +1,7 @@
 JetFile: Properties_ERR.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     PROPERTY
       PsiElement(var)('var')
       PsiWhiteSpace(' ')

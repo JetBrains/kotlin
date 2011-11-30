@@ -1,3 +1,4 @@
 JetFile: EmptyFile.jet
   NAMESPACE
-    <empty list>
+    NAMESPACE_HEADER
+      <empty list>

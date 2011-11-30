@@ -1,11 +1,13 @@
 JetFile: NamespaceBlock_ERR.jet
   NAMESPACE
-    PsiElement(namespace)('namespace')
-    PsiWhiteSpace(' ')
-    NAMESPACE_NAME
-      PsiElement(IDENTIFIER)('foo')
+    NAMESPACE_HEADER
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('bar')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('goo')
     PsiWhiteSpace('\n\n')
@@ -69,9 +71,9 @@ JetFile: NamespaceBlock_ERR.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace('\n\n')
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foof')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')
@@ -190,9 +192,9 @@ JetFile: NamespaceBlock_ERR.jet
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n\n    ')
         NAMESPACE
-          PsiElement(namespace)('namespace')
-          PsiWhiteSpace(' ')
-          NAMESPACE_NAME
+          NAMESPACE_HEADER
+            PsiElement(namespace)('namespace')
+            PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('foo')
           PsiErrorElement:A namespace block in '{...}' expected
             <empty list>
@@ -209,9 +211,10 @@ JetFile: NamespaceBlock_ERR.jet
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         NAMESPACE
-          PsiElement(namespace)('namespace')
-          PsiErrorElement:Expecting namespace name
-            <empty list>
+          NAMESPACE_HEADER
+            PsiElement(namespace)('namespace')
+            PsiErrorElement:Expecting namespace name
+              <empty list>
           PsiWhiteSpace('  ')
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n      ')
@@ -228,9 +231,9 @@ JetFile: NamespaceBlock_ERR.jet
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n      ')
             NAMESPACE
-              PsiElement(namespace)('namespace')
-              PsiWhiteSpace(' ')
-              NAMESPACE_NAME
+              NAMESPACE_HEADER
+                PsiElement(namespace)('namespace')
+                PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('ns')
               PsiWhiteSpace(' ')
               PsiElement(LBRACE)('{')
@@ -279,17 +282,18 @@ JetFile: NamespaceBlock_ERR.jet
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
       PsiErrorElement:A namespace block in '{...}' expected
         <empty list>
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(namespace)('namespace')
-      PsiErrorElement:Expecting namespace name
-        <empty list>
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiErrorElement:Expecting namespace name
+          <empty list>
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')
       NAMESPACE_BODY
@@ -297,9 +301,9 @@ JetFile: NamespaceBlock_ERR.jet
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(namespace)('namespace')
-      PsiWhiteSpace(' ')
-      NAMESPACE_NAME
+      NAMESPACE_HEADER
+        PsiElement(namespace)('namespace')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')

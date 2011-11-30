@@ -1,11 +1,13 @@
 JetFile: TypeDef.jet
   NAMESPACE
-    PsiElement(namespace)('namespace')
-    PsiWhiteSpace(' ')
-    NAMESPACE_NAME
-      PsiElement(IDENTIFIER)('foo')
+    NAMESPACE_HEADER
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('bar')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('goo')
     PsiWhiteSpace('\n\n')

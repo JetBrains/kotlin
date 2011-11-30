@@ -1,5 +1,7 @@
 JetFile: Enums.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     CLASS
       MODIFIER_LIST
         PsiElement(enum)('enum')

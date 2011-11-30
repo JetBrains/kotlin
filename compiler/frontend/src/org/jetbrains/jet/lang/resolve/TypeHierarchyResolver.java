@@ -69,19 +69,7 @@ public class TypeHierarchyResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamespace(JetNamespace namespace) {
-                    String name = JetPsiUtil.safeName(namespace.getName());
-
-                    NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
-                    if (namespaceDescriptor == null) {
-                        namespaceDescriptor = new NamespaceDescriptorImpl(
-                                owner.getOriginal(),
-                                Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
-                                name
-                        );
-                        namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope"));
-                        owner.addNamespace(namespaceDescriptor);
-                        context.getTrace().record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);
-                    }
+                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(namespace, owner);
                     context.getNamespaceDescriptors().put(namespace, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
@@ -200,6 +188,35 @@ public class TypeHierarchyResolver {
                 }
             });
         }
+    }
+
+    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetNamespace namespace, NamespaceLike owner) {
+        NamespaceLike currentOwner = owner;
+        for (JetSimpleNameExpression nameExpression : namespace.getHeader().getParentNamespaceNames()) {
+            currentOwner = createNamespaceDescriptorIfNeeded(null, currentOwner, JetPsiUtil.safeName(nameExpression.getReferencedName()));
+            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
+        }
+
+        String name = JetPsiUtil.safeName(namespace.getName());
+        return createNamespaceDescriptorIfNeeded(namespace, currentOwner, name);
+    }
+
+    @NotNull
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetNamespace namespace, @NotNull NamespaceLike owner, @NotNull String name) {
+        NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
+        if (namespaceDescriptor == null) {
+            namespaceDescriptor = new NamespaceDescriptorImpl(
+                    owner.getOriginal(),
+                    Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
+                    name
+            );
+            namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope"));
+            owner.addNamespace(namespaceDescriptor);
+            if (namespace != null) {
+                context.getTrace().record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);
+            }
+        }
+        return namespaceDescriptor;
     }
 
     @NotNull

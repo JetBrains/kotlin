@@ -1,5 +1,7 @@
 JetFile: EOLsInComments.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     FUN
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')

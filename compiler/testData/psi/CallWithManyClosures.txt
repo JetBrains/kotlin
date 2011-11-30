@@ -1,5 +1,7 @@
 JetFile: CallWithManyClosures.jet
   NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')

@@ -142,5 +142,5 @@ public interface JetNodeTypes {
     JetNodeType WHEN_CONDITION_IN_RANGE   = new JetNodeType("WHEN_CONDITION_IN_RANGE", JetWhenConditionInRange.class);
     JetNodeType WHEN_CONDITION_IS_PATTERN = new JetNodeType("WHEN_CONDITION_IS_PATTERN", JetWhenConditionIsPattern.class);
 
-    JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
+    JetNodeType NAMESPACE_HEADER = new JetNodeType("NAMESPACE_HEADER", JetNamespaceHeader.class);
 }
