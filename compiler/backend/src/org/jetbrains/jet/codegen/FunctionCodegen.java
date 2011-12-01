@@ -68,7 +68,7 @@ public class FunctionCodegen {
             if (isAbstract) flags |= ACC_ABSTRACT;
 
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
-            if(kind != OwnerKind.TRAIT_IMPL) {
+            if(kind != OwnerKind.TRAIT_IMPL && v.generateCode()) {
                 int start = functionDescriptor.getReceiverParameter().exists() ? 1 : 0;
                 for(int i = 0; i != paramDescrs.size(); ++i) {
                     AnnotationVisitor annotationVisitor = mv.visitParameterAnnotation(i + start, "Ljet/typeinfo/JetParameterName;", true);
