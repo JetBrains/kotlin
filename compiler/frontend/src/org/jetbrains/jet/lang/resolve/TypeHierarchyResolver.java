@@ -73,6 +73,7 @@ public class TypeHierarchyResolver {
                     context.getNamespaceDescriptors().put(namespace, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
+                    namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
                     context.getNamespaceScopes().put(namespace, namespaceScope);
                     context.getDeclaringScopes().put(namespace, outerScope);
 
@@ -147,7 +148,7 @@ public class TypeHierarchyResolver {
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                                      Modality.FINAL, Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
-                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
+                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, context.getTrace());
                     if (object != null) {
                         context.getTrace().record(CONSTRUCTOR, object, constructorDescriptor);
                     }
@@ -210,7 +211,9 @@ public class TypeHierarchyResolver {
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                     name
             );
-            namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope"));
+            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope");
+            scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+            namespaceDescriptor.initialize(scope);
             owner.addNamespace(namespaceDescriptor);
             if (namespace != null) {
                 context.getTrace().record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);

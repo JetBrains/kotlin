@@ -96,6 +96,7 @@ public class AnalyzingUtils {
         final WritableScope scope = new WritableScopeImpl(JetScope.EMPTY, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
         importingStrategy.addImports(project, semanticServices, bindingTraceContext, scope);
         scope.importScope(libraryScope);
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 

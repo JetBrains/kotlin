@@ -17,7 +17,10 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     private MutableValueParameterDescriptor parameter;
 
-    public PropertySetterDescriptor(@NotNull Modality modality, @NotNull Visibility visibility, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, boolean hasBody, boolean isDefault) {
+    public PropertySetterDescriptor(@NotNull Modality modality, @NotNull Visibility visibility,
+            @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations,
+            boolean hasBody, boolean isDefault)
+    {
         super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
     }
 

@@ -17,9 +17,14 @@ import java.util.Set;
 public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private JetType returnType;
 
-    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, @NotNull Modality modality, @NotNull Visibility visibility, @Nullable JetType returnType, boolean hasBody, boolean isDefault) {
+    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Modality modality, @NotNull Visibility visibility, boolean hasBody, boolean isDefault)
+    {
         super(modality, visibility, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody, isDefault);
-        this.returnType = returnType == null ? correspondingProperty.getOutType() : returnType;
+    }
+    
+    public void initialize(JetType returnType) {
+        this.returnType = returnType == null ? getCorrespondingProperty().getOutType() : returnType;
     }
 
     @NotNull
