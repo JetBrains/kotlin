@@ -343,6 +343,11 @@ public class TypeUtils {
     private static void fillInDeepSubstitutor(@NotNull JetType context, @NotNull TypeSubstitutor substitutor, @NotNull Map<TypeConstructor, TypeProjection> substitution, @Nullable Multimap<TypeConstructor, TypeProjection> fullSubstitution) {
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
         List<TypeProjection> arguments = context.getArguments();
+        
+        if (parameters.size() != arguments.size()) {
+            throw new IllegalStateException();
+        }
+        
         for (int i = 0; i < arguments.size(); i++) {
             TypeProjection argument = arguments.get(i);
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
