@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -16,13 +18,22 @@ import static org.jetbrains.jet.lang.types.Variance.OUT_VARIANCE;
 public class JetTypeChecker {
 
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();
+    public static final HashBiMap<TypeConstructor, TypeConstructor> EMPTY_AXIOMS = HashBiMap.create();
 
     private JetTypeChecker() {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
 //        return new TypeCheckingProcedure().run(subtype, supertype);
-        return TYPE_CHECKER.run(subtype, supertype);
+        return TYPE_CHECKER.isSubtypeOf(subtype, supertype);
+    }
+
+    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
+        return equalTypes(a, b, EMPTY_AXIOMS);
+    }
+
+    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull BiMap<TypeConstructor, TypeConstructor> equalityAxioms) {
+        return TYPE_CHECKER.equalTypes(a, b, equalityAxioms);
     }
 
     // This method returns the supertype of the first parameter that has the same constructor
@@ -86,8 +97,37 @@ public class JetTypeChecker {
             this.constraintBuilder = constraintBuilder;
         }
 
-        public boolean run(@NotNull JetType subtype, @NotNull JetType supertype) {
-            return isSubtypeOf(subtype, supertype);
+        public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2, @NotNull BiMap<TypeConstructor, TypeConstructor> equalityAxioms) {
+            if (type1.isNullable() != type2.isNullable()) {
+                return false;
+            }
+            TypeConstructor constructor1 = type1.getConstructor();
+            TypeConstructor constructor2 = type2.getConstructor();
+            if (!constructor1.equals(constructor2)) {
+                TypeConstructor img1 = equalityAxioms.get(constructor1);
+                TypeConstructor img2 = equalityAxioms.get(constructor2);
+                if (!(img1 != null && img1.equals(constructor2)) &&
+                        !(img2 != null && img2.equals(constructor1))) {
+                    return false;
+                }
+            }
+            List<TypeProjection> type1Arguments = type1.getArguments();
+            List<TypeProjection> type2Arguments = type2.getArguments();
+            if (type1Arguments.size() != type2Arguments.size()) {
+                return false;
+            }
+
+            for (int i = 0; i < type1Arguments.size(); i++) {
+                TypeProjection typeProjection1 = type1Arguments.get(i);
+                TypeProjection typeProjection2 = type2Arguments.get(i);
+                if (typeProjection1.getProjectionKind() != typeProjection2.getProjectionKind()) {
+                    return false;
+                }
+                if (!equalTypes(typeProjection1.getType(), typeProjection2.getType(), equalityAxioms)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
@@ -140,182 +180,5 @@ public class JetTypeChecker {
             return true;
         }
     }
-
-//    public static abstract class AbstractTypeCheckingProcedure<T> {
-//
-//        protected enum StatusAction {
-//            PROCEED(false),
-//            DONE_WITH_CURRENT_TYPE(true),
-//            ABORT_ALL(true);
-//
-//            private final boolean abort;
-//
-//            private StatusAction(boolean abort) {
-//                this.abort = abort;
-//            }
-//
-//            public boolean isAbort() {
-//                return abort;
-//            }
-//        }
-//
-//        public final T run(@NotNull JetType subtype, @NotNull JetType supertype) {
-//            proceedOrStop(subtype, supertype);
-//            return result();
-//        }
-//
-//        protected abstract StatusAction startForPairOfTypes(@NotNull JetType subtype, @NotNull JetType supertype);
-//
-//        protected abstract StatusAction noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype);
-//
-//        protected abstract StatusAction equalTypesRequired(@NotNull JetType subArgumentType, @NotNull JetType superArgumentType);
-//
-//        protected abstract StatusAction varianceConflictFound(@NotNull TypeProjection subArgument, @NotNull TypeProjection superArgument);
-//
-//        protected abstract StatusAction doneForPairOfTypes(@NotNull JetType subtype, @NotNull JetType supertype);
-//
-//        protected abstract T result();
-//
-//        private StatusAction proceedOrStop(@NotNull JetType subtype, @NotNull JetType supertype) {
-//            StatusAction statusAction = startForPairOfTypes(subtype, supertype);
-//            if (statusAction.isAbort()) {
-//                return statusAction;
-//            }
-//
-//            JetType closestSupertype = findCorrespondingSupertype(subtype, supertype);
-//            if (closestSupertype == null) {
-//                return noCorrespondingSupertype(subtype, supertype);
-//            }
-//
-//            proceed(closestSupertype, supertype);
-//            return doneForPairOfTypes(subtype, supertype);
-//        }
-//
-//        private void proceed(@NotNull JetType subtype, @NotNull JetType supertype) {
-//            TypeConstructor constructor = subtype.getConstructor();
-//            assert constructor.equals(supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
-//
-//            List<TypeProjection> subArguments = subtype.getArguments();
-//            List<TypeProjection> superArguments = supertype.getArguments();
-//            List<TypeParameterDescriptor> parameters = constructor.getParameters();
-//
-//            loop:
-//            for (int i = 0; i < parameters.size(); i++) {
-//                TypeParameterDescriptor parameter = parameters.get(i);
-//                TypeProjection subArgument = subArguments.get(i);
-//                TypeProjection superArgument = superArguments.get(i);
-//
-//                JetType subArgumentType = subArgument.getType();
-//                JetType superArgumentType = superArgument.getType();
-//
-//                StatusAction action = null;
-//                switch (parameter.getVariance()) {
-//                    case INVARIANT:
-//                        switch (superArgument.getProjectionKind()) {
-//                            case INVARIANT:
-//                                action = equalTypesRequired(subArgumentType, superArgumentType);
-//                                break;
-//                            case OUT_VARIANCE:
-//                                if (!subArgument.getProjectionKind().allowsOutPosition()) {
-//                                    action = varianceConflictFound(subArgument, superArgument);
-//                                }
-//                                else {
-//                                    action = proceedOrStop(subArgumentType, superArgumentType);
-//                                }
-//                                break;
-//                            case IN_VARIANCE:
-//                                if (!subArgument.getProjectionKind().allowsInPosition()) {
-//                                    action = varianceConflictFound(subArgument, superArgument);
-//                                }
-//                                else {
-//                                    action = proceedOrStop(superArgumentType, subArgumentType);
-//                                }
-//                                break;
-//                        }
-//                        break;
-//                    case IN_VARIANCE:
-//                        switch (superArgument.getProjectionKind()) {
-//                            case INVARIANT:
-//                            case IN_VARIANCE:
-//                                action = proceedOrStop(superArgumentType, subArgumentType);
-//                                break;
-//                            case OUT_VARIANCE:
-//                                action = proceedOrStop(subArgumentType, superArgumentType);
-//                                break;
-//                        }
-//                        break;
-//                    case OUT_VARIANCE:
-//                        switch (superArgument.getProjectionKind()) {
-//                            case INVARIANT:
-//                            case OUT_VARIANCE:
-//                            case IN_VARIANCE:
-//                                action = proceedOrStop(subArgumentType, superArgumentType);
-//                                break;
-//                        }
-//                        break;
-//                }
-//                switch (action) {
-//                    case ABORT_ALL: break loop;
-//                    case DONE_WITH_CURRENT_TYPE:
-//                    default:
-//                }
-//            }
-//        }
-//
-//    }
-
-
-//    private static class TypeCheckingProcedure extends AbstractTypeCheckingProcedure<Boolean> {
-//
-//        private boolean result = true;
-//
-//        private StatusAction fail() {
-//            result = false;
-//            return StatusAction.ABORT_ALL;
-//        }
-//
-//        @Override
-//        public StatusAction startForPairOfTypes(@NotNull JetType subtype, @NotNull JetType supertype) {
-//            if (ErrorUtils.isErrorType(subtype) || ErrorUtils.isErrorType(supertype)) {
-//                return StatusAction.DONE_WITH_CURRENT_TYPE;
-//            }
-//            if (!supertype.isNullable() && subtype.isNullable()) {
-//                return fail();
-//            }
-//            if (JetStandardClasses.isNothingOrNullableNothing(subtype)) {
-//                return StatusAction.DONE_WITH_CURRENT_TYPE;
-//            }
-//            return StatusAction.PROCEED;
-//        }
-//
-//        @Override
-//        protected StatusAction noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-//            return fail();
-//        }
-//
-//        @Override
-//        protected StatusAction equalTypesRequired(@NotNull JetType subArgumentType, @NotNull JetType superArgumentType) {
-//            if (!subArgumentType.equals(superArgumentType)) {
-//                return fail();
-//            }
-//            return StatusAction.PROCEED;
-//        }
-//
-//        @Override
-//        protected StatusAction varianceConflictFound(@NotNull TypeProjection subArgument, @NotNull TypeProjection superArgument) {
-//            return fail();
-//        }
-//
-//        @Override
-//        protected StatusAction doneForPairOfTypes(@NotNull JetType subtype, @NotNull JetType supertype) {
-//            return StatusAction.PROCEED;
-//        }
-//
-//        @Override
-//        protected Boolean result() {
-//            return result;
-//        }
-//    }
-
 
 }

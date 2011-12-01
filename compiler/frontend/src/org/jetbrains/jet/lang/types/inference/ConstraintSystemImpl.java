@@ -196,7 +196,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     }
 
-    private static class KnownType extends TypeValue {
+    private class KnownType extends TypeValue {
 
         private final JetType type;
 
@@ -377,7 +377,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             for (TypeValue upperBound : typeValue.getUpperBounds()) {
                 if (upperBound instanceof KnownType) {
                     KnownType knownBoundType = (KnownType) upperBound;
-                    boolean ok = constraintExpander.run(jetType, knownBoundType.getType());
+                    boolean ok = constraintExpander.isSubtypeOf(jetType, knownBoundType.getType());
                     if (!ok) {
                         return new Solution().registerError("Mismatch while expanding constraints");
                     }
@@ -565,6 +565,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private static void println(String message) {
-//        System.out.println(message);
+        System.out.println(message);
     }
 }

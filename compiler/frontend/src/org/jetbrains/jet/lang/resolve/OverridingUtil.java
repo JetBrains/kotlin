@@ -153,7 +153,7 @@ public class OverridingUtil {
             TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
 
-            if (!JetTypeImpl.equalTypes(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), axioms)) {
+            if (!JetTypeChecker.INSTANCE.equalTypes(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), axioms)) {
                 return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
             }
         }
@@ -164,7 +164,7 @@ public class OverridingUtil {
             JetType superValueParameter = superValueParameters.get(i);
             JetType subValueParameter = subValueParameters.get(i);
 
-            if (!JetTypeImpl.equalTypes(superValueParameter, subValueParameter, axioms)) {
+            if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, axioms)) {
                 return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter);
             }
         }
@@ -174,7 +174,6 @@ public class OverridingUtil {
         return OverrideCompatibilityInfo.success();
     }
 
-    @NotNull
     public static boolean isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
