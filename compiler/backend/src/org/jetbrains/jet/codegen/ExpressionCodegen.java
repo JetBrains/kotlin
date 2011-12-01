@@ -1307,6 +1307,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 else if(type.getSort() == Type.DOUBLE) {
                     v.aconst(0d);
                 }
+                else if(type.getSort() == Type.LONG) {
+                    v.aconst(0l);
+                }
                 else {
                     v.iconst(0);
                 }
