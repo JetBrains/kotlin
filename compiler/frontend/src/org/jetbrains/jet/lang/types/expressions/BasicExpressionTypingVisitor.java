@@ -266,6 +266,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return false;
         }
 
+        // do not crash on error types
+        if (ErrorUtils.isErrorType(actualType) || ErrorUtils.isErrorType(targetType)) {
+            return false;
+        }
+
         {
             Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
                     TypeUtils.buildDeepSubstitutionMultimap(targetType);
