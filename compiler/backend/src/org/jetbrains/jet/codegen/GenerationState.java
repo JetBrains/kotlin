@@ -3,6 +3,7 @@
  */
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.Stack;
@@ -115,6 +116,9 @@ public class GenerationState {
                 catch (Throwable e) {
                     errorHandler.reportException(e, namespace.getContainingFile().getVirtualFile().getUrl());
                     DiagnosticUtils.throwIfRunningOnServer(e);
+                    if (ApplicationManager.getApplication().isInternal()) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
