@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.List;
 
