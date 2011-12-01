@@ -802,9 +802,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 v.newField(myClass, Opcodes.ACC_PRIVATE, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
 
                 MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
-                mv.visitCode();
                 InstructionAdapter iv = null;
                 if (v.generateCode()) {
+                    mv.visitCode();
                     iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);

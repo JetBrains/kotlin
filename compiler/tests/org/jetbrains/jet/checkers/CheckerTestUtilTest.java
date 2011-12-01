@@ -1,7 +1,6 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -20,7 +19,7 @@ import java.util.List;
 public class CheckerTestUtilTest extends JetLiteFixture {
 
     public CheckerTestUtilTest() {
-        super("checkerWithErrorTypes/checkerTestUtil");
+        super("diagnostics/checkerTestUtil");
     }
 
     protected void doTest(TheTest theTest) throws Exception {

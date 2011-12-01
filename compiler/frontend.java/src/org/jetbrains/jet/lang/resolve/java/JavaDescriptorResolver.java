@@ -432,6 +432,7 @@ public class JavaDescriptorResolver {
             }
             return functionDescriptor;
         }
+        DeclarationDescriptor classDescriptor = method.hasModifierProperty(PsiModifier.STATIC) ? resolveNamespace(method.getContainingClass()) : resolveClass(method.getContainingClass());
         PsiParameter[] parameters = method.getParameterList().getParameters();
         FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
                 owner,
@@ -443,7 +444,7 @@ public class JavaDescriptorResolver {
         initializeTypeParameters(method);
         functionDescriptorImpl.initialize(
                 null,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
+                DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 typeParameters,
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),

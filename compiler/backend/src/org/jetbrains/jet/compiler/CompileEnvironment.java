@@ -113,7 +113,11 @@ public class CompileEnvironment {
         }
 
         if ((rtJar == null || !rtJar.exists()) && failOnError) {
-            throw new CompileEnvironmentException("No rt.jar found under JAVA_HOME=" + javaHome);
+            rtJar = findActiveRtJar(failOnError);
+
+            if ((rtJar == null || !rtJar.exists())) {
+                throw new CompileEnvironmentException("No rt.jar found under JAVA_HOME=" + javaHome);
+            }
         }
         return rtJar;
     }
@@ -144,7 +148,7 @@ public class CompileEnvironment {
                 throw new CompileEnvironmentException("Could not find rt.jar in system class loader: " + StringUtil.join(loader.getURLs(), new Function<URL, String>() {
                     @Override
                     public String fun(URL url) {
-                        return url.toString();
+                        return url.toString() + "\n";
                     }
                 }, ", "));
             }

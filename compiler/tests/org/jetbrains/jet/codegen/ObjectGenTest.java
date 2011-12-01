@@ -7,6 +7,7 @@ package org.jetbrains.jet.codegen;
 public class ObjectGenTest extends CodegenTestCase {
     public void testSimpleObject() throws Exception {
         blackBoxFile("objects/simpleObject.jet");
+//        System.out.println(generateToText());
     }
 
     public void testObjectLiteral() throws Exception {
