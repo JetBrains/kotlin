@@ -134,6 +134,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testKt257 () throws Exception {
         blackBoxFile("regressions/kt257.jet");
+//        System.out.println(generateToText());
     }
 
     public void testKt613 () throws Exception {

@@ -1,11 +1,9 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -101,11 +99,7 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
-    public static StackValue instanceField(Type type, String owner, String name) {
-        return new InstanceField(type, owner, name);
-    }
-
-    public static StackValue property(String name, String owner, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter) {
+    public static Property property(String name, String owner, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter) {
         return new Property(name, owner, getter, setter, isStatic, isInterface, isSuper, type);
     }
 
@@ -262,6 +256,12 @@ public abstract class StackValue {
 
     public static StackValue preIncrement(int index, int increment) {
         return new PreIncrement(index, increment);
+    }
+
+    public static StackValue receiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, @Nullable CallableMethod callableMethod) {
+        if(resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists())
+            return new CallReceiver(resolvedCall, receiver, codegen, callableMethod);
+        return receiver;
     }
 
     private static class None extends StackValue {
@@ -614,7 +614,7 @@ public abstract class StackValue {
 
                 if(resolvedSetCall.getThisObject().exists()) {
                     if(resolvedSetCall.getReceiverArgument().exists()) {
-                        codegen.generateFromResolvedCall(resolvedSetCall.getThisObject());
+                        codegen.generateFromResolvedCall(resolvedSetCall.getThisObject(), JetTypeMapper.TYPE_OBJECT);
                     }
                     v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
                 }
@@ -730,39 +730,11 @@ public abstract class StackValue {
         }
     }
 
-    static class InstanceField extends StackValue {
-        final String owner;
-        final String name;
-
-        public InstanceField(Type type, String owner, String name) {
-            super(type);
-            this.owner = owner;
-            this.name = name;
-        }
-
-        @Override
-        public void put(Type type, InstructionAdapter v) {
-            v.load(0, JetTypeMapper.TYPE_OBJECT);
-            v.getfield(owner, name, this.type.getDescriptor());
-            coerce(type, v);
-        }
-
-        @Override
-        public void dupReceiver(InstructionAdapter v) {
-        }
-
-        @Override
-        public void store(InstructionAdapter v) {
-            v.load(0, JetTypeMapper.TYPE_OBJECT);
-            v.putfield(owner, name, this.type.getDescriptor());
-        }
-    }
-
-    private static class Property extends StackValue {
+    static class Property extends StackValue {
         private final String name;
         private final Method getter;
         private final Method setter;
-        private final String owner;
+        public final String owner;
         private final boolean isStatic;
         private final boolean isInterface;
         private boolean isSuper;
@@ -1008,6 +980,96 @@ public abstract class StackValue {
             if(!type.equals(Type.VOID_TYPE)) {
                 v.load(index, Type.INT_TYPE);
                 coerce(type, v);
+            }
+        }
+    }
+
+    public static class CallReceiver extends StackValue {
+        private ResolvedCall<? extends CallableDescriptor> resolvedCall;
+        StackValue receiver;
+        private ExpressionCodegen codegen;
+        private CallableMethod callableMethod;
+
+        public CallReceiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, CallableMethod callableMethod) {
+            super(calcType(resolvedCall, codegen, callableMethod));
+            this.resolvedCall = resolvedCall;
+            this.receiver = receiver;
+            this.codegen = codegen;
+            this.callableMethod = callableMethod;
+        }
+
+        private static Type calcType(ResolvedCall<? extends CallableDescriptor> resolvedCall, ExpressionCodegen codegen, CallableMethod callableMethod) {
+            ReceiverDescriptor thisObject = resolvedCall.getThisObject();
+            ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
+
+            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+
+            if (thisObject.exists()) {
+                if(callableMethod != null) {
+                    if(receiverArgument.exists()) {
+                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass());
+                    }
+                    else {
+                        return codegen.typeMapper.mapType(callableMethod.getThisType());
+                    }
+                }
+                else {
+                    if(receiverArgument.exists()) {
+                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
+                    }
+                    else {
+                        return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
+                    }
+                }
+            }
+            else {
+                if (receiverArgument.exists()) {
+                    if(callableMethod != null)
+                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass());
+                    else
+                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
+                }
+                else {
+                    return Type.VOID_TYPE;
+                }
+            }
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+
+            ReceiverDescriptor thisObject = resolvedCall.getThisObject();
+            ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
+            if (thisObject.exists()) {
+                if(receiverArgument.exists()) {
+                    codegen.generateFromResolvedCall(thisObject, codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType()));
+                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter());
+                }
+                else {
+                    genReceiver(v, thisObject, type, null);
+                }
+            }
+            else {
+                if (receiverArgument.exists()) {
+                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter());
+                }
+            }
+        }
+
+        private void genReceiver(InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type, ReceiverDescriptor receiverParameter) {
+            if(receiver == StackValue.none()) {
+                if(receiverParameter != null) {
+                    Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType());
+                    codegen.generateFromResolvedCall(receiverArgument, receiverType);
+                    StackValue.onStack(receiverType).put(type, v);
+                }
+                else {
+                    codegen.generateFromResolvedCall(receiverArgument, type);
+                }
+            }
+            else {
+                receiver.put(type, v);
             }
         }
     }

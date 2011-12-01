@@ -5,6 +5,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -51,6 +52,14 @@ public class CallableMethod implements Callable {
 
     public void setNeedsReceiver(@Nullable CallableDescriptor receiverClass) {
         this.receiverFunction = receiverClass;
+    }
+
+    public JetType getThisType() {
+        return thisClass.getDefaultType();
+    }
+
+    public JetType getReceiverClass() {
+        return receiverFunction.getReceiverParameter().getType();
     }
 
     public void setNeedsThis(@Nullable ClassDescriptor receiverClass) {
