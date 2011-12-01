@@ -164,7 +164,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 //    }
 
     public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/checkerWithErrorTypes/quick", true, new JetTestCaseBuilder.NamedTestFactory() {
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/diagnostics/tests", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {

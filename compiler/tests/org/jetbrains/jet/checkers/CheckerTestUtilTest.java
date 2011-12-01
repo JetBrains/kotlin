@@ -19,7 +19,7 @@ import java.util.List;
 public class CheckerTestUtilTest extends JetLiteFixture {
 
     public CheckerTestUtilTest() {
-        super("checkerWithErrorTypes/checkerTestUtil");
+        super("diagnostics/checkerTestUtil");
     }
 
     protected void doTest(TheTest theTest) throws Exception {
