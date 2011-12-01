@@ -1,7 +1,6 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;

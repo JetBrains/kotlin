@@ -116,11 +116,16 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected void createAndCheckPsiFile(String name, String text) {
-        myFile = createPsiFile(name, text);
+        myFile = createCheckAndReturnPsiFile(name, text);
+    }
+
+    protected JetFile createCheckAndReturnPsiFile(String name, String text) {
+        JetFile myFile = createPsiFile(name, text);
         ensureParsed(myFile);
         assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
         assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
         assertEquals("psi text mismatch", text, myFile.getText());
+        return myFile;
     }
 }
