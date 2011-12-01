@@ -9,14 +9,24 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.k2js.intrinsic.Intrinsic;
+import org.jetbrains.jet.lang.psi.JetOperationExpression;
+import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
+import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
+
+import java.util.Arrays;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
 /**
  * @author Talanov Pavel
@@ -24,79 +34,98 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 public class OperationTranslator extends AbstractTranslator {
 
     @NotNull
-    static public JsExpression translate(@NotNull JetBinaryExpression expression,
+    public static JsExpression translate(@NotNull JetBinaryExpression expression,
                                          @NotNull TranslationContext context) {
-        JsExpression result = tryToApplyIntrinsic(expression, context);
-        if (result != null) return result;
-
+        //TODO: move to assignment translator
         if (ArrayAccessTranslator.canBeArraySetterCall(expression)) {
             return ArrayAccessTranslator.translateAsArraySetterCall(expression, context);
         }
-        return translateAsBinary(expression, context);
+        DeclarationDescriptor descriptorForReferenceExpression = getDescriptorForReferenceExpression
+                (context.bindingContext(), expression.getOperation());
+        if (descriptorForReferenceExpression == null) {
+            return IntrinsicBinaryOperationTranslator.translate(expression, context);
+        }
+        if (isEqualsCall(expression, context)) {
+            return translateAsEqualsCall(expression, context);
+        }
+        if (isCompareToCall(expression, context)) {
+            return translateAsCompareToCall(expression, context);
+        }
+        return CallTranslator.translate(expression, context);
     }
 
     @NotNull
-    private static JsExpression translateAsBinary(@NotNull JetBinaryExpression expression,
-                                                  @NotNull TranslationContext context) {
-        if (TranslationUtils.isIntrinsicOperation(context, expression.getOperationReference())) {
-            return IntrinsicBinaryOperationTranslator.translate(expression, context);
-        } else {
-            return OverloadedBinaryOperationTranslator.translate(expression, context);
-        }
+    public static JsExpression translate(@NotNull JetUnaryExpression expression,
+                                         @NotNull TranslationContext context) {
+        return CallTranslator.translate(expression, context);
     }
 
-    @Nullable
-    private static JsExpression tryToApplyIntrinsic(@NotNull JetBinaryExpression expression,
-                                                    @NotNull TranslationContext context) {
-        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression
-                (context.bindingContext(), expression.getOperationReference());
-        if (descriptor == null) {
-            return null;
-        }
-        if (!context.intrinsics().hasDescriptor(descriptor)) {
-            return null;
-        }
-        //TODO: should be no nulls here
-        Intrinsic intrinsic = context.intrinsics().getIntrinsic(descriptor);
-        if (intrinsic == null) return null;
-        return intrinsic.apply(expression, context);
+
+    public static boolean isEqualsCall(@NotNull JetBinaryExpression expression,
+                                       @NotNull TranslationContext context) {
+        DeclarationDescriptor operationDescriptor = getOperationDescriptor(expression, context);
+        //TODO: add descriptor is equals utils
+        boolean isEquals = operationDescriptor.getName().equals("equals");
+        boolean isIntrinsic = context.intrinsics().hasDescriptor(operationDescriptor);
+        return isEquals && isIntrinsic;
+    }
+
+    @NotNull
+    public static JsExpression translateAsEqualsCall(@NotNull JetBinaryExpression expression,
+                                                     @NotNull TranslationContext context) {
+        Intrinsic intrinsic = context.intrinsics().
+                getIntrinsic(getOperationDescriptor(expression, context));
+        //TODO
+        ((EqualsIntrinsic) intrinsic).setNegated(expression.getOperationToken().equals(JetTokens.EXCLEQ));
+        return intrinsic.apply(translateLeftExpression(context, expression),
+                Arrays.asList(translateRightExpression(context, expression)), context);
+    }
+
+    public static boolean isCompareToCall(@NotNull JetBinaryExpression expression,
+                                          @NotNull TranslationContext context) {
+        DeclarationDescriptor operationDescriptor = getOperationDescriptor(expression, context);
+        return (operationDescriptor.getName().equals("compareTo")
+                && (context.intrinsics().hasDescriptor(operationDescriptor)));
+    }
+
+    @NotNull
+    public static JsExpression translateAsCompareToCall(@NotNull JetBinaryExpression expression,
+                                                        @NotNull TranslationContext context) {
+        Intrinsic intrinsic = context.intrinsics().
+                getIntrinsic(getOperationDescriptor(expression, context));
+        ((CompareToIntrinsic) intrinsic).setComparisonToken((JetToken) expression.getOperationToken());
+        return intrinsic.apply(translateLeftExpression(context, expression),
+                Arrays.asList(translateRightExpression(context, expression)), context);
     }
 
     protected OperationTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 
+    //TODO: refactor
     @Nullable
-    protected JsNameRef getOverloadedOperationReference(@NotNull JetSimpleNameExpression operationExpression) {
-        DeclarationDescriptor operationDescriptor = getOperationDescriptor(operationExpression);
-        if (operationDescriptor == null) {
+    protected static JsNameRef getOverloadedOperationReference(@NotNull JetOperationExpression operationExpression,
+                                                               @NotNull TranslationContext context) {
+        DeclarationDescriptor operationDescriptor = getOperationDescriptor(operationExpression, context);
+        if (!context.isDeclared(operationDescriptor)) {
             return null;
         }
-        if (context().intrinsics().hasDescriptor(operationDescriptor)) {
-            return null;
-        }
-        if (!context().isDeclared(operationDescriptor)) {
-            return null;
-        }
-        return context().getNameForDescriptor(operationDescriptor).makeRef();
+        return context.getNameForDescriptor(operationDescriptor).makeRef();
     }
 
-    @Nullable
-    private DeclarationDescriptor getOperationDescriptor(@NotNull JetSimpleNameExpression expression) {
-        return BindingUtils.getDescriptorForReferenceExpression
-                (context().bindingContext(), expression);
+    @NotNull
+    private static DeclarationDescriptor getOperationDescriptor(@NotNull JetOperationExpression expression,
+                                                                @NotNull TranslationContext context) {
+        DeclarationDescriptor descriptorForReferenceExpression = getDescriptorForReferenceExpression
+                (context.bindingContext(), expression.getOperation());
+        assert descriptorForReferenceExpression != null;
+        return descriptorForReferenceExpression;
     }
 
     protected boolean isPropertyAccess(@NotNull JetExpression expression) {
         return PropertyAccessTranslator.canBePropertyAccess(expression, context());
 
     }
-
-    protected boolean isVariableReassignment(@NotNull JetExpression expression) {
-        return BindingUtils.isVariableReassignment
-                (context().bindingContext(), expression);
-    }
-
 
     protected final class TemporaryVariable {
 

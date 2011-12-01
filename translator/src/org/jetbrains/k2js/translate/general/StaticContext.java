@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.k2js.declarations.Declarations;
-import org.jetbrains.k2js.intrinsic.Intrinsics;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.Namer;
 
 public class StaticContext {

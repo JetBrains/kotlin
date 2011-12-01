@@ -4,12 +4,11 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 
@@ -43,8 +42,8 @@ public final class TranslationUtils {
 
 
     @NotNull
-    public static List<JsExpression> translateArgumentList(@NotNull List<? extends ValueArgument> jetArguments,
-                                                           @NotNull TranslationContext context) {
+    public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
+                                                           @NotNull List<? extends ValueArgument> jetArguments) {
         List<JsExpression> jsArguments = new ArrayList<JsExpression>();
         for (ValueArgument argument : jetArguments) {
             jsArguments.add(translateArgument(context, argument));
@@ -102,15 +101,8 @@ public final class TranslationUtils {
         return jsInitExpression;
     }
 
-    public static boolean isConstructorInvocation(@NotNull TranslationContext context,
-                                                  @NotNull JetCallExpression expression) {
-        JetExpression calleeExpression = expression.getCalleeExpression();
-        assert calleeExpression != null : "JetCallExpression should have not null callee";
-        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context.bindingContext(), calleeExpression);
-        if (resolvedCall == null) {
-            return false;
-        }
-        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+    //TODO: move to descriptor UTILS
+    public static boolean isConstructorDescriptor(@NotNull FunctionDescriptor descriptor) {
         return (descriptor instanceof ConstructorDescriptor);
     }
 
@@ -184,4 +176,42 @@ public final class TranslationUtils {
 
         return (context.intrinsics().hasDescriptor(descriptor));
     }
+
+
+    @NotNull
+    public static JsExpression translateBaseExpression(@NotNull TranslationContext context,
+                                                       @NotNull JetUnaryExpression expression) {
+        JetExpression baseExpression = getBaseExpression(expression);
+        return Translation.translateAsExpression(baseExpression, context);
+    }
+
+    //TODO: move to psi utils
+    @NotNull
+    public static JetExpression getBaseExpression(@NotNull JetUnaryExpression expression) {
+        JetExpression baseExpression = expression.getBaseExpression();
+        assert baseExpression != null : "Unary expression should have a base expression";
+        return baseExpression;
+    }
+
+    @NotNull
+    public static JsExpression translateReceiver(@NotNull TranslationContext context,
+                                                 @NotNull JetDotQualifiedExpression expression) {
+        return Translation.translateAsExpression(expression.getReceiverExpression(), context);
+    }
+
+
+    @NotNull
+    public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
+                                                       @NotNull JetBinaryExpression expression) {
+        return Translation.translateAsExpression(expression.getLeft(), context);
+    }
+
+    @NotNull
+    public static JsExpression translateRightExpression(@NotNull TranslationContext context,
+                                                        @NotNull JetBinaryExpression expression) {
+        JetExpression rightExpression = expression.getRight();
+        assert rightExpression != null : "Binary expression should have a right expression";
+        return Translation.translateAsExpression(rightExpression, context);
+    }
+
 }

@@ -18,7 +18,6 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.PsiUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
  * @author Talanov Pavel
@@ -148,17 +147,6 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression defaultQualifier() {
-        if (BindingUtils.isOwnedByClass(propertyDescriptor)) {
-            return TranslationUtils.getThisQualifier(context());
-        }
-        assert BindingUtils.isOwnedByNamespace(propertyDescriptor)
-                : "Property can be a member of class or a namespace.";
-        //NOTE: qualifier for descriptor and it's accessor should be equal
-        return context().declarations().getQualifier(propertyDescriptor);
-    }
-
-    @NotNull
     public JsInvocation translateAsPropertySetterCall() {
         JsName setterName = getNotNullSetterName();
         return qualifiedAccessorInvocation(setterName);
@@ -169,7 +157,9 @@ public final class PropertyAccessTranslator extends AbstractTranslator {
         if (qualifier != null) {
             return Translation.translateAsExpression(qualifier, context());
         }
-        return defaultQualifier();
+        JsExpression implicitReceiver = ReferenceTranslator.getImplicitReceiver(propertyDescriptor, context());
+        assert implicitReceiver != null : "Property can only be a member of class or a namespace.";
+        return implicitReceiver;
     }
 
 

@@ -1,70 +1,55 @@
 package org.jetbrains.k2js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPrefixExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getBaseExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateBaseExpression;
 
 /**
  * @author Talanov Pavel
  */
-public final class UnaryOperationTranslator extends OperationTranslator {
-
-
-    @NotNull
-    static public JsExpression translate(@NotNull JetPrefixExpression expression,
-                                         @NotNull TranslationContext context) {
-        return (new UnaryOperationTranslator(context, expression, true)).translate();
-    }
-
-    @NotNull
-    static public JsExpression translate(@NotNull JetPostfixExpression expression,
-                                         @NotNull TranslationContext context) {
-        return (new UnaryOperationTranslator(context, expression, false)).translate();
-    }
+//TODO: reexamine class, see if can be clearer
+public abstract class UnaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     private final JetUnaryExpression expression;
     @NotNull
-    private final JsExpression baseExpression;
-    private final boolean isPrefix;
+    protected final JsExpression baseExpression;
+    protected final boolean isPrefix;
     private final boolean isVariableReassignment;
     private final boolean isStatement;
-    private final boolean isPropertyAccess;
-    @Nullable
-    private final JsNameRef operationReference;
+    protected final boolean isPropertyAccess;
 
-    private UnaryOperationTranslator(@NotNull TranslationContext context, @NotNull JetUnaryExpression expression,
-                                     boolean isPrefix) {
+    protected UnaryOperationTranslator(@NotNull JetUnaryExpression expression,
+                                       @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        this.isPrefix = isPrefix;
-        this.isVariableReassignment = isVariableReassignment(expression);
+        this.isPrefix = isPrefix(expression);
+        this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
         this.isStatement = BindingUtils.isStatement(context().bindingContext(), expression);
-        this.baseExpression = translateBaseExpression();
-        this.isPropertyAccess = isPropertyAccess(getBaseExpression());
-        this.operationReference = getOverloadedOperationReference(expression.getOperationSign());
+        this.baseExpression = translateBaseExpression(context, expression);
+        this.isPropertyAccess = isPropertyAccess(getBaseExpression(expression));
     }
 
     @NotNull
-    JsExpression translate() {
-        if ((operationReference != null) || isPropertyAccess) {
-            return translateOverload();
-        }
-        return jsUnaryExpression();
-    }
+    protected abstract JsExpression translate();
 
     @NotNull
-    private JsExpression translateOverload() {
+    protected JsExpression translateAsMethodCall() {
         if (isStatement || isPrefix) {
             return asPrefix();
         }
@@ -99,7 +84,6 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     private JsExpression asPostfixWithNoReassignment() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, t2.inc(), t1) )
-        assert operationReference != null;
         TemporaryVariable t1 = declareTemporary(baseExpression);
         TemporaryVariable t2 = declareTemporary(t1.nameReference());
         JsExpression methodCall = operationExpression(t2.nameReference());
@@ -122,7 +106,7 @@ public final class UnaryOperationTranslator extends OperationTranslator {
 
     @NotNull
     private JsExpression propertyReassignment(@NotNull JsExpression toCallMethodUpon) {
-        JetExpression jetBaseExpression = getBaseExpression();
+        JetExpression jetBaseExpression = getBaseExpression(expression);
         JsInvocation setterCall =
                 PropertyAccessTranslator.translateAsPropertySetterCall(jetBaseExpression, context());
         assert PropertyAccessTranslator.canBePropertyGetterCall(jetBaseExpression, context()) : "Should be a getter call";
@@ -132,52 +116,19 @@ public final class UnaryOperationTranslator extends OperationTranslator {
     }
 
     @NotNull
-    private JsExpression operationExpression(@NotNull JsExpression receiver) {
-        if (operationReference != null) {
-            AstUtil.setQualifier(operationReference, receiver);
-            return AstUtil.newInvocation(operationReference);
-        }
-        return unaryAsBinary(getOperationToken(), receiver);
-    }
+    abstract JsExpression operationExpression(@NotNull JsExpression receiver);
 
     @NotNull
-    private JsExpression jsUnaryExpression() {
-        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken());
-        if (isPrefix) {
-            return new JsPrefixOperation(operator, baseExpression);
-        } else {
-            return new JsPostfixOperation(operator, baseExpression);
-        }
-    }
-
-    @NotNull
-    private JsExpression translateBaseExpression() {
-        JetExpression baseExpression = getBaseExpression();
-        return Translation.translateAsExpression(baseExpression, context());
-    }
-
-    private JetExpression getBaseExpression() {
-        JetExpression baseExpression = expression.getBaseExpression();
-        assert baseExpression != null : "Unary expression should have a base expression";
-        return baseExpression;
-    }
-
-    @NotNull
-    private JetToken getOperationToken() {
-        JetSimpleNameExpression operationExpression = expression.getOperationSign();
+    protected JetToken getOperationToken() {
+        JetSimpleNameExpression operationExpression = expression.getOperation();
         IElementType elementType = operationExpression.getReferencedNameElementType();
         assert elementType instanceof JetToken : "Unary expression should have IElementType of type JetToken";
         return (JetToken) elementType;
     }
 
-    public JsBinaryOperation unaryAsBinary(@NotNull JetToken token, @NotNull JsExpression expression) {
-        JsNumberLiteral oneLiteral = context().program().getNumberLiteral(1);
-        if (token.equals(JetTokens.PLUSPLUS)) {
-            return new JsBinaryOperation(JsBinaryOperator.ADD, expression, oneLiteral);
-        }
-        if (token.equals(JetTokens.MINUSMINUS)) {
-            return new JsBinaryOperation(JsBinaryOperator.SUB, expression, oneLiteral);
-        }
-        throw new AssertionError("This method should be called only for increment and decrement operators");
+    private boolean isPrefix(JetUnaryExpression expression) {
+        return (expression instanceof JetPrefixExpression);
     }
+
+
 }

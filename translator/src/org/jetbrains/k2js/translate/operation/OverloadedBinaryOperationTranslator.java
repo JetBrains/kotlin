@@ -25,7 +25,7 @@ public final class OverloadedBinaryOperationTranslator extends BinaryOperationTr
     private OverloadedBinaryOperationTranslator(@NotNull JetBinaryExpression expression,
                                                 @NotNull TranslationContext context) {
         super(expression, context);
-        JsNameRef overloadedOperationReference = getOverloadedOperationReference(expression.getOperationReference());
+        JsNameRef overloadedOperationReference = getOverloadedOperationReference(expression, context);
         assert overloadedOperationReference != null;
         this.operationReference = overloadedOperationReference;
     }

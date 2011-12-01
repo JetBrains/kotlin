@@ -309,6 +309,13 @@ public class AstUtil {
         throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
     }
 
+    //TODO: look for should-be-usages
+    public static JsNameRef qualified(JsName selector, JsExpression qualifier) {
+        JsNameRef reference = selector.makeRef();
+        AstUtil.setQualifier(reference, qualifier);
+        return reference;
+    }
+
     public static JsBinaryOperation equals(JsExpression arg1, JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2);
     }

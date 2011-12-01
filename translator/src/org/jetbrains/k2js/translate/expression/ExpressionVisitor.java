@@ -14,6 +14,7 @@ import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.OperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
+import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -108,24 +109,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitCallExpression(JetCallExpression expression, TranslationContext context) {
-        JsExpression callee = translateCallee(expression, context);
-        List<JsExpression> arguments = translateArgumentList(expression.getValueArguments(), context);
-        if (isConstructorInvocation(context, expression)) {
-            JsNew constructorCall = new JsNew(callee);
-            constructorCall.setArguments(arguments);
-            return constructorCall;
-        }
-        return AstUtil.newInvocation(callee, arguments);
-    }
-
-    @NotNull
-    private JsExpression translateCallee(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
-        JetExpression callee = expression.getCalleeExpression();
-        if (callee == null) {
-            throw new AssertionError("Call expression with no callee encountered!");
-        }
-        return translateAsExpression(callee, context);
+    public JsNode visitCallExpression(@NotNull JetCallExpression expression,
+                                      @NotNull TranslationContext context) {
+        return CallTranslator.translate(expression, context);
     }
 
     @Override

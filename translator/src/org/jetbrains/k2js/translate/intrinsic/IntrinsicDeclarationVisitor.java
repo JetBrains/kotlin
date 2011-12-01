@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -2,11 +2,11 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -38,10 +38,9 @@ public class ReferenceTranslator extends AbstractTranslator {
     @NotNull
     //TODO: make this process simpler and clearer
     public JsExpression translateSimpleName() {
-        tryResolveAsPropertyAccess();
-        tryResolveAsThisQualifiedExpression();
         tryResolveAsAliasReference();
-        tryResolveAsGlobalReference();
+        tryResolveAsPropertyAccess();
+        tryResolveAsImplicitlyQualifiedExpression();
         tryResolveAsLocalReference();
         if (result != null) {
             return result;
@@ -49,7 +48,8 @@ public class ReferenceTranslator extends AbstractTranslator {
         throw new AssertionError("Undefined name in this scope: " + simpleName.getReferencedName());
     }
 
-    private void tryResolveAsThisQualifiedExpression() {
+    //TODO: refactor
+    private void tryResolveAsImplicitlyQualifiedExpression() {
         if (alreadyResolved()) return;
 
         DeclarationDescriptor referencedDescriptor =
@@ -59,24 +59,24 @@ public class ReferenceTranslator extends AbstractTranslator {
         if (!context().isDeclared(referencedDescriptor)) return;
 
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
+        JsExpression implicitReceiver = getImplicitReceiver(referencedDescriptor, context());
 
-        if (!requiresThisQualifier(simpleName, referencedName)) return;
+        if (implicitReceiver == null) return;
 
-        if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
-            result = TranslationUtils.getThisQualifiedNameReference(context(), referencedName);
-        }
-        if (BindingUtils.isOwnedByNamespace(referencedDescriptor)) {
-            result = TranslationUtils.getQualifiedReference(context(), referencedDescriptor);
-        }
+        result = AstUtil.qualified(referencedName, implicitReceiver);
     }
 
-    private boolean requiresThisQualifier(@NotNull JetSimpleNameExpression expression,
-                                          @NotNull JsName referencedName) {
+    @Nullable
+    public static JsExpression getImplicitReceiver(@NotNull DeclarationDescriptor referencedDescriptor,
+                                                   @NotNull TranslationContext context) {
+        if (!context.isDeclared(referencedDescriptor)) return null;
 
-        JsName name = context().enclosingScope().findExistingName(referencedName.getIdent());
-        boolean isClassMember = context().classScope().ownsName(name);
-        boolean isBackingFieldAccess = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-        return (isBackingFieldAccess || isClassMember);
+        if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
+            return TranslationUtils.getThisQualifier(context);
+        }
+        if (!BindingUtils.isOwnedByNamespace(referencedDescriptor)) return null;
+
+        return context.declarations().getQualifier(referencedDescriptor);
     }
 
     private void tryResolveAsAliasReference() {
@@ -102,18 +102,6 @@ public class ReferenceTranslator extends AbstractTranslator {
         if (!PropertyAccessTranslator.canBePropertyGetterCall(simpleName, context())) return;
 
         result = PropertyAccessTranslator.translateAsPropertyGetterCall(simpleName, context());
-    }
-
-    private void tryResolveAsGlobalReference() {
-        if (alreadyResolved()) return;
-
-        DeclarationDescriptor referencedDescriptor =
-                BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), simpleName);
-
-        if (referencedDescriptor == null) return;
-        if (!context().isDeclared(referencedDescriptor)) return;
-
-        result = TranslationUtils.getQualifiedReference(context(), referencedDescriptor);
     }
 
     private void tryResolveAsLocalReference() {

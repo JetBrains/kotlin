@@ -4,11 +4,14 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
+
 
 /**
  * @author Talanov Pavel
@@ -29,26 +32,16 @@ public abstract class BinaryOperationTranslator extends OperationTranslator {
         super(context);
         this.expression = expression;
         this.isPropertyOnTheLeft = isPropertyAccess(expression.getLeft());
-        this.isVariableReassignment = isVariableReassignment(expression);
+        this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
 
-        this.right = translateRightExpression();
+        this.right = translateRightExpression(context(), expression);
         //TODO: decide whether it is harmful to possibly translateNamespace left expression more than once
-        this.left = translateLeftExpression();
+        this.left = translateLeftExpression(context(), expression);
     }
 
     @NotNull
     abstract protected JsExpression translate();
 
-    private JsExpression translateLeftExpression() {
-        return Translation.translateAsExpression(expression.getLeft(), context());
-    }
-
-    @NotNull
-    private JsExpression translateRightExpression() {
-        JetExpression rightExpression = expression.getRight();
-        assert rightExpression != null : "Binary expression should have a right expression";
-        return Translation.translateAsExpression(rightExpression, context());
-    }
 
     @NotNull
     protected JetToken getOperationToken() {
