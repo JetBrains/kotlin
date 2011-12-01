@@ -21,6 +21,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
 
     public void testWhenFail() throws Exception {
         loadFile();
+//        System.out.println(generateToText());
         Method foo = generateFunction("foo");
         assertThrows(foo, Exception.class, null, new StringBuilder());
     }

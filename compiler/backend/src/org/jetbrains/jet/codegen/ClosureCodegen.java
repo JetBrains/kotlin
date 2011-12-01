@@ -5,8 +5,11 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -123,7 +126,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return answer;
     }
 
-    private void generateConstInstance(JetFunctionLiteralExpression fun) {
+    private void generateConstInstance(PsiElement fun) {
         String classDescr = "L" + name + ";";
         cv.newField(fun, ACC_PRIVATE | ACC_STATIC, "$instance", classDescr, null, null);
 
@@ -149,7 +152,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private boolean generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetFunctionLiteral body) {
+    private boolean generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
         int arity = funDescriptor.getValueParameters().size();
 
         ClassDescriptorImpl function = new ClassDescriptorImpl(
@@ -167,7 +170,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return closureContext.outerWasUsed;
     }
 
-    private void generateBridge(String className, FunctionDescriptor funDescriptor, JetFunctionLiteralExpression fun, ClassBuilder cv) {
+    private void generateBridge(String className, FunctionDescriptor funDescriptor, JetExpression fun, ClassBuilder cv) {
         final Method bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = invokeSignature(funDescriptor);
 
@@ -207,7 +210,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private Method generateConstructor(String funClass, JetFunctionLiteralExpression fun) {
+    private Method generateConstructor(String funClass, PsiElement fun) {
         int argCount = captureThis ? 1 : 0;
         argCount += (captureReceiver != null ? 1 : 0);
 
@@ -294,7 +297,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         signatureWriter.visitTypeArgument(variance);
 
         final JetTypeMapper typeMapper = state.getTypeMapper();
-        final Type rawRetType = typeMapper.boxType(typeMapper.mapType(type));
+        final Type rawRetType = JetTypeMapper.boxType(typeMapper.mapType(type));
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();
     }
