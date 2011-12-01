@@ -125,20 +125,31 @@ public class TypeSubstitutor {
     private JetType unsafeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) throws SubstitutionException {
         if (ErrorUtils.isErrorType(type)) return type;
 
-        TypeConstructor constructor = type.getConstructor();
-        TypeProjection value = substitution.get(constructor);
+        TypeProjection value = getValueWithCorrectNullability(substitution, type);
         if (value != null) {
+            TypeConstructor constructor = type.getConstructor();
             assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            return TypeUtils.makeNullableIfNeeded(substitutionResult((TypeParameterDescriptor) constructor.getDeclarationDescriptor(), howThisTypeIsUsed, Variance.INVARIANT, value).getType(), type.isNullable());
+            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) constructor.getDeclarationDescriptor();
 
-//            if (!allows(howThisTypeIsUsed, value.getProjectionKind())) {
-//                throw new SubstitutionException("!!" + value.toString());
-//            }
-//            return value.getType();
+            TypeProjection result = substitutionResult(typeParameterDescriptor, howThisTypeIsUsed, Variance.INVARIANT, value);
+
+            return TypeUtils.makeNullableIfNeeded(result.getType(), type.isNullable());
         }
 
         return specializeType(type, howThisTypeIsUsed);
+    }
+
+    private TypeProjection getValueWithCorrectNullability(TypeSubstitution substitution, JetType type) {
+        TypeProjection typeProjection = substitution.get(type.getConstructor());
+        if (typeProjection == null) return null;
+
+        return type.isNullable() ? makeNullableProjection(typeProjection) : typeProjection;
+    }
+
+    @NotNull
+    private static TypeProjection makeNullableProjection(@NotNull TypeProjection value) {
+        return new TypeProjection(value.getProjectionKind(), TypeUtils.makeNullable(value.getType()));
     }
 
     private JetType specializeType(JetType subjectType, Variance callSiteVariance) throws SubstitutionException {
@@ -178,7 +189,7 @@ public class TypeSubstitutor {
         Variance effectiveProjectionKind = asymmetricOr(passedProjectionKind, parameterVariance);
         Variance effectiveContextVariance = contextCallSiteVariance.superpose(effectiveProjectionKind);
 
-        TypeProjection projectionValue = substitutionContext.get(typeToSubstituteIn.getConstructor());
+        TypeProjection projectionValue = getValueWithCorrectNullability(substitutionContext, typeToSubstituteIn);
         if (projectionValue != null) {
             assert typeToSubstituteIn.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 

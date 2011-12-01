@@ -8,6 +8,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
+import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -224,7 +226,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean equate(TypeValue other) {
             if (other instanceof KnownType) {
                 KnownType knownType = (KnownType) other;
-                return TypeUtils.equalTypes(type, knownType.getType());
+                return constraintExpander.equalTypes(type, knownType.getType());
             }
             return other.equate(this);
         }
@@ -234,16 +236,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private final Map<TypeParameterDescriptor, UnknownType> unknownTypes = Maps.newHashMap();
     private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
 
-    private static final class TypeConstraintBuilderAdapter implements JetTypeChecker.TypingConstraintBuilder {
-        private final JetTypeChecker.TypingConstraintBuilder delegate;
+    private static final class TypeConstraintBuilderAdapter implements TypingConstraints {
+        private final TypingConstraints delegate;
 
-        private TypeConstraintBuilderAdapter(JetTypeChecker.TypingConstraintBuilder delegate) {
+        private TypeConstraintBuilderAdapter(TypingConstraints delegate) {
             this.delegate = delegate;
         }
 
         @Override
-        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b) {
-            boolean result = delegate.assertEqualTypes(a, b);
+        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
+            boolean result = delegate.assertEqualTypes(a, b, typeCheckingProcedure);
             if (!result) {
                 println("-- Failed to equate " + a + " and " + b);
             }
@@ -251,8 +253,17 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         @Override
-        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype) {
-            boolean result = delegate.assertSubtype(subtype, supertype);
+        public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+            boolean result = delegate.assertEqualTypeConstructors(a, b);
+            if (!result) {
+                println("-- Type constructors are not equal: " + a + " and " + b);
+            }
+            return result;
+        }
+
+        @Override
+        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
+            boolean result = delegate.assertSubtype(subtype, supertype, typeCheckingProcedure);
             if (!result) {
                 println("-- " + subtype + " can't be a subtype of " + supertype);
             }
@@ -269,9 +280,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
     }
     
-    private final JetTypeChecker.TypeCheckingProcedure constraintExpander = new JetTypeChecker.TypeCheckingProcedure(new TypeConstraintBuilderAdapter(new JetTypeChecker.TypingConstraintBuilder() {
+    private final TypeCheckingProcedure constraintExpander = new TypeCheckingProcedure(new TypeConstraintBuilderAdapter(new TypingConstraints() {
         @Override
-        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b) {
+        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
             TypeValue aValue = getTypeValueFor(a);
             TypeValue bValue = getTypeValueFor(b);
 
@@ -279,7 +290,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         @Override
-        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype) {
+        public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+            return a.equals(b)
+                || unknownTypes.containsKey(a.getDeclarationDescriptor())
+                || unknownTypes.containsKey(b.getDeclarationDescriptor());
+        }
+
+        @Override
+        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
             TypeValue subtypeValue = getTypeValueFor(subtype);
             TypeValue supertypeValue = getTypeValueFor(supertype);
 
@@ -306,7 +324,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return subtypeValue instanceof UnknownType || supertypeValue instanceof UnknownType;
         }
 
-    }));
+    }))
+    ;
 
     public ConstraintSystemImpl() {}
 
@@ -427,6 +446,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         // TODO : check that all bounds are respected by solutions:
         //  we have set some of them from equality constraints with known types
         //  and thus the bounds may be violated if some of the constraints conflict
+        
+        println("====================================");
+        println("");
+        println("");
 
         return solution;
     }
@@ -566,6 +589,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private static void println(String message) {
-        System.out.println(message);
+//        System.out.println(message);
     }
 }
