@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
  * @author Talanov Pavel
@@ -20,7 +19,6 @@ public final class UnaryOperationTranslator {
         if (IncrementTranslator.isIncrement(expression)) {
             return IncrementTranslator.translate(expression, context);
         }
-        assert TranslationUtils.isIntrinsicOperation(context, expression);
         return CallTranslator.translate(expression, context);
     }
 }

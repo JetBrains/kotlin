@@ -14,7 +14,6 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
@@ -69,21 +68,23 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         if (AssignmentTranslator.isAssignmentOperator(expression)) {
             return AssignmentTranslator.translate(expression, context());
         }
-        if (operationDescriptor == null) {
-            return translateAsUnOverloadableBinaryOperation();
+        if (CompareToTranslator.isCompareToCall(expression, context())) {
+            return CompareToTranslator.translate(expression, context());
         }
         if (isEqualsCall()) {
             return translateAsEqualsCall();
         }
-        if (isCompareToCall()) {
-            return translateAsCompareToCall();
+        if (operationDescriptor == null) {
+            return translateAsUnOverloadableBinaryOperation();
         }
         return CallTranslator.translate(expression, context());
     }
 
     private boolean isEqualsCall() {
         //TODO: add descriptor is equals utils
-        assert operationDescriptor != null;
+        if (operationDescriptor == null) {
+            return false;
+        }
         boolean isEquals = operationDescriptor.getName().equals("equals");
         boolean isIntrinsic = context().intrinsics().hasDescriptor(operationDescriptor);
         return isEquals && isIntrinsic;
@@ -98,21 +99,6 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         JsExpression left = translateLeftExpression(context(), expression);
         JsExpression right = translateRightExpression(context(), expression);
         return intrinsic.apply(left, Arrays.asList(right), context());
-    }
-
-    private boolean isCompareToCall() {
-        DeclarationDescriptor operationDescriptor = getOperationDescriptor(expression, context());
-        return (operationDescriptor.getName().equals("compareTo")
-                && (context().intrinsics().hasDescriptor(operationDescriptor)));
-    }
-
-    @NotNull
-    private JsExpression translateAsCompareToCall() {
-        Intrinsic intrinsic = context().intrinsics().
-                getIntrinsic(getOperationDescriptor(expression, context()));
-        ((CompareToIntrinsic) intrinsic).setComparisonToken((JetToken) expression.getOperationToken());
-        return intrinsic.apply(translateLeftExpression(context(), expression),
-                Arrays.asList(translateRightExpression(context(), expression)), context());
     }
 
     @NotNull

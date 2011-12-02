@@ -1,16 +1,14 @@
 package org.jetbrains.k2js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
 /**
  * @author Talanov Pavel
@@ -41,31 +39,6 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     @Override
     @NotNull
     protected JsExpression translate() {
-        if (isCompareTo()) {
-            return asCompareToOverload();
-        }
-        return asOverloadedMethodCall();
-    }
-
-    @NotNull
-    private JsExpression asCompareToOverload() {
-        JetToken operationToken = getOperationToken(expression);
-        assert (OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken));
-        JsNumberLiteral zeroLiteral = program().getNumberLiteral(0);
-        JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(operationToken);
-        return new JsBinaryOperation(correspondingOperator, overloadedMethodInvocation(), zeroLiteral);
-    }
-
-    private boolean isCompareTo() {
-        //util
-        JetToken operationToken = getOperationToken(expression);
-        String nameForOperationSymbol = OperatorConventions.getNameForOperationSymbol(operationToken);
-        assert nameForOperationSymbol != null : "Must have a name for overloaded operator";
-        return (nameForOperationSymbol.equals("compareTo"));
-    }
-
-    @NotNull
-    private JsExpression asOverloadedMethodCall() {
         if (isVariableReassignment) {
             return reassignment();
         }
