@@ -100,7 +100,7 @@ public class BodyResolver {
         final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
-                : getInnerScopeForConstructor(primaryConstructor);
+                : FunctionDescriptorUtil.getFunctionInnerScope(descriptor.getScopeForSupertypeResolution(), primaryConstructor, traceForConstructors);
         final ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
@@ -267,10 +267,10 @@ public class BodyResolver {
         if (jetClassOrObject.hasPrimaryConstructor()) {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
-            final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor);
+            final JetScope scopeForInitializers = classDescriptor.getScopeForInitializers();
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
+                typeInferrer.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
         }
         else {
@@ -285,15 +285,19 @@ public class BodyResolver {
             JetSecondaryConstructor constructor = entry.getKey();
             ConstructorDescriptor descriptor = entry.getValue();
 
-            resolveSecondaryConstructorBody(constructor, descriptor, ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getScopeForMemberResolution());
+            resolveSecondaryConstructorBody(constructor, descriptor);
 
             assert descriptor.getReturnType() != null;
         }
     }
 
-    private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
+    private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor) {
         if (!context.completeAnalysisNeeded(declaration)) return;
-        final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor);
+        MutableClassDescriptor classDescriptor = (MutableClassDescriptor) descriptor.getContainingDeclaration();
+        final JetScope scopeForSupertypeInitializers = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForSupertypeResolution(), descriptor, traceForConstructors);
+        //contains only constructor parameters
+        final JetScope scopeForConstructorBody = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForInitializers(), descriptor, traceForConstructors);
+        //contains members & backing fields
 
         final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
 
@@ -313,8 +317,7 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            callResolver.resolveCall(context.getTrace(), functionInnerScope,
-                                                                                      CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
+                            callResolver.resolveCall(context.getTrace(), scopeForSupertypeInitializers, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                         }
                     }
 
@@ -325,7 +328,7 @@ public class BodyResolver {
                         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
 
                         callResolver.resolveCall(context.getTrace(),
-                                functionInnerScope,
+                                scopeForSupertypeInitializers,
                                 CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
@@ -357,18 +360,10 @@ public class BodyResolver {
         }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
-            //context.getDescriptorResolver().computeFlowData(declaration, bodyExpression);
-            //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(declaration, bodyExpression);
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
 
-            typeInferrer.checkFunctionReturnType(functionInnerScope, declaration, JetStandardClasses.getUnitType());
+            typeInferrer.checkFunctionReturnType(scopeForConstructorBody, declaration, JetStandardClasses.getUnitType());
         }
-    }
-
-    @NotNull
-    private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor) {
-        MutableClassDescriptor mutableClassDescriptor = (MutableClassDescriptor) descriptor.getContainingDeclaration();
-        return mutableClassDescriptor.getScopeForConstructor(descriptor);
     }
 
     private void resolvePropertyDeclarationBodies() {

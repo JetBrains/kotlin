@@ -15,7 +15,7 @@ public interface WritableScope extends JetScope {
         READING,
     }
 
-    void changeLockLevel(LockLevel lockLevel);
+    WritableScope changeLockLevel(LockLevel lockLevel);
 
     void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor);
 

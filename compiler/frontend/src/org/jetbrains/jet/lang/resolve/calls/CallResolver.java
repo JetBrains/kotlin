@@ -161,6 +161,9 @@ public class CallResolver {
             else if (calleeExpression instanceof JetThisReferenceExpression) {
                 functionReference = (JetThisReferenceExpression) calleeExpression;
                 DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
+                if (containingDeclaration instanceof ConstructorDescriptor) {
+                    containingDeclaration = containingDeclaration.getContainingDeclaration();
+                }
                 assert containingDeclaration instanceof ClassDescriptor;
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
