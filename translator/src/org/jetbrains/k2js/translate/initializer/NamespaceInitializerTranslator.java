@@ -5,7 +5,7 @@ import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
  * @author Talanov Pavel

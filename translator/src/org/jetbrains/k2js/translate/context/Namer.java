@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate.utils;
+package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;

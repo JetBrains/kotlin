@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
+import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,15 +58,17 @@ public final class Intrinsics {
     private void addUnaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
         JetToken token = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(functionName);
-        if (token != null) {
+        boolean isUnary = !DescriptorUtils.hasParameters(descriptor);
+        if (isUnary && (token != null)) {
             descriptorToIntrinsicMap.put(descriptor, UnaryOperationIntrinsic.newInstance(token));
         }
     }
 
     private void addBinaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
+        boolean isUnary = !DescriptorUtils.hasParameters(descriptor);
         JetToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(functionName);
-        if (token != null && OperatorTable.hasCorrespondingBinaryOperator(token)) {
+        if (token != null && OperatorTable.hasCorrespondingBinaryOperator(token) && (!isUnary)) {
             descriptorToIntrinsicMap.put(descriptor, BinaryOperationIntrinsic.newInstance(token));
         }
     }

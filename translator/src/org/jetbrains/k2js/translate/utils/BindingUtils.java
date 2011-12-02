@@ -247,4 +247,18 @@ public final class BindingUtils {
         return result;
     }
 
+
+    @Nullable
+    public static FunctionDescriptor getFunctionDescriptorForOperationExpression(@NotNull BindingContext context,
+                                                                                 @NotNull JetOperationExpression expression) {
+        DeclarationDescriptor descriptorForReferenceExpression = getDescriptorForReferenceExpression
+                (context, expression.getOperation());
+
+        if (descriptorForReferenceExpression == null) return null;
+
+        assert descriptorForReferenceExpression instanceof FunctionDescriptor
+                : "Operation should resolve to function descriptor.";
+        return (FunctionDescriptor) descriptorForReferenceExpression;
+    }
+
 }

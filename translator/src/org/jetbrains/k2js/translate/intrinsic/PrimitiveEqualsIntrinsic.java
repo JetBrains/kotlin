@@ -3,7 +3,7 @@ package org.jetbrains.k2js.translate.intrinsic;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 

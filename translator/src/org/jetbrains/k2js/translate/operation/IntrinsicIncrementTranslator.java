@@ -5,49 +5,58 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.reference.ReferenceAccessTranslator;
+
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+
 
 /**
  * @author Talanov Pavel
  */
-public final class IntrinsicUnaryOperationTranslator extends UnaryOperationTranslator {
+public final class IntrinsicIncrementTranslator extends IncrementTranslator {
 
 
     @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression expression,
                                          @NotNull TranslationContext context) {
-        return (new IntrinsicUnaryOperationTranslator(expression, context))
+        return (new IntrinsicIncrementTranslator(expression, context))
                 .translate();
     }
 
-    protected IntrinsicUnaryOperationTranslator(@NotNull JetUnaryExpression expression,
-                                                @NotNull TranslationContext context) {
+    protected IntrinsicIncrementTranslator(@NotNull JetUnaryExpression expression,
+                                           @NotNull TranslationContext context) {
         super(expression, context);
     }
 
     @Override
     @NotNull
     protected JsExpression translate() {
-        if (isPropertyAccess) {
-            return translateAsMethodCall();
+        if (isPrimitiveExpressionIncrement()) {
+            return jsUnaryExpression();
         }
-        return jsUnaryExpression();
+        return translateAsMethodCall();
+    }
+
+    private boolean isPrimitiveExpressionIncrement() {
+        return accessTranslator instanceof ReferenceAccessTranslator;
     }
 
     @NotNull
     private JsExpression jsUnaryExpression() {
-        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken());
+        JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
+        JsExpression getExpression = accessTranslator.translateAsGet();
         if (isPrefix) {
-            return new JsPrefixOperation(operator, baseExpression);
+            return new JsPrefixOperation(operator, getExpression);
         } else {
-            return new JsPostfixOperation(operator, baseExpression);
+            return new JsPostfixOperation(operator, getExpression);
         }
     }
 
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return unaryAsBinary(getOperationToken(), receiver);
+        return unaryAsBinary(getOperationToken(expression), receiver);
     }
 
     public JsBinaryOperation unaryAsBinary(@NotNull JetToken token, @NotNull JsExpression expression) {

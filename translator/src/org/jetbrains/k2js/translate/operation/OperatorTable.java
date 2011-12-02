@@ -1,10 +1,7 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -19,7 +16,6 @@ public final class OperatorTable {
 
     private static Map<JetToken, JsBinaryOperator> binaryOperatorsMap = new HashMap<JetToken, JsBinaryOperator>();
     private static Map<JetToken, JsUnaryOperator> unaryOperatorsMap = new HashMap<JetToken, JsUnaryOperator>();
-    private static Map<JetToken, JsNameRef> operatorToFunctionNameReference = new HashMap<JetToken, JsNameRef>();
 
     static {
         unaryOperatorsMap.put(JetTokens.PLUSPLUS, JsUnaryOperator.INC);     //++
@@ -51,24 +47,9 @@ public final class OperatorTable {
         binaryOperatorsMap.put(JetTokens.PERCEQ, JsBinaryOperator.ASG_MOD);
     }
 
-    //TODO: resolve
-    static {
-        //operatorToFunctionNameReference.put(JetTokens.IS_KEYWORD, Namer.isOperationReference());
-    }
 
     public static boolean hasCorrespondingBinaryOperator(@NotNull JetToken token) {
         return binaryOperatorsMap.containsKey(token);
-    }
-
-    public static boolean hasCorrespondingFunctionInvocation(@NotNull JetToken token) {
-        return operatorToFunctionNameReference.containsKey(token);
-    }
-
-    @NotNull
-    static public JsInvocation getCorrespondingFunctionInvocation(@NotNull JetToken token) {
-        JsNameRef functionReference = operatorToFunctionNameReference.get(token);
-        assert functionReference != null : "Token should represent a function call!";
-        return AstUtil.newInvocation(functionReference);
     }
 
     @NotNull

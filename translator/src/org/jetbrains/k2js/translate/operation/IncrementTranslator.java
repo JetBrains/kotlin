@@ -1,0 +1,152 @@
+package org.jetbrains.k2js.translate.operation;
+
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPrefixExpression;
+import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.reference.AccessTranslator;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
+
+/**
+ * @author Talanov Pavel
+ */
+//TODO: reexamine class, see if can be clearer
+public abstract class IncrementTranslator extends AbstractTranslator {
+
+    public static boolean isIncrement(@NotNull JetUnaryExpression expression) {
+        return OperatorConventions.INCREMENT_OPERATIONS.contains(getOperationToken(expression));
+    }
+
+    @NotNull
+    public static JsExpression translate(@NotNull JetUnaryExpression expression,
+                                         @NotNull TranslationContext context) {
+        if (isIntrinsicOperation(context, expression)) {
+            return IntrinsicIncrementTranslator.translate(expression, context);
+        }
+        return OverloadedIncrementTranslator.translate(expression, context);
+    }
+
+    @NotNull
+    protected final JetUnaryExpression expression;
+    @NotNull
+    protected final AccessTranslator accessTranslator;
+    protected final boolean isPrefix;
+    private final boolean isVariableReassignment;
+    private final boolean isStatement;
+
+    protected IncrementTranslator(@NotNull JetUnaryExpression expression,
+                                  @NotNull TranslationContext context) {
+        super(context);
+        this.expression = expression;
+        this.isPrefix = isPrefix(expression);
+        this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
+        this.isStatement = isStatement(context().bindingContext(), expression);
+        //TODO: use util method
+        JetExpression baseExpression = expression.getBaseExpression();
+        assert baseExpression != null;
+        this.accessTranslator = AccessTranslator.getAccessTranslator(baseExpression, context());
+    }
+
+    @NotNull
+    protected abstract JsExpression translate();
+
+    @NotNull
+    protected JsExpression translateAsMethodCall() {
+        if (isStatement || isPrefix) {
+            return asPrefix();
+        }
+        if (isVariableReassignment) {
+            return asPostfixWithReassignment();
+        } else {
+            return asPostfixWithNoReassignment();
+        }
+    }
+
+    @NotNull
+    private JsExpression asPrefix() {
+        JsExpression getExpression = accessTranslator.translateAsGet();
+        if (isVariableReassignment) {
+            return variableReassignment(getExpression);
+        }
+        return operationExpression(getExpression);
+    }
+
+    //TODO: decide if this expression can be optimised in case of direct access (not property)
+    @NotNull
+    private JsExpression asPostfixWithReassignment() {
+        // code fragment: expr(a++)
+        // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
+        TemporaryVariable t1 = declareTemporary(accessTranslator.translateAsGet());
+        TemporaryVariable t2 = declareTemporary(t1.nameReference());
+        JsExpression variableReassignment = variableReassignment(t1.nameReference());
+        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
+                variableReassignment, t2.nameReference());
+    }
+
+    @NotNull
+    private JsExpression asPostfixWithNoReassignment() {
+        // code fragment: expr(a++)
+        // generate: expr( (t1 = a, t2 = t1, t2.inc(), t1) )
+        TemporaryVariable t1 = declareTemporary(accessTranslator.translateAsGet());
+        TemporaryVariable t2 = declareTemporary(t1.nameReference());
+        JsExpression methodCall = operationExpression(t2.nameReference());
+        JsExpression returnedValue = t1.nameReference();
+        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
+    }
+
+    @NotNull
+    private JsExpression variableReassignment(@NotNull JsExpression toCallMethodUpon) {
+        JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
+        return accessTranslator.translateAsSet(overloadedMethodCallOnPropertyGetter);
+    }
+
+    @NotNull
+    abstract JsExpression operationExpression(@NotNull JsExpression receiver);
+
+
+    private boolean isPrefix(@NotNull JetUnaryExpression expression) {
+        return (expression instanceof JetPrefixExpression);
+    }
+
+    //TODO: consider moving into context
+    protected final class TemporaryVariable {
+
+        @NotNull
+        private final JsExpression assignmentExpression;
+        @NotNull
+        private final JsName variableName;
+
+        private TemporaryVariable(@NotNull JsExpression initExpression) {
+            this.variableName = context().enclosingScope().declareTemporary();
+            this.assignmentExpression = AstUtil.newAssignment(variableName.makeRef(), initExpression);
+        }
+
+        @NotNull
+        public JsNameRef nameReference() {
+            return variableName.makeRef();
+        }
+
+        @NotNull
+        public JsExpression assignmentExpression() {
+            return assignmentExpression;
+        }
+    }
+
+    @NotNull
+    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
+        return new TemporaryVariable(initExpression);
+    }
+
+
+}

@@ -9,8 +9,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.general.TranslationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -214,4 +215,15 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(rightExpression, context);
     }
 
+    //TODO: check function with same name
+    public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
+                                               @NotNull JetOperationExpression expression) {
+        FunctionDescriptor operationDescriptor =
+                BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+
+        if (operationDescriptor == null) return true;
+        if (context.intrinsics().hasDescriptor(operationDescriptor)) return true;
+
+        return false;
+    }
 }

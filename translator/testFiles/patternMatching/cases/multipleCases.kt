@@ -6,12 +6,12 @@ fun box() : Int {
   var z = 0
   when(c) {
     is 5, is 3 => z++;
-    else => z = -1000;
+    else => {z = -1000;}
   }
 
   when(d) {
     is 5, is 3 => z++;
-    else => z = -1000;
+    else => {z = -1000;}
   }
   return z
 }

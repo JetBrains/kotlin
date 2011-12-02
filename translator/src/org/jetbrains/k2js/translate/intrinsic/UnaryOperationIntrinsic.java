@@ -5,7 +5,7 @@ import com.google.dart.compiler.backend.js.ast.JsPrefixOperation;
 import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.k2js.translate.general.TranslationContext;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 
 import java.util.List;

@@ -8,12 +8,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.general.TranslationContext;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
-import org.jetbrains.k2js.translate.operation.OperationTranslator;
+import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
+import org.jetbrains.k2js.translate.operation.IncrementTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
-import org.jetbrains.k2js.translate.reference.ArrayAccessTranslator;
+import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
@@ -95,7 +96,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBinaryExpression(@NotNull JetBinaryExpression expression,
                                         @NotNull TranslationContext context) {
-        return OperationTranslator.translate(expression, context);
+        return BinaryOperationTranslator.translate(expression, context);
     }
 
     @Override
@@ -302,7 +303,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitPostfixExpression(@NotNull JetPostfixExpression expression,
                                          @NotNull TranslationContext context) {
-        return UnaryOperationTranslator.translate(expression, context);
+        return IncrementTranslator.translate(expression, context);
     }
 
     @Override
@@ -372,9 +373,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsInvocation visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression,
-                                                   @NotNull TranslationContext context) {
-        return ArrayAccessTranslator.translateAsArrayGetterCall(expression, context);
+    public JsNode visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression,
+                                             @NotNull TranslationContext context) {
+        return AccessTranslator.translateAsGet(expression, context);
     }
 
 
