@@ -11,6 +11,7 @@ import org.jetbrains.k2js.translate.reference.AccessTranslator;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isAssignment;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
@@ -22,7 +23,7 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     public static boolean isAssignmentOperator(JetBinaryExpression expression) {
         JetToken operationToken = getOperationToken(expression);
         return (OperatorConventions.ASSIGNMENT_OPERATIONS.keySet().contains(operationToken)
-                || OperatorTable.isAssignment(operationToken));
+                || isAssignment(operationToken));
     }
 
     @NotNull
@@ -49,8 +50,4 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         this.accessTranslator = AccessTranslator.getAccessTranslator(expression.getLeft(), context());
         this.right = translateRightExpression(context(), expression);
     }
-
-    @NotNull
-    abstract protected JsExpression translate();
-
 }

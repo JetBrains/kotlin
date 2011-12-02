@@ -9,6 +9,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.ReferenceAccessTranslator;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isPrefix;
 
 
 /**
@@ -46,7 +47,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     private JsExpression jsUnaryExpression() {
         JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
         JsExpression getExpression = accessTranslator.translateAsGet();
-        if (isPrefix) {
+        if (isPrefix(expression)) {
             return new JsPrefixOperation(operator, getExpression);
         } else {
             return new JsPostfixOperation(operator, getExpression);
@@ -56,16 +57,17 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return unaryAsBinary(getOperationToken(expression), receiver);
+        return unaryAsBinary(receiver);
     }
 
-    public JsBinaryOperation unaryAsBinary(@NotNull JetToken token, @NotNull JsExpression expression) {
+    public JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
         JsNumberLiteral oneLiteral = context().program().getNumberLiteral(1);
+        JetToken token = getOperationToken(expression);
         if (token.equals(JetTokens.PLUSPLUS)) {
-            return new JsBinaryOperation(JsBinaryOperator.ADD, expression, oneLiteral);
+            return new JsBinaryOperation(JsBinaryOperator.ADD, leftExpression, oneLiteral);
         }
         if (token.equals(JetTokens.MINUSMINUS)) {
-            return new JsBinaryOperation(JsBinaryOperator.SUB, expression, oneLiteral);
+            return new JsBinaryOperation(JsBinaryOperator.SUB, leftExpression, oneLiteral);
         }
         throw new AssertionError("This method should be called only for increment and decrement operators");
     }

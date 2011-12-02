@@ -63,8 +63,4 @@ public final class OperatorTable {
         assert JetTokens.OPERATIONS.contains(token) : "Token should represent an operation!";
         return unaryOperatorsMap.get(token);
     }
-
-    static public boolean isAssignment(JetToken token) {
-        return (token == JetTokens.EQ);
-    }
 }

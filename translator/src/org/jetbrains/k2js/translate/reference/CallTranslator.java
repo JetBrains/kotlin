@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForCallExpression;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**

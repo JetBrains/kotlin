@@ -24,7 +24,6 @@ public class BasicClassTest extends TranslationTest {
         testFooBoxIsTrue("methodDeclarationAndCall.kt");
     }
 
-    //TODO: wait for bugfix and implement properties as constructor parameter declaration
     @Test
     public void constructorWithParameter() throws Exception {
         testFooBoxIsTrue("constructorWithParameter.kt");

@@ -5,10 +5,8 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
-import org.jetbrains.jet.lang.psi.JetOperationExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -20,8 +18,8 @@ import org.jetbrains.k2js.translate.reference.CallTranslator;
 
 import java.util.Arrays;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isEquals;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
@@ -31,17 +29,6 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRight
  * @author Talanov Pavel
  */
 public final class BinaryOperationTranslator extends AbstractTranslator {
-
-
-    //TODO: move to utils
-    @NotNull
-    private static DeclarationDescriptor getOperationDescriptor(@NotNull JetOperationExpression expression,
-                                                                @NotNull TranslationContext context) {
-        DeclarationDescriptor descriptorForReferenceExpression = getDescriptorForReferenceExpression
-                (context.bindingContext(), expression.getOperation());
-        assert descriptorForReferenceExpression != null;
-        return descriptorForReferenceExpression;
-    }
 
     @NotNull
     public static JsExpression translate(@NotNull JetBinaryExpression expression,
@@ -68,32 +55,22 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         if (AssignmentTranslator.isAssignmentOperator(expression)) {
             return AssignmentTranslator.translate(expression, context());
         }
+        if (operationDescriptor == null) {
+            return translateAsUnOverloadableBinaryOperation();
+        }
         if (CompareToTranslator.isCompareToCall(expression, context())) {
             return CompareToTranslator.translate(expression, context());
         }
-        if (isEqualsCall()) {
+        if (isEquals(operationDescriptor)) {
             return translateAsEqualsCall();
-        }
-        if (operationDescriptor == null) {
-            return translateAsUnOverloadableBinaryOperation();
         }
         return CallTranslator.translate(expression, context());
     }
 
-    private boolean isEqualsCall() {
-        //TODO: add descriptor is equals utils
-        if (operationDescriptor == null) {
-            return false;
-        }
-        boolean isEquals = operationDescriptor.getName().equals("equals");
-        boolean isIntrinsic = context().intrinsics().hasDescriptor(operationDescriptor);
-        return isEquals && isIntrinsic;
-    }
-
     @NotNull
     private JsExpression translateAsEqualsCall() {
-        Intrinsic intrinsic = context().intrinsics().
-                getIntrinsic(getOperationDescriptor(expression, context()));
+        assert operationDescriptor != null : "Equals operation must resolve to descriptor.";
+        Intrinsic intrinsic = context().intrinsics().getIntrinsic(operationDescriptor);
         //TODO
         ((EqualsIntrinsic) intrinsic).setNegated(expression.getOperationToken().equals(JetTokens.EXCLEQ));
         JsExpression left = translateLeftExpression(context(), expression);

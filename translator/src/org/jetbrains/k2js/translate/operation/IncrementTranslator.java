@@ -6,7 +6,6 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -15,7 +14,7 @@ import org.jetbrains.k2js.translate.reference.AccessTranslator;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
 
 /**
@@ -41,20 +40,14 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     protected final JetUnaryExpression expression;
     @NotNull
     protected final AccessTranslator accessTranslator;
-    protected final boolean isPrefix;
     private final boolean isVariableReassignment;
-    private final boolean isStatement;
 
     protected IncrementTranslator(@NotNull JetUnaryExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        this.isPrefix = isPrefix(expression);
         this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
-        this.isStatement = isStatement(context().bindingContext(), expression);
-        //TODO: use util method
-        JetExpression baseExpression = expression.getBaseExpression();
-        assert baseExpression != null;
+        JetExpression baseExpression = getBaseExpression(expression);
         this.accessTranslator = AccessTranslator.getAccessTranslator(baseExpression, context());
     }
 
@@ -63,7 +56,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
     @NotNull
     protected JsExpression translateAsMethodCall() {
-        if (isStatement || isPrefix) {
+        if (returnValueIgnored() || isPrefix(expression)) {
             return asPrefix();
         }
         if (isVariableReassignment) {
@@ -71,6 +64,10 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         } else {
             return asPostfixWithNoReassignment();
         }
+    }
+
+    private boolean returnValueIgnored() {
+        return isStatement(context().bindingContext(), expression);
     }
 
     @NotNull
@@ -113,11 +110,6 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
     @NotNull
     abstract JsExpression operationExpression(@NotNull JsExpression receiver);
-
-
-    private boolean isPrefix(@NotNull JetUnaryExpression expression) {
-        return (expression instanceof JetPrefixExpression);
-    }
 
     //TODO: consider moving into context
     protected final class TemporaryVariable {

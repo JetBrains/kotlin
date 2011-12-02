@@ -18,6 +18,7 @@ import org.jetbrains.k2js.translate.reference.CallTranslator;
 import java.util.Arrays;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isCompareTo;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
@@ -28,13 +29,12 @@ public final class CompareToTranslator extends AbstractTranslator {
 
     public static boolean isCompareToCall(@NotNull JetBinaryExpression expression,
                                           @NotNull TranslationContext context) {
-        //move to util
         FunctionDescriptor operationDescriptor =
                 getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null) return false;
 
-        return (operationDescriptor.getName().equals("compareTo"));
+        return (isCompareTo(operationDescriptor));
     }
 
     @NotNull
@@ -88,6 +88,4 @@ public final class CompareToTranslator extends AbstractTranslator {
         JsExpression right = translateRightExpression(context(), expression);
         return intrinsic.apply(left, Arrays.asList(right), context());
     }
-
-
 }

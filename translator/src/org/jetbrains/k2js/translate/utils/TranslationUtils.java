@@ -4,7 +4,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -72,7 +71,13 @@ public final class TranslationUtils {
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = getBackingFieldName(descriptor.getName(), context);
-        return getThisQualifiedNameReference(context, backingFieldName);
+        if (BindingUtils.isOwnedByClass(descriptor)) {
+            return getThisQualifiedNameReference(context, backingFieldName);
+        }
+        assert BindingUtils.isOwnedByNamespace(descriptor)
+                : "Only classes and namespaces may own descriptors";
+        JsNameRef qualifier = context.declarations().getQualifier(descriptor);
+        return AstUtil.qualified(backingFieldName, qualifier);
     }
 
     @NotNull
@@ -100,11 +105,6 @@ public final class TranslationUtils {
             jsInitExpression = Translation.translateAsExpression(initializer, context);
         }
         return jsInitExpression;
-    }
-
-    //TODO: move to descriptor UTILS
-    public static boolean isConstructorDescriptor(@NotNull FunctionDescriptor descriptor) {
-        return (descriptor instanceof ConstructorDescriptor);
     }
 
     @NotNull
@@ -168,30 +168,11 @@ public final class TranslationUtils {
         return result;
     }
 
-    public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
-                                               @NotNull JetReferenceExpression expression) {
-        DeclarationDescriptor descriptor =
-                BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
-
-        if (descriptor == null) return true;
-
-        return (context.intrinsics().hasDescriptor(descriptor));
-    }
-
-
     @NotNull
     public static JsExpression translateBaseExpression(@NotNull TranslationContext context,
                                                        @NotNull JetUnaryExpression expression) {
-        JetExpression baseExpression = getBaseExpression(expression);
+        JetExpression baseExpression = PsiUtils.getBaseExpression(expression);
         return Translation.translateAsExpression(baseExpression, context);
-    }
-
-    //TODO: move to psi utils
-    @NotNull
-    public static JetExpression getBaseExpression(@NotNull JetUnaryExpression expression) {
-        JetExpression baseExpression = expression.getBaseExpression();
-        assert baseExpression != null : "Unary expression should have a base expression";
-        return baseExpression;
     }
 
     @NotNull
@@ -215,7 +196,6 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(rightExpression, context);
     }
 
-    //TODO: check function with same name
     public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
                                                @NotNull JetOperationExpression expression) {
         FunctionDescriptor operationDescriptor =

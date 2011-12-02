@@ -102,7 +102,8 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
 
     public void extractAccessor(@Nullable PropertyAccessorDescriptor descriptor, boolean isGetter,
                                 @NotNull String propertyName, @NotNull DeclarationContext context) {
-        assert descriptor != null : "Accessor descriptor should not be null";
+        if (descriptor == null) return;
+
         String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
         declareName(descriptor, context, accessorName);
         declareScope(descriptor, context, (isGetter ? "getter " : "setter ") + propertyName);

@@ -36,7 +36,6 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
         this.operationReference = overloadedOperationReference;
     }
 
-    @Override
     @NotNull
     protected JsExpression translate() {
         if (isVariableReassignment) {
