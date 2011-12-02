@@ -26,7 +26,7 @@ public class JetPsiUtil {
             }
         }
         else if (expression instanceof JetPrefixExpression) {
-            if (JetTokens.LABELS.contains(((JetPrefixExpression) expression).getOperationSign().getReferencedNameElementType())) {
+            if (JetTokens.LABELS.contains(((JetPrefixExpression) expression).getOperationReference().getReferencedNameElementType())) {
                 JetExpression baseExpression = ((JetPrefixExpression) expression).getBaseExpression();
                 if (baseExpression != null) {
                     expression = baseExpression;

@@ -628,7 +628,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return null;
-        JetSimpleNameExpression operationSign = expression.getOperationSign();
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
         if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
             String referencedName = operationSign.getReferencedName();
             referencedName = referencedName == null ? " <?>" : referencedName;
@@ -649,7 +649,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         FunctionDescriptor functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, expression),
-                expression.getOperationSign(),
+                expression.getOperationReference(),
                 name);
 
         if (functionDescriptor == null) return null;

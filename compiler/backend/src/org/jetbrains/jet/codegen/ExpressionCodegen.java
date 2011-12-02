@@ -1830,7 +1830,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitPrefixExpression(JetPrefixExpression expression, StackValue receiver) {
-        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationSign());
+        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         final Callable callable = resolveToCallable(op, false);
         if (callable instanceof IntrinsicMethod) {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
@@ -1847,7 +1847,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitPostfixExpression(JetPostfixExpression expression, StackValue receiver) {
-        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationSign());
+        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();

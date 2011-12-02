@@ -162,7 +162,7 @@ public class CallMaker {
     }
 
     public static Call makeCall(@NotNull ReceiverDescriptor baseAsReceiver, JetUnaryExpression expression) {
-        return makeCall(expression, baseAsReceiver, null, expression.getOperationSign(), Collections.<ValueArgument>emptyList());
+        return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.<ValueArgument>emptyList());
     }
 
     public static Call makeArraySetCall(@NotNull ReceiverDescriptor arrayAsReceiver, JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide) {

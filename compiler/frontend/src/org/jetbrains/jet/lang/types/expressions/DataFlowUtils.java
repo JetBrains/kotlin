@@ -109,7 +109,7 @@ public class DataFlowUtils {
 
             @Override
             public void visitUnaryExpression(JetUnaryExpression expression) {
-                IElementType operationTokenType = expression.getOperationSign().getReferencedNameElementType();
+                IElementType operationTokenType = expression.getOperationReference().getReferencedNameElementType();
                 if (operationTokenType == JetTokens.EXCL) {
                     JetExpression baseExpression = expression.getBaseExpression();
                     if (baseExpression != null) {

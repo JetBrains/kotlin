@@ -25,7 +25,7 @@ public class JetPrefixExpression extends JetUnaryExpression {
 
     @Nullable @IfNotParsed
     public JetExpression getBaseExpression() {
-        PsiElement expression = getOperationSign().getNextSibling();
+        PsiElement expression = getOperationReference().getNextSibling();
         while (expression != null && !(expression instanceof JetExpression)) {
             expression = expression.getNextSibling();
         }

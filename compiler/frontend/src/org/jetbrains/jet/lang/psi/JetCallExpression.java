@@ -65,7 +65,7 @@ public class JetCallExpression extends JetExpression implements JetCallElement {
             }
             else if (psi instanceof JetPrefixExpression) {
                 JetPrefixExpression prefixExpression = (JetPrefixExpression) psi;
-                if (JetTokens.LABELS.contains(prefixExpression.getOperationSign().getReferencedNameElementType())) {
+                if (JetTokens.LABELS.contains(prefixExpression.getOperationReference().getReferencedNameElementType())) {
                     JetExpression labeledExpression = prefixExpression.getBaseExpression();
                     if (labeledExpression instanceof JetFunctionLiteralExpression) {
                         result.add(labeledExpression);

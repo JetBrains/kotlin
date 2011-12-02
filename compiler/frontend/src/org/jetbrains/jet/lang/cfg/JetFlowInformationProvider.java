@@ -286,7 +286,7 @@ public class JetFlowInformationProvider {
                 operationReference = ((JetBinaryExpression) parent).getOperationReference();
             }
             else if (parent instanceof JetUnaryExpression) {
-                operationReference = ((JetUnaryExpression) parent).getOperationSign();
+                operationReference = ((JetUnaryExpression) parent).getOperationReference();
             }
             if (operationReference != null) {
                 DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference);
@@ -471,7 +471,7 @@ public class JetFlowInformationProvider {
                                     }
                                 }
                                 else if (element instanceof JetPostfixExpression) {
-                                    IElementType operationToken = ((JetPostfixExpression) element).getOperationSign().getReferencedNameElementType();
+                                    IElementType operationToken = ((JetPostfixExpression) element).getOperationReference().getReferencedNameElementType();
                                     if (operationToken == JetTokens.PLUSPLUS || operationToken == JetTokens.MINUSMINUS) {
                                         trace.report(Errors.UNUSED_CHANGED_VALUE.on(element, element));
                                     }

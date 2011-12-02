@@ -8,7 +8,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author abreslav
  */
-public abstract class JetUnaryExpression extends JetExpression {
+public abstract class JetUnaryExpression extends JetExpression implements JetOperationExpression {
     public JetUnaryExpression(ASTNode node) {
         super(node);
     }
@@ -16,8 +16,9 @@ public abstract class JetUnaryExpression extends JetExpression {
     @Nullable @IfNotParsed
     public abstract JetExpression getBaseExpression();
 
+    @Override
     @NotNull
-    public JetSimpleNameExpression getOperationSign() {
+    public JetSimpleNameExpression getOperationReference() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 }
