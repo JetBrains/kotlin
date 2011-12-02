@@ -9,7 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -266,10 +266,19 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="FunctionTest.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="FunctionTest.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="51" column="31" selection-start="1193" selection-end="1193" vertical-scroll-proportion="0.8927393">
+                <state line="51" column="31" selection-start="1193" selection-end="1193" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="StandardClassesTest.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="15" column="20" selection-start="311" selection-end="311" vertical-scroll-proportion="0.4047619">
                   <folding />
                 </state>
               </provider>
@@ -395,7 +404,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/intrinsic/Intrinsics.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/multipleCases.kt" />
         <option value="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenValue.kt" />
@@ -411,6 +419,7 @@
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/BindingUtils.java" />
         <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/JavascriptTest.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" />
       </list>
     </option>
   </component>
@@ -1246,7 +1255,7 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="test fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Test fixes." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1259,7 +1268,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Reorganised project structure." />
     <MESSAGE value="Refactored reference provider logic." />
     <MESSAGE value="Got rid of redundant ExpressionTranslator class." />
     <MESSAGE value="Refactoring" />
@@ -1284,6 +1292,7 @@
     <MESSAGE value="imolement most of the intrinsic logic. test fixes to follow" />
     <MESSAGE value="some test fixes" />
     <MESSAGE value="test fixes" />
+    <MESSAGE value="Test fixes." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1293,13 +1302,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/operatorOverloading/out/operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="54" selection-start="989" selection-end="989" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/operation/BinaryOperationTranslator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="67" column="0" selection-start="2980" selection-end="2980" vertical-scroll-proportion="0.0">
@@ -1407,7 +1409,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="31" selection-start="1193" selection-end="1193" vertical-scroll-proportion="0.8927393">
+        <state line="51" column="31" selection-start="1193" selection-end="1193" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="20" selection-start="311" selection-end="311" vertical-scroll-proportion="0.4047619">
           <folding />
         </state>
       </provider>
