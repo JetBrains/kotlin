@@ -27,7 +27,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private final boolean isVar;
     private final ReceiverDescriptor expectedThisObject;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
-    private final Set<PropertyDescriptor> overridingProperties = Sets.newLinkedHashSet();
     private final PropertyDescriptor original;
 
     private ReceiverDescriptor receiver;

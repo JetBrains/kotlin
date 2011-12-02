@@ -74,7 +74,7 @@ public class DeclarationResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
-                    classDescriptor.getScopeForPropertyIntiailizer(), classDescriptor.getScopeForMemberResolution(),
+                    classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),
                     classDescriptor);
 //            processPrimaryConstructor(classDescriptor, jetClass);
 //            for (JetSecondaryConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
@@ -86,7 +86,7 @@ public class DeclarationResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             resolveFunctionAndPropertyHeaders(object.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
-                    classDescriptor.getScopeForPropertyIntiailizer(), classDescriptor.getScopeForMemberResolution(),
+                    classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),
                     classDescriptor);
         }
 

@@ -36,11 +36,12 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     private LockLevel lockLevel = LockLevel.WRITING;
 
     @Override
-    public void changeLockLevel(LockLevel lockLevel) {
+    public WritableScope changeLockLevel(LockLevel lockLevel) {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
             throw new IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel);
         }
         this.lockLevel = lockLevel;
+        return this;
     }
 
     protected void checkMayRead() {
