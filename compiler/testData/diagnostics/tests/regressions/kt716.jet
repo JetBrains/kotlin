@@ -1,4 +1,5 @@
 // KT-716 Type inference failed
+// +JDK
 
 fun <T> typeinfo.TypeInfo<T>.getJavaClass() : java.lang.Class<T> {
     val t : java.lang.Object = this as java.lang.Object
