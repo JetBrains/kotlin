@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Type reference element.
+ * Underlying token is {@link org.jetbrains.jet.JetNodeTypes#TYPE_REFERENCE}
+ *
  * @author max
  */
 public class JetTypeReference extends JetElement {
@@ -34,6 +37,15 @@ public class JetTypeReference extends JetElement {
     @Nullable
     public JetTypeElement getTypeElement() {
         return findChildByClass(JetTypeElement.class);
+    }
+
+    /**
+     * Will return not null for type references with internal user type.
+     * There could be other JetTypeReferences, see parsing of in {@link org.jetbrains.jet.lang.parsing.JetParsing}
+     */
+    @Nullable
+    public JetUserType getUserType() {
+        return findChildByClass(JetUserType.class);
     }
 
     public List<JetAnnotationEntry> getAnnotations() {

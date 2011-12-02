@@ -49,11 +49,20 @@ public class TypeResolver {
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false);
         trace.record(BindingContext.TYPE, typeReference, type);
+
+        final JetUserType jetUserType = typeReference.getUserType();
+        if (jetUserType != null) {
+            final JetSimpleNameExpression referenceExpression = jetUserType.getReferenceExpression();
+            trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, scope);
+        }
+
         return type;
     }
 
     @NotNull
-    private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations, JetTypeElement typeElement, final boolean nullable) {
+    private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations,
+                                       JetTypeElement typeElement, final boolean nullable) {
+
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
             typeElement.accept(new JetVisitorVoid() {
@@ -70,6 +79,7 @@ public class TypeResolver {
                         resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
                         return;
                     }
+
                     if (classifierDescriptor instanceof TypeParameterDescriptor) {
                         TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 

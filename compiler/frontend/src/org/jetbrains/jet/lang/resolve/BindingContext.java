@@ -41,11 +41,15 @@ public interface BindingContext {
     WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice();
+
+    /** A scope where type of expression has been resolved */
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice();
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
     WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice();
+
+    /** Was type of current expression has been already resolved */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice();
     WritableSlice<CallableMemberDescriptor, Boolean> DELEGATED = Slices.createRemovableSetSlice();
