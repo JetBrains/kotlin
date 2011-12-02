@@ -106,7 +106,16 @@ public final class CallTranslator extends AbstractTranslator {
         if (isConstructorDescriptor(descriptor)) {
             return constructorCall();
         }
-        return AstUtil.newInvocation(qualifiedMethodReference(), arguments);
+        return AstUtil.newInvocation(calleeReference(), arguments);
+    }
+
+    @NotNull
+    private JsNameRef calleeReference() {
+        if (context().isDeclared(descriptor)) {
+            return qualifiedMethodReference();
+        }
+        //TODO: hack
+        return AstUtil.newQualifiedNameRef(descriptor.getName());
     }
 
     @NotNull
@@ -120,7 +129,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression constructorCall() {
-        JsNew constructorCall = new JsNew(qualifiedMethodReference());
+        JsNew constructorCall = new JsNew(calleeReference());
         constructorCall.setArguments(arguments);
         return constructorCall;
     }
