@@ -284,4 +284,21 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testKt518 () throws Exception {
         blackBoxFile("regressions/kt518.jet");
     }
+
+    public void testKt665() throws Exception {
+        loadText("fun f(x: Long, zzz: Long = 1): Long\n" +
+                 "{\n" +
+                 "    return if (x <= 1) zzz\n" +
+                 "    else f(x-1, x*zzz)\n" +
+                 "}\n" +
+                 "\n" +
+                 "fun box() : String\n" +
+                 "{\n" +
+                 "    val six: Long = 6;\n" +
+                 "    System.out?.println(f(six))\n" +
+                 "    return \"OK\"" +
+                 "}");
+        System.out.println(generateToText());
+        blackBox();
+    }
 }

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -248,7 +249,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
                 context.trace.report(USELESS_CAST.on(expression, expression.getOperationSign()));
             } else {
-                if (isCastErased(actualType, targetType)) {
+                if (isCastErased(actualType, targetType, typeChecker)) {
                     context.trace.report(Errors.UNCHECKED_CAST.on(expression, actualType, targetType));
                 }
             }
@@ -259,46 +260,75 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
      * Check if assignment from ActualType to TargetType is erased.
      * It is an error in "is" statement and warning in "as".
      */
-    public static boolean isCastErased(JetType actualType, JetType targetType) {
+    public static boolean isCastErased(JetType actualType, JetType targetType, JetTypeChecker typeChecker) {
 
         if (!(targetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             // TODO: what if it is TypeParameterDescriptor?
             return false;
         }
 
-        JetType targetTypeClerared = TypeUtils.makeUnsubstitutedType(
-                (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
+        // do not crash on error types
+        if (ErrorUtils.isErrorType(actualType) || ErrorUtils.isErrorType(targetType)) {
+            return false;
+        }
 
-        Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
-                TypeUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+        {
+            Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
+                    TypeUtils.buildDeepSubstitutionMultimap(targetType);
 
-        Set<JetType> clearSubstituted = new HashSet<JetType>();
+            for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
+                TypeProjection actualTypeParameter = actualType.getArguments().get(i);
+                TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
 
-        for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
-            TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
+                if (subjectTypeParameterDescriptor.isReified()) {
+                    continue;
+                }
 
-            Collection<TypeProjection> subst = clearTypeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
-            for (TypeProjection proj : subst) {
-                clearSubstituted.add(proj.getType());
+                Collection<TypeProjection> subst = typeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
+                for (TypeProjection proj : subst) {
+                    //if (!proj.getType().equals(actualTypeParameter.getType())) {
+                    if (!typeChecker.isSubtypeOf(actualTypeParameter.getType(), proj.getType())) {
+                        return true;
+                    }
+                }
             }
         }
 
-        for (int i = 0; i < targetType.getConstructor().getParameters().size(); ++i) {
-            TypeParameterDescriptor typeParameter = targetType.getConstructor().getParameters().get(i);
-            TypeProjection typeProjection = targetType.getArguments().get(i);
+        {
+            JetType targetTypeClerared = TypeUtils.makeUnsubstitutedType(
+                    (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
 
-            if (typeParameter.isReified()) {
-                continue;
+            Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
+                    TypeUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+
+            Set<JetType> clearSubstituted = new HashSet<JetType>();
+
+            for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
+                TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
+
+                Collection<TypeProjection> subst = clearTypeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
+                for (TypeProjection proj : subst) {
+                    clearSubstituted.add(proj.getType());
+                }
             }
 
-            // "is List<*>"
-            if (typeProjection.equals(TypeUtils.makeStarProjection(typeParameter))) {
-                continue;
-            }
+            for (int i = 0; i < targetType.getConstructor().getParameters().size(); ++i) {
+                TypeParameterDescriptor typeParameter = targetType.getConstructor().getParameters().get(i);
+                TypeProjection typeProjection = targetType.getArguments().get(i);
 
-            // if parameter is mapped to nothing then it is erased
-            if (!clearSubstituted.contains(typeParameter.getDefaultType())) {
-                return true;
+                if (typeParameter.isReified()) {
+                    continue;
+                }
+
+                // "is List<*>"
+                if (typeProjection.equals(TypeUtils.makeStarProjection(typeParameter))) {
+                    continue;
+                }
+
+                // if parameter is mapped to nothing then it is erased
+                if (!clearSubstituted.contains(typeParameter.getDefaultType())) {
+                    return true;
+                }
             }
         }
         return false;

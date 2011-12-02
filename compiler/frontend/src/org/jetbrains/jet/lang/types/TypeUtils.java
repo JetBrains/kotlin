@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
@@ -343,6 +344,11 @@ public class TypeUtils {
     private static void fillInDeepSubstitutor(@NotNull JetType context, @NotNull TypeSubstitutor substitutor, @NotNull Map<TypeConstructor, TypeProjection> substitution, @Nullable Multimap<TypeConstructor, TypeProjection> fullSubstitution) {
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
         List<TypeProjection> arguments = context.getArguments();
+        
+        if (parameters.size() != arguments.size()) {
+            throw new IllegalStateException();
+        }
+        
         for (int i = 0; i < arguments.size(); i++) {
             TypeProjection argument = arguments.get(i);
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);

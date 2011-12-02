@@ -246,7 +246,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     return;
                 }
                 
-                if (BasicExpressionTypingVisitor.isCastErased(subjectType, type)) {
+                if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, context.semanticServices.getTypeChecker())) {
                     context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(reportErrorOn, type));
                 }
             }

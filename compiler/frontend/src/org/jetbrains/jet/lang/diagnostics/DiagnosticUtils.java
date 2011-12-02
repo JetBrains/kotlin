@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,6 +14,9 @@ import org.jetbrains.annotations.Nullable;
  * @author abreslav
  */
 public class DiagnosticUtils {
+    private DiagnosticUtils() {
+    }
+
     public static String atLocation(@NotNull PsiElement element) {
         return atLocation(element.getNode());
     }
@@ -28,10 +32,10 @@ public class DiagnosticUtils {
 
     @Nullable
     public static PsiElement getClosestPsiElement(@NotNull ASTNode node) {
-        while (node != null && node.getPsi() == null) {
+        while (node.getPsi() == null) {
             node = node.getTreeParent();
         }
-        return node == null ? null : node.getPsi();
+        return node.getPsi();
     }
     
     @NotNull
@@ -84,14 +88,12 @@ public class DiagnosticUtils {
 
     public static void throwIfRunningOnServer(Throwable e) {
         // This is needed for the Web Demo server to log the exceptions coming from the analyzer instead of showing them in the editor.
-        if (System.getProperty("kotlin.running.in.server.mode", "false").equals("true")) {
+        if (System.getProperty("kotlin.running.in.server.mode", "false").equals("true") || ApplicationManager.getApplication().isUnitTestMode()) {
             if (e instanceof RuntimeException) {
-                RuntimeException runtimeException = (RuntimeException) e;
-                throw runtimeException;
+                throw (RuntimeException) e;
             }
             if (e instanceof Error) {
-                Error error = (Error) e;
-                throw error;
+                throw (Error) e;
             }
             throw new RuntimeException(e);
         }

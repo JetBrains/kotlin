@@ -176,7 +176,8 @@ public class IntrinsicMethods {
         for (DeclarationDescriptor stringMember : stringMembers) {
             if (stringMember instanceof FunctionDescriptor) {
                 final FunctionDescriptor stringMethod = (FunctionDescriptor) stringMember;
-                final PsiMethod[] methods = stringPsiClass.findMethodsByName(stringMember.getName(), false);
+                final PsiMethod[] methods = stringPsiClass != null?
+                                            stringPsiClass.findMethodsByName(stringMember.getName(), false) : new PsiMethod[]{};
                 for (PsiMethod method : methods) {
                     if (method.getParameterList().getParametersCount() == stringMethod.getValueParameters().size()) {
                         myMethods.put(stringMethod, new PsiMethodCall(stringMethod));

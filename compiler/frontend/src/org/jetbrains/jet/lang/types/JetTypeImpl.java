@@ -1,12 +1,11 @@
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -16,8 +15,6 @@ import java.util.List;
  * @author abreslav
  */
 public final class JetTypeImpl extends AnnotatedImpl implements JetType {
-
-    public static final HashBiMap<TypeConstructor,TypeConstructor> EMPTY_AXIOMS = HashBiMap.<TypeConstructor, TypeConstructor>create();
 
     private final TypeConstructor constructor;
     private final List<TypeProjection> arguments;
@@ -96,7 +93,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
         JetTypeImpl type = (JetTypeImpl) o;
 
         // TODO
-        return nullable == type.nullable && equalTypes(this, type, EMPTY_AXIOMS);
+        return nullable == type.nullable && JetTypeChecker.INSTANCE.equalTypes(this, type);
 //        if (nullable != type.nullable) return false;
 //        if (arguments != null ? !arguments.equals(type.arguments) : type.arguments != null) return false;
 //        if (constructor != null ? !constructor.equals(type.constructor) : type.constructor != null) return false;
@@ -111,39 +108,6 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
         result = 31 * result + (arguments != null ? arguments.hashCode() : 0);
         result = 31 * result + (nullable ? 1 : 0);
         return result;
-    }
-
-    public static boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2, @NotNull BiMap<TypeConstructor, TypeConstructor> equalityAxioms) {
-        if (type1.isNullable() != type2.isNullable()) {
-            return false;
-        }
-        TypeConstructor constructor1 = type1.getConstructor();
-        TypeConstructor constructor2 = type2.getConstructor();
-        if (!constructor1.equals(constructor2)) {
-            TypeConstructor img1 = equalityAxioms.get(constructor1);
-            TypeConstructor img2 = equalityAxioms.get(constructor2);
-            if (!(img1 != null && img1.equals(constructor2)) &&
-                    !(img2 != null && img2.equals(constructor1))) {
-                return false;
-            }
-        }
-        List<TypeProjection> type1Arguments = type1.getArguments();
-        List<TypeProjection> type2Arguments = type2.getArguments();
-        if (type1Arguments.size() != type2Arguments.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < type1Arguments.size(); i++) {
-            TypeProjection typeProjection1 = type1Arguments.get(i);
-            TypeProjection typeProjection2 = type2Arguments.get(i);
-            if (typeProjection1.getProjectionKind() != typeProjection2.getProjectionKind()) {
-                return false;
-            }
-            if (!equalTypes(typeProjection1.getType(), typeProjection2.getType(), equalityAxioms)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 
