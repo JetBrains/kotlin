@@ -326,30 +326,35 @@ public class JavaDescriptorResolver {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
-            String name = parameter.getName();
-            PsiType psiType = parameter.getType();
-
-            JetType varargElementType;
-            if (psiType instanceof PsiEllipsisType) {
-                PsiEllipsisType psiEllipsisType = (PsiEllipsisType) psiType;
-                varargElementType = semanticServices.getTypeTransformer().transformToType(psiEllipsisType.getComponentType());
-            }
-            else {
-                varargElementType = null;
-            }
-            JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
-            result.add(new ValueParameterDescriptorImpl(
-                    containingDeclaration,
-                    i,
-                    Collections.<AnnotationDescriptor>emptyList(), // TODO
-                    name == null ? "p" + i : name,
-                    null, // TODO : review
-                    outType,
-                    false,
-                    varargElementType
-            ));
+            ValueParameterDescriptor valueParameterDescriptor = resolveParameterDescriptor(containingDeclaration, i, parameter);
+            result.add(valueParameterDescriptor);
         }
         return result;
+    }
+
+    private ValueParameterDescriptor resolveParameterDescriptor(DeclarationDescriptor containingDeclaration, int i, PsiParameter parameter) {
+        String name = parameter.getName();
+        PsiType psiType = parameter.getType();
+
+        JetType varargElementType;
+        if (psiType instanceof PsiEllipsisType) {
+            PsiEllipsisType psiEllipsisType = (PsiEllipsisType) psiType;
+            varargElementType = semanticServices.getTypeTransformer().transformToType(psiEllipsisType.getComponentType());
+        }
+        else {
+            varargElementType = null;
+        }
+        JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
+        return new ValueParameterDescriptorImpl(
+                containingDeclaration,
+                i,
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                name == null ? "p" + i : name,
+                null, // TODO : review
+                outType,
+                false,
+                varargElementType
+        );
     }
 
     public VariableDescriptor resolveFieldToVariableDescriptor(DeclarationDescriptor containingDeclaration, PsiField field) {
