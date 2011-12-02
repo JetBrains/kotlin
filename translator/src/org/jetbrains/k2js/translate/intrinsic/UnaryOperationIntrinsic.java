@@ -33,7 +33,7 @@ public class UnaryOperationIntrinsic implements Intrinsic {
     public JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert arguments.size() == 0 : "Unary operator should not have arguments.";
-        //TODO: note that we cannot use this for increment/decrement
+        //NOTE: cannot use this for increment/decrement
         return new JsPrefixOperation(operator, receiver);
     }
 }

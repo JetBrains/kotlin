@@ -12,7 +12,6 @@ import java.util.List;
  */
 public final class PrimitiveEqualsIntrinsic extends EqualsIntrinsic {
 
-
     @NotNull
     /*package*/ static PrimitiveEqualsIntrinsic newInstance() {
         return new PrimitiveEqualsIntrinsic();

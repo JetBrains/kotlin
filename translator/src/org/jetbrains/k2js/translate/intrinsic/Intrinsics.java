@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * @author Talanov Pavel
  */
+//TODO: different maps for different kinds of intrinsics
 public final class Intrinsics {
 
     @NotNull
@@ -33,7 +34,6 @@ public final class Intrinsics {
     }
 
     /*package*/ void declareIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        //TODO: HACK!
         addCompareToIntrinsics(descriptor);
         addEqualsIntrinsics(descriptor);
         addUnaryIntrinsics(descriptor);

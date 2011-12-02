@@ -10,13 +10,13 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: implement aliases stack for this
 public class Aliaser {
 
     static public Aliaser aliasesForStandardClasses(@NotNull JetStandardLibrary standardLibrary,
                                                     @NotNull Namer namer) {
-        Aliaser result = new Aliaser();
-        // result.setAliasForDescriptor(standardLibrary.getArray(), namer.declareStandardClass("Array"));
-        return result;
+        //TODO: decide if this aliases are needed
+        return new Aliaser();
     }
 
     @NotNull

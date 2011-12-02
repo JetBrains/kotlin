@@ -60,7 +60,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     }
 
     private void addCallToSuperMethod(@NotNull JetDelegatorToSuperCall superCall) {
-        JsName superMethodName = initializerMethodScope.declareName(Namer.SUPER_METHOD_NAME);
+        JsName superMethodName = initializerMethodScope.declareName(Namer.superMethodName());
         List<JsExpression> arguments = translateArguments(superCall);
         initializerStatements.add(AstUtil.convertToStatement
                 (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName), arguments)));
