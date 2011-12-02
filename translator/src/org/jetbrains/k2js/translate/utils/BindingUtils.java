@@ -191,11 +191,22 @@ public final class BindingUtils {
         return null;
     }
 
+    //TODO: duplication
     public static boolean isOwnedByNamespace(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ConstructorDescriptor) {
+            DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
+            assert classDescriptor != null;
+            return isOwnedByNamespace(classDescriptor);
+        }
         return (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor);
     }
 
     public static boolean isOwnedByClass(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ConstructorDescriptor) {
+            DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
+            assert classDescriptor != null;
+            return isOwnedByClass(classDescriptor);
+        }
         return (descriptor.getContainingDeclaration() instanceof ClassDescriptor);
     }
 
