@@ -12,7 +12,6 @@ import java.util.List;
 public interface Intrinsic {
 
     @NotNull
-    public JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
-                              @NotNull TranslationContext context);
-
+    JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
+                       @NotNull TranslationContext context);
 }

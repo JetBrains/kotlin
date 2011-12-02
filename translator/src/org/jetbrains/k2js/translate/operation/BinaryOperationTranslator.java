@@ -13,7 +13,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 
 import java.util.Arrays;
@@ -70,9 +69,8 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateAsEqualsCall() {
         assert operationDescriptor != null : "Equals operation must resolve to descriptor.";
-        Intrinsic intrinsic = context().intrinsics().getIntrinsic(operationDescriptor);
-        //TODO
-        ((EqualsIntrinsic) intrinsic).setNegated(expression.getOperationToken().equals(JetTokens.EXCLEQ));
+        EqualsIntrinsic intrinsic = context().intrinsics().getEqualsIntrinsic(operationDescriptor);
+        intrinsic.setNegated(expression.getOperationToken().equals(JetTokens.EXCLEQ));
         JsExpression left = translateLeftExpression(context(), expression);
         JsExpression right = translateRightExpression(context(), expression);
         return intrinsic.apply(left, Arrays.asList(right), context());

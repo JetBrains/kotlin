@@ -25,7 +25,7 @@ public final class OperatorTable {
         unaryOperatorsMap.put(JetTokens.PLUS, JsUnaryOperator.POS);         //+
     }
 
-    //TODO : not all operators
+    //TODO : not all operators , add and test bit operators
     static {
         binaryOperatorsMap.put(JetTokens.PLUS, JsBinaryOperator.ADD);
         binaryOperatorsMap.put(JetTokens.MINUS, JsBinaryOperator.SUB);

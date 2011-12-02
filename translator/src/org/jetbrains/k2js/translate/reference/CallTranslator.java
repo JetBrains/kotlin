@@ -12,7 +12,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
+import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
@@ -99,10 +99,10 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translate() {
-        if (context().intrinsics().hasDescriptor(descriptor)) {
-            Intrinsic intrinsic = context().intrinsics().getIntrinsic(descriptor);
-            assert receiver != null : "Functions that have intrinsic implementation should have a receiver.";
-            return intrinsic.apply(receiver, arguments, context());
+        if (context().intrinsics().isIntrinsic(descriptor)) {
+            FunctionIntrinsic functionIntrinsic = context().intrinsics().getFunctionIntrinsic(descriptor);
+            assert receiver != null : "Functions that have functionIntrinsic implementation should have a receiver.";
+            return functionIntrinsic.apply(receiver, arguments, context());
         }
         if (isConstructorDescriptor(descriptor)) {
             return constructorCall();

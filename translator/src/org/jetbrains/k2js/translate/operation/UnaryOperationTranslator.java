@@ -10,7 +10,6 @@ import org.jetbrains.k2js.translate.reference.CallTranslator;
  * @author Talanov Pavel
  */
 
-//TODO: merge with binary operation
 public final class UnaryOperationTranslator {
 
     @NotNull

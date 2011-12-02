@@ -15,6 +15,8 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+
 /**
  * @author Talanov Pavel
  */
@@ -202,8 +204,20 @@ public final class TranslationUtils {
                 BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null) return true;
-        if (context.intrinsics().hasDescriptor(operationDescriptor)) return true;
+        if (context.intrinsics().isIntrinsic(operationDescriptor)) return true;
 
         return false;
     }
+
+    @NotNull
+    public static JsNameRef getMethodReferenceForOverloadedOperation(@NotNull TranslationContext context,
+                                                                     @NotNull JetOperationExpression expression) {
+        FunctionDescriptor overloadedOperationDescriptor = getFunctionDescriptorForOperationExpression
+                (context.bindingContext(), expression);
+        assert overloadedOperationDescriptor != null;
+        JsNameRef overloadedOperationReference = context.getNameForDescriptor(overloadedOperationDescriptor).makeRef();
+        assert overloadedOperationReference != null;
+        return overloadedOperationReference;
+    }
+
 }

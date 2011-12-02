@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
-public class BinaryOperationIntrinsic implements Intrinsic {
+public class BinaryOperationIntrinsic extends FunctionIntrinsic {
 
     @NotNull
     /*package*/ static BinaryOperationIntrinsic newInstance(@NotNull JetToken token) {

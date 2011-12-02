@@ -4,11 +4,10 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodReferenceForOverloadedOperation;
 
 /**
  * @author Talanov Pavel
@@ -27,13 +26,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     private OverloadedAssignmentTranslator(@NotNull JetBinaryExpression expression,
                                            @NotNull TranslationContext context) {
         super(expression, context);
-        //TODO: util
-        DeclarationDescriptor overloadedOperationDescriptor = getDescriptorForReferenceExpression
-                (context.bindingContext(), expression.getOperation());
-        assert overloadedOperationDescriptor != null;
-        JsNameRef overloadedOperationReference = context().getNameForDescriptor(overloadedOperationDescriptor).makeRef();
-        assert overloadedOperationReference != null;
-        this.operationReference = overloadedOperationReference;
+        this.operationReference = getMethodReferenceForOverloadedOperation(context, expression);
     }
 
     @NotNull

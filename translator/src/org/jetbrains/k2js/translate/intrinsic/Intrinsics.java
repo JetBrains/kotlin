@@ -19,8 +19,17 @@ import java.util.Map;
 public final class Intrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, Intrinsic> descriptorToIntrinsicMap =
-            new HashMap<FunctionDescriptor, Intrinsic>();
+    private final Map<FunctionDescriptor, FunctionIntrinsic> functionIntrinsics =
+            new HashMap<FunctionDescriptor, FunctionIntrinsic>();
+
+    @NotNull
+    private final Map<FunctionDescriptor, EqualsIntrinsic> equalsIntrinsics =
+            new HashMap<FunctionDescriptor, EqualsIntrinsic>();
+
+
+    @NotNull
+    private final Map<FunctionDescriptor, CompareToIntrinsic> compareToIntrinsics =
+            new HashMap<FunctionDescriptor, CompareToIntrinsic>();
 
     public static Intrinsics standardLibraryIntrinsics(@NotNull JetStandardLibrary library) {
         return new Intrinsics(library);
@@ -38,54 +47,65 @@ public final class Intrinsics {
         addEqualsIntrinsics(descriptor);
         addUnaryIntrinsics(descriptor);
         addBinaryIntrinsics(descriptor);
-
     }
 
     private void addCompareToIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
         if (functionName.equals("compareTo")) {
-            descriptorToIntrinsicMap.put(descriptor, PrimitiveCompareToIntrinsic.newInstance());
+            compareToIntrinsics.put(descriptor, PrimitiveCompareToIntrinsic.newInstance());
         }
     }
 
     private void addEqualsIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
         if (functionName.equals("equals")) {
-            descriptorToIntrinsicMap.put(descriptor, PrimitiveEqualsIntrinsic.newInstance());
+            equalsIntrinsics.put(descriptor, PrimitiveEqualsIntrinsic.newInstance());
         }
     }
 
     private void addUnaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
         JetToken token = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(functionName);
+        if (token == null) return;
         boolean isUnary = !DescriptorUtils.hasParameters(descriptor);
-        if (isUnary && (token != null)) {
-            descriptorToIntrinsicMap.put(descriptor, UnaryOperationIntrinsic.newInstance(token));
-        }
+        if (!isUnary) return;
+        functionIntrinsics.put(descriptor, UnaryOperationIntrinsic.newInstance(token));
     }
 
     private void addBinaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
         boolean isUnary = !DescriptorUtils.hasParameters(descriptor);
+        if (isUnary) return;
         JetToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(functionName);
-        if (token != null && OperatorTable.hasCorrespondingBinaryOperator(token) && (!isUnary)) {
-            descriptorToIntrinsicMap.put(descriptor, BinaryOperationIntrinsic.newInstance(token));
-        }
+        if (token == null) return;
+        //TODO: implement range and contains intrinsic
+        if (!OperatorTable.hasCorrespondingBinaryOperator(token)) return;
+        functionIntrinsics.put(descriptor, BinaryOperationIntrinsic.newInstance(token));
     }
 
-    public boolean hasDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    public boolean isIntrinsic(@NotNull DeclarationDescriptor descriptor) {
+        //NOTE: that if we want to add other intrinsics we have to modify this method
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor.getOriginal();
-            return (descriptorToIntrinsicMap.get(functionDescriptor) != null);
+            return (equalsIntrinsics.containsKey(functionDescriptor) ||
+                    compareToIntrinsics.containsKey(functionDescriptor) ||
+                    functionIntrinsics.containsKey(functionDescriptor));
         }
         return false;
     }
 
+    @NotNull
+    public FunctionIntrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        return functionIntrinsics.get(descriptor);
+    }
 
     @NotNull
-    public Intrinsic getIntrinsic(@NotNull DeclarationDescriptor descriptor) {
-        assert descriptor instanceof FunctionDescriptor;
-        Intrinsic intrinsic = descriptorToIntrinsicMap.get(descriptor);
-        return intrinsic;
+    public CompareToIntrinsic getCompareToIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        return compareToIntrinsics.get(descriptor);
+    }
+
+    @NotNull
+    public EqualsIntrinsic getEqualsIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        return equalsIntrinsics.get(descriptor);
     }
 }

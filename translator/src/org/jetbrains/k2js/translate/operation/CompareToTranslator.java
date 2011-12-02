@@ -12,7 +12,6 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 
 import java.util.Arrays;
@@ -82,8 +81,8 @@ public final class CompareToTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression intrinsicCompareTo() {
-        Intrinsic intrinsic = context().intrinsics().getIntrinsic(descriptor);
-        ((CompareToIntrinsic) intrinsic).setComparisonToken((JetToken) expression.getOperationToken());
+        CompareToIntrinsic intrinsic = context().intrinsics().getCompareToIntrinsic(descriptor);
+        intrinsic.setComparisonToken((JetToken) expression.getOperationToken());
         JsExpression left = translateLeftExpression(context(), expression);
         JsExpression right = translateRightExpression(context(), expression);
         return intrinsic.apply(left, Arrays.asList(right), context());
