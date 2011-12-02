@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.ImportingStrategy;
 import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 
+import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -167,7 +168,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/diagnostics/tests", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetDiagnosticsTest(dataPath, name);
             }
         });

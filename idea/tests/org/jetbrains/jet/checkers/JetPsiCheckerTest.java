@@ -58,21 +58,21 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
         JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
         }, suite);
         JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/regression/", false, JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
         }, suite);
         JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/infos/", false, JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetPsiCheckerTest(dataPath, name).setCheckInfos(true);
             }
         }, suite);

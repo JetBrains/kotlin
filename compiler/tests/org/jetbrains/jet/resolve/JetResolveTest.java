@@ -157,7 +157,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         return JetTestCaseBuilder.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetResolveTest(dataPath + "/" + name + ".jet", name);
             }
         });

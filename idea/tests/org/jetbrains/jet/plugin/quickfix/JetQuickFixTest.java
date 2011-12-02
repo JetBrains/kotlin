@@ -53,7 +53,7 @@ public class JetQuickFixTest  extends LightQuickFixTestCase {
         JetTestCaseBuilder.NamedTestFactory namedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetQuickFixTest(dataPath, name);
             }
         };
