@@ -320,7 +320,8 @@ public class JetTypeMapper {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
             boolean isInterface = CodegenUtil.isInterface(containingClass);
             OwnerKind kind1 = isInterface && superCall ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
-            owner = mapType(containingClass.getDefaultType(), kind1).getInternalName();
+            Type type = mapType(containingClass.getDefaultType(), kind1);
+            owner = type.getInternalName();
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
                     : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);

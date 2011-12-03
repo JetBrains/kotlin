@@ -315,6 +315,12 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertTrue(generateToText().contains("IFNULL"));
     }
 
+    public void testKt737() throws Exception {
+        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.byt.compareTo(10.lng) >= 0) \"fail\" else \"OK\"");
+        System.out.println(generateToText());
+        assertEquals("OK", blackBox());
+    }
+
     public void testKt665() throws Exception {
         loadText("fun f(x: Long, zzz: Long = 1): Long\n" +
                  "{\n" +

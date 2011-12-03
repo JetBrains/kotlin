@@ -97,6 +97,9 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("FloatIterator", "next", 0, ITERATOR_NEXT);
         declareIntrinsicFunction("DoubleIterator", "next", 0, ITERATOR_NEXT);
 
+        for (String type : PRIMITIVE_NUMBER_TYPES) {
+            declareIntrinsicFunction(type, "compareTo", 1, new CompareTo());
+        }
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
         declareIntrinsicStringMethods();

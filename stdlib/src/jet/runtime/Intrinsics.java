@@ -17,6 +17,18 @@ public class Intrinsics {
         throw new JetNullPointerException();
     }
 
+    public static int compare(long thisVal, long anotherVal) {
+        return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+    }
+
+    public static int compare(int thisVal, int anotherVal) {
+        return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+    }
+    
+    public static int compare(boolean thisVal, boolean anotherVal) {
+        return (thisVal == anotherVal ? 0 : (anotherVal ? 1 : -1));
+    }
+
     private static Throwable sanitizeStackTrace(Throwable throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>();
