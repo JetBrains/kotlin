@@ -334,7 +334,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
                  "    System.out?.println(f(six))\n" +
                  "    return \"OK\"" +
                  "}");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 }

@@ -39,7 +39,7 @@ public class FunctionGenTest extends CodegenTestCase {
         loadText("fun foo(x: String?, y: Any?) = x + y");
         String text = generateToText();
         assertTrue(text.contains(".stringPlus"));
-        System.out.println(text);
+//        System.out.println(text);
         Method foo = generateFunction();
         assertEquals("something239", foo.invoke(null, "something", 239));
         assertEquals("null239", foo.invoke(null, null, 239));
@@ -52,7 +52,7 @@ public class FunctionGenTest extends CodegenTestCase {
         loadText("fun foo(x: String, y: Any?) = x + y + 120");
         String text = generateToText();
         assertFalse(text.contains(".stringPlus"));
-        System.out.println(text);
+//        System.out.println(text);
         Method foo = generateFunction();
         assertEquals("something239120", foo.invoke(null, "something", 239));
         assertEquals("null239120", foo.invoke(null, null, 239));
