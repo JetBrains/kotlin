@@ -1693,6 +1693,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final Type exprType = expressionType(expression);
         final Type leftType = expressionType(expression.getLeft());
         gen(expression.getLeft(), leftType);
+        if(leftType.getSort() != Type.OBJECT && leftType.getSort() != Type.ARRAY) {
+            if(leftType != exprType) {
+                StackValue.onStack(leftType).put(exprType, v);
+            }
+            return StackValue.onStack(exprType);
+        }
         v.dup();
         Label end = new Label();
         Label ifNull = new Label();

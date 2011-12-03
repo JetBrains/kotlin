@@ -285,6 +285,12 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         blackBoxFile("regressions/kt518.jet");
     }
 
+    public void testKt711 () throws Exception {
+        loadText("fun box() = if ((1 ?: 0) == 1) \"OK\" else \"fail\"");
+//        System.out.println(generateToText());
+        blackBox();
+    }
+
     public void testKt665() throws Exception {
         loadText("fun f(x: Long, zzz: Long = 1): Long\n" +
                  "{\n" +
