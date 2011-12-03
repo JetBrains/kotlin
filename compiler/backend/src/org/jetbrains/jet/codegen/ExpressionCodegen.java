@@ -1196,7 +1196,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         receiver.put(receiver.type, v);
     }
 
-    protected void generateFromResolvedCall(ReceiverDescriptor descriptor, Type type) {
+    public void generateFromResolvedCall(ReceiverDescriptor descriptor, Type type) {
         if(descriptor instanceof ClassReceiver) {
             Type exprType = asmType(descriptor.getType());
             ClassReceiver classReceiver = (ClassReceiver) descriptor;

@@ -13,13 +13,7 @@ public class Intrinsics {
         return ((self == null) ? "null" : self) + ((other == null) ? "null" : other.toString());
     }
 
-    public static Object sure(Object self) {
-        if(self == null)
-            return throwNpe();
-        return self;
-    }
-
-    private static Object throwNpe() {
+    public static void throwNpe() {
         throw new JetNullPointerException();
     }
 
@@ -32,7 +26,7 @@ public class Intrinsics {
                 list.add(ste);
             }
             else {
-                if("jet.runtime.Intrinsics".equals(ste.getClassName()) && "sure".equals(ste.getMethodName())) {
+                if("jet.runtime.Intrinsics".equals(ste.getClassName()) && "throwNpe".equals(ste.getMethodName())) {
                     skip = false;
                 }
             }

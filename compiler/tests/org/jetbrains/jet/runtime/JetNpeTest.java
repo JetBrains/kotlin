@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 public class JetNpeTest extends CodegenTestCase {
     public void testStackTrace () {
         try {
-            Intrinsics.sure(null);
+            Intrinsics.throwNpe();
             fail("No Sure thrown");
         }
         catch (NullPointerException e) {
