@@ -1377,7 +1377,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         JetType receiverJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression());
         Type receiverType = asmType(receiverJetType);
         gen(expr, receiverType);
-        if(receiverType.getSort() != Type.OBJECT && receiverType.getSort() != Type.ARRAY) {
+        assert receiverJetType != null;
+        if(!receiverJetType.isNullable()) {
             StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
             Type type = propValue.type;
             propValue.put(type, v);
@@ -1691,24 +1692,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue generateElvis(JetBinaryExpression expression) {
         final Type exprType = expressionType(expression);
-        final Type leftType = expressionType(expression.getLeft());
-        gen(expression.getLeft(), leftType);
-        if(leftType.getSort() != Type.OBJECT && leftType.getSort() != Type.ARRAY) {
-            if(leftType != exprType) {
-                StackValue.onStack(leftType).put(exprType, v);
-            }
-            return StackValue.onStack(exprType);
+        JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLeft());
+        assert type != null;
+        final Type leftType = asmType(type);
+        if(type.isNullable())  {
+            gen(expression.getLeft(), leftType);
+            v.dup();
+            Label end = new Label();
+            Label ifNull = new Label();
+            v.ifnull(ifNull);
+            StackValue.onStack(leftType).put(exprType, v);
+            v.goTo(end);
+            v.mark(ifNull);
+            v.pop();
+            gen(expression.getRight(), exprType);
+            v.mark(end);
         }
-        v.dup();
-        Label end = new Label();
-        Label ifNull = new Label();
-        v.ifnull(ifNull);
-        StackValue.onStack(leftType).put(exprType, v);
-        v.goTo(end);
-        v.mark(ifNull);
-        v.pop();
-        gen(expression.getRight(), exprType);
-        v.mark(end);
+        else {
+            gen(expression.getLeft(), leftType);
+            StackValue.onStack(leftType).put(exprType, v);
+        }
         return StackValue.onStack(exprType);
     }
 

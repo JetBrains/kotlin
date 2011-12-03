@@ -303,6 +303,18 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertTrue(generateToText().contains("IFNONNULL"));
     }
 
+    public void testSafeNonnull () throws Exception {
+        loadText("fun box() = 10?.toString()");
+//        System.out.println(generateToText());
+        assertFalse(generateToText().contains("IFNULL"));
+    }
+
+    public void testSafeNullable () throws Exception {
+        loadText("val a : Int? = 10; fun box() = a?.toString()");
+//        System.out.println(generateToText());
+        assertTrue(generateToText().contains("IFNULL"));
+    }
+
     public void testKt665() throws Exception {
         loadText("fun f(x: Long, zzz: Long = 1): Long\n" +
                  "{\n" +
