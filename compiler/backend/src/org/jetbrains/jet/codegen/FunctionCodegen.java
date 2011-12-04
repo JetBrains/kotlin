@@ -78,6 +78,10 @@ public class FunctionCodegen {
             }
             if (!isAbstract && v.generateCode()) {
                 mv.visitCode();
+                
+                Label methodBegin = new Label();
+                mv.visitLabel(methodBegin);
+                
                 FrameMap frameMap = context.prepareFrame();
 
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
@@ -125,6 +129,18 @@ public class FunctionCodegen {
                     }
 
                     codegen.returnExpression(bodyExpressions);
+                }
+                
+                Label methodEnd = new Label();
+                mv.visitLabel(methodEnd);
+
+                // http://youtrack.jetbrains.net/issue/KT-746
+                // Fill LocalVariableTable with method parameter names
+                for (int i = 0; i < paramDescrs.size(); i++) {
+                    ValueParameterDescriptor parameter = paramDescrs.get(i);
+                    Type type = state.getTypeMapper().mapType(parameter.getOutType());
+                    // TODO: specify signature
+                    mv.visitLocalVariable(parameter.getName(), type.getDescriptor(), null, methodBegin, methodEnd, i + add);
                 }
 
                 mv.visitMaxs(0, 0);
