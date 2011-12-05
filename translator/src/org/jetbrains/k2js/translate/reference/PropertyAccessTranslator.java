@@ -16,7 +16,8 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.PsiUtils;
+
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
 /**
  * @author Talanov Pavel
@@ -67,7 +68,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     public static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
                                                   @NotNull TranslationContext context) {
-        JetSimpleNameExpression selector = PsiUtils.getSelectorAsSimpleName(expression);
+        JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
         if (selector == null) {
             return false;
         }
@@ -95,9 +96,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         return canBePropertyGetterCall(expression, context);
     }
 
-
-    @NotNull
-    private final JetSimpleNameExpression expression;
     @Nullable
     private final JetExpression qualifier;
     @NotNull
@@ -106,30 +104,28 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     private PropertyAccessTranslator(@NotNull JetSimpleNameExpression simpleName,
                                      @NotNull TranslationContext context) {
         super(context);
-        this.expression = simpleName;
         this.qualifier = null;
-        this.propertyDescriptor = getNotNullPropertyDescriptor();
+        this.propertyDescriptor = getPropertyDescriptor(simpleName);
     }
 
     private PropertyAccessTranslator(@NotNull JetQualifiedExpression qualifiedExpression,
                                      @NotNull TranslationContext context) {
         super(context);
-        this.expression = getNotNullSelector(qualifiedExpression);
         this.qualifier = qualifiedExpression.getReceiverExpression();
-        this.propertyDescriptor = getNotNullPropertyDescriptor();
+        this.propertyDescriptor = getPropertyDescriptor(getNotNullSelector(qualifiedExpression));
     }
 
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        JsName getterName = getNotNullGetterName();
+        JsName getterName = getGetterName();
         return qualifiedAccessorInvocation(getterName);
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        JsName setterName = getNotNullSetterName();
+        JsName setterName = getSetterName();
         JsInvocation setterCall = qualifiedAccessorInvocation(setterName);
         setterCall.getArguments().add(toSetTo);
         return setterCall;
@@ -155,77 +151,42 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private static JetSimpleNameExpression getNotNullSelector(@NotNull JetQualifiedExpression qualifiedExpression) {
-        JetSimpleNameExpression selectorExpression = PsiUtils.getSelectorAsSimpleName(qualifiedExpression);
+        JetSimpleNameExpression selectorExpression = getSelectorAsSimpleName(qualifiedExpression);
         assert selectorExpression != null : MESSAGE;
         return selectorExpression;
     }
 
     @NotNull
-    private JsName getNotNullGetterName() {
-        JsName getterName = getNullableGetterName();
-        assert getterName != null : MESSAGE;
-        return getterName;
-    }
-
-    @Nullable
-    private JsName getNullableGetterName() {
+    private JsName getGetterName() {
         PropertyGetterDescriptor getter = getGetterDescriptor();
-
-        if (getter == null) return null;
-
         return context().getNameForDescriptor(getter);
     }
 
-    @Nullable
+    @NotNull
     private PropertyGetterDescriptor getGetterDescriptor() {
-        PropertyDescriptor property = getNullablePropertyDescriptor();
-        if (property == null) {
-            return null;
-        }
-        PropertyGetterDescriptor getter = property.getGetter();
-        if (getter == null) {
-            return null;
-        }
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        assert getter != null;
         return getter;
     }
 
     @NotNull
-    private JsName getNotNullSetterName() {
-        JsName setterName = getNullableSetterName();
-        assert setterName != null : MESSAGE;
-        return setterName;
-    }
-
-    @Nullable
-    private JsName getNullableSetterName() {
+    private JsName getSetterName() {
         PropertySetterDescriptor setter = getSetterDescriptor();
-
-        if (setter == null) return null;
-
         return context().getNameForDescriptor(setter);
     }
 
-    @Nullable
+    @NotNull
     private PropertySetterDescriptor getSetterDescriptor() {
-        PropertyDescriptor property = getNullablePropertyDescriptor();
-        if (property == null) {
-            return null;
-        }
-        PropertySetterDescriptor setter = property.getSetter();
-        if (setter == null) {
-            return null;
-        }
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        assert setter != null;
         return setter;
     }
 
-    @Nullable
-    private PropertyDescriptor getNullablePropertyDescriptor() {
-        return BindingUtils.getPropertyDescriptorForSimpleName(context().bindingContext(), expression);
-    }
 
     @NotNull
-    private PropertyDescriptor getNotNullPropertyDescriptor() {
-        PropertyDescriptor propertyDescriptor = getNullablePropertyDescriptor();
+    private PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression) {
+        PropertyDescriptor propertyDescriptor =
+                BindingUtils.getPropertyDescriptorForSimpleName(context().bindingContext(), expression);
         assert propertyDescriptor != null;
         return propertyDescriptor;
     }

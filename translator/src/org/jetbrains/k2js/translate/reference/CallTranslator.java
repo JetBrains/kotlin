@@ -7,14 +7,14 @@ import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,12 +29,15 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
  */
 public final class CallTranslator extends AbstractTranslator {
 
-    public static boolean isFunctionCall(@NotNull JetOperationExpression expression,
-                                         @NotNull TranslationContext context) {
-        DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
-                (context.bindingContext(), expression.getOperation());
-        return (descriptor instanceof FunctionDescriptor);
-    }
+
+    //TODO: remove?
+
+//    public static boolean isFunctionCall(@NotNull JetOperationExpression expression,
+//                                         @NotNull TranslationContext context) {
+//        DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
+//                (context.bindingContext(), expression.getOperation());
+//        return (descriptor instanceof FunctionDescriptor);
+//    }
 
     public static JsExpression translate(@NotNull JetUnaryExpression unaryExpression,
                                          @NotNull TranslationContext context) {
@@ -111,7 +114,16 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsNameRef calleeReference() {
+    private JsExpression calleeReference() {
+        //TODO: refactor
+        if (descriptor instanceof VariableAsFunctionDescriptor) {
+            VariableDescriptor variableDescriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
+            if (variableDescriptor instanceof PropertyDescriptor) {
+                PropertyGetterDescriptor getter = ((PropertyDescriptor) variableDescriptor).getGetter();
+                assert getter != null;
+                return (new CallTranslator(null, new ArrayList<JsExpression>(), getter, context())).translate();
+            }
+        }
         if (context().isDeclared(descriptor)) {
             return qualifiedMethodReference();
         }

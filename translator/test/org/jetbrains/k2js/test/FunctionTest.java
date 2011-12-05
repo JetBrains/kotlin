@@ -54,5 +54,10 @@ public class FunctionTest extends AbstractExpressionTest {
         testFooBoxIsOk("closureWithParameterAndBoxing.jet");
     }
 
+    @Test
+    public void enclosingThis() throws Exception {
+        testFunctionOutput("enclosingThis.jet", "Anonymous", "box", "OK");
+    }
+
 
 }
