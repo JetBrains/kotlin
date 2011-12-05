@@ -1,5 +1,6 @@
 package org.jetbrains.jet.completion;
 
+import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
@@ -48,7 +49,7 @@ public class JetBasicCompletion extends JetCompletionTestBase {
 
             @NotNull
             @Override
-            public junit.framework.Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetBasicCompletion(dataPath, name);
             }
         }, suite);
