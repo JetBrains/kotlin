@@ -272,4 +272,12 @@ public final class BindingUtils {
         return (FunctionDescriptor) descriptorForReferenceExpression;
     }
 
+    @NotNull
+    public static DeclarationDescriptor getDescriptorForElement(@NotNull BindingContext context,
+                                                                @NotNull JetElement element) {
+        DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        assert descriptor != null : element + " doesn't have a descriptor.";
+        return descriptor;
+    }
+
 }

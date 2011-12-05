@@ -1,8 +1,7 @@
-package org.jetbrains.k2js.declarations;
+package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -15,22 +14,24 @@ import java.util.Map;
  * @author Talanov Pavel
  */
 public final class Declarations {
+
+
     @NotNull
-    private final Map<DeclarationDescriptor, JsScope> descriptorToScopeMap = new HashMap<DeclarationDescriptor, JsScope>();
+    public static Declarations newInstance(@NotNull NamingScope rootScope) {
+        return new Declarations(rootScope);
+    }
+
+    @NotNull
+    private final Map<DeclarationDescriptor, NamingScope> descriptorToScopeMap = new HashMap<DeclarationDescriptor, NamingScope>();
     @NotNull
     private final Map<DeclarationDescriptor, JsName> descriptorToNameMap = new HashMap<DeclarationDescriptor, JsName>();
     @NotNull
     private final Map<DeclarationDescriptor, JsNameRef> descriptorToQualifierMap = new HashMap<DeclarationDescriptor, JsNameRef>();
     @NotNull
-    private final JsScope rootScope;
+    private final NamingScope rootScope;
 
-    private Declarations(@NotNull JsScope scope) {
+    private Declarations(@NotNull NamingScope scope) {
         this.rootScope = scope;
-    }
-
-    @NotNull
-    static public Declarations newInstance(@NotNull JsScope rootScope) {
-        return new Declarations(rootScope);
     }
 
     public void extractDeclarations(@NotNull DeclarationDescriptor descriptor) {
@@ -38,7 +39,6 @@ public final class Declarations {
         descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, null));
     }
 
-    //TODO: provide a mechanism to do intrinsics
     public void extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary,
                                        @NotNull JsNameRef standardLibraryObjectName) {
         DeclarationVisitor visitor = new DeclarationVisitor(this);
@@ -50,8 +50,8 @@ public final class Declarations {
     }
 
     @NotNull
-    public JsScope getScope(@NotNull DeclarationDescriptor descriptor) {
-        JsScope scope = descriptorToScopeMap.get(descriptor.getOriginal());
+    public NamingScope getScope(@NotNull DeclarationDescriptor descriptor) {
+        NamingScope scope = descriptorToScopeMap.get(descriptor.getOriginal());
         assert scope != null : "Unknown declaration";
         return scope;
     }
@@ -78,7 +78,7 @@ public final class Declarations {
         return qualifier;
     }
 
-    /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull JsScope scope) {
+    /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull NamingScope scope) {
 //        assert !descriptorToScopeMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToScopeMap.put(descriptor, scope);
     }

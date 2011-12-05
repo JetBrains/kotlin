@@ -19,16 +19,10 @@ import java.util.List;
  */
 public final class ArrayAccessTranslator extends AccessTranslator {
 
-
     public static ArrayAccessTranslator newInstance(@NotNull JetArrayAccessExpression expression,
                                                     @NotNull TranslationContext context) {
         return new ArrayAccessTranslator(expression, context);
     }
-
-//    public static JsExpression translateAsArrayGet(@NotNull JetArrayAccessExpression expression,
-//                                                    @NotNull TranslationContext context) {
-//        return (new ArrayAccessTranslator(expression, context)).translateAsGet();
-//    }
 
     @NotNull
     private final JetArrayAccessExpression expression;

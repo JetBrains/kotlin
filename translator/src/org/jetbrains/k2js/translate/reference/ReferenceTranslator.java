@@ -38,10 +38,9 @@ public class ReferenceTranslator extends AbstractTranslator {
     @NotNull
     //TODO: make this process simpler and clearer
     public JsExpression translateSimpleName() {
-        tryResolveAsAliasReference();
+        tryResolveAsAlias();
         tryResolveAsPropertyAccess();
-        tryResolveAsImplicitlyQualifiedExpression();
-        tryResolveAsLocalReference();
+        tryResolveAsReference();
         if (result != null) {
             return result;
         }
@@ -49,7 +48,7 @@ public class ReferenceTranslator extends AbstractTranslator {
     }
 
     //TODO: refactor
-    private void tryResolveAsImplicitlyQualifiedExpression() {
+    private void tryResolveAsReference() {
         if (alreadyResolved()) return;
 
         DeclarationDescriptor referencedDescriptor =
@@ -61,9 +60,11 @@ public class ReferenceTranslator extends AbstractTranslator {
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
         JsExpression implicitReceiver = getImplicitReceiver(referencedDescriptor, context());
 
-        if (implicitReceiver == null) return;
-
-        result = AstUtil.qualified(referencedName, implicitReceiver);
+        if (implicitReceiver != null) {
+            result = AstUtil.qualified(referencedName, implicitReceiver);
+        } else {
+            result = context().getNameForDescriptor(referencedDescriptor).makeRef();
+        }
     }
 
     @Nullable
@@ -79,7 +80,7 @@ public class ReferenceTranslator extends AbstractTranslator {
         return context.declarations().getQualifier(referencedDescriptor);
     }
 
-    private void tryResolveAsAliasReference() {
+    private void tryResolveAsAlias() {
         //TODO: decide if this code is meaningful
         if (alreadyResolved()) return;
 
@@ -103,23 +104,4 @@ public class ReferenceTranslator extends AbstractTranslator {
 
         result = PropertyAccessTranslator.translateAsPropertyGetterCall(simpleName, context());
     }
-
-    private void tryResolveAsLocalReference() {
-        if (alreadyResolved()) return;
-
-        String name = getReferencedName();
-        JsName localReferencedName = TranslationUtils.getLocalReferencedName(context(), name);
-
-        if (localReferencedName == null) return;
-
-        result = localReferencedName.makeRef();
-    }
-
-    @NotNull
-    private String getReferencedName() {
-        String name = simpleName.getReferencedName();
-        assert name != null : "SimpleNameExpression should reference a name";
-        return name;
-    }
-
 }

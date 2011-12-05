@@ -3,13 +3,19 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
+
 
 /**
  * @author Talanov Pavel
@@ -42,33 +48,30 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
-    //TODO: consider refactoring
     @NotNull
     public JsExpression translateAsLiteral() {
-        //TODO: provide a way not to pollute global namespace
-        JsName aliasForThis = context().enclosingScope().declareName("that");
-        context().aliaser().setAliasForThis(aliasForThis);
+        TemporaryVariable aliasForThis = context().newAliasForThis();
         JsFunction function = generateFunctionObject();
-        context().aliaser().removeAliasForThis();
-        JsExpression assignThatToThis = AstUtil.newAssignment(aliasForThis.makeRef(), new JsThisRef());
-        return AstUtil.newSequence(assignThatToThis, function);
+        context().removeAliasForThis();
+        return AstUtil.newSequence(aliasForThis.assignmentExpression(), function);
     }
 
     @NotNull
     private JsFunction generateFunctionObject() {
-        functionObject.setParameters(translateParameters(functionDeclaration.getValueParameters(),
-                functionObject.getScope()));
-        functionObject.setBody(translateBody());
+        TranslationContext innerContext = functionBodyContext();
+        functionObject.setParameters(translateParameters(functionDeclaration.getValueParameters(), innerContext));
+        functionObject.setBody(translateBody(innerContext));
         return functionObject;
     }
 
     private JsFunction createFunctionObject() {
         if (isDeclaration()) {
-            return JsFunction.getAnonymousFunctionWithScope
+            return functionWithScope
                     (context().getScopeForElement((JetDeclaration) functionDeclaration));
         }
         if (isLiteral()) {
-            return new JsFunction(context().enclosingScope());
+            //TODO: look into
+            return new JsFunction(context().jsScope());
         }
         throw new AssertionError("Unsupported type of functionDeclaration.");
     }
@@ -83,11 +86,11 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsBlock translateBody() {
+    private JsBlock translateBody(@NotNull TranslationContext functionBodyContext) {
         JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
         //TODO decide if there are cases where this assert is illegal
         assert jetBodyExpression != null : "Function without body not supported";
-        JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext());
+        JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext);
         return wrapWithReturnIfNeeded(body, !functionDeclaration.hasBlockBody());
     }
 
@@ -124,19 +127,27 @@ public final class FunctionTranslator extends AbstractTranslator {
             return context().newPropertyAccess((JetPropertyAccessor) functionDeclaration);
         }
         if (isLiteral()) {
-            return context().newEnclosingScope(functionObject.getScope());
+            return context().innerJsScope(functionObject.getScope());
         }
         throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
     @NotNull
     private List<JsParameter> translateParameters(@NotNull List<JetParameter> jetParameters,
-                                                  @NotNull JsScope functionScope) {
+                                                  @NotNull TranslationContext functionBodyContext) {
         List<JsParameter> jsParameters = new ArrayList<JsParameter>();
         for (JetParameter jetParameter : jetParameters) {
-            JsName parameterName = functionScope.declareName(jetParameter.getName());
+            JsName parameterName = declareParameter(jetParameter, functionBodyContext);
             jsParameters.add(new JsParameter(parameterName));
         }
         return jsParameters;
+    }
+
+    @NotNull
+    private JsName declareParameter(@NotNull JetParameter jetParameter,
+                                    @NotNull TranslationContext functionBodyContext) {
+        DeclarationDescriptor parameterDescriptor =
+                getDescriptorForElement(context().bindingContext(), jetParameter);
+        return context().declareLocalVariable(parameterDescriptor);
     }
 }

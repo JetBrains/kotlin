@@ -1,11 +1,12 @@
 package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 /**
  * @author Talanov Pavel
@@ -16,15 +17,15 @@ public final class NamespaceInitializerTranslator extends AbstractInitializerTra
     private final JetNamespace namespace;
 
     public NamespaceInitializerTranslator(@NotNull JetNamespace namespace, @NotNull TranslationContext context) {
-        super(new JsScope(context.getScopeForElement(namespace),
-                "initializer " + namespace.getName()), context);
+        super(context.getScopeForElement(namespace).innerScope
+                ("initializer " + namespace.getName()), context);
         this.namespace = namespace;
     }
 
     @Override
     @NotNull
     protected JsFunction generateInitializerFunction() {
-        JsFunction result = JsFunction.getAnonymousFunctionWithScope(initializerMethodScope);
+        JsFunction result = functionWithScope(initializerMethodScope);
         result.setBody(AstUtil.newBlock(translatePropertyAndAnonymousInitializers(namespace)));
         return result;
     }

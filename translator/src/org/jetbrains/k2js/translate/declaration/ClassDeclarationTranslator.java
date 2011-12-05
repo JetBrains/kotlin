@@ -40,11 +40,11 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         super(context);
         this.namespace = namespace;
         this.localToGlobalClassName = new HashMap<JsName, JsName>();
-        this.dummyFunctionScope = new JsScope(context().enclosingScope(), "class declaration function");
+        this.dummyFunctionScope = new JsScope(context().jsScope(), "class declaration function");
     }
 
     public void generateDeclarations() {
-        declarationsObject = context().enclosingScope().declareName(Namer.nameForClassesVariable());
+        declarationsObject = context().jsScope().declareName(Namer.nameForClassesVariable());
         assert declarationsObject != null;
         declarationsStatement =
                 AstUtil.newAssignmentStatement(declarationsObject.makeRef(), generateDummyFunctionInvocation());

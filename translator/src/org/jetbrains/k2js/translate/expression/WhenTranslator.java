@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
+//TODO: look into using temporary variable for counter
 public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
@@ -35,7 +36,7 @@ public class WhenTranslator extends AbstractTranslator {
         super(context);
         this.whenExpression = expression;
         this.expressionToMatch = translateExpressionToMatch(whenExpression);
-        this.dummyCounterName = context.enclosingScope().declareTemporary();
+        this.dummyCounterName = context.jsScope().declareTemporary();
     }
 
     @NotNull

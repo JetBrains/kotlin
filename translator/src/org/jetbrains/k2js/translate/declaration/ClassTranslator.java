@@ -20,6 +20,8 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
+
 /**
  * @author Talanov Pavel
  */
@@ -127,7 +129,7 @@ public final class ClassTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> result = new ArrayList<JsPropertyInitializer>();
         for (JetParameter parameter : classDeclaration.getPrimaryConstructorParameters()) {
             PropertyDescriptor descriptor =
-                    BindingUtils.getPropertyDescriptorForConstructorParameter(context().bindingContext(), parameter);
+                    getPropertyDescriptorForConstructorParameter(context().bindingContext(), parameter);
             if (descriptor != null) {
                 result.addAll(PropertyTranslator.translateAccessors(descriptor, context()));
             }

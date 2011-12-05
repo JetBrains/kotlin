@@ -1,13 +1,12 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.reference.AccessTranslator;
@@ -84,8 +83,8 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPostfixWithReassignment() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
-        TemporaryVariable t1 = declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = declareTemporary(t1.nameReference());
+        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
+        TemporaryVariable t2 = context().declareTemporary(t1.nameReference());
         JsExpression variableReassignment = variableReassignment(t1.nameReference());
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
                 variableReassignment, t2.nameReference());
@@ -95,8 +94,8 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     private JsExpression asPostfixWithNoReassignment() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, t2.inc(), t1) )
-        TemporaryVariable t1 = declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = declareTemporary(t1.nameReference());
+        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
+        TemporaryVariable t2 = context().declareTemporary(t1.nameReference());
         JsExpression methodCall = operationExpression(t2.nameReference());
         JsExpression returnedValue = t1.nameReference();
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
@@ -110,35 +109,4 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
     @NotNull
     abstract JsExpression operationExpression(@NotNull JsExpression receiver);
-
-    //TODO: consider moving into context
-    protected final class TemporaryVariable {
-
-        @NotNull
-        private final JsExpression assignmentExpression;
-        @NotNull
-        private final JsName variableName;
-
-        private TemporaryVariable(@NotNull JsExpression initExpression) {
-            this.variableName = context().enclosingScope().declareTemporary();
-            this.assignmentExpression = AstUtil.newAssignment(variableName.makeRef(), initExpression);
-        }
-
-        @NotNull
-        public JsNameRef nameReference() {
-            return variableName.makeRef();
-        }
-
-        @NotNull
-        public JsExpression assignmentExpression() {
-            return assignmentExpression;
-        }
-    }
-
-    @NotNull
-    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
-        return new TemporaryVariable(initExpression);
-    }
-
-
 }

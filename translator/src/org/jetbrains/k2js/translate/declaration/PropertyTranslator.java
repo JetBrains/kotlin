@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingFieldFromParameter;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
  * @author Talanov Pavel
@@ -105,8 +104,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction generateDefaultGetterFunction(@NotNull PropertyGetterDescriptor descriptor) {
         JsReturn returnExpression = new JsReturn(backingFieldReference(context(), property));
-        JsFunction getterFunction =
-                JsFunction.getAnonymousFunctionWithScope(context().getScopeForDescriptor(descriptor));
+        JsFunction getterFunction = functionWithScope(context().getScopeForDescriptor(descriptor));
         getterFunction.setBody(AstUtil.convertToBlock(returnExpression));
         return getterFunction;
     }
@@ -121,10 +119,9 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction generateDefaultSetterFunction(@NotNull PropertySetterDescriptor propertySetterDescriptor) {
-        JsFunction result = JsFunction.getAnonymousFunctionWithScope(
-                context().getScopeForDescriptor(propertySetterDescriptor));
+        JsFunction result = functionWithScope(context().getScopeForDescriptor(propertySetterDescriptor));
         JsParameter defaultParameter =
-                new JsParameter(propertyAccessContext(propertySetterDescriptor).enclosingScope().declareTemporary());
+                new JsParameter(propertyAccessContext(propertySetterDescriptor).jsScope().declareTemporary());
         JsStatement assignment = assignmentToBackingFieldFromParameter(context(), property, defaultParameter);
         result.setParameters(Arrays.asList(defaultParameter));
         result.setBody(AstUtil.convertToBlock(assignment));

@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.context.NamingScope;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
 /**
  * @author Talanov Pavel
@@ -35,13 +36,6 @@ public final class TranslationUtils {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         return AstUtil.equals(expressionToCheck, nullLiteral);
     }
-
-    @Nullable
-    public static JsName getLocalReferencedName(@NotNull TranslationContext context,
-                                                @NotNull String name) {
-        return context.enclosingScope().findExistingName(name);
-    }
-
 
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
@@ -65,19 +59,19 @@ public final class TranslationUtils {
     @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull JetProperty expression) {
-        JsName backingFieldName = getBackingFieldName(getPropertyName(expression), context);
-        return getThisQualifiedNameReference(context, backingFieldName);
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), expression);
+        return backingFieldReference(context, propertyDescriptor);
     }
 
     @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
-        JsName backingFieldName = getBackingFieldName(descriptor.getName(), context);
+        JsName backingFieldName = context.getNameForDescriptor(descriptor);
         if (BindingUtils.isOwnedByClass(descriptor)) {
             return getThisQualifiedNameReference(context, backingFieldName);
         }
         assert BindingUtils.isOwnedByNamespace(descriptor)
-                : "Only classes and namespaces may own descriptors";
+                : "Only classes and namespaces may own backing fields.";
         JsNameRef qualifier = context.declarations().getQualifier(descriptor);
         return AstUtil.qualified(backingFieldName, qualifier);
     }
@@ -89,13 +83,6 @@ public final class TranslationUtils {
             throw new AssertionError("Property with no name encountered!");
         }
         return propertyName;
-    }
-
-    @NotNull
-    static private JsName getBackingFieldName(@NotNull String propertyName,
-                                              @NotNull TranslationContext context) {
-        String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
-        return context.enclosingScope().findExistingName(backingFieldName);
     }
 
     @Nullable
@@ -218,6 +205,11 @@ public final class TranslationUtils {
         JsNameRef overloadedOperationReference = context.getNameForDescriptor(overloadedOperationDescriptor).makeRef();
         assert overloadedOperationReference != null;
         return overloadedOperationReference;
+    }
+
+    @NotNull
+    public static JsFunction functionWithScope(@NotNull NamingScope scope) {
+        return JsFunction.getAnonymousFunctionWithScope(scope.jsScope());
     }
 
 }
