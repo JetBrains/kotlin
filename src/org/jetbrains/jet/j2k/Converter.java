@@ -432,18 +432,21 @@ public class Converter {
   @NotNull
   private static List<Import> importsToImportList(@NotNull PsiImportStatementBase[] imports) {
     List<Import> result = new LinkedList<Import>();
-    for (PsiImportStatementBase i : imports)
-      if (!NOT_NULL_ANNOTATIONS.contains(importToImport(i).getName()))
-        result.add(importToImport(i));
+    for (PsiImportStatementBase i : imports) {
+      Import anImport = importToImport(i);
+      String name = anImport.getName();
+      if (!name.isEmpty() && !NOT_NULL_ANNOTATIONS.contains(name))
+        result.add(anImport);
+    }
     return result;
   }
 
   @NotNull
-  private static Import importToImport(@NotNull PsiImportStatementBase i) { // TODO: import reference
+  private static Import importToImport(@NotNull PsiImportStatementBase i) {
     final PsiJavaCodeReferenceElement reference = i.getImportReference();
     if (reference != null)
       return new Import(quoteKeywords(reference.getQualifiedName()) + (i.isOnDemand() ? ".*" : ""));
-    return new Import(""); // TODO: remove
+    return new Import("");
   }
 
   @NotNull
@@ -456,7 +459,7 @@ public class Converter {
   @NotNull
   public static Parameter parameterToParameter(@NotNull PsiParameter parameter) {
     return new Parameter(
-      new IdentifierImpl(parameter.getName()), // TODO: remove
+      new IdentifierImpl(parameter.getName()),
       typeToType(parameter.getType(), isNotNull(parameter.getModifierList())),
       isReadOnly(parameter)
     );
