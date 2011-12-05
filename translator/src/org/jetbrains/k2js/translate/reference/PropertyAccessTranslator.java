@@ -36,6 +36,14 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     }
 
     @NotNull
+    public static JsExpression translateAsPropertyGetterCall(@NotNull PropertyDescriptor descriptor,
+                                                             @NotNull TranslationContext context) {
+        return (new PropertyAccessTranslator(descriptor, context))
+                .translateAsGet();
+    }
+
+
+    @NotNull
     public static PropertyAccessTranslator newInstance(@NotNull JetQualifiedExpression expression,
                                                        @NotNull TranslationContext context) {
         return (new PropertyAccessTranslator(expression, context));
@@ -113,6 +121,13 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         super(context);
         this.qualifier = qualifiedExpression.getReceiverExpression();
         this.propertyDescriptor = getPropertyDescriptor(getNotNullSelector(qualifiedExpression));
+    }
+
+    private PropertyAccessTranslator(@NotNull PropertyDescriptor descriptor,
+                                     @NotNull TranslationContext context) {
+        super(context);
+        this.qualifier = null;
+        this.propertyDescriptor = descriptor;
     }
 
     @Override

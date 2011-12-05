@@ -14,7 +14,6 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -116,12 +115,12 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression calleeReference() {
         //TODO: refactor
+        //TODO: write tests on this cases
         if (descriptor instanceof VariableAsFunctionDescriptor) {
             VariableDescriptor variableDescriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
             if (variableDescriptor instanceof PropertyDescriptor) {
-                PropertyGetterDescriptor getter = ((PropertyDescriptor) variableDescriptor).getGetter();
-                assert getter != null;
-                return (new CallTranslator(null, new ArrayList<JsExpression>(), getter, context())).translate();
+                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+                return PropertyAccessTranslator.translateAsPropertyGetterCall(propertyDescriptor, context());
             }
         }
         if (context().isDeclared(descriptor)) {
