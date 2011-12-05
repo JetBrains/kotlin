@@ -9,8 +9,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 /**
- * Stores a number of semantic services. Should be created once for each kotlin project.
- *
  * @author abreslav
  */
 public class JetSemanticServices {

@@ -39,15 +39,6 @@ public class JetTypeReference extends JetElement {
         return findChildByClass(JetTypeElement.class);
     }
 
-    /**
-     * Will return not null for type references with internal user type.
-     * There could be other JetTypeReferences, see parsing of in {@link org.jetbrains.jet.lang.parsing.JetParsing}
-     */
-    @Nullable
-    public JetUserType getUserType() {
-        return findChildByClass(JetUserType.class);
-    }
-
     public List<JetAnnotationEntry> getAnnotations() {
         List<JetAnnotationEntry> answer = null;
         for (JetAnnotation annotation : getAttributeAnnotations()) {

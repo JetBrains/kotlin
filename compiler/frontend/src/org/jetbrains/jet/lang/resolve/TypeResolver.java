@@ -50,12 +50,6 @@ public class TypeResolver {
         JetType type = resolveTypeElement(scope, annotations, typeElement, false);
         trace.record(BindingContext.TYPE, typeReference, type);
 
-        final JetUserType jetUserType = typeReference.getUserType();
-        if (jetUserType != null) {
-            final JetSimpleNameExpression referenceExpression = jetUserType.getReferenceExpression();
-            trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, scope);
-        }
-
         return type;
     }
 
@@ -278,6 +272,8 @@ public class TypeResolver {
         ClassifierDescriptor classifierDescriptor;
         if (userType.isAbsoluteInRootNamespace()) {
             classifierDescriptor = JetModuleUtil.getRootNamespaceType(userType).getMemberScope().getClassifier(referencedName);
+            trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(),
+                         JetModuleUtil.getRootNamespaceType(userType).getMemberScope());
         }
         else {
             JetUserType qualifier = userType.getQualifier();
@@ -288,7 +284,9 @@ public class TypeResolver {
                 return ErrorUtils.getErrorClass();
             }
             classifierDescriptor = scope.getClassifier(referencedName);
+            trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(), scope);
         }
+
         return classifierDescriptor;
     }
 

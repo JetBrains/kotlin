@@ -49,7 +49,7 @@ public interface BindingContext {
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
     WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice();
 
-    /** Was type of current expression has been already resolved */
+    /** Has type of current expression has been already resolved */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice();
     WritableSlice<CallableMemberDescriptor, Boolean> DELEGATED = Slices.createRemovableSetSlice();
