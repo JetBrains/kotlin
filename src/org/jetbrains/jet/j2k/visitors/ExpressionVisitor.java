@@ -183,7 +183,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitMethodCallExpression(PsiMethodCallExpression expression) {
+  public void visitMethodCallExpression(@NotNull PsiMethodCallExpression expression) {
     super.visitMethodCallExpression(expression);
     if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression))
       myResult = // TODO: not resolved
