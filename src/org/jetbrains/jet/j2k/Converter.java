@@ -432,7 +432,9 @@ public class Converter {
   @NotNull
   private static List<Import> importsToImportList(@NotNull PsiImportStatementBase[] imports) {
     List<Import> result = new LinkedList<Import>();
-    for (PsiImportStatementBase t : imports) result.add(importToImport(t));
+    for (PsiImportStatementBase i : imports)
+      if (!NOT_NULL_ANNOTATIONS.contains(importToImport(i).getName()))
+        result.add(importToImport(i));
     return result;
   }
 

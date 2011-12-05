@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 public class Import extends Node {
   private final String myName;
 
+  public String getName() {
+    return myName;
+  }
+
   public Import(String name) {
     myName = name;
   }

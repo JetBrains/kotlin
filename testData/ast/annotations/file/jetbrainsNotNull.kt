@@ -1,5 +1,4 @@
 namespace test
-import org.jetbrains.annotations.NotNull
 public open class Test(str : String) {
 {
 $myStr = str
