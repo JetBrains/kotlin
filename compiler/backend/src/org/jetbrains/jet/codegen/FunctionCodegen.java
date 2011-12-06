@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -226,7 +227,7 @@ public class FunctionCodegen {
         }
     }
 
-    static void generateDefaultIfNeeded(CodegenContext.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    static void generateDefaultIfNeeded(CodegenContext.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, @Nullable FunctionDescriptor functionDescriptor, OwnerKind kind) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
         if(kind != OwnerKind.TRAIT_IMPL) {
@@ -242,15 +243,18 @@ public class FunctionCodegen {
         }
 
         boolean needed = false;
-        for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-            if(parameterDescriptor.hasDefaultValue()) {
-                needed = true;
-                break;
+        if(functionDescriptor != null) {
+            for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
+                if(parameterDescriptor.hasDefaultValue()) {
+                    needed = true;
+                    break;
+                }
             }
         }
 
         if(needed) {
-            boolean hasReceiver = functionDescriptor.getReceiverParameter().exists();
+            ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+            boolean hasReceiver = receiverParameter.exists();
             boolean isStatic = kind == OwnerKind.NAMESPACE;
 
             if(kind == OwnerKind.TRAIT_IMPL) {
@@ -265,9 +269,10 @@ public class FunctionCodegen {
                                        state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
 
             String descriptor = jvmSignature.getDescriptor().replace(")","I)");
-            if(!isStatic)
+            boolean isConstructor = "<init>".equals(jvmSignature.getName());
+            if(!isStatic && !isConstructor)
                 descriptor = descriptor.replace("(","(L" + ownerInternalName + ";");
-            final MethodVisitor mv = v.newMethod(null, flags | ACC_STATIC, jvmSignature.getName() + "$default", descriptor, null, null);
+            final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC), isConstructor ? "<init>" : jvmSignature.getName() + "$default", descriptor, null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
             if (v.generateCode()) {
                 mv.visitCode();
@@ -278,32 +283,27 @@ public class FunctionCodegen {
 
                 int var = 0;
                 if(!isStatic) {
-                    frameMap.enterTemp();
                     var++;
                 }
 
+                Type receiverType = receiverParameter.exists() ? state.getTypeMapper().mapType(receiverParameter.getType()) : Type.DOUBLE_TYPE;
                 if(hasReceiver) {
-                    frameMap.enterTemp();
-                    var++;
+                    var += receiverType.getSize();
                 }
 
                 List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    int slot = frameMap.enterTemp();
-                    codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(slot, JetTypeMapper.TYPE_TYPEINFO));
-                    var++;
+                    if(typeParameterDescriptor.isReified()) {
+                        codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(var++, JetTypeMapper.TYPE_TYPEINFO));
+                    }
                 }
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
                 List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
                 for (int i = 0; i < paramDescrs.size(); i++) {
-                    ValueParameterDescriptor parameter = paramDescrs.get(i);
                     int size = argTypes[i + (hasReceiver ? 1 : 0)].getSize();
                     var += size;
-                    frameMap.enter(parameter, size);
                 }
-
-                frameMap.enterTemp();
 
                 int maskIndex = var;
 
@@ -313,7 +313,8 @@ public class FunctionCodegen {
                 }
 
                 if(hasReceiver) {
-                    mv.visitVarInsn(ALOAD, var++); // todo - Long etc.
+                    iv.load(var, receiverType);
+                    var += receiverType.getSize();
                 }
 
                 int extra = hasReceiver ? 1 : 0;
