@@ -75,6 +75,7 @@ public class TypeHierarchyResolver {
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+                    context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope);
                     context.getNamespaceScopes().put(namespace, namespaceScope);
                     context.getDeclaringScopes().put(namespace, outerScope);
 
@@ -215,6 +216,7 @@ public class TypeHierarchyResolver {
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             namespaceDescriptor.initialize(scope);
+            context.getConfiguration().extendNamespaceScope(context.getTrace(), namespaceDescriptor, scope);
             owner.addNamespace(namespaceDescriptor);
             if (namespace != null) {
                 context.getTrace().record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);

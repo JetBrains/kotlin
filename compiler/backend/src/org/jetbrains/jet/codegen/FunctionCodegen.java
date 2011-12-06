@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -199,7 +199,7 @@ public class FunctionCodegen {
             int flags = ACC_PUBLIC; // TODO.
 
             String ownerInternalName = contextClass instanceof NamespaceDescriptor ?
-                                       NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(contextClass)) :
+                                       NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(contextClass)) :
                                        state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
 
             String descriptor = jvmSignature.getDescriptor().replace(")","I)");

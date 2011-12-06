@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
@@ -100,7 +101,7 @@ class JetSimpleNameReference extends JetPsiReference {
                 typeText = DescriptorRenderer.TEXT.renderType(outType);
             }
             else if (descriptor instanceof ClassDescriptor) {
-                tailText = " (" + DescriptorRenderer.getFQName(descriptor.getContainingDeclaration()) + ")";
+                tailText = " (" + DescriptorUtils.getFQName(descriptor.getContainingDeclaration()) + ")";
                 tailTextGrayed = true;
             }
             else {

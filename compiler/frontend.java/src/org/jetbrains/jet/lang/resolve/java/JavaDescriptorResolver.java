@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -53,7 +52,7 @@ public class JavaDescriptorResolver {
         }
     };
 
-    protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
+    protected final Map<String, ClassDescriptor> classDescriptorCache = Maps.newHashMap();
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
@@ -122,7 +121,7 @@ public class JavaDescriptorResolver {
                 psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
                 !psiClass.hasModifierProperty(PsiModifier.FINAL))
         );
-        classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), psiClass));
+        classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(psiClass));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
 
@@ -163,7 +162,7 @@ public class JavaDescriptorResolver {
                         Collections.<AnnotationDescriptor>emptyList(), // TODO
                         false);
                 constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()), Modality.FINAL,
-                                                 resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), constructor));
+                                                 resolveVisibilityFromPsiModifiers(constructor));
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, constructor, constructorDescriptor);
@@ -368,7 +367,7 @@ public class JavaDescriptorResolver {
                 containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(),
                 Modality.FINAL,
-                resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), field),
+                resolveVisibilityFromPsiModifiers(field),
                 !isFinal,
                 null,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
@@ -454,7 +453,7 @@ public class JavaDescriptorResolver {
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),
                 Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
-                resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), method)
+                resolveVisibilityFromPsiModifiers(method)
         );
         semanticServices.getTrace().record(BindingContext.FUNCTION, method, functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
@@ -464,7 +463,7 @@ public class JavaDescriptorResolver {
         return substitutedFunctionDescriptor;
     }
 
-    private static Visibility resolveVisibilityFromPsiModifiers(BindingTrace trace, PsiModifierListOwner modifierListOwner) {
+    private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {
         //TODO report error
         return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibility.PUBLIC :
                                         (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibility.PRIVATE :
