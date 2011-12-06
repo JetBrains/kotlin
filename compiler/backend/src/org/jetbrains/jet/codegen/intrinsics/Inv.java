@@ -11,12 +11,18 @@ import java.util.List;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class Inv implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         receiver.put(expectedType, v);
-        v.iconst(-1);
+        if(expectedType == Type.LONG_TYPE) {
+            v.lconst(-1L);
+        }
+        else {
+            v.iconst(-1);
+        }
         v.xor(expectedType);
         return StackValue.onStack(expectedType);
     }
