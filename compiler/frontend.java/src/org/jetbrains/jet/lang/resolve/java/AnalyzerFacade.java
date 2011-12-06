@@ -1,7 +1,9 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
@@ -20,8 +22,10 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -34,22 +38,11 @@ public class AnalyzerFacade {
             return Collections.<JetDeclaration>singleton(file.getRootNamespace());
         }
     };
-    
-    private static final AnalyzingUtils ANALYZING_UTILS = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
+
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
 
-    public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return ANALYZING_UTILS.analyzeNamespace(namespace, flowDataTraceFactory);
-    }
-
     public static BindingContext analyzeFileWithCache(@NotNull final JetFile file, @NotNull final Function<JetFile, Collection<JetDeclaration>> declarationProvider) {
-        return analyzeFileWithCache(ANALYZING_UTILS, file, declarationProvider);
-    }
-
-    public static BindingContext analyzeFileWithCache(@NotNull final AnalyzingUtils analyzingUtils, 
-                                                      @NotNull final JetFile file, 
-                                                      @NotNull final Function<JetFile, Collection<JetDeclaration>> declarationProvider) {
         // TODO : Synchronization?
         CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
         if (bindingContextCachedValue == null) {
@@ -58,11 +51,7 @@ public class AnalyzerFacade {
                 public Result<BindingContext> compute() {
                     synchronized (lock) {
                         try {
-                            BindingContext bindingContext = analyzingUtils.analyzeNamespaces(
-                                    file.getProject(),
-                                    declarationProvider.fun(file),
-                                    Predicates.<PsiFile>equalTo(file),
-                                    JetControlFlowDataTraceFactory.EMPTY);
+                            BindingContext bindingContext = analyzeNamespacesWithJavaIntegration(file.getProject(), declarationProvider.fun(file), Predicates.<PsiFile>equalTo(file), JetControlFlowDataTraceFactory.EMPTY);
                             return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                         catch (ProcessCanceledException e) {
@@ -83,5 +72,40 @@ public class AnalyzerFacade {
             file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
         }
         return bindingContextCachedValue.getValue();
+    }
+
+    public static BindingContext analyzeOneNamespaceWithJavaIntegration(JetNamespace namespace, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        return analyzeNamespacesWithJavaIntegration(namespace.getProject(), Collections.singleton(namespace), Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory);
+    }
+
+    public static BindingContext analyzeNamespacesWithJavaIntegration(Project project, Collection<? extends JetDeclaration> declarations, Predicate<PsiFile> filesToAnalyzeCompletely, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        BindingTraceContext bindingTraceContext = new BindingTraceContext();
+        return AnalyzingUtils.getInstance().analyzeNamespacesWithGivenTrace(
+                project,
+                JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext),
+                declarations,
+                filesToAnalyzeCompletely,
+                flowDataTraceFactory, bindingTraceContext);
+    }
+
+    public static BindingContext shallowAnalyzeFiles(Collection<PsiFile> files) {
+        assert files.size() > 0;
+
+        Project project = files.iterator().next().getProject();
+
+        Collection<JetNamespace> namespaces = collectRootNamespaces(files);
+
+        return analyzeNamespacesWithJavaIntegration(project, namespaces, Predicates.<PsiFile>alwaysFalse(), JetControlFlowDataTraceFactory.EMPTY);
+    }
+
+    public static List<JetNamespace> collectRootNamespaces(Collection<PsiFile> files) {
+        List<JetNamespace> namespaces = new ArrayList<JetNamespace>();
+
+        for (PsiFile file : files) {
+            if (file instanceof JetFile) {
+                namespaces.add(((JetFile) file).getRootNamespace());
+            }
+        }
+        return namespaces;
     }
 }

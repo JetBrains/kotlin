@@ -18,16 +18,6 @@ import java.util.List;
  */
 public class DescriptorRenderer implements Renderer {
 
-    public static String getFQName(DeclarationDescriptor descriptor) {
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (container != null && !(container instanceof ModuleDescriptor)) {
-            String baseName = getFQName(container);
-            if (!baseName.isEmpty()) return baseName + "." + descriptor.getName();
-        }
-
-        return descriptor.getName();
-    }
-
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
 
     public static final DescriptorRenderer HTML = new DescriptorRenderer() {

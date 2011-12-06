@@ -3,11 +3,10 @@ package org.jetbrains.jet.checkers;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.ImportingStrategy;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.util.Collections;
@@ -81,7 +80,10 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         }
 
         public void test(PsiFile psiFile) {
-            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(AnalyzingUtils.getInstance(ImportingStrategy.NONE), (JetFile) psiFile, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+            BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(
+                    ((JetFile) psiFile).getRootNamespace(),
+                    JetControlFlowDataTraceFactory.EMPTY);
+
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile)).toString();
 
             List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();

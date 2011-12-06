@@ -15,7 +15,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.Collections;
@@ -84,7 +84,7 @@ public class GenerationState {
 
     public void compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
-        final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
+        final BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(namespace, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
 //        NamespaceCodegen codegen = forNamespace(namespace);

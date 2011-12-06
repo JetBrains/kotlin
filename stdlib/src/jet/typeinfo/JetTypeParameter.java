@@ -6,10 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotation for parameters
+ *
  * @author alex.tkachman
  */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JetParameterName {
-    String value ();
+public @interface JetTypeParameter {
+    /**
+     * @return name of parameter
+     */
+    String name();
 }

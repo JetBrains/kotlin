@@ -5,8 +5,8 @@ package jet.typeinfo;
  */
 public enum TypeInfoVariance {
     INVARIANT("") ,
-    IN_VARIANCE("in"),
-    OUT_VARIANCE("out");
+    IN("in"),
+    OUT("out");
 
     private final String label;
 

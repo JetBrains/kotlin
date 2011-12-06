@@ -1,18 +1,13 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
@@ -51,7 +46,7 @@ public class OverloadResolver {
         }
         
         Key(NamespaceDescriptor namespaceDescriptor, String name) {
-            this(DescriptorRenderer.getFQName(namespaceDescriptor), name);
+            this(DescriptorUtils.getFQName(namespaceDescriptor), name);
         }
 
         public String getNamespace() {
