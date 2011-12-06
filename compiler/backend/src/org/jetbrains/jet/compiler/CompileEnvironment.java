@@ -356,7 +356,7 @@ public class CompileEnvironment {
         }
     }
 
-    private static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
+    public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
         List<String> files = factory.files();
         for (String file : files) {
             if(!skipFile(file)) {
