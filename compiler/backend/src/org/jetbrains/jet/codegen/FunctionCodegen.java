@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -26,17 +27,19 @@ public class FunctionCodegen {
     private final CodegenContext owner;
     private final ClassBuilder v;
     private final GenerationState state;
+    private final JetTypeMapper typeMapper;
 
     public FunctionCodegen(CodegenContext owner, ClassBuilder v, GenerationState state) {
         this.owner = owner;
         this.v = v;
         this.state = state;
+        typeMapper = state.getTypeMapper();
     }
 
     public void gen(JetNamedFunction f) {
         final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
-        Method method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
+        Method method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
         generateMethod(f, method, functionDescriptor);
     }
 
@@ -59,21 +62,57 @@ public class FunctionCodegen {
 
         OwnerKind kind = context.getContextKind();
 
+        ReceiverDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
+        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+
         if (kind != OwnerKind.TRAIT_IMPL || bodyExpressions != null) {
+            boolean isStatic = kind == OwnerKind.NAMESPACE;
+            if (isStatic || kind == OwnerKind.TRAIT_IMPL)
+                flags |= ACC_STATIC;
 
-            boolean isStatic = kind == OwnerKind.NAMESPACE || kind == OwnerKind.TRAIT_IMPL;
-            if (isStatic) flags |= ACC_STATIC;
-
-            boolean isAbstract = !isStatic && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()));
+            boolean isAbstract = !isStatic && !(kind == OwnerKind.TRAIT_IMPL) && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()));
             if (isAbstract) flags |= ACC_ABSTRACT;
 
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
-            if(kind != OwnerKind.TRAIT_IMPL && v.generateCode()) {
-                int start = functionDescriptor.getReceiverParameter().exists() ? 1 : 0;
+            if(v.generateCode()) {
+                int start = 0;
+                if(kind != OwnerKind.TRAIT_IMPL) {
+                    AnnotationVisitor av = mv.visitAnnotation("Ljet/typeinfo/JetMethod;", true);
+                    if(functionDescriptor.getReturnType().isNullable()) {
+                        av.visit("nullableReturnType", true);
+                    }
+                    av.visitEnd();
+                }
+
+                if(kind == OwnerKind.TRAIT_IMPL) {
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, "Ljet/typeinfo/JetParameter;", true);
+                    av.visit("value", "this$self");
+                    av.visitEnd();
+                }
+                if(receiverParameter.exists()) {
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, "Ljet/typeinfo/JetParameter;", true);
+                    av.visit("value", "this$receiver");
+                    if(receiverParameter.getType().isNullable()) {
+                        av.visit("nullable", true);
+                    }
+                    av.visitEnd();
+                }
+                for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, "Ljet/typeinfo/JetTypeParameter;", true);
+                    av.visit("value", typeParameterDescriptor.getName());
+                    av.visitEnd();
+                }
                 for(int i = 0; i != paramDescrs.size(); ++i) {
-                    AnnotationVisitor annotationVisitor = mv.visitParameterAnnotation(i + start, "Ljet/typeinfo/JetParameterName;", true);
-                    annotationVisitor.visit("value", paramDescrs.get(i).getName());
-                    annotationVisitor.visitEnd();
+                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, "Ljet/typeinfo/JetParameter;", true);
+                    ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
+                    av.visit("value", parameterDescriptor.getName());
+                    if(parameterDescriptor.hasDefaultValue()) {
+                        av.visit("hasDefaultValue", true);
+                    }
+                    if(parameterDescriptor.getOutType().isNullable()) {
+                        av.visit("nullable", true);
+                    }
+                    av.visitEnd();
                 }
             }
             if (!isAbstract && v.generateCode()) {
@@ -82,12 +121,18 @@ public class FunctionCodegen {
                 Label methodBegin = new Label();
                 mv.visitLabel(methodBegin);
                 
-                FrameMap frameMap = context.prepareFrame();
+                FrameMap frameMap = context.prepareFrame(typeMapper);
 
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
-                int add = functionDescriptor.getReceiverParameter().exists() ? state.getTypeMapper().mapType(functionDescriptor.getReceiverParameter().getType()).getSize() : 0;
+                int add = 0;
+
+                if(kind == OwnerKind.TRAIT_IMPL)
+                    add++;
+
+                if(receiverParameter.exists())
+                    add++;
 
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
                     int slot = frameMap.enterTemp();
@@ -114,9 +159,9 @@ public class FunctionCodegen {
                 }
                 else {
                     for (ValueParameterDescriptor parameter : paramDescrs) {
-                        Type sharedVarType = state.getTypeMapper().getSharedVarType(parameter);
-                        Type localVarType = state.getTypeMapper().mapType(parameter.getOutType());
+                        Type sharedVarType = typeMapper.getSharedVarType(parameter);
                         if (sharedVarType != null) {
+                            Type localVarType = typeMapper.mapType(parameter.getOutType());
                             int index = frameMap.getIndex(parameter);
                             mv.visitTypeInsn(NEW, sharedVarType.getInternalName());
                             mv.visitInsn(DUP);
@@ -134,13 +179,30 @@ public class FunctionCodegen {
                 Label methodEnd = new Label();
                 mv.visitLabel(methodEnd);
 
-                // http://youtrack.jetbrains.net/issue/KT-746
-                // Fill LocalVariableTable with method parameter names
-                for (int i = 0; i < paramDescrs.size(); i++) {
-                    ValueParameterDescriptor parameter = paramDescrs.get(i);
-                    Type type = state.getTypeMapper().mapType(parameter.getOutType());
+                int k = 0;
+
+                if(expectedThisObject.exists()) {
+                    Type type = typeMapper.mapType(expectedThisObject.getType());
                     // TODO: specify signature
-                    mv.visitLocalVariable(parameter.getName(), type.getDescriptor(), null, methodBegin, methodEnd, i + add);
+                    mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
+                }
+
+                if(receiverParameter.exists()) {
+                    Type type = typeMapper.mapType(receiverParameter.getType());
+                    // TODO: specify signature
+                    mv.visitLocalVariable("this$receiver", type.getDescriptor(), null, methodBegin, methodEnd, k);
+                    k += type.getSize();
+                }
+
+                for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+                    mv.visitLocalVariable(typeParameterDescriptor.getName(), JetTypeMapper.TYPE_TYPEINFO.getDescriptor(), null, methodBegin, methodEnd, k++);
+                }
+
+                for (ValueParameterDescriptor parameter : paramDescrs) {
+                    Type type = typeMapper.mapType(parameter.getOutType());
+                    // TODO: specify signature
+                    mv.visitLocalVariable(parameter.getName(), type.getDescriptor(), null, methodBegin, methodEnd, k);
+                    k += type.getSize();
                 }
 
                 mv.visitMaxs(0, 0);
@@ -164,7 +226,7 @@ public class FunctionCodegen {
         }
     }
 
-    static void generateDefaultIfNeeded(CodegenContext.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    static void generateDefaultIfNeeded(CodegenContext.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, @Nullable FunctionDescriptor functionDescriptor, OwnerKind kind) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
         if(kind != OwnerKind.TRAIT_IMPL) {
@@ -180,15 +242,18 @@ public class FunctionCodegen {
         }
 
         boolean needed = false;
-        for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-            if(parameterDescriptor.hasDefaultValue()) {
-                needed = true;
-                break;
+        if(functionDescriptor != null) {
+            for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
+                if(parameterDescriptor.hasDefaultValue()) {
+                    needed = true;
+                    break;
+                }
             }
         }
 
         if(needed) {
-            boolean hasReceiver = functionDescriptor.getReceiverParameter().exists();
+            ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+            boolean hasReceiver = receiverParameter.exists();
             boolean isStatic = kind == OwnerKind.NAMESPACE;
 
             if(kind == OwnerKind.TRAIT_IMPL) {
@@ -203,45 +268,41 @@ public class FunctionCodegen {
                                        state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
 
             String descriptor = jvmSignature.getDescriptor().replace(")","I)");
-            if(!isStatic)
+            boolean isConstructor = "<init>".equals(jvmSignature.getName());
+            if(!isStatic && !isConstructor)
                 descriptor = descriptor.replace("(","(L" + ownerInternalName + ";");
-            final MethodVisitor mv = v.newMethod(null, flags | ACC_STATIC, jvmSignature.getName() + "$default", descriptor, null, null);
+            final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC), isConstructor ? "<init>" : jvmSignature.getName() + "$default", descriptor, null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
             if (v.generateCode()) {
                 mv.visitCode();
 
-                FrameMap frameMap = owner.prepareFrame();
+                FrameMap frameMap = owner.prepareFrame(state.getTypeMapper());
 
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
 
                 int var = 0;
                 if(!isStatic) {
-                    frameMap.enterTemp();
                     var++;
                 }
 
+                Type receiverType = receiverParameter.exists() ? state.getTypeMapper().mapType(receiverParameter.getType()) : Type.DOUBLE_TYPE;
                 if(hasReceiver) {
-                    frameMap.enterTemp();
-                    var++;
+                    var += receiverType.getSize();
                 }
 
                 List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    int slot = frameMap.enterTemp();
-                    codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(slot, JetTypeMapper.TYPE_TYPEINFO));
-                    var++;
+                    if(typeParameterDescriptor.isReified()) {
+                        codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(var++, JetTypeMapper.TYPE_TYPEINFO));
+                    }
                 }
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
                 List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
                 for (int i = 0; i < paramDescrs.size(); i++) {
-                    ValueParameterDescriptor parameter = paramDescrs.get(i);
                     int size = argTypes[i + (hasReceiver ? 1 : 0)].getSize();
                     var += size;
-                    frameMap.enter(parameter, size);
                 }
-
-                frameMap.enterTemp();
 
                 int maskIndex = var;
 
@@ -251,7 +312,8 @@ public class FunctionCodegen {
                 }
 
                 if(hasReceiver) {
-                    mv.visitVarInsn(ALOAD, var++); // todo - Long etc.
+                    iv.load(var, receiverType);
+                    var += receiverType.getSize();
                 }
 
                 int extra = hasReceiver ? 1 : 0;

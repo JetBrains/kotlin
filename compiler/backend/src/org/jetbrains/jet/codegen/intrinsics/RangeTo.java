@@ -18,16 +18,24 @@ import java.util.List;
 public class RangeTo implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        JetBinaryExpression expression = (JetBinaryExpression) element;
-        final Type leftType = codegen.expressionType(expression.getLeft());
-        if (JetTypeMapper.isIntPrimitive(leftType)) {
-            codegen.gen(expression.getLeft(), Type.INT_TYPE);
-            codegen.gen(expression.getRight(), Type.INT_TYPE);
+        if(arguments.size()==1) {
+            receiver.put(Type.INT_TYPE, v);
+            codegen.gen(arguments.get(0), Type.INT_TYPE);
             v.invokestatic("jet/IntRange", "rangeTo", "(II)Ljet/IntRange;");
             return StackValue.onStack(JetTypeMapper.TYPE_INT_RANGE);
         }
         else {
-            throw new UnsupportedOperationException("ranges are only supported for int objects");
+            JetBinaryExpression expression = (JetBinaryExpression) element;
+            final Type leftType = codegen.expressionType(expression.getLeft());
+            if (JetTypeMapper.isIntPrimitive(leftType)) {
+                codegen.gen(expression.getLeft(), Type.INT_TYPE);
+                codegen.gen(expression.getRight(), Type.INT_TYPE);
+                v.invokestatic("jet/IntRange", "rangeTo", "(II)Ljet/IntRange;");
+                return StackValue.onStack(JetTypeMapper.TYPE_INT_RANGE);
+            }
+            else {
+                throw new UnsupportedOperationException("ranges are only supported for int objects");
+            }
         }
     }
 }

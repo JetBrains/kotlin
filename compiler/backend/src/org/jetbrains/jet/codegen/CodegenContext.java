@@ -124,15 +124,17 @@ public abstract class CodegenContext {
         return new ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName);
     }
 
-    public FrameMap prepareFrame() {
+    public FrameMap prepareFrame(JetTypeMapper mapper) {
         FrameMap frameMap = new FrameMap();
 
         if (getContextKind() != OwnerKind.NAMESPACE) {
             frameMap.enterTemp();  // 0 slot for this
         }
 
-        if (getReceiverDescriptor() != null) {
-            frameMap.enterTemp();  // Next slot for fake this
+        CallableDescriptor receiverDescriptor = getReceiverDescriptor();
+        if (receiverDescriptor != null) {
+            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType());
+            frameMap.enterTemp(type.getSize());  // Next slot for fake this
         }
 
         return frameMap;

@@ -317,7 +317,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt737() throws Exception {
         loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.byt.compareTo(10.lng) >= 0) \"fail\" else \"OK\"");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         assertEquals("OK", blackBox());
     }
 
@@ -336,5 +336,20 @@ public class PrimitiveTypesTest extends CodegenTestCase {
                  "}");
 //        System.out.println(generateToText());
         blackBox();
+    }
+
+    public void testKt752 () {
+        blackBoxFile("regressions/kt752.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testKt753 () {
+        blackBoxFile("regressions/kt753.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testKt684 () {
+        blackBoxFile("regressions/kt684.jet");
+//        System.out.println(generateToText());
     }
 }

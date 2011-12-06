@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
+import org.objectweb.asm.Type;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ import java.util.List;
  * @author alex.tkachman
  */
 public class SignatureUtil {
+    private SignatureUtil() {
+    }
+
     public static String classToSignature(JetClass type, BindingContext bindingContext, JetTypeMapper typeMapper) {
         StringBuilder sb = new StringBuilder();
         genTypeParams(type, sb);
@@ -33,7 +37,7 @@ public class SignatureUtil {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if(descriptor instanceof ClassDescriptor) {
             JetType defaultType = ((ClassDescriptor) descriptor).getDefaultType();
-            org.objectweb.asm.Type type = typeMapper.mapType(defaultType, OwnerKind.IMPLEMENTATION);
+            Type type = typeMapper.mapType(defaultType, OwnerKind.IMPLEMENTATION);
             if(JetTypeMapper.isPrimitive(type)) {
                 type = JetTypeMapper.boxType(type);
             }

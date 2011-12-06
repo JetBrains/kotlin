@@ -1,5 +1,6 @@
 package org.jetbrains.jet.completion;
 
+import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
@@ -8,16 +9,13 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import java.io.File;
 
 /**
- * Test auto completion messages
- *
  * @author Nikolay.Krasko
  */
-public class KeywordsCompletionTest extends JetCompletionTestBase {
-
+public class JetBasicCompletionTest extends JetCompletionTestBase {
     private final String myPath;
     private final String myName;
 
-    public KeywordsCompletionTest(@NotNull String path, @NotNull String name) {
+    public JetBasicCompletionTest(@NotNull String path, @NotNull String name) {
         myPath = path;
         myName = name;
 
@@ -46,13 +44,13 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         TestSuite suite = new TestSuite();
 
         JetTestCaseBuilder.appendTestsInDirectory(
-                PluginTestCaseBase.getTestDataPathBase(), "/completion/keywords/", false,
+                PluginTestCaseBase.getTestDataPathBase(), "/completion/basic/", false,
                 JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
 
             @NotNull
             @Override
-            public junit.framework.Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new KeywordsCompletionTest(dataPath, name);
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
+                return new JetBasicCompletionTest(dataPath, name);
             }
         }, suite);
 

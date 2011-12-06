@@ -348,9 +348,6 @@ public class JetTypeMapper {
         final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
-        if (receiverType != null) {
-            parameterTypes.add(mapType(receiverType));
-        }
         if(kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
             JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
@@ -361,6 +358,9 @@ public class JetTypeMapper {
             }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
+        }
+        if (receiverType != null) {
+            parameterTypes.add(mapType(receiverType));
         }
         for (TypeParameterDescriptor parameterDescriptor : f.getTypeParameters()) {
             if(parameterDescriptor.isReified()) {
