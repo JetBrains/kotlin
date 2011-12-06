@@ -60,7 +60,7 @@ public abstract class TypeInfo<T> implements JetObject {
 //            @NotNull
             @Override
             public TypeInfoVariance getVariance() {
-                return TypeInfoVariance.IN_VARIANCE;
+                return TypeInfoVariance.IN;
             }
         };
     }
@@ -70,7 +70,7 @@ public abstract class TypeInfo<T> implements JetObject {
 //            @NotNull
             @Override
             public TypeInfoVariance getVariance() {
-                return TypeInfoVariance.OUT_VARIANCE;
+                return TypeInfoVariance.OUT;
             }
         };
     }
@@ -606,11 +606,11 @@ public abstract class TypeInfo<T> implements JetObject {
         private TypeInfoVariance parseVariance() {
             if(string[cur] == 'i' && string[cur+1] == 'n' && string[cur+2] == ' ' ) {
                 cur += 3;
-                return TypeInfoVariance.IN_VARIANCE;
+                return TypeInfoVariance.IN;
             }
             else if (string[cur] == 'o' && string[cur+1] == 'u' && string[cur+2] == 't' && string[cur+3] == ' ') {
                 cur += 4;
-                return TypeInfoVariance.OUT_VARIANCE;
+                return TypeInfoVariance.OUT;
             }
             else {
                 return TypeInfoVariance.INVARIANT;
