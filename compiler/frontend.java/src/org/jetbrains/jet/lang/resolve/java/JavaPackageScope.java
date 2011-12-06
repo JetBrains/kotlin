@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
@@ -35,17 +34,7 @@ public class JavaPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-        // TODO: what is GlobalSearchScope
-        PsiClass psiClass = semanticServices.getDescriptorResolver().javaFacade.findClass(packagePrefix + "namespace");
-        if (psiClass == null) {
-            return Collections.emptySet();
-        }
-
-        if (containingDescriptor == null) {
-            return Collections.emptySet();
-        }
-
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(containingDescriptor, psiClass, null, name, true);
+        return Collections.emptySet();
     }
 
     @NotNull

@@ -332,6 +332,7 @@ public class JavaDescriptorResolver {
     }
 
     private ValueParameterDescriptor resolveParameterDescriptor(DeclarationDescriptor containingDeclaration, int i, PsiParameter parameter) {
+        String name = parameter.getName();
         PsiType psiType = parameter.getType();
 
         JetType varargElementType;
@@ -342,41 +343,14 @@ public class JavaDescriptorResolver {
         else {
             varargElementType = null;
         }
-
-        boolean nullable = true;
-        
-        // TODO: must be very slow, make it lazy?
-        String name = parameter.getName() != null ? parameter.getName() : "p" + i;
-        for (PsiAnnotation annotation : parameter.getModifierList().getAnnotations()) {
-            // TODO: softcode annotation name
-
-            PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
-            attributes.toString();
-
-            if (annotation.getQualifiedName().equals("jet.typeinfo.JetParameter")) {
-                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue("name");
-                if (nameExpression != null) {
-                    name = (String) nameExpression.getValue();
-                }
-                
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue("nullable");
-                if (nullableExpression != null) {
-                    nullable = (Boolean) nullableExpression.getValue();
-                } else {
-                    // default value of parameter
-                    nullable = false;
-                }
-            }
-        }
-        
         JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
         return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 i,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                name,
+                name == null ? "p" + i : name,
                 null, // TODO : review
-                TypeUtils.makeNullableAsSpecified(outType, nullable),
+                outType,
                 false,
                 varargElementType
         );

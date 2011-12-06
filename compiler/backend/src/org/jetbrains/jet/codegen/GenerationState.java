@@ -82,12 +82,11 @@ public class GenerationState {
         return factory.forNamespace(namespace);
     }
 
-    public BindingContext compile(JetFile psiFile) {
+    public void compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
         final BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(namespace, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
-        return bindingContext;
 //        NamespaceCodegen codegen = forNamespace(namespace);
 //        bindingContexts.push(bindingContext);
 //        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
