@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -8,10 +9,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -83,7 +81,7 @@ public class TaskPrioritizers {
         }
     };
 
-    /*package*/ static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
+    /*package*/ static TaskPrioritizer<VariableDescriptor> VARIABLE_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
 
         @NotNull
         @Override
@@ -113,6 +111,36 @@ public class TaskPrioritizers {
                 return Collections.singleton(variable);
             }
             return Collections.emptyList();
+        }
+    };
+    
+    /*package*/ static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
+        private Collection<VariableDescriptor> filterProperties(Collection<VariableDescriptor> variableDescriptors) {
+            ArrayList<VariableDescriptor> properties = Lists.newArrayList();
+            for (VariableDescriptor descriptor : variableDescriptors) {
+                if (descriptor instanceof PropertyDescriptor) {
+                    properties.add(descriptor);
+                }
+            }
+            return properties;
+        }
+
+        @NotNull
+        @Override
+        protected Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
+            return filterProperties(VARIABLE_TASK_PRIORITIZER.getNonExtensionsByName(scope, name));
+        }
+
+        @NotNull
+        @Override
+        protected Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiver, String name) {
+            return filterProperties(VARIABLE_TASK_PRIORITIZER.getMembersByName(receiver, name));
+        }
+
+        @NotNull
+        @Override
+        protected Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
+            return filterProperties(VARIABLE_TASK_PRIORITIZER.getExtensionsByName(scope, name));
         }
     };
 }

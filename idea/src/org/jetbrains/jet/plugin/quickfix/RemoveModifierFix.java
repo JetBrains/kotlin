@@ -35,7 +35,7 @@ public class RemoveModifierFix {
         if (isRedundant) {
             return JetBundle.message("remove.redundant.modifier", modifier.getValue());
         }
-        if (element != null && modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
+        if (element != null && (modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD)) {
             return JetBundle.message("make.element.not.modifier", AddModifierFix.getElementName(element), modifier.getValue());
         }
         return JetBundle.message("remove.modifier", modifier.getValue());

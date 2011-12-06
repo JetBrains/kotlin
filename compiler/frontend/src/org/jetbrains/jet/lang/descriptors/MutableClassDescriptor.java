@@ -52,7 +52,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, this, redeclarationHandler).setDebugName("PropertyInitializers").changeLockLevel(WritableScope.LockLevel.BOTH);
+        this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, this, redeclarationHandler).setDebugName("Initializers").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.kind = kind;
     }
 
@@ -137,7 +137,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         callableMembers.add(propertyDescriptor);
         scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
         scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
-        scopeForInitializers.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
     }
 
     @Override

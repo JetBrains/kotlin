@@ -3,6 +3,6 @@ class ReadNonexistent() {
         get() = 1
 
     {
-        val x = <!NO_BACKING_FIELD!>$a<!>
+        val x = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$a<!>
     }
 }

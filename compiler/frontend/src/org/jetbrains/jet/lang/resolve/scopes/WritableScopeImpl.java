@@ -339,17 +339,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void addPropertyDescriptorByFieldName(@NotNull String fieldName, @NotNull PropertyDescriptor propertyDescriptor) {
-        checkMayWrite();
-
-        if (!fieldName.startsWith("$")) {
-            throw new IllegalStateException();
-        }
-        
-        getPropertyDescriptorsByFieldNames().put(fieldName, propertyDescriptor);
-    }
-
-    @Override
     public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
         checkMayRead();
 

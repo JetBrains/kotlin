@@ -64,7 +64,15 @@ public class CallResolver {
         if (referencedName == null) {
             return null;
         }
-        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = TaskPrioritizers.PROPERTY_TASK_PRIORITIZER.computePrioritizedTasks(scope, call, referencedName, trace.getBindingContext(), dataFlowInfo);
+        TaskPrioritizer<VariableDescriptor> task_prioritizer;
+        if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+            referencedName = referencedName.substring(1);
+            task_prioritizer = TaskPrioritizers.PROPERTY_TASK_PRIORITIZER;
+        }
+        else {
+            task_prioritizer = TaskPrioritizers.VARIABLE_TASK_PRIORITIZER;
+        }
+        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = task_prioritizer.computePrioritizedTasks(scope, call, referencedName, trace.getBindingContext(), dataFlowInfo);
         return resolveCallToDescriptor(trace, scope, call, expectedType, prioritizedTasks, nameExpression);
     }
 

@@ -181,7 +181,8 @@ public class DeclarationsChecker {
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
                 PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
                 assert classElement instanceof JetClass;
-                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, abstractNode, property.getName(), classDescriptor, (JetClass) classElement));
+                String name = property.getName();
+                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, abstractNode, name != null ? name : "", classDescriptor, (JetClass) classElement));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {

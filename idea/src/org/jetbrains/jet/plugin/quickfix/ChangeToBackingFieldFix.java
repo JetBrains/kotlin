@@ -36,12 +36,7 @@ public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExp
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetSimpleNameExpression backingField = (JetSimpleNameExpression) JetPsiFactory.createExpression(project, "$" + element.getText());
-        if (element.getParent() instanceof JetDotQualifiedExpression && ((JetDotQualifiedExpression) element.getParent()).getReceiverExpression() instanceof JetThisExpression) {
-            element.getParent().replace(backingField);
-        }
-        else {
-            element.replace(backingField);
-        }
+        element.replace(backingField);
     }
 
     public static JetIntentionActionFactory<JetSimpleNameExpression> createFactory() {

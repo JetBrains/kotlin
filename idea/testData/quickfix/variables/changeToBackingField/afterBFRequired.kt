@@ -1,6 +1,7 @@
 // "Change reference to backing field" "true"
 class A() {
-    val a : Int
+    var a : Int
+    set(v) {}
     {
         <caret>$a = 1
     }

@@ -31,7 +31,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     }
 
     @NotNull
-    /*package*/ static String getElementName(JetModifierListOwner modifierListOwner) {
+    /*package*/ static String getElementName(@NotNull JetModifierListOwner modifierListOwner) {
         String name = null;
         if (modifierListOwner instanceof PsiNameIdentifierOwner) {
             PsiElement nameIdentifier = ((PsiNameIdentifierOwner) modifierListOwner).getNameIdentifier();
