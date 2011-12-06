@@ -105,8 +105,6 @@ public class ReadClassDataTest extends UsefulTestCase {
 
     @Override
     public void runTest() throws Exception {
-        if (true) return;
-
         createMockCoreEnvironment();
 
         LanguageASTFactory.INSTANCE.addExplicitExtension(JavaLanguage.INSTANCE, new JavaASTFactory());
@@ -184,7 +182,8 @@ public class ReadClassDataTest extends UsefulTestCase {
         for (int i = 0; i < a.getValueParameters().size(); ++i) {
             compareAnything(ValueParameterDescriptor.class, a.getValueParameters().get(i), b.getValueParameters().get(i));
         }
-        System.out.println("function " + a.getName());
+        Assert.assertEquals(a.getReturnType(), b.getReturnType());
+        System.out.println("fun " + a.getName() + "(...): " + a.getReturnType());
     }
 
     private <T> void compareAnything(Class<T> clazz, T a, T b) {

@@ -479,7 +479,7 @@ public class JavaDescriptorResolver {
                 DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 typeParameters,
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
-                semanticServices.getTypeTransformer().transformToType(returnType),
+                semanticServices.getDescriptorResolver().makeReturnType(returnType, method),
                 Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
                 resolveVisibilityFromPsiModifiers(method)
         );
@@ -489,6 +489,30 @@ public class JavaDescriptorResolver {
             substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
         }
         return substitutedFunctionDescriptor;
+    }
+
+    private JetType makeReturnType(PsiType returnType, PsiMethod method) {
+        boolean changeNullable = false;
+        boolean nullable = true;
+
+        for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
+            if (annotation.getQualifiedName().equals("jet.typeinfo.JetMethod")) {
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue("nullableReturnType");
+                if (nullableExpression != null) {
+                    nullable = (Boolean) nullableExpression.getValue();
+                } else {
+                    // default value of parameter
+                    nullable = false;
+                    changeNullable = true;
+                }
+            }
+        }
+        JetType transformedType = semanticServices.getTypeTransformer().transformToType(returnType);
+        if (changeNullable) {
+            return TypeUtils.makeNullableAsSpecified(transformedType, nullable);
+        } else {
+            return transformedType;
+        }
     }
 
     private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {
