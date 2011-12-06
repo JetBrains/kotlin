@@ -14,7 +14,7 @@ import static org.jetbrains.jet.j2k.Converter.getDefaultInitializer;
  */
 public class Field extends Member {
   final Identifier myIdentifier;
-  private final Type myType;
+  final Type myType;
   final Element myInitializer;
 
   public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer) {

@@ -305,11 +305,8 @@ public class Converter {
       modifiers.add(Modifier.OVERRIDE);
     if (method.getParent() instanceof PsiClass && ((PsiClass) method.getParent()).isInterface())
       modifiers.remove(Modifier.ABSTRACT);
-    if (method.getParent() instanceof PsiClass) {
-      final PsiModifierList parentModifierList = ((PsiClass) method.getParent()).getModifierList();
-      if (parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL))
-        modifiers.add(Modifier.NOT_OPEN);
-    }
+    if (isNotOpenMethod(method))
+      modifiers.add(Modifier.NOT_OPEN);
 
     if (method.isConstructor()) { // TODO: simplify
       boolean isPrimary = isConstructorPrimary(method);
@@ -331,6 +328,15 @@ public class Converter {
       params,
       body
     );
+  }
+
+  private static boolean isNotOpenMethod(final PsiMethod method) {
+    if (method.getParent() instanceof PsiClass) {
+      final PsiModifierList parentModifierList = ((PsiClass) method.getParent()).getModifierList();
+      if ((parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL)) || ((PsiClass) method.getParent()).isEnum())
+        return true;
+    }
+    return false;
   }
 
   private static boolean isOverrideAnyMethodExceptMethodsFromObject(@NotNull PsiMethod method) {
@@ -418,14 +424,14 @@ public class Converter {
   public static Type typeToType(PsiType type, boolean notNull) {
     Type result = typeToType(type);
     if (notNull)
-      result.convertToNotNull();
+      result.convertedToNotNull();
     return result;
   }
 
   @NotNull
   private static List<Type> typesToNotNullableTypeList(@NotNull PsiType[] types) {
     List<Type> result = new LinkedList<Type>(typesToTypeList(types));
-    for (Type p : result) p.convertToNotNull();
+    for (Type p : result) p.convertedToNotNull();
     return result;
   }
 

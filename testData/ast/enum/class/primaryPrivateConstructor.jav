@@ -1,3 +1,5 @@
+package demo;
+
 enum Color {
  private int code;
 

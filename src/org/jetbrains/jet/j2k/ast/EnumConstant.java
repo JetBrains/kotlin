@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class EnumConstant extends Field {
   public EnumConstant(Identifier identifier, Set<String> modifiers, Type type, Element params) {
-    super(identifier, modifiers, type, params);
+    super(identifier, modifiers, type.convertedToNotNull(), params);
   }
 
   @NotNull
@@ -17,6 +17,6 @@ public class EnumConstant extends Field {
   public String toKotlin() {
     if (myInitializer.toKotlin().isEmpty())
       return myIdentifier.toKotlin();
-    return myIdentifier.toKotlin() + "(" + myInitializer.toKotlin() + ")";
+    return myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + "(" + myInitializer.toKotlin() + ")";
   }
 }
