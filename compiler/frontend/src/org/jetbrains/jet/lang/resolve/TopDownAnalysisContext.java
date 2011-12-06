@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -23,31 +24,31 @@ import java.util.Set;
 
     private final ObservableBindingTrace trace;
     private final JetSemanticServices semanticServices;
-    private final DescriptorResolver descriptorResolver;
+    private final Configuration configuration;
 
+    private final DescriptorResolver descriptorResolver;
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     protected final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
     protected final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
-
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetSecondaryConstructor, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 
     private final Predicate<PsiFile> analyzeCompletely;
-    
-    private StringBuilder debugOutput;
 
+    private StringBuilder debugOutput;
     private boolean analyzingBootstrapLibrary = false;
 
-    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely) {
+    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely, @NotNull Configuration configuration) {
         this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         this.analyzeCompletely = analyzeCompletely;
+        this.configuration = configuration;
     }
 
     public void debug(Object message) {
@@ -133,4 +134,8 @@ import java.util.Set;
         return functions;
     }
 
+    @NotNull
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 }

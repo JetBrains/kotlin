@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 public class JetNpeTest extends CodegenTestCase {
     public void testStackTrace () {
         try {
-            Intrinsics.sure(null);
+            Intrinsics.throwNpe();
             fail("No Sure thrown");
         }
         catch (NullPointerException e) {
@@ -25,7 +25,7 @@ public class JetNpeTest extends CodegenTestCase {
 
     public void testNull () throws Exception {
         loadText("fun box() = if(null.sure() == 10) \"OK\" else \"fail\"");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method box = generateFunction("box");
         assertThrows(box, NullPointerException.class, null);
     }

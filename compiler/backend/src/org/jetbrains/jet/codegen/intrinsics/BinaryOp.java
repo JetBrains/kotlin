@@ -5,6 +5,7 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -31,11 +32,11 @@ public class BinaryOp implements IntrinsicMethod {
             if (receiver != null) {
                 receiver.put(expectedType, v);
             }
-            codegen.gen(arguments.get(0), expectedType);
+            codegen.gen(arguments.get(0), shift() ? Type.INT_TYPE : expectedType);
         }
         else {
             codegen.gen(arguments.get(0), expectedType);
-            codegen.gen(arguments.get(1), expectedType);
+            codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : expectedType);
         }
         v.visitInsn(expectedType.getOpcode(opcode));
 
@@ -43,5 +44,9 @@ public class BinaryOp implements IntrinsicMethod {
             StackValue.onStack(expectedType).put(expectedType = JetTypeMapper.boxType(expectedType), v);
         }
         return StackValue.onStack(expectedType);
+    }
+
+    private boolean shift() {
+        return opcode == Opcodes.ISHL || opcode == Opcodes.ISHR || opcode == Opcodes.IUSHR;
     }
 }

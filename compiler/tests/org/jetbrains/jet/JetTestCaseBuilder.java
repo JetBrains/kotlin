@@ -32,7 +32,7 @@ public abstract class JetTestCaseBuilder {
     }
 
     public interface NamedTestFactory {
-        @NotNull Test createTest(@NotNull String dataPath, @NotNull String name);
+        @NotNull Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file);
     }
 
     @NotNull
@@ -90,7 +90,7 @@ public abstract class JetTestCaseBuilder {
             String fileName = file.getName();
             assert fileName != null;
             String extension = fileName.endsWith(extensionJet) ? extensionJet : extensionKt;
-            suite.addTest(factory.createTest(dataPath, fileName.substring(0, fileName.length() - extension.length())));
+            suite.addTest(factory.createTest(dataPath, fileName.substring(0, fileName.length() - extension.length()), file));
         }
     }
 }

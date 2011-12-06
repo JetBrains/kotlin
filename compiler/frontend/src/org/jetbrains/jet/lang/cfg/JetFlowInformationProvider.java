@@ -288,7 +288,7 @@ public class JetFlowInformationProvider {
                 operationReference = ((JetBinaryExpression) parent).getOperationReference();
             }
             else if (parent instanceof JetUnaryExpression) {
-                operationReference = ((JetUnaryExpression) parent).getOperationSign();
+                operationReference = ((JetUnaryExpression) parent).getOperationReference();
             }
             if (operationReference != null) {
                 DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, operationReference);

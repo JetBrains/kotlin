@@ -11,10 +11,10 @@ import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,7 +72,7 @@ public class JetControlFlowTest extends JetLiteFixture {
 
         };
 
-        AnalyzerFacade.analyzeNamespace(file.getRootNamespace(), new JetControlFlowDataTraceFactory() {
+        JetTestUtils.analyzeNamespace(file.getRootNamespace(), new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
             public JetPseudocodeTrace createTrace(JetElement element) {
@@ -420,7 +420,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/cfg/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetControlFlowTest(dataPath, name);
             }
         }));

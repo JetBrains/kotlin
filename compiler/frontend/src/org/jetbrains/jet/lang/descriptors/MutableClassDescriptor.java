@@ -48,6 +48,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration);
+
+        if (containingDeclaration instanceof ClassDescriptor
+                || containingDeclaration instanceof NamespaceLike
+                || containingDeclaration instanceof ModuleDescriptor
+                || containingDeclaration instanceof FunctionDescriptor)
+        {
+        } else {
+            throw new IllegalStateException();
+        }
+
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution").changeLockLevel(WritableScope.LockLevel.BOTH);

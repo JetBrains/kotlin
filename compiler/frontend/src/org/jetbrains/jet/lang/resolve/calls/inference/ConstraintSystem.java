@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.types.inference;
+package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;

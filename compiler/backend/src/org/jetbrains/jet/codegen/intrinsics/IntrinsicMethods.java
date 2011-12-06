@@ -23,6 +23,7 @@ import java.util.*;
  */
 public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
+    private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
     private static final IntrinsicMethod INV = new Inv();
     private static final IntrinsicMethod TYPEINFO = new TypeInfo();
@@ -53,6 +54,7 @@ public class IntrinsicMethods {
         }
 
         for (String type : PRIMITIVE_NUMBER_TYPES) {
+            declareIntrinsicFunction(type, "plus", 0, UNARY_PLUS);
             declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS);
             declareIntrinsicFunction(type, "inv", 0, INV);
             declareIntrinsicFunction(type, "rangeTo", 1, RANGE_TO);
@@ -97,6 +99,9 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("FloatIterator", "next", 0, ITERATOR_NEXT);
         declareIntrinsicFunction("DoubleIterator", "next", 0, ITERATOR_NEXT);
 
+        for (String type : PRIMITIVE_NUMBER_TYPES) {
+            declareIntrinsicFunction(type, "compareTo", 1, new CompareTo());
+        }
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
         declareIntrinsicStringMethods();

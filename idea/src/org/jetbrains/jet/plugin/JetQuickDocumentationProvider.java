@@ -52,6 +52,11 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return "Not a reference";
     }
 
+    @Override
+    public String generateDoc(PsiElement element, PsiElement originalElement) {
+        return getQuickNavigateInfo(element, originalElement);
+    }
+
     private String render(DeclarationDescriptor declarationDescriptor) {
         return DescriptorRenderer.HTML.render(declarationDescriptor);
     }

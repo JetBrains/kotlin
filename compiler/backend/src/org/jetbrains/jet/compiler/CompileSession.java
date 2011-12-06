@@ -11,9 +11,8 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
@@ -93,10 +92,10 @@ public class CompileSession {
             }
             return false;
         }
-        final AnalyzingUtils instance = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS);
         List<JetNamespace> allNamespaces = new ArrayList<JetNamespace>(mySourceFileNamespaces);
         allNamespaces.addAll(myLibrarySourceFileNamespaces);
-        myBindingContext = instance.analyzeNamespaces(myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        myBindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(
+                myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         ErrorCollector errorCollector = new ErrorCollector(myBindingContext);
         errorCollector.report(out);
         return !errorCollector.hasErrors;

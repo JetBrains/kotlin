@@ -24,9 +24,8 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
@@ -59,7 +58,7 @@ public class JetCompiler implements TranslatingCompiler {
     public void compile(final CompileContext compileContext, Chunk<Module> moduleChunk, final VirtualFile[] virtualFiles, OutputSink outputSink) {
         if (virtualFiles.length == 0) return;
 
-        Module module = compileContext.getModuleByFile(virtualFiles[0]);
+        final Module module = compileContext.getModuleByFile(virtualFiles[0]);
         final VirtualFile outputDir = compileContext.getModuleOutputDirectory(module);
         if (outputDir == null) {
             compileContext.addMessage(ERROR, "[Internal Error] No output directory", "", -1, -1);
@@ -80,10 +79,8 @@ public class JetCompiler implements TranslatingCompiler {
                     }
                 }
 
-                BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespaces(
-                        compileContext.getProject(), namespaces,
-                        Predicates.<PsiFile>alwaysTrue(),
-                        JetControlFlowDataTraceFactory.EMPTY);
+                BindingContext bindingContext =
+                    AnalyzerFacade.analyzeNamespacesWithJavaIntegration(compileContext.getProject(), namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
                 boolean errors = false;
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

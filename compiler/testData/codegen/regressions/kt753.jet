@@ -1,0 +1,11 @@
+namespace bitwise_demo
+
+fun Long?.shl(bits : Int?) : Long = this.sure().shl(bits.sure())
+
+fun box() : String {
+    val x : Long? = 10
+    val y : Int? = 12
+
+    System.out?.println(x.shl(y))
+    return "OK"
+}

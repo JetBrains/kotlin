@@ -269,7 +269,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
-        Method method;
+        Method constructorMethod;
         CallableMethod callableMethod;
         if (constructorDescriptor == null) {
             List<Type> parameterTypes = new ArrayList<Type>();
@@ -282,17 +282,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
             }
 
-            method = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-            callableMethod = new CallableMethod("", method, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
+            constructorMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
+            callableMethod = new CallableMethod("", constructorMethod, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
-            method = callableMethod.getSignature();
+            constructorMethod = callableMethod.getSignature();
         }
 
         ObjectOrClosureCodegen closure = context.closure;
         if(closure != null) {
-            final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(method.getArgumentTypes()));
+            final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(constructorMethod.getArgumentTypes()));
 
             int insert = 0;
             if(closure.captureThis) {
@@ -319,11 +319,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
-            method = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
+            constructorMethod = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
         }
 
         int flags = Opcodes.ACC_PUBLIC; // TODO
-        final MethodVisitor mv = v.newMethod(myClass, flags, "<init>", method.getDescriptor(), null, null);
+        final MethodVisitor mv = v.newMethod(myClass, flags, "<init>", constructorMethod.getDescriptor(), null, null);
         if (!v.generateCode()) return;
         
         mv.visitCode();
@@ -470,6 +470,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+
+        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod, constructorDescriptor, OwnerKind.IMPLEMENTATION );
     }
 
     private void generateTraitMethods(ExpressionCodegen codegen) {

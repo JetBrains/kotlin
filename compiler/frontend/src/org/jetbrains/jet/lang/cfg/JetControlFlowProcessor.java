@@ -14,7 +14,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -284,7 +283,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitUnaryExpression(JetUnaryExpression expression) {
-            JetSimpleNameExpression operationSign = expression.getOperationSign();
+            JetSimpleNameExpression operationSign = expression.getOperationReference();
             IElementType operationType = operationSign.getReferencedNameElementType();
             JetExpression baseExpression = expression.getBaseExpression();
             if (baseExpression == null) return;

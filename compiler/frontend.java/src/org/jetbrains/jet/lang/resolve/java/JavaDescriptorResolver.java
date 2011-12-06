@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -53,7 +52,7 @@ public class JavaDescriptorResolver {
         }
     };
 
-    protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
+    protected final Map<String, ClassDescriptor> classDescriptorCache = Maps.newHashMap();
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
@@ -122,7 +121,7 @@ public class JavaDescriptorResolver {
                 psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
                 !psiClass.hasModifierProperty(PsiModifier.FINAL))
         );
-        classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), psiClass));
+        classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(psiClass));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
 
@@ -163,7 +162,7 @@ public class JavaDescriptorResolver {
                         Collections.<AnnotationDescriptor>emptyList(), // TODO
                         false);
                 constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()), Modality.FINAL,
-                                                 resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), constructor));
+                                                 resolveVisibilityFromPsiModifiers(constructor));
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, constructor, constructorDescriptor);
@@ -326,30 +325,63 @@ public class JavaDescriptorResolver {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
-            String name = parameter.getName();
-            PsiType psiType = parameter.getType();
-
-            JetType varargElementType;
-            if (psiType instanceof PsiEllipsisType) {
-                PsiEllipsisType psiEllipsisType = (PsiEllipsisType) psiType;
-                varargElementType = semanticServices.getTypeTransformer().transformToType(psiEllipsisType.getComponentType());
-            }
-            else {
-                varargElementType = null;
-            }
-            JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
-            result.add(new ValueParameterDescriptorImpl(
-                    containingDeclaration,
-                    i,
-                    Collections.<AnnotationDescriptor>emptyList(), // TODO
-                    name == null ? "p" + i : name,
-                    null, // TODO : review
-                    outType,
-                    false,
-                    varargElementType
-            ));
+            ValueParameterDescriptor valueParameterDescriptor = resolveParameterDescriptor(containingDeclaration, i, parameter);
+            result.add(valueParameterDescriptor);
         }
         return result;
+    }
+
+    private ValueParameterDescriptor resolveParameterDescriptor(DeclarationDescriptor containingDeclaration, int i, PsiParameter parameter) {
+        PsiType psiType = parameter.getType();
+
+        JetType varargElementType;
+        if (psiType instanceof PsiEllipsisType) {
+            PsiEllipsisType psiEllipsisType = (PsiEllipsisType) psiType;
+            varargElementType = semanticServices.getTypeTransformer().transformToType(psiEllipsisType.getComponentType());
+        }
+        else {
+            varargElementType = null;
+        }
+
+        boolean changeNullable = false;
+        boolean nullable = true;
+        
+        // TODO: must be very slow, make it lazy?
+        String name = parameter.getName() != null ? parameter.getName() : "p" + i;
+        for (PsiAnnotation annotation : parameter.getModifierList().getAnnotations()) {
+            // TODO: softcode annotation name
+
+            PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
+            attributes.toString();
+
+            if (annotation.getQualifiedName().equals("jet.typeinfo.JetParameter")) {
+                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue("name");
+                if (nameExpression != null) {
+                    name = (String) nameExpression.getValue();
+                }
+                
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue("nullable");
+                if (nullableExpression != null) {
+                    nullable = (Boolean) nullableExpression.getValue();
+                } else {
+                    // default value of parameter
+                    nullable = false;
+                    changeNullable = true;
+                }
+            }
+        }
+        
+        JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
+        return new ValueParameterDescriptorImpl(
+                containingDeclaration,
+                i,
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                name,
+                null, // TODO : review
+                changeNullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
+                false,
+                varargElementType
+        );
     }
 
     public VariableDescriptor resolveFieldToVariableDescriptor(DeclarationDescriptor containingDeclaration, PsiField field) {
@@ -363,7 +395,7 @@ public class JavaDescriptorResolver {
                 containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(),
                 Modality.FINAL,
-                resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), field),
+                resolveVisibilityFromPsiModifiers(field),
                 !isFinal,
                 null,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
@@ -449,7 +481,7 @@ public class JavaDescriptorResolver {
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),
                 Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
-                resolveVisibilityFromPsiModifiers(semanticServices.getTrace(), method)
+                resolveVisibilityFromPsiModifiers(method)
         );
         semanticServices.getTrace().record(BindingContext.FUNCTION, method, functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
@@ -459,7 +491,7 @@ public class JavaDescriptorResolver {
         return substitutedFunctionDescriptor;
     }
 
-    private static Visibility resolveVisibilityFromPsiModifiers(BindingTrace trace, PsiModifierListOwner modifierListOwner) {
+    private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {
         //TODO report error
         return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibility.PUBLIC :
                                         (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibility.PRIVATE :

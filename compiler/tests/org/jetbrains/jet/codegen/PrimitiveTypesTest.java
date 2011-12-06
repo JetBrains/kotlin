@@ -285,6 +285,36 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         blackBoxFile("regressions/kt518.jet");
     }
 
+    public void testKt711 () throws Exception {
+        loadText("fun box() = if ((1 ?: 0) == 1) \"OK\" else \"fail\"");
+        blackBox();
+    }
+
+    public void testSureNonnull () throws Exception {
+        loadText("fun box() = 10.sure().toString()");
+        assertFalse(generateToText().contains("IFNONNULL"));
+    }
+
+    public void testSureNullable () throws Exception {
+        loadText("val a : Int? = 10; fun box() = a.sure().toString()");
+        assertTrue(generateToText().contains("IFNONNULL"));
+    }
+
+    public void testSafeNonnull () throws Exception {
+        loadText("fun box() = 10?.toString()");
+        assertFalse(generateToText().contains("IFNULL"));
+    }
+
+    public void testSafeNullable () throws Exception {
+        loadText("val a : Int? = 10; fun box() = a?.toString()");
+        assertTrue(generateToText().contains("IFNULL"));
+    }
+
+    public void testKt737() throws Exception {
+        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.byt.compareTo(10.lng) >= 0) \"fail\" else \"OK\"");
+        assertEquals("OK", blackBox());
+    }
+
     public void testKt665() throws Exception {
         loadText("fun f(x: Long, zzz: Long = 1): Long\n" +
                  "{\n" +
@@ -298,7 +328,27 @@ public class PrimitiveTypesTest extends CodegenTestCase {
                  "    System.out?.println(f(six))\n" +
                  "    return \"OK\"" +
                  "}");
-        System.out.println(generateToText());
         blackBox();
+    }
+
+    public void testKt752 () {
+        blackBoxFile("regressions/kt752.jet");
+    }
+
+    public void testKt753 () {
+        blackBoxFile("regressions/kt753.jet");
+    }
+
+    public void testKt684 () {
+        blackBoxFile("regressions/kt684.jet");
+    }
+
+    public void testKt756 () {
+        blackBoxFile("regressions/kt756.jet");
+        System.out.println(generateToText());
+    }
+
+    public void testKt757 () {
+        blackBoxFile("regressions/kt757.jet");
     }
 }

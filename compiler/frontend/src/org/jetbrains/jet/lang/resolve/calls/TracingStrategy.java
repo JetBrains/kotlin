@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.inference.SolutionStatus;
+import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 
 import java.util.Collection;
 

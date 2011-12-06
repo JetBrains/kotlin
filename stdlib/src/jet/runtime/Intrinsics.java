@@ -13,14 +13,20 @@ public class Intrinsics {
         return ((self == null) ? "null" : self) + ((other == null) ? "null" : other.toString());
     }
 
-    public static Object sure(Object self) {
-        if(self == null)
-            return throwNpe();
-        return self;
+    public static void throwNpe() {
+        throw new JetNullPointerException();
     }
 
-    private static Object throwNpe() {
-        throw new JetNullPointerException();
+    public static int compare(long thisVal, long anotherVal) {
+        return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+    }
+
+    public static int compare(int thisVal, int anotherVal) {
+        return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+    }
+    
+    public static int compare(boolean thisVal, boolean anotherVal) {
+        return (thisVal == anotherVal ? 0 : (anotherVal ? 1 : -1));
     }
 
     private static Throwable sanitizeStackTrace(Throwable throwable) {
@@ -32,7 +38,7 @@ public class Intrinsics {
                 list.add(ste);
             }
             else {
-                if("jet.runtime.Intrinsics".equals(ste.getClassName()) && "sure".equals(ste.getMethodName())) {
+                if("jet.runtime.Intrinsics".equals(ste.getClassName()) && "throwNpe".equals(ste.getMethodName())) {
                     skip = false;
                 }
             }

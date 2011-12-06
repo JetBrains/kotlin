@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
@@ -95,16 +95,7 @@ public class JetTypeMapper {
     }
 
     public static boolean isPrimitive(Type type) {
-        return type == Type.INT_TYPE
-                || type == Type.SHORT_TYPE
-                || type == Type.BYTE_TYPE
-                || type == Type.CHAR_TYPE
-                || type == Type.SHORT_TYPE
-                || type == Type.FLOAT_TYPE
-                || type == Type.DOUBLE_TYPE
-                || type == Type.LONG_TYPE
-                || type == Type.BOOLEAN_TYPE
-                || type == Type.VOID_TYPE;
+        return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
     }
 
     public static Type getBoxedType(final Type type) {
@@ -139,7 +130,7 @@ public class JetTypeMapper {
         String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName((NamespaceDescriptor) containingDeclaration));
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName((NamespaceDescriptor) containingDeclaration));
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -314,7 +305,7 @@ public class JetTypeMapper {
         ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent));
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
         }
@@ -329,7 +320,8 @@ public class JetTypeMapper {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
             boolean isInterface = CodegenUtil.isInterface(containingClass);
             OwnerKind kind1 = isInterface && superCall ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
-            owner = mapType(containingClass.getDefaultType(), kind1).getInternalName();
+            Type type = mapType(containingClass.getDefaultType(), kind1);
+            owner = type.getInternalName();
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
                     : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
@@ -356,9 +348,6 @@ public class JetTypeMapper {
         final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
-        if (receiverType != null) {
-            parameterTypes.add(mapType(receiverType));
-        }
         if(kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
             JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
@@ -369,6 +358,9 @@ public class JetTypeMapper {
             }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
+        }
+        if (receiverType != null) {
+            parameterTypes.add(mapType(receiverType));
         }
         for (TypeParameterDescriptor parameterDescriptor : f.getTypeParameters()) {
             if(parameterDescriptor.isReified()) {

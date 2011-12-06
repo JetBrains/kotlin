@@ -19,10 +19,10 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.types.inference.ConstraintSystemSolution;
-import org.jetbrains.jet.lang.types.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.types.inference.SolutionStatus;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;

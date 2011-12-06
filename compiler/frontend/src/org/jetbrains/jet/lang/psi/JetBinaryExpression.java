@@ -10,7 +10,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetBinaryExpression extends JetExpression {
+public class JetBinaryExpression extends JetExpression implements JetOperationExpression {
     public JetBinaryExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -46,6 +46,7 @@ public class JetBinaryExpression extends JetExpression {
         return null;
     }
 
+    @Override
     @NotNull
     public JetSimpleNameExpression getOperationReference() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);

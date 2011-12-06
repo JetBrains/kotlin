@@ -35,9 +35,8 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.*;
@@ -211,8 +210,8 @@ public class JavaElementFinder extends PsiElementFinder {
                 
 
         if (dirty.size() > 0) {
-            final BindingContext context = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).shallowAnalyzeFiles(dirty);
-            state.compileCorrectNamespaces(context, AnalyzingUtils.collectRootNamespaces(dirty));
+            final BindingContext context = AnalyzerFacade.shallowAnalyzeFiles(dirty);
+            state.compileCorrectNamespaces(context, AnalyzerFacade.collectRootNamespaces(dirty));
             state.getFactory().files();
         }
         

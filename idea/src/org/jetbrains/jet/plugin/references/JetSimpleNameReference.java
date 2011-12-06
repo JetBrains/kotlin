@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
@@ -78,7 +79,6 @@ class JetSimpleNameReference extends JetPsiReference {
     private Object[] collectLookupElements(BindingContext bindingContext, JetScope scope) {
         List<LookupElement> result = Lists.newArrayList();
         for (final DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
-            PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getOriginal());
             LookupElementBuilder element = LookupElementBuilder.create(descriptor.getName());
             String typeText = "";
             String tailText = "";
@@ -100,16 +100,19 @@ class JetSimpleNameReference extends JetPsiReference {
                 typeText = DescriptorRenderer.TEXT.renderType(outType);
             }
             else if (descriptor instanceof ClassDescriptor) {
-                tailText = " (" + DescriptorRenderer.getFQName(descriptor.getContainingDeclaration()) + ")";
+                tailText = " (" + DescriptorUtils.getFQName(descriptor.getContainingDeclaration()) + ")";
                 tailTextGrayed = true;
             }
             else {
                 typeText = DescriptorRenderer.TEXT.render(descriptor);
             }
             element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText);
+
+            PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getOriginal());
             if (declaration != null) {
                 element = element.setIcon(declaration.getIcon(Iconable.ICON_FLAG_OPEN | Iconable.ICON_FLAG_VISIBILITY));
             }
+
             result.add(element);
         }
         return result.toArray();

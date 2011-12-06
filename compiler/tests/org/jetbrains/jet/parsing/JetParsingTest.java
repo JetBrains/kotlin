@@ -104,7 +104,7 @@ public class JetParsingTest extends ParsingTestCase {
         JetTestCaseBuilder.NamedTestFactory factory = new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetParsingTest(dataPath, name);
             }
         };

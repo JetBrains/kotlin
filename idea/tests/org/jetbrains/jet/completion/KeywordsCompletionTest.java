@@ -22,10 +22,10 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         myName = name;
 
         // Set name explicitly because otherwise there will be "TestCase.fName cannot be null"
-        setName("testComletionExecute");
+        setName("testCompletionExecute");
     }
 
-    public void testComletionExecute() {
+    public void testCompletionExecute() {
         doTest();
     }
 
@@ -51,7 +51,7 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
 
             @NotNull
             @Override
-            public junit.framework.Test createTest(@NotNull String dataPath, @NotNull String name) {
+            public junit.framework.Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new KeywordsCompletionTest(dataPath, name);
             }
         }, suite);

@@ -49,11 +49,14 @@ public class TypeResolver {
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false);
         trace.record(BindingContext.TYPE, typeReference, type);
+
         return type;
     }
 
     @NotNull
-    private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations, JetTypeElement typeElement, final boolean nullable) {
+    private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations,
+                                       JetTypeElement typeElement, final boolean nullable) {
+
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
             typeElement.accept(new JetVisitorVoid() {
@@ -70,6 +73,7 @@ public class TypeResolver {
                         resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
                         return;
                     }
+
                     if (classifierDescriptor instanceof TypeParameterDescriptor) {
                         TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 
@@ -268,6 +272,8 @@ public class TypeResolver {
         ClassifierDescriptor classifierDescriptor;
         if (userType.isAbsoluteInRootNamespace()) {
             classifierDescriptor = JetModuleUtil.getRootNamespaceType(userType).getMemberScope().getClassifier(referencedName);
+            trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(),
+                         JetModuleUtil.getRootNamespaceType(userType).getMemberScope());
         }
         else {
             JetUserType qualifier = userType.getQualifier();
@@ -278,7 +284,9 @@ public class TypeResolver {
                 return ErrorUtils.getErrorClass();
             }
             classifierDescriptor = scope.getClassifier(referencedName);
+            trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(), scope);
         }
+
         return classifierDescriptor;
     }
 
