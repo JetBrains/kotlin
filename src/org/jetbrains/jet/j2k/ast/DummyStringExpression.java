@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author ignatov
  */
-public class DummyStringStatement extends Statement {
+public class DummyStringExpression extends Expression {
   private final String myString;
 
-  public DummyStringStatement(String string) {
+  public DummyStringExpression(String string) {
     myString = string;
   }
 

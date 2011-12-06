@@ -16,7 +16,12 @@ import static org.jetbrains.jet.j2k.Converter.*;
  * @author ignatov
  */
 public class ExpressionVisitor extends StatementVisitor {
-  private Expression myResult = Expression.EMPTY_EXPRESSION;
+  Expression myResult = Expression.EMPTY_EXPRESSION;
+
+  @Override
+  public void visitExpression(final PsiExpression expression) {
+    myResult = Expression.EMPTY_EXPRESSION;
+  }
 
   @NotNull
   @Override
@@ -295,7 +300,7 @@ public class ExpressionVisitor extends StatementVisitor {
     final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
     final boolean isThis = isThisExpression(expression);
     final boolean isNullable = typeToType(expression.getType()).isNullable();
-    final String className = getClassName(expression);
+    final String className = getClassNameWithConstructor(expression);
 
     Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
 
@@ -316,7 +321,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private static String getClassName(@NotNull PsiReferenceExpression expression) {
+  static String getClassNameWithConstructor(@NotNull PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
@@ -326,6 +331,21 @@ public class ExpressionVisitor extends StatementVisitor {
           if (identifier != null)
             return identifier.getText();
         }
+      }
+      context = context.getContext();
+    }
+    return "";
+  }
+
+  @NotNull
+  static String getClassName(@NotNull PsiExpression expression) {
+    PsiElement context = expression.getContext();
+    while (context != null) {
+      if (context instanceof PsiClass) {
+        final PsiClass containingClass = (PsiClass) context;
+        final PsiIdentifier identifier = containingClass.getNameIdentifier();
+        if (identifier != null)
+          return identifier.getText();
       }
       context = context.getContext();
     }

@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class DummyMethodCallExpression extends Expression {
-  private final Expression myWho;
+  private final Element myWho;
   private final String myMethodName;
-  private final Expression myWhat;
+  private final Element myWhat;
 
-  public DummyMethodCallExpression(Expression who, String methodName, Expression what) {
+  public DummyMethodCallExpression(Element who, String methodName, Element what) {
     myWho = who;
     myMethodName = methodName;
     myWhat = what;
