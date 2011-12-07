@@ -59,27 +59,6 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
         jetCoreEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
     }
 
-    private void mkdirs(File file) throws IOException {
-        if (file.isDirectory()) {
-            return;
-        }
-        if (!file.mkdirs()) {
-            throw new IOException();
-        }
-    }
-
-    private void rmrf(File file) {
-        if (file != null) {
-            File[] children = file.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    rmrf(child);
-                }
-            }
-            file.delete();
-        }
-    }
-
     @Override
     public String getName() {
         return ktFile.getName();
@@ -89,8 +68,7 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         tmpdir = new File("tmp/" + this.getClass().getSimpleName() + "." + this.getName());
-        rmrf(tmpdir);
-        mkdirs(tmpdir);
+        JetTestUtils.recreateDirectory(tmpdir);
     }
 
     @Override

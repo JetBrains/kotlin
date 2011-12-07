@@ -65,8 +65,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         tmpdir = new File("tmp/" + this.getClass().getSimpleName() + "." + this.getName());
-        rmrf(tmpdir);
-        mkdirs(tmpdir);
+        JetTestUtils.recreateDirectory(tmpdir);
     }
 
     @Override
@@ -74,27 +73,6 @@ public class ReadClassDataTest extends UsefulTestCase {
         Disposer.dispose(myTestRootDisposable);
     }
 
-    private void mkdirs(File file) throws IOException {
-        if (file.isDirectory()) {
-            return;
-        }
-        if (!file.mkdirs()) {
-            throw new IOException();
-        }
-    }
-    
-    private void rmrf(File file) {
-        if (file != null) {
-            File[] children = file.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    rmrf(child);
-                }
-            }
-            file.delete();
-        }
-    }
-    
     private void createMockCoreEnvironment() {
         jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable);
 
