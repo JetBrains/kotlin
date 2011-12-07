@@ -199,10 +199,9 @@ public class StatementVisitor extends ElementVisitor {
   @Override
   public void visitSwitchStatement(PsiSwitchStatement statement) {
     super.visitSwitchStatement(statement);
-    List<CaseContainer> caseContainers = listToCases(splitToCases(statement.getBody()));
     myResult = new SwitchContainer(
       expressionToExpression(statement.getExpression()),
-      caseContainers
+      listToCases(splitToCases(statement.getBody()))
     );
   }
 
