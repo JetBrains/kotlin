@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -201,27 +202,62 @@ public class StatementVisitor extends ElementVisitor {
     super.visitSwitchStatement(statement);
     myResult = new SwitchContainer(
       expressionToExpression(statement.getExpression()),
-      listToCases(splitToCases(statement.getBody()))
+      switchBodyToCases(statement.getBody())
     );
   }
 
   @NotNull
-  private static List<CaseContainer> listToCases(@NotNull final List<List<PsiStatement>> cases) {
+  private static List<CaseContainer> switchBodyToCases(@Nullable final PsiCodeBlock body) {
+    final List<List<PsiStatement>> cases = splitToCases(body);
+    final List<PsiStatement> allSwitchStatements = body != null ? Arrays.asList(body.getStatements()) : Collections.<PsiStatement>emptyList();
+
     List<CaseContainer> result = new LinkedList<CaseContainer>();
     List<Statement> pendingLabels = new LinkedList<Statement>();
+    int i = 0;
     for (List<PsiStatement> ls : cases) {
       assert ls.size() > 0;
       PsiStatement label = ls.get(0);
       assert label instanceof PsiSwitchLabelStatement;
+
+      assert allSwitchStatements.get(i) == label : "not a right index";
+
       if (ls.size() > 1) {
         pendingLabels.add(statementToStatement(label));
-        result.add(new CaseContainer(pendingLabels,
-          statementsToStatementList(ls.subList(1, ls.size()).toArray(new PsiStatement[ls.size() - 1]))
-        ));
-        pendingLabels = new LinkedList<Statement>();
-      }
-      else // ls.size() == 1
+        List<PsiStatement> slice = ls.subList(1, ls.size());
+
+        if (!containsBreak(slice)) {
+          List<Statement> statements = statementsToStatementList(slice);
+          statements.addAll(
+            statementsToStatementList(getAllToNextBreak(allSwitchStatements, i + ls.size()))
+          );
+          result.add(new CaseContainer(pendingLabels, statements));
+          pendingLabels = new LinkedList<Statement>();
+        } else {
+          result.add(new CaseContainer(pendingLabels, statementsToStatementList(slice)));
+          pendingLabels = new LinkedList<Statement>();
+        }
+      } else // ls.size() == 1
         pendingLabels.add(statementToStatement(label));
+      i += ls.size();
+    }
+    return result;
+  }
+
+  private static boolean containsBreak(@NotNull final List<PsiStatement> slice) {
+    for (PsiStatement s : slice)
+      if (s instanceof PsiBreakStatement)
+        return true;
+    return false;
+  }
+
+  private static List<PsiStatement> getAllToNextBreak(@NotNull final List<PsiStatement> allStatements, final int start) {
+    List<PsiStatement> result = new LinkedList<PsiStatement>();
+    for (int i = start; i < allStatements.size(); i++) {
+      PsiStatement s = allStatements.get(i);
+      if (s instanceof PsiBreakStatement)
+        return result;
+      if (!(s instanceof PsiSwitchLabelStatement))
+        result.add(s);
     }
     return result;
   }

@@ -389,6 +389,13 @@ public class Converter {
   }
 
   @NotNull
+  public static List<Statement> statementsToStatementList(@NotNull List<PsiStatement> statements) {
+    List<Statement> result = new LinkedList<Statement>();
+    for (PsiStatement t : statements) result.add(statementToStatement(t));
+    return result;
+  }
+
+  @NotNull
   public static Statement statementToStatement(@Nullable PsiStatement s) {
     if (s == null) return Statement.EMPTY_STATEMENT;
     final StatementVisitor statementVisitor = new StatementVisitor();
