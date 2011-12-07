@@ -267,7 +267,7 @@ public class JavaDescriptorResolver {
         return javaFacade.findClass(qualifiedName, javaSearchScope);
     }
 
-    private PsiPackage findPackage(String qualifiedName) {
+    /*package*/ PsiPackage findPackage(String qualifiedName) {
         return javaFacade.findPackage(qualifiedName);
     }
 

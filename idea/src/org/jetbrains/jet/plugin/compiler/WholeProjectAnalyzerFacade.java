@@ -24,13 +24,23 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class WholeProjectAnalyzerFacade {
-    public static final Function<JetFile, Collection<JetDeclaration>> WHOLE_PROJECT_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetDeclaration>>() {
+public final class WholeProjectAnalyzerFacade {
+
+    /** Forbid creating */
+    private WholeProjectAnalyzerFacade() {}
+
+    /**
+     * Will collect all root-namespaces in all kotlin files in the project.
+     */
+    public static final Function<JetFile, Collection<JetDeclaration>> WHOLE_PROJECT_DECLARATION_PROVIDER =
+            new Function<JetFile, Collection<JetDeclaration>>() {
+
         @Override
         public Collection<JetDeclaration> fun(final JetFile rootFile) {
             final Project project = rootFile.getProject();
             final Set<JetDeclaration> namespaces = Sets.newLinkedHashSet();
-            ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
+            final ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
+
             if (rootManager != null && !ApplicationManager.getApplication().isUnitTestMode()) {
                 VirtualFile[] contentRoots = rootManager.getContentRoots();
 
@@ -55,9 +65,9 @@ public class WholeProjectAnalyzerFacade {
         }
     };
 
+
     @NotNull
     public static BindingContext analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
         return AnalyzerFacade.analyzeFileWithCache(file, WHOLE_PROJECT_DECLARATION_PROVIDER);
     }
-
 }
