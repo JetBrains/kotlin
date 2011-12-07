@@ -104,9 +104,9 @@ public class JetPsiUtil {
         }
     }
 
-    public static boolean isLocal(@NotNull JetDeclaration declaration) {
-        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(declaration, JetClassOrObject.class);
-        JetDeclarationWithBody function = PsiTreeUtil.getParentOfType(declaration, JetDeclarationWithBody.class);
+    public static boolean isLocal(@NotNull JetElement element) {
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class);
+        JetDeclarationWithBody function = PsiTreeUtil.getParentOfType(element, JetDeclarationWithBody.class);
         if (function != null && PsiTreeUtil.isAncestor(classOrObject, function, false)) {
             return true;
         }

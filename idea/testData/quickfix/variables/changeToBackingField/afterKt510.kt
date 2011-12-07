@@ -1,7 +1,8 @@
 // "Change reference to backing field" "true"
 public open class Identifier() {
     var field : Boolean
+    set(v) {}
     {
-        <caret>$field = false;
+        <caret>this.$field = false;
     }
 }

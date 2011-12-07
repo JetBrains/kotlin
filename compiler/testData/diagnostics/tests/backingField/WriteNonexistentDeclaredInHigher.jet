@@ -2,6 +2,6 @@ val y = 1
 
 class A() {
     {
-        <!UNRESOLVED_REFERENCE!>$y<!> = 1
+        <!INACCESSIBLE_BACKING_FIELD!>$y<!> = 1
     }
 }

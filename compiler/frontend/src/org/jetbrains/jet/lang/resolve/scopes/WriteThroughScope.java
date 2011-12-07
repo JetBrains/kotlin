@@ -177,13 +177,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void addPropertyDescriptorByFieldName(@NotNull String fieldName, @NotNull PropertyDescriptor propertyDescriptor) {
-        checkMayWrite();
-
-        writableWorker.addPropertyDescriptorByFieldName(fieldName, propertyDescriptor);
-    }
-
-    @Override
     public void importScope(@NotNull JetScope imported) {
         checkMayWrite();
 
@@ -206,6 +199,10 @@ public class WriteThroughScope extends WritableScopeWithImports {
             allDescriptors = Lists.newArrayList();
             allDescriptors.addAll(writableWorker.getAllDescriptors());
             allDescriptors.addAll(getWorkerScope().getAllDescriptors());
+
+            for (JetScope imported : getImports()) {
+                allDescriptors.addAll(imported.getAllDescriptors());
+            }
         }
         return allDescriptors;
     }

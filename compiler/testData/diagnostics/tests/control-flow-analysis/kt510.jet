@@ -5,7 +5,7 @@ namespace kt510
 public open class Identifier1() {
     var field : Boolean
     {
-        <!INITIALIZATION_USING_BACKING_FIELD!>field<!> = false; // error
+        field = false; // error
     }
 }
 
@@ -13,6 +13,6 @@ public open class Identifier1() {
 public open class Identifier2() {
     var field : Boolean
     {
-        <!INITIALIZATION_USING_BACKING_FIELD!>this.field<!> = false;
+        this.field = false;
     }
 }

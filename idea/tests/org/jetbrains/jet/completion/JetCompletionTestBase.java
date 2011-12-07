@@ -2,70 +2,64 @@ package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
  * @author Nikolay.Krasko
  */
-public abstract class JetCompletionTestBase extends LightCodeInsightTestCase {
+public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
-    protected void doTest() {
+    private CompletionType type;
+
+    protected void doTest() throws Exception {
         final String testName = getTestName(false);
+
+        type = (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
+
         configureByFile(testName + ".kt");
 
-        CompletionType completionType = (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
-        new CodeCompletionHandlerBase(completionType, false, false, true).invokeCompletion(getProject(), getEditor());
-
-        LookupEx lookup = LookupManager.getActiveLookup(getEditor());
-        assert lookup != null;
-
-        HashSet<String> items = new HashSet<String>(resolveLookups(lookup.getItems()));
-
-        List<String> shouldExist = itemsShouldExist(getFile().getText());
-        for (String shouldExistItem : shouldExist) {
-            assertTrue(String.format("Should contain proposal '%s'.", shouldExistItem),
-                       items.contains(shouldExistItem));
-        }
-        
-        List<String> shouldAbsent = itemsShouldAbsent(getFile().getText());
-        for (String shouldAbsentItem : shouldAbsent) {
-            assertTrue(String.format("Shouldn't contain proposal '%s'.", shouldAbsentItem),
-                       !items.contains(shouldAbsentItem));
-        }
+        assertContainsItems(itemsShouldExist(getFile().getText()));
+        assertNotContainItems(itemsShouldAbsent(getFile().getText()));
     }
-    
-    private static List<String> resolveLookups(List<LookupElement> items) {
-        ArrayList<String> result = new ArrayList<String>(items.size());
-        for (LookupElement item : items) {
-            result.add(item.getLookupString());
-        }
 
-        return result;
+    @Override
+    protected Sdk getProjectJDK() {
+        return PluginTestCaseBase.jdkFromIdeaHome();
+    }
+
+    @Override
+    protected void complete(final int time) {
+        new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false);
+
+        LookupImpl lookup = (LookupImpl) LookupManager.getActiveLookup(myEditor);
+        myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
+        myPrefix = lookup == null ? null : lookup.itemPattern(lookup.getItems().get(0));
     }
 
     @NotNull
-    private static List<String> itemsShouldExist(String fileText) {
+    private static String[] itemsShouldExist(String fileText) {
         return findListWithPrefix("// EXIST:", fileText);
     }
 
     @NotNull
-    private static List<String> itemsShouldAbsent(String fileText) {
+    private static String[] itemsShouldAbsent(String fileText) {
         return findListWithPrefix("// ABSENT:", fileText);
     }
 
     @NotNull
-    private static List<String> findListWithPrefix(String prefix, String fileText) {
+    private static String[] findListWithPrefix(String prefix, String fileText) {
         ArrayList<String> result = new ArrayList<String>();
 
         for (String line : findLinesWithPrefixRemoved(prefix, fileText)) {
@@ -76,7 +70,7 @@ public abstract class JetCompletionTestBase extends LightCodeInsightTestCase {
             }
         }
 
-        return result;
+        return result.toArray(new String[result.size()]);
     }
 
     @NotNull

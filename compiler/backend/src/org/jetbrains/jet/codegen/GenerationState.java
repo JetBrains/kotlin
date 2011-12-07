@@ -82,11 +82,12 @@ public class GenerationState {
         return factory.forNamespace(namespace);
     }
 
-    public void compile(JetFile psiFile) {
+    public BindingContext compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
         final BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(namespace, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
+        return bindingContext;
 //        NamespaceCodegen codegen = forNamespace(namespace);
 //        bindingContexts.push(bindingContext);
 //        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
@@ -139,7 +140,7 @@ public class GenerationState {
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
-        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION);
+        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, typeMapper);
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate(null);
 

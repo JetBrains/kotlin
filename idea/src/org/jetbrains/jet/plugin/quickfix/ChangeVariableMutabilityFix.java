@@ -78,8 +78,9 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetProperty element = getCorrespondingProperty(editor, (JetFile)file);
-        JetProperty newElement = (JetProperty) element.copy();
+        JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
+        assert property != null && !property.isVar();
+        JetProperty newElement = (JetProperty) property.copy();
         if (newElement.isVar()) {
             PsiElement varElement = newElement.getNode().findChildByType(JetTokens.VAR_KEYWORD).getPsi();
 
@@ -94,7 +95,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
             PsiElement varElement = varProperty.getNode().findChildByType(JetTokens.VAR_KEYWORD).getPsi();
             CodeEditUtil.replaceChild(newElement.getNode(), valElement.getNode(), varElement.getNode());
         }
-        element.replace(newElement);
+        property.replace(newElement);
     }
 
     @Override

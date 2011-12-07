@@ -106,7 +106,7 @@ public class FunctionCodegen {
                 for(int i = 0; i != paramDescrs.size(); ++i) {
                     AnnotationVisitor av = mv.visitParameterAnnotation(i + start, "Ljet/typeinfo/JetParameter;", true);
                     ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                    av.visit("value", parameterDescriptor.getName());
+                    av.visit("name", parameterDescriptor.getName());
                     if(parameterDescriptor.hasDefaultValue()) {
                         av.visit("hasDefaultValue", true);
                     }

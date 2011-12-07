@@ -213,16 +213,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             basic.checkLValue(context.trace, expression.getLeft());
         }
         if (left instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression simpleName = (JetSimpleNameExpression) left;
-            String referencedName = simpleName.getReferencedName();
-            if (simpleName.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
-                && referencedName != null) {
-                PropertyDescriptor property = context.scope.getPropertyByFieldReference(referencedName);
-                if (property != null) {
-                    context.trace.record(BindingContext.VARIABLE_ASSIGNMENT, simpleName, property);
-                }
-            }
-            ExpressionTypingUtils.checkWrappingInRef(simpleName, context);
+            ExpressionTypingUtils.checkWrappingInRef(left, context);
         }
         return checkExpectedType(expression, contextWithExpectedType);
     }

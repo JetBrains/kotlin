@@ -286,4 +286,9 @@ public class ArrayGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
         blackBox();
     }
+
+    public void testNonNullArray() throws Exception {
+        blackBoxFile("classes/nonnullarray.jet");
+        System.out.println(generateToText());
+    }
 }

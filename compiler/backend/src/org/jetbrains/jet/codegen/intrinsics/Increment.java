@@ -24,20 +24,38 @@ public class Increment implements IntrinsicMethod {
 
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        JetExpression operand = arguments.get(0);
-        while(operand instanceof JetParenthesizedExpression) {
-            operand = ((JetParenthesizedExpression)operand).getExpression();
+        boolean nullable = expectedType.getSort() == Type.OBJECT;
+        if(nullable) {
+            expectedType = JetTypeMapper.unboxType(expectedType);
         }
-        if (operand instanceof JetReferenceExpression) {
-            final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
-            if (index >= 0 && JetTypeMapper.isIntPrimitive(expectedType)) {
-                return StackValue.preIncrement(index, myDelta);
+        if(arguments.size() > 0) {
+            JetExpression operand = arguments.get(0);
+            while(operand instanceof JetParenthesizedExpression) {
+                operand = ((JetParenthesizedExpression)operand).getExpression();
             }
+            if (operand instanceof JetReferenceExpression) {
+                final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
+                if (index >= 0 && JetTypeMapper.isIntPrimitive(expectedType)) {
+                    return StackValue.preIncrement(index, myDelta);
+                }
+            }
+            StackValue value = codegen.genQualified(receiver, operand);
+            value. dupReceiver(v);
+            value. dupReceiver(v);
+
+            value.put(expectedType, v);
+            plusMinus(v, expectedType);
+            value.store(v);
+            value.put(expectedType, v);
         }
-        StackValue value = codegen.genQualified(receiver, operand);
-        value. dupReceiver(v);
-        value. dupReceiver(v);
-        value.put(expectedType, v);
+        else {
+            receiver.put(expectedType, v);
+            plusMinus(v, expectedType);
+        }
+        return StackValue.onStack(expectedType);
+    }
+
+    private void plusMinus(InstructionAdapter v, Type expectedType) {
         if (expectedType == Type.LONG_TYPE) {
             v.lconst(myDelta);
         }
@@ -51,8 +69,5 @@ public class Increment implements IntrinsicMethod {
             v.iconst(myDelta);
         }
         v.add(expectedType);
-        value.store(v);
-        value.put(expectedType, v);
-        return StackValue.onStack(expectedType);
     }
 }

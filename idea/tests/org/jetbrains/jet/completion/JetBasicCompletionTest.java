@@ -23,7 +23,7 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         setName("testCompletionExecute");
     }
 
-    public void testCompletionExecute() {
+    public void testCompletionExecute() throws Exception {
         doTest();
     }
 

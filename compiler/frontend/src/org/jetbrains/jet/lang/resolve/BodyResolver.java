@@ -34,41 +34,11 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class BodyResolver {
     private final TopDownAnalysisContext context;
 
-    private final ObservableBindingTrace traceForConstructors;
-    private final ObservableBindingTrace traceForMembers;
+    private final ObservableBindingTrace trace;
 
     public BodyResolver(TopDownAnalysisContext context) {
         this.context = context;
-
-        // This allows access to backing fields
-        this.traceForConstructors = new ObservableBindingTrace(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
-            @Override
-            public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
-                if (expression instanceof JetSimpleNameExpression) {
-                    JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
-                    if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                        if (!BodyResolver.this.context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) descriptor)) {
-                            BodyResolver.this.context.getTrace().report(NO_BACKING_FIELD.on(expression));
-                        }
-                    }
-                }
-            }
-        });
-
-        // This tracks access to properties in order to register primary constructor parameters that yield real fields (JET-9)
-        // NOTE!!! This code is not used, because we do not allow constructor parameter access in member bodies
-        this.traceForMembers = new ObservableBindingTrace(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
-            @Override
-            public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
-                if (descriptor instanceof PropertyDescriptor) {
-                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                    if (BodyResolver.this.context.getPrimaryConstructorParameterProperties().contains(propertyDescriptor)) {
-                        traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
-                    }
-                }
-            }
-        });
-
+        this.trace = context.getTrace();
     }
 
     public void resolveBehaviorDeclarationBodies() {
@@ -100,8 +70,8 @@ public class BodyResolver {
         final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
-                : FunctionDescriptorUtil.getFunctionInnerScope(descriptor.getScopeForSupertypeResolution(), primaryConstructor, traceForConstructors);
-        final ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors); // TODO : flow
+                : FunctionDescriptorUtil.getFunctionInnerScope(descriptor.getScopeForSupertypeResolution(), primaryConstructor, trace);
+        final ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
         JetVisitorVoid visitor = new JetVisitorVoid() {
@@ -268,7 +238,7 @@ public class BodyResolver {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForInitializers = classDescriptor.getScopeForInitializers();
-            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
+            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
@@ -294,9 +264,9 @@ public class BodyResolver {
     private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor) {
         if (!context.completeAnalysisNeeded(declaration)) return;
         MutableClassDescriptor classDescriptor = (MutableClassDescriptor) descriptor.getContainingDeclaration();
-        final JetScope scopeForSupertypeInitializers = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForSupertypeResolution(), descriptor, traceForConstructors);
+        final JetScope scopeForSupertypeInitializers = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForSupertypeResolution(), descriptor, trace);
         //contains only constructor parameters
-        final JetScope scopeForConstructorBody = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForInitializers(), descriptor, traceForConstructors);
+        final JetScope scopeForConstructorBody = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForInitializers(), descriptor, trace);
         //contains members & backing fields
 
         final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
@@ -360,7 +330,7 @@ public class BodyResolver {
         }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
-            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
+            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
 
             typeInferrer.checkFunctionReturnType(scopeForConstructorBody, declaration, JetStandardClasses.getUnitType());
         }
@@ -417,7 +387,6 @@ public class BodyResolver {
         JetScope propertyDeclarationInnerScope = context.getDescriptorResolver().getPropertyDeclarationInnerScope(
                 declaringScope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter());
         WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
-        accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
 
         return accessorScope;
@@ -442,7 +411,7 @@ public class BodyResolver {
     }
 
     private ObservableBindingTrace createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new ObservableBindingTrace(traceForMembers).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        return new ObservableBindingTrace(trace).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
@@ -450,7 +419,7 @@ public class BodyResolver {
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
-                            traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this context.getTrace()?
+                            trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this context.getTrace()?
                         }
                     }
                 }
@@ -460,7 +429,7 @@ public class BodyResolver {
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
-        ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors);
+        ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
         JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getOutType() : NO_EXPECTED_TYPE;
         JetType type = typeInferrer.getType(context.getDescriptorResolver().getPropertyDeclarationInnerScope(scope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter()), initializer, expectedTypeForInitializer);
 //
@@ -494,7 +463,7 @@ public class BodyResolver {
             JetScope declaringScope = this.context.getDeclaringScopes().get(declaration);
             assert declaringScope != null;
 
-            resolveFunctionBody(traceForMembers, declaration, descriptor, declaringScope);
+            resolveFunctionBody(trace, declaration, descriptor, declaringScope);
 
             assert descriptor.getReturnType() != null;
         }

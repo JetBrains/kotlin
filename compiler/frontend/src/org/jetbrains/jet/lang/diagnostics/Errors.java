@@ -84,7 +84,11 @@ public interface Errors {
 
     SimpleDiagnosticFactory CANNOT_INFER_PARAMETER_TYPE = SimpleDiagnosticFactory.create(ERROR, "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
 
-    SimpleDiagnosticFactory NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "This property does not have a backing field");
+    SimpleDiagnosticFactory NO_BACKING_FIELD_ABSTRACT_PROPERTY = SimpleDiagnosticFactory.create(ERROR, "This property doesn't have a backing field, because it's abstract");
+    SimpleDiagnosticFactory NO_BACKING_FIELD_CUSTOM_ACCESSORS = SimpleDiagnosticFactory.create(ERROR, "This property doesn't have a backing field, because it has custom accessors without reference to the backing field");
+    SimpleDiagnosticFactory INACCESSIBLE_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "The backing field is not accessible here");
+    SimpleDiagnosticFactory NOT_PROPERTY_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "The referenced variable is not a property and doesn't have backing field");
+
     SimpleDiagnosticFactory MIXING_NAMED_AND_POSITIONED_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Mixing named and positioned arguments in not allowed");
     SimpleDiagnosticFactory ARGUMENT_PASSED_TWICE = SimpleDiagnosticFactory.create(ERROR, "An argument is already passed for this parameter");
     UnresolvedReferenceDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = new UnresolvedReferenceDiagnosticFactory("Cannot find a parameter with this name");//SimpleDiagnosticFactory.create(ERROR, "Cannot find a parameter with this name");
@@ -166,7 +170,8 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Val can not be reassigned", NAME);
     SimplePsiElementOnlyDiagnosticFactory<JetExpression> VARIABLE_EXPECTED = new SimplePsiElementOnlyDiagnosticFactory<JetExpression>(ERROR, "Variable expected");
 
-    PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Initialization using backing field required", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER = PsiElementOnlyDiagnosticFactory1.create(ERROR, "This property has a custom setter, so initialization using backing field required", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Setter of this property can be overridden, so initialization using backing field required", NAME);
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> FUNCTION_PARAMETERS_OF_INLINE_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function parameters of inline function can only be invoked", NAME);
 

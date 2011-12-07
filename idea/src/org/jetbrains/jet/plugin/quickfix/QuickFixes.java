@@ -111,8 +111,10 @@ public class QuickFixes {
         add(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
         
         add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
-        
-        add(Errors.INITIALIZATION_USING_BACKING_FIELD, ChangeToBackingFieldFix.createFactory());
+
+        JetIntentionActionFactory<JetSimpleNameExpression> changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
+        add(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
+        add(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
 
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actionMap.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);

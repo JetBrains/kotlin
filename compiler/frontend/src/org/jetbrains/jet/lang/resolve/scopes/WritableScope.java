@@ -36,8 +36,6 @@ public interface WritableScope extends JetScope {
     @Nullable
     NamespaceDescriptor getDeclaredNamespace(@NotNull String name);
 
-    void addPropertyDescriptorByFieldName(@NotNull String fieldName, @NotNull PropertyDescriptor propertyDescriptor);
-
     void importScope(@NotNull JetScope imported);
 
     void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver);

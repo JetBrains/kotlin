@@ -1,0 +1,9 @@
+namespace org2
+
+enum class Test {
+    A
+    B
+    C
+}
+
+fun box() = Test.A.toString()

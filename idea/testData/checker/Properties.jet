@@ -14,7 +14,7 @@
 
 class Test() {
     var a : Int = 111
-    var b : Int get() = <error>$a</error>; set(x) {a = x; <error>$a</error> = x}
+    var b : Int get() = $a; set(x) {a = x; $a = x}
 
    this(i : Int) : this() {
     <error>$b</error> = $a
@@ -22,7 +22,7 @@ class Test() {
     a = <error>$b</error>
    }
    fun f() {
-    <error>$b</error> = <error>$a</error>
+    <error>$b</error> = $a
     a = <error>$b</error>
    }
 }

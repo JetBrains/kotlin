@@ -1,4 +1,4 @@
- var x : Int = 1 + x
+var x : Int = 1 + x
    get() : Int = 1
    set(<!REF_SETTER_PARAMETER!>ref<!> value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
       $x = value.int
@@ -14,16 +14,16 @@
 
 class Test() {
     var a : Int = 111
-    var b : Int get() = <!UNRESOLVED_REFERENCE!>$a<!>; set(x) {a = x; <!UNRESOLVED_REFERENCE!>$a<!> = x}
+    var b : Int get() = $a; set(x) {a = x; $a = x}
 
    this(i : Int) : this() {
-    <!NO_BACKING_FIELD!>$b<!> = $a
-    $a = <!NO_BACKING_FIELD!>$b<!>
-    a = <!NO_BACKING_FIELD!>$b<!>
+    <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = $a
+    $a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
+    a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
    }
    fun f() {
-    <!UNRESOLVED_REFERENCE!>$b<!> = <!UNRESOLVED_REFERENCE!>$a<!>
-    a = <!UNRESOLVED_REFERENCE!>$b<!>
+    <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = $a
+    a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
    }
    public val <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>i<!> = 1
 }

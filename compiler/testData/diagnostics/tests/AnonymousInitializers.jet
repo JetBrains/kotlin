@@ -24,7 +24,7 @@ class WithC() {
   {
     val z = <!UNRESOLVED_REFERENCE!>b<!>
     val zz = x
-    val zzz = <!NO_BACKING_FIELD!>$a<!>
+    val zzz = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$a<!>
   }
 
   this(a : Int) : this() {

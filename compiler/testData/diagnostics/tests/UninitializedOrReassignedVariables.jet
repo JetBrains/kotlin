@@ -137,14 +137,14 @@ class AnonymousInitializers(var a: String, val b: String) {
 
     {
         <!VAL_REASSIGNMENT!>$i<!> = 13
-        <!NO_BACKING_FIELD, VAL_REASSIGNMENT!>$j<!> = 30
-        j = 34
+        <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$j<!> = 30
+        <!VAL_REASSIGNMENT!>j<!> = 34
     }
 
     val k: String
     {
         if (1 < 3) {
-            <!INITIALIZATION_USING_BACKING_FIELD!>k<!> = "a"
+            k = "a"
         }
         else {
             $k = "b"
@@ -288,7 +288,7 @@ class TestObjectExpression() {
             val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
             {
                 if (true)
-                    <!INITIALIZATION_USING_BACKING_FIELD!>x<!> = 12
+                    x = 12
                 else
                     $x = 1
             }

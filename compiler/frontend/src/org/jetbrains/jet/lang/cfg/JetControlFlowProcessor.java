@@ -820,6 +820,9 @@ public class JetControlFlowProcessor {
         }
         
         private void visitClassOrObject(JetClassOrObject classOrObject) {
+            for (JetDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
+                value(specifier, inCondition);
+            }
             List<JetDeclaration> declarations = classOrObject.getDeclarations();
             List<JetProperty> properties = Lists.newArrayList();
             for (JetDeclaration declaration : declarations) {
@@ -836,6 +839,14 @@ public class JetControlFlowProcessor {
         @Override
         public void visitClass(JetClass klass) {
             visitClassOrObject(klass);
+        }
+
+        @Override
+        public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+            List<? extends ValueArgument> valueArguments = call.getValueArguments();
+            for (ValueArgument valueArgument : valueArguments) {
+                value(valueArgument.getArgumentExpression(), inCondition);
+            }
         }
 
         @Override

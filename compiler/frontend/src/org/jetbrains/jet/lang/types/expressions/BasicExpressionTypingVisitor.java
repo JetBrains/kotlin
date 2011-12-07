@@ -47,22 +47,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
-        String referencedName = expression.getReferencedName();
-        if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
-                && referencedName != null) {
-            PropertyDescriptor property = context.scope.getPropertyByFieldReference(referencedName);
-            if (property == null) {
-                context.trace.report(UNRESOLVED_REFERENCE.on(expression));
-            }
-            else {
-                context.trace.record(REFERENCE_TARGET, expression, property);
-                return DataFlowUtils.checkType(property.getOutType(), expression, context);
-            }
-        }
-        else {
-            return DataFlowUtils.checkType(getSelectorReturnType(NO_RECEIVER, null, expression, context), expression, context); // TODO : Extensions to this
-        }
-        return null;
+        return DataFlowUtils.checkType(getSelectorReturnType(NO_RECEIVER, null, expression, context), expression, context); // TODO : Extensions to this
     }
 
     private JetType lookupNamespaceOrClassObject(JetSimpleNameExpression expression, String referencedName, ExpressionTypingContext context) {

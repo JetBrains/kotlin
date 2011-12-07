@@ -1,7 +1,6 @@
-val y = 1
-
-class A() {
-    {
-        val x = <!UNRESOLVED_REFERENCE!>$y<!>
-    }
+class CustomValNoBackingField() {
+    val a: Int
+        get() = 1
+    
+    val b = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$a<!>
 }

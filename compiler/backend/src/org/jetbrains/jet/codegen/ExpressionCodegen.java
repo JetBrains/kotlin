@@ -1958,26 +1958,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             } else {
                 ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
 
-                receiver.put(receiver.type, v);
                 v.anew(type);
+                v.dup();
 
                 // TODO typechecker must verify that we're the outer class of the instance being created
                 //noinspection ConstantConditions
-                if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
-                    if(!receiver.type.equals(Type.VOID_TYPE)) {
-                        // class object is in receiver
-                        v.dupX1();
-                        v.swap();
-                    }
-                    else {
-                        // this$0 need to be put on stack
-                        v.dup();
-                        v.load(0, typeMapper.mapType(classDecl.getDefaultType(), OwnerKind.IMPLEMENTATION));
-                    }
-                }
-                else {
-                    // regular case
-                    v.dup();
+                if(!receiver.type.equals(Type.VOID_TYPE)) {
+                    receiver.put(receiver.type, v);
                 }
 
                 CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
