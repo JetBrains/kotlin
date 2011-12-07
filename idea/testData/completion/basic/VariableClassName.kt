@@ -1,7 +1,7 @@
 open class MyClass() {
 }
 
-class A() : My<caret> {
+class A() {
     public fun test() {
         val a : MyC<caret>
     }
