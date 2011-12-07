@@ -1,9 +1,6 @@
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,49 +78,63 @@ public final class CallTranslator extends AbstractTranslator {
     private final List<JsExpression> arguments;
 
     @NotNull
-    private final FunctionDescriptor descriptor;
+    private final FunctionDescriptor functionDescriptor;
 
     private CallTranslator(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                            @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
         this.receiver = receiver;
         this.arguments = arguments;
-        this.descriptor = descriptor;
+        this.functionDescriptor = descriptor;
     }
 
     @NotNull
     private JsExpression translate() {
-        if (context().intrinsics().isIntrinsic(descriptor)) {
-            FunctionIntrinsic functionIntrinsic = context().intrinsics().getFunctionIntrinsic(descriptor);
-            assert receiver != null : "Functions that have functionIntrinsic implementation should have a receiver.";
-            return functionIntrinsic.apply(receiver, arguments, context());
+        if (isIntrinsic()) {
+            return intrinsicInvocation();
         }
-        if (isConstructorDescriptor(descriptor)) {
+        if (isConstructor()) {
             return constructorCall();
         }
+        return methodCall();
+    }
+
+    @NotNull
+    private JsExpression intrinsicInvocation() {
+        FunctionIntrinsic functionIntrinsic = context().intrinsics().getFunctionIntrinsic(functionDescriptor);
+        assert receiver != null : "Functions that have functionIntrinsic implementation should have a receiver.";
+        return functionIntrinsic.apply(receiver, arguments, context());
+    }
+
+    private JsInvocation methodCall() {
         return AstUtil.newInvocation(calleeReference(), arguments);
+    }
+
+    private boolean isConstructor() {
+        return isConstructorDescriptor(functionDescriptor);
+    }
+
+    private boolean isIntrinsic() {
+        return context().intrinsics().isIntrinsic(functionDescriptor);
     }
 
     @NotNull
     private JsExpression calleeReference() {
         //TODO: refactor
         //TODO: write tests on this cases
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            VariableDescriptor variableDescriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
+        if (functionDescriptor instanceof VariableAsFunctionDescriptor) {
+            VariableDescriptor variableDescriptor = ((VariableAsFunctionDescriptor) functionDescriptor).getVariableDescriptor();
             if (variableDescriptor instanceof PropertyDescriptor) {
                 PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
                 return PropertyAccessTranslator.translateAsPropertyGetterCall(propertyDescriptor, context());
             }
+            return qualifiedMethodReference(variableDescriptor);
         }
-        if (context().isDeclared(descriptor)) {
-            return qualifiedMethodReference();
-        }
-        //TODO: hack
-        return AstUtil.newQualifiedNameRef(descriptor.getName());
+        return qualifiedMethodReference(functionDescriptor);
     }
 
     @NotNull
-    private JsNameRef qualifiedMethodReference() {
+    private JsNameRef qualifiedMethodReference(@Nullable DeclarationDescriptor descriptor) {
         JsName methodName = context().getNameForDescriptor(descriptor);
         if (receiver != null) {
             return AstUtil.qualified(methodName, receiver);
@@ -137,14 +148,4 @@ public final class CallTranslator extends AbstractTranslator {
         constructorCall.setArguments(arguments);
         return constructorCall;
     }
-
-//    //TODO: delete?
-//    @NotNull
-//    private JsExpression translateCallee(@NotNull JetCallExpression expression) {
-//        JetExpression callee = expression.getCalleeExpression();
-//        assert callee != null : "Call expression with no callee encountered!";
-//        return Translation.translateAsExpression(callee, context);
-//    }
-
-
 }

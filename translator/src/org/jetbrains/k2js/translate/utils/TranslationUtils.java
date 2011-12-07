@@ -208,4 +208,17 @@ public final class TranslationUtils {
         return context.program().getNumberLiteral(0);
     }
 
+    @Nullable
+    public static JsExpression getImplicitReceiver(@NotNull TranslationContext context,
+                                                   @NotNull DeclarationDescriptor referencedDescriptor) {
+        if (!context.isDeclared(referencedDescriptor)) return null;
+
+        if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
+            return TranslationUtils.getThisQualifier(context);
+        }
+        if (!BindingUtils.isOwnedByNamespace(referencedDescriptor)) return null;
+
+        return context.declarations().getQualifier(referencedDescriptor);
+    }
+
 }
