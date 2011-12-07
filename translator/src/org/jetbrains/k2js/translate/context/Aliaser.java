@@ -62,10 +62,10 @@ public class Aliaser {
     }
 
     @NotNull
-    public JsNameRef getAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
+    public JsName getAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
         JsName alias = aliases.get(declaration.getOriginal());
         assert alias != null : "Use has alias for declaration to check.";
-        return alias.makeRef();
+        return alias;
     }
 
     public void setAliasForDescriptor(@NotNull DeclarationDescriptor declaration, @NotNull JsName alias) {

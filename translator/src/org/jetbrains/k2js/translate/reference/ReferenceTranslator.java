@@ -4,7 +4,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -40,53 +39,28 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     private final boolean shouldQualify;
 
-    @Nullable
-    private JsExpression result;
-
     private ReferenceTranslator(@NotNull DeclarationDescriptor referencedDescriptor,
                                 boolean shouldQualify,
                                 @NotNull TranslationContext context) {
         super(context);
         this.referencedDescriptor = referencedDescriptor;
-        this.result = null;
         this.shouldQualify = shouldQualify;
     }
 
+    //TODO: refactor
     @NotNull
     public JsExpression translate() {
-        tryResolveAsAlias();
-        tryResolveAsReference();
-        if (result != null) {
-            return result;
+        if (!context().isDeclared(referencedDescriptor)) {
+            throw new AssertionError("Undefined name in this scope: " + referencedDescriptor.getName());
         }
-        throw new AssertionError("Undefined name in this scope: " + referencedDescriptor.getName());
-    }
-
-    private void tryResolveAsAlias() {
-        if (alreadyResolved()) return;
-
-        if (!context().aliaser().hasAliasForDeclaration(referencedDescriptor)) return;
-
-        result = context().aliaser().getAliasForDeclaration(referencedDescriptor);
-    }
-
-
-    private void tryResolveAsReference() {
-        if (alreadyResolved()) return;
-
-        if (!context().isDeclared(referencedDescriptor)) return;
 
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
         JsExpression implicitReceiver = getImplicitReceiver(context(), referencedDescriptor);
 
         if (shouldQualify && implicitReceiver != null) {
-            result = AstUtil.qualified(referencedName, implicitReceiver);
+            return AstUtil.qualified(referencedName, implicitReceiver);
         } else {
-            result = referencedName.makeRef();
+            return referencedName.makeRef();
         }
-    }
-
-    private boolean alreadyResolved() {
-        return result != null;
     }
 }

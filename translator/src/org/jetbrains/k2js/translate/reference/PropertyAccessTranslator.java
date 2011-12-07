@@ -212,6 +212,9 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private JsName getGetterName() {
+        if (context().aliaser().hasAliasForDeclaration(propertyDescriptor)) {
+            return context().aliaser().getAliasForDeclaration(propertyDescriptor);
+        }
         PropertyGetterDescriptor getter = getGetterDescriptor();
         return context().getNameForDescriptor(getter);
     }

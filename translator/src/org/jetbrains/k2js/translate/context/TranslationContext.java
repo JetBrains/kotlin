@@ -92,6 +92,9 @@ public final class TranslationContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (aliaser().hasAliasForDeclaration(descriptor)) {
+            return aliaser().getAliasForDeclaration(descriptor);
+        }
         if (dynamicContext.isDeclared(descriptor)) {
             return dynamicContext.getLocalName(descriptor);
         }
