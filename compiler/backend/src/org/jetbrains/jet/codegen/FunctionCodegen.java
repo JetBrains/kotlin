@@ -7,12 +7,15 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
+import org.objectweb.asm.signature.SignatureVisitor;
+import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.List;
 import java.util.Set;
@@ -50,7 +53,7 @@ public class FunctionCodegen {
         final JetExpression bodyExpression = f.getBodyExpression();
         generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor, f);
     }
-
+    
     private void generatedMethod(JetExpression bodyExpressions,
                                  Method jvmSignature,
                                  CodegenContext.MethodContext context,
@@ -73,7 +76,7 @@ public class FunctionCodegen {
 
             boolean isAbstract = !isStatic && !(kind == OwnerKind.TRAIT_IMPL) && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()));
             if (isAbstract) flags |= ACC_ABSTRACT;
-
+            
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
             if(v.generateCode()) {
                 int start = 0;
