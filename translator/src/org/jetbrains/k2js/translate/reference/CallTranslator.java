@@ -1,6 +1,8 @@
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -134,12 +136,12 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsNameRef qualifiedMethodReference(@Nullable DeclarationDescriptor descriptor) {
-        JsName methodName = context().getNameForDescriptor(descriptor);
+    private JsExpression qualifiedMethodReference(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression methodReference = ReferenceTranslator.translateReference(descriptor, context());
         if (receiver != null) {
-            return AstUtil.qualified(methodName, receiver);
+            AstUtil.setQualifier(methodReference, receiver);
         }
-        return methodName.makeRef();
+        return methodReference;
     }
 
     @NotNull
