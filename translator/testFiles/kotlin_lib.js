@@ -483,6 +483,31 @@ Kotlin.Array = Class.create({
     }
 });
 
+//Kotlin.Array = Class.create({
+//    initialize:function (len) {
+//        this.array = [];
+//        this.size = 0
+//    },
+//    get:function (index) {
+//        if ((index < 0) || (index > this.size)) {
+//            throw Kotlin.Exceptions.IndexOutOfBounds;
+//        }
+//        return (this.array)[index];
+//    },
+//    set:function (index, value) {
+//        if ((index < 0) || (index > this.size)) {
+//            throw Kotlin.Exceptions.IndexOutOfBounds;
+//        }
+//        (this.array)[index] = value;
+//    },
+//    size:function () {
+//        return this.size;
+//    },
+//    iterator:function () {
+//        return new Kotlin.ArrayIterator(this);
+//    }
+//});
+
 Kotlin.ArrayIterator = Class.create({
     initialize:function (array) {
         this.array = array;

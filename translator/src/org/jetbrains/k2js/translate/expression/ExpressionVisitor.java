@@ -382,5 +382,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return AccessTranslator.translateAsGet(expression, context);
     }
 
-
+    @Override
+    @NotNull
+    public JsNode visitForExpression(@NotNull JetForExpression expression,
+                                     @NotNull TranslationContext context) {
+        return ForTranslator.translate(expression, context);
+    }
 }
