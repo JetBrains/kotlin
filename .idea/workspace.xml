@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Aliaser.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Aliaser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java" />
     </list>
     <ignored path="k2js.iws" />
@@ -207,10 +203,10 @@
     <splitter split-orientation="horizontal" split-proportion="0.4949225">
       <split-first>
         <leaf>
-          <file leaf-file-name="StandardClassesTest.java" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="StandardClassesTest.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="37" column="48" selection-start="865" selection-end="865" vertical-scroll-proportion="0.775">
+                <state line="28" column="38" selection-start="629" selection-end="629" vertical-scroll-proportion="0.7256098">
                   <folding />
                 </state>
               </provider>
@@ -230,7 +226,7 @@
           <file leaf-file-name="BasicClassTest.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="17" column="16" selection-start="303" selection-end="303" vertical-scroll-proportion="0.0">
+                <state line="32" column="16" selection-start="699" selection-end="699" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -348,10 +344,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ReferenceTranslator.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="ReferenceTranslator.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="17" column="48" selection-start="768" selection-end="768" vertical-scroll-proportion="0.15">
+                <state line="64" column="66" selection-start="2895" selection-end="2895" vertical-scroll-proportion="0.7138414">
                   <folding />
                 </state>
               </provider>
@@ -834,41 +830,7 @@
       <recent name="org.jetbrains.k2js.test.examples" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.tests">
-    <configuration default="false" name="FunctionTest.enclosingThis" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true">
-        <pattern>
-          <option name="PATTERN" value="org.jetbrains.k2js.test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="translator" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="org.jetbrains.k2js.test" />
-      <option name="MAIN_CLASS_NAME" value="org.jetbrains.k2js.test.FunctionTest" />
-      <option name="METHOD_NAME" value="enclosingThis" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="JUnit.All in jetTests">
     <configuration default="false" name="StandardClassesTest.array" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -1003,6 +965,29 @@
       <ConfigurationWrapper RunnerId="Debug" />
       <method />
     </configuration>
+    <configuration default="false" name="All in jetTests" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" />
+      <module name="jetTests" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -1130,11 +1115,11 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="JUnit.tests" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.FunctionTest.enclosingThis" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.StandardClassesTest.array" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.ClassInheritanceTest.methodOverride" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.BasicClassTest.methodDeclarationAndCall" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.BasicClassTest.classInstantiation" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.StandardClassesTest.array" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.ClassInheritanceTest.methodOverride" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.BasicClassTest.methodDeclarationAndCall" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.BasicClassTest.classInstantiation" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.All in jetTests" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -1200,16 +1185,16 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28530258" sideWeight="0.7557456" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949087" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27185398" sideWeight="0.35435596" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.6705091" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854405" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22382325" sideWeight="0.45750934" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949087" sideWeight="0.49812934" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32756963" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20363443" sideWeight="0.284342" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20363443" sideWeight="0.284342" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.7002882" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20791021" sideWeight="0.7002882" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20791021" sideWeight="0.7002882" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29971182" sideWeight="0.64190274" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1253,7 +1238,7 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="work on array size property" />
+    <option name="LAST_COMMIT_MESSAGE" value="move aliasing into context. array size works." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1266,7 +1251,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Worked on namer." />
     <MESSAGE value="Include standard library." />
     <MESSAGE value="Reworked ExtractionVisitor into Declaration visitor." />
     <MESSAGE value="Work on reference expression. Test fixes to follow." />
@@ -1291,6 +1275,7 @@
     <MESSAGE value="refactor ReferenceTranslator" />
     <MESSAGE value="simple array tests pass" />
     <MESSAGE value="work on array size property" />
+    <MESSAGE value="move aliasing into context. array size works." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1331,13 +1316,6 @@
     <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/scopes/WritableScopeImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="356" column="0" selection-start="12812" selection-end="12812" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="16" selection-start="303" selection-end="303" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1406,16 +1384,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="48" selection-start="865" selection-end="865" vertical-scroll-proportion="0.775">
+        <state line="64" column="66" selection-start="2895" selection-end="2895" vertical-scroll-proportion="0.7138414">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java">
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="48" selection-start="768" selection-end="768" vertical-scroll-proportion="0.15">
+        <state line="32" column="16" selection-start="699" selection-end="699" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="38" selection-start="629" selection-end="629" vertical-scroll-proportion="0.7256098">
           <folding />
         </state>
       </provider>

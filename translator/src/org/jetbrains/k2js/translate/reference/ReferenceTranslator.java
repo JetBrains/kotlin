@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -47,7 +48,6 @@ public class ReferenceTranslator extends AbstractTranslator {
         this.shouldQualify = shouldQualify;
     }
 
-    //TODO: refactor
     @NotNull
     public JsExpression translate() {
         if (!context().isDeclared(referencedDescriptor)) {
@@ -57,6 +57,11 @@ public class ReferenceTranslator extends AbstractTranslator {
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
         JsExpression implicitReceiver = getImplicitReceiver(context(), referencedDescriptor);
 
+        return generateReference(referencedName, implicitReceiver);
+    }
+
+    @NotNull
+    private JsExpression generateReference(@NotNull JsName referencedName, @Nullable JsExpression implicitReceiver) {
         if (shouldQualify && implicitReceiver != null) {
             return AstUtil.qualified(referencedName, implicitReceiver);
         } else {
