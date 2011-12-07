@@ -5,9 +5,11 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -190,11 +192,57 @@ public class StatementVisitor extends ElementVisitor {
   @Override
   public void visitSwitchLabelStatement(PsiSwitchLabelStatement statement) {
     super.visitSwitchLabelStatement(statement);
+    myResult = statement.isDefaultCase() ?
+      new DefaultSwitchLabelStatement() :
+      new SwitchLabelStatement(expressionToExpression(statement.getCaseValue()));
   }
 
   @Override
   public void visitSwitchStatement(PsiSwitchStatement statement) {
     super.visitSwitchStatement(statement);
+    List<CaseContainer> caseContainers = listToCases(splitToCases(statement.getBody()));
+    myResult = new SwitchContainer(
+      expressionToExpression(statement.getExpression()),
+      caseContainers
+    );
+  }
+
+  @NotNull
+  private static List<CaseContainer> listToCases(@NotNull final List<List<PsiStatement>> cases) {
+    List<CaseContainer> result = new LinkedList<CaseContainer>();
+    for (List<PsiStatement> ls : cases) {
+      assert ls.size() > 0;
+      PsiStatement label = ls.get(0);
+      assert label instanceof PsiSwitchLabelStatement;
+      result.add(new CaseContainer(statementToStatement(label),
+        ls.size() > 1 ?
+          statementsToStatementList(ls.subList(1, ls.size()).toArray(new PsiStatement[ls.size() - 1])) :
+          Collections.<Statement>emptyList()
+      ));
+    }
+    return result;
+  }
+
+  @NotNull
+  private static List<List<PsiStatement>> splitToCases(@Nullable final PsiCodeBlock body) {
+    List<List<PsiStatement>> cases = new LinkedList<List<PsiStatement>>();
+    List<PsiStatement> currentCaseStatements = new LinkedList<PsiStatement>();
+    boolean isFirst = true;
+    if (body != null) {
+      for (PsiStatement s : body.getStatements()) {
+        if (s instanceof PsiSwitchLabelStatement) {
+          if (isFirst)
+            isFirst = false;
+          else {
+            cases.add(currentCaseStatements);
+            currentCaseStatements = new LinkedList<PsiStatement>();
+          }
+        }
+        currentCaseStatements.add(s);
+      }
+      cases.add(currentCaseStatements);
+    }
+    return cases;
   }
 
   @Override
