@@ -53,10 +53,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected void createEnvironmentWithMockJdk() {
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
-        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
-        myEnvironment.addToClasspath(rtJar);
-        myEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
+        myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable());
     }
 
     protected void createEnvironmentWithFullJdk() {
