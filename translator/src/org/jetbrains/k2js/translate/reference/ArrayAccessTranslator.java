@@ -9,6 +9,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -41,19 +43,47 @@ public final class ArrayAccessTranslator extends AccessTranslator {
 
     @Override
     @NotNull
-    public JsInvocation translateAsGet() {
-        return translateAsArrayAccessWithIndices();
+    public JsExpression translateAsGet() {
+        if (intrinsicCall()) {
+            return intrinsicGet();
+        }
+        return translateAsAccessMethodCall();
+    }
+
+    private boolean intrinsicCall() {
+        return context().intrinsics().isIntrinsic(methodDescriptor);
+    }
+
+    @NotNull
+    private JsExpression intrinsicGet() {
+        return ArrayGetIntrinsic.INSTANCE.apply(translateArrayExpression(), translateIndexExpressions(), context());
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression expression) {
-        JsInvocation setCall = translateAsArrayAccessWithIndices();
+        if (intrinsicCall()) {
+            return intrinsicSet(expression);
+        }
+        return overloadedSet(expression);
+    }
+
+    @NotNull
+    private JsExpression intrinsicSet(@NotNull JsExpression expression) {
+        List<JsExpression> arguments = translateIndexExpressions();
+        arguments.add(expression);
+        return ArraySetIntrinsic.INSTANCE.apply(translateArrayExpression(), arguments, context());
+    }
+
+    @NotNull
+    private JsExpression overloadedSet(@NotNull JsExpression expression) {
+        JsInvocation setCall = translateAsAccessMethodCall();
         setCall.getArguments().add(expression);
         return setCall;
     }
 
-    private JsInvocation translateAsArrayAccessWithIndices() {
+    @NotNull
+    private JsInvocation translateAsAccessMethodCall() {
         JsNameRef accessMethodReference = getAccessMethodReference();
         AstUtil.setQualifier(accessMethodReference, translateArrayExpression());
         return AstUtil.newInvocation(accessMethodReference, translateIndexExpressions());

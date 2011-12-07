@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.findAncestorClass;
 
 /**
  * @author Talanov Pavel
@@ -108,7 +109,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @Nullable
     private ClassDescriptor findAndRemoveAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
-        ClassDescriptor ancestorClass = BindingUtils.findAncestorClass(superclassDescriptors);
+        ClassDescriptor ancestorClass = findAncestorClass(superclassDescriptors);
         superclassDescriptors.remove(ancestorClass);
         return ancestorClass;
     }

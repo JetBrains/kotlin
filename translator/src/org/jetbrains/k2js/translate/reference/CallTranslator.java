@@ -26,17 +26,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 /**
  * @author Talanov Pavel
  */
+//TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
-
-
-    //TODO: remove?
-
-//    public static boolean isFunctionCall(@NotNull JetOperationExpression expression,
-//                                         @NotNull TranslationContext context) {
-//        DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
-//                (context.bindingContext(), expression.getOperation());
-//        return (descriptor instanceof FunctionDescriptor);
-//    }
 
     public static JsExpression translate(@NotNull JetUnaryExpression unaryExpression,
                                          @NotNull TranslationContext context) {
@@ -48,6 +39,7 @@ public final class CallTranslator extends AbstractTranslator {
         return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
     }
 
+    //TODO: method too long
     public static JsExpression translate(@NotNull JetDotQualifiedExpression dotExpression,
                                          @NotNull TranslationContext context) {
         //TODO: look for duplication

@@ -125,6 +125,11 @@ public final class Namer {
     }
 
     @NotNull
+    public JsName libraryObject(@NotNull String name) {
+        return kotlinScope.declareName(name);
+    }
+
+    @NotNull
     public JsNameRef kotlinObject() {
         return kotlinName.makeRef();
     }

@@ -238,6 +238,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
                                               @NotNull TranslationContext context) {
+        if (expression.getSelectorExpression() instanceof JetCallExpression) {
+            return CallTranslator.translate(expression, context);
+        }
         return translateQualifiedExpression(expression, context);
     }
 

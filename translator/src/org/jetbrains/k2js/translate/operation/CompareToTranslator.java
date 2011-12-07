@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNumberLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
@@ -13,6 +12,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
 
@@ -73,10 +73,9 @@ public final class CompareToTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression overloadedCompareTo() {
-        JsNumberLiteral zeroLiteral = program().getNumberLiteral(0);
         JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(operationToken);
         JsExpression methodCall = CallTranslator.translate(expression, context());
-        return new JsBinaryOperation(correspondingOperator, methodCall, zeroLiteral);
+        return new JsBinaryOperation(correspondingOperator, methodCall, TranslationUtils.zeroLiteral(context()));
     }
 
     @NotNull

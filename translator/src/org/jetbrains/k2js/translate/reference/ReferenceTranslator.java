@@ -12,61 +12,14 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+
 /**
  * @author Talanov Pavel
  */
 public class ReferenceTranslator extends AbstractTranslator {
 
-    @NotNull
-    private final JetSimpleNameExpression simpleName;
-
-    @Nullable
-    private JsExpression result;
-
-    @NotNull
-    public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
-                                                   @NotNull TranslationContext context) {
-        return (new ReferenceTranslator(expression, context)).translateSimpleName();
-    }
-
-    private ReferenceTranslator(@NotNull JetSimpleNameExpression expression, @NotNull TranslationContext context) {
-        super(context);
-        this.simpleName = expression;
-        this.result = null;
-    }
-
-    @NotNull
-    //TODO: make this process simpler and clearer
-    public JsExpression translateSimpleName() {
-        tryResolveAsAlias();
-        tryResolveAsPropertyAccess();
-        tryResolveAsReference();
-        if (result != null) {
-            return result;
-        }
-        throw new AssertionError("Undefined name in this scope: " + simpleName.getReferencedName());
-    }
-
-    //TODO: refactor
-    private void tryResolveAsReference() {
-        if (alreadyResolved()) return;
-
-        DeclarationDescriptor referencedDescriptor =
-                BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), simpleName);
-
-        if (referencedDescriptor == null) return;
-        if (!context().isDeclared(referencedDescriptor)) return;
-
-        JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
-        JsExpression implicitReceiver = getImplicitReceiver(referencedDescriptor, context());
-
-        if (implicitReceiver != null) {
-            result = AstUtil.qualified(referencedName, implicitReceiver);
-        } else {
-            result = context().getNameForDescriptor(referencedDescriptor).makeRef();
-        }
-    }
-
+    // TODO: move to other util
     @Nullable
     public static JsExpression getImplicitReceiver(@NotNull DeclarationDescriptor referencedDescriptor,
                                                    @NotNull TranslationContext context) {
@@ -80,28 +33,74 @@ public class ReferenceTranslator extends AbstractTranslator {
         return context.declarations().getQualifier(referencedDescriptor);
     }
 
+    @NotNull
+    public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
+                                                   @NotNull TranslationContext context) {
+        if (PropertyAccessTranslator.canBePropertyAccess(expression, context)) {
+            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, context);
+        }
+        DeclarationDescriptor referencedDescriptor =
+                getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        return (new ReferenceTranslator(referencedDescriptor, context)).translate();
+    }
+
+    @NotNull
+    public static JsExpression translateReference(@NotNull DeclarationDescriptor referencedDescriptor,
+                                                  @NotNull TranslationContext context) {
+        return (new ReferenceTranslator(referencedDescriptor, context)).translate();
+    }
+
+    @NotNull
+    private final DeclarationDescriptor referencedDescriptor;
+
+    @Nullable
+    private JsExpression result;
+
+    private ReferenceTranslator(@NotNull DeclarationDescriptor referencedDescriptor, @NotNull TranslationContext context) {
+        super(context);
+        this.referencedDescriptor = referencedDescriptor;
+        this.result = null;
+    }
+
+    @NotNull
+    public JsExpression translate() {
+        tryResolveAsAlias();
+        tryResolveAsReference();
+        if (result != null) {
+            return result;
+        }
+        throw new AssertionError("Undefined name in this scope: " + referencedDescriptor.getName());
+    }
+
     private void tryResolveAsAlias() {
-        //TODO: decide if this code is meaningful
         if (alreadyResolved()) return;
 
-        DeclarationDescriptor referencedDescriptor =
-                BindingUtils.getDescriptorForReferenceExpression(context().bindingContext(), simpleName);
-
-        if (referencedDescriptor == null) return;
         if (!context().aliaser().hasAliasForDeclaration(referencedDescriptor)) return;
 
         result = context().aliaser().getAliasForDeclaration(referencedDescriptor);
     }
 
-    private boolean alreadyResolved() {
-        return result != null;
-    }
 
-    private void tryResolveAsPropertyAccess() {
+    private void tryResolveAsReference() {
         if (alreadyResolved()) return;
 
-        if (!PropertyAccessTranslator.canBePropertyGetterCall(simpleName, context())) return;
+        if (!context().isDeclared(referencedDescriptor)) return;
 
-        result = PropertyAccessTranslator.translateAsPropertyGetterCall(simpleName, context());
+        JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
+        JsExpression implicitReceiver = getImplicitReceiver(referencedDescriptor, context());
+
+        generateReference(referencedName, implicitReceiver);
+    }
+
+    private void generateReference(@NotNull JsName referencedName, @Nullable JsExpression implicitReceiver) {
+        if (implicitReceiver != null) {
+            result = AstUtil.qualified(referencedName, implicitReceiver);
+        } else {
+            result = context().getNameForDescriptor(referencedDescriptor).makeRef();
+        }
+    }
+
+    private boolean alreadyResolved() {
+        return result != null;
     }
 }

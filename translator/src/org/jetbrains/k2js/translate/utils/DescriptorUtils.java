@@ -1,15 +1,15 @@
 package org.jetbrains.k2js.translate.utils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Talanov Pavel
@@ -57,5 +57,44 @@ public final class DescriptorUtils {
             }
         }
         return resultingList;
+    }
+
+    @NotNull
+    public static FunctionDescriptor getFunctionByName(@NotNull ClassDescriptor classDescriptor,
+                                                       @NotNull String name) {
+        JetScope scope = classDescriptor.getDefaultType().getMemberScope();
+        return getFunctionByName(scope, name);
+    }
+
+    @NotNull
+    public static FunctionDescriptor getFunctionByName(@NotNull JetScope scope,
+                                                       @NotNull String name) {
+        Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
+        assert functionDescriptors.size() == 1 :
+                "In scope " + scope + " supposed to be exactly one " + name + " function.";
+        //noinspection LoopStatementThatDoesntLoop
+        for (FunctionDescriptor descriptor : functionDescriptors) {
+            return descriptor;
+        }
+        throw new AssertionError("In scope " + scope
+                + " supposed to be exactly one " + name + " function.");
+    }
+
+    @Nullable
+    public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
+        for (ClassDescriptor descriptor : superclassDescriptors) {
+            if (descriptor.getKind() == ClassKind.CLASS) {
+                return descriptor;
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    /*package*/ static VariableDescriptor getVariableDescriptorForVariableAsFunction
+            (@NotNull VariableAsFunctionDescriptor descriptor) {
+        VariableDescriptor functionVariable = descriptor.getVariableDescriptor();
+        assert functionVariable != null;
+        return functionVariable;
     }
 }

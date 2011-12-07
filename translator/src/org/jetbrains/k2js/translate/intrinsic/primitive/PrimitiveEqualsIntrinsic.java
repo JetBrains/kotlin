@@ -1,9 +1,10 @@
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.primitive;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public final class PrimitiveEqualsIntrinsic extends EqualsIntrinsic {
 
     @NotNull
-    /*package*/ static PrimitiveEqualsIntrinsic newInstance() {
+    public static PrimitiveEqualsIntrinsic newInstance() {
         return new PrimitiveEqualsIntrinsic();
     }
 

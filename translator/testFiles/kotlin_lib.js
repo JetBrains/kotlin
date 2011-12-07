@@ -447,17 +447,35 @@ Object.extend(Function.prototype, (function () {
 })());
 
 Kotlin = {}
+Kotlin.Exceptions = {}
+Kotlin.Exceptions.IndexOutOfBounds = {}
+Kotlin.array = function (len) {
+    return new Kotlin.Array(len, function () {
+        return null
+    });
+}
 Kotlin.Array = Class.create({
-    initialize:function () {
+    initialize:function (len, f) {
         this.array = [];
+        var i = 0;
+        while (i < len) {
+            this.array.push(f(i));
+            ++i;
+        }
     },
     get:function (index) {
+        if ((index < 0) || (index > this.array.length)) {
+            throw Kotlin.Exceptions.IndexOutOfBounds;
+        }
         return (this.array)[index];
     },
     set:function (index, value) {
+        if ((index < 0) || (index > this.array.length)) {
+            throw Kotlin.Exceptions.IndexOutOfBounds;
+        }
         (this.array)[index] = value;
     }
-})
+});
 
 Kotlin.Class = Class
 Kotlin.Namespace = Namespace

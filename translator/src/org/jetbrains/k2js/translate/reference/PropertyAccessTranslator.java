@@ -7,6 +7,7 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
@@ -15,9 +16,11 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
 /**
  * @author Talanov Pavel
@@ -85,7 +88,8 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     public static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
                                                   @NotNull TranslationContext context) {
-        return (BindingUtils.getPropertyDescriptorForSimpleName(context.bindingContext(), expression) != null);
+        return (getDescriptorForReferenceExpression
+                (context.bindingContext(), expression) instanceof PropertyDescriptor);
     }
 
     public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
@@ -108,19 +112,23 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     private final JetExpression qualifier;
     @NotNull
     private final PropertyDescriptor propertyDescriptor;
+    private final boolean isBackingFieldAccess;
 
     private PropertyAccessTranslator(@NotNull JetSimpleNameExpression simpleName,
                                      @NotNull TranslationContext context) {
         super(context);
         this.qualifier = null;
         this.propertyDescriptor = getPropertyDescriptor(simpleName);
+        this.isBackingFieldAccess = isBackingFieldReference(simpleName);
     }
 
     private PropertyAccessTranslator(@NotNull JetQualifiedExpression qualifiedExpression,
                                      @NotNull TranslationContext context) {
         super(context);
         this.qualifier = qualifiedExpression.getReceiverExpression();
-        this.propertyDescriptor = getPropertyDescriptor(getNotNullSelector(qualifiedExpression));
+        JetSimpleNameExpression selector = getNotNullSelector(qualifiedExpression);
+        this.propertyDescriptor = getPropertyDescriptor(selector);
+        this.isBackingFieldAccess = isBackingFieldReference(selector);
     }
 
     private PropertyAccessTranslator(@NotNull PropertyDescriptor descriptor,
@@ -128,11 +136,26 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         super(context);
         this.qualifier = null;
         this.propertyDescriptor = descriptor;
+        this.isBackingFieldAccess = false;
     }
 
     @Override
     @NotNull
     public JsExpression translateAsGet() {
+        if (isBackingFieldAccess) {
+            return backingFieldGet();
+        } else {
+            return getterCall();
+        }
+    }
+
+    @NotNull
+    private JsExpression backingFieldGet() {
+        return backingFieldReference(context(), propertyDescriptor);
+    }
+
+    @NotNull
+    private JsExpression getterCall() {
         JsName getterName = getGetterName();
         return qualifiedAccessorInvocation(getterName);
     }
@@ -140,10 +163,25 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
+        if (isBackingFieldAccess) {
+            return backingFieldAssignment(toSetTo);
+        } else {
+            return setterCall(toSetTo);
+        }
+    }
+
+    @NotNull
+    private JsExpression setterCall(@NotNull JsExpression toSetTo) {
         JsName setterName = getSetterName();
         JsInvocation setterCall = qualifiedAccessorInvocation(setterName);
         setterCall.getArguments().add(toSetTo);
         return setterCall;
+    }
+
+    @NotNull
+    private JsExpression backingFieldAssignment(@NotNull JsExpression toSetTo) {
+        JsNameRef backingFieldReference = backingFieldReference(context(), propertyDescriptor);
+        return AstUtil.newAssignment(backingFieldReference, toSetTo);
     }
 
     @NotNull
@@ -197,12 +235,12 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         return setter;
     }
 
-
     @NotNull
     private PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression) {
-        PropertyDescriptor propertyDescriptor =
-                BindingUtils.getPropertyDescriptorForSimpleName(context().bindingContext(), expression);
-        assert propertyDescriptor != null;
-        return propertyDescriptor;
+        DeclarationDescriptor descriptor =
+                getDescriptorForReferenceExpression(context().bindingContext(), expression);
+        //TODO
+        assert descriptor instanceof PropertyDescriptor;
+        return (PropertyDescriptor) descriptor;
     }
 }

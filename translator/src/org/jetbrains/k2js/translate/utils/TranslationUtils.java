@@ -76,15 +76,6 @@ public final class TranslationUtils {
         return AstUtil.qualified(backingFieldName, qualifier);
     }
 
-    @NotNull
-    public static String getPropertyName(@NotNull JetProperty expression) {
-        String propertyName = expression.getName();
-        if (propertyName == null) {
-            throw new AssertionError("Property with no name encountered!");
-        }
-        return propertyName;
-    }
-
     @Nullable
     public static JsExpression translateInitializerForProperty(@NotNull JetProperty declaration,
                                                                @NotNull TranslationContext context) {
@@ -210,6 +201,11 @@ public final class TranslationUtils {
     @NotNull
     public static JsFunction functionWithScope(@NotNull NamingScope scope) {
         return JsFunction.getAnonymousFunctionWithScope(scope.jsScope());
+    }
+
+    @NotNull
+    public static JsNumberLiteral zeroLiteral(@NotNull TranslationContext context) {
+        return context.program().getNumberLiteral(0);
     }
 
 }

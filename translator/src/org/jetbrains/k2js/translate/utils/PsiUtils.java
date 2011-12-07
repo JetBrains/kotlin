@@ -47,4 +47,15 @@ public final class PsiUtils {
     public static boolean isAssignment(JetToken token) {
         return (token == JetTokens.EQ);
     }
+
+    public static boolean isBackingFieldReference(@NotNull JetSimpleNameExpression expression) {
+        return expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+    }
+
+    @NotNull
+    /*package*/ static JetExpression getCallee(@NotNull JetCallExpression expression) {
+        JetExpression calleeExpression = expression.getCalleeExpression();
+        assert calleeExpression != null;
+        return calleeExpression;
+    }
 }

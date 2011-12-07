@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.primitive;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsPrefixOperation;
@@ -6,6 +6,7 @@ import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 
 import java.util.List;
@@ -13,18 +14,18 @@ import java.util.List;
 /**
  * @author Talanov Pavel
  */
-public class UnaryOperationIntrinsic extends FunctionIntrinsic {
+public final class PrimitiveUnaryOperationIntrinsic implements FunctionIntrinsic {
 
     @NotNull
-    /*package*/ static UnaryOperationIntrinsic newInstance(@NotNull JetToken token) {
+    public static PrimitiveUnaryOperationIntrinsic newInstance(@NotNull JetToken token) {
         JsUnaryOperator operator = OperatorTable.getUnaryOperator(token);
-        return new UnaryOperationIntrinsic(operator);
+        return new PrimitiveUnaryOperationIntrinsic(operator);
     }
 
     @NotNull
     private final JsUnaryOperator operator;
 
-    private UnaryOperationIntrinsic(@NotNull JsUnaryOperator operator) {
+    private PrimitiveUnaryOperationIntrinsic(@NotNull JsUnaryOperator operator) {
         this.operator = operator;
     }
 

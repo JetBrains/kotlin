@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
+
 /**
  * @author Talanov Pavel
  *         <p/>
@@ -32,6 +34,7 @@ public final class BindingUtils {
         assert descriptor != null;
         assert descriptorClass.isInstance(descriptor)
                 : expression.toString() + " expected to have of type" + descriptorClass.toString();
+        //noinspection unchecked
         return (D) descriptor;
     }
 
@@ -64,40 +67,12 @@ public final class BindingUtils {
         return getDescriptorForExpression(context, declaration, PropertyDescriptor.class);
     }
 
-    //TODO: possibly remove
-//    @NotNull
-//    public static PropertySetterDescriptor getPropertySetterDescriptorForProperty(@NotNull BindingContext context,
-//                                                                                  @NotNull JetProperty property) {
-//        PropertySetterDescriptor result = getPropertyDescriptor(context, property).getSetter();
-//        assert result != null : "Property should have a setter descriptor";
-//        return result;
-//    }
-//
-//    @NotNull
-//    public static PropertyGetterDescriptor getPropertyGetterDescriptorForProperty(@NotNull BindingContext context,
-//                                                                                  @NotNull JetProperty property) {
-//        PropertyGetterDescriptor result = getPropertyDescriptor(context, property).getGetter();
-//        assert result != null : "Property should have a getter descriptor";
-//        return result;
-//    }
-
     @NotNull
     public static JetClass getClassForDescriptor(@NotNull BindingContext context,
                                                  @NotNull ClassDescriptor descriptor) {
         PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         assert result instanceof JetClass : "ClassDescriptor should have declaration of type JetClass";
         return (JetClass) result;
-    }
-
-    //TODO: delete?
-    @Nullable
-    public static JetDeclaration getDeclarationForDescriptor(@NotNull BindingContext context,
-                                                             @NotNull DeclarationDescriptor descriptor) {
-        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-        if (!(result instanceof JetDeclaration)) {
-            return null;
-        }
-        return (JetDeclaration) result;
     }
 
     @NotNull
@@ -131,7 +106,7 @@ public final class BindingUtils {
 
     public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
         List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(context, classDeclaration);
-        return (findAncestorClass(superclassDescriptors) != null);
+        return (DescriptorUtils.findAncestorClass(superclassDescriptors) != null);
     }
 
     public static boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
@@ -170,25 +145,26 @@ public final class BindingUtils {
         return (JetProperty) result;
     }
 
-    @Nullable
+    @NotNull
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
                                                                             @NotNull JetReferenceExpression reference) {
-        return context.get(BindingContext.REFERENCE_TARGET, reference);
+        DeclarationDescriptor referencedDescriptor = getNullableDescriptorForReferenceExpression(context, reference);
+        assert referencedDescriptor != null : "Reference expression must reference a descriptor.";
+        return referencedDescriptor;
     }
 
-    static private boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
-        return !superClassDescriptor.equals(JetStandardClasses.getAny());
-    }
-
-    //TODO move unrelated utils to other class
     @Nullable
-    public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
-        for (ClassDescriptor descriptor : superclassDescriptors) {
-            if (descriptor.getKind() == ClassKind.CLASS) {
-                return descriptor;
-            }
+    private static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
+                                                                                     @NotNull JetReferenceExpression reference) {
+        DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, reference);
+        if (referencedDescriptor instanceof VariableAsFunctionDescriptor) {
+            return getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) referencedDescriptor);
         }
-        return null;
+        return referencedDescriptor;
+    }
+
+    private static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
+        return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
 
     //TODO: duplication
@@ -210,46 +186,28 @@ public final class BindingUtils {
         return (descriptor.getContainingDeclaration() instanceof ClassDescriptor);
     }
 
-
-    //TODO: refactor, check with getDescriptorForReferenceExpression
-    @Nullable
-    public static PropertyDescriptor getPropertyDescriptorForSimpleName(@NotNull BindingContext context,
-                                                                        @NotNull JetSimpleNameExpression expression) {
-        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context, expression);
-        if (resolvedCall == null) return null;
-
-        DeclarationDescriptor descriptor = resolvedCall.getCandidateDescriptor();
-        if (descriptor instanceof PropertyDescriptor) {
-            return (PropertyDescriptor) descriptor;
-        }
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            VariableAsFunctionDescriptor functionVariable = (VariableAsFunctionDescriptor) descriptor;
-            VariableDescriptor variableDescriptor = functionVariable.getVariableDescriptor();
-            if (variableDescriptor instanceof PropertyDescriptor) {
-                return (PropertyDescriptor) variableDescriptor;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
+    @NotNull
     public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
                                                   @NotNull JetExpression expression) {
-        return (context.get(BindingContext.RESOLVED_CALL, expression));
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
+        assert resolvedCall != null : "Must resolve to a call.";
+        return resolvedCall;
     }
 
     @NotNull
     public static FunctionDescriptor getFunctionDescriptorForCallExpression(@NotNull BindingContext context,
                                                                             @NotNull JetCallExpression expression) {
-        //TODO: move to PSI utils
-        JetExpression calleeExpression = expression.getCalleeExpression();
-        assert calleeExpression != null;
+        JetExpression calleeExpression = PsiUtils.getCallee(expression);
         ResolvedCall<?> resolvedCall = getResolvedCall(context, calleeExpression);
-        //TODO
-        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+        CallableDescriptor descriptor = getDescriptorForResolvedCall(resolvedCall);
         assert descriptor instanceof FunctionDescriptor :
                 "Callee expression must have resolved call with descriptor of type FunctionDescriptor";
         return (FunctionDescriptor) descriptor;
+    }
+
+    @NotNull
+    private static CallableDescriptor getDescriptorForResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
+        return resolvedCall.getCandidateDescriptor();
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
@@ -262,7 +220,7 @@ public final class BindingUtils {
     @Nullable
     public static FunctionDescriptor getFunctionDescriptorForOperationExpression(@NotNull BindingContext context,
                                                                                  @NotNull JetOperationExpression expression) {
-        DeclarationDescriptor descriptorForReferenceExpression = getDescriptorForReferenceExpression
+        DeclarationDescriptor descriptorForReferenceExpression = getNullableDescriptorForReferenceExpression
                 (context, expression.getOperation());
 
         if (descriptorForReferenceExpression == null) return null;
