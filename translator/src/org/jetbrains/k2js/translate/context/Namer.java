@@ -132,7 +132,7 @@ public final class Namer {
     @NotNull
     public JsName libraryMethod(@NotNull String name) {
         //TODO: Create scopes for library methods
-        return kotlinScope.declareName("size");
+        return kotlinScope.declareName(name);
     }
 
     @NotNull

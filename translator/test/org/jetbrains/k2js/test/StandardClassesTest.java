@@ -44,5 +44,8 @@ public class StandardClassesTest extends TranslationTest {
         testFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
     }
 
-
+    @Test
+    public void arraysIterator() throws Exception {
+        testFooBoxIsTrue("arraysIterator.kt");
+    }
 }
