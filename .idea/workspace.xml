@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayThrowsExceptionOnOOBaccess.kt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" afterPath="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -200,13 +202,24 @@
     <favorites_list name="k2js" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4949225">
+    <splitter split-orientation="horizontal" split-proportion="0.4183536">
       <split-first>
         <leaf>
           <file leaf-file-name="StandardClassesTest.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="28" column="38" selection-start="629" selection-end="629" vertical-scroll-proportion="0.7256098">
+                <state line="48" column="33" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.8445122">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="arraySize.kt" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arraySize.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="7" column="58" selection-start="116" selection-end="116" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -236,15 +249,6 @@
             <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/scopes/WritableScopeImpl.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state line="356" column="0" selection-start="12812" selection-end="12812" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Namer.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Namer.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="133" column="16" selection-start="4198" selection-end="4198" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -299,24 +303,6 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="arraySize.kt" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arraySize.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="2" column="0" selection-start="15" selection-end="15" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ReflectiveCallable.class" pinned="false" current="false" current-in-tab="false">
-            <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="11" column="40" selection-start="397" selection-end="397" vertical-scroll-proportion="-6.8">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="TraitTest.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TraitTest.java">
               <provider selected="true" editor-type-id="text-editor">
@@ -344,10 +330,19 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ReferenceTranslator.java" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="ReferenceTranslator.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="64" column="66" selection-start="2895" selection-end="2895" vertical-scroll-proportion="0.7138414">
+                <state line="60" column="57" selection-start="2706" selection-end="2706" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Library.jet" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/jet/Library.jet">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="48" column="14" selection-start="1187" selection-end="1191" vertical-scroll-proportion="-8.76">
                   <folding />
                 </state>
               </provider>
@@ -384,10 +379,19 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="kotlin_lib.js" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="kotlin_lib.js" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/testFiles/kotlin_lib.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="477" column="4" selection-start="12824" selection-end="12824" vertical-scroll-proportion="0.0">
+                <state line="477" column="39" selection-start="12841" selection-end="12841" vertical-scroll-proportion="0.54420733">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="arrayThrowsExceptionOnOOBaccess.kt" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayThrowsExceptionOnOOBaccess.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="7" column="26" selection-start="100" selection-end="100" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -414,15 +418,12 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/testFiles/standardClasses/out/array.js" />
         <option value="$PROJECT_DIR$/translator/testFiles/standardClasses/out/arrayAccess.js" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/BindingUtils.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayIsFilledWithNulls.kt" />
         <option value="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayFunctionConstructor.kt" />
-        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arraySize.kt" />
-        <option value="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Namer.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java" />
@@ -430,6 +431,9 @@
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassTranslator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayThrowsExceptionOnOOBaccess.kt" />
+        <option value="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" />
+        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" />
       </list>
     </option>
   </component>
@@ -1238,7 +1242,7 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="move aliasing into context. array size works." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1251,7 +1255,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Include standard library." />
     <MESSAGE value="Reworked ExtractionVisitor into Declaration visitor." />
     <MESSAGE value="Work on reference expression. Test fixes to follow." />
     <MESSAGE value="fix test" />
@@ -1276,6 +1279,7 @@
     <MESSAGE value="simple array tests pass" />
     <MESSAGE value="work on array size property" />
     <MESSAGE value="move aliasing into context. array size works." />
+    <MESSAGE value="refactor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1285,51 +1289,9 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/TranslationUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="221" column="5" selection-start="10200" selection-end="10200" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Namer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="133" column="16" selection-start="4198" selection-end="4198" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/out/arrayIsFilledWithNulls.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="70" selection-start="326" selection-end="326" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayFunctionConstructor.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="48" selection-start="114" selection-end="114" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/scopes/WritableScopeImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="356" column="0" selection-start="12812" selection-end="12812" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="79" column="47" selection-start="3268" selection-end="3268" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/kotlin_lib.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="477" column="4" selection-start="12824" selection-end="12824" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1384,13 +1346,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="66" selection-start="2895" selection-end="2895" vertical-scroll-proportion="0.7138414">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/BasicClassTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="16" selection-start="699" selection-end="699" vertical-scroll-proportion="0.0">
@@ -1398,10 +1353,61 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/ReferenceTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="57" selection-start="2706" selection-end="2706" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/jet/Library.jet">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="14" selection-start="1187" selection-end="1191" vertical-scroll-proportion="-8.76">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/translator/lib/junit-4.10.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="40" selection-start="397" selection-end="397" vertical-scroll-proportion="-6.8">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Namer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="133" column="16" selection-start="4198" selection-end="4198" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayThrowsExceptionOnOOBaccess.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="26" selection-start="100" selection-end="100" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/kotlin_lib.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="477" column="39" selection-start="12841" selection-end="12841" vertical-scroll-proportion="0.54420733">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arraySize.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="58" selection-start="116" selection-end="116" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="38" selection-start="629" selection-end="629" vertical-scroll-proportion="0.7256098">
-          <folding />
+        <state line="48" column="33" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.8445122">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

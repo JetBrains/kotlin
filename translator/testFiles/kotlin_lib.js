@@ -477,6 +477,22 @@ Kotlin.Array = Class.create({
     },
     size:function () {
         return this.array.length;
+    },
+    iterator:function () {
+        return new Kotlin.ArrayIterator(this);
+    }
+});
+
+Kotlin.ArrayIterator = Class.create({
+    initialize:function (array) {
+        this.array = array;
+        this.index = 0;
+    },
+    next:function () {
+        return this.array.get(this.index++);
+    },
+    hasNext:function () {
+        return (this.array.size() > this.index);
     }
 });
 

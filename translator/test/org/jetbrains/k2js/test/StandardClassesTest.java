@@ -1,6 +1,7 @@
 package org.jetbrains.k2js.test;
 
 import org.junit.Test;
+import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Talanov Pavel
@@ -37,4 +38,11 @@ public class StandardClassesTest extends TranslationTest {
     public void arraySize() throws Exception {
         testFooBoxIsTrue("arraySize.kt");
     }
+
+    @Test(expected = JavaScriptException.class)
+    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
+        testFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
+    }
+
+
 }
