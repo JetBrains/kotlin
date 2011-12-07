@@ -1,6 +1,5 @@
 package org.jetbrains.jet;
 
-import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -14,8 +13,6 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -130,41 +127,5 @@ public class JetTestUtils {
 
     public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(namespace, flowDataTraceFactory);
-    }
-
-
-    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable);
-        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
-        environment.addToClasspath(rtJar);
-        environment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
-        return environment;
-    }
-
-
-    public static void mkdirs(File file) throws IOException {
-        if (file.isDirectory()) {
-            return;
-        }
-        if (!file.mkdirs()) {
-            throw new IOException();
-        }
-    }
-
-    public static void rmrf(File file) {
-        if (file != null) {
-            File[] children = file.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    rmrf(child);
-                }
-            }
-            file.delete();
-        }
-    }
-
-    public static void recreateDirectory(File dir) throws IOException {
-        rmrf(dir);
-        mkdirs(dir);
     }
 }

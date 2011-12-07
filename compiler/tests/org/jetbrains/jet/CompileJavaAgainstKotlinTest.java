@@ -16,8 +16,10 @@ import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
@@ -26,6 +28,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +51,35 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
         this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt", ".java"));
     }
 
+    private void createMockCoreEnvironment() {
+        jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable);
+
+        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
+        jetCoreEnvironment.addToClasspath(rtJar);
+        jetCoreEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
+    }
+
+    private void mkdirs(File file) throws IOException {
+        if (file.isDirectory()) {
+            return;
+        }
+        if (!file.mkdirs()) {
+            throw new IOException();
+        }
+    }
+
+    private void rmrf(File file) {
+        if (file != null) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    rmrf(child);
+                }
+            }
+            file.delete();
+        }
+    }
+
     @Override
     public String getName() {
         return ktFile.getName();
@@ -57,20 +89,26 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         tmpdir = new File("tmp/" + this.getClass().getSimpleName() + "." + this.getName());
-        JetTestUtils.recreateDirectory(tmpdir);
+        rmrf(tmpdir);
+        mkdirs(tmpdir);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        Disposer.dispose(myTestRootDisposable);
     }
 
 
     @Override
     protected void runTest() throws Throwable {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
+        createMockCoreEnvironment();
 
         LanguageASTFactory.INSTANCE.addExplicitExtension(JavaLanguage.INSTANCE, new JavaASTFactory());
 
 
         String text = FileUtil.loadFile(ktFile);
 
-        LightVirtualFile virtualFile = new LightVirtualFile(ktFile.getName(), JetLanguage.INSTANCE, text);
+        LightVirtualFile virtualFile = new LightVirtualFile("Hello.kt", JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
