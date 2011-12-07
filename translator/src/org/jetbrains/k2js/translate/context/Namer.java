@@ -130,13 +130,14 @@ public final class Namer {
     }
 
     @NotNull
-    public JsNameRef kotlinObject() {
-        return kotlinName.makeRef();
+    public JsName libraryMethod(@NotNull String name) {
+        //TODO: Create scopes for library methods
+        return kotlinScope.declareName("size");
     }
 
     @NotNull
-    public JsName declareStandardClass(@NotNull String name) {
-        return kotlinScope.declareName(name);
+    public JsNameRef kotlinObject() {
+        return kotlinName.makeRef();
     }
 
     @NotNull

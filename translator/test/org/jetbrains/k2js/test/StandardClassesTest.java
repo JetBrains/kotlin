@@ -22,4 +22,19 @@ public class StandardClassesTest extends TranslationTest {
     public void arrayAccess() throws Exception {
         testFooBoxIsTrue("arrayAccess.kt");
     }
+
+    @Test
+    public void arrayIsFilledWithNulls() throws Exception {
+        testFooBoxIsTrue("arrayIsFilledWithNulls.kt");
+    }
+
+    @Test
+    public void arrayFunctionConstructor() throws Exception {
+        testFooBoxIsTrue("arrayFunctionConstructor.kt");
+    }
+
+    @Test
+    public void arraySize() throws Exception {
+        testFooBoxIsTrue("arraySize.kt");
+    }
 }

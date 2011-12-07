@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForCallExpression;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
@@ -122,17 +124,21 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression calleeReference() {
-        //TODO: refactor
-        //TODO: write tests on this cases
-        if (functionDescriptor instanceof VariableAsFunctionDescriptor) {
-            VariableDescriptor variableDescriptor = ((VariableAsFunctionDescriptor) functionDescriptor).getVariableDescriptor();
+        if (DescriptorUtils.isVariableDescriptor(functionDescriptor)) {
+            //TODO: write tests on this cases
+            VariableDescriptor variableDescriptor =
+                    getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) functionDescriptor);
             if (variableDescriptor instanceof PropertyDescriptor) {
-                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-                return PropertyAccessTranslator.translateAsPropertyGetterCall(propertyDescriptor, context());
+                return getterCall((PropertyDescriptor) variableDescriptor);
             }
             return qualifiedMethodReference(variableDescriptor);
         }
         return qualifiedMethodReference(functionDescriptor);
+    }
+
+    @NotNull
+    private JsExpression getterCall(PropertyDescriptor variableDescriptor) {
+        return PropertyAccessTranslator.translateAsPropertyGetterCall(variableDescriptor, context());
     }
 
     @NotNull
@@ -146,7 +152,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression constructorCall() {
-        JsNew constructorCall = new JsNew(calleeReference());
+        JsNew constructorCall = new JsNew(qualifiedMethodReference(functionDescriptor));
         constructorCall.setArguments(arguments);
         return constructorCall;
     }

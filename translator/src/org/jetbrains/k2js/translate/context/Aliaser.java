@@ -6,12 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
 
 //TODO: implement aliases stack for this
 public class Aliaser {
@@ -22,6 +24,9 @@ public class Aliaser {
         aliaser.setAliasForDescriptor(standardLibrary.getArray(), namer.libraryObject("Array"));
         FunctionDescriptor nullConstructorFunction = getFunctionByName(standardLibrary.getLibraryScope(), "Array");
         aliaser.setAliasForDescriptor(nullConstructorFunction, namer.libraryObject("array"));
+        PropertyDescriptor sizeProperty =
+                getPropertyByName(standardLibrary.getArray().getDefaultType().getMemberScope(), "size");
+        aliaser.setAliasForDescriptor(sizeProperty, namer.libraryMethod("size"));
         return aliaser;
     }
 
@@ -39,6 +44,7 @@ public class Aliaser {
         return aliasForThis.makeRef();
     }
 
+    @SuppressWarnings("NullableProblems")
     public void setAliasForThis(@NotNull JsName alias) {
         aliasForThis = alias;
     }

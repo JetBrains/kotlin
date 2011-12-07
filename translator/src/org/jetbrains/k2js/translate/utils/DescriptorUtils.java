@@ -80,6 +80,14 @@ public final class DescriptorUtils {
                 + " supposed to be exactly one " + name + " function.");
     }
 
+    @NotNull
+    public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
+                                                       @NotNull String name) {
+        PropertyDescriptor descriptor = (PropertyDescriptor) scope.getVariable(name);
+        assert descriptor != null : "Must have a descriptor.";
+        return descriptor;
+    }
+
     @Nullable
     public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
         for (ClassDescriptor descriptor : superclassDescriptors) {
@@ -91,10 +99,15 @@ public final class DescriptorUtils {
     }
 
     @NotNull
-    /*package*/ static VariableDescriptor getVariableDescriptorForVariableAsFunction
+    public static VariableDescriptor getVariableDescriptorForVariableAsFunction
             (@NotNull VariableAsFunctionDescriptor descriptor) {
         VariableDescriptor functionVariable = descriptor.getVariableDescriptor();
         assert functionVariable != null;
         return functionVariable;
+    }
+
+
+    public static boolean isVariableDescriptor(@Nullable DeclarationDescriptor referencedDescriptor) {
+        return referencedDescriptor instanceof VariableAsFunctionDescriptor;
     }
 }

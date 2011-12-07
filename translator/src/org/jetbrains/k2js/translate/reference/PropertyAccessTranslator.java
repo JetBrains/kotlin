@@ -219,7 +219,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     @NotNull
     private PropertyGetterDescriptor getGetterDescriptor() {
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-        assert getter != null;
+        assert getter != null : propertyDescriptor.getName() + " does not have a getter.";
         return getter;
     }
 

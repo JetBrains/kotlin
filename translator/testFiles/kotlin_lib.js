@@ -474,10 +474,13 @@ Kotlin.Array = Class.create({
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         (this.array)[index] = value;
+    },
+    size:function () {
+        return this.array.length;
     }
 });
 
-Kotlin.Class = Class
-Kotlin.Namespace = Namespace
-Kotlin.Trait = Trait
-Kotlin.isType = isType
+Kotlin.Class = Class;
+Kotlin.Namespace = Namespace;
+Kotlin.Trait = Trait;
+Kotlin.isType = isType;
