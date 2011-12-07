@@ -9,29 +9,14 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getImplicitReceiver;
 
 /**
  * @author Talanov Pavel
  */
 public class ReferenceTranslator extends AbstractTranslator {
-
-    // TODO: move to other util
-    @Nullable
-    public static JsExpression getImplicitReceiver(@NotNull DeclarationDescriptor referencedDescriptor,
-                                                   @NotNull TranslationContext context) {
-        if (!context.isDeclared(referencedDescriptor)) return null;
-
-        if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
-            return TranslationUtils.getThisQualifier(context);
-        }
-        if (!BindingUtils.isOwnedByNamespace(referencedDescriptor)) return null;
-
-        return context.declarations().getQualifier(referencedDescriptor);
-    }
 
     @NotNull
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
@@ -41,25 +26,30 @@ public class ReferenceTranslator extends AbstractTranslator {
         }
         DeclarationDescriptor referencedDescriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        return (new ReferenceTranslator(referencedDescriptor, context)).translate();
+        return (new ReferenceTranslator(referencedDescriptor, true, context)).translate();
     }
 
     @NotNull
     public static JsExpression translateReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                   @NotNull TranslationContext context) {
-        return (new ReferenceTranslator(referencedDescriptor, context)).translate();
+        return (new ReferenceTranslator(referencedDescriptor, false, context)).translate();
     }
 
     @NotNull
     private final DeclarationDescriptor referencedDescriptor;
 
+    private final boolean shouldQualify;
+
     @Nullable
     private JsExpression result;
 
-    private ReferenceTranslator(@NotNull DeclarationDescriptor referencedDescriptor, @NotNull TranslationContext context) {
+    private ReferenceTranslator(@NotNull DeclarationDescriptor referencedDescriptor,
+                                boolean shouldQualify,
+                                @NotNull TranslationContext context) {
         super(context);
         this.referencedDescriptor = referencedDescriptor;
         this.result = null;
+        this.shouldQualify = shouldQualify;
     }
 
     @NotNull
@@ -87,16 +77,12 @@ public class ReferenceTranslator extends AbstractTranslator {
         if (!context().isDeclared(referencedDescriptor)) return;
 
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
-        JsExpression implicitReceiver = getImplicitReceiver(referencedDescriptor, context());
+        JsExpression implicitReceiver = getImplicitReceiver(context(), referencedDescriptor);
 
-        generateReference(referencedName, implicitReceiver);
-    }
-
-    private void generateReference(@NotNull JsName referencedName, @Nullable JsExpression implicitReceiver) {
-        if (implicitReceiver != null) {
+        if (shouldQualify && implicitReceiver != null) {
             result = AstUtil.qualified(referencedName, implicitReceiver);
         } else {
-            result = context().getNameForDescriptor(referencedDescriptor).makeRef();
+            result = referencedName.makeRef();
         }
     }
 

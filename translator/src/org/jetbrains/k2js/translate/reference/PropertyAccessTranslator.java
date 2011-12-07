@@ -21,6 +21,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getImplicitReceiver;
 
 /**
  * @author Talanov Pavel
@@ -196,7 +197,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         if (qualifier != null) {
             return Translation.translateAsExpression(qualifier, context());
         }
-        JsExpression implicitReceiver = ReferenceTranslator.getImplicitReceiver(propertyDescriptor, context());
+        JsExpression implicitReceiver = getImplicitReceiver(context(), propertyDescriptor);
         assert implicitReceiver != null : "Property can only be a member of class or a namespace.";
         return implicitReceiver;
     }

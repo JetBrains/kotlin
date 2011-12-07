@@ -220,5 +220,4 @@ public final class TranslationUtils {
 
         return context.declarations().getQualifier(referencedDescriptor);
     }
-
 }

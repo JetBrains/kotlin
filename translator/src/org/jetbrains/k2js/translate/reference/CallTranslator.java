@@ -55,7 +55,7 @@ public final class CallTranslator extends AbstractTranslator {
                                          @NotNull TranslationContext context) {
         DeclarationDescriptor descriptor =
                 getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
-        JsExpression receiver = ReferenceTranslator.getImplicitReceiver(descriptor, context);
+        JsExpression receiver = getImplicitReceiver(context, descriptor);
         List<JsExpression> arguments = translateArgumentList(context, callExpression.getValueArguments());
         return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
     }
