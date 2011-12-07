@@ -267,7 +267,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 
-        CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         Method constructorMethod;
         CallableMethod callableMethod;

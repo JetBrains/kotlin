@@ -104,24 +104,24 @@ public abstract class CodegenContext {
         return new ClassContext(descriptor, kind, this, typeMapper);
     }
 
-    public CodegenContext intoAnonymousClass(@NotNull ObjectOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind) {
-        return new AnonymousClassContext(descriptor, kind, this, closure);
+    public CodegenContext intoAnonymousClass(@NotNull ObjectOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {
+        return new AnonymousClassContext(descriptor, kind, this, closure, typeMapper);
     }
 
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
         return new MethodContext(descriptor, getContextKind(), this);
     }
 
-    public ConstructorContext intoConstructor(ConstructorDescriptor descriptor) {
+    public ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
         if(descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
                     .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC);
         }
-        return new ConstructorContext(descriptor, getContextKind(), this);
+        return new ConstructorContext(descriptor, getContextKind(), this, typeMapper);
     }
 
-    public ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen) {
-        return new ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName);
+    public ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
+        return new ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
     }
 
     public FrameMap prepareFrame(JetTypeMapper mapper) {
@@ -170,12 +170,12 @@ public abstract class CodegenContext {
         return parentContext != null ? parentContext.lookupInContext(d, v, result) : null;
     }
 
-    public Type enclosingClassType() {
+    public Type enclosingClassType(JetTypeMapper typeMapper) {
         CodegenContext cur = getParentContext();
         while(cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor))
             cur = cur.getParentContext();
 
-        return cur == null ? null : Type.getObjectType(cur.getContextDescriptor().getName());
+        return cur == null ? null : typeMapper.mapType(((ClassDescriptor)cur.getContextDescriptor()).getDefaultType());
     }
     
     public int getTypeInfoConstantIndex(JetType type) {
@@ -290,8 +290,8 @@ public abstract class CodegenContext {
             return getParentContext().lookupInContext(d, v, result);
         }
 
-        public Type enclosingClassType() {
-            return getParentContext().enclosingClassType();
+        public Type enclosingClassType(JetTypeMapper typeMapper) {
+            return getParentContext().enclosingClassType(typeMapper);
         }
 
         @Override
@@ -305,10 +305,10 @@ public abstract class CodegenContext {
     }
 
     public static class ConstructorContext extends MethodContext {
-        public ConstructorContext(ConstructorDescriptor contextType, OwnerKind kind, CodegenContext parent) {
+        public ConstructorContext(ConstructorDescriptor contextType, OwnerKind kind, CodegenContext parent, JetTypeMapper typeMapper) {
             super(contextType, kind, parent);
 
-            final Type type = enclosingClassType();
+            final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
                         ? local1
                         : null;
@@ -323,7 +323,7 @@ public abstract class CodegenContext {
         public ClassContext(ClassDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, JetTypeMapper typeMapper) {
             super(contextType, contextKind, parentContext, null);
 
-            final Type type = enclosingClassType();
+            final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
                         ? StackValue.field(type, typeMapper.getFQName(contextType), "this$0", false)
                         : null;
@@ -341,10 +341,10 @@ public abstract class CodegenContext {
     }
 
     public static class AnonymousClassContext extends CodegenContext {
-        public AnonymousClassContext(ClassDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closure) {
+        public AnonymousClassContext(ClassDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closure, JetTypeMapper typeMapper) {
             super(contextType, contextKind, parentContext, closure);
             
-            final Type type = enclosingClassType();
+            final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
                         ? StackValue.field(type, closure.state.getTypeMapper().mapType(contextType.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "this$0", false)
                         : null;
@@ -364,11 +364,11 @@ public abstract class CodegenContext {
     public static class ClosureContext extends ReceiverContext {
         private ClassDescriptor classDescriptor;
 
-        public ClosureContext(FunctionDescriptor contextType, ClassDescriptor classDescriptor, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closureCodegen, String internalClassName) {
+        public ClosureContext(FunctionDescriptor contextType, ClassDescriptor classDescriptor, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closureCodegen, String internalClassName, JetTypeMapper typeMapper) {
             super(contextType, OwnerKind.IMPLEMENTATION, parentContext, closureCodegen);
             this.classDescriptor = classDescriptor;
 
-            final Type type = enclosingClassType();
+            final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
                         ? StackValue.field(type, internalClassName, "this$0", false)
                         : null;

@@ -10,7 +10,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -100,7 +99,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         generateBridge(name, funDescriptor, fun, cv);
         captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
         ClassDescriptor thisDescriptor = context.getThisDescriptor();
-        final Type enclosingType = thisDescriptor == null ? null : Type.getObjectType(thisDescriptor.getName());
+        final Type enclosingType = thisDescriptor == null ? null : state.getTypeMapper().mapType(thisDescriptor.getDefaultType());
         if (enclosingType == null)
             captureThis = false;
 
@@ -164,7 +163,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 Collections.<TypeParameterDescriptor>emptyList(),
                 Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
-        final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this);
+        final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this, state.getTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
         return closureContext.outerWasUsed;
