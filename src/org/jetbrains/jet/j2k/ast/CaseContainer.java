@@ -1,6 +1,7 @@
 package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,10 +10,10 @@ import java.util.List;
  * @author ignatov
  */
 public class CaseContainer extends Statement {
-  private Statement myCaseStatement;
+  private List<Statement> myCaseStatement;
   private Block myBlock;
 
-  public CaseContainer(final Statement caseStatement, final List<Statement> statements) {
+  public CaseContainer(final List<Statement> caseStatement, final List<Statement> statements) {
     myCaseStatement = caseStatement;
     List<Statement> newStatements = new LinkedList<Statement>();
     for (Statement s : statements)
@@ -24,6 +25,6 @@ public class CaseContainer extends Statement {
   @NotNull
   @Override
   public String toKotlin() {
-    return myCaseStatement.toKotlin() + SPACE + "=>" + SPACE + myBlock.toKotlin();
+    return AstUtil.joinNodes(myCaseStatement, COMMA_WITH_SPACE) + SPACE + "=>" + SPACE + myBlock.toKotlin();
   }
 }

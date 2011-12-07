@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -210,15 +209,20 @@ public class StatementVisitor extends ElementVisitor {
   @NotNull
   private static List<CaseContainer> listToCases(@NotNull final List<List<PsiStatement>> cases) {
     List<CaseContainer> result = new LinkedList<CaseContainer>();
+    List<Statement> pendingLabels = new LinkedList<Statement>();
     for (List<PsiStatement> ls : cases) {
       assert ls.size() > 0;
       PsiStatement label = ls.get(0);
       assert label instanceof PsiSwitchLabelStatement;
-      result.add(new CaseContainer(statementToStatement(label),
-        ls.size() > 1 ?
-          statementsToStatementList(ls.subList(1, ls.size()).toArray(new PsiStatement[ls.size() - 1])) :
-          Collections.<Statement>emptyList()
-      ));
+      if (ls.size() > 1) {
+        pendingLabels.add(statementToStatement(label));
+        result.add(new CaseContainer(pendingLabels,
+          statementsToStatementList(ls.subList(1, ls.size()).toArray(new PsiStatement[ls.size() - 1]))
+        ));
+        pendingLabels = new LinkedList<Statement>();
+      }
+      else // ls.size() == 1
+        pendingLabels.add(statementToStatement(label));
     }
     return result;
   }
