@@ -2562,13 +2562,21 @@ If finally block is present, its last expression is the value of try expression.
     public StackValue visitWhenExpression(JetWhenExpression expression, StackValue receiver) {
         JetExpression expr = expression.getSubjectExpression();
         final Type subjectType = expressionType(expr);
+        final Type resultType = expressionType(expression);
         final int subjectLocal = myFrameMap.enterTemp(subjectType.getSize());
         gen(expr, subjectType);
         v.store(subjectLocal, subjectType);
 
         Label end = new Label();
-        Label nextCondition = null;
         boolean hasElse = false;
+        for (JetWhenEntry whenEntry : expression.getEntries()) {
+            if(whenEntry.isElse()) {
+                hasElse = true;
+                break;
+            }
+        }
+
+        Label nextCondition = null;
         for (JetWhenEntry whenEntry : expression.getEntries()) {
             if (nextCondition != null) {
                 v.mark(nextCondition);
@@ -2588,13 +2596,13 @@ If finally block is present, its last expression is the value of try expression.
                     }
                 }
             }
-            else {
-                hasElse = true;
-            }
+
             v.visitLabel(thisEntry);
-            genToJVMStack(whenEntry.getExpression());
+            gen(whenEntry.getExpression(), resultType);
             mark.dropTo();
-            v.goTo(end);
+            if (!whenEntry.isElse()) {
+                v.goTo(end);
+            }
         }
         if (!hasElse && nextCondition != null) {
             v.mark(nextCondition);
@@ -2603,7 +2611,7 @@ If finally block is present, its last expression is the value of try expression.
         v.mark(end);
 
         myFrameMap.leaveTemp(subjectType.getSize());
-        return StackValue.onStack(expressionType(expression));
+        return StackValue.onStack(resultType);
     }
 
     private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition, @Nullable Label nextEntry) {

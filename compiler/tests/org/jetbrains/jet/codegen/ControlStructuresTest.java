@@ -221,6 +221,16 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("regressions/kt434.jet");
     }
 
+    public void testKt769() throws Exception {
+        blackBoxFile("regressions/kt769.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testKt773() throws Exception {
+        blackBoxFile("regressions/kt773.jet");
+//        System.out.println(generateToText());
+    }
+
     public void testQuicksort() throws Exception {
         blackBoxFile("controlStructures/quicksort.jet");
 //        System.out.println(generateToText());
