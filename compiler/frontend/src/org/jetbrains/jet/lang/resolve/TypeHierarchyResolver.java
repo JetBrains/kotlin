@@ -15,7 +15,10 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -30,17 +33,19 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  */
 public class TypeHierarchyResolver {
     private final TopDownAnalysisContext context;
+    private final ImportsResolver importsResolver;
     private LinkedList<MutableClassDescriptor> topologicalOrder;
 
 
     public TypeHierarchyResolver(TopDownAnalysisContext context) {
         this.context = context;
+        this.importsResolver = new ImportsResolver(context);
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
-        processTypeImports();
+        importsResolver.processTypeImports();
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
@@ -75,7 +80,6 @@ public class TypeHierarchyResolver {
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-                    context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope);
                     context.getNamespaceScopes().put(namespace, namespaceScope);
                     context.getDeclaringScopes().put(namespace, outerScope);
 
@@ -231,82 +235,6 @@ public class TypeHierarchyResolver {
         if (jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD)) return ClassKind.ANNOTATION_CLASS;
         if (jetClass.hasModifier(JetTokens.ENUM_KEYWORD)) return ClassKind.ENUM_CLASS;
         return ClassKind.CLASS;
-    }
-
-    private void processTypeImports() {
-        for (JetNamespace jetNamespace : context.getNamespaceDescriptors().keySet()) {
-            processImports(jetNamespace, context.getNamespaceScopes().get(jetNamespace), context.getDeclaringScopes().get(jetNamespace));
-        }
-    }
-
-    private void processImports(@NotNull JetNamespace namespace, @NotNull WritableScope namespaceScope, @NotNull JetScope outerScope) {
-        List<JetImportDirective> importDirectives = namespace.getImportDirectives();
-        for (JetImportDirective importDirective : importDirectives) {
-            if (importDirective.isAbsoluteInRootNamespace()) {
-                context.getTrace().report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
-                continue;
-            }
-            if (importDirective.isAllUnder()) {
-                JetExpression importedReference = importDirective.getImportedReference();
-                if (importedReference != null) {
-                    ExpressionTypingServices typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
-                    JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference);
-                    if (type != null) {
-                        namespaceScope.importScope(type.getMemberScope());
-                    }
-                }
-            }
-            else {
-                ClassifierDescriptor classifierDescriptor = null;
-                NamespaceDescriptor namespaceDescriptor = null;
-                JetSimpleNameExpression referenceExpression = null;
-
-                JetExpression importedReference = importDirective.getImportedReference();
-                if (importedReference instanceof JetDotQualifiedExpression) {
-                    JetDotQualifiedExpression reference = (JetDotQualifiedExpression) importedReference;
-                    JetType type = context.getSemanticServices().getTypeInferrerServices(context.getTrace()).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression());
-                    JetExpression selectorExpression = reference.getSelectorExpression();
-                    if (selectorExpression != null) {
-                        referenceExpression = (JetSimpleNameExpression) selectorExpression;
-                        String referencedName = referenceExpression.getReferencedName();
-                        if (type != null && referencedName != null) {
-                            classifierDescriptor = type.getMemberScope().getClassifier(referencedName);
-                            namespaceDescriptor = type.getMemberScope().getNamespace(referencedName);
-                        }
-                    }
-                }
-                else {
-                    assert importedReference instanceof JetSimpleNameExpression;
-                    referenceExpression = (JetSimpleNameExpression) importedReference;
-
-                    String referencedName = referenceExpression.getReferencedName();
-                    if (referencedName != null) {
-                        classifierDescriptor = outerScope.getClassifier(referencedName);
-                        namespaceDescriptor = outerScope.getNamespace(referencedName);
-                    }
-                }
-
-                String aliasName = importDirective.getAliasName();
-                if (aliasName == null) {
-                    aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
-                }
-                if (classifierDescriptor != null) {
-                    context.getTrace().record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
-
-                    if (aliasName != null) {
-                        namespaceScope.importClassifierAlias(aliasName, classifierDescriptor);
-                    }
-                }
-                if (namespaceDescriptor != null) {
-                    if (classifierDescriptor == null) {
-                        context.getTrace().record(BindingContext.REFERENCE_TARGET, referenceExpression, namespaceDescriptor);
-                    }
-                    if (aliasName != null) {
-                        namespaceScope.importNamespaceAlias(aliasName, namespaceDescriptor);
-                    }
-                }
-            }
-        }
     }
 
     private void createTypeConstructors() {
