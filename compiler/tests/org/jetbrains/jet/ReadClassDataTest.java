@@ -1,6 +1,5 @@
 package org.jetbrains.jet;
 
-import com.intellij.lang.ASTFactory;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.Disposable;
@@ -35,9 +34,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -83,14 +80,14 @@ public class ReadClassDataTest extends UsefulTestCase {
 
     @Override
     public void runTest() throws Exception {
-        createMockCoreEnvironment();
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
 
         LanguageASTFactory.INSTANCE.addExplicitExtension(JavaLanguage.INSTANCE, new JavaASTFactory());
 
 
         String text = FileUtil.loadFile(testFile);
 
-        LightVirtualFile virtualFile = new LightVirtualFile("Hello.kt", JetLanguage.INSTANCE, text);
+        LightVirtualFile virtualFile = new LightVirtualFile(testFile.getName(), JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
@@ -107,11 +104,10 @@ public class ReadClassDataTest extends UsefulTestCase {
         Assert.assertEquals("test", namespaceFromSource.getName());
 
         Disposer.dispose(myTestRootDisposable);
-        
-        
-        
-        createMockCoreEnvironment();
-        
+
+
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
+
         jetCoreEnvironment.addToClasspath(tmpdir);
 
         JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(jetCoreEnvironment.getProject());

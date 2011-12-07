@@ -1,5 +1,6 @@
 package org.jetbrains.jet;
 
+import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -129,6 +130,15 @@ public class JetTestUtils {
 
     public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(namespace, flowDataTraceFactory);
+    }
+
+
+    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
+        JetCoreEnvironment environment = new JetCoreEnvironment(disposable);
+        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
+        environment.addToClasspath(rtJar);
+        environment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
+        return environment;
     }
 
 
