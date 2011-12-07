@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class JetTestUtils {
         @Override
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
-            return null;
+            return SlicedMap.DO_NOTHING.get(slice, key);
         }
 
         @NotNull
