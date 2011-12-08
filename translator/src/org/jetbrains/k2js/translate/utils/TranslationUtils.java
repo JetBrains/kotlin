@@ -204,7 +204,9 @@ public final class TranslationUtils {
             return TranslationUtils.getThisQualifier(context);
         }
         if (BindingUtils.isOwnedByNamespace(referencedDescriptor)) {
-            return context.getQualifierForDescriptor(referencedDescriptor);
+            if (context.hasQualifierForDescriptor(referencedDescriptor)) {
+                return context.getQualifierForDescriptor(referencedDescriptor);
+            }
         }
         return null;
     }

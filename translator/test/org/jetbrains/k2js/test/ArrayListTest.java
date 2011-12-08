@@ -18,4 +18,9 @@ public final class ArrayListTest extends JavaClassesTest {
     public void emptyList() throws Exception {
         testFooBoxIsTrue("emptyList.kt");
     }
+
+    @Test
+    public void access() throws Exception {
+        testFooBoxIsTrue("access.kt");
+    }
 }
