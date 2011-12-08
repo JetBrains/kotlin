@@ -381,7 +381,7 @@ public class BodyResolver {
         // Top-level properties & properties of objects
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : this.context.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
-            if (!context.completeAnalysisNeeded(property)) return;
+            if (!context.completeAnalysisNeeded(property)) continue;
             if (processed.contains(property)) continue;
 
             final PropertyDescriptor propertyDescriptor = entry.getValue();
