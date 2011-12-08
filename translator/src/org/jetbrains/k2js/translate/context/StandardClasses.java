@@ -36,10 +36,10 @@ public final class StandardClasses {
     }
 
     private static void declareJavaArrayList(@NotNull StandardClasses standardClasses) {
-        String arrayListFQName = "java.util.ArrayList";
+        String arrayListFQName = "<java_root>.java.util.ArrayList";
         standardClasses.declareStandardTopLevelObject(arrayListFQName, "ArrayList");
-        standardClasses.declareStandardMethodOrProperty(arrayListFQName, "size", "size");
-        standardClasses.declareStandardMethodOrProperty(arrayListFQName, "<init>", "ArrayList");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "size", "size");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "<init>", "ArrayList");
     }
 
     //TODO: more generic ways to declare standard classes
@@ -48,10 +48,10 @@ public final class StandardClasses {
         standardClasses.declareStandardTopLevelObject(iteratorClass, "ArrayIterator");
         FunctionDescriptor nextFunction =
                 getFunctionByName(iteratorClass.getDefaultType().getMemberScope(), "next");
-        standardClasses.declareStandardMethodOrProperty(iteratorClass, nextFunction, "next");
+        standardClasses.declareStandardMethodOrProperty(nextFunction, "next");
         PropertyDescriptor hasNextProperty =
                 getPropertyByName(iteratorClass.getDefaultType().getMemberScope(), "hasNext");
-        standardClasses.declareStandardMethodOrProperty(iteratorClass, hasNextProperty, "hasNext");
+        standardClasses.declareStandardMethodOrProperty(hasNextProperty, "hasNext");
     }
 
     private static void bindArray(@NotNull StandardClasses standardClasses,
@@ -62,7 +62,7 @@ public final class StandardClasses {
         standardClasses.declareStandardTopLevelObject(nullConstructorFunction, "array");
         PropertyDescriptor sizeProperty =
                 getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "size");
-        standardClasses.declareStandardMethodOrProperty(arrayClass, sizeProperty, "size");
+        standardClasses.declareStandardMethodOrProperty(sizeProperty, "size");
     }
 
 
@@ -70,14 +70,10 @@ public final class StandardClasses {
     private final JsScope kotlinScope;
 
     @NotNull
-    private final Map<String, JsName> topLevelNameMap = new HashMap<String, JsName>();
+    private final Map<String, JsName> nameMap = new HashMap<String, JsName>();
 
     @NotNull
     private final Map<String, JsScope> scopeMap = new HashMap<String, JsScope>();
-
-    @NotNull
-    private final Map<String, Map<String, JsName>> methodNameMap = new HashMap<String, Map<String, JsName>>();
-
 
     private StandardClasses(@NotNull JsScope kotlinScope) {
         this.kotlinScope = kotlinScope;
@@ -89,67 +85,29 @@ public final class StandardClasses {
     }
 
     private void declareStandardTopLevelObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
-        topLevelNameMap.put(fullQualifiedName, kotlinScope.declareName(kotlinLibName));
-        scopeMap.put(fullQualifiedName, new JsScope(kotlinScope, "class " + kotlinLibName));
-        methodNameMap.put(fullQualifiedName, new HashMap<String, JsName>());
+        nameMap.put(fullQualifiedName, kotlinScope.declareName(kotlinLibName));
+        scopeMap.put(fullQualifiedName, new JsScope(kotlinScope, "standard object " + kotlinLibName));
     }
 
-    private void declareStandardMethodOrProperty(@NotNull DeclarationDescriptor topLevelDescriptor,
-                                                 @NotNull DeclarationDescriptor innerDescriptor,
+    private void declareStandardMethodOrProperty(@NotNull DeclarationDescriptor descriptor,
                                                  @NotNull String kotlinLibName) {
-        declareStandardMethodOrProperty(getFQName(topLevelDescriptor), innerDescriptor.getName(), kotlinLibName);
+        String containingFQName = getFQName(getContainingDeclaration(descriptor));
+        declareStandardInnerDeclaration(containingFQName, getFQName(descriptor), kotlinLibName);
     }
 
-    private void declareStandardMethodOrProperty(@NotNull String fullQualifiedClassName, @NotNull String methodOrPropertyName,
+    private void declareStandardInnerDeclaration(@NotNull String fullQualifiedClassName,
+                                                 @NotNull String fullQualifiedMethodName,
                                                  @NotNull String kotlinLibName) {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
-        Map<String, JsName> classMethodsMap = methodNameMap.get(fullQualifiedClassName);
-        classMethodsMap.put(methodOrPropertyName, classScope.declareName(kotlinLibName));
+        nameMap.put(fullQualifiedMethodName, classScope.declareName(kotlinLibName));
     }
 
-    //TODO: refactor
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        if (canBeTopLevelObject(descriptor)) {
-            if (topLevelNameMap.containsKey(getFQName(descriptor))) {
-                return true;
-            }
-        }
-        if (canBeInnerObject(descriptor)) {
-            DeclarationDescriptor containing = getContainingDeclaration(descriptor);
-            if (!isStandardObject(containing)) {
-                return false;
-            }
-            Map<String, JsName> methodMapForClass = methodMapForDescriptor(containing);
-            return methodMapForClass.containsKey(descriptor.getName());
-        }
-        return false;
-    }
-
-    private Map<String, JsName> methodMapForDescriptor(DeclarationDescriptor containing) {
-        return methodNameMap.get(getFQName(containing));
-    }
-
-    private boolean canBeInnerObject(DeclarationDescriptor descriptor) {
-        return (descriptor instanceof FunctionDescriptor) || (descriptor instanceof PropertyDescriptor);
-    }
-
-    private boolean canBeTopLevelObject(DeclarationDescriptor descriptor) {
-        return (descriptor instanceof ClassDescriptor) || (descriptor instanceof FunctionDescriptor);
+        return nameMap.containsKey(getFQName(descriptor));
     }
 
     @NotNull
     public JsName getStandardObjectName(@NotNull DeclarationDescriptor descriptor) {
-        if (canBeTopLevelObject(descriptor)) {
-            JsName result = topLevelNameMap.get(getFQName(descriptor));
-            if (result != null) {
-                return result;
-            }
-        }
-        if (canBeInnerObject(descriptor)) {
-            DeclarationDescriptor containing = getContainingDeclaration(descriptor);
-            Map<String, JsName> methodMapForClass = methodMapForDescriptor(containing);
-            return methodMapForClass.get(descriptor.getName());
-        }
-        throw new AssertionError("Only classes and functions can be standard objects.");
+        return nameMap.get(getFQName(descriptor));
     }
 }
