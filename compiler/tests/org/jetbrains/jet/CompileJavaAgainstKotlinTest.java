@@ -95,7 +95,7 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
         try {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(javaFile));
             List<String> options = Arrays.asList(
-                    "-classpath", tmpdir.getPath(),
+                    "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + "out/production/stdlib",
                     "-d", tmpdir.getPath()
                 );
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);

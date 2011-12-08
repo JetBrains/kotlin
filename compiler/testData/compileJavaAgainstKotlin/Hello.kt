@@ -1,1 +1,1 @@
-fun f() = 1
+fun f() = "hello"

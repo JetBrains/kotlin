@@ -991,7 +991,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
-        v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getDescriptor());
+        v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getAsmMethod().getDescriptor());
         StackValue.onStack(asmType(functionDescriptor.getReturnType())).coerce(type, v);
     }
 
@@ -1034,7 +1034,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     }
                 }
                 if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor))
-                    getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                    getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getAsmMethod();
                 else
                     getter = null;
             }
@@ -1043,10 +1043,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 setter = null;
             }
             else {
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor))
-                    setter = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                else
+                if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor)) {
+                    JvmMethodSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                    setter = jvmMethodSignature != null ? jvmMethodSignature.getAsmMethod() : null;
+                } else {
                     setter = null;
+                }
 
             }
         }
@@ -1119,7 +1121,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             final CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, expression, receiver);
 
-            final Type callReturnType = callableMethod.getSignature().getReturnType();
+            final Type callReturnType = callableMethod.getSignature().getAsmMethod().getReturnType();
             return returnValueAsStackValue((FunctionDescriptor) fd, callReturnType);
         }
         else {
@@ -1478,7 +1480,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 pushTypeArguments(resolvedCall);
                 pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
                 callableMethod.invoke(v);
-                return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
+                return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getAsmMethod().getReturnType());
             }
         }
     }
@@ -1850,7 +1852,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             CallableMethod callableMethod = (CallableMethod) callable;
             genToJVMStack(expression.getBaseExpression());
             callableMethod.invoke(v);
-            return returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
+            return returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getAsmMethod().getReturnType());
         }
     }
 
@@ -2115,7 +2117,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             CallableMethod accessor = typeMapper.mapToCallableMethod(operationDescriptor, false, OwnerKind.IMPLEMENTATION);
 
-            boolean isGetter = accessor.getSignature().getName().equals("get");
+            boolean isGetter = accessor.getSignature().getAsmMethod().getName().equals("get");
 
             ResolvedCall<FunctionDescriptor> resolvedSetCall = bindingContext.get(BindingContext.INDEXED_LVALUE_SET, expression);
             ResolvedCall<FunctionDescriptor> resolvedGetCall = bindingContext.get(BindingContext.INDEXED_LVALUE_GET, expression);
@@ -2124,7 +2126,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             FunctionDescriptor getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
 
             Type asmType;
-            Type[] argumentTypes = accessor.getSignature().getArgumentTypes();
+            Type[] argumentTypes = accessor.getSignature().getAsmMethod().getArgumentTypes();
             int index = 0;
             if(isGetter) {
                 Callable callable = resolveToCallable(getterDescriptor, false);
@@ -2145,7 +2147,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         index++;
                     }
                 }
-                asmType = accessor.getSignature().getReturnType();
+                asmType = accessor.getSignature().getAsmMethod().getReturnType();
             }
             else {
                 assert resolvedSetCall != null;

@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -17,6 +18,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.signature.SignatureWriter;
+import org.objectweb.asm.util.CheckSignatureAdapter;
 
 import java.util.List;
 import java.util.Set;
@@ -44,19 +46,19 @@ public class FunctionCodegen {
     public void gen(JetNamedFunction f) {
         final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
-        Method method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
+        JvmMethodSignature method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
         generateMethod(f, method, functionDescriptor);
     }
 
-    public void generateMethod(JetDeclarationWithBody f, Method jvmMethod, FunctionDescriptor functionDescriptor) {
+    public void generateMethod(JetDeclarationWithBody f, JvmMethodSignature jvmMethod, FunctionDescriptor functionDescriptor) {
         CodegenContext.MethodContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
         generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor, f);
     }
-    
+
     private void generatedMethod(JetExpression bodyExpressions,
-                                 Method jvmSignature,
+                                 JvmMethodSignature jvmSignature,
                                  CodegenContext.MethodContext context,
                                  FunctionDescriptor functionDescriptor, JetDeclarationWithBody fun)
     {
@@ -78,7 +80,7 @@ public class FunctionCodegen {
             boolean isAbstract = !isStatic && !(kind == OwnerKind.TRAIT_IMPL) && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()));
             if (isAbstract) flags |= ACC_ABSTRACT;
             
-            final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
+            final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(), jvmSignature.getGenericsSignature(), null);
             if(v.generateCode()) {
                 int start = 0;
                 if(kind != OwnerKind.TRAIT_IMPL) {
@@ -128,9 +130,9 @@ public class FunctionCodegen {
                 
                 FrameMap frameMap = context.prepareFrame(typeMapper);
 
-                ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
+                ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
 
-                Type[] argTypes = jvmSignature.getArgumentTypes();
+                Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();
                 int add = 0;
 
                 if(kind == OwnerKind.TRAIT_IMPL)
@@ -159,8 +161,8 @@ public class FunctionCodegen {
                         Type argType = argTypes[i];
                         iv.load(i + 1, argType);
                     }
-                    iv.invokeinterface(dk.getOwnerClass(), jvmSignature.getName(), jvmSignature.getDescriptor());
-                    iv.areturn(jvmSignature.getReturnType());
+                    iv.invokeinterface(dk.getOwnerClass(), jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor());
+                    iv.areturn(jvmSignature.getAsmMethod().getReturnType());
                 }
                 else {
                     for (ValueParameterDescriptor parameter : paramDescrs) {
@@ -213,11 +215,11 @@ public class FunctionCodegen {
                 mv.visitMaxs(0, 0);
                 mv.visitEnd();
 
-                generateBridgeIfNeeded(owner, state, v, jvmSignature, functionDescriptor, kind);
+                generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind);
             }
         }
 
-        generateDefaultIfNeeded(context, state, v, jvmSignature, functionDescriptor, kind);
+        generateDefaultIfNeeded(context, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind);
     }
 
     static void generateBridgeIfNeeded(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
@@ -383,7 +385,7 @@ public class FunctionCodegen {
         Type type1 = state.getTypeMapper().mapType(overriddenFunction.getOriginal().getReturnType());
         Type type2 = state.getTypeMapper().mapType(functionDescriptor.getReturnType());
         if(!type1.equals(type2)) {
-            Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal());
+            Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
             int flags = ACC_PUBLIC; // TODO.
 
             final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);

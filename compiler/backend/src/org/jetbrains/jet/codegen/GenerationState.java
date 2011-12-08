@@ -146,7 +146,7 @@ public class GenerationState {
 
         ConstructorDescriptor constructorDescriptor = closure.state.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
         CallableMethod callableMethod = closure.state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
-        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature(), objectContext.outerWasUsed, null);
+        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
     }
 
     public static void prepareAnonymousClasses(JetElement aClass, final JetTypeMapper typeMapper) {

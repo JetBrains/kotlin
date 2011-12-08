@@ -1,6 +1,6 @@
 
 class Hello {
     public static void xx() {
-        int x = namespace.f();
+        String s = namespace.f();
     }
 }
