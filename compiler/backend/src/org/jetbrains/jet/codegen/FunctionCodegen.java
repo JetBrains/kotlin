@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.AnnotationVisitor;
@@ -81,40 +82,40 @@ public class FunctionCodegen {
             if(v.generateCode()) {
                 int start = 0;
                 if(kind != OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitAnnotation("Ljet/typeinfo/JetMethod;", true);
+                    AnnotationVisitor av = mv.visitAnnotation(StdlibNames.JET_METHOD_TYPE.getDescriptor(), true);
                     if(functionDescriptor.getReturnType().isNullable()) {
-                        av.visit("nullableReturnType", true);
+                        av.visit(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
                     }
                     av.visitEnd();
                 }
 
                 if(kind == OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, "Ljet/typeinfo/JetParameter;", true);
-                    av.visit("value", "this$self");
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_PARAMETER_DESCRIPTOR, true);
+                    av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, "this$self");
                     av.visitEnd();
                 }
                 if(receiverParameter.exists()) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, "Ljet/typeinfo/JetParameter;", true);
-                    av.visit("value", "this$receiver");
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_PARAMETER_DESCRIPTOR, true);
+                    av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, "this$receiver");
                     if(receiverParameter.getType().isNullable()) {
-                        av.visit("nullable", true);
+                        av.visit(StdlibNames.JET_PARAMETER_NULLABLE_FIELD, true);
                     }
                     av.visitEnd();
                 }
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, "Ljet/typeinfo/JetTypeParameter;", true);
-                    av.visit("value", typeParameterDescriptor.getName());
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_TYPE_PARAMETER_DESCRIPTOR, true);
+                    av.visit(StdlibNames.JET_TYPE_PARAMETER_NAME_FIELD, typeParameterDescriptor.getName());
                     av.visitEnd();
                 }
                 for(int i = 0; i != paramDescrs.size(); ++i) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, "Ljet/typeinfo/JetParameter;", true);
+                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, StdlibNames.JET_PARAMETER_DESCRIPTOR, true);
                     ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                    av.visit("name", parameterDescriptor.getName());
+                    av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
                     if(parameterDescriptor.hasDefaultValue()) {
-                        av.visit("hasDefaultValue", true);
+                        av.visit(StdlibNames.JET_PARAMETER_HAS_DEFAULT_FIELD, true);
                     }
                     if(parameterDescriptor.getOutType().isNullable()) {
-                        av.visit("nullable", true);
+                        av.visit(StdlibNames.JET_PARAMETER_NULLABLE_FIELD, true);
                     }
                     av.visitEnd();
                 }

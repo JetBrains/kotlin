@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -354,13 +355,13 @@ public class JavaDescriptorResolver {
             PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
             attributes.toString();
 
-            if (annotation.getQualifiedName().equals("jet.typeinfo.JetParameter")) {
-                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue("name");
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_PARAMETER_CLASS)) {
+                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_PARAMETER_NAME_FIELD);
                 if (nameExpression != null) {
                     name = (String) nameExpression.getValue();
                 }
                 
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue("nullable");
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_PARAMETER_NULLABLE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
                 } else {
@@ -496,8 +497,8 @@ public class JavaDescriptorResolver {
         boolean nullable = true;
 
         for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals("jet.typeinfo.JetMethod")) {
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue("nullableReturnType");
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD_CLASS)) {
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
                 } else {

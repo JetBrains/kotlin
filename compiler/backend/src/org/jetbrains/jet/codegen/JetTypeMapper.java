@@ -82,6 +82,8 @@ public class JetTypeMapper {
     public static final Type TYPE_LONG_ITERATOR = Type.getObjectType("jet/LongIterator");
     public static final Type TYPE_FLOAT_ITERATOR = Type.getObjectType("jet/FloatIterator");
     public static final Type TYPE_DOUBLE_ITERATOR = Type.getObjectType("jet/DoubleIterator");
+    
+    public static final Type TYPE_JET_PARAMETER = Type.getType(JetParameter.class);
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
