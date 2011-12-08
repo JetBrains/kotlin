@@ -38,26 +38,15 @@ public final class StandardClasses {
     private static void declareJavaArrayList(@NotNull StandardClasses standardClasses) {
         String arrayListFQName = "<java_root>.java.util.ArrayList";
         standardClasses.declareStandardTopLevelObject(arrayListFQName, "ArrayList");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "size", "size");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "<init>", "ArrayList");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "add", "add");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "get", "get");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "isEmpty", "isEmpty");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "set", "set");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "remove", "remove");
-        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "addAll", "addAll");
+        declareMethods(standardClasses, arrayListFQName, "size", "add", "get",
+                "isEmpty", "set", "remove", "addAll");
     }
 
-    //TODO: more generic ways to declare standard classes
     private static void bindIterator(@NotNull StandardClasses standardClasses,
                                      @NotNull ClassDescriptor iteratorClass) {
         standardClasses.declareStandardTopLevelObject(iteratorClass, "ArrayIterator");
-        FunctionDescriptor nextFunction =
-                getFunctionByName(iteratorClass.getDefaultType().getMemberScope(), "next");
-        standardClasses.declareStandardMethodOrProperty(nextFunction, "next");
-        PropertyDescriptor hasNextProperty =
-                getPropertyByName(iteratorClass.getDefaultType().getMemberScope(), "hasNext");
-        standardClasses.declareStandardMethodOrProperty(hasNextProperty, "hasNext");
+        declareMethods(standardClasses, getFQName(iteratorClass), "next", "hasNext");
     }
 
     private static void bindArray(@NotNull StandardClasses standardClasses,
@@ -68,7 +57,16 @@ public final class StandardClasses {
         standardClasses.declareStandardTopLevelObject(nullConstructorFunction, "array");
         PropertyDescriptor sizeProperty =
                 getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "size");
-        standardClasses.declareStandardMethodOrProperty(sizeProperty, "size");
+        standardClasses.declareStandardInnerDeclaration(sizeProperty, "size");
+    }
+
+
+    private static void declareMethods(@NotNull StandardClasses standardClasses,
+                                       @NotNull String classFQName,
+                                       @NotNull String... methodNames) {
+        for (String methodName : methodNames) {
+            standardClasses.declareStandardInnerDeclaration(classFQName, methodName, methodName);
+        }
     }
 
 
@@ -95,7 +93,7 @@ public final class StandardClasses {
         scopeMap.put(fullQualifiedName, new JsScope(kotlinScope, "standard object " + kotlinLibName));
     }
 
-    private void declareStandardMethodOrProperty(@NotNull DeclarationDescriptor descriptor,
+    private void declareStandardInnerDeclaration(@NotNull DeclarationDescriptor descriptor,
                                                  @NotNull String kotlinLibName) {
         String containingFQName = getFQName(getContainingDeclaration(descriptor));
         declareStandardInnerDeclaration(containingFQName, descriptor.getName(), kotlinLibName);
