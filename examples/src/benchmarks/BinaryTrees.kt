@@ -36,11 +36,10 @@ fun bottomUpTree(item: Int, depth: Int) : TreeNode =
         TreeNode(item, bottomUpTree(2*item-1, depth-1), bottomUpTree(2*item, depth-1))
     }
     else {
-        TreeNode(item, null, null)
+        TreeNode(item)
     }
 
-class TreeNode(val item: Int, val left: TreeNode?, val right: TreeNode?) {
-
+class TreeNode(val item: Int, val left: TreeNode? = null, val right: TreeNode? = null) {
     fun itemCheck() : Int {
         var res = item
         if(left != null)
