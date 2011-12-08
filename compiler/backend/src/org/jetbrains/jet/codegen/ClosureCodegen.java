@@ -254,19 +254,24 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             iv.invokespecial(funClass, "<init>", "(Ljet/typeinfo/TypeInfo;)V");
 
             i = 1;
+            int k = 0;
             for (Type type : argTypes) {
                 StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
                 StackValue.local(i, type).put(type, iv);
                 final String fieldName;
                 if (captureThis && i == 1) {
                     fieldName = "this$0";
+                    i++;
+                    k++;
                 }
                 else {
                     if (captureReceiver != null && (captureThis && i == 2 || !captureThis && i == 1)) {
                         fieldName = "receiver$0";
+                        i++;
+                        k++;
                     }
                     else {
-                        fieldName = "$" + (i);
+                        fieldName = "$" + (i-k);
                         i++;
                     }
                 }

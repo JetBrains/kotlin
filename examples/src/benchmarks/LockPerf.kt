@@ -15,35 +15,46 @@ fun thread(f: fun ()) {
     thread.start()
 }
 
+fun <T> Int.latch(op: fun CountDownLatch.() : T) : T {
+    val cdl = CountDownLatch(this)
+    val res = cdl.op()
+    cdl.await()
+    return res
+}
+
+fun Int.times(action: fun Int.()) {
+    for(i in 0..this-1)
+        action()
+}
+
 fun main(args: Array<String>) {
     val processors = Runtime.getRuntime().sure().availableProcessors()
     var threadNum = 1
     while(threadNum <= 1024) {
         val counter = AtomicInteger()
-        val cdl = CountDownLatch(threadNum)
-        val lock = ReentrantLock()
 
         val start = System.currentTimeMillis()
-        for(i in 0..threadNum-1) {
-            thread {
-                while(true) {
-                    lock.lock()
-                    try {
-                        if (counter.get() == 100000000) {
-                            cdl.countDown();
-                            break;
-                        } else {
-                            counter.incrementAndGet();
+        threadNum.latch{
+            val lock = ReentrantLock()
+            threadNum.times {
+                thread {
+                    while(true) {
+                        lock.lock()
+                        try {
+                            if (counter.get() == 100000000) {
+                                countDown();
+                                break;
+                            } else {
+                                counter.incrementAndGet();
+                            }
                         }
-                    }
-                    finally {
-                        lock.unlock()
+                        finally {
+                            lock.unlock()
+                        }
                     }
                 }
             }
         }
-
-        cdl.await()
 
         System.out?.println(threadNum.toString() + " " + (System.currentTimeMillis() - start));
 
