@@ -212,8 +212,9 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private JsName getGetterName() {
-        if (context().aliaser().hasAliasForDeclaration(propertyDescriptor)) {
-            return context().aliaser().getAliasForDeclaration(propertyDescriptor);
+        //TODO: hack alert. properties for standard objects that do not have their implementation do not have getters
+        if (context().isStandardObject(propertyDescriptor)) {
+            return context().getNameForStandardObject(propertyDescriptor);
         }
         PropertyGetterDescriptor getter = getGetterDescriptor();
         return context().getNameForDescriptor(getter);

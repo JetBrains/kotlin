@@ -4,17 +4,11 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
 
 //TODO: implement aliases stack for this
 public class Aliaser {
@@ -22,27 +16,7 @@ public class Aliaser {
     public static Aliaser aliasesForStandardClasses(@NotNull JetStandardLibrary standardLibrary,
                                                     @NotNull Namer namer) {
         Aliaser aliaser = new Aliaser();
-        setAliasesForArray(standardLibrary, namer, aliaser);
-        ClassDescriptor iteratorClass = (ClassDescriptor)
-                standardLibrary.getLibraryScope().getClassifier("Iterator");
-        setAliasesForIterator(namer, aliaser, iteratorClass);
         return aliaser;
-    }
-
-    private static void setAliasesForIterator(Namer namer, Aliaser aliaser, ClassDescriptor iteratorClass) {
-        FunctionDescriptor nextFunction = getFunctionByName(iteratorClass.getDefaultType().getMemberScope(), "next");
-        PropertyDescriptor hasNextProperty = getPropertyByName(iteratorClass.getDefaultType().getMemberScope(), "hasNext");
-        aliaser.setAliasForDescriptor(nextFunction, namer.libraryMethod("next"));
-        aliaser.setAliasForDescriptor(hasNextProperty, namer.libraryMethod("hasNext"));
-    }
-
-    private static void setAliasesForArray(JetStandardLibrary standardLibrary, Namer namer, Aliaser aliaser) {
-        aliaser.setAliasForDescriptor(standardLibrary.getArray(), namer.libraryObject("Array"));
-        FunctionDescriptor nullConstructorFunction = getFunctionByName(standardLibrary.getLibraryScope(), "Array");
-        aliaser.setAliasForDescriptor(nullConstructorFunction, namer.libraryObject("array"));
-        PropertyDescriptor sizeProperty =
-                getPropertyByName(standardLibrary.getArray().getDefaultType().getMemberScope(), "size");
-        aliaser.setAliasForDescriptor(sizeProperty, namer.libraryMethod("size"));
     }
 
     @NotNull

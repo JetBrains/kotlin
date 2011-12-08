@@ -118,6 +118,15 @@ public final class TranslationContext {
         }
     }
 
+    public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
+        return staticContext.getStandardClasses().isStandardObject(descriptor);
+    }
+
+    @NotNull
+    public JsName getNameForStandardObject(@NotNull DeclarationDescriptor descriptor) {
+        return staticContext.getStandardClasses().getStandardObjectName(descriptor);
+    }
+
     @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
