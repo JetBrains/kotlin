@@ -117,4 +117,8 @@ public final class DescriptorUtils {
         assert containing != null : "Should be called on objects that have containing declaration.";
         return containing;
     }
+
+    public static boolean isExtensionFunction(@NotNull FunctionDescriptor functionDescriptor) {
+        return (functionDescriptor.getReceiverParameter().exists());
+    }
 }

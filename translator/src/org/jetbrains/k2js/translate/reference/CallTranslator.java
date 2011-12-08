@@ -14,6 +14,7 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -100,7 +101,22 @@ public final class CallTranslator extends AbstractTranslator {
         if (isConstructor()) {
             return constructorCall();
         }
+        if (isExtensionFunction()) {
+            return extensionFunctionCall();
+        }
         return methodCall();
+    }
+
+    @NotNull
+    private JsExpression extensionFunctionCall() {
+        List<JsExpression> argumentList = new ArrayList<JsExpression>();
+        argumentList.add(receiver);
+        argumentList.addAll(arguments);
+        return AstUtil.newInvocation(calleeReference(), argumentList);
+    }
+
+    private boolean isExtensionFunction() {
+        return DescriptorUtils.isExtensionFunction(functionDescriptor);
     }
 
     @NotNull
@@ -144,7 +160,9 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression qualifiedMethodReference(@NotNull DeclarationDescriptor descriptor) {
         JsExpression methodReference = ReferenceTranslator.translateReference(descriptor, context());
-        if (receiver != null) {
+        if (isExtensionFunction()) {
+            AstUtil.setQualifier(methodReference, context().getQualifierForDescriptor(functionDescriptor));
+        } else if (receiver != null) {
             AstUtil.setQualifier(methodReference, receiver);
         }
         return methodReference;

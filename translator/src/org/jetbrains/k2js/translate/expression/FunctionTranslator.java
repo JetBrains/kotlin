@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isExtensionFunction;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 
@@ -136,6 +139,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     private List<JsParameter> translateParameters(@NotNull List<JetParameter> jetParameters,
                                                   @NotNull TranslationContext functionBodyContext) {
         List<JsParameter> jsParameters = new ArrayList<JsParameter>();
+        mayBeAddThisParameterForExtensionFunction(jsParameters);
         for (JetParameter jetParameter : jetParameters) {
             JsName parameterName = declareParameter(jetParameter, functionBodyContext);
             jsParameters.add(new JsParameter(parameterName));
@@ -149,5 +153,16 @@ public final class FunctionTranslator extends AbstractTranslator {
         DeclarationDescriptor parameterDescriptor =
                 getDescriptorForElement(functionBodyContext.bindingContext(), jetParameter);
         return context().declareLocalVariable(parameterDescriptor);
+    }
+
+    private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
+        if (!(functionDeclaration instanceof JetNamedFunction)) return;
+
+        FunctionDescriptor functionDescriptor = getFunctionDescriptor(context().bindingContext(), functionDeclaration);
+        if (isExtensionFunction(functionDescriptor)) {
+            JsName receiver = context().jsScope().declareName("receiver");
+            context().aliaser().setAliasForThis(receiver);
+            jsParameters.add(new JsParameter(receiver));
+        }
     }
 }

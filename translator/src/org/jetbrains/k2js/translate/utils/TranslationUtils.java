@@ -15,8 +15,8 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isExtensionFunction;
 
 /**
  * @author Talanov Pavel
@@ -67,10 +67,10 @@ public final class TranslationUtils {
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
-        if (BindingUtils.isOwnedByClass(descriptor)) {
+        if (isOwnedByClass(descriptor)) {
             return getThisQualifiedNameReference(context, backingFieldName);
         }
-        assert BindingUtils.isOwnedByNamespace(descriptor)
+        assert isOwnedByNamespace(descriptor)
                 : "Only classes and namespaces may own backing fields.";
         JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
         return AstUtil.qualified(backingFieldName, qualifier);
@@ -200,10 +200,15 @@ public final class TranslationUtils {
     @Nullable
     public static JsExpression getImplicitReceiver(@NotNull TranslationContext context,
                                                    @NotNull DeclarationDescriptor referencedDescriptor) {
-        if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
+        if (referencedDescriptor instanceof FunctionDescriptor) {
+            if (isExtensionFunction((FunctionDescriptor) referencedDescriptor)) {
+                return TranslationUtils.getThisQualifier(context);
+            }
+        }
+        if (isOwnedByClass(referencedDescriptor)) {
             return TranslationUtils.getThisQualifier(context);
         }
-        if (BindingUtils.isOwnedByNamespace(referencedDescriptor)) {
+        if (isOwnedByNamespace(referencedDescriptor)) {
             if (context.hasQualifierForDescriptor(referencedDescriptor)) {
                 return context.getQualifierForDescriptor(referencedDescriptor);
             }
