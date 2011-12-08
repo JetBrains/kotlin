@@ -13,8 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.resolve.DescriptorRenderer.getFQName;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 /**
  * @author Talanov Pavel
@@ -32,7 +31,6 @@ public final class StandardClasses {
         bindIterator(standardClasses, iteratorClass);
         return standardClasses;
     }
-
 
     private static void bindIterator(StandardClasses standardClasses,
                                      ClassDescriptor iteratorClass) {
@@ -100,35 +98,45 @@ public final class StandardClasses {
 
     //TODO: refactor
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        if ((descriptor instanceof ClassDescriptor) || (descriptor instanceof FunctionDescriptor)) {
+        if (canBeTopLevelObject(descriptor)) {
             if (topLevelNameMap.containsKey(getFQName(descriptor))) {
                 return true;
             }
         }
-        if ((descriptor instanceof FunctionDescriptor) || (descriptor instanceof PropertyDescriptor)) {
-            DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-            assert containing != null : "Cannot be on top level.";
+        if (canBeInnerObject(descriptor)) {
+            DeclarationDescriptor containing = getContainingDeclaration(descriptor);
             if (!isStandardObject(containing)) {
                 return false;
             }
-            Map<String, JsName> methodMapForClass = methodNameMap.get(getFQName(containing));
+            Map<String, JsName> methodMapForClass = methodMapForDescriptor(containing);
             return methodMapForClass.containsKey(descriptor.getName());
         }
         return false;
     }
 
+    private Map<String, JsName> methodMapForDescriptor(DeclarationDescriptor containing) {
+        return methodNameMap.get(getFQName(containing));
+    }
+
+    private boolean canBeInnerObject(DeclarationDescriptor descriptor) {
+        return (descriptor instanceof FunctionDescriptor) || (descriptor instanceof PropertyDescriptor);
+    }
+
+    private boolean canBeTopLevelObject(DeclarationDescriptor descriptor) {
+        return (descriptor instanceof ClassDescriptor) || (descriptor instanceof FunctionDescriptor);
+    }
+
     @NotNull
     public JsName getStandardObjectName(@NotNull DeclarationDescriptor descriptor) {
-        if ((descriptor instanceof ClassDescriptor) || (descriptor instanceof FunctionDescriptor)) {
+        if (canBeTopLevelObject(descriptor)) {
             JsName result = topLevelNameMap.get(getFQName(descriptor));
             if (result != null) {
                 return result;
             }
         }
-        if ((descriptor instanceof FunctionDescriptor) || (descriptor instanceof PropertyDescriptor)) {
-            DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-            assert containing != null : "Cannot have top level functions.";
-            Map<String, JsName> methodMapForClass = methodNameMap.get(getFQName(containing));
+        if (canBeInnerObject(descriptor)) {
+            DeclarationDescriptor containing = getContainingDeclaration(descriptor);
+            Map<String, JsName> methodMapForClass = methodMapForDescriptor(containing);
             return methodMapForClass.get(descriptor.getName());
         }
         throw new AssertionError("Only classes and functions can be standard objects.");

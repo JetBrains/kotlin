@@ -110,4 +110,11 @@ public final class DescriptorUtils {
     public static boolean isVariableDescriptor(@Nullable DeclarationDescriptor referencedDescriptor) {
         return referencedDescriptor instanceof VariableAsFunctionDescriptor;
     }
+
+    @NotNull
+    public static DeclarationDescriptor getContainingDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        assert containing != null : "Should be called on objects that have containing declaration.";
+        return containing;
+    }
 }

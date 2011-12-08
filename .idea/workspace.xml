@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Aliaser.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Aliaser.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -229,7 +227,7 @@
     <favorites_list name="k2js" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.64078945">
+    <splitter split-orientation="horizontal" split-proportion="0.50828433">
       <split-first>
         <leaf>
           <file leaf-file-name="TranslationContext.java" pinned="false" current="false" current-in-tab="false">
@@ -259,15 +257,15 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="StandardClasses.java" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="StandardClasses.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="95" column="53" selection-start="4647" selection-end="4647" vertical-scroll-proportion="0.0">
+                <state line="35" column="0" selection-start="1522" selection-end="1522" vertical-scroll-proportion="0.39285713">
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#3001#3017#0" expanded="true" />
-                    <element signature="e#3096#3113#0" expanded="true" />
-                    <element signature="e#3209#3238#0" expanded="true" />
+                    <element signature="e#3091#3107#0" expanded="true" />
+                    <element signature="e#3186#3203#0" expanded="true" />
+                    <element signature="e#3299#3328#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -291,10 +289,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="PropertyAccessTranslator.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="PropertyAccessTranslator.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="214" column="117" selection-start="9084" selection-end="9084" vertical-scroll-proportion="-0.07342144">
+                <state line="243" column="50" selection-start="10077" selection-end="10077" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -331,24 +329,6 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="simpleBox.jet" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/examples/sortedTests/unsupported/simpleBox.jet">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="traitproperty.jet" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/examples/sortedTests/unsupported/traitproperty.jet">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="basicmethod.jet" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/testFiles/examples/sortedTests/usesJava/basicmethod.jet">
               <provider selected="true" editor-type-id="text-editor">
@@ -394,10 +374,28 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="JavaPsiFacade.class" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="JavaPsiFacade.class" pinned="false" current="false" current-in-tab="false">
             <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 110.283/lib/openapi.jar!/com/intellij/psi/JavaPsiFacade.class">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="27" column="94" selection-start="1644" selection-end="1644" vertical-scroll-proportion="0.30322582">
+                <state line="44" column="24" selection-start="2339" selection-end="2339" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DescriptorUtils.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/DescriptorUtils.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="36" column="13" selection-start="1253" selection-end="1253" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DescriptorUtils.java" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="116" column="98" selection-start="4803" selection-end="4803" vertical-scroll-proportion="0.9782609">
                   <folding />
                 </state>
               </provider>
@@ -442,7 +440,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/testFiles/expression/for/cases/forIteratesOverArray.kt" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/expression/ExpressionVisitor.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/expression/for/out/forIteratesOverArray.js" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/PsiUtils.java" />
@@ -454,10 +451,11 @@
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StaticContext.java" />
         <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Aliaser.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/TranslationUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
       </list>
     </option>
   </component>
@@ -1538,7 +1536,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24973261" sideWeight="0.7183908" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28530258" sideWeight="0.7493319" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949087" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2987512" sideWeight="0.19508284" order="11" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2987512" sideWeight="0.19828968" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.6705091" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854405" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -1549,7 +1547,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.7002882" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18760021" sideWeight="0.7012488" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2987512" sideWeight="0.80117583" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2987512" sideWeight="0.797969" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.0908605" sideWeight="0.7146974" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1592,7 +1590,7 @@
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="work on standard classes mechanism implementation" />
+    <option name="LAST_COMMIT_MESSAGE" value="implement standard classes mechanism" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1605,7 +1603,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="supported array access expressions." />
     <MESSAGE value="work on intrinsic implementation: split binary expression translation into 2 classes" />
     <MESSAGE value="work on intrinsic implementation: binary intrinsics" />
     <MESSAGE value="implement some of the intrinsic functionality" />
@@ -1630,6 +1627,7 @@
     <MESSAGE value="Array iterator object support." />
     <MESSAGE value="simple for support" />
     <MESSAGE value="work on standard classes mechanism implementation" />
+    <MESSAGE value="implement standard classes mechanism" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1639,41 +1637,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/descriptors/ClassDescriptorImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="40" selection-start="1083" selection-end="1083" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="41" selection-start="2346" selection-end="2350" vertical-scroll-proportion="-8.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/expression/for/out/forIteratesOverArray.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="30" selection-start="506" selection-end="506" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/DescriptorUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="13" selection-start="1253" selection-end="1253" vertical-scroll-proportion="56.76">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/expression/for/out/forOnEmptyArray.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ForTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="16" selection-start="307" selection-end="307" vertical-scroll-proportion="0.0">
@@ -1723,18 +1686,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="95" column="53" selection-start="4647" selection-end="4647" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3001#3017#0" expanded="true" />
-            <element signature="e#3096#3113#0" expanded="true" />
-            <element signature="e#3209#3238#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/types/JetStandardLibrary.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="122" column="26" selection-start="4299" selection-end="4313" vertical-scroll-proportion="240.73077">
@@ -1751,8 +1702,55 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="214" column="117" selection-start="9084" selection-end="9084" vertical-scroll-proportion="-0.07342144">
+        <state line="243" column="50" selection-start="10077" selection-end="10077" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 110.283/lib/openapi.jar!/com/intellij/psi/JavaPsiFacade.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="24" selection-start="2339" selection-end="2339" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/examples/sortedTests/unsupported/simpleBox.jet">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/DescriptorUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="13" selection-start="1253" selection-end="1253" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/examples/sortedTests/unsupported/traitproperty.jet">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="116" column="98" selection-start="4803" selection-end="4803" vertical-scroll-proportion="0.9782609">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="0" selection-start="1522" selection-end="1522" vertical-scroll-proportion="0.39285713">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3091#3107#0" expanded="true" />
+            <element signature="e#3186#3203#0" expanded="true" />
+            <element signature="e#3299#3328#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
