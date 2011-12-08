@@ -843,7 +843,7 @@ public class DescriptorResolver {
                 name == null ? "<no name>" : name
         );
         JetType inType = isMutable ? type : null;
-        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER);
+        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
 
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = createDefaultSetter(propertyDescriptor);
