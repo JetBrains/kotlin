@@ -43,9 +43,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
 
-    private final Stack<Label> myContinueTargets = new Stack<Label>();
-    private final Stack<Label> myBreakTargets = new Stack<Label>();
-
     private int myLastLineNumber = -1;
 
     final InstructionAdapter v;
@@ -60,7 +57,29 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private final CodegenContext context;
     private final IntrinsicMethods intrinsics;
 
-    private final ArrayList<JetTryExpression> stackOfFinallyBlocks = new ArrayList<JetTryExpression>();
+    private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
+
+    static class BlockStackElement {
+    }
+    
+    static class LoopBlockStackElement extends BlockStackElement {
+        final Label continueLabel;
+        final Label breakLabel;
+
+        LoopBlockStackElement(Label breakLabel, Label continueLabel) {
+            this.breakLabel = breakLabel;
+            this.continueLabel = continueLabel;
+        }
+    }
+
+    static class FinallyBlockStackElement extends BlockStackElement {
+        final JetTryExpression expression;
+
+        FinallyBlockStackElement(JetTryExpression expression) {
+            this.expression = expression;
+        }
+    }
+
 
     public ExpressionCodegen(MethodVisitor v,
                              FrameMap myMap,
@@ -225,11 +244,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @Override
     public StackValue visitWhileExpression(JetWhileExpression expression, StackValue receiver) {
         Label condition = new Label();
-        myContinueTargets.push(condition);
         v.mark(condition);
 
         Label end = continueLabel != null ? continueLabel : new Label();
-        myBreakTargets.push(end);
+        blockStackElements.push(new LoopBlockStackElement(end, condition));
 
         Label savedContinueLabel = continueLabel;
         continueLabel = condition;
@@ -243,8 +261,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         continueLabel = savedContinueLabel;
         if(end != continueLabel)
             v.mark(end);
-        myBreakTargets.pop();
-        myContinueTargets.pop();
+
+        blockStackElements.pop();
 
         return StackValue.onStack(Type.VOID_TYPE);
     }
@@ -253,10 +271,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue visitDoWhileExpression(JetDoWhileExpression expression, StackValue receiver) {
         Label condition = new Label();
         v.mark(condition);
-        myContinueTargets.push(condition);
 
         Label end = new Label();
-        myBreakTargets.push(end);
+
+        blockStackElements.push(new LoopBlockStackElement(end, condition));
 
         gen(expression.getBody(), Type.VOID_TYPE);
 
@@ -265,8 +283,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.mark(end);
 
-        myBreakTargets.pop();
-        myContinueTargets.pop();
+        blockStackElements.pop();
         return StackValue.onStack(Type.VOID_TYPE);
     }
 
@@ -328,8 +345,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         Label begin = new Label();
-        myContinueTargets.push(begin);
-        myBreakTargets.push(end);
+        blockStackElements.push(new LoopBlockStackElement(end, begin));
 
         v.mark(begin);
         v.load(iteratorVar, asmIterType);
@@ -365,8 +381,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         //noinspection ConstantConditions
         v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, begin, end, paramIndex);
         myFrameMap.leaveTemp();
-        myBreakTargets.pop();
-        myContinueTargets.pop();
+
+        blockStackElements.pop();
     }
 
     private OwnerKind contextKind() {
@@ -398,8 +414,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Label condition = new Label();
             Label increment = new Label();
             v.mark(condition);
-            myContinueTargets.push(increment);
-            myBreakTargets.push(end);
+
+            blockStackElements.push(new LoopBlockStackElement(end, increment));
 
             generateCondition(asmParamType, end);
 
@@ -414,8 +430,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             final int paramIndex = myFrameMap.leave(parameterDescriptor);
             //noinspection ConstantConditions
             v.visitLocalVariable(expression.getLoopParameter().getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
-            myBreakTargets.pop();
-            myContinueTargets.pop();
+
+            blockStackElements.pop();
         }
 
         protected void generatePrologue() {
@@ -536,21 +552,51 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @Override
     public StackValue visitBreakExpression(JetBreakExpression expression, StackValue receiver) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
-
-        Label label = labelElement == null ? myBreakTargets.peek() : null; // TODO:
-
-        v.goTo(label);
-        return StackValue.none();
+        
+        for(int i = blockStackElements.size()-1; i >= 0; --i) {
+            BlockStackElement stackElement = blockStackElements.get(i);
+            if(stackElement instanceof FinallyBlockStackElement) {
+                FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
+                JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
+                gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+            }
+            else if(stackElement instanceof LoopBlockStackElement) {
+                LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
+                Label label = labelElement == null ? loopBlockStackElement.breakLabel : null; // TODO:
+                v.goTo(label);
+                return StackValue.none();
+            }
+            else {
+                throw new UnsupportedOperationException();
+            }
+        }
+        
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public StackValue visitContinueExpression(JetContinueExpression expression, StackValue receiver) {
-        String labelName = expression.getLabelName();
+        JetSimpleNameExpression labelElement = expression.getTargetLabel();
 
-        Label label = labelName == null ? myContinueTargets.peek() : null; // TODO:
+        for(int i = blockStackElements.size()-1; i >= 0; --i) {
+            BlockStackElement stackElement = blockStackElements.get(i);
+            if(stackElement instanceof FinallyBlockStackElement) {
+                FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
+                JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
+                gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+            }
+            else if(stackElement instanceof LoopBlockStackElement) {
+                LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
+                Label label = labelElement == null ? loopBlockStackElement.continueLabel : null; // TODO:
+                v.goTo(label);
+                return StackValue.none();
+            }
+            else {
+                throw new UnsupportedOperationException();
+            }
+        }
 
-        v.goTo(label);
-        return StackValue.none();
+        throw new UnsupportedOperationException();
     }
 
     private StackValue generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
@@ -763,12 +809,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void doFinallyOnReturnOrThrow() {
-        if(stackOfFinallyBlocks.size() > 0) {
-            JetTryExpression jetTryExpression = stackOfFinallyBlocks.remove(stackOfFinallyBlocks.size()-1);
-            //noinspection ConstantConditions
-            gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
-            doFinallyOnReturnOrThrow();
-            stackOfFinallyBlocks.add(jetTryExpression);
+        for(int i = blockStackElements.size()-1; i >= 0; --i) {
+            BlockStackElement stackElement = blockStackElements.get(i);
+            if(stackElement instanceof FinallyBlockStackElement) {
+                FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
+                JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
+                blockStackElements.pop();
+                gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+                blockStackElements.push(finallyBlockStackElement);
+            }
+            else {
+                break;
+            }
         }
     }
     
@@ -2208,9 +2260,12 @@ The "returned" value of try expression with no finally is either the last expres
 
 If finally block is present, its last expression is the value of try expression.
          */
+        Label savedContinueLabel = continueLabel;
+        continueLabel = null;
+
         JetFinallySection finallyBlock = expression.getFinallyBlock();
         if(finallyBlock != null) {
-            stackOfFinallyBlocks.add(expression);
+            blockStackElements.push(new FinallyBlockStackElement(expression));
         }
 
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
@@ -2267,8 +2322,10 @@ If finally block is present, its last expression is the value of try expression.
         v.nop();
 
         if(finallyBlock != null) {
-            stackOfFinallyBlocks.remove(stackOfFinallyBlocks.size()-1);
+            blockStackElements.pop();
         }
+
+        continueLabel = savedContinueLabel;
 
         return StackValue.onStack(expectedAsmType);
     }
