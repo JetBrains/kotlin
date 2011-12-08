@@ -349,8 +349,8 @@ public class JetFlowInformationProvider {
             return true;
         }
         PsiElement property = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
-        if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor) &&
-            !PsiTreeUtil.isAncestor(property, element, false)) { // not to generate error in accessors of abstract properties, there is one: declared accessor of abstract property
+        boolean insideSelfAccessors = PsiTreeUtil.isAncestor(property, element, false);
+        if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor) && !insideSelfAccessors) { // not to generate error in accessors of abstract properties, there is one: declared accessor of abstract property
             if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.ABSTRACT) {
                 trace.report(NO_BACKING_FIELD_ABSTRACT_PROPERTY.on(element));
             }
@@ -359,6 +359,7 @@ public class JetFlowInformationProvider {
             }
             return true;
         }
+        if (insideSelfAccessors) return false;
 
         JetNamedDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
         DeclarationDescriptor declarationDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, parentDeclaration);

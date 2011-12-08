@@ -49,27 +49,25 @@ public class ControlFlowAnalyzer {
             if (!context.completeAnalysisNeeded(constructor)) continue;
             checkFunction(constructor, JetStandardClasses.getUnitType());
         }
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : context.getProperties().entrySet()) {
+            JetProperty property = entry.getKey();
+            PropertyDescriptor propertyDescriptor = entry.getValue();
+            checkProperty(property, propertyDescriptor);
+        }
     }
     
     private void checkClassOrObject(JetClassOrObject klass) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
         flowInformationProvider.markUninitializedVariables((JetElement) klass, processLocalDeclaration);
-
-        List<JetDeclaration> declarations = klass.getDeclarations();
-        for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetProperty) {
-                JetProperty property = (JetProperty) declaration;
-                DeclarationDescriptor descriptor = context.getTrace().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-                assert descriptor instanceof PropertyDescriptor;
-                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                for (JetPropertyAccessor accessor : property.getAccessors()) {
-                    PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
-                                                                    ? propertyDescriptor.getGetter()
-                                                                    : propertyDescriptor.getSetter();
-                    assert accessorDescriptor != null;
-                    checkFunction(accessor, accessorDescriptor.getReturnType());
-                }
-            }
+    }
+    
+    private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
+        for (JetPropertyAccessor accessor : property.getAccessors()) {
+            PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
+                                                            ? propertyDescriptor.getGetter()
+                                                            : propertyDescriptor.getSetter();
+            assert accessorDescriptor != null;
+            checkFunction(accessor, accessorDescriptor.getReturnType());
         }
     }
 
