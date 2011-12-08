@@ -1,6 +1,7 @@
 package org.jetbrains.k2js.test;
 
 import org.junit.Test;
+import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Talanov Pavel
@@ -42,5 +43,10 @@ public final class ArrayListTest extends JavaClassesTest {
     @Test
     public void remove() throws Exception {
         testFooBoxIsTrue("remove.kt");
+    }
+
+    @Test(expected = JavaScriptException.class)
+    public void indexOOB() throws Exception {
+        testFooBoxIsTrue("indexOOB.kt");
     }
 }

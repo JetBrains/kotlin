@@ -3,14 +3,10 @@ namespace foo
 import java.util.ArrayList;
 
 fun box() : Boolean {
-    var i = 0
     val arr = ArrayList<Int>();
+    var i = 0;
     while (i++ < 10) {
         arr.add(i);
     }
-    var sum = 0
-    for (a in arr) {
-        sum += a;
-    }
-    return (sum == 55) && (arr.size() == 10)
+    return (arr[10] == 11)
 }

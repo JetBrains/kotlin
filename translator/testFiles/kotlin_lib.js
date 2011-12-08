@@ -463,13 +463,13 @@ Kotlin.Array = Class.create({
         }
     },
     get:function (index) {
-        if ((index < 0) || (index > this.array.length)) {
+        if ((index < 0) || (index >= this.array.length)) {
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         return (this.array)[index];
     },
     set:function (index, value) {
-        if ((index < 0) || (index > this.array.length)) {
+        if ((index < 0) || (index >= this.array.length)) {
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         (this.array)[index] = value;
@@ -489,13 +489,13 @@ Kotlin.ArrayList = Class.create({
         this.$size = 0;
     },
     get:function (index) {
-        if ((index < 0) || (index > this.$size)) {
+        if ((index < 0) || (index >= this.$size)) {
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         return (this.array)[index];
     },
     set:function (index, value) {
-        if ((index < 0) || (index > this.$size)) {
+        if ((index < 0) || (index >= this.$size)) {
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         (this.array)[index] = value;
