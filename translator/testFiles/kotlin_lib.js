@@ -46,7 +46,6 @@ var Class = (function () {
             parent.subclasses.push(klass);
         }
 
-
         klass.addMethods(
             {
                 get_class:function () {
@@ -483,30 +482,50 @@ Kotlin.Array = Class.create({
     }
 });
 
-//Kotlin.Array = Class.create({
-//    initialize:function (len) {
-//        this.array = [];
-//        this.size = 0
-//    },
-//    get:function (index) {
-//        if ((index < 0) || (index > this.size)) {
-//            throw Kotlin.Exceptions.IndexOutOfBounds;
-//        }
-//        return (this.array)[index];
-//    },
-//    set:function (index, value) {
-//        if ((index < 0) || (index > this.size)) {
-//            throw Kotlin.Exceptions.IndexOutOfBounds;
-//        }
-//        (this.array)[index] = value;
-//    },
-//    size:function () {
-//        return this.size;
-//    },
-//    iterator:function () {
-//        return new Kotlin.ArrayIterator(this);
-//    }
-//});
+
+Kotlin.ArrayList = Class.create({
+    initialize:function (len) {
+        this.array = [];
+        this.size = 0;
+    },
+    get:function (index) {
+        if ((index < 0) || (index > this.size)) {
+            throw Kotlin.Exceptions.IndexOutOfBounds;
+        }
+        return (this.array)[index];
+    },
+    set:function (index, value) {
+        if ((index < 0) || (index > this.size)) {
+            throw Kotlin.Exceptions.IndexOutOfBounds;
+        }
+        (this.array)[index] = value;
+    },
+    size:function () {
+        return this.size;
+    },
+    iterator:function () {
+        return new Kotlin.ArrayIterator(this);
+    },
+    isEmpty:function () {
+        return (this.size == 0);
+    },
+    add:function (element) {
+        this.array[size++] = element;
+    },
+    addAll:function (collection) {
+        var it = collection.iterator();
+        while (it.hasNext()) {
+            this.add(it.next());
+        }
+    },
+    remove:function (index) {
+        for (var i = index; i < this.size - 1; ++i) {
+            this.array[i] = this.array[i + 1];
+        }
+        this.size--;
+    }
+});
+
 
 Kotlin.ArrayIterator = Class.create({
     initialize:function (array) {

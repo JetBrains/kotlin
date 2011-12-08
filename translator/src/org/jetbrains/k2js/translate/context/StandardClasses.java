@@ -28,12 +28,23 @@ public final class StandardClasses {
         bindArray(standardClasses, standardLibrary);
         ClassDescriptor iteratorClass = (ClassDescriptor)
                 standardLibrary.getLibraryScope().getClassifier("Iterator");
+        assert iteratorClass != null;
         bindIterator(standardClasses, iteratorClass);
+
+        declareJavaArrayList(standardClasses);
         return standardClasses;
     }
 
-    private static void bindIterator(StandardClasses standardClasses,
-                                     ClassDescriptor iteratorClass) {
+    private static void declareJavaArrayList(@NotNull StandardClasses standardClasses) {
+        String arrayListFQName = "java.util.ArrayList";
+        standardClasses.declareStandardTopLevelObject(arrayListFQName, "ArrayList");
+        standardClasses.declareStandardMethodOrProperty(arrayListFQName, "size", "size");
+        standardClasses.declareStandardMethodOrProperty(arrayListFQName, "<init>", "ArrayList");
+    }
+
+    //TODO: more generic ways to declare standard classes
+    private static void bindIterator(@NotNull StandardClasses standardClasses,
+                                     @NotNull ClassDescriptor iteratorClass) {
         standardClasses.declareStandardTopLevelObject(iteratorClass, "ArrayIterator");
         FunctionDescriptor nextFunction =
                 getFunctionByName(iteratorClass.getDefaultType().getMemberScope(), "next");

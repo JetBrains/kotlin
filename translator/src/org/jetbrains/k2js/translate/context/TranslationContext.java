@@ -101,7 +101,10 @@ public final class TranslationContext {
         if (dynamicContext.isDeclared(descriptor)) {
             return dynamicContext.getLocalName(descriptor);
         }
-        return staticContext.getGlobalName(descriptor);
+        if (staticContext.isDeclared(descriptor)) {
+            return staticContext.getGlobalName(descriptor);
+        }
+        throw new AssertionError("Undefined name in this scope: " + descriptor.getName());
     }
 
     @NotNull

@@ -50,10 +50,6 @@ public class ReferenceTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translate() {
-        if (!context().isDeclared(referencedDescriptor)) {
-            throw new AssertionError("Undefined name in this scope: " + referencedDescriptor.getName());
-        }
-
         JsName referencedName = context().getNameForDescriptor(referencedDescriptor);
         JsExpression implicitReceiver = getImplicitReceiver(context(), referencedDescriptor);
 
