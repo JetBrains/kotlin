@@ -11,10 +11,11 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
 /**
  * @author Talanov Pavel
@@ -35,10 +36,7 @@ public final class ArrayAccessTranslator extends AccessTranslator {
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        DeclarationDescriptor descriptorForReferenceExpression =
-                BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        assert descriptorForReferenceExpression != null : "Array access expression must reference a descriptor";
-        this.methodDescriptor = descriptorForReferenceExpression;
+        this.methodDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
     }
 
     @Override

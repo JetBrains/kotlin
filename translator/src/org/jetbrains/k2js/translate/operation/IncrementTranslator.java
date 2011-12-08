@@ -19,7 +19,6 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOpe
 /**
  * @author Talanov Pavel
  */
-//TODO: reexamine class, see if can be clearer
 public abstract class IncrementTranslator extends AbstractTranslator {
 
     public static boolean isIncrement(@NotNull JetUnaryExpression expression) {

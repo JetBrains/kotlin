@@ -87,7 +87,6 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         return result;
     }
 
-    //TODO: util method
     @NotNull
     List<JsParameter> translatePrimaryConstructorParameters() {
         List<JetParameter> parameterList = classDeclaration.getPrimaryConstructorParameters();

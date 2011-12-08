@@ -169,7 +169,6 @@ public final class BindingUtils {
         return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
 
-    //TODO: duplication
     public static boolean isOwnedByNamespace(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) {
             DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
