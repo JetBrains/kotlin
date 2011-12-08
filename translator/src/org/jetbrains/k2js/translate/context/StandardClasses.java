@@ -92,13 +92,14 @@ public final class StandardClasses {
     private void declareStandardMethodOrProperty(@NotNull DeclarationDescriptor descriptor,
                                                  @NotNull String kotlinLibName) {
         String containingFQName = getFQName(getContainingDeclaration(descriptor));
-        declareStandardInnerDeclaration(containingFQName, getFQName(descriptor), kotlinLibName);
+        declareStandardInnerDeclaration(containingFQName, descriptor.getName(), kotlinLibName);
     }
 
     private void declareStandardInnerDeclaration(@NotNull String fullQualifiedClassName,
-                                                 @NotNull String fullQualifiedMethodName,
+                                                 @NotNull String shortMethodName,
                                                  @NotNull String kotlinLibName) {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
+        String fullQualifiedMethodName = fullQualifiedClassName + "." + shortMethodName;
         nameMap.put(fullQualifiedMethodName, classScope.declareName(kotlinLibName));
     }
 

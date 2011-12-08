@@ -50,7 +50,7 @@ public final class Declarations {
     }
 
     @NotNull
-    public NamingScope getScope(@NotNull DeclarationDescriptor descriptor) {
+        /*package*/ NamingScope getScope(@NotNull DeclarationDescriptor descriptor) {
         NamingScope scope = descriptorToScopeMap.get(descriptor.getOriginal());
         assert scope != null : "Unknown declaration";
         return scope;
@@ -67,12 +67,12 @@ public final class Declarations {
         return descriptorToNameMap.containsKey(descriptor.getOriginal());
     }
 
-    public boolean hasQualifier(@NotNull DeclarationDescriptor descriptor) {
+    /*package*/ boolean hasQualifier(@NotNull DeclarationDescriptor descriptor) {
         return (descriptorToQualifierMap.get(descriptor.getOriginal()) != null);
     }
 
     @NotNull
-    public JsNameRef getQualifier(@NotNull DeclarationDescriptor descriptor) {
+        /*package*/ JsNameRef getQualifier(@NotNull DeclarationDescriptor descriptor) {
         JsNameRef qualifier = descriptorToQualifierMap.get(descriptor.getOriginal());
         assert qualifier != null : "Cannot be null. Use hasQualifier to check.";
         return qualifier;

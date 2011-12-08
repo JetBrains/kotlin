@@ -96,8 +96,8 @@ public final class TranslationContext {
         if (aliaser().hasAliasForDeclaration(descriptor)) {
             return aliaser().getAliasForDeclaration(descriptor);
         }
-        if (staticContext.getStandardClasses().isStandardObject(descriptor)) {
-            return staticContext.getStandardClasses().getStandardObjectName(descriptor);
+        if (standardClasses().isStandardObject(descriptor)) {
+            return standardClasses().getStandardObjectName(descriptor);
         }
         if (dynamicContext.isDeclared(descriptor)) {
             return dynamicContext.getLocalName(descriptor);
@@ -106,6 +106,20 @@ public final class TranslationContext {
             return staticContext.getGlobalName(descriptor);
         }
         throw new AssertionError("Undefined descriptor: " + DescriptorRenderer.getFQName(descriptor));
+    }
+
+    @NotNull
+    public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (standardClasses().isStandardObject(descriptor)) {
+            return namer().kotlinObject();
+        }
+        return declarations().getQualifier(descriptor);
+    }
+
+
+    public boolean hasQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        return (declarations().hasQualifier(descriptor) ||
+                standardClasses().isStandardObject(descriptor));
     }
 
     @NotNull
@@ -123,12 +137,12 @@ public final class TranslationContext {
     }
 
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        return staticContext.getStandardClasses().isStandardObject(descriptor);
+        return standardClasses().isStandardObject(descriptor);
     }
 
     @NotNull
     public JsName getNameForStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        return staticContext.getStandardClasses().getStandardObjectName(descriptor);
+        return standardClasses().getStandardObjectName(descriptor);
     }
 
     @NotNull
@@ -182,6 +196,11 @@ public final class TranslationContext {
     @NotNull
     public JsProgram program() {
         return staticContext.getProgram();
+    }
+
+    @NotNull
+    private StandardClasses standardClasses() {
+        return staticContext.getStandardClasses();
     }
 
     @NotNull

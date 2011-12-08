@@ -486,31 +486,31 @@ Kotlin.Array = Class.create({
 Kotlin.ArrayList = Class.create({
     initialize:function (len) {
         this.array = [];
-        this.size = 0;
+        this.$size = 0;
     },
     get:function (index) {
-        if ((index < 0) || (index > this.size)) {
+        if ((index < 0) || (index > this.$size)) {
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         return (this.array)[index];
     },
     set:function (index, value) {
-        if ((index < 0) || (index > this.size)) {
+        if ((index < 0) || (index > this.$size)) {
             throw Kotlin.Exceptions.IndexOutOfBounds;
         }
         (this.array)[index] = value;
     },
     size:function () {
-        return this.size;
+        return this.$size;
     },
     iterator:function () {
         return new Kotlin.ArrayIterator(this);
     },
     isEmpty:function () {
-        return (this.size == 0);
+        return (this.$size == 0);
     },
     add:function (element) {
-        this.array[size++] = element;
+        this.array[this.$size++] = element;
     },
     addAll:function (collection) {
         var it = collection.iterator();
@@ -519,10 +519,10 @@ Kotlin.ArrayList = Class.create({
         }
     },
     remove:function (index) {
-        for (var i = index; i < this.size - 1; ++i) {
+        for (var i = index; i < this.$size - 1; ++i) {
             this.array[i] = this.array[i + 1];
         }
-        this.size--;
+        this.$size--;
     }
 });
 

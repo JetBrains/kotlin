@@ -72,7 +72,7 @@ public final class TranslationUtils {
         }
         assert BindingUtils.isOwnedByNamespace(descriptor)
                 : "Only classes and namespaces may own backing fields.";
-        JsNameRef qualifier = context.declarations().getQualifier(descriptor);
+        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
         return AstUtil.qualified(backingFieldName, qualifier);
     }
 
@@ -95,27 +95,16 @@ public final class TranslationUtils {
         return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
     }
 
-
-    public static boolean hasQualifier(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
-        return context.declarations().hasQualifier(descriptor);
-    }
-
     @NotNull
     public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
                                                   @NotNull DeclarationDescriptor descriptor) {
         JsName name = context.declarations().getName(descriptor);
         JsNameRef reference = name.makeRef();
-        if (hasQualifier(context, descriptor)) {
-            JsNameRef qualifier = getQualifier(context, descriptor);
+        if (context.hasQualifierForDescriptor(descriptor)) {
+            JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
             AstUtil.setQualifier(reference, qualifier);
         }
         return reference;
-    }
-
-    @NotNull
-    private static JsNameRef getQualifier(@NotNull TranslationContext context,
-                                          @NotNull DeclarationDescriptor descriptor) {
-        return context.declarations().getQualifier(descriptor);
     }
 
     @NotNull
@@ -211,13 +200,12 @@ public final class TranslationUtils {
     @Nullable
     public static JsExpression getImplicitReceiver(@NotNull TranslationContext context,
                                                    @NotNull DeclarationDescriptor referencedDescriptor) {
-        if (!context.isDeclared(referencedDescriptor)) return null;
-
         if (BindingUtils.isOwnedByClass(referencedDescriptor)) {
             return TranslationUtils.getThisQualifier(context);
         }
-        if (!BindingUtils.isOwnedByNamespace(referencedDescriptor)) return null;
-
-        return context.declarations().getQualifier(referencedDescriptor);
+        if (BindingUtils.isOwnedByNamespace(referencedDescriptor)) {
+            return context.getQualifierForDescriptor(referencedDescriptor);
+        }
+        return null;
     }
 }
