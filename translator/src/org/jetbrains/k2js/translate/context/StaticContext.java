@@ -22,7 +22,9 @@ public class StaticContext {
         NamingScope scope = NamingScope.rootScope(jsRootScope);
         Declarations declarations = Declarations.newInstance(scope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
-        return new StaticContext(program, bindingContext, declarations, aliaser, namer, intrinsics, scope);
+        StandardClasses standardClasses = StandardClasses.bindImplementations(library, namer.getKotlinScope());
+        return new StaticContext(program, bindingContext, declarations, aliaser,
+                namer, intrinsics, standardClasses, scope);
     }
 
     @NotNull
@@ -44,13 +46,16 @@ public class StaticContext {
     private final Intrinsics intrinsics;
 
     @NotNull
+    private final StandardClasses standardClasses;
+
+    @NotNull
     private final NamingScope rootScope;
 
 
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
                           @NotNull Declarations declarations, @NotNull Aliaser aliaser,
                           @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-                          @NotNull NamingScope rootScope) {
+                          @NotNull StandardClasses standardClasses, @NotNull NamingScope rootScope) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.declarations = declarations;
@@ -58,6 +63,7 @@ public class StaticContext {
         this.namer = namer;
         this.intrinsics = intrinsics;
         this.rootScope = rootScope;
+        this.standardClasses = standardClasses;
     }
 
     @NotNull
@@ -93,6 +99,11 @@ public class StaticContext {
     @NotNull
     public NamingScope getRootScope() {
         return rootScope;
+    }
+
+    @NotNull
+    public StandardClasses getStandardClasses() {
+        return standardClasses;
     }
 
     @NotNull

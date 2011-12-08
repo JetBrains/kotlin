@@ -58,4 +58,18 @@ public final class PsiUtils {
         assert calleeExpression != null;
         return calleeExpression;
     }
+
+    @NotNull
+    public static JetExpression getLoopBody(@NotNull JetLoopExpression expression) {
+        JetExpression body = expression.getBody();
+        assert body != null : "Loops cannot have null bodies.";
+        return body;
+    }
+
+    @NotNull
+    public static JetParameter getLoopParameter(@NotNull JetForExpression expression) {
+        JetParameter loopParameter = expression.getLoopParameter();
+        assert loopParameter != null;
+        return loopParameter;
+    }
 }

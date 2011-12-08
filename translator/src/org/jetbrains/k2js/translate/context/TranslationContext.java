@@ -95,6 +95,9 @@ public final class TranslationContext {
         if (aliaser().hasAliasForDeclaration(descriptor)) {
             return aliaser().getAliasForDeclaration(descriptor);
         }
+        if (staticContext.getStandardClasses().isStandardObject(descriptor)) {
+            return staticContext.getStandardClasses().getStandardObjectName(descriptor);
+        }
         if (dynamicContext.isDeclared(descriptor)) {
             return dynamicContext.getLocalName(descriptor);
         }

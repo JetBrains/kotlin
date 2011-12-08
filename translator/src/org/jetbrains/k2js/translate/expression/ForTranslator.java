@@ -11,6 +11,9 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
+
 /**
  * @author Talanov Pavel
  */
@@ -33,41 +36,56 @@ public final class ForTranslator extends AbstractTranslator {
 
     @NotNull
     private JsBlock translate() {
-        JetParameter loopParameter = expression.getLoopParameter();
-        assert loopParameter != null;
-        JsName parameterName = context().declareLocalVariable(loopParameter);
+        JsName parameterName = declareParameter();
         TemporaryVariable iterator = context().declareTemporary(iteratorMethodInvocation());
-        JsBlock bodyBlock = new JsBlock();
-        bodyBlock.addStatement(AstUtil.newAssignmentStatement(parameterName.makeRef(), nextMethodInvocation(iterator)));
-        bodyBlock.addStatement(AstUtil.convertToBlock(Translation.translateExpression(expression.getBody(), context())));
+        JsBlock bodyBlock = generateCycleBody(parameterName, iterator);
         JsWhile cycle = new JsWhile(hasNextMethodInvocation(iterator), bodyBlock);
         return AstUtil.newBlock(iterator.assignmentExpression().makeStmt(), cycle);
     }
 
     @NotNull
+    private JsName declareParameter() {
+        JetParameter loopParameter = getLoopParameter(expression);
+        return context().declareLocalVariable(loopParameter);
+    }
+
+    @NotNull
+    private JsBlock generateCycleBody(@NotNull JsName parameterName, @NotNull TemporaryVariable iterator) {
+        JsStatement parameterAssignment = AstUtil.newAssignmentStatement(parameterName.makeRef(), nextMethodInvocation(iterator));
+        JsNode originalBody = Translation.translateExpression(getLoopBody(expression), context());
+        return AstUtil.newBlock(parameterAssignment, AstUtil.convertToBlock(originalBody));
+    }
+
+    @NotNull
     private JsExpression nextMethodInvocation(@NotNull TemporaryVariable iterator) {
-        JsNameRef next = AstUtil.newQualifiedNameRef("next");
-        JsNameRef result = iterator.nameReference();
-        AstUtil.setQualifier(next, result);
-        return AstUtil.newInvocation(next);
+        return callStandardMethodOnExpression("next", iterator.nameReference());
     }
 
     @NotNull
     private JsExpression hasNextMethodInvocation(@NotNull TemporaryVariable iterator) {
-        JsNameRef hasNext = AstUtil.newQualifiedNameRef("hasNext");
-        JsNameRef result = iterator.nameReference();
-        AstUtil.setQualifier(hasNext, result);
+        return callStandardMethodOnExpression("hasNext", iterator.nameReference());
+    }
+
+    @NotNull
+    private JsExpression callStandardMethodOnExpression(@NotNull String methodName, @NotNull JsNameRef expression) {
+        JsNameRef hasNext = AstUtil.newQualifiedNameRef(methodName);
+        AstUtil.setQualifier(hasNext, expression);
         return AstUtil.newInvocation(hasNext);
     }
 
-
     @NotNull
     private JsExpression iteratorMethodInvocation() {
-        JetExpression rangeExpression = expression.getLoopRange();
-        assert rangeExpression != null;
+        JetExpression rangeExpression = getLoopRange();
         JsExpression range = Translation.translateAsExpression(rangeExpression, context());
         JsNameRef iteratorMethodReference = AstUtil.newQualifiedNameRef("iterator");
         AstUtil.setQualifier(iteratorMethodReference, range);
         return AstUtil.newInvocation(iteratorMethodReference);
+    }
+
+    @NotNull
+    private JetExpression getLoopRange() {
+        JetExpression rangeExpression = expression.getLoopRange();
+        assert rangeExpression != null;
+        return rangeExpression;
     }
 }

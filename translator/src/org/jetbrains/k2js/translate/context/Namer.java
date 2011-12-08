@@ -144,4 +144,9 @@ public final class Namer {
     public JsNameRef isOperationReference() {
         return kotlin(AstUtil.newQualifiedNameRef("isType"));
     }
+
+    @NotNull
+        /*package*/ JsScope getKotlinScope() {
+        return kotlinScope;
+    }
 }

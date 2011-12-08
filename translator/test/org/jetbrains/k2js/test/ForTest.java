@@ -18,4 +18,9 @@ public final class ForTest extends AbstractExpressionTest {
     public void forIteratesOverArray() throws Exception {
         testFooBoxIsTrue("forIteratesOverArray.kt");
     }
+
+    @Test
+    public void forOnEmptyArray() throws Exception {
+        testFooBoxIsTrue("forOnEmptyArray.kt");
+    }
 }
