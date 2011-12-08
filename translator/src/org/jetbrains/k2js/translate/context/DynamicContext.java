@@ -34,6 +34,7 @@ public class DynamicContext {
         return new DynamicContext(namingScope.innerScope(scope), currentBlock);
     }
 
+    //TODO:
     @NotNull
     public DynamicContext innerBlock(@NotNull JsBlock block) {
         return new DynamicContext(namingScope, block);

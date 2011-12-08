@@ -18,7 +18,7 @@ public class StaticContext {
         JsProgram program = new JsProgram("main");
         JsRootScope jsRootScope = program.getRootScope();
         Namer namer = Namer.newInstance(jsRootScope);
-        Aliaser aliaser = Aliaser.aliasesForStandardClasses(library, namer);
+        Aliaser aliaser = Aliaser.newInstance();
         NamingScope scope = NamingScope.rootScope(jsRootScope);
         Declarations declarations = Declarations.newInstance(scope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);

@@ -79,18 +79,17 @@ public final class Declarations {
     }
 
     /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull NamingScope scope) {
-//        assert !descriptorToScopeMap.containsKey(descriptor) : "Already contains that key!";
+        assert !descriptorToScopeMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToScopeMap.put(descriptor, scope);
     }
 
-    //TODO: decide what to do about function overriding
     /*package*/ void putName(@NotNull DeclarationDescriptor descriptor, @NotNull JsName name) {
-//        assert !descriptorToNameMap.containsKey(descriptor) : "Already contains that key!";
+        assert !descriptorToNameMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToNameMap.put(descriptor, name);
     }
 
     /*package*/ void putQualifier(@NotNull DeclarationDescriptor descriptor, @Nullable JsNameRef qualifier) {
-//        assert !descriptorToQualifierMap.containsKey(descriptor) : "Already contains that key!";
+        assert !descriptorToQualifierMap.containsKey(descriptor) : "Already contains that key!";
         descriptorToQualifierMap.put(descriptor, qualifier);
     }
 }

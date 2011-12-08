@@ -128,14 +128,6 @@ public final class TranslationContext {
         return getNameForDescriptor(descriptor);
     }
 
-    public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {
-        if (dynamicContext.isDeclared(descriptor)) {
-            return true;
-        } else {
-            return staticContext.isDeclared(descriptor);
-        }
-    }
-
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
         return standardClasses().isStandardObject(descriptor);
     }

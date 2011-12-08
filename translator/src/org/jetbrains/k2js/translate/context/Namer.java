@@ -10,11 +10,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Talanov Pavel
  */
 
-/*
- * This class is a dummy and should completely change in the future
- */
-//TODO: rework into stateful class and include into context
-
 public final class Namer {
 
     private static final String INITIALIZE_METHOD_NAME = "initialize";
@@ -31,11 +26,6 @@ public final class Namer {
     public static JsNameRef initializeMethodReference() {
         return AstUtil.newQualifiedNameRef(INITIALIZE_METHOD_NAME);
     }
-
-//    @NotNull
-//    public static JsNameRef superMethodReference() {
-//        return AstUtil.newQualifiedNameRef(SUPER_METHOD_NAME);
-//    }
 
     @NotNull
     public static String superMethodName() {
@@ -122,17 +112,6 @@ public final class Namer {
         JsNameRef kotlinReference = kotlinName.makeRef();
         AstUtil.setQualifier(reference, kotlinReference);
         return reference;
-    }
-
-    @NotNull
-    public JsName libraryObject(@NotNull String name) {
-        return kotlinScope.declareName(name);
-    }
-
-    @NotNull
-    public JsName libraryMethod(@NotNull String name) {
-        //TODO: Create scopes for library methods
-        return kotlinScope.declareName(name);
     }
 
     @NotNull

@@ -5,18 +5,15 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO: implement aliases stack for this
+//TODO: implement aliases stack for this need TESTS
 public class Aliaser {
 
-    public static Aliaser aliasesForStandardClasses(@NotNull JetStandardLibrary standardLibrary,
-                                                    @NotNull Namer namer) {
-        Aliaser aliaser = new Aliaser();
-        return aliaser;
+    public static Aliaser newInstance() {
+        return new Aliaser();
     }
 
     @NotNull
