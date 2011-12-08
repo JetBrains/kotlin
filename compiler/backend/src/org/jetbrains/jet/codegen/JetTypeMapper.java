@@ -200,6 +200,8 @@ public class JetTypeMapper {
             }
             return name;
         }
+        if(name.contains("/"))
+            return name;
         if (container != null) {
             if (container instanceof ModuleDescriptor) {
                 return name;
