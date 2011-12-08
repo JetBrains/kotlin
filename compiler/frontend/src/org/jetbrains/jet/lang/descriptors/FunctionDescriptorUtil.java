@@ -16,6 +16,19 @@ import java.util.*;
  * @author abreslav
  */
 public class FunctionDescriptorUtil {
+    private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+
+        @Override
+        public TypeProjection get(TypeConstructor key) {
+            return null;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+    });
+
     public static Map<TypeConstructor, TypeProjection> createSubstitutionContext(@NotNull FunctionDescriptor functionDescriptor, List<JetType> typeArguments) {
         if (functionDescriptor.getTypeParameters().isEmpty()) return Collections.emptyMap();
 
@@ -92,5 +105,9 @@ public class FunctionDescriptorUtil {
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
                                       JetStandardClasses.getReturnTypeFromFunctionType(functionType),
                                       Modality.FINAL, Visibility.LOCAL);
+    }
+
+    public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
+        return (D) candidate.substitute(MAKE_TYPE_PARAMETERS_FRESH);
     }
 }

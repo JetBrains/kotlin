@@ -226,11 +226,10 @@ public abstract class CodegenContext {
                     pd.getModality(),
                     pd.getVisibility(),
                     pd.isVar(),
-                    pd.getExpectedThisObject(),
                     pd.getName()  + "$bridge$" + accessors.size()
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
-            myAccessor.setType(pd.getInType(), pd.getOutType(), Collections.<TypeParameterDescriptor>emptyList(), receiverType);
+            myAccessor.setType(pd.getInType(), pd.getOutType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
 
             PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
                         myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),

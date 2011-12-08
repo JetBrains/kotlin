@@ -433,15 +433,25 @@ public class CallResolver {
 
                     ConstraintSystem constraintSystem = new ConstraintSystemImpl(new DebugConstraintResolutionListener(debugInfo));
 
-                    for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
-                        constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
+                    // If the call is recursive, e.g.
+                    //   fun foo<T>(t : T) : T = foo(t)
+                    // we can't use same descriptor objects for T's as actual type values and same T's as unknowns,
+                    // because constraints become trivial (T :< T), and inference fails
+                    //
+                    // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
+                    CallableDescriptor candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate);
+
+
+                    for (TypeParameterDescriptor typeParameterDescriptor : candidateWithFreshVariables.getTypeParameters()) {
+                        constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
                     }
 
-                    TypeSubstitutor substituteDontCare = ConstraintSystemImpl.makeConstantSubstitutor(candidate.getTypeParameters(), DONT_CARE);
+                    TypeSubstitutor substituteDontCare = ConstraintSystemImpl.makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
 
+                    // Value parameters
                     for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
                         ResolvedValueArgument valueArgument = entry.getValue();
-                        ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
+                        ValueParameterDescriptor valueParameterDescriptor = candidateWithFreshVariables.getValueParameters().get(entry.getKey().getIndex());
 
                         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor);
 
@@ -463,25 +473,29 @@ public class CallResolver {
                         }
                     }
 
+                    // Receiver
                     // Error is already reported if something is missing
                     ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
-                    ReceiverDescriptor receiverParameter = candidate.getReceiverParameter();
+                    ReceiverDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
                     if (receiverArgument.exists() && receiverParameter.exists()) {
                         constraintSystem.addSubtypingConstraint(receiverArgument.getType(), receiverParameter.getType());
                     }
 
+                    // Return type
                     if (expectedType != NO_EXPECTED_TYPE) {
-                        constraintSystem.addSubtypingConstraint(candidate.getReturnType(), expectedType);
+                        constraintSystem.addSubtypingConstraint(candidateWithFreshVariables.getReturnType(), expectedType);
                     }
 
+                    // Solution
                     ConstraintSystemSolution solution = constraintSystem.solve();
                     if (solution.getStatus().isSuccessful()) {
-                        D substitute = (D) candidate.substitute(solution.getSubstitutor());
+                        D substitute = (D) candidateWithFreshVariables.substitute(solution.getSubstitutor());
                         assert substitute != null;
                         replaceValueParametersWithSubstitutedOnes(candidateCall, substitute);
                         candidateCall.setResultingDescriptor(substitute);
+
                         for (TypeParameterDescriptor typeParameterDescriptor : candidateCall.getCandidateDescriptor().getTypeParameters()) {
-                            candidateCall.recordTypeArgument(typeParameterDescriptor, solution.getValue(typeParameterDescriptor));
+                            candidateCall.recordTypeArgument(typeParameterDescriptor, solution.getValue(candidateWithFreshVariables.getTypeParameters().get(typeParameterDescriptor.getIndex())));
                         }
 
                         // Here we type check the arguments with inferred types expected
