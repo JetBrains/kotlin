@@ -392,36 +392,6 @@ public class JetTypeMapper {
         return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
-    public String genericSignature(FunctionDescriptor f) {
-        StringBuffer answer = new StringBuffer();
-        final List<TypeParameterDescriptor> typeParameters = f.getTypeParameters();
-        if (!typeParameters.isEmpty()) {
-            answer.append('<');
-            for (TypeParameterDescriptor p : typeParameters) {
-                appendTypeParameterSignature(answer, p);
-            }
-            answer.append('>');
-        }
-
-        answer.append('(');
-        for (ValueParameterDescriptor p : f.getValueParameters()) {
-            appendType(answer, p.getOutType());
-        }
-        answer.append(')');
-
-        appendType(answer, f.getReturnType());
-
-        return answer.toString();
-    }
-
-    private void appendType(StringBuffer answer, JetType type) {
-        answer.append(mapType(type).getDescriptor()); // TODO: type parameter references!
-    }
-
-    private static void appendTypeParameterSignature(StringBuffer answer, TypeParameterDescriptor p) {
-        answer.append(p.getName()); // TODO: BOUND!
-    }
-
     public Method mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         Type returnType = mapType(descriptor.getOutType());
         String name = PropertyCodegen.getterName(descriptor.getName());

@@ -176,7 +176,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         if(bridge.getDescriptor().equals(delegate.getDescriptor()))
             return;
 
-        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
+        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getDescriptor(), null, new String[0]);
         if (cv.generateCode()) {
             mv.visitCode();
 
