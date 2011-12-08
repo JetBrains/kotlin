@@ -11,7 +11,7 @@ class C() {
 }
 
 fun f(): Unit {
-  var <warning>x</warning>: Int? = 1
+  var x: Int? = <warning>1</warning>
   x = 1
   x <error>+</error> 1
   x <error>plus</error> 1

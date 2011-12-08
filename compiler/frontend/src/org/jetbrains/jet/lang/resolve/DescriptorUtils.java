@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -163,5 +164,36 @@ public class DescriptorUtils {
         }
 
         return descriptor.getName();
+    }
+
+    @Nullable
+    public static <D extends DeclarationDescriptor> D getParentOfType(@Nullable DeclarationDescriptor descriptor, @NotNull Class<D> aClass) {
+        return getParentOfType(descriptor, aClass, true);
+    }    
+    
+    @Nullable
+    public static <D extends DeclarationDescriptor> D getParentOfType(@Nullable DeclarationDescriptor descriptor, @NotNull Class<D> aClass, boolean strict) {
+        if (descriptor == null) return null;
+        if (strict) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        while (descriptor != null) {
+            if (aClass.isInstance(descriptor)) {
+                //noinspection unchecked
+                return (D) descriptor;
+            }
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return null;
+    }
+    
+    public static boolean isAncestor(@Nullable DeclarationDescriptor ancestor, @NotNull DeclarationDescriptor declarationDescriptor, boolean strict) {
+        if (ancestor == null) return false;
+        DeclarationDescriptor descriptor = strict ? declarationDescriptor.getContainingDeclaration() : declarationDescriptor;
+        while (descriptor != null) {
+            if (ancestor == descriptor) return true;
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return false;
     }
 }

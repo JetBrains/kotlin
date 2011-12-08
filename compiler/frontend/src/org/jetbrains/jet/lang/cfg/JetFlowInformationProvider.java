@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -354,8 +355,11 @@ public class JetFlowInformationProvider {
             return true;
         }
 
-        JetClassOrObject propertyClassOrObject = PsiTreeUtil.getParentOfType(property, JetClassOrObject.class);
-        if (propertyClassOrObject == null || !PsiTreeUtil.isAncestor(propertyClassOrObject, element, false)) {
+        JetNamedDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
+        DeclarationDescriptor declarationDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, parentDeclaration);
+        assert declarationDescriptor != null;
+        ClassDescriptor variableClass = DescriptorUtils.getParentOfType(variableDescriptor, ClassDescriptor.class);
+        if (variableClass == null || !DescriptorUtils.isAncestor(variableClass, declarationDescriptor, false)) {
             trace.report(Errors.INACCESSIBLE_BACKING_FIELD.on(element));
             return true;
         }
@@ -482,11 +486,7 @@ public class JetFlowInformationProvider {
         assert pseudocode != null;
         JetControlFlowGraphTraverser<Map<VariableDescriptor, VariableStatus>> traverser = JetControlFlowGraphTraverser.create(pseudocode, true, false);
         final Collection<VariableDescriptor> declaredVariables = collectDeclaredVariables(subroutine);        
-        Collection<VariableDescriptor> usedVariables = collectUsedVariables(pseudocode);
         Map<VariableDescriptor, VariableStatus> sinkInstructionData = Maps.newHashMap();
-        for (VariableDescriptor usedVariable : usedVariables) {
-            sinkInstructionData.put(usedVariable, VariableStatus.UNUSED);
-        }
         traverser.collectInformationFromInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataMergeStrategy<Map<VariableDescriptor, VariableStatus>>() {
             @Override
             public Pair<Map<VariableDescriptor, VariableStatus>, Map<VariableDescriptor, VariableStatus>> execute(Instruction instruction, @NotNull Collection<Map<VariableDescriptor, VariableStatus>> incomingEdgesData) {
@@ -505,7 +505,17 @@ public class JetFlowInformationProvider {
                         exitResult.put(variableDescriptor, VariableStatus.READ);
                     }
                     else if (instruction instanceof WriteValueInstruction) {
-                        exitResult.put(variableDescriptor, VariableStatus.WRITTEN);
+                        VariableStatus variableStatus = enterResult.get(variableDescriptor);
+                        if (variableStatus == null) variableStatus = VariableStatus.UNUSED;
+                        switch(variableStatus) {
+                            case UNUSED:
+                            case ONLY_WRITTEN:
+                                exitResult.put(variableDescriptor, VariableStatus.ONLY_WRITTEN);
+                                break;
+                            case WRITTEN:
+                            case READ:
+                                exitResult.put(variableDescriptor, VariableStatus.WRITTEN);
+                        }
                     }
                 }
                 return new Pair<Map<VariableDescriptor, VariableStatus>, Map<VariableDescriptor, VariableStatus>>(enterResult, exitResult);
@@ -516,13 +526,12 @@ public class JetFlowInformationProvider {
             public void execute(Instruction instruction, @Nullable Map<VariableDescriptor, VariableStatus> enterData, @Nullable Map<VariableDescriptor, VariableStatus> exitData) {
                 assert enterData != null && exitData != null;
                 VariableDescriptor variableDescriptor = extractVariableDescriptorIfAny(instruction, false);
-                if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor)) return;
-                PsiElement variableDeclarationElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
-                assert variableDeclarationElement instanceof JetDeclaration;
-                if (!JetPsiUtil.isLocal((JetDeclaration) variableDeclarationElement)) return;
+                if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor) ||
+                    !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
+                VariableStatus variableStatus = enterData.get(variableDescriptor);
                 if (instruction instanceof WriteValueInstruction) {
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
-                    if (enterData.get(variableDescriptor) == VariableStatus.WRITTEN || enterData.get(variableDescriptor) == VariableStatus.UNUSED) {
+                    if (variableStatus != VariableStatus.READ) {
                         if (element instanceof JetBinaryExpression && ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {
                             JetExpression right = ((JetBinaryExpression) element).getRight();
                             if (right != null) {
@@ -542,7 +551,7 @@ public class JetFlowInformationProvider {
                     if (element instanceof JetNamedDeclaration) {
                         PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
                         PsiElement elementToMark = nameIdentifier != null ? nameIdentifier : element;
-                        if (enterData.get(variableDescriptor) == VariableStatus.UNUSED) {
+                        if (variableStatus == null || variableStatus == VariableStatus.UNUSED) {
                             if (element instanceof JetProperty) {
                                 trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, elementToMark, variableDescriptor));
                             }
@@ -559,8 +568,14 @@ public class JetFlowInformationProvider {
                                 }
                             }
                         }
-                        else if (enterData.get(variableDescriptor) == VariableStatus.WRITTEN && element instanceof JetProperty) {
+                        else if (variableStatus == VariableStatus.ONLY_WRITTEN && element instanceof JetProperty) {
                             trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, elementToMark, variableDescriptor));
+                        }
+                        else if (variableStatus == VariableStatus.WRITTEN && element instanceof JetProperty) {
+                            JetExpression initializer = ((JetProperty) element).getInitializer();
+                            if (initializer != null) {
+                                trace.report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on((JetNamedDeclaration) element, initializer, variableDescriptor));
+                            }
                         }
                     }
 
@@ -570,8 +585,9 @@ public class JetFlowInformationProvider {
     }
 
     private static enum VariableStatus { 
-        READ(2),
-        WRITTEN(1),
+        READ(3),
+        WRITTEN(2),
+        ONLY_WRITTEN(1),
         UNUSED(0);
         
         private int importance;

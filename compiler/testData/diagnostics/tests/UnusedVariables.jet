@@ -1,7 +1,7 @@
 namespace unused_variables
 
 fun testSimpleCases() {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = 2
+    var i = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>2<!>
     i = <!UNUSED_VALUE!>34<!>
     i = 34
     doSmth(i)
@@ -62,7 +62,7 @@ class MyTest() {
     }
 
     fun testIf() {
-        var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!> : Any
+        var a : Any
         if (1 < 2) {
             a = 23
         }
