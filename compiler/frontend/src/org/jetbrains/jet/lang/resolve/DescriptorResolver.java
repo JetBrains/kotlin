@@ -475,11 +475,10 @@ public class DescriptorResolver {
                 Modality.FINAL,
                 resolveVisibilityFromModifiers(objectDeclaration.getModifierList()),
                 false,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 JetPsiUtil.safeName(objectDeclaration.getName())
         );
 
-        propertyDescriptor.setType(null, classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER);
+        propertyDescriptor.setType(null, classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(null, null);
 
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
@@ -518,7 +517,6 @@ public class DescriptorResolver {
                 resolveModalityFromModifiers(property.getModifierList(), defaultModality),
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 JetPsiUtil.safeName(property.getName())
         );
 
@@ -555,7 +553,7 @@ public class DescriptorResolver {
         JetType type = getVariableType(scope2, property, true);
 
         JetType inType = isVar ? type : null;
-        propertyDescriptor.setType(inType, type, typeParameterDescriptors, receiverDescriptor);
+        propertyDescriptor.setType(inType, type, typeParameterDescriptors, DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), receiverDescriptor);
 
         PropertyGetterDescriptor getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor);
         PropertySetterDescriptor setter = resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor);
@@ -838,14 +836,13 @@ public class DescriptorResolver {
                 resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 name == null ? "<no name>" : name
         );
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = createDefaultSetter(propertyDescriptor);
 
         JetType inType = isMutable ? type : null;
-        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER);
+        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(getter, setter);
         getter.initialize(propertyDescriptor.getOutType());
 
