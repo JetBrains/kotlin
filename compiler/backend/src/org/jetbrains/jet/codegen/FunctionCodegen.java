@@ -366,8 +366,12 @@ public class FunctionCodegen {
                     if(kind == OwnerKind.TRAIT_IMPL) {
                         iv.invokeinterface(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
                     }
-                    else
-                        iv.invokevirtual(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                    else {
+                        if(!isConstructor)
+                            iv.invokevirtual(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                        else
+                            iv.invokespecial(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                    }
                 }
                 else {
                     iv.invokestatic(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
