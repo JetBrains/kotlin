@@ -574,7 +574,11 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitParameter(JetParameter parameter) {
+            JetExpression defaultValue = parameter.getDefaultValue();
             builder.declare(parameter);
+            if (defaultValue != null) {
+                builder.read(defaultValue);
+            }
             builder.write(parameter, parameter);
         }
 
@@ -838,6 +842,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitClass(JetClass klass) {
+            List<JetParameter> parameters = klass.getPrimaryConstructorParameters();
+            for (JetParameter parameter : parameters) {
+                value(parameter, inCondition);
+            }
             visitClassOrObject(klass);
         }
 

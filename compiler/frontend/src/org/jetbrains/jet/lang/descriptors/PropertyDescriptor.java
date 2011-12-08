@@ -261,6 +261,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
                         propertyDescriptor,
                         Lists.newArrayList(setter.getAnnotations()),
                         setter.hasBody(), setter.isDefault());
+        if (newSetter != null) {
+            newSetter.initialize(setter.getValueParameters().get(0).copy(newSetter));
+        }
         propertyDescriptor.initialize(newGetter, newSetter);
         return propertyDescriptor;
     }

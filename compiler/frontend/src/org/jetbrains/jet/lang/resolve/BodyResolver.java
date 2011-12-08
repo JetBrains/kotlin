@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,7 @@ public class BodyResolver {
 
         resolvePropertyDeclarationBodies();
         resolveAnonymousInitializers();
+        resolvePrimaryConstructorParameters();
 
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
@@ -250,6 +252,17 @@ public class BodyResolver {
         }
     }
 
+    private void resolvePrimaryConstructorParameters() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClass klass = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
+            ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+            if (unsubstitutedPrimaryConstructor != null) {
+                checkDefaultParameterValues(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(), classDescriptor.getScopeForInitializers());
+            }
+        }
+    }
+
     private void resolveSecondaryConstructorBodies() {
         for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
             JetSecondaryConstructor constructor = entry.getKey();
@@ -332,8 +345,10 @@ public class BodyResolver {
         if (bodyExpression != null) {
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
 
-            typeInferrer.checkFunctionReturnType(scopeForConstructorBody, declaration, JetStandardClasses.getUnitType());
+            typeInferrer.checkFunctionReturnType(scopeForConstructorBody, declaration, descriptor, JetStandardClasses.getUnitType());
         }
+
+        checkDefaultParameterValues(declaration.getValueParameters(), descriptor.getValueParameters(), scopeForConstructorBody);
     }
 
     private void resolvePropertyDeclarationBodies() {
@@ -477,17 +492,25 @@ public class BodyResolver {
         if (!context.completeAnalysisNeeded(function)) return;
 
         JetExpression bodyExpression = function.getBodyExpression();
+        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(declaringScope, functionDescriptor, trace);
         if (bodyExpression != null) {
-            //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
             ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
 
-            typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
+            typeInferrer.checkFunctionReturnType(functionInnerScope, function, functionDescriptor);
         }
 
-        ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
         List<JetParameter> valueParameters = function.getValueParameters();
+        List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
+
+        checkDefaultParameterValues(valueParameters, valueParameterDescriptors, functionInnerScope);
+
+        assert functionDescriptor.getReturnType() != null;
+    }
+
+    private void checkDefaultParameterValues(List<JetParameter> valueParameters, List<ValueParameterDescriptor> valueParameterDescriptors, JetScope declaringScope) {
+        ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
         for (int i = 0; i < valueParameters.size(); i++) {
-            ValueParameterDescriptor valueParameterDescriptor = functionDescriptor.getValueParameters().get(i);
+            ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
             if (valueParameterDescriptor.hasDefaultValue()) {
                 JetParameter jetParameter = valueParameters.get(i);
                 JetExpression defaultValue = jetParameter.getDefaultValue();
@@ -496,8 +519,6 @@ public class BodyResolver {
                 }
             }
         }
-
-        assert functionDescriptor.getReturnType() != null;
     }
 
     private void computeDeferredTypes() {

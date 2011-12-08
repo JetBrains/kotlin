@@ -18,13 +18,17 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.CommonSupertypes;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.FORBIDDEN;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -76,10 +80,6 @@ public class ExpressionTypingServices {
 //        return ((ExpressionTypingContext) ExpressionTyperVisitorWithNamespaces).INSTANCE.getType(expression, ExpressionTypingContext.newRootContext(semanticServices, trace, scope, DataFlowInfo.getEmpty(), TypeUtils.NO_EXPECTED_TYPE, TypeUtils.NO_EXPECTED_TYPE));
     }
 
-    public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
-        checkFunctionReturnType(outerScope, function, functionDescriptor, DataFlowInfo.EMPTY);
-    }
-
     @NotNull
     public JetType inferFunctionReturnType(@NotNull JetScope outerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
         Map<JetExpression, JetType> typeMap = collectReturnedExpressionsWithTypes(trace, outerScope, function, functionDescriptor);
@@ -89,24 +89,30 @@ public class ExpressionTypingServices {
                : CommonSupertypes.commonSupertype(types);
     }
 
-    public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType) {
-        checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-                semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, expectedReturnType, false
-        ));
+
+    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, null);
     }
 
+    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @Nullable JetType expectedReturnType) {
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, expectedReturnType);
+    }
 /////////////////////////////////////////////////////////
 
-    /*package*/ void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, DataFlowInfo dataFlowInfo) {
-        JetType expectedReturnType = functionDescriptor.getReturnType();
-        if (!function.hasBlockBody() && !function.hasDeclaredReturnType()) {
-            expectedReturnType = NO_EXPECTED_TYPE;
+    /*package*/ void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo) {
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, dataFlowInfo, null);
+    }
+
+    /*package*/ void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedReturnType) {
+        if (expectedReturnType == null) {
+            expectedReturnType = functionDescriptor.getReturnType();
+            if (!function.hasBlockBody() && !function.hasDeclaredReturnType()) {
+                expectedReturnType = NO_EXPECTED_TYPE;
+            }
         }
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-            semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-            trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, expectedReturnType, false
+                semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
+                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, expectedReturnType, false
         ));
     }
 

@@ -262,7 +262,12 @@ public class JetFlowInformationProvider {
         }
         if (!isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
             varWithUninitializedErrorGenerated.add(variableDescriptor);
-            trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
+            if (variableDescriptor instanceof ValueParameterDescriptor) {
+                trace.report(Errors.UNINITIALIZED_PARAMETER.on((JetSimpleNameExpression) element, (ValueParameterDescriptor) variableDescriptor));
+            }
+            else {
+                trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
+            }
         }
     }
 

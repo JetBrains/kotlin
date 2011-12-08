@@ -707,6 +707,10 @@ public class DescriptorResolver {
                 MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
+            else {
+                setterDescriptor.initializeDefault();
+            }
+
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         else if (property.isVar()) {
@@ -841,11 +845,12 @@ public class DescriptorResolver {
                 DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 name == null ? "<no name>" : name
         );
+        JetType inType = isMutable ? type : null;
+        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER);
+
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = createDefaultSetter(propertyDescriptor);
 
-        JetType inType = isMutable ? type : null;
-        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(getter, setter);
         getter.initialize(propertyDescriptor.getOutType());
 

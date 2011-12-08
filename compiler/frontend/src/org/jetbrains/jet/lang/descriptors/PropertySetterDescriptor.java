@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.descriptors;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -15,22 +14,28 @@ import java.util.Set;
  */
 public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
-    private MutableValueParameterDescriptor parameter;
+    private ValueParameterDescriptor parameter;
 
-    public PropertySetterDescriptor(@NotNull Modality modality, @NotNull Visibility visibility,
-            @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations,
-            boolean hasBody, boolean isDefault)
-    {
+    public PropertySetterDescriptor(@NotNull Modality modality,
+                                    @NotNull Visibility visibility,
+                                    @NotNull PropertyDescriptor correspondingProperty,
+                                    @NotNull List<AnnotationDescriptor> annotations,
+                                    boolean hasBody,
+                                    boolean isDefault) {
         super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
+        if (isDefault) {
+            initializeDefault();
+        }
     }
 
-    public void initialize(@NotNull MutableValueParameterDescriptor parameter) {
+    public void initialize(@NotNull ValueParameterDescriptor parameter) {
         assert this.parameter == null;
         this.parameter = parameter;
     }
 
-    public void setParameterType(@NotNull JetType type) {
-        parameter.setType(type);
+    public void initializeDefault() {
+        assert parameter == null;
+        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), "<>", null, getCorrespondingProperty().getReturnType(), false, null);
     }
 
     @NotNull
@@ -42,7 +47,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @NotNull
     @Override
     public List<ValueParameterDescriptor> getValueParameters() {
-        return Collections.<ValueParameterDescriptor>singletonList(parameter);
+        return Collections.singletonList(parameter);
     }
 
     @NotNull

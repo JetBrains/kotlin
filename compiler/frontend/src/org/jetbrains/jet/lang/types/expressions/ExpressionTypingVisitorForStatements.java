@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,7 @@ import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -108,7 +110,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     public JetType visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
         FunctionDescriptorImpl functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
         scope.addFunctionDescriptor(functionDescriptor);
-        context.getServices().checkFunctionReturnType(context.scope, function, functionDescriptor, context.dataFlowInfo);
+        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
+        context.getServices().checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo);
         return checkExpectedType(function, context);
     }
 
