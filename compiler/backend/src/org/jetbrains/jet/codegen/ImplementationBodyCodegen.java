@@ -138,8 +138,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
                     FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
 
-                    Method method = typeMapper.mapSignature(bridge.getName(), bridge);
-                    Method originalMethod = typeMapper.mapSignature(original.getName(), original);
+                    Method method = typeMapper.mapSignature(bridge.getName(), bridge).getAsmMethod();
+                    Method originalMethod = typeMapper.mapSignature(original.getName(), original).getAsmMethod();
                     Type[] argTypes = method.getArgumentTypes();
 
                     MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, bridge.getName(), method.getDescriptor(), null, null);
@@ -166,8 +166,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
                     PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
 
-                    Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION);
-                    Method originalMethod = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
+                    Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
+                    Method originalMethod = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION).getAsmMethod();
                     MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                     InstructionAdapter iv = null;
                     if (v.generateCode()) {
@@ -186,8 +186,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         mv.visitEnd();
                     }
 
-                    method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION);
-                    originalMethod = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
+                    method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
+                    originalMethod = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION).getAsmMethod();
                     mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                     if (v.generateCode()) {
                         mv.visitCode();
@@ -267,7 +267,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 
-        CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         Method constructorMethod;
         CallableMethod callableMethod;
@@ -283,11 +283,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             constructorMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-            callableMethod = new CallableMethod("", constructorMethod, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
+            callableMethod = new CallableMethod("", new JvmMethodSignature(constructorMethod, null) /* TODO */, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
-            constructorMethod = callableMethod.getSignature();
+            constructorMethod = callableMethod.getSignature().getAsmMethod();
         }
 
         ObjectOrClosureCodegen closure = context.closure;
@@ -471,7 +471,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitMaxs(0, 0);
         mv.visitEnd();
 
-        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod, constructorDescriptor, OwnerKind.IMPLEMENTATION );
+        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod, constructorDescriptor, OwnerKind.IMPLEMENTATION);
     }
 
     private void generateTraitMethods(ExpressionCodegen codegen) {
@@ -490,8 +490,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if(jetClass.isTrait()) {
                             int flags = Opcodes.ACC_PUBLIC; // TODO.
 
-                            Method function = typeMapper.mapSignature(fun.getName(), fun);
-                            Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal());
+                            Method function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
+                            Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
 
                             final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
                             if (v.generateCode()) {
@@ -629,7 +629,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
         int flags = Opcodes.ACC_PUBLIC; // TODO
-        final MethodVisitor mv = v.newMethod(constructor, flags, "<init>", method.getSignature().getDescriptor(), null, null);
+        final MethodVisitor mv = v.newMethod(constructor, flags, "<init>", method.getSignature().getAsmMethod().getDescriptor(), null, null);
         if (v.generateCode()) {
             mv.visitCode();
 

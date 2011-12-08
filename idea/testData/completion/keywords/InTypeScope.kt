@@ -3,4 +3,4 @@ fun foo() {
 }
 
 // TODO: Move all keywords to absent
-// EXPECT: fun, val, var, namespace
+// EXIST: fun, val, var, namespace

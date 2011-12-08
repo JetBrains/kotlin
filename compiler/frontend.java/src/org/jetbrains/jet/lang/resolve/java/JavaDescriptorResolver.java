@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -267,7 +268,7 @@ public class JavaDescriptorResolver {
         return javaFacade.findClass(qualifiedName, javaSearchScope);
     }
 
-    private PsiPackage findPackage(String qualifiedName) {
+    /*package*/ PsiPackage findPackage(String qualifiedName) {
         return javaFacade.findPackage(qualifiedName);
     }
 
@@ -354,13 +355,13 @@ public class JavaDescriptorResolver {
             PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
             attributes.toString();
 
-            if (annotation.getQualifiedName().equals("jet.typeinfo.JetParameter")) {
-                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue("name");
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_PARAMETER_CLASS)) {
+                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_PARAMETER_NAME_FIELD);
                 if (nameExpression != null) {
                     name = (String) nameExpression.getValue();
                 }
                 
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue("nullable");
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_PARAMETER_NULLABLE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
                 } else {
@@ -479,7 +480,7 @@ public class JavaDescriptorResolver {
                 DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 typeParameters,
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
-                semanticServices.getTypeTransformer().transformToType(returnType),
+                semanticServices.getDescriptorResolver().makeReturnType(returnType, method),
                 Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
                 resolveVisibilityFromPsiModifiers(method)
         );
@@ -489,6 +490,30 @@ public class JavaDescriptorResolver {
             substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
         }
         return substitutedFunctionDescriptor;
+    }
+
+    private JetType makeReturnType(PsiType returnType, PsiMethod method) {
+        boolean changeNullable = false;
+        boolean nullable = true;
+
+        for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD_CLASS)) {
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD);
+                if (nullableExpression != null) {
+                    nullable = (Boolean) nullableExpression.getValue();
+                } else {
+                    // default value of parameter
+                    nullable = false;
+                    changeNullable = true;
+                }
+            }
+        }
+        JetType transformedType = semanticServices.getTypeTransformer().transformToType(returnType);
+        if (changeNullable) {
+            return TypeUtils.makeNullableAsSpecified(transformedType, nullable);
+        } else {
+            return transformedType;
+        }
     }
 
     private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {

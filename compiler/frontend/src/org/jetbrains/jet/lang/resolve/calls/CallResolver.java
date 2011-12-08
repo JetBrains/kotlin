@@ -13,16 +13,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -241,6 +238,12 @@ public class CallResolver {
             @NotNull JetType expectedType,
             @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
             @NotNull final JetReferenceExpression reference) {
+
+        ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
+        trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, call.getCallElement(), debugInfo);
+
+        debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
+
         TracingStrategy tracing = new TracingStrategy() {
             @Override
             public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall) {
@@ -371,6 +374,9 @@ public class CallResolver {
             OverloadResolutionResults<D> results = performResolution(temporaryTrace, scope, expectedType, task, tracing);
             if (results.isSuccess()) {
                 temporaryTrace.commit();
+
+                debugInfo.set(ResolutionDebugInfo.RESULT, results.getResult());
+
                 return results.getResult();
             }
             if (traceForFirstNonemptyCandidateSet == null && !task.getCandidates().isEmpty()) {
@@ -381,6 +387,9 @@ public class CallResolver {
         if (traceForFirstNonemptyCandidateSet != null) {
             traceForFirstNonemptyCandidateSet.commit();
             if (resultsForFirstNonemptyCandidateSet.singleDescriptor()) {
+
+                debugInfo.set(ResolutionDebugInfo.RESULT, resultsForFirstNonemptyCandidateSet.getResult());
+
                 return resultsForFirstNonemptyCandidateSet.getResult();
             }
         }
@@ -420,7 +429,10 @@ public class CallResolver {
                 if (!candidate.getTypeParameters().isEmpty()) {
                     // Type argument inference
 
-                    ConstraintSystem constraintSystem = new ConstraintSystemImpl();
+                    ResolutionDebugInfo.Data debugInfo = trace.get(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, task.getCall().getCallElement());
+
+                    ConstraintSystem constraintSystem = new ConstraintSystemImpl(new DebugConstraintResolutionListener(debugInfo));
+
                     for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
                         constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
                     }

@@ -1,5 +1,7 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.psi.JetNamespace;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -214,6 +216,10 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testKt500 () throws Exception {
         blackBoxFile("regressions/kt500.jet");
+    }
+
+    public void testKt694 () throws Exception {
+//        blackBoxFile("regressions/kt694.jet");
     }
 
     public void testKt285 () throws Exception {

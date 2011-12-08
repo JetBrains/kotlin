@@ -1,5 +1,6 @@
 package org.jetbrains.jet.completion;
 
+import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
@@ -25,7 +26,7 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         setName("testCompletionExecute");
     }
 
-    public void testCompletionExecute() {
+    public void testCompletionExecute() throws Exception {
         doTest();
     }
 
@@ -49,9 +50,10 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
                 PluginTestCaseBase.getTestDataPathBase(), "/completion/keywords/", false,
                 JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
 
+
             @NotNull
             @Override
-            public junit.framework.Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new KeywordsCompletionTest(dataPath, name);
             }
         }, suite);

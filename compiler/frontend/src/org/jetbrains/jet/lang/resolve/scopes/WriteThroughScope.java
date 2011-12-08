@@ -199,6 +199,10 @@ public class WriteThroughScope extends WritableScopeWithImports {
             allDescriptors = Lists.newArrayList();
             allDescriptors.addAll(writableWorker.getAllDescriptors());
             allDescriptors.addAll(getWorkerScope().getAllDescriptors());
+
+            for (JetScope imported : getImports()) {
+                allDescriptors.addAll(imported.getAllDescriptors());
+            }
         }
         return allDescriptors;
     }

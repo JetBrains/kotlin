@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class CallableMethod implements Callable {
     private String owner;
-    private final Method signature;
+    private final JvmMethodSignature signature;
     private int invokeOpcode;
     private final List<Type> valueParameterTypes;
     private ClassDescriptor thisClass = null;
@@ -27,7 +27,7 @@ public class CallableMethod implements Callable {
     private CallableDescriptor receiverFunction = null;
     private Type generateCalleeType = null;
 
-    public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
+    public CallableMethod(String owner, JvmMethodSignature signature, int invokeOpcode, List<Type> valueParameterTypes) {
         this.owner = owner;
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
@@ -38,7 +38,7 @@ public class CallableMethod implements Callable {
         return owner;
     }
 
-    public Method getSignature() {
+    public JvmMethodSignature getSignature() {
         return signature;
     }
 
@@ -67,7 +67,7 @@ public class CallableMethod implements Callable {
     }
 
     void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), getOwner(), getSignature().getName(), getSignature().getDescriptor());
+        v.visitMethodInsn(getInvokeOpcode(), getOwner(), getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
     }
 
     public void requestGenerateCallee(Type objectType) {
@@ -80,14 +80,14 @@ public class CallableMethod implements Callable {
 
     public void invokeWithDefault(InstructionAdapter v, int mask) {
         v.iconst(mask);
-        String desc = getSignature().getDescriptor().replace(")", "I)");
-        if("<init>".equals(getSignature().getName())) {
+        String desc = getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
+        if("<init>".equals(getSignature().getAsmMethod().getName())) {
             v.visitMethodInsn(Opcodes.INVOKESPECIAL, getOwner(), "<init>", desc);
         }
         else {
             if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
                 desc = desc.replace("(", "(L" + getOwner() + ";");
-            v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + "$$TImpl" : getOwner(), getSignature().getName() + "$default", desc);
+            v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + "$$TImpl" : getOwner(), getSignature().getAsmMethod().getName() + "$default", desc);
         }
     }
 

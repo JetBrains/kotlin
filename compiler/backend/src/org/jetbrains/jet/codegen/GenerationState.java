@@ -140,13 +140,13 @@ public class GenerationState {
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
-        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION);
+        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, typeMapper);
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate(null);
 
         ConstructorDescriptor constructorDescriptor = closure.state.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
         CallableMethod callableMethod = closure.state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
-        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature(), objectContext.outerWasUsed, null);
+        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
     }
 
     public static void prepareAnonymousClasses(JetElement aClass, final JetTypeMapper typeMapper) {

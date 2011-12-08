@@ -44,7 +44,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         });
     }
 
-
     private static class LoopInTypeVariableConstraintsException extends RuntimeException {
         public LoopInTypeVariableConstraintsException() {}
     }
@@ -79,6 +78,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         
         public abstract boolean equate(TypeValue other);
     }
+
+//==========================================================================================================================================================
 
     private class UnknownType extends TypeValue {
 
@@ -142,7 +143,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                                 }
                             }
 
-                            println("minimal solution from lowerbounds for " + this + " is " + commonSupertype);
+                            listener.log("minimal solution from lowerbounds for " + this + " is " + commonSupertype);
                             value = new KnownType(commonSupertype);
                         }
                         else {
@@ -238,16 +239,18 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     private static final class TypeConstraintBuilderAdapter implements TypingConstraints {
         private final TypingConstraints delegate;
+        private final ConstraintResolutionListener listener;
 
-        private TypeConstraintBuilderAdapter(TypingConstraints delegate) {
+        private TypeConstraintBuilderAdapter(TypingConstraints delegate, ConstraintResolutionListener listener) {
             this.delegate = delegate;
+            this.listener = listener;
         }
 
         @Override
         public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
             boolean result = delegate.assertEqualTypes(a, b, typeCheckingProcedure);
             if (!result) {
-                println("-- Failed to equate " + a + " and " + b);
+                listener.error("-- Failed to equate " + a + " and " + b);
             }
             return result;
         }
@@ -256,7 +259,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
             boolean result = delegate.assertEqualTypeConstructors(a, b);
             if (!result) {
-                println("-- Type constructors are not equal: " + a + " and " + b);
+                listener.error("-- Type constructors are not equal: " + a + " and " + b);
             }
             return result;
         }
@@ -265,7 +268,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
             boolean result = delegate.assertSubtype(subtype, supertype, typeCheckingProcedure);
             if (!result) {
-                println("-- " + subtype + " can't be a subtype of " + supertype);
+                listener.error("-- " + subtype + " can't be a subtype of " + supertype);
             }
             return result;
         }
@@ -274,60 +277,67 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
             boolean result = delegate.noCorrespondingSupertype(subtype, supertype);
             if (!result) {
-                println("-- " + subtype + " has no supertype corresponding to " + supertype);
+                listener.error("-- " + subtype + " has no supertype corresponding to " + supertype);
             }
             return result;
         }
     }
-    
-    private final TypeCheckingProcedure constraintExpander = new TypeCheckingProcedure(new TypeConstraintBuilderAdapter(new TypingConstraints() {
-        @Override
-        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
-            TypeValue aValue = getTypeValueFor(a);
-            TypeValue bValue = getTypeValueFor(b);
 
-            return aValue.equate(bValue);
-        }
+    private final TypeCheckingProcedure constraintExpander;
+    private final ConstraintResolutionListener listener;
 
-        @Override
-        public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-            return a.equals(b)
-                || unknownTypes.containsKey(a.getDeclarationDescriptor())
-                || unknownTypes.containsKey(b.getDeclarationDescriptor());
-        }
+    public ConstraintSystemImpl(ConstraintResolutionListener listener) {
+        this.listener = listener;
+        this.constraintExpander = createConstraintExpander();
+    }
 
-        @Override
-        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
-            TypeValue subtypeValue = getTypeValueFor(subtype);
-            TypeValue supertypeValue = getTypeValueFor(supertype);
+    private TypeCheckingProcedure createConstraintExpander() {
+        return new TypeCheckingProcedure(new TypeConstraintBuilderAdapter(new TypingConstraints() {
+            @Override
+            public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
+                TypeValue aValue = getTypeValueFor(a);
+                TypeValue bValue = getTypeValueFor(b);
 
-            if (someUnknown(subtypeValue, supertypeValue)) {
-                addSubtypingConstraintOnTypeValues(subtypeValue, supertypeValue);
+                return aValue.equate(bValue);
             }
-            return true;
-        }
 
-        @Override
-        public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-            // If some of the types is an unknown, the constraint must be generated, and we should carry on
-            // otherwise there can be no solution, and we should fail
-            TypeValue subTypeValue = getTypeValueFor(subtype);
-            TypeValue superTypeValue = getTypeValueFor(supertype);
-            boolean someUnknown = someUnknown(subTypeValue, superTypeValue);
-            if (someUnknown) {
-                addSubtypingConstraintOnTypeValues(subTypeValue, superTypeValue);
+            @Override
+            public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+                return a.equals(b)
+                       || unknownTypes.containsKey(a.getDeclarationDescriptor())
+                       || unknownTypes.containsKey(b.getDeclarationDescriptor());
             }
-            return someUnknown;
-        }
 
-        private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {
-            return subtypeValue instanceof UnknownType || supertypeValue instanceof UnknownType;
-        }
+            @Override
+            public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
+                TypeValue subtypeValue = getTypeValueFor(subtype);
+                TypeValue supertypeValue = getTypeValueFor(supertype);
 
-    }))
-    ;
+                if (someUnknown(subtypeValue, supertypeValue)) {
+                    addSubtypingConstraintOnTypeValues(subtypeValue, supertypeValue);
+                }
+                return true;
+            }
 
-    public ConstraintSystemImpl() {}
+            @Override
+            public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
+                // If some of the types is an unknown, the constraint must be generated, and we should carry on
+                // otherwise there can be no solution, and we should fail
+                TypeValue subTypeValue = getTypeValueFor(subtype);
+                TypeValue superTypeValue = getTypeValueFor(supertype);
+                boolean someUnknown = someUnknown(subTypeValue, superTypeValue);
+                if (someUnknown) {
+                    addSubtypingConstraintOnTypeValues(subTypeValue, superTypeValue);
+                }
+                return someUnknown;
+            }
+
+            private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {
+                return subtypeValue instanceof UnknownType || supertypeValue instanceof UnknownType;
+            }
+
+        }, listener));
+    }
 
     @NotNull
     private TypeValue getTypeValueFor(@NotNull JetType type) {
@@ -368,7 +378,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private void mergeUnknowns(@NotNull UnknownType a, @NotNull UnknownType b) {
-        System.err.println("!!!mergeUnknowns() is not implemented!!!");
+        listener.error("!!!mergeUnknowns() is not implemented!!!");
     }
 
     @Override
@@ -379,7 +389,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private void addSubtypingConstraintOnTypeValues(TypeValue typeValueForLower, TypeValue typeValueForUpper) {
-        println(typeValueForLower + " :< " + typeValueForUpper);
+        listener.log("Constraint added: " + typeValueForLower + " :< " + typeValueForUpper);
         if (typeValueForLower != typeValueForUpper) {
             typeValueForLower.addUpperBound(typeValueForUpper);
             typeValueForUpper.addLowerBound(typeValueForLower);
@@ -424,13 +434,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         for (UnknownType unknownType : unknownTypes.values()) {
-            println("Constraints for " + unknownType.getTypeParameterDescriptor());
-            printTypeValue(unknownType);
+            listener.constraintsForUnknown(unknownType.getTypeParameterDescriptor(), unknownType);
         }
 
         for (KnownType knownType : knownTypes.values()) {
-            println("Constraints for " + knownType.getType());
-            printTypeValue(knownType);
+            listener.constraintsForKnownType(knownType.getType(), knownType);
         }
 
         // Find inconsistencies
@@ -447,20 +455,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         //  we have set some of them from equality constraints with known types
         //  and thus the bounds may be violated if some of the constraints conflict
         
-        println("====================================");
-        println("");
-        println("");
+        listener.done(solution, unknownTypes.keySet());
 
         return solution;
-    }
-
-    private void printTypeValue(TypeValue typeValue) {
-        for (TypeValue bound : typeValue.getUpperBounds()) {
-            println(" :< " + bound);
-        }
-        for (TypeValue bound : typeValue.getLowerBounds()) {
-            println(" :> " + bound);
-        }
     }
 
     private void check(TypeValue typeValue, Solution solution) {
@@ -471,33 +468,20 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 JetType boundingType = solution.getSubstitutor().substitute(upperBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(type, boundingType)) { // TODO
                     solution.registerError("Constraint violation: " + type + " is not a subtype of " + boundingType);
-                    println("Constraint violation: " + type + " :< " + boundingType);
+                    listener.error("Constraint violation: " + type + " :< " + boundingType);
                 }
             }
             for (TypeValue lowerBound : typeValue.getLowerBounds()) {
                 JetType boundingType = solution.getSubstitutor().substitute(lowerBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(boundingType, type)) {
                     solution.registerError("Constraint violation: " + boundingType + " is not a subtype of " + type);
-                    println("Constraint violation: " + boundingType + " :< " + type);
+                    listener.error("Constraint violation: " + boundingType + " :< " + type);
                 }
             }
         }
         catch (LoopInTypeVariableConstraintsException e) {
-            println("-------------------------------------------------------------------");
-            for (Map.Entry<TypeParameterDescriptor, UnknownType> entry : unknownTypes.entrySet()) {
-                println("Unknown: " + entry.getKey());
-                UnknownType unknownType = entry.getValue();
-                println("Lower bounds: ");
-                for (TypeValue lowerBound : unknownType.getLowerBounds()) {
-                    println("  " + lowerBound);
-                }
-                println("Upper bounds: ");
-                for (TypeValue lowerBound : unknownType.getUpperBounds()) {
-                    println("  " + lowerBound);
-                }
-            }
+            listener.error("Loop detected");
             solution.registerError("[TODO] Loop in constraints");
-//            e.printStackTrace();
         }
     }
 
@@ -544,9 +528,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
                 if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
+
                     if (!unknownTypes.containsKey(descriptor)) return null;
-                    println(descriptor + " |-> " + getValue(descriptor));
-                    return new TypeProjection(getValue(descriptor));
+
+                    TypeProjection typeProjection = new TypeProjection(getValue(descriptor));
+
+                    listener.log(descriptor + " |-> " + typeProjection);
+
+                    return typeProjection;
                 }
                 return null;
             }
@@ -588,7 +577,4 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     }
 
-    private static void println(String message) {
-//        System.out.println(message);
-    }
 }

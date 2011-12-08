@@ -21,27 +21,31 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo.*;
 
 /*
  * @author abreslav
@@ -121,19 +125,20 @@ public class ResolveToolwindow extends JPanel {
                 PsiElement currentElement = elementAtOffset;
 
                 boolean callFound = false;
-                while (currentElement != null && !(currentElement instanceof PsiFile)) {
-                    if (currentElement instanceof JetElement) {
-                        JetElement atOffset = (JetElement) currentElement;
-                        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(RESOLVED_CALL, (JetElement) atOffset);
-                        if (resolvedCall != null) {
-                            setText(renderCall(resolvedCall) + "\n===\n" + currentElement + ": " + currentElement.getText());
-                            callFound = true;
-                            break;
-                        }
 
-                    }
-                    currentElement = currentElement.getParent();
+                PsiElement elementWithDebugInfo = findData(bindingContext, currentElement, RESOLUTION_DEBUG_INFO);
+                if (elementWithDebugInfo != null) {
+                    callFound = true;
+                    setText(renderDebugInfo(elementWithDebugInfo, bindingContext.get(RESOLUTION_DEBUG_INFO, elementWithDebugInfo), null));
                 }
+                else {
+                    PsiElement elementWithResolvedCall = findData(bindingContext, currentElement, (WritableSlice) RESOLVED_CALL);
+                    if (elementWithResolvedCall instanceof JetElement) {
+                        callFound = true;
+                        setText(renderDebugInfo(elementWithResolvedCall, null, bindingContext.get(RESOLVED_CALL, (JetElement) elementWithResolvedCall)));
+                    }
+                }
+
                 if (!callFound) {
 
                     JetExpression parentExpression = (elementAtOffset instanceof JetExpression) ? (JetExpression) elementAtOffset
@@ -153,8 +158,70 @@ public class ResolveToolwindow extends JPanel {
         }
     }
 
-    private String renderCall(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
-        StringBuilder builder = new StringBuilder();
+    @Nullable
+    private <D> PsiElement findData(BindingContext bindingContext, PsiElement currentElement, ReadOnlySlice<PsiElement, D> slice) {
+        while (currentElement != null && !(currentElement instanceof PsiFile)) {
+            if (currentElement instanceof JetElement) {
+                JetElement atOffset = (JetElement) currentElement;
+                D data = bindingContext.get(slice, atOffset);
+                if (data != null && data != NO_DEBUG_INFO) {
+                    return currentElement;
+                }
+
+            }
+            currentElement = currentElement.getParent();
+        }
+        return null;
+    }
+
+    private String renderDebugInfo(PsiElement currentElement, @Nullable ResolutionDebugInfo.Data debugInfo, @Nullable ResolvedCall<? extends CallableDescriptor> call) {
+        final String bar = "\n\n===\n\n";
+
+        StringBuilder result = new StringBuilder();
+
+        if (debugInfo != null) {
+            StringBuilder errors = debugInfo.get(ERRORS);
+            if (errors != null) {
+                result.append("Errors: \n").append(errors).append(bar);
+            }
+
+            StringBuilder log = debugInfo.get(LOG);
+            if (log != null) {
+                result.append("Log: \n").append(log).append(bar);
+            }
+
+            Map<JetType, ConstraintSystemImpl.TypeValue> knowns = debugInfo.get(BOUNDS_FOR_KNOWNS);
+            renderMap(knowns, result);
+            Map<TypeParameterDescriptor, ConstraintSystemImpl.TypeValue> unknowns = debugInfo.get(BOUNDS_FOR_UNKNOWNS);
+            renderMap(unknowns, result);
+
+            result.append(bar);
+
+            call = debugInfo.get(RESULT);
+        }
+
+        renderCall(result, call);
+        result.append(currentElement + ": " + currentElement.getText());
+        return result.toString();
+    }
+    
+    private <K> void renderMap(Map<K, ConstraintSystemImpl.TypeValue> map, StringBuilder builder) {
+        if (map == null) return;
+
+        for (Map.Entry<K, ConstraintSystemImpl.TypeValue> entry : map.entrySet()) {
+            K key = entry.getKey();
+            ConstraintSystemImpl.TypeValue typeValue = entry.getValue();
+            builder.append("Bounds for ").append(key).append("\n");
+            for (ConstraintSystemImpl.TypeValue bound : typeValue.getLowerBounds()) {
+                builder.append("    >: ").append(bound).append("\n");
+            }
+            for (ConstraintSystemImpl.TypeValue bound : typeValue.getUpperBounds()) {
+                builder.append("    <: ").append(bound).append("\n");
+            }
+        }
+    }
+
+    private String renderCall(StringBuilder builder, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
 
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
