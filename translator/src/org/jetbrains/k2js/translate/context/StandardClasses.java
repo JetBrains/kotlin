@@ -45,6 +45,7 @@ public final class StandardClasses {
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "isEmpty", "isEmpty");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "set", "set");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "remove", "remove");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "addAll", "addAll");
     }
 
     //TODO: more generic ways to declare standard classes

@@ -1,3 +1,5 @@
+namespace foo
+
 import java.util.*
 
 class ArrayWrapper<T>() {

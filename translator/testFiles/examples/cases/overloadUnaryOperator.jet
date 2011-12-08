@@ -10,7 +10,10 @@ class ArrayWrapper<T>() {
     fun minus(): ArrayWrapper<T> {
         val result = ArrayWrapper<T>()
         result.contents.addAll(contents)
-        Collections.reverse(result.contents)
+        var i = contents.size();
+        for (a in contents) {
+            result.contents[--i] = a;
+        }
         return result
     }
 

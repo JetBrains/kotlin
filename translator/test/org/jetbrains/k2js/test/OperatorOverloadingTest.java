@@ -94,4 +94,9 @@ public class OperatorOverloadingTest extends TranslationTest {
         testFooBoxIsTrue("usingModInCaseModAssignNotAvailable.kt");
     }
 
+
+    @Test
+    public void overloadPlusAssignArrayList() throws Exception {
+        testFooBoxIsOk("overloadPlusAssignArrayList.kt");
+    }
 }

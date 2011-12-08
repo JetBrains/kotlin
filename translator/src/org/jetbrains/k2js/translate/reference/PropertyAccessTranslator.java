@@ -115,11 +115,12 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     private final PropertyDescriptor propertyDescriptor;
     private final boolean isBackingFieldAccess;
 
+    //TODO: make one constructor
     private PropertyAccessTranslator(@NotNull JetSimpleNameExpression simpleName,
                                      @NotNull TranslationContext context) {
         super(context);
         this.qualifier = null;
-        this.propertyDescriptor = getPropertyDescriptor(simpleName);
+        this.propertyDescriptor = getPropertyDescriptor(simpleName).getOriginal();
         this.isBackingFieldAccess = isBackingFieldReference(simpleName);
     }
 
@@ -128,7 +129,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         super(context);
         this.qualifier = qualifiedExpression.getReceiverExpression();
         JetSimpleNameExpression selector = getNotNullSelector(qualifiedExpression);
-        this.propertyDescriptor = getPropertyDescriptor(selector);
+        this.propertyDescriptor = getPropertyDescriptor(selector).getOriginal();
         this.isBackingFieldAccess = isBackingFieldReference(selector);
     }
 
@@ -136,7 +137,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
                                      @NotNull TranslationContext context) {
         super(context);
         this.qualifier = null;
-        this.propertyDescriptor = descriptor;
+        this.propertyDescriptor = descriptor.getOriginal();
         this.isBackingFieldAccess = false;
     }
 
