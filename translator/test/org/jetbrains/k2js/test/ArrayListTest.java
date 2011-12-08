@@ -23,4 +23,24 @@ public final class ArrayListTest extends JavaClassesTest {
     public void access() throws Exception {
         testFooBoxIsTrue("access.kt");
     }
+
+    @Test
+    public void isEmpty() throws Exception {
+        testFooBoxIsTrue("isEmpty.kt");
+    }
+
+    @Test
+    public void arrayAccess() throws Exception {
+        testFooBoxIsTrue("arrayAccess.kt");
+    }
+
+    @Test
+    public void iterate() throws Exception {
+        testFooBoxIsTrue("iterate.kt");
+    }
+
+    @Test
+    public void remove() throws Exception {
+        testFooBoxIsTrue("remove.kt");
+    }
 }

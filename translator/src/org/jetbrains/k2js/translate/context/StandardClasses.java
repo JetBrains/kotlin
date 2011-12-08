@@ -40,6 +40,11 @@ public final class StandardClasses {
         standardClasses.declareStandardTopLevelObject(arrayListFQName, "ArrayList");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "size", "size");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "<init>", "ArrayList");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "add", "add");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "get", "get");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "isEmpty", "isEmpty");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "set", "set");
+        standardClasses.declareStandardInnerDeclaration(arrayListFQName, "remove", "remove");
     }
 
     //TODO: more generic ways to declare standard classes
