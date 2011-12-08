@@ -16,7 +16,7 @@ fun t1(b : Boolean) {
     }
     doSmth(<!UNINITIALIZED_VARIABLE!>u<!>)
 
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>r<!>: String
+    var r: String
     if (b) {
         r = "s"
     }

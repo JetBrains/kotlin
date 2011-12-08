@@ -137,7 +137,7 @@ fun tf() : Int {
   <!UNREACHABLE_CODE!>return 1<!>
 }
 
-fun failtest(a : Int) : Int {
+fun failtest(<!UNUSED_PARAMETER!>a<!> : Int) : Int {
   if (fail() || <!UNREACHABLE_CODE!>true<!>) {
 
   }

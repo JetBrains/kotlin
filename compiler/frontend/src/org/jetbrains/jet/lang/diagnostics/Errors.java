@@ -154,6 +154,7 @@ public interface Errors {
     UnusedElementDiagnosticFactory<JetProperty, VariableDescriptor> UNUSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, "Variable ''{0}'' is never used", NAME);
     UnusedElementDiagnosticFactory<JetParameter, VariableDescriptor> UNUSED_PARAMETER = UnusedElementDiagnosticFactory.create(WARNING, "Parameter ''{0}'' is never used", NAME);
     UnusedElementDiagnosticFactory<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, "Variable ''{0}'' is assigned but never accessed", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetNamedDeclaration, DeclarationDescriptor> VARIABLE_WITH_REDUNDANT_INITIALIZER = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Variable ''{0}'' initializer is redundant", NAME);
     PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = new PsiElementOnlyDiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor>(WARNING, "The value ''{0}'' assigned to ''{1}'' is never used", NAME) {
         @Override
         protected String makeMessageForA(@NotNull JetElement element) {

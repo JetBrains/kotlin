@@ -13,7 +13,7 @@ fun bbb() {
   return <error>1</error>
 }
 
-fun foo(expr: StringBuilder): Int {
+fun foo(<warning>expr</warning>: StringBuilder): Int {
   val c = 'a'
   when(c) {
     0.chr => throw Exception("zero")
