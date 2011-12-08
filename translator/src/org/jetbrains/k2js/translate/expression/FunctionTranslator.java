@@ -147,7 +147,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     private JsName declareParameter(@NotNull JetParameter jetParameter,
                                     @NotNull TranslationContext functionBodyContext) {
         DeclarationDescriptor parameterDescriptor =
-                getDescriptorForElement(context().bindingContext(), jetParameter);
+                getDescriptorForElement(functionBodyContext.bindingContext(), jetParameter);
         return context().declareLocalVariable(parameterDescriptor);
     }
 }
