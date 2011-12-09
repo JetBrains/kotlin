@@ -29,6 +29,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl.MAP_TO_RESULT;
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.RECEIVER;
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.VALUE_ARGUMENT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -465,7 +468,7 @@ public class CallResolver {
                             ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, traceForUnknown);
                             JetType type = temporaryServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getOutType(), Variance.INVARIANT));
                             if (type != null) {
-                                constraintSystem.addSubtypingConstraint(type, effectiveExpectedType);
+                                constraintSystem.addSubtypingConstraint(VALUE_ARGUMENT.assertSubtyping(type, effectiveExpectedType));
                             }
                             else {
                                 candidateCall.argumentHasNoType();
@@ -478,12 +481,12 @@ public class CallResolver {
                     ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
                     ReceiverDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
                     if (receiverArgument.exists() && receiverParameter.exists()) {
-                        constraintSystem.addSubtypingConstraint(receiverArgument.getType(), receiverParameter.getType());
+                        constraintSystem.addSubtypingConstraint(RECEIVER.assertSubtyping(receiverArgument.getType(), receiverParameter.getType()));
                     }
 
                     // Return type
                     if (expectedType != NO_EXPECTED_TYPE) {
-                        constraintSystem.addSubtypingConstraint(candidateWithFreshVariables.getReturnType(), expectedType);
+                        constraintSystem.addSubtypingConstraint(EXPECTED_TYPE.assertSubtyping(candidateWithFreshVariables.getReturnType(), expectedType));
                     }
 
                     // Solution

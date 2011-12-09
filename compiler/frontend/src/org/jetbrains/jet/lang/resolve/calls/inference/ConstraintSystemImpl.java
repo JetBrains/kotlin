@@ -382,9 +382,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    public void addSubtypingConstraint(@NotNull JetType lower, @NotNull JetType upper) {
-        TypeValue typeValueForLower = getTypeValueFor(lower);
-        TypeValue typeValueForUpper = getTypeValueFor(upper);
+    public void addSubtypingConstraint(@NotNull SubtypingConstraint constraint) {
+        TypeValue typeValueForLower = getTypeValueFor(constraint.getSubtype());
+        TypeValue typeValueForUpper = getTypeValueFor(constraint.getSupertype());
         addSubtypingConstraintOnTypeValues(typeValueForLower, typeValueForUpper);
     }
 
@@ -415,8 +415,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 }
             }
 
-            // Lower bounds?
-
+            for (TypeValue lowerBound : typeValue.getLowerBounds()) {
+                if (lowerBound instanceof KnownType) {
+                    KnownType knownBoundType = (KnownType) lowerBound;
+                    boolean ok = constraintExpander.isSubtypeOf(knownBoundType.getType(), jetType);
+                    if (!ok) {
+                        listener.error("Error while expanding '" + knownBoundType.getType() + " :< " + jetType + "'");
+                        return new Solution().registerError("Mismatch while expanding constraints");
+                    }
+                }
+            }
         }
 
         // Fill in upper bounds from type parameter bounds

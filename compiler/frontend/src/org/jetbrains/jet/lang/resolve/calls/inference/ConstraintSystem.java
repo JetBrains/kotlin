@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
 /**
@@ -11,7 +10,7 @@ import org.jetbrains.jet.lang.types.Variance;
 public interface ConstraintSystem {
     void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance);
 
-    void addSubtypingConstraint(@NotNull JetType lower, @NotNull JetType upper);
+    void addSubtypingConstraint(@NotNull SubtypingConstraint constraint);
 
     @NotNull
     ConstraintSystemSolution solve();
