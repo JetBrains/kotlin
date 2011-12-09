@@ -41,6 +41,8 @@ public class JavaPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
+        // Kotlin functions are already there
         NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
         if (kotlinNamespaceDescriptor != null) {
             return Collections.emptySet();
@@ -83,6 +85,7 @@ public class JavaPackageScope extends JetScopeImpl {
                 }
 
                 for (PsiClass psiClass : javaPackage.getClasses()) {
+                    // If this is a Kotlin class, we have already taken it through a containing namespace descriptor
                     ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(psiClass.getQualifiedName());
                     if (kotlinClassDescriptor != null) {
                         continue;
