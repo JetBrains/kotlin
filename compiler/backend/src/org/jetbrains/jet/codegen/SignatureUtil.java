@@ -45,8 +45,9 @@ public class SignatureUtil {
         }
         else {
             sb.append("T");
-            sb.append(descriptor.getContainingDeclaration().getName());
-            sb.append(";");
+            JetType defaultType = ((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType();
+            Type type = typeMapper.mapType(defaultType, OwnerKind.IMPLEMENTATION);
+            sb.append(type.getDescriptor());
             sb.append(descriptor.getName());
             sb.append(";");
         }
