@@ -10,13 +10,13 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isExtensionFunction;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 
@@ -29,6 +29,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     private final JetDeclarationWithBody functionDeclaration;
     @NotNull
     private final JsFunction functionObject;
+    @NotNull
+    private final TranslationContext functionBodyContext;
 
     @NotNull
     public static FunctionTranslator newInstance(@NotNull JetDeclarationWithBody function,
@@ -41,6 +43,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         super(context);
         this.functionDeclaration = functionDeclaration;
         this.functionObject = createFunctionObject();
+        this.functionBodyContext = functionBodyContext();
     }
 
     @NotNull
@@ -61,10 +64,16 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction generateFunctionObject() {
-        TranslationContext innerContext = functionBodyContext();
-        functionObject.setParameters(translateParameters(functionDeclaration.getValueParameters(), innerContext));
-        functionObject.setBody(translateBody(innerContext));
+        functionObject.setParameters(translateParameters(functionDeclaration.getValueParameters(), functionBodyContext));
+        functionObject.setBody(translateBody(functionBodyContext));
+        restoreContext();
         return functionObject;
+    }
+
+    private void restoreContext() {
+        if (isExtensionFunction()) {
+            functionBodyContext.removeAliasForThis();
+        }
     }
 
     private JsFunction createFunctionObject() {
@@ -156,13 +165,20 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
-        if (!(functionDeclaration instanceof JetNamedFunction)) return;
-
-        FunctionDescriptor functionDescriptor = getFunctionDescriptor(context().bindingContext(), functionDeclaration);
-        if (isExtensionFunction(functionDescriptor)) {
-            JsName receiver = context().jsScope().declareName("receiver");
+        boolean isExtensionFunction = isExtensionFunction();
+        if (isExtensionFunction) {
+            JsName receiver = functionBodyContext.jsScope().declareName("receiver");
             context().aliaser().setAliasForThis(receiver);
             jsParameters.add(new JsParameter(receiver));
         }
+    }
+
+    private boolean isExtensionFunction() {
+        if (!(functionDeclaration instanceof JetNamedFunction)) {
+            return false;
+        }
+
+        FunctionDescriptor functionDescriptor = getFunctionDescriptor(context().bindingContext(), functionDeclaration);
+        return DescriptorUtils.isExtensionFunction(functionDescriptor);
     }
 }

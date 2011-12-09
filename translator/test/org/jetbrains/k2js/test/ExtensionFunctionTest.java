@@ -32,4 +32,14 @@ public final class ExtensionFunctionTest extends TranslationTest {
     public void extensionUsedInsideClass() throws Exception {
         testFooBoxIsTrue("extensionUsedInsideClass.kt");
     }
+
+    @Test
+    public void virtualExtension() throws Exception {
+        testFooBoxIsTrue("virtualExtension.kt");
+    }
+
+    @Test
+    public void virtualExtensionOverride() throws Exception {
+        testFooBoxIsTrue("virtualExtensionOverride.kt");
+    }
 }

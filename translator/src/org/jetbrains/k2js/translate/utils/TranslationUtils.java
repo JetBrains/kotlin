@@ -205,6 +205,20 @@ public final class TranslationUtils {
                 return TranslationUtils.getThisQualifier(context);
             }
         }
+        return getImplicitReceiverBasedOnOwner(context, referencedDescriptor);
+    }
+
+    @NotNull
+    public static JsExpression getExtensionFunctionImplicitReceiver(@NotNull TranslationContext context,
+                                                                    @NotNull FunctionDescriptor descriptor) {
+        JsExpression receiverBasedOnOwner = getImplicitReceiverBasedOnOwner(context, descriptor);
+        assert receiverBasedOnOwner != null : "Extension function must have receiver based on owner.";
+        return receiverBasedOnOwner;
+    }
+
+    @Nullable
+    private static JsExpression getImplicitReceiverBasedOnOwner(@NotNull TranslationContext context,
+                                                                @NotNull DeclarationDescriptor referencedDescriptor) {
         if (isOwnedByClass(referencedDescriptor)) {
             return TranslationUtils.getThisQualifier(context);
         }
