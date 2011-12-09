@@ -409,6 +409,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                     KnownType knownBoundType = (KnownType) upperBound;
                     boolean ok = constraintExpander.isSubtypeOf(jetType, knownBoundType.getType());
                     if (!ok) {
+                        listener.error("Error while expanding '" + jetType + " :< " + knownBoundType.getType() + "'");
                         return new Solution().registerError("Mismatch while expanding constraints");
                     }
                 }
