@@ -15,6 +15,10 @@ import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
@@ -33,7 +37,7 @@ import java.util.List;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.java.JetLightClass");
-    private final static Key<PsiJavaFileStub> JAVA_API_STUB = Key.create("JAVA_API_STUB");
+    private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     private final JetFile file;
     private final String className;
@@ -83,13 +87,18 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     private PsiJavaFileStub getStub() {
-        PsiJavaFileStub answer = file.getUserData(JAVA_API_STUB);
+        CachedValue<PsiJavaFileStub> answer = file.getUserData(JAVA_API_STUB);
         if (answer == null) {
-            answer = calcStub();
+            answer = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<PsiJavaFileStub>() {
+                @Override
+                public Result<PsiJavaFileStub> compute() {
+                    return Result.create(calcStub(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+                }
+            }, false);
             file.putUserData(JAVA_API_STUB, answer);
         }
         
-        return answer;
+        return answer.getValue();
     }
     
     private PsiJavaFileStub calcStub() {
@@ -139,7 +148,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 finally {
                     final StubElement pop = stubStack.pop();
                     if (pop != answer) {
-                        LOG.error("Unbalanced stack operations");
+                        LOG.error("Unbalanced stack operations: " + pop);
                     }
                 }
             }
