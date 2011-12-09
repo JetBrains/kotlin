@@ -59,9 +59,9 @@
       <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>
 
 
-      <!--
       <java.elementFinder implementation="org.jetbrains.jet.plugin.java.JavaElementFinder"/>
-      -->
+      <psi.treeChangePreprocessor implementation="org.jetbrains.jet.plugin.java.JetCodeBlockModificationListener"/>
+
       <toolWindow id="CodeWindow"
                   factoryClass="org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow$Factory"
                   anchor="right"/>

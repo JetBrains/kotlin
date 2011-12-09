@@ -1,16 +1,13 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.util.PsiTreeUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -106,40 +103,6 @@ public class CodegenUtil {
             return false;
 
         return hasTypeInfoField(outerClassDescriptor.getDefaultType());
-    }
-
-    public static String getFQName(JetNamespace jetNamespace) {
-        JetNamespace parent = PsiTreeUtil.getParentOfType(jetNamespace, JetNamespace.class);
-        if (parent != null) {
-            String parentFQName = getFQName(parent);
-            if (parentFQName.length() > 0) {
-                return parentFQName + "." + getFQName(jetNamespace.getHeader());
-            }
-        }
-        return getFQName(jetNamespace.getHeader()); // TODO: Must include module root namespace
-    }
-
-    private static String getFQName(JetNamespaceHeader header) {
-        StringBuilder builder = new StringBuilder();
-        for (Iterator<JetSimpleNameExpression> iterator = header.getParentNamespaceNames().iterator(); iterator.hasNext(); ) {
-            JetSimpleNameExpression nameExpression = iterator.next();
-            builder.append(nameExpression.getReferencedName());
-            builder.append(".");
-        }
-//        PsiElement nameIdentifier = header.getNameIdentifier();
-        builder.append(header.getName());
-        return builder.toString();
-    }
-
-    public static String getFQName(JetClass jetClass) {
-        JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(jetClass, JetNamespace.class, JetClass.class);
-        if (parent instanceof JetNamespace) {
-            return getFQName(((JetNamespace) parent)) + "." + jetClass.getName();
-        }
-        if (parent instanceof JetClass) {
-            return getFQName(((JetClass) parent)) + "." + jetClass.getName();
-        }
-        return jetClass.getName();
     }
 
     public static FunctionDescriptor createInvoke(ExpressionAsFunctionDescriptor fd) {

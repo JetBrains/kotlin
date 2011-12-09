@@ -8,10 +8,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 /**
@@ -34,14 +34,14 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         JetClass containingClass = (JetClass) location.getParentElement(JetClass.class);
         if (containingClass != null && JetMainDetector.hasMain(containingClass.getDeclarations())) {
             mySourceElement = containingClass;
-            return createConfigurationByQName(location.getModule(), configurationContext, CodegenUtil.getFQName(containingClass));
+            return createConfigurationByQName(location.getModule(), configurationContext, JetPsiUtil.getFQName(containingClass));
         }
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
             if (JetMainDetector.hasMain(namespace.getDeclarations())) {
                 mySourceElement = namespace;
-                String fqName = CodegenUtil.getFQName(namespace);
+                String fqName = JetPsiUtil.getFQName(namespace);
                 String className = fqName.length() == 0 ? "namespace" : fqName + ".namespace";
                 return createConfigurationByQName(location.getModule(), configurationContext, className);
             }

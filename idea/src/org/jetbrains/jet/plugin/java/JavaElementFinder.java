@@ -15,11 +15,7 @@ import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.CodegenUtil;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.ArrayList;
@@ -52,7 +48,7 @@ public class JavaElementFinder extends PsiElementFinder {
         final List<JetFile> filesInScope = collectProjectFiles(project, scope);
         for (JetFile file : filesInScope) {
             JetNamespace rootNamespace = file.getRootNamespace();
-            final String packageName = CodegenUtil.getFQName(rootNamespace);
+            final String packageName = JetPsiUtil.getFQName(rootNamespace);
             if (packageName != null && qualifiedName.startsWith(packageName)) {
                 if (qualifiedName.equals(fqn(packageName, "namespace"))) {
                     answer.add(new JetLightClass(psiManager, file, "namespace"));
@@ -77,7 +73,7 @@ public class JavaElementFinder extends PsiElementFinder {
         String packageFQN = psiPackage.getQualifiedName();
         for (JetFile psiFile : collectProjectFiles(project, GlobalSearchScope.allScope(project))) {
             final JetNamespace rootNamespace = psiFile.getRootNamespace();
-            if (packageFQN.equals(CodegenUtil.getFQName(rootNamespace))) {
+            if (packageFQN.equals(JetPsiUtil.getFQName(rootNamespace))) {
                 answer.add("namespace");
                 for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
@@ -100,7 +96,7 @@ public class JavaElementFinder extends PsiElementFinder {
         final List<JetFile> psiFiles = collectProjectFiles(project, GlobalSearchScope.allScope(project));
 
         for (JetFile psiFile : psiFiles) {
-            if (qualifiedName.equals(CodegenUtil.getFQName(psiFile.getRootNamespace()))) {
+            if (qualifiedName.equals(JetPsiUtil.getFQName(psiFile.getRootNamespace()))) {
                 return new PsiPackageImpl(psiFile.getManager(), qualifiedName);
             }
         }
@@ -116,7 +112,7 @@ public class JavaElementFinder extends PsiElementFinder {
         String packageFQN = psiPackage.getQualifiedName();
         for (JetFile file : filesInScope) {
             final JetNamespace rootNamespace = file.getRootNamespace();
-            if (packageFQN.equals(CodegenUtil.getFQName(rootNamespace))) {
+            if (packageFQN.equals(JetPsiUtil.getFQName(rootNamespace))) {
                 answer.add(new JetLightClass(psiManager, file, "namespace"));
                 for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {

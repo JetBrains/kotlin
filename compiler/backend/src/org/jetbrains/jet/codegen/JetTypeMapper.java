@@ -629,7 +629,7 @@ public class JetTypeMapper {
 
         String baseName;
         if (container instanceof JetNamespace) {
-            baseName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(((JetNamespace) container)));
+            baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetNamespace) container)));
         }
         else {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);

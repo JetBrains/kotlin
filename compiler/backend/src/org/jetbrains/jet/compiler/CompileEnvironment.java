@@ -5,9 +5,6 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.modules.IModuleBuilder;
@@ -15,16 +12,15 @@ import jet.modules.IModuleSetBuilder;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.jar.*;
@@ -332,7 +328,7 @@ public class CompileEnvironment {
         String mainClass = null;
         for (JetNamespace namespace : session.getSourceFileNamespaces()) {
             if (JetMainDetector.hasMain(namespace.getDeclarations())) {
-                mainClass = CodegenUtil.getFQName(namespace) + ".namespace";
+                mainClass = JetPsiUtil.getFQName(namespace) + ".namespace";
                 break;
             }
         }

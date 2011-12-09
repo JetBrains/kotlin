@@ -505,7 +505,7 @@ public class CallResolver {
                     }
                     else {
                         tracing.typeInferenceFailed(temporaryTrace, solution.getStatus());
-                        candidateCall.setStatus(OTHER_ERROR);
+                        candidateCall.setStatus(checkAllValueArguments(scope, tracing, task, candidateCall));
                     }
                 }
                 else {

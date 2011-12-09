@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class ClassFileFactory {
 
     NamespaceCodegen forNamespace(JetNamespace namespace) {
         assert !isDone : "Already done!";
-        String fqName = CodegenUtil.getFQName(namespace);
+        String fqName = JetPsiUtil.getFQName(namespace);
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
             final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class");

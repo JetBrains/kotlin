@@ -669,7 +669,9 @@ public abstract class TypeInfo<T> implements JetObject {
 
         private TypeInfo parseTypeVar(Signature signature) {
             TypeInfoVariance variance = parseVariance();
-            String klazz = parseName();
+            assert string[cur] == 'L';
+            cur++;
+            String klazz = parseName().replace('/','.');
             String name = parseName();
             boolean nullable = false;
             if(string[cur] == '?') {

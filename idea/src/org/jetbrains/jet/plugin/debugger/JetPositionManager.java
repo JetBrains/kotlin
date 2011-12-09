@@ -17,7 +17,6 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
@@ -113,10 +112,10 @@ public class JetPositionManager implements PositionManager {
         else {
             JetNamespace namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetNamespace.class);
             if (namespace != null) {
-                names.add(NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)));
+                names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace)));
             }
             else {
-                names.add(NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(file.getRootNamespace())));
+                names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(file.getRootNamespace())));
             }
         }
         return names;
