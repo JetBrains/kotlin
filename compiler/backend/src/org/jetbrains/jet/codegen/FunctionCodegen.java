@@ -8,17 +8,12 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.signature.SignatureVisitor;
-import org.objectweb.asm.signature.SignatureWriter;
-import org.objectweb.asm.util.CheckSignatureAdapter;
 
 import java.util.List;
 import java.util.Set;
@@ -114,7 +109,7 @@ public class FunctionCodegen {
                     ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
                     av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
                     if(parameterDescriptor.hasDefaultValue()) {
-                        av.visit(StdlibNames.JET_PARAMETER_HAS_DEFAULT_FIELD, true);
+                        av.visit(StdlibNames.JET_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
                     }
                     if(parameterDescriptor.getOutType().isNullable()) {
                         av.visit(StdlibNames.JET_PARAMETER_NULLABLE_FIELD, true);
