@@ -61,6 +61,13 @@ public class FunctionCodegen {
         List<TypeParameterDescriptor> typeParameters = (functionDescriptor instanceof PropertyAccessorDescriptor ? ((PropertyAccessorDescriptor)functionDescriptor).getCorrespondingProperty(): functionDescriptor).getTypeParameters();
 
         int flags = ACC_PUBLIC; // TODO.
+        
+        if (!functionDescriptor.getValueParameters().isEmpty()
+                && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
+                        .getVarargElementType() != null)
+        {
+            flags |= ACC_VARARGS;
+        }
 
         OwnerKind kind = context.getContextKind();
 
