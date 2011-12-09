@@ -42,4 +42,9 @@ public final class ExtensionFunctionTest extends TranslationTest {
     public void virtualExtensionOverride() throws Exception {
         testFooBoxIsTrue("virtualExtensionOverride.kt");
     }
+
+    @Test
+    public void extensionLiteralPassedToFunction() throws Exception {
+        testFooBoxIsTrue("extensionLiteralPassedToFunction.kt");
+    }
 }

@@ -89,7 +89,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isLiteral() {
-        return functionDeclaration instanceof JetFunctionLiteral;
+        return functionDeclaration instanceof JetFunctionLiteralExpression;
     }
 
     private boolean isDeclaration() {
@@ -174,9 +174,9 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        if (!(functionDeclaration instanceof JetNamedFunction)) {
-            return false;
-        }
+//        if (!(functionDeclaration instanceof JetNamedFunction)) {
+//            return false;
+//        }
 
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context().bindingContext(), functionDeclaration);
         return DescriptorUtils.isExtensionFunction(functionDescriptor);

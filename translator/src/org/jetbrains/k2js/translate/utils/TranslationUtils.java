@@ -208,12 +208,10 @@ public final class TranslationUtils {
         return getImplicitReceiverBasedOnOwner(context, referencedDescriptor);
     }
 
-    @NotNull
+    @Nullable
     public static JsExpression getExtensionFunctionImplicitReceiver(@NotNull TranslationContext context,
                                                                     @NotNull FunctionDescriptor descriptor) {
-        JsExpression receiverBasedOnOwner = getImplicitReceiverBasedOnOwner(context, descriptor);
-        assert receiverBasedOnOwner != null : "Extension function must have receiver based on owner.";
-        return receiverBasedOnOwner;
+        return getImplicitReceiverBasedOnOwner(context, descriptor);
     }
 
     @Nullable

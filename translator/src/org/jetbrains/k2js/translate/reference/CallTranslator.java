@@ -161,10 +161,17 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression qualifiedMethodReference(@NotNull DeclarationDescriptor descriptor) {
         JsExpression methodReference = ReferenceTranslator.translateReference(descriptor, context());
         if (isExtensionFunction()) {
-            AstUtil.setQualifier(methodReference,
-                    TranslationUtils.getExtensionFunctionImplicitReceiver(context(), functionDescriptor));
+            return extensionFunctionReference(methodReference);
         } else if (receiver != null) {
             AstUtil.setQualifier(methodReference, receiver);
+        }
+        return methodReference;
+    }
+
+    private JsExpression extensionFunctionReference(@NotNull JsExpression methodReference) {
+        JsExpression qualifier = TranslationUtils.getExtensionFunctionImplicitReceiver(context(), functionDescriptor);
+        if (qualifier != null) {
+            AstUtil.setQualifier(methodReference, qualifier);
         }
         return methodReference;
     }
