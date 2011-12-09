@@ -801,7 +801,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetType defaultType = descriptor.getDefaultType();
         if(CodegenUtil.hasTypeInfoField(defaultType)) {
             if(!CodegenUtil.hasDerivedTypeInfoField(defaultType, true)) {
-                v.newField(myClass, Opcodes.ACC_PRIVATE, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+                v.newField(myClass, Opcodes.ACC_PROTECTED, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
 
                 MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
                 InstructionAdapter iv = null;
