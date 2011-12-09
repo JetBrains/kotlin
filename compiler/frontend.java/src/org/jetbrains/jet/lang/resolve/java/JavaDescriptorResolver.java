@@ -76,6 +76,12 @@ public class JavaDescriptorResolver {
     @NotNull
     public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
         String qualifiedName = psiClass.getQualifiedName();
+
+        ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
+        if (kotlinClassDescriptor != null) {
+            return kotlinClassDescriptor;
+        }
+
         ClassDescriptor classDescriptor = classDescriptorCache.get(qualifiedName);
         if (classDescriptor == null) {
             classDescriptor = createJavaClassDescriptor(psiClass);
@@ -86,6 +92,11 @@ public class JavaDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull String qualifiedName) {
+        ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
+        if (kotlinClassDescriptor != null) {
+            return kotlinClassDescriptor;
+        }
+
         ClassDescriptor classDescriptor = classDescriptorCache.get(qualifiedName);
         if (classDescriptor == null) {
             PsiClass psiClass = findClass(qualifiedName);

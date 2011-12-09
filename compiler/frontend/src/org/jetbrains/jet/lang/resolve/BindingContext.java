@@ -18,6 +18,8 @@ import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 
+import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
+
 /**
  * @author abreslav
  */
@@ -26,12 +28,12 @@ public interface BindingContext {
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(RewritePolicy.DO_NOTHING);
+    WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
 
-    WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(RewritePolicy.DO_NOTHING);
-    WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(RewritePolicy.DO_NOTHING);
+    WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
+    WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
 
-    WritableSlice<JetReferenceExpression, Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>>>(RewritePolicy.DO_NOTHING);
+    WritableSlice<JetReferenceExpression, Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>>>(DO_NOTHING);
 
     WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = Slices.createSimpleSlice();
     WritableSlice<JetExpression, CallableDescriptor> LOOP_RANGE_HAS_NEXT = Slices.createSimpleSlice();
@@ -61,7 +63,7 @@ public interface BindingContext {
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
-    WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(RewritePolicy.DO_NOTHING) {
+    WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(DO_NOTHING) {
         @Override
         public Boolean computeValue(SlicedMap map, PropertyDescriptor propertyDescriptor, Boolean backingFieldRequired, boolean valueNotFound) {
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
@@ -92,7 +94,7 @@ public interface BindingContext {
     };
     WritableSlice<PropertyDescriptor, Boolean> IS_INITIALIZED = Slices.createSimpleSetSlice();
 
-    WritableSlice<JetFunctionLiteralExpression, Boolean> BLOCK = new Slices.SetSlice<JetFunctionLiteralExpression>(RewritePolicy.DO_NOTHING) {
+    WritableSlice<JetFunctionLiteralExpression, Boolean> BLOCK = new Slices.SetSlice<JetFunctionLiteralExpression>(DO_NOTHING) {
         @Override
         public Boolean computeValue(SlicedMap map, JetFunctionLiteralExpression expression, Boolean isBlock, boolean valueNotFound) {
             isBlock = valueNotFound ? false : isBlock;
@@ -135,6 +137,9 @@ public interface BindingContext {
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
     WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.<JetParameter, PropertyDescriptor>sliceBuilder().build();
+
+    WritableSlice<String, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<String, ClassDescriptor>(DO_NOTHING);
+    WritableSlice<String, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR = new BasicWritableSlice<String, NamespaceDescriptor>(DO_NOTHING);
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer

@@ -1,24 +1,17 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
-import org.junit.Assert;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +92,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         GeneratedClassLoader loader = new GeneratedClassLoader(codegens);
 
         final JetNamespace namespace = myFile.getRootNamespace();
-        String fqName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)).replace("/", ".");
+        String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace)).replace("/", ".");
         Class<?> namespaceClass = loader.loadClass(fqName);
         Method method = namespaceClass.getMethod("box");
         return (String) method.invoke(null);
@@ -120,7 +113,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
     protected Class loadRootNamespaceClass(ClassFileFactory state) {
         final JetNamespace namespace = myFile.getRootNamespace();
-        String fqName = NamespaceCodegen.getJVMClassName(CodegenUtil.getFQName(namespace)).replace("/", ".");
+        String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace)).replace("/", ".");
         Map<String, Class> classMap = loadAllClasses(state);
         return classMap.get(fqName);
     }

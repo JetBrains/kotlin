@@ -5,10 +5,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
@@ -44,6 +41,11 @@ public class JavaPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
+        if (kotlinNamespaceDescriptor != null) {
+            return Collections.emptySet();
+        }
+
         // TODO: what is GlobalSearchScope
         PsiClass psiClass = semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName("namespace"));
         if (psiClass == null) {
@@ -54,7 +56,9 @@ public class JavaPackageScope extends JetScopeImpl {
             return Collections.emptySet();
         }
 
+        System.out.println(psiClass.getQualifiedName());
         return semanticServices.getDescriptorResolver().resolveFunctionGroup(containingDescriptor, psiClass, null, name, true);
+//            return Collections.emptySet();
     }
 
     @NotNull
@@ -79,6 +83,11 @@ public class JavaPackageScope extends JetScopeImpl {
                 }
 
                 for (PsiClass psiClass : javaPackage.getClasses()) {
+                    ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(psiClass.getQualifiedName());
+                    if (kotlinClassDescriptor != null) {
+                        continue;
+                    }
+
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
                         allDescriptors.add(descriptorResolver.resolveClass(psiClass));
                     }

@@ -20,7 +20,6 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -91,6 +90,7 @@ public class TypeHierarchyResolver {
                 @Override
                 public void visitClass(JetClass klass) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, outerScope, getClassKind(klass));
+                    context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(context.getTrace(), mutableClassDescriptor, outerScope, ClassKind.OBJECT);
@@ -217,6 +217,7 @@ public class TypeHierarchyResolver {
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                     name
             );
+            context.getTrace().record(FQNAME_TO_NAMESPACE_DESCRIPTOR, DescriptorUtils.getFQName(namespaceDescriptor), namespaceDescriptor);
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             namespaceDescriptor.initialize(scope);

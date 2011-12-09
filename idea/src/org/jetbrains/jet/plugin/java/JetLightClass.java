@@ -19,10 +19,10 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
@@ -75,8 +75,13 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
         return null;
     }
-    
-    
+
+    @Override
+    public String getQualifiedName() {
+        String fqName = JetPsiUtil.getFQName(file.getRootNamespace());
+        return fqName.length() == 0 ? className : fqName + "." + className;
+    }
+
     private PsiJavaFileStub getStub() {
         PsiJavaFileStub answer = file.getUserData(JAVA_API_STUB);
         if (answer == null) {
@@ -88,7 +93,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
     
     private PsiJavaFileStub calcStub() {
-        final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(CodegenUtil.getFQName(file.getRootNamespace()), true);
+        final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file.getRootNamespace()), true);
         final Project project = getProject();
         
         final Stack<StubElement> stubStack = new Stack<StubElement>();
@@ -148,5 +153,5 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
         return answer;
     }
-    
+
 }
