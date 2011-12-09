@@ -36,7 +36,7 @@ public final class CallTranslator extends AbstractTranslator {
         JsExpression receiver = TranslationUtils.translateBaseExpression(context, unaryExpression);
         List<JsExpression> arguments = Collections.emptyList();
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
-                (context.bindingContext(), unaryExpression.getOperation());
+                (context.bindingContext(), unaryExpression.getOperationReference());
         assert descriptor instanceof FunctionDescriptor;
         return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
     }
@@ -71,7 +71,7 @@ public final class CallTranslator extends AbstractTranslator {
         List<JsExpression> arguments = Arrays.asList(translateRightExpression(context, binaryExpression));
         //TODO: use PSI util method to get operation reference
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
-                (context.bindingContext(), binaryExpression.getOperation());
+                (context.bindingContext(), binaryExpression.getOperationReference());
         assert descriptor instanceof FunctionDescriptor;
         return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
     }

@@ -6,9 +6,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 /**
  * @author Talanov Pavel
@@ -105,7 +106,7 @@ public final class TranslationContext {
         if (staticContext.isDeclared(descriptor)) {
             return staticContext.getGlobalName(descriptor);
         }
-        throw new AssertionError("Undefined descriptor: " + DescriptorRenderer.getFQName(descriptor));
+        throw new AssertionError("Undefined descriptor: " + getFQName(descriptor));
     }
 
     @NotNull

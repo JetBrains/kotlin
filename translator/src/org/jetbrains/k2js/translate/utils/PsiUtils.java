@@ -27,7 +27,7 @@ public final class PsiUtils {
 
     @NotNull
     public static JetToken getOperationToken(@NotNull JetOperationExpression expression) {
-        JetSimpleNameExpression operationExpression = expression.getOperation();
+        JetSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();
         assert elementType instanceof JetToken : "Unary expression should have operation token of type JetToken";
         return (JetToken) elementType;

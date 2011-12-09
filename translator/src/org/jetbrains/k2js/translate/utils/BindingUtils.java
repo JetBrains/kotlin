@@ -222,7 +222,7 @@ public final class BindingUtils {
     public static FunctionDescriptor getFunctionDescriptorForOperationExpression(@NotNull BindingContext context,
                                                                                  @NotNull JetOperationExpression expression) {
         DeclarationDescriptor descriptorForReferenceExpression = getNullableDescriptorForReferenceExpression
-                (context, expression.getOperation());
+                (context, expression.getOperationReference());
 
         if (descriptorForReferenceExpression == null) return null;
 

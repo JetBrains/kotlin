@@ -7,12 +7,13 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.resolve.DescriptorRenderer.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 /**
@@ -20,19 +21,26 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
  */
 public final class StandardClasses {
 
+    //TODO: move declaration code to some kind of builder
     @NotNull
     public static StandardClasses bindImplementations(@NotNull JetStandardLibrary standardLibrary,
                                                       @NotNull JsScope kotlinObjectScope) {
         StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
-
-        bindArray(standardClasses, standardLibrary);
-        ClassDescriptor iteratorClass = (ClassDescriptor)
-                standardLibrary.getLibraryScope().getClassifier("Iterator");
-        assert iteratorClass != null;
-        bindIterator(standardClasses, iteratorClass);
-
+        declareArray(standardClasses, standardLibrary);
+        declareIterator(standardClasses, standardLibrary);
         declareJavaArrayList(standardClasses);
+        declareJavaSystem(standardClasses);
         return standardClasses;
+    }
+
+    private static void declareJavaSystem(@NotNull StandardClasses standardClasses) {
+        String systemFQName = "<java_root>.java.lang.System";
+        standardClasses.declareStandardTopLevelObject(systemFQName, "System");
+        declareMethods(standardClasses, systemFQName, "out");
+        String printStreamFQName = "<java_root>.java.io.PrintStream";
+        //TODO:
+        standardClasses.declareStandardTopLevelObject(printStreamFQName, "ErrorName");
+        declareMethods(standardClasses, printStreamFQName, "print", "println");
     }
 
     private static void declareJavaArrayList(@NotNull StandardClasses standardClasses) {
@@ -43,14 +51,17 @@ public final class StandardClasses {
                 "isEmpty", "set", "remove", "addAll");
     }
 
-    private static void bindIterator(@NotNull StandardClasses standardClasses,
-                                     @NotNull ClassDescriptor iteratorClass) {
+    private static void declareIterator(@NotNull StandardClasses standardClasses,
+                                        @NotNull JetStandardLibrary standardLibrary) {
+        ClassDescriptor iteratorClass = (ClassDescriptor)
+                standardLibrary.getLibraryScope().getClassifier("Iterator");
+        assert iteratorClass != null;
         standardClasses.declareStandardTopLevelObject(iteratorClass, "ArrayIterator");
         declareMethods(standardClasses, getFQName(iteratorClass), "next", "hasNext");
     }
 
-    private static void bindArray(@NotNull StandardClasses standardClasses,
-                                  @NotNull JetStandardLibrary standardLibrary) {
+    private static void declareArray(@NotNull StandardClasses standardClasses,
+                                     @NotNull JetStandardLibrary standardLibrary) {
         ClassDescriptor arrayClass = standardLibrary.getArray();
         standardClasses.declareStandardTopLevelObject(arrayClass, "Array");
         FunctionDescriptor nullConstructorFunction = getFunctionByName(standardLibrary.getLibraryScope(), "Array");
@@ -85,7 +96,7 @@ public final class StandardClasses {
 
     private void declareStandardTopLevelObject(@NotNull DeclarationDescriptor descriptor,
                                                @NotNull String kotlinLibName) {
-        declareStandardTopLevelObject(getFQName(descriptor), kotlinLibName);
+        declareStandardTopLevelObject(DescriptorUtils.getFQName(descriptor), kotlinLibName);
     }
 
     private void declareStandardTopLevelObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
@@ -95,7 +106,7 @@ public final class StandardClasses {
 
     private void declareStandardInnerDeclaration(@NotNull DeclarationDescriptor descriptor,
                                                  @NotNull String kotlinLibName) {
-        String containingFQName = getFQName(getContainingDeclaration(descriptor));
+        String containingFQName = DescriptorUtils.getFQName(getContainingDeclaration(descriptor));
         declareStandardInnerDeclaration(containingFQName, descriptor.getName(), kotlinLibName);
     }
 

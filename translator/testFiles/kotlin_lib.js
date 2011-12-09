@@ -484,7 +484,7 @@ Kotlin.Array = Class.create({
 
 
 Kotlin.ArrayList = Class.create({
-    initialize:function (len) {
+    initialize:function () {
         this.array = [];
         this.$size = 0;
     },
@@ -539,6 +539,30 @@ Kotlin.ArrayIterator = Class.create({
         return (this.array.size() > this.index);
     }
 });
+
+Kotlin.System = function () {
+    var output = "";
+
+    var print = function (obj) {
+        output += obj;
+    };
+    var println = function (obj) {
+        output += obj;
+        output += "\n";
+    };
+
+    return {
+        out:function () {
+            return {
+                print:print,
+                println:println
+            };
+        },
+        output:function () {
+            return output;
+        }
+    };
+}();
 
 Kotlin.Class = Class;
 Kotlin.Namespace = Namespace;

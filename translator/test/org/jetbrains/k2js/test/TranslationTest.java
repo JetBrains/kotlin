@@ -56,11 +56,8 @@ public abstract class TranslationTest {
                 new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
-    private void translateFile(String filename) {
-        K2JSTranslator.Arguments args = new K2JSTranslator.Arguments();
-        args.src = getInputFilePath(filename);
-        args.outputDir = getOutputFilePath(filename);
-        K2JSTranslator.translate(args);
+    protected void translateFile(String filename) {
+        (new K2JSTranslator()).translate(getInputFilePath(filename), getOutputFilePath(filename));
     }
 
     protected List<String> generateFilenameList(String inputFile) {
@@ -68,7 +65,7 @@ public abstract class TranslationTest {
     }
 
     //TODO: refactor filename generation logic
-    private String getOutputFilePath(String filename) {
+    protected String getOutputFilePath(String filename) {
         return getOutputPath() + convertToDotJsFile(filename);
     }
 
