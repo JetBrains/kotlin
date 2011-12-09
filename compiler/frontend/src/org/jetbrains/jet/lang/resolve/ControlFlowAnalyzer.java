@@ -19,12 +19,10 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
-    private final boolean processLocalDeclaration;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory, boolean processLocalDeclaration) {
+    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.context = context;
         this.flowDataTraceFactory = flowDataTraceFactory;
-        this.processLocalDeclaration = processLocalDeclaration;
     }
 
     public void process() {
@@ -58,7 +56,7 @@ public class ControlFlowAnalyzer {
     
     private void checkClassOrObject(JetClassOrObject klass) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, processLocalDeclaration);
+        flowInformationProvider.markUninitializedVariables((JetElement) klass, context.isDeclaredLocally());
     }
     
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -80,7 +78,7 @@ public class ControlFlowAnalyzer {
 
         flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
 
-        flowInformationProvider.markUninitializedVariables(function.asElement(), processLocalDeclaration);
+        flowInformationProvider.markUninitializedVariables(function.asElement(), context.isDeclaredLocally());
 
         flowInformationProvider.markUnusedVariables(function.asElement());
     }

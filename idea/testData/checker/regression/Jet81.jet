@@ -1,7 +1,7 @@
 // JET-81 Assertion fails when processing self-referring anonymous objects
 
 val y = object {
-  val a = y;
+  val a = <error>y</error>
 }
 
 val z = y.a;

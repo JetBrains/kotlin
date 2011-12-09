@@ -42,13 +42,15 @@ import java.util.Set;
 
     private StringBuilder debugOutput;
     private boolean analyzingBootstrapLibrary = false;
+    private boolean declaredLocally;
 
-    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely, @NotNull Configuration configuration) {
+    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely, @NotNull Configuration configuration, boolean declaredLocally) {
         this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         this.analyzeCompletely = analyzeCompletely;
         this.configuration = configuration;
+        this.declaredLocally = declaredLocally;
     }
 
     public void debug(Object message) {
@@ -137,5 +139,9 @@ import java.util.Set;
     @NotNull
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    public boolean isDeclaredLocally() {
+        return declaredLocally;
     }
 }

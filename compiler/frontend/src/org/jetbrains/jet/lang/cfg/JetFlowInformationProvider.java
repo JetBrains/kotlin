@@ -364,12 +364,12 @@ public class JetFlowInformationProvider {
         JetNamedDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
         DeclarationDescriptor declarationDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, parentDeclaration);
         assert declarationDescriptor != null;
-        ClassDescriptor variableClass = DescriptorUtils.getParentOfType(variableDescriptor, ClassDescriptor.class);
-        if (variableClass == null || !DescriptorUtils.isAncestor(variableClass, declarationDescriptor, false)) {
-            trace.report(Errors.INACCESSIBLE_BACKING_FIELD.on(element));
-            return true;
+        DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
+        if ((containingDeclaration instanceof ClassDescriptor) && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
+            return false;
         }
-        return false;
+        trace.report(Errors.INACCESSIBLE_BACKING_FIELD.on(element));
+        return true;
     }
 
     private boolean isBackingFieldReference(@Nullable JetElement element, boolean[] error, boolean reportError) {

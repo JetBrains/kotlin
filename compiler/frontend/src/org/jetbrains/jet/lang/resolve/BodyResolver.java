@@ -54,7 +54,9 @@ public class BodyResolver {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
-        computeDeferredTypes();
+        if (!context.isDeclaredLocally()) {
+            computeDeferredTypes();
+        }
     }
     
     private void resolveDelegationSpecifierLists() {
@@ -364,6 +366,8 @@ public class BodyResolver {
                 final PropertyDescriptor propertyDescriptor = this.context.getProperties().get(property);
                 assert propertyDescriptor != null;
 
+                computeDeferredType(propertyDescriptor.getReturnType());
+
                 JetExpression initializer = property.getInitializer();
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
@@ -385,6 +389,9 @@ public class BodyResolver {
             if (processed.contains(property)) continue;
 
             final PropertyDescriptor propertyDescriptor = entry.getValue();
+
+            computeDeferredType(propertyDescriptor.getReturnType());
+
             JetScope declaringScope = this.context.getDeclaringScopes().get(property);
 
             JetExpression initializer = property.getInitializer();
@@ -395,7 +402,7 @@ public class BodyResolver {
             resolvePropertyAccessors(property, propertyDescriptor);
         }
     }
-    
+
     private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, PropertyDescriptor propertyDescriptor) {
         JetScope declaringScope = context.getDeclaringScopes().get(accessor);
 
@@ -462,18 +469,8 @@ public class BodyResolver {
         for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : this.context.getFunctions().entrySet()) {
             JetNamedFunction declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
-            
-            if (descriptor.getReturnType() instanceof DeferredType) {
-                // handle type inference loop: function body contains a closure that calls that function
-                //
-                // fun f() = { f() }
-                //
-                // function type resolution must be started before function body resolution
-                //
 
-                DeferredType returnType = (DeferredType) descriptor.getReturnType();
-                returnType.getActualType();
-            }
+            computeDeferredType(descriptor.getReturnType());
 
             JetScope declaringScope = this.context.getDeclaringScopes().get(declaration);
             assert declaringScope != null;
@@ -517,6 +514,19 @@ public class BodyResolver {
                 if (defaultValue != null) {
                     typeInferrer.getType(declaringScope, defaultValue, valueParameterDescriptor.getOutType());
                 }
+            }
+        }
+    }
+    
+    private static void computeDeferredType(JetType type) {
+        // handle type inference loop: function or property body contains a reference to itself
+        // fun f() = { f() }
+        // val x = x
+        // type resolution must be started before body resolution
+        if (type instanceof DeferredType) {
+            DeferredType deferredType = (DeferredType) type;
+            if (!deferredType.isComputed()) {
+                deferredType.getActualType();
             }
         }
     }

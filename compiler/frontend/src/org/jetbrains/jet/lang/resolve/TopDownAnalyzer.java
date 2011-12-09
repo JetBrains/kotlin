@@ -47,8 +47,8 @@ public class TopDownAnalyzer {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull Configuration configuration,
             boolean declaredLocally) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, analyzeCompletely, configuration);
-        doProcess(context, outerScope, owner, declarations, flowDataTraceFactory, declaredLocally);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, analyzeCompletely, configuration, declaredLocally);
+        doProcess(context, outerScope, owner, declarations, flowDataTraceFactory);
 
     }
 
@@ -56,8 +56,7 @@ public class TopDownAnalyzer {
             TopDownAnalysisContext context, JetScope outerScope,
             NamespaceLike owner,
             Collection<? extends JetDeclaration> declarations,
-            JetControlFlowDataTraceFactory flowDataTraceFactory,
-            boolean processLocalDeclaration) {
+            JetControlFlowDataTraceFactory flowDataTraceFactory) {
 //        context.enableDebugOutput();
         context.debug("Enter");
 
@@ -69,7 +68,7 @@ public class TopDownAnalyzer {
         new OverloadResolver(context).process();
         if (!context.analyzingBootstrapLibrary()) {
             new BodyResolver(context).resolveBehaviorDeclarationBodies();
-            new ControlFlowAnalyzer(context, flowDataTraceFactory, processLocalDeclaration).process();
+            new ControlFlowAnalyzer(context, flowDataTraceFactory).process();
             new DeclarationsChecker(context).process();
         }
 
@@ -93,13 +92,13 @@ public class TopDownAnalyzer {
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
             @NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
         context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
         context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
         context.getDeclaringScopes().put(namespace, outerScope);
         context.setAnalyzingBootstrapLibrary(true);
 
-        doProcess(context, outerScope, standardLibraryNamespace, namespace.getDeclarations(), JetControlFlowDataTraceFactory.EMPTY, false);
+        doProcess(context, outerScope, standardLibraryNamespace, namespace.getDeclarations(), JetControlFlowDataTraceFactory.EMPTY);
     }
 
     public static void processObject(
