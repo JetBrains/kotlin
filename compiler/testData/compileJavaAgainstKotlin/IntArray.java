@@ -1,6 +1,6 @@
 
 class IntArray {
     {
-        int[] r = namespace.doNothing(new int[0]);
+        int[] r = namespace.doNothing(new int[0], null);
     }
 }

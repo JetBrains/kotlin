@@ -234,10 +234,10 @@ public class JetTypeMapper {
         return mapType(jetType, kind, signatureVisitor, false);
     }
 
-    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable SignatureVisitor signatureVisitor, boolean typeParameter) {
+    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable SignatureVisitor signatureVisitor, boolean boxPrimitive) {
         Type known = knowTypes.get(jetType);
         if (known != null) {
-            return mapKnownAsmType(jetType, known, signatureVisitor, typeParameter);
+            return mapKnownAsmType(jetType, known, signatureVisitor, boxPrimitive);
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -249,8 +249,7 @@ public class JetTypeMapper {
             
             if (signatureVisitor != null) {
                 SignatureVisitor arraySignatureVisitor = signatureVisitor.visitArrayType();
-                // TODO: box
-                mapType(memberType, kind, arraySignatureVisitor);
+                mapType(memberType, kind, arraySignatureVisitor, true);
             }
             
             if (!isGenericsArray(jetType)) {
