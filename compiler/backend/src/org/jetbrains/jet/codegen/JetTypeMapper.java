@@ -260,6 +260,9 @@ public class JetTypeMapper {
         }
 
         if (JetStandardClasses.getAny().equals(descriptor)) {
+            if (signatureVisitor != null) {
+                visitAsmType(signatureVisitor, TYPE_OBJECT);
+            }
             return TYPE_OBJECT;
         }
 
