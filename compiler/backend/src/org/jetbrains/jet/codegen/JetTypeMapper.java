@@ -307,7 +307,7 @@ public class JetTypeMapper {
         return asmType;
     }
 
-    private void visitAsmType(SignatureVisitor visitor, Type asmType) {
+    public static void visitAsmType(SignatureVisitor visitor, Type asmType) {
         switch (asmType.getSort()) {
         case Type.OBJECT:
             visitor.visitClassType(asmType.getInternalName());
@@ -379,7 +379,7 @@ public class JetTypeMapper {
         return asmType;
     }
 
-    private static final boolean DEBUG_SIGNATURE_WRITER = true;
+    public static final boolean DEBUG_SIGNATURE_WRITER = true;
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
         if(functionDescriptor == null)

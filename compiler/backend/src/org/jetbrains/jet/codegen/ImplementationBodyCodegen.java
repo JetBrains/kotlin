@@ -16,6 +16,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
+import org.objectweb.asm.signature.SignatureVisitor;
+import org.objectweb.asm.signature.SignatureWriter;
+import org.objectweb.asm.util.CheckSignatureAdapter;
 
 import java.util.*;
 
@@ -75,7 +78,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                                                       ? Opcodes.ACC_INTERFACE
                                                                                       : 0/*Opcodes.ACC_SUPER*/),
                       jvmName(),
-                      null,
+                      genericSignature(),
                       superClass,
                       interfaces.toArray(new String[interfaces.size()])
         );
@@ -90,6 +93,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             annotationVisitor.visit("value", SignatureUtil.classToSignature((JetClass)myClass, bindingContext, typeMapper));
             annotationVisitor.visitEnd();
         }
+    }
+
+    @Nullable
+    private String genericSignature() {
+        List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
+        
+        SignatureWriter signatureWriter = new SignatureWriter();
+        SignatureVisitor signatureVisitor = JetTypeMapper.DEBUG_SIGNATURE_WRITER
+                ? new CheckSignatureAdapter(CheckSignatureAdapter.CLASS_SIGNATURE, signatureWriter)
+                : signatureWriter;
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            signatureVisitor.visitFormalTypeParameter(typeParameter.getName());
+            SignatureVisitor classBoundVisitor = signatureVisitor.visitClassBound();
+            // TODO: wrong
+            JetTypeMapper.visitAsmType(classBoundVisitor, JetTypeMapper.TYPE_OBJECT);
+        }
+        SignatureVisitor superclassSignatureVisitor = signatureVisitor.visitSuperclass();
+        // TODO: wrong
+        superclassSignatureVisitor.visitClassType("java/lang/Object");
+        // TODO: add interfaces
+        superclassSignatureVisitor.visitEnd();
+
+        // TODO: return null if class is not generic and does not have generic superclasses
+
+        return signatureWriter.toString();
     }
 
     private String jvmName() {
