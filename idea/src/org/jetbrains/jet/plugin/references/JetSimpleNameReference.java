@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
@@ -37,6 +38,13 @@ import java.util.Set;
 * @author yole
 */
 class JetSimpleNameReference extends JetPsiReference {
+
+    private final static JetFunctionInsertHandler EMPTY_FUNCTION_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
+
+    private final static JetFunctionInsertHandler PARAMS_FUNCTION_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS);
+
     private final JetSimpleNameExpression myExpression;
 
     public JetSimpleNameReference(JetSimpleNameExpression jetSimpleNameExpression) {
@@ -135,10 +143,12 @@ class JetSimpleNameReference extends JetPsiReference {
             String typeText = "";
             String tailText = "";
             boolean tailTextGrayed = false;
+
             if (descriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                 JetType returnType = functionDescriptor.getReturnType();
                 typeText = DescriptorRenderer.TEXT.renderType(returnType);
+
                 tailText = "(" + StringUtil.join(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
                     @Override
                     public String fun(ValueParameterDescriptor valueParameterDescriptor) {
@@ -146,6 +156,14 @@ class JetSimpleNameReference extends JetPsiReference {
                                DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getOutType());
                     }
                 }, ",") + ")";
+
+                // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
+                // TODO: Support omitting brackets for one argument functions
+                if (functionDescriptor.getValueParameters().isEmpty()) {
+                    element = element.setInsertHandler(EMPTY_FUNCTION_HANDLER);
+                } else {
+                    element = element.setInsertHandler(PARAMS_FUNCTION_HANDLER);
+                }
             }
             else if (descriptor instanceof VariableDescriptor) {
                 JetType outType = ((VariableDescriptor) descriptor).getOutType();
@@ -170,8 +188,8 @@ class JetSimpleNameReference extends JetPsiReference {
         return result.toArray();
     }
 
-    /**
-     * Checks that receiver declaration could be resolved to call expected receiver.
+    /*
+     * Checks if receiver declaration could be resolved to call expected receiver.
      */
     private static boolean checkReceiverResolution (
             @NotNull ReceiverDescriptor expectedReceiver,
