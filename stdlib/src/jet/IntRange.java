@@ -47,7 +47,12 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
     public TypeInfo<?> getTypeInfo() {
         return typeInfo;
     }
-    
+
+    @Override
+    public JetObject getOuterObject() {
+        return null;
+    }
+
     public static IntRange count(int length) {
         return new IntRange(0, length);
     }
@@ -94,6 +99,11 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         @Override
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
     }
 }

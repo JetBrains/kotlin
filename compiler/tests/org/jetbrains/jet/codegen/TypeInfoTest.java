@@ -140,7 +140,7 @@ public class TypeInfoTest extends CodegenTestCase {
 
     public void testInner() throws Exception {
         blackBoxFile("typeInfo/inner.jet");
-//        System.out.println(generateToText());
+        System.out.println(generateToText());
     }
 
     public void testInheritance() throws Exception {
@@ -148,4 +148,3 @@ public class TypeInfoTest extends CodegenTestCase {
         System.out.println(generateToText());
     }
 }
-

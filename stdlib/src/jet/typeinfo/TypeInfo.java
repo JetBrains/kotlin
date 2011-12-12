@@ -182,6 +182,11 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
+        public JetObject getOuterObject() {
+            return null;
+        }
+
+        @Override
         public String toString() {
             return "T:" + signature.klazz.getName() + ":" + varIndex;
         }
@@ -386,6 +391,11 @@ public abstract class TypeInfo<T> implements JetObject {
                 throw new UnsupportedOperationException(); // TODO
             }
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
 
         public final boolean isSubtypeOf(TypeInfoImpl<?> superType) {

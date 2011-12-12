@@ -86,7 +86,11 @@ public class JetTypeMapper {
     public static final Type TYPE_LONG_ITERATOR = Type.getObjectType("jet/LongIterator");
     public static final Type TYPE_FLOAT_ITERATOR = Type.getObjectType("jet/FloatIterator");
     public static final Type TYPE_DOUBLE_ITERATOR = Type.getObjectType("jet/DoubleIterator");
-    
+
+    public JetStandardLibrary getStandardLibrary() {
+        return standardLibrary;
+    }
+
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
         this.bindingContext = bindingContext;
@@ -575,10 +579,8 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(CodegenUtil.getOuterClassDescriptor(classDescriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
         }
 
-        List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if(typeParameter.isReified())
-                parameterTypes.add(TYPE_TYPEINFO);
+        if (CodegenUtil.requireTypeInfoConstructorArg(classDescriptor.getDefaultType())) {
+            parameterTypes.add(TYPE_TYPEINFO);
         }
 
         for (ValueParameterDescriptor parameter : parameters) {

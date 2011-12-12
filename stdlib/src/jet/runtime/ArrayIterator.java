@@ -39,6 +39,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public TypeInfo<?> getTypeInfo() {
             return TypeInfo.getTypeInfo(GenericIterator.class, false, null, new TypeInfoProjection[] {(TypeInfoProjection) elementTypeInfo});
         }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
+        }
     }
     
     public static <T> Iterator<T> iterator(T[] array, TypeInfo elementTypeInfo) {
@@ -68,6 +73,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
     }
 
@@ -99,6 +109,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
         }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
+        }
     }
 
     public static ShortIterator iterator(short[] array) {
@@ -128,6 +143,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
     }
 
@@ -159,6 +179,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
         }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
+        }
     }
 
     public static LongIterator iterator(long[] array) {
@@ -188,6 +213,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
     }
 
@@ -219,6 +249,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
         }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
+        }
     }
 
     public static DoubleIterator iterator(double[] array) {
@@ -249,6 +284,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
         }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
+        }
     }
 
     public static CharIterator iterator(char[] array) {
@@ -278,6 +318,11 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
     }
 

@@ -24,7 +24,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testArrayListInheritance() throws Exception {
         loadFile("classes/inheritingFromArrayList.jet");
-
+        System.out.println(generateToText());
         final Class aClass = loadClass("Foo", generateClassesInFile());
         assertInstanceOf(aClass.newInstance(), List.class);
     }

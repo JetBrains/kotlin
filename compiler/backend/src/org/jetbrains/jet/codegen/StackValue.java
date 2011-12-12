@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -629,7 +630,7 @@ public abstract class StackValue {
 
                 for (TypeParameterDescriptor typeParameterDescriptor : setterDescriptor.getOriginal().getTypeParameters()) {
                     if(typeParameterDescriptor.isReified()) {
-                        codegen.generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor));
+                        codegen.generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor), null);
                     }
                 }
 
@@ -1010,7 +1011,8 @@ public abstract class StackValue {
                         return codegen.typeMapper.mapType(callableMethod.getReceiverClass());
                     }
                     else {
-                        return codegen.typeMapper.mapType(callableMethod.getThisType());
+                        JetType thisType = callableMethod.getThisType();
+                        return codegen.typeMapper.mapType(thisType);
                     }
                 }
                 else {
