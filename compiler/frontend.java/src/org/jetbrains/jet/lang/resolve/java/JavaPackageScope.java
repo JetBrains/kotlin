@@ -58,7 +58,6 @@ public class JavaPackageScope extends JetScopeImpl {
             return Collections.emptySet();
         }
 
-        System.out.println(psiClass.getQualifiedName());
         return semanticServices.getDescriptorResolver().resolveFunctionGroup(containingDescriptor, psiClass, null, name, true);
 //            return Collections.emptySet();
     }
