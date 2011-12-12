@@ -1,10 +1,12 @@
 package org.jetbrains.jet.j2k.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.Expression;
 import org.jetbrains.jet.j2k.ast.INode;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ignatov
@@ -53,15 +55,27 @@ public class AstUtil {
     return conversions;
   }
 
-  public static List<String> applyConversions(List<String> first, List<String> second) {
+  @NotNull
+  public static List<String> applyConversions(@NotNull List<String> first, @NotNull List<String> second) {
     List<String> result = new LinkedList<String>();
     assert first.size() == second.size() : "Lists must have the same size.";
     for (int i = 0; i < first.size(); i++) {
-      if (second.get(i).isEmpty())
-        result.add(first.get(i));
-      else
-        result.add("(" + first.get(i) + ")" + second.get(i));
+      result.add(applyConversionForOneItem(first.get(i), second.get(i)));
     }
     return result;
+  }
+
+  @NotNull
+  public static String applyConversionForOneItem(@NotNull String f, @NotNull String s) {
+    if (s.isEmpty())
+      return f;
+    else
+      return "(" + f + ")" + s;
+  }
+
+  public static <T> T getOrElse(Map<T, T> map, T e, T orElse) {
+    if (map.containsKey(e))
+      return map.get(e);
+    return orElse;
   }
 }

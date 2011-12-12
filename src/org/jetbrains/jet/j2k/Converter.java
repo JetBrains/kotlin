@@ -25,8 +25,9 @@ public class Converter {
       add("javax.annotation.Nonnull");
     }
   };
-  private static Set<String> ourClassIdentifiers = new HashSet<String>();
-  private static final Dispatcher ourDispatcher = new Dispatcher();
+  @NotNull private static Set<String> ourClassIdentifiers = new HashSet<String>();
+  @NotNull private static final Dispatcher ourDispatcher = new Dispatcher();
+  @Nullable private static PsiType ourMethodReturnType = null;
 
   public static void setClassIdentifiers(Set<String> identifiers) {
     ourClassIdentifiers = identifiers;
@@ -34,6 +35,11 @@ public class Converter {
 
   public static Set<String> getClassIdentifiers() {
     return new HashSet<String>(ourClassIdentifiers);
+  }
+
+  @Nullable
+  public static PsiType getMethodReturnType() {
+    return ourMethodReturnType;
   }
 
   public static void clearClassIdentifiers() {
@@ -299,6 +305,8 @@ public class Converter {
       ourDispatcher.setExpressionVisitor(new ExpressionVisitorForDirectObjectInheritors());
     else
       ourDispatcher.setExpressionVisitor(new ExpressionVisitor());
+
+    ourMethodReturnType = method.getReturnType();
 
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
     final Type returnType = typeToType(method.getReturnType(), isNotNull(method.getModifierList()));

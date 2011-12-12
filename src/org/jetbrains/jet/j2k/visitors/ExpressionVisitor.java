@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
+import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.*;
 
@@ -231,7 +232,9 @@ public class ExpressionVisitor extends StatementVisitor {
     }
   }
 
-  private static boolean isConversionNeeded(final PsiType actual, final PsiType expected) {
+  static boolean isConversionNeeded(@Nullable final PsiType actual,@Nullable final PsiType expected) {
+    if (actual == null || expected == null)
+      return false;
     Map<String, String> typeMap = new HashMap<String, String>();
     typeMap.put("java.lang.Byte", "byte");
     typeMap.put("java.lang.Short", "short");
@@ -242,20 +245,13 @@ public class ExpressionVisitor extends StatementVisitor {
     typeMap.put("java.lang.Character", "char");
     String expectedStr = expected.getCanonicalText();
     String actualStr = actual.getCanonicalText();
-    boolean o1 = getOrElse(typeMap, actualStr, "").equals(expectedStr);
-    boolean o2 = getOrElse(typeMap, expectedStr, "").equals(actualStr);
+    boolean o1 = AstUtil.getOrElse(typeMap, actualStr, "").equals(expectedStr);
+    boolean o2 = AstUtil.getOrElse(typeMap, expectedStr, "").equals(actualStr);
     return !actualStr.equals(expectedStr) && (!(o1 ^ o2));
   }
 
-  
-
-  private static <T> T getOrElse(Map<T, T> map, T e, T orElse) {
-    if (map.containsKey(e))
-      return map.get(e);
-    return orElse;
-  }
-
-  private static String getPrimitiveTypeConversion(String type) {
+  @NotNull
+  static String getPrimitiveTypeConversion(@NotNull String type) {
     Map<String, String> conversions = new HashMap<String, String>();
     conversions.put("byte", "byt");
     conversions.put("short", "sht");

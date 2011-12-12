@@ -6,6 +6,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
+import static org.jetbrains.jet.j2k.visitors.ExpressionVisitor.getPrimitiveTypeConversion;
+import static org.jetbrains.jet.j2k.visitors.ExpressionVisitor.isConversionNeeded;
 
 /**
  * @author ignatov
@@ -332,8 +335,16 @@ public class StatementVisitor extends ElementVisitor {
   @Override
   public void visitReturnStatement(PsiReturnStatement statement) {
     super.visitReturnStatement(statement);
+    PsiExpression returnValue = statement.getReturnValue();
+    String conversion = "";
+
+    PsiType methodReturnType = Converter.getMethodReturnType();
+    if (returnValue != null && methodReturnType != null && isConversionNeeded(returnValue.getType(), methodReturnType)) {
+      conversion = getPrimitiveTypeConversion(methodReturnType.getCanonicalText());
+    }
     myResult = new ReturnStatement(
-      expressionToExpression(statement.getReturnValue())
+      expressionToExpression(returnValue),
+      conversion
     );
   }
 }
