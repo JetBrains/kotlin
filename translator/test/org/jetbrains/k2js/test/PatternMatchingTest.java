@@ -55,15 +55,8 @@ public final class PatternMatchingTest extends TranslationTest {
         testFooBoxIsTrue("matchNullableType.kt");
     }
 
-    //TODO: tests not actual due to drop of conditionCall feature
-//    @Test
-//    public void whenConditionMethodCall() throws Exception {
-//        testFooBoxIsTrue("whenConditionMethodCall.kt");
-//    }
-//
-//    @Test
-//    public void whenConditionPropertyAccess() throws Exception {
-//        testFooBoxIsTrue("whenConditionPropertyAccess.kt");
-//    }
-
+    @Test
+    public void whenAsExpression() throws Exception {
+        testFooBoxIsTrue("whenAsExpression.kt");
+    }
 }

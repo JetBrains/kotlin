@@ -22,6 +22,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCompileTimeValue;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 
@@ -217,21 +218,25 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (stringLiteral != null) {
             return stringLiteral;
         }
-        throw new AssertionError("String templates not supported!");
+        return resolveAsTemplate(expression, context);
+    }
+
+    @NotNull
+    private JsNode resolveAsTemplate(@NotNull JetStringTemplateExpression expression,
+                                     @NotNull TranslationContext context) {
+        return StringTemplateTranslator.translate(expression, context);
     }
 
     @Nullable
-    private JsStringLiteral resolveAsStringConstant(@NotNull JetStringTemplateExpression expression,
+    private JsStringLiteral resolveAsStringConstant(@NotNull JetExpression expression,
                                                     @NotNull TranslationContext context) {
-        CompileTimeConstant<?> compileTimeValue =
-                context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
-        if (compileTimeValue != null) {
-            Object value = compileTimeValue.getValue();
-            assert value instanceof String : "Compile time constant template should be a String constant.";
-            String constantString = (String) value;
-            return context.program().getStringLiteral(constantString);
+        Object value = getCompileTimeValue(context.bindingContext(), expression);
+        if (value == null) {
+            return null;
         }
-        return null;
+        assert value instanceof String : "Compile time constant template should be a String constant.";
+        String constantString = (String) value;
+        return context.program().getStringLiteral(constantString);
     }
 
     @Override

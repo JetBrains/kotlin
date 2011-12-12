@@ -327,4 +327,9 @@ public class AstUtil {
     public static JsExpression equalsTrue(JsExpression expression, JsProgram program) {
         return equals(expression, program.getTrueLiteral());
     }
+
+
+    public static JsBinaryOperation sum(JsExpression left, JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ADD, left, right);
+    }
 }

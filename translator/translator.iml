@@ -7,13 +7,13 @@
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="IDEA IC-112.121" jdkType="IDEA JDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="js" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="module" module-name="backend" />
-    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
 

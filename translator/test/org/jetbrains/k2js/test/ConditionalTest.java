@@ -25,8 +25,8 @@ public class ConditionalTest extends AbstractExpressionTest {
     }
 
     //TODO: test fails due to isStatement issue, include when issue is solved or implement another solution
-//    @Test
-//    public void ifElseIf() throws Exception {
-//        testFunctionOutput("elseif.kt", "foo", "box", 5);
-//    }
+    @Test
+    public void ifElseIf() throws Exception {
+        testFunctionOutput("elseif.kt", "foo", "box", 5);
+    }
 }

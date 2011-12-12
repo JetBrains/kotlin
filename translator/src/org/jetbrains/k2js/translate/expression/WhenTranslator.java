@@ -45,6 +45,9 @@ public class WhenTranslator extends AbstractTranslator {
         List<JsStatement> entries = translateEntries();
         resultingFor.setBody(AstUtil.newBlock(entries));
         return resultingFor;
+//        JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope(context().jsScope());
+//        dummyFunction.setBody(AstUtil.convertToBlock(resultingFor));
+//        return AstUtil.newInvocation(dummyFunction);
     }
 
     @NotNull

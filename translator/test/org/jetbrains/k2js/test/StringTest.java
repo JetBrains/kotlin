@@ -23,4 +23,19 @@ public class StringTest extends AbstractExpressionTest {
     public void stringAssignment() throws Exception {
         testFooBoxIsTrue("stringAssignment.kt");
     }
+
+    @Test
+    public void intInTemplate() throws Exception {
+        testFunctionOutput("intInTemplate.kt", "foo", "box", "my age is 3");
+    }
+
+    @Test
+    public void stringInTemplate() throws Exception {
+        testFunctionOutput("stringInTemplate.kt", "foo", "box", "oHelloo");
+    }
+
+    @Test
+    public void multipleExpressionInTemplate() throws Exception {
+        testFunctionOutput("multipleExpressionsInTemplate.kt", "foo", "box", "left = 3\nright = 2\nsum = 5\n");
+    }
 }

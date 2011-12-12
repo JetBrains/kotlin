@@ -540,6 +540,16 @@ Kotlin.ArrayIterator = Class.create({
     }
 });
 
+Kotlin.Integer = function () {
+
+    return {
+        parseInt:function (str) {
+            return parseInt(str);
+        }
+    }
+
+}();
+
 Kotlin.System = function () {
     var output = "";
 

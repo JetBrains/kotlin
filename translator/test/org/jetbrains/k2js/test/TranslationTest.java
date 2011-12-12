@@ -1,5 +1,6 @@
 package org.jetbrains.k2js.test;
 
+import org.jetbrains.k2js.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 

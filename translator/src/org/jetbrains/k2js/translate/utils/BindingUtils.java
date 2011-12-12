@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -237,6 +238,15 @@ public final class BindingUtils {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         assert descriptor != null : element + " doesn't have a descriptor.";
         return descriptor;
+    }
+
+    @Nullable
+    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression) {
+        CompileTimeConstant<?> compileTimeValue = context.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (compileTimeValue != null) {
+            return compileTimeValue.getValue();
+        }
+        return null;
     }
 
 }

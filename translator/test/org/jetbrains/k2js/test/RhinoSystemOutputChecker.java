@@ -41,13 +41,13 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
 
     @NotNull
     private String execMain() {
-        String constructArguments = "var args = new Kotlin.Array(" + arguments.size() + ");\n";
+        String constructArguments = "var args = Kotlin.array(" + arguments.size() + ");\n";
         int index = 0;
         for (String argument : arguments) {
-            constructArguments = constructArguments + "args[" + index + "] = \"" + argument + "\";\n";
+            constructArguments = constructArguments + "args.set(" + index + ", \"" + argument + "\");\n";
             index++;
         }
-        String callMain = "foo.main(args)\n";
+        String callMain = "Anonymous.main(args);\n";
         return constructArguments + callMain;
     }
 }

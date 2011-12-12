@@ -30,7 +30,14 @@ public final class StandardClasses {
         declareIterator(standardClasses, standardLibrary);
         declareJavaArrayList(standardClasses);
         declareJavaSystem(standardClasses);
+        declareInteger(standardClasses);
         return standardClasses;
+    }
+
+    private static void declareInteger(@NotNull StandardClasses standardClasses) {
+        String integerFQName = "<java_root>.java.lang.Integer";
+        standardClasses.declareStandardTopLevelObject(integerFQName, "Integer");
+        declareMethods(standardClasses, integerFQName, "parseInt");
     }
 
     private static void declareJavaSystem(@NotNull StandardClasses standardClasses) {
