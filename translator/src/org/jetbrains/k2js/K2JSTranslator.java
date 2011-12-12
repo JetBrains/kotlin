@@ -1,11 +1,10 @@
 package org.jetbrains.k2js;
 
+import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
@@ -15,12 +14,12 @@ import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.generate.CodeGenerator;
+import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.JetTestUtils;
 
 import java.io.File;
@@ -35,14 +34,13 @@ public final class K2JSTranslator {
 
         @Override
         public void dispose() {
-            //To change body of implemented methods use File | Settings | File Templates.
         }
     });
 
     public K2JSTranslator() {
     }
 
-    public void translate(String inputFile, String outputFile) {
+    public void translate(String inputFile, String outputFile) throws Exception {
 
         try {
 
@@ -54,8 +52,10 @@ public final class K2JSTranslator {
             BindingContext bindingContext = JetTestUtils.analyzeNamespace(namespace,
                     JetControlFlowDataTraceFactory.EMPTY);
 
-            NamespaceDescriptor namespaceDescriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
-            namespaceDescriptor.getMemberScope().getAllDescriptors();
+            JsProgram program = Translation.generateAst(bindingContext, namespace, myEnvironment.getProject());
+
+            CodeGenerator generator = new CodeGenerator();
+            generator.generateToFile(program, new File(outputFile));
 
         } catch (CompileEnvironmentException e) {
             System.out.println(e.getMessage());
@@ -88,24 +88,6 @@ public final class K2JSTranslator {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(myEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
-    }
-
-    protected void ensureParsed(PsiFile file) {
-        file.accept(new PsiElementVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                element.acceptChildren(this);
-            }
-        });
-    }
-
-    protected void prepareForTest(String name) throws IOException {
-        // String text = loadFile(name + ".jet");
-        // createAndCheckPsiFile(name, text);
-    }
-
-    protected void createAndCheckPsiFile(String name, String text) {
-        //createCheckAndReturnPsiFile(name, text);
     }
 
 }

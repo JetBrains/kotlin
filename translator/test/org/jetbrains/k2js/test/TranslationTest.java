@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.jetbrains.k2js.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -56,7 +55,7 @@ public abstract class TranslationTest {
                 new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
-    protected void translateFile(String filename) {
+    protected void translateFile(String filename) throws Exception {
         (new K2JSTranslator()).translate(getInputFilePath(filename), getOutputFilePath(filename));
     }
 
