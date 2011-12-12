@@ -203,7 +203,7 @@ public class ErrorUtils {
     }
 
     public static boolean isError(@NotNull DeclarationDescriptor candidate) {
-        return candidate.getContainingDeclaration() == getErrorClass() || candidate == ERROR_MODULE;
+        return candidate == getErrorClass() || candidate.getContainingDeclaration() == getErrorClass() || candidate == ERROR_MODULE;
     }
 
     private static class ErrorTypeImpl implements JetType {
