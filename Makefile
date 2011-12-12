@@ -9,3 +9,6 @@ disable-sandbox:
 
 enable-sandbox:
 	cd ~/.IdeaIC11/system/ && rm -rf plugins-sandbox && mv plugins-sandbox.tmp ./plugins-sandbox
+
+release-patch:
+	cp ~/src/jet/.git/patches/master/j2k ~/src/jet-contrib/upstream-patches/
