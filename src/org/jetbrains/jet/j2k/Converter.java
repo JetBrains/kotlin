@@ -20,16 +20,13 @@ import java.util.*;
 public class Converter {
   private final static Set<String> NOT_NULL_ANNOTATIONS = new HashSet<String>() {
     {
-     add("org.jetbrains.annotations.NotNull");
-     add("com.sun.istack.internal.NotNull");
-     add("javax.annotation.Nonnull");
+      add("org.jetbrains.annotations.NotNull");
+      add("com.sun.istack.internal.NotNull");
+      add("javax.annotation.Nonnull");
     }
-  } ;
+  };
   private static Set<String> ourClassIdentifiers = new HashSet<String>();
   private static final Dispatcher ourDispatcher = new Dispatcher();
-//  private static ExpressionVisitor ourExpressionVisitor = new ExpressionVisitor();
-
-  private static final java.lang.Class<ExpressionVisitor> visitorClass = ExpressionVisitor.class;
 
   public static void setClassIdentifiers(Set<String> identifiers) {
     ourClassIdentifiers = identifiers;
@@ -512,10 +509,10 @@ public class Converter {
 
   private static boolean isReadOnly(PsiParameter parameter) {
     for (PsiReference r : (ReferencesSearch.search(parameter))) {
-        if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
-          return false;
-        }
+      if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
+        return false;
       }
+    }
     return true;
   }
 
