@@ -1,5 +1,6 @@
 package org.jetbrains.jet.j2k.util;
 
+import org.jetbrains.jet.j2k.ast.Expression;
 import org.jetbrains.jet.j2k.ast.INode;
 
 import java.util.LinkedList;
@@ -43,5 +44,24 @@ public class AstUtil {
 
   public static String upperFirstCharacter(String string) {
     return string.substring(0, 1).toUpperCase() + string.substring(1);
+  }
+
+  public static List<String> createListWithEmptyString(final List<Expression> arguments) {
+    final List<String> conversions = new LinkedList<String>();
+    //noinspection UnusedDeclaration
+    for (Expression argument : arguments) conversions.add("");
+    return conversions;
+  }
+
+  public static List<String> applyConversions(List<String> first, List<String> second) {
+    List<String> result = new LinkedList<String>();
+    assert first.size() == second.size() : "Lists must have the same size.";
+    for (int i = 0; i < first.size(); i++) {
+      if (second.get(i).isEmpty())
+        result.add(first.get(i));
+      else
+        result.add("(" + first.get(i) + ")" + second.get(i));
+    }
+    return result;
   }
 }
