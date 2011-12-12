@@ -2609,7 +2609,7 @@ If finally block is present, its last expression is the value of try expression.
                             v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
                         }
                         else {
-                            v.load(1, TYPE_OBJECT);
+                            v.load(((ConstructorFrameMap)myFrameMap).getTypeInfoIndex(), TYPE_OBJECT);
                         }
                     }
                     else {

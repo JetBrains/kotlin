@@ -37,7 +37,7 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
         @Override
         public TypeInfo<?> getTypeInfo() {
-            return TypeInfo.getTypeInfo(GenericIterator.class, false, null, new TypeInfoProjection[] {(TypeInfoProjection) elementTypeInfo});
+            return TypeInfo.getTypeInfo(GenericIterator.class, false, new TypeInfoProjection[] {(TypeInfoProjection) elementTypeInfo});
         }
 
         @Override
