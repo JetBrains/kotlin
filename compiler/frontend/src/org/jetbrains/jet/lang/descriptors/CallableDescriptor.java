@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -24,6 +25,7 @@ public interface CallableDescriptor extends DeclarationDescriptor {
     /**
      * Method may return null for not yet fully initialized object or if error occurred.
      */
+    @Nullable
     JetType getReturnType();
 
     @NotNull

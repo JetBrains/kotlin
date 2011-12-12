@@ -51,6 +51,11 @@ public interface JetScope {
     @Nullable
     PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName);
 
+    /**
+     * All visible descriptors from current scope.
+     *
+     * @return All visible descriptors from current scope.
+     */
     @NotNull
     Collection<DeclarationDescriptor> getAllDescriptors();
 

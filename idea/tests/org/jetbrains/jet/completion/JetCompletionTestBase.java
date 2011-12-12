@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -20,6 +21,32 @@ import java.util.List;
  * @author Nikolay.Krasko
  */
 public abstract class JetCompletionTestBase extends LightCompletionTestCase {
+    private final String myPath;
+    private final String myName;
+
+    protected JetCompletionTestBase(@NotNull String path, @NotNull String name) {
+        myPath = path;
+        myName = name;
+
+        // Set name explicitly because otherwise there will be "TestCase.fName cannot be null"
+        setName("testCompletionExecute");
+    }
+
+    public void testCompletionExecute() throws Exception {
+        doTest();
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return new File(PluginTestCaseBase.getTestDataPathBase(), myPath).getPath() +
+               File.separator;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+        return "test" + myName;
+    }
 
     private CompletionType type;
 

@@ -1,6 +1,9 @@
 package org.jetbrains.jet.plugin.references;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Iconable;
@@ -14,12 +17,21 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
+import java.util.Set;
 
 /**
 * @author yole
@@ -53,9 +65,14 @@ class JetSimpleNameReference extends JetPsiReference {
             JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
             JetFile file = (JetFile) myExpression.getContainingFile();
             BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+
             final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
-            if (expressionType != null) {
-                return collectLookupElements(bindingContext, expressionType.getMemberScope());
+            final JetScope resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
+
+            if (expressionType != null && resolutionScope != null) {
+                return collectLookupElements(bindingContext,
+                        includeExternalCallableExtensions(expressionType.getMemberScope().getAllDescriptors(),
+                                                          resolutionScope, new ExpressionReceiver(receiverExpression, expressionType)));
             }
         }
         else {
@@ -63,7 +80,8 @@ class JetSimpleNameReference extends JetPsiReference {
             BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
             JetScope resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, myExpression);
             if (resolutionScope != null) {
-                return collectLookupElements(bindingContext, resolutionScope);
+                return collectLookupElements(bindingContext,
+                        excludeNotCallableExtensions(resolutionScope.getAllDescriptors(), resolutionScope));
             }
         }
 
@@ -76,9 +94,43 @@ class JetSimpleNameReference extends JetPsiReference {
         return myExpression.getReferencedNameElement().replace(element);
     }
 
-    private Object[] collectLookupElements(BindingContext bindingContext, JetScope scope) {
+    private Iterable<DeclarationDescriptor> excludeNotCallableExtensions(
+            @NotNull Iterable<DeclarationDescriptor> descriptors, @NotNull final JetScope scope
+    ) {
+        final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
+        descriptorsSet.removeAll(
+                Collections2.filter(JetScopeUtils.getAllExtensions(scope), new Predicate<CallableDescriptor>() {
+                    @Override
+                    public boolean apply(CallableDescriptor callableDescriptor) {
+                        return !checkReceiverResolution(scope.getImplicitReceiver(), callableDescriptor);
+                    }
+                }));
+
+        return descriptorsSet;
+    }
+
+    private Iterable<DeclarationDescriptor> includeExternalCallableExtensions(
+            @NotNull Iterable<DeclarationDescriptor> descriptors,
+            @NotNull final JetScope externalScope,
+            @NotNull final ReceiverDescriptor receiverDescriptor
+    ) {
+        Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
+
+        descriptorsSet.addAll(Collections2.filter(JetScopeUtils.getAllExtensions(externalScope),
+                new Predicate<CallableDescriptor>() {
+                    @Override
+                    public boolean apply(CallableDescriptor callableDescriptor) {
+                        return checkReceiverResolution(receiverDescriptor, callableDescriptor);
+                    }
+                }));
+
+        return descriptorsSet;
+    }
+
+    private Object[] collectLookupElements(BindingContext bindingContext, Iterable<DeclarationDescriptor> descriptors) {
         List<LookupElement> result = Lists.newArrayList();
-        for (final DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
+
+        for (final DeclarationDescriptor descriptor : descriptors) {
             LookupElementBuilder element = LookupElementBuilder.create(descriptor.getName());
             String typeText = "";
             String tailText = "";
@@ -116,5 +168,30 @@ class JetSimpleNameReference extends JetPsiReference {
             result.add(element);
         }
         return result.toArray();
+    }
+
+    /**
+     * Checks that receiver declaration could be resolved to call expected receiver.
+     */
+    private static boolean checkReceiverResolution (
+            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull CallableDescriptor receiverArgument
+    ) {
+        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
+        for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
+            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
+        }
+
+        ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
+        if (expectedReceiver.exists() && receiverParameter.exists()) {
+            constraintSystem.addSubtypingConstraint(expectedReceiver.getType(), receiverParameter.getType());
+        }
+        else if (expectedReceiver.exists() || receiverParameter.exists()) {
+            // Only one of receivers exist
+            return false;
+        }
+
+        ConstraintSystemSolution solution = constraintSystem.solve();
+        return solution.getStatus().isSuccessful();
     }
 }

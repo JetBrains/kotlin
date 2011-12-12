@@ -17,8 +17,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,8 +32,11 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /*package*/ abstract class TaskPrioritizer<D extends CallableDescriptor> {
 
     public static <D extends CallableDescriptor> void splitLexicallyLocalDescriptors(
-            Collection<ResolvedCallImpl<D>> allDescriptors, DeclarationDescriptor containerOfTheCurrentLocality, Collection<ResolvedCallImpl<D>> local, Collection<ResolvedCallImpl<D>> nonlocal) {
-
+            @NotNull Collection<ResolvedCallImpl<D>> allDescriptors,
+            @NotNull DeclarationDescriptor containerOfTheCurrentLocality,
+            @NotNull Collection<ResolvedCallImpl<D>> local,
+            @NotNull Collection<ResolvedCallImpl<D>> nonlocal
+    ) {
         for (ResolvedCallImpl<D> resolvedCall : allDescriptors) {
             if (DescriptorUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getCandidateDescriptor())) {
                 local.add(resolvedCall);
@@ -56,7 +59,9 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return null;
     }
 
-    public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull Call call, @NotNull String name, @NotNull BindingContext bindingContext, @NotNull DataFlowInfo dataFlowInfo) {
+    @NotNull
+    public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull JetScope scope, @NotNull Call call, @NotNull String name,
+                                                           @NotNull BindingContext bindingContext, @NotNull DataFlowInfo dataFlowInfo) {
         List<ResolutionTask<D>> result = Lists.newArrayList();
 
         ReceiverDescriptor explicitReceiver = call.getExplicitReceiver();
@@ -68,7 +73,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 
         return result;
     }
-
+    
     private void doComputeTasks(JetScope scope, ReceiverDescriptor receiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull AutoCastService autoCastService) {
         DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();

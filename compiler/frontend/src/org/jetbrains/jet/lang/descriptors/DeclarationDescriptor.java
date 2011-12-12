@@ -21,6 +21,7 @@ public interface DeclarationDescriptor extends Annotated, Named {
     @Nullable
     DeclarationDescriptor getContainingDeclaration();
 
+    @Nullable
     DeclarationDescriptor substitute(TypeSubstitutor substitutor);
 
     <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
