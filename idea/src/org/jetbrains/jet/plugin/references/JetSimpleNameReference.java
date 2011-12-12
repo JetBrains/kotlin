@@ -17,10 +17,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -33,6 +30,8 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.RECEIVER;
 
 /**
 * @author yole
@@ -202,7 +201,7 @@ class JetSimpleNameReference extends JetPsiReference {
 
         ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
         if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintSystem.addSubtypingConstraint(expectedReceiver.getType(), receiverParameter.getType());
+            constraintSystem.addSubtypingConstraint(RECEIVER.assertSubtyping(expectedReceiver.getType(), receiverParameter.getType()));
         }
         else if (expectedReceiver.exists() || receiverParameter.exists()) {
             // Only one of receivers exist
