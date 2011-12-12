@@ -2199,7 +2199,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 if(getterDescriptor.getReceiverParameter().exists()) {
                     index++;
                 }
-                for (TypeParameterDescriptor typeParameterDescriptor : getterDescriptor.getTypeParameters()) {
+                for (TypeParameterDescriptor typeParameterDescriptor : resolvedGetCall.getCandidateDescriptor().getTypeParameters()) {
                     if(typeParameterDescriptor.isReified()) {
                         generateTypeInfo(resolvedGetCall.getTypeArguments().get(typeParameterDescriptor), null);
                         index++;
