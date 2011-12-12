@@ -12,6 +12,9 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.dart.compiler.util.AstUtil.convertToStatement;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
+
 /**
  * @author Talanov Pavel
  */
@@ -39,15 +42,25 @@ public class WhenTranslator extends AbstractTranslator {
         this.dummyCounterName = context.jsScope().declareTemporary();
     }
 
+    boolean shouldWrapInFunction() {
+        return !isStatement(context().bindingContext(), whenExpression);
+    }
+
     @NotNull
     JsNode translate() {
         JsFor resultingFor = generateDummyFor();
         List<JsStatement> entries = translateEntries();
         resultingFor.setBody(AstUtil.newBlock(entries));
-        return resultingFor;
-//        JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope(context().jsScope());
-//        dummyFunction.setBody(AstUtil.convertToBlock(resultingFor));
-//        return AstUtil.newInvocation(dummyFunction);
+        return mayBeWrapInFunction(resultingFor);
+    }
+
+    @NotNull
+    private JsNode mayBeWrapInFunction(@NotNull JsFor resultingFor) {
+        if (!shouldWrapInFunction()) return resultingFor;
+
+        JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope(context().jsScope());
+        dummyFunction.setBody(AstUtil.convertToBlock(resultingFor));
+        return AstUtil.newInvocation(dummyFunction);
     }
 
     @NotNull
@@ -94,7 +107,7 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsStatement translateEntry(@NotNull JetWhenEntry entry) {
-        JsStatement statementToExecute = translateExpressionToExecute(entry);
+        JsStatement statementToExecute = mayBeWrapWithReturn(translateEntryExpression(entry));
         if (entry.isElse()) {
             return statementToExecute;
         }
@@ -103,10 +116,21 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsStatement translateExpressionToExecute(@NotNull JetWhenEntry entry) {
+    private JsStatement mayBeWrapWithReturn(@NotNull JsNode node) {
+        if (shouldWrapInFunction()) {
+            assert node instanceof JsExpression :
+                    "Statements are not supported in when clauses which are themselves expressions";
+            return new JsReturn((JsExpression) node);
+        } else {
+            return convertToStatement(node);
+        }
+    }
+
+    @NotNull
+    private JsNode translateEntryExpression(@NotNull JetWhenEntry entry) {
         JetExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
-        return Translation.translateAsStatement(expressionToExecute, context());
+        return Translation.translateExpression(expressionToExecute, context());
     }
 
     @NotNull
