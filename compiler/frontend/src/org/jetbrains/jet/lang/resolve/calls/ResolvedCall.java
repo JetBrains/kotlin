@@ -13,11 +13,11 @@ import java.util.Map;
  * @author abreslav
  */
 public interface ResolvedCall<D extends CallableDescriptor> {
-    /** A target callable descriptor as it was accessible in the corresponding scope, i.e. with type parameters not substituted */
+    /** A target callable descriptor as it was accessible in the corresponding scope, i.e. with type arguments not substituted */
     @NotNull
     D getCandidateDescriptor();
 
-    /** Type parameters are substituted */
+    /** Type arguments are substituted. This descriptor is guaranteed to have NO declared type parameters */
     @NotNull
     D getResultingDescriptor();
 
