@@ -393,4 +393,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                      @NotNull TranslationContext context) {
         return ForTranslator.translate(expression, context);
     }
+
+    @Override
+    @NotNull
+    public JsNode visitTryExpression(@NotNull JetTryExpression expression,
+                                     @NotNull TranslationContext context) {
+        return TryTranslator.translate(expression, context);
+    }
 }

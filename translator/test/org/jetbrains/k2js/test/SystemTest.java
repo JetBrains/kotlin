@@ -43,8 +43,19 @@ public final class SystemTest extends JavaClassesTest {
     }
 
     @Test
+    public void objectOrientedHello() throws Exception {
+        checkOutput("objectOrientedHello.kt", "Hello, Pavel!\n", "Pavel");
+    }
+
+    @Test
     public void multiLanguageHello() throws Exception {
         checkOutput("multiLanguageHello.kt", "Salut!\n", "FR");
+    }
+
+    @Test
+    public void nullChecks() throws Exception {
+        checkOutput("nullChecks.kt", "No number supplied");
+        checkOutput("nullChecks.kt", "6", "2", "3");
     }
 
 

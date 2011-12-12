@@ -15,7 +15,7 @@ public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
     @Override
     @NotNull
     public T visitJetElement(JetElement expression, TranslationContext context) {
-        throw new RuntimeException("Unsupported expression encountered:" + expression.toString());
+        throw new UnsupportedOperationException("Unsupported expression encountered:" + expression.toString());
     }
 
 }
