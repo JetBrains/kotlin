@@ -191,45 +191,50 @@ public class ExpressionVisitor extends StatementVisitor {
   public void visitMethodCallExpression(@NotNull PsiMethodCallExpression expression) {
     super.visitMethodCallExpression(expression);
     if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
-      List<String> conversions = new LinkedList<String>();
-      PsiExpression[] arguments = expression.getArgumentList().getExpressions();
-      //noinspection UnusedDeclaration
-      for (final PsiExpression a : arguments) {
-        conversions.add("");
-      }
-
-      PsiMethod resolve = expression.resolveMethod();
-      if (resolve != null) {
-        List<PsiType> expectedTypes = new LinkedList<PsiType>();
-        List<PsiType> actualTypes = new LinkedList<PsiType>();
-
-        for (PsiParameter p : resolve.getParameterList().getParameters())
-          expectedTypes.add(p.getType());
-
-        for (PsiExpression e : arguments)
-          actualTypes.add(e.getType());
-
-        assert actualTypes.size() == expectedTypes.size() : "The type list must have the same length";
-
-        for (int i = 0; i < actualTypes.size(); i++) {
-          PsiType actual = actualTypes.get(i);
-          PsiType expected = expectedTypes.get(i);
-
-          if (isConversionNeeded(actual, expected)) {
-            conversions.set(i, getPrimitiveTypeConversion(expected.getCanonicalText()));
-          }
-        }
-      }
-
       myResult = // TODO: not resolved
         new MethodCallExpression(
           expressionToExpression(expression.getMethodExpression()),
-          expressionsToExpressionList(arguments),
-          conversions,
+          expressionsToExpressionList(expression.getArgumentList().getExpressions()),
+          createConversions(expression),
           typeToType(expression.getType()).isNullable(),
           typesToTypeList(expression.getTypeArguments())
         );
     }
+  }
+
+  @NotNull
+  private static List<String> createConversions(@NotNull PsiCallExpression expression) {
+    List<String> conversions = new LinkedList<String>();
+    PsiExpressionList argumentList = expression.getArgumentList();
+    PsiExpression[] arguments = argumentList != null? argumentList.getExpressions() : new PsiExpression[]{};
+    //noinspection UnusedDeclaration
+    for (final PsiExpression a : arguments) {
+      conversions.add("");
+    }
+
+    PsiMethod resolve = expression.resolveMethod();
+    if (resolve != null) {
+      List<PsiType> expectedTypes = new LinkedList<PsiType>();
+      List<PsiType> actualTypes = new LinkedList<PsiType>();
+
+      for (PsiParameter p : resolve.getParameterList().getParameters())
+        expectedTypes.add(p.getType());
+
+      for (PsiExpression e : arguments)
+        actualTypes.add(e.getType());
+
+      assert actualTypes.size() == expectedTypes.size() : "The type list must have the same length";
+
+      for (int i = 0; i < actualTypes.size(); i++) {
+        PsiType actual = actualTypes.get(i);
+        PsiType expected = expectedTypes.get(i);
+
+        if (isConversionNeeded(actual, expected)) {
+          conversions.set(i, getPrimitiveTypeConversion(expected.getCanonicalText()));
+        }
+      }
+    }
+    return conversions;
   }
 
   static boolean isConversionNeeded(@Nullable final PsiType actual,@Nullable final PsiType expected) {
@@ -299,23 +304,24 @@ public class ExpressionVisitor extends StatementVisitor {
     PsiJavaCodeReferenceElement classReference = expression.getClassOrAnonymousClassReference();
     final boolean isNotConvertedClass = classReference != null && !Converter.getClassIdentifiers().contains(classReference.getQualifiedName());
     PsiExpressionList argumentList = expression.getArgumentList();
+    PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
     if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
       return new NewClassExpression(
         expressionToExpression(expression.getQualifier()),
         elementToElement(classReference),
-        elementToElement(argumentList),
+        expressionsToExpressionList(arguments),
+        createConversions(expression),
         anonymousClass != null ? anonymousClassToAnonymousClass(anonymousClass) : null
       );
     }
     // is constructor secondary
     final PsiJavaCodeReferenceElement reference = expression.getClassReference();
     final List<Type> typeParameters = reference != null ? typesToTypeList(reference.getTypeParameters()) : Collections.<Type>emptyList();
-    PsiExpression[] expressions = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
     return new CallChainExpression(
       new IdentifierImpl(constructor.getName(), false),
       new MethodCallExpression(
         new IdentifierImpl("init"),
-        expressionsToExpressionList(expressions),
+        expressionsToExpressionList(arguments),
         false,
         typeParameters));
   }
@@ -326,7 +332,7 @@ public class ExpressionVisitor extends StatementVisitor {
     callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
     return new NewClassExpression(
       typeToType(expression.getType()),
-      new ExpressionList(callExpression)
+      callExpression
     );
   }
 
