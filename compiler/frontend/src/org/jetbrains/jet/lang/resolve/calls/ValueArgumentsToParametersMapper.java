@@ -50,20 +50,17 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 JetReferenceExpression nameReference = valueArgument.getArgumentName().getReferenceExpression();
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getReferenceExpression().getReferencedName());
                 if (valueParameterDescriptor == null) {
-//                        temporaryTrace.getErrorHandler().genericError(nameNode, "Cannot find a parameter with this name");
                     temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
                     error = true;
                 }
                 else {
                     if (!usedParameters.add(valueParameterDescriptor)) {
-//                        temporaryTrace.getErrorHandler().genericError(nameNode, "An argument is already passed for this parameter");
                         temporaryTrace.report(ARGUMENT_PASSED_TWICE.on(nameReference));
                     }
                     temporaryTrace.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
                     put(candidateCall, valueParameterDescriptor, valueArgument, varargs);
                 }
                 if (somePositioned) {
-//                    temporaryTrace.getErrorHandler().genericError(nameNode, "Mixing named and positioned arguments in not allowed");
                     temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(nameReference));
                     error = true;
                 }
@@ -71,7 +68,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             else {
                 somePositioned = true;
                 if (someNamed) {
-//                    temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), "Mixing named and positioned arguments in not allowed");
                     temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(valueArgument.asElement()));
                     error = true;
                 }
@@ -89,13 +85,11 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                             usedParameters.add(valueParameterDescriptor);
                         }
                         else {
-//                            temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), getTooManyArgumentsMessage(candidate));
                             temporaryTrace.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
                             error = true;
                         }
                     }
                     else {
-//                        temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), getTooManyArgumentsMessage(candidate));
                         temporaryTrace.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
                         error = true;
                     }
@@ -108,7 +102,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
 
             if (valueParameters.isEmpty()) {
-//                temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), getTooManyArgumentsMessage(candidate));
                 temporaryTrace.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
                 error = true;
             }
@@ -124,13 +117,11 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
                 ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
                 if (valueParameterDescriptor.getVarargElementType() != null) {
-//                    temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), "Passing value as a vararg is only allowed inside a parenthesized argument list");
                     temporaryTrace.report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
                     error = true;
                 }
                 else {
                     if (!usedParameters.add(valueParameterDescriptor)) {
-//                        temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), getTooManyArgumentsMessage(candidate));
                         temporaryTrace.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
                         error = true;
                     }
@@ -142,7 +133,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
             for (int i = 1; i < functionLiteralArguments.size(); i++) {
                 JetExpression argument = functionLiteralArguments.get(i);
-//                temporaryTrace.getErrorHandler().genericError(argument.getNode(), "Only one function literal is allowed outside a parenthesized argument list");
                 temporaryTrace.report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
                 error = true;
             }
@@ -176,7 +166,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             error = true;
         }
 
-        assert candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists() : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+        assert candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists() :
+                "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
 
         return error;
     }
@@ -196,8 +187,4 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             candidateCall.recordValueArgument(valueParameterDescriptor, argument);
         }
     }
-
-//    private static <Descriptor extends CallableDescriptor> String getTooManyArgumentsMessage(Descriptor candidate) {
-//        return "Too many arguments for " + DescriptorRenderer.TEXT.render(candidate);
-//    }
 }

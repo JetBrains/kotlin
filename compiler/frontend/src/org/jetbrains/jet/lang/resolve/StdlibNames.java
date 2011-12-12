@@ -12,7 +12,7 @@ public class StdlibNames {
     public static final String JET_PARAMETER_DESCRIPTOR = "Ljet/typeinfo/JetParameter;";
     
     public static final String JET_PARAMETER_NAME_FIELD = "name";
-    public static final String JET_PARAMETER_HAS_DEFAULT_FIELD = "hasDefault";
+    public static final String JET_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
     public static final String JET_PARAMETER_NULLABLE_FIELD = "nullable";
     
     

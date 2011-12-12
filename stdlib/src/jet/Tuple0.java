@@ -31,4 +31,9 @@ public class Tuple0 implements JetObject {
     public TypeInfo<?> getTypeInfo() {
         return typeInfo;
     }
+
+    @Override
+    public JetObject getOuterObject() {
+        return null;
+    }
 }

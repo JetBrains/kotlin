@@ -2,14 +2,16 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 /**
+ * Introduces a simple wrapper for internal scope.
+ *
  * @author abreslav
  */
 public abstract class AbstractScopeAdapter implements JetScope {

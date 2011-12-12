@@ -80,6 +80,10 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("regressions/kt528.kt");
     }
 
+    public void testKt789 () {
+//        blackBoxFile("regressions/kt789.jet");
+    }
+
     public void testCollectionSize () throws Exception {
         loadText("import std.util.*; fun box() = if(java.util.Arrays.asList(0, 1, 2)?.size == 3) \"OK\" else \"fail\"");
 //        System.out.println(generateToText());

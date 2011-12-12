@@ -23,4 +23,9 @@ public class DefaultJetObject implements JetObject {
     public final TypeInfo<?> getTypeInfo() {
         return typeInfo;
     }
+
+    @Override
+    public JetObject getOuterObject() {
+        return null;
+    }
 }

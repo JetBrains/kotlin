@@ -9,6 +9,8 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import java.util.Collection;
 
 /**
+ * Stores candidates for call resolution.
+ *
  * @author abreslav
  */
 /*package*/ class ResolutionTask<D extends CallableDescriptor> {

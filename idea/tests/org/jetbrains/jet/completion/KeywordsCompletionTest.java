@@ -15,31 +15,8 @@ import java.io.File;
  */
 public class KeywordsCompletionTest extends JetCompletionTestBase {
 
-    private final String myPath;
-    private final String myName;
-
-    public KeywordsCompletionTest(@NotNull String path, @NotNull String name) {
-        myPath = path;
-        myName = name;
-
-        // Set name explicitly because otherwise there will be "TestCase.fName cannot be null"
-        setName("testCompletionExecute");
-    }
-
-    public void testCompletionExecute() throws Exception {
-        doTest();
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), myPath).getPath() +
-               File.separator;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "test" + myName;
+    protected KeywordsCompletionTest(@NotNull String path, @NotNull String name) {
+        super(path, name);
     }
 
     @NotNull

@@ -86,7 +86,11 @@ public class JetTypeMapper {
     public static final Type TYPE_LONG_ITERATOR = Type.getObjectType("jet/LongIterator");
     public static final Type TYPE_FLOAT_ITERATOR = Type.getObjectType("jet/FloatIterator");
     public static final Type TYPE_DOUBLE_ITERATOR = Type.getObjectType("jet/DoubleIterator");
-    
+
+    public JetStandardLibrary getStandardLibrary() {
+        return standardLibrary;
+    }
+
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
         this.bindingContext = bindingContext;
@@ -234,10 +238,10 @@ public class JetTypeMapper {
         return mapType(jetType, kind, signatureVisitor, false);
     }
 
-    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable SignatureVisitor signatureVisitor, boolean typeParameter) {
+    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable SignatureVisitor signatureVisitor, boolean boxPrimitive) {
         Type known = knowTypes.get(jetType);
         if (known != null) {
-            return mapKnownAsmType(jetType, known, signatureVisitor, typeParameter);
+            return mapKnownAsmType(jetType, known, signatureVisitor, boxPrimitive);
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -249,8 +253,7 @@ public class JetTypeMapper {
             
             if (signatureVisitor != null) {
                 SignatureVisitor arraySignatureVisitor = signatureVisitor.visitArrayType();
-                // TODO: box
-                mapType(memberType, kind, arraySignatureVisitor);
+                mapType(memberType, kind, arraySignatureVisitor, true);
             }
             
             if (!isGenericsArray(jetType)) {
@@ -261,6 +264,9 @@ public class JetTypeMapper {
         }
 
         if (JetStandardClasses.getAny().equals(descriptor)) {
+            if (signatureVisitor != null) {
+                visitAsmType(signatureVisitor, TYPE_OBJECT);
+            }
             return TYPE_OBJECT;
         }
 
@@ -305,7 +311,7 @@ public class JetTypeMapper {
         return asmType;
     }
 
-    private void visitAsmType(SignatureVisitor visitor, Type asmType) {
+    public static void visitAsmType(SignatureVisitor visitor, Type asmType) {
         switch (asmType.getSort()) {
         case Type.OBJECT:
             visitor.visitClassType(asmType.getInternalName());
@@ -377,7 +383,7 @@ public class JetTypeMapper {
         return asmType;
     }
 
-    private static final boolean DEBUG_SIGNATURE_WRITER = true;
+    public static final boolean DEBUG_SIGNATURE_WRITER = true;
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
         if(functionDescriptor == null)
@@ -573,10 +579,8 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(CodegenUtil.getOuterClassDescriptor(classDescriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
         }
 
-        List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if(typeParameter.isReified())
-                parameterTypes.add(TYPE_TYPEINFO);
+        if (CodegenUtil.requireTypeInfoConstructorArg(classDescriptor.getDefaultType())) {
+            parameterTypes.add(TYPE_TYPEINFO);
         }
 
         for (ValueParameterDescriptor parameter : parameters) {

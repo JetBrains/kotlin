@@ -104,6 +104,4 @@ public class JavaPackageScope extends JetScopeImpl {
     private String getQualifiedName(String name) {
         return (packageFQN.isEmpty() ? "" : packageFQN + ".") + name;
     }
-
-
 }

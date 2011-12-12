@@ -5,14 +5,12 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -30,7 +28,7 @@ public class ArrayIterator implements IntrinsicMethod {
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         JetStandardLibrary standardLibrary = codegen.getState().getStandardLibrary();
         if(containingDeclaration.equals(standardLibrary.getArray())) {
-            codegen.generateTypeInfo(funDescriptor.getReturnType().getArguments().get(0).getType());
+            codegen.generateTypeInfo(funDescriptor.getReturnType().getArguments().get(0).getType(), null);
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;Ljet/typeinfo/TypeInfo;)Ljet/Iterator;");
             return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
         }

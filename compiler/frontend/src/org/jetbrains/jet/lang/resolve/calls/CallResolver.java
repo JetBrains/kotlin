@@ -86,7 +86,7 @@ public class CallResolver {
         FunctionDescriptor functionDescriptor = resolveSimpleCallToFunctionDescriptor(trace, scope, call, expectedType);
         return functionDescriptor == null ? null : functionDescriptor.getReturnType();
     }
-    
+
     @Nullable
     public ResolvedCall<FunctionDescriptor> resolveCallWithGivenName(
             @NotNull BindingTrace trace,
@@ -95,7 +95,8 @@ public class CallResolver {
             @NotNull final JetReferenceExpression functionReference,
             @NotNull String name,
             @NotNull JetType expectedType) {
-        List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, call, name, trace.getBindingContext(), dataFlowInfo);
+        List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(
+                scope, call, name, trace.getBindingContext(), dataFlowInfo);
         return doResolveCall(trace, scope, call, expectedType, tasks, functionReference);
     }
 
@@ -406,7 +407,11 @@ public class CallResolver {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing) {
+    private <D extends CallableDescriptor> OverloadResolutionResults<D> performResolution(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope, @NotNull JetType expectedType,
+            @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing
+    ) {
         for (ResolvedCallImpl<D> candidateCall : task.getCandidates()) {
             D candidate = candidateCall.getCandidateDescriptor();
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);

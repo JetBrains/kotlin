@@ -48,6 +48,11 @@ public final class LongRange implements Range<Long>, Iterable<Long>, JetObject {
         return typeInfo;
     }
 
+    @Override
+    public JetObject getOuterObject() {
+        return null;
+    }
+
     public static IntRange count(int length) {
         return new IntRange(0, length);
     }
@@ -94,6 +99,11 @@ public final class LongRange implements Range<Long>, Iterable<Long>, JetObject {
         @Override
         public TypeInfo<?> getTypeInfo() {
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
     }
 }

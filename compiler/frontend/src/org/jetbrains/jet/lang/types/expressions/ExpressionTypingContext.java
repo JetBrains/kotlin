@@ -12,9 +12,9 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -40,7 +40,8 @@ import java.util.Map;
             @NotNull JetType expectedType,
             @NotNull JetType expectedReturnType,
             boolean namespacesAllowed) {
-        return new ExpressionTypingContext(semanticServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
+        return new ExpressionTypingContext(semanticServices, patternsToDataFlowInfo, patternsToBoundVariableLists,
+                                           labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
     }
 
 //    @NotNull

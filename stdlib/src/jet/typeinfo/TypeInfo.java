@@ -79,14 +79,6 @@ public abstract class TypeInfo<T> implements JetObject {
         return new TypeInfoImpl<T>(klazz, nullable);
     }
 
-    public static <T> TypeInfo<T> getTypeInfo(Class<T> klazz, boolean nullable, TypeInfo outerTypeInfo) {
-        return new TypeInfoImpl<T>(klazz, nullable, outerTypeInfo);
-    }
-
-    public static <T> TypeInfo<T> getTypeInfo(Class<T> klazz, boolean nullable, TypeInfo outerTypeInfo, TypeInfoProjection[] projections) {
-        return new TypeInfoImpl<T>(klazz, nullable, outerTypeInfo, projections);
-    }
-
     public static <T> TypeInfo<T> getTypeInfo(Class<T> klazz, boolean nullable, TypeInfoProjection[] projections) {
         return new TypeInfoImpl<T>(klazz, nullable, projections);
     }
@@ -99,15 +91,13 @@ public abstract class TypeInfo<T> implements JetObject {
 
     public abstract int getProjectionCount();
 
-    public abstract TypeInfo getOuterTypeInfo();
-
     public abstract TypeInfoProjection getProjection(int index);
 
     public abstract TypeInfo getArgumentType(Class klass, int index);
     
     protected abstract TypeInfo substitute(List<TypeInfo> myVars);
 
-    protected abstract TypeInfo substitute(TypeInfo outer, TypeInfoProjection[] projections);
+    protected abstract TypeInfo substitute(TypeInfoProjection[] projections);
 
     private static class TypeInfoVar<T> extends TypeInfo<T> {
         final int varIndex;
@@ -152,11 +142,6 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        public TypeInfo getOuterTypeInfo() {
-            return null;
-        }
-
-        @Override
         public TypeInfoProjection getProjection(int index) {
             throw new UnsupportedOperationException("Abstract TypeInfo");
         }
@@ -172,13 +157,18 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        protected TypeInfo substitute(TypeInfo outer, TypeInfoProjection[] projections) {
+        protected TypeInfo substitute(TypeInfoProjection[] projections) {
             return projections[varIndex].getType();
         }
 
         @Override
         public TypeInfo<?> getTypeInfo() {
             throw new UnsupportedOperationException("Abstract TypeInfo");
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
 
         @Override
@@ -192,22 +182,12 @@ public abstract class TypeInfo<T> implements JetObject {
         private final Signature signature;
         private final boolean nullable;
         private final TypeInfoProjection[] projections;
-        private final TypeInfo outerTypeInfo;
 
         private TypeInfoImpl(Class<T> theClass, boolean nullable) {
-            this(theClass, nullable, null, EMPTY);
-        }
-
-        private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfo outerTypeInfo) {
-            this(theClass, nullable, outerTypeInfo, EMPTY);
+            this(theClass, nullable, EMPTY);
         }
 
         private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfoProjection[] projections) {
-            this(theClass, nullable, null, projections);
-        }
-        
-        private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfo outerTypeInfo, TypeInfoProjection[] projections) {
-            this.outerTypeInfo = outerTypeInfo;
             this.signature = Parser.parse(theClass);
             this.nullable = nullable;
             this.projections = projections;
@@ -247,7 +227,7 @@ public abstract class TypeInfo<T> implements JetObject {
             if(klass == this.signature.klazz)
                 return projections[index].getType();
             else {
-                return getSuperTypeInfo(klass).substitute(outerTypeInfo, projections).getArgumentType(klass, index);
+                return getSuperTypeInfo(klass).substitute(projections).getArgumentType(klass, index);
             }
         }
 
@@ -283,14 +263,14 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        protected TypeInfo substitute(TypeInfo outer, TypeInfoProjection[] prj) {
+        protected TypeInfo substitute(TypeInfoProjection[] prj) {
             if(projections.length == 0)
                 return new TypeInfoImpl(signature.klazz, nullable, EMPTY);
             else {
                 TypeInfoProjection [] proj = new TypeInfoProjection[projections.length];
                 for(int i = 0; i != proj.length; ++i) {
                     final int finalI = i;
-                    final TypeInfo substitute = projections[finalI].getType().substitute(outer, prj);
+                    final TypeInfo substitute = projections[finalI].getType().substitute(prj);
                     proj[i] = new TypeInfoProjection(){
 
                         @Override
@@ -360,11 +340,6 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        public TypeInfo getOuterTypeInfo() {
-            return outerTypeInfo;
-        }
-
-        @Override
         public final String toString() {
             StringBuilder sb = new StringBuilder().append(signature.klazz.getName());
             if (projections.length != 0) {
@@ -386,6 +361,11 @@ public abstract class TypeInfo<T> implements JetObject {
                 throw new UnsupportedOperationException(); // TODO
             }
             return typeInfo;
+        }
+
+        @Override
+        public JetObject getOuterObject() {
+            return null;
         }
 
         public final boolean isSubtypeOf(TypeInfoImpl<?> superType) {
@@ -410,7 +390,6 @@ public abstract class TypeInfo<T> implements JetObject {
     }
 
     public static class Signature {
-        final Signature outer;
         final Class klazz;
 
         List<TypeInfoProjection> variables;
@@ -419,8 +398,7 @@ public abstract class TypeInfo<T> implements JetObject {
         
         final HashMap<Class,TypeInfo> superSignatures = new HashMap<Class,TypeInfo>();
 
-        public Signature(Signature outer, Class klazz) {
-            this.outer = outer;
+        public Signature(Class klazz) {
             this.klazz = klazz;
         }
 
@@ -502,7 +480,7 @@ public abstract class TypeInfo<T> implements JetObject {
                 if(value != null) {
                     Parser parser = new Parser(value, klass.getClassLoader());
                     Class enclosingClass = klass.getEnclosingClass();
-                    Signature signature = new Signature(parse(enclosingClass), klass);
+                    Signature signature = new Signature(klass);
                     map.put(klass, signature);
                     parser.parseVars(signature);
                     parser.parseTypes(signature);
@@ -517,7 +495,7 @@ public abstract class TypeInfo<T> implements JetObject {
             // todo complete impl
 
             java.lang.reflect.Type genericSuperclass = klass.getGenericSuperclass();
-            Signature signature = new Signature(parse(klass.getEnclosingClass()), klass);
+            Signature signature = new Signature(klass);
 
             TypeVariable[] typeParameters = klass.getTypeParameters();
             if(typeParameters == null || typeParameters.length == 0) {
@@ -682,14 +660,14 @@ public abstract class TypeInfo<T> implements JetObject {
             if(klazz.equals(signature.klazz.getName()))
                 return new TypeInfoVar(signature, nullable, signature.varNames.get(name));
             else {
-                Signature sig = signature;
-                while(!klazz.equals(sig.klazz.getName())) {
-                    sig = sig.outer;
-                    if(sig == null)
-                        throw new IllegalStateException();
-                }
+//                Signature sig = signature;
+//                while(!klazz.equals(sig.klazz.getName())) {
+//                    sig = sig.outer;
+//                    if(sig == null)
+//                        throw new IllegalStateException();
+//                }
                 
-                return new TypeInfoVar(sig, nullable, sig.varNames.get(name));
+                throw new UnsupportedOperationException("outer type info does not supported");
             }
         }
 
@@ -716,7 +694,7 @@ public abstract class TypeInfo<T> implements JetObject {
 
         private static class ArraySignature extends Signature {
             public ArraySignature(Class klass) {
-                super(null, klass);
+                super(klass);
                 variables  = new LinkedList<TypeInfoProjection>();
                 varNames = new HashMap<String, Integer>();
                 varNames.put("T", 0);
