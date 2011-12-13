@@ -4,7 +4,6 @@ class Box<T>() {
     }
 
     class Inner2() : Inner() {
-
     }
 
     fun inner() = Inner2()

@@ -1,11 +1,9 @@
-namespace std
+namespace std.util
 
-namespace util {
-    import java.util.*
+import java.util.*
 
-    val Collection<*>.size : Int
-        get() = size()
+val Collection<*>.size : Int
+    get() = size()
 
-    val Collection<*>.empty : Boolean
-        get() = isEmpty()
-}
+val Collection<*>.empty : Boolean
+    get() = isEmpty()

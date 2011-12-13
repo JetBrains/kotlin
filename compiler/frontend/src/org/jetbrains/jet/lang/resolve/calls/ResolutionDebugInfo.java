@@ -5,7 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.slicedmap.*;
@@ -22,8 +22,8 @@ public class ResolutionDebugInfo {
     public static final WritableSlice<One, ResolvedCall<? extends CallableDescriptor>> RESULT = Slices.createSimpleSlice();
     public static final WritableSlice<One, StringBuilder> ERRORS = Slices.createSimpleSlice();
     public static final WritableSlice<One, StringBuilder> LOG = Slices.createSimpleSlice();
-    public static final WritableSlice<One, Map<TypeParameterDescriptor, ConstraintSystemImpl.TypeValue>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
-    public static final WritableSlice<One, Map<JetType, ConstraintSystemImpl.TypeValue>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
+    public static final WritableSlice<One, Map<TypeParameterDescriptor, BoundsOwner>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
+    public static final WritableSlice<One, Map<JetType, BoundsOwner>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
     public static final WritableSlice<One, ConstraintSystemSolution> SOLUTION = Slices.createSimpleSlice();
     public static final WritableSlice<One, Collection<TypeParameterDescriptor>> UNKNOWNS = Slices.createSimpleSlice();
 

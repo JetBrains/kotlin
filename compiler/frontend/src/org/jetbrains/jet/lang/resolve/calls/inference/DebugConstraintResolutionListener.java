@@ -23,9 +23,9 @@ public class DebugConstraintResolutionListener implements ConstraintResolutionLi
     }
 
     @Override
-    public void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, ConstraintSystemImpl.TypeValue typeValue) {
+    public void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, BoundsOwner typeValue) {
         if (!ResolutionDebugInfo.isResolutionDebugEnabled()) return;
-        Map<TypeParameterDescriptor, ConstraintSystemImpl.TypeValue> map = debugInfo.get(BOUNDS_FOR_UNKNOWNS);
+        Map<TypeParameterDescriptor, BoundsOwner> map = debugInfo.get(BOUNDS_FOR_UNKNOWNS);
         if (map == null) {
             map = Maps.newLinkedHashMap();
             debugInfo.set(BOUNDS_FOR_UNKNOWNS, map);
@@ -34,9 +34,9 @@ public class DebugConstraintResolutionListener implements ConstraintResolutionLi
     }
 
     @Override
-    public void constraintsForKnownType(JetType type, ConstraintSystemImpl.TypeValue typeValue) {
+    public void constraintsForKnownType(JetType type, BoundsOwner typeValue) {
         if (!ResolutionDebugInfo.isResolutionDebugEnabled()) return;
-        Map<JetType,ConstraintSystemImpl.TypeValue> map = debugInfo.get(BOUNDS_FOR_KNOWNS);
+        Map<JetType,BoundsOwner> map = debugInfo.get(BOUNDS_FOR_KNOWNS);
         if (map == null) {
             map = Maps.newLinkedHashMap();
             debugInfo.set(BOUNDS_FOR_KNOWNS, map);
@@ -52,24 +52,30 @@ public class DebugConstraintResolutionListener implements ConstraintResolutionLi
     }
 
     @Override
-    public void log(Object message) {
+    public void log(Object... messageFragments) {
         if (!ResolutionDebugInfo.isResolutionDebugEnabled()) return;
         StringBuilder stringBuilder = debugInfo.get(LOG);
         if (stringBuilder == null) {
             stringBuilder = new StringBuilder();
             debugInfo.set(LOG, stringBuilder);
         }
-        stringBuilder.append(message).append("\n");
+        for (Object m : messageFragments) {
+            stringBuilder.append(m);
+        }
+        stringBuilder.append("\n");
     }
 
     @Override
-    public void error(Object message) {
+    public void error(Object... messageFragments) {
         if (!ResolutionDebugInfo.isResolutionDebugEnabled()) return;
         StringBuilder stringBuilder = debugInfo.get(ERRORS);
         if (stringBuilder == null) {
             stringBuilder = new StringBuilder();
             debugInfo.set(ERRORS, stringBuilder);
         }
-        stringBuilder.append(message).append("\n");
+        for (Object m : messageFragments) {
+            stringBuilder.append(m);
+        }
+        stringBuilder.append("\n");
     }
 }

@@ -12,11 +12,11 @@ import java.util.List;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
-    private int myFirstTypeParameter = -1;
-    private int myTypeParameterCount = 0;
+    private int myTypeInfoIndex  = -1;
 
     public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, ClassDescriptor classDescriptor, OwnerKind kind) {
         enterTemp(); // this
@@ -27,15 +27,8 @@ public class ConstructorFrameMap extends FrameMap {
         }
 
         if (classDescriptor != null) {
-            List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
-            for (TypeParameterDescriptor parameter : parameters) {
-                if(parameter.isReified()) {
-                    int index = enterTemp();
-                    myTypeParameterCount++;
-                    if(myFirstTypeParameter == -1) {
-                        myFirstTypeParameter = index;
-                    }
-                }
+            if (CodegenUtil.requireTypeInfoConstructorArg(classDescriptor.getDefaultType())) {
+                myTypeInfoIndex = enterTemp();
             }
         }
 
@@ -54,11 +47,7 @@ public class ConstructorFrameMap extends FrameMap {
         return myOuterThisIndex;
     }
 
-    public int getFirstTypeParameter() {
-        return myFirstTypeParameter;
-    }
-
-    public int getTypeParameterCount() {
-        return myTypeParameterCount;
+    public int getTypeInfoIndex() {
+        return myTypeInfoIndex;
     }
 }

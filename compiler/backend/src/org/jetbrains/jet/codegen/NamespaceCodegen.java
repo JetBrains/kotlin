@@ -2,10 +2,12 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -42,7 +44,8 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        final CodegenContext context = CodegenContext.STATIC.intoNamespace(state.getBindingContext().get(BindingContext.NAMESPACE, namespace));
+        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.NAMESPACE, namespace);
+        final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
@@ -145,7 +148,7 @@ public class NamespaceCodegen {
         }
 
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor)) {
+        if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor) && !JetStandardClasses.getAny().equals(declarationDescriptor)) {
             // TODO: we need some better checks here
             v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
             return;

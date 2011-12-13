@@ -12,11 +12,11 @@ public interface ConstraintResolutionListener {
 
     public static final ConstraintResolutionListener DO_NOTHING = new ConstraintResolutionListener() {
         @Override
-        public void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, ConstraintSystemImpl.TypeValue typeValue) {
+        public void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, BoundsOwner typeValue) {
         }
 
         @Override
-        public void constraintsForKnownType(JetType type, ConstraintSystemImpl.TypeValue typeValue) {
+        public void constraintsForKnownType(JetType type, BoundsOwner typeValue) {
         }
 
         @Override
@@ -24,18 +24,18 @@ public interface ConstraintResolutionListener {
         }
 
         @Override
-        public void log(Object message) {
+        public void log(Object... messageFragments) {
         }
 
         @Override
-        public void error(Object message) {
+        public void error(Object... messageFragments) {
         }
     };
 
-    void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, ConstraintSystemImpl.TypeValue typeValue);
-    void constraintsForKnownType(JetType type, ConstraintSystemImpl.TypeValue typeValue);
+    void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, BoundsOwner typeValue);
+    void constraintsForKnownType(JetType type, BoundsOwner typeValue);
     void done(ConstraintSystemSolution solution, Set<TypeParameterDescriptor> typeParameterDescriptors);
 
-    void log(Object message);
-    void error(Object message);
+    void log(Object... messageFragments);
+    void error(Object... messageFragments);
 }

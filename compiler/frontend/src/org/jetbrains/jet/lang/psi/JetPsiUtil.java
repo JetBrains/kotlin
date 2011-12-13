@@ -131,11 +131,15 @@ public class JetPsiUtil {
     public static String getFQName(JetClass jetClass) {
         JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(jetClass, JetNamespace.class, JetClass.class);
         if (parent instanceof JetNamespace) {
-            return getFQName(((JetNamespace) parent)) + "." + jetClass.getName();
+            return makeFQName(getFQName(((JetNamespace) parent)), jetClass);
         }
         if (parent instanceof JetClass) {
-            return getFQName(((JetClass) parent)) + "." + jetClass.getName();
+            return makeFQName(getFQName(((JetClass) parent)), jetClass);
         }
         return jetClass.getName();
+    }
+
+    private static String makeFQName(String prefix, JetClass jetClass) {
+        return (prefix.length() == 0 ? "" : prefix + ".") + jetClass.getName();
     }
 }

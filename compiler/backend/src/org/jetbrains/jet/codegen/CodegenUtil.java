@@ -57,26 +57,18 @@ public class CodegenUtil {
         return (ClassDescriptor) outerDescriptor;
     }
 
-    public static boolean hasOuterTypeInfo(ClassDescriptor descriptor) {
-        ClassDescriptor outerClassDescriptor = getOuterClassDescriptor(descriptor);
-        if(outerClassDescriptor == null)
-            return false;
-
-        if(outerClassDescriptor.getTypeConstructor().getParameters().size() > 0)
-            return true;
-
-        return hasOuterTypeInfo(outerClassDescriptor);
-    }
-
-    public static boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
-        if(!exceptOwn) {
-            if(!isInterface(type))
-                if(hasTypeInfoField(type))
-                    return true;
+    public static boolean hasDerivedTypeInfoField(JetType type) {
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(hasTypeInfoField(jetType))
+                return true;
         }
 
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasDerivedTypeInfoField(jetType, false))
+        return false;
+    }
+
+    public static boolean requireTypeInfoConstructorArg(JetType type) {
+        for (TypeParameterDescriptor parameter : type.getConstructor().getParameters()) {
+            if(parameter.isReified())
                 return true;
         }
 
@@ -87,22 +79,10 @@ public class CodegenUtil {
         if(isInterface(type))
             return false;
 
-        List<TypeParameterDescriptor> parameters = type.getConstructor().getParameters();
-        for (TypeParameterDescriptor parameter : parameters) {
-            if(parameter.isReified())
-                return true;
-        }
+        if(requireTypeInfoConstructorArg(type))
+            return true;
 
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasTypeInfoField(jetType))
-                return true;
-        }
-
-        ClassDescriptor outerClassDescriptor = getOuterClassDescriptor(type.getConstructor().getDeclarationDescriptor());
-        if(outerClassDescriptor == null || isClassObject(type.getConstructor().getDeclarationDescriptor()))
-            return false;
-
-        return hasTypeInfoField(outerClassDescriptor.getDefaultType());
+        return hasDerivedTypeInfoField(type);
     }
 
     public static FunctionDescriptor createInvoke(ExpressionAsFunctionDescriptor fd) {

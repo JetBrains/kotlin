@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.java.StdlibNames;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -16,9 +17,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.signature.SignatureVisitor;
-import org.objectweb.asm.signature.SignatureWriter;
-import org.objectweb.asm.util.CheckSignatureAdapter;
 
 import java.util.*;
 
@@ -29,7 +27,9 @@ import java.util.*;
  */
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JetDelegationSpecifier superCall;
-    private String superClass = "java/lang/Object";
+    private String superClass;
+    @Nullable // null means java/lang/Object
+    private JetType superClassType;
     private final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;
 
@@ -39,28 +39,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         bindingContext = state.getBindingContext();
     }
 
-    private Set<String> getSuperInterfaces(JetClassOrObject aClass) {
-        List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
-        Set<String> superInterfaces = new LinkedHashSet<String>();
-
-        for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-            assert superType != null;
-            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            if(CodegenUtil.isInterface(superClassDescriptor)) {
-                superInterfaces.add(typeMapper.getFQName(superClassDescriptor));
-            }
-        }
-        return superInterfaces;
-    }
-
     @Override
     protected void generateDeclaration() {
         getSuperClass();
 
-        List<String> interfaces = new ArrayList<String>();
-        interfaces.add("jet/JetObject");
-        interfaces.addAll(getSuperInterfaces(myClass));
+        JvmClassSignature signature = signature();
 
         boolean isAbstract = false;
         boolean isInterface = false;
@@ -77,10 +60,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                       Opcodes.ACC_PUBLIC | (isAbstract ? Opcodes.ACC_ABSTRACT : 0) | (isInterface
                                                                                       ? Opcodes.ACC_INTERFACE
                                                                                       : 0/*Opcodes.ACC_SUPER*/),
-                      jvmName(),
-                      genericSignature(),
-                      superClass,
-                      interfaces.toArray(new String[interfaces.size()])
+                      signature.getName(),
+                      signature.getGenericSignature(),
+                      signature.getSuperclassName(),
+                      signature.getInterfaces().toArray(new String[0])
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
 
@@ -94,30 +77,57 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             annotationVisitor.visitEnd();
         }
     }
+    
+    private JvmClassSignature signature() {
+        String genericSignature;
+        List<String> superInterfaces;
 
-    @Nullable
-    private String genericSignature() {
-        List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
-        
-        SignatureWriter signatureWriter = new SignatureWriter();
-        SignatureVisitor signatureVisitor = JetTypeMapper.DEBUG_SIGNATURE_WRITER
-                ? new CheckSignatureAdapter(CheckSignatureAdapter.CLASS_SIGNATURE, signatureWriter)
-                : signatureWriter;
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            signatureVisitor.visitFormalTypeParameter(typeParameter.getName());
-            SignatureVisitor classBoundVisitor = signatureVisitor.visitClassBound();
-            // TODO: wrong
-            JetTypeMapper.visitAsmType(classBoundVisitor, JetTypeMapper.TYPE_OBJECT);
+        {
+            LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
+
+            BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+
+
+            {   // type parameters
+                List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
+                typeMapper.writeFormalTypeParameters(typeParameters, signatureVisitor);
+            }
+
+
+            {   // superclass
+                signatureVisitor.writeSuperclass();
+                if (superClassType == null) {
+                    signatureVisitor.writeClassBegin(superClass);
+                    signatureVisitor.writeClassEnd();
+                } else {
+                    typeMapper.mapType(superClassType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
+                }
+                signatureVisitor.writeSuperclassEnd();
+            }
+
+
+            {   // superinterfaces
+                superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT_INTERNAL);
+
+                for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
+                    JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+                    assert superType != null;
+                    ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+                    if (CodegenUtil.isInterface(superClassDescriptor)) {
+                        signatureVisitor.writeInterface();
+                        Type jvmName = typeMapper.mapType(superType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
+                        signatureVisitor.writeInterfaceEnd();
+                        superInterfacesLinkedHashSet.add(jvmName.getInternalName());
+                    }
+                }
+
+                superInterfaces = new ArrayList<String>(superInterfacesLinkedHashSet);
+            }
+
+            // TODO: null if class is not generic and does not have generic superclasses
+            genericSignature = signatureVisitor.makeJavaString();
         }
-        SignatureVisitor superclassSignatureVisitor = signatureVisitor.visitSuperclass();
-        // TODO: wrong
-        superclassSignatureVisitor.visitClassType("java/lang/Object");
-        // TODO: add interfaces
-        superclassSignatureVisitor.visitEnd();
-
-        // TODO: return null if class is not generic and does not have generic superclasses
-
-        return signatureWriter.toString();
+        return new JvmClassSignature(jvmName(), superClass, superInterfaces, genericSignature);
     }
 
     private String jvmName() {
@@ -125,6 +135,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void getSuperClass() {
+        superClass = "java/lang/Object";
+        superClassType = null;
+
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
 
         if(myClass instanceof JetClass && ((JetClass) myClass).isTrait())
@@ -136,6 +149,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert superType != null;
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 if(!CodegenUtil.isInterface(superClassDescriptor)) {
+                    superClassType = superType;
                     superClass = typeMapper.mapType(superClassDescriptor.getDefaultType(), kind).getInternalName();
                     superCall = specifier;
                 }
@@ -305,8 +319,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
             }
 
-            List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
-            for (int n = typeParameters.size(); n > 0; n--) {
+            if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType())) {
                 parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
             }
 
@@ -365,12 +378,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, constructorContext, state);
 
-        for(int slot = 0; slot != frameMap.getTypeParameterCount(); ++slot) {
-            if(constructorDescriptor != null)
-                codegen.addTypeParameter(constructorDescriptor.getTypeParameters().get(slot), StackValue.local(frameMap.getFirstTypeParameter() + slot, JetTypeMapper.TYPE_TYPEINFO));
-            else
-                codegen.addTypeParameter(descriptor.getTypeConstructor().getParameters().get(slot), StackValue.local(frameMap.getFirstTypeParameter() + slot, JetTypeMapper.TYPE_TYPEINFO));
-        }
+//        for(int slot = 0; slot != frameMap.getTypeParameterCount(); ++slot) {
+//            if(constructorDescriptor != null)
+//                codegen.addTypeParameter(constructorDescriptor.getTypeParameters().get(slot), StackValue.local(frameMap.getFirstTypeParameter() + slot, JetTypeMapper.TYPE_TYPEINFO));
+//            else
+//                codegen.addTypeParameter(descriptor.getTypeConstructor().getParameters().get(slot), StackValue.local(frameMap.getFirstTypeParameter() + slot, JetTypeMapper.TYPE_TYPEINFO));
+//        }
 
         String classname = typeMapper.mapType(descriptor.getDefaultType(), kind).getInternalName();
         final Type classType = Type.getType("L" + classname + ";");
@@ -399,7 +412,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
                 }
                 for(TypeProjection typeParameterDescriptor : superType.getArguments()) {
-                    codegen.generateTypeInfo(typeParameterDescriptor.getType());
+                    codegen.generateTypeInfo(typeParameterDescriptor.getType(), null);
                     parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
                 }
                 Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
@@ -447,10 +460,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
             iv.putfield(classname, fieldName, interfaceDesc);
+
+            Type outerType = typeMapper.mapType(outerDescriptor.getDefaultType());
+            MethodVisitor outer = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getOuterObject", "()Ljet/JetObject;", null, null);
+            outer.visitCode();
+            outer.visitVarInsn(Opcodes.ALOAD, 0);
+            outer.visitFieldInsn(Opcodes.GETFIELD, classname, "this$0", outerType.getDescriptor());
+            outer.visitInsn(Opcodes.ARETURN);
+            outer.visitMaxs(0, 0);
+            outer.visitEnd();
         }
 
-        if (CodegenUtil.hasTypeInfoField(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
-            generateTypeInfoInitializer(frameMap.getFirstTypeParameter(), frameMap.getTypeParameterCount(), iv);
+        if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            iv.load(frameMap.getTypeInfoIndex(), JetTypeMapper.TYPE_OBJECT);
+            iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V");
         }
 
         if(closure != null) {
@@ -691,46 +715,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generateTypeInfoInitializer(int firstTypeParameter, int typeParamCount, InstructionAdapter iv) {
-        iv.load(0, JetTypeMapper.TYPE_OBJECT);
-
-        iv.aconst(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION));
-        iv.iconst(0);
-
-        if(CodegenUtil.hasOuterTypeInfo(descriptor)) {
-            iv.load(1, JetTypeMapper.TYPE_OBJECT);
-            iv.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
-        }
-
-        if(typeParamCount != 0) {
-            iv.iconst(typeParamCount);
-            iv.newarray(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
-
-            for (int i = 0; i < typeParamCount; i++) {
-                iv.dup();
-                iv.iconst(i);
-                iv.load(firstTypeParameter + i, JetTypeMapper.TYPE_OBJECT);
-                iv.checkcast(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
-                iv.astore(JetTypeMapper.TYPE_OBJECT);
-            }
-
-            if(CodegenUtil.hasOuterTypeInfo(descriptor)) {
-                iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;ZLjet/typeinfo/TypeInfo;[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
-            }
-            else
-                iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
-        }
-        else {
-            if(CodegenUtil.hasOuterTypeInfo(descriptor)) {
-                iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;ZLjet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfo;");
-            }
-            else
-                iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
-        }
-
-        iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V");
-    }
-
     protected void generateInitializers(ExpressionCodegen codegen, InstructionAdapter iv) {
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
@@ -827,15 +811,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
 
         JetType defaultType = descriptor.getDefaultType();
-        if(CodegenUtil.hasTypeInfoField(defaultType)) {
-            if(!CodegenUtil.hasDerivedTypeInfoField(defaultType, true)) {
+        if(CodegenUtil.requireTypeInfoConstructorArg(defaultType)) {
+            if(!CodegenUtil.hasDerivedTypeInfoField(defaultType)) {
                 v.newField(myClass, Opcodes.ACC_PROTECTED, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
 
                 MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
-                InstructionAdapter iv = null;
                 if (v.generateCode()) {
                     mv.visitCode();
-                    iv = new InstructionAdapter(mv);
+                    InstructionAdapter iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
@@ -847,7 +830,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 mv = v.newMethod(myClass, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL, "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V", null, null);
                 if (v.generateCode()) {
                     mv.visitCode();
-                    iv = new InstructionAdapter(mv);
+                    InstructionAdapter iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.load(1, JetTypeMapper.TYPE_OBJECT);
@@ -884,14 +867,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             public void generate(InstructionAdapter v) {
                 v.aconst(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION));
                 v.iconst(0);
-                ClassDescriptor outerClassDescriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
-                if(outerClassDescriptor == null || CodegenUtil.isClassObject(descriptor)) {
-                    v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
-                }
-                else {
-                    v.getstatic(typeMapper.mapType(outerClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
-                    v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;ZLjet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfo;");
-                }
+                v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
                 v.putstatic(typeMapper.mapType(descriptor.getDefaultType(), kind).getInternalName(), "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
             }
         });

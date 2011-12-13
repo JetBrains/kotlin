@@ -74,4 +74,8 @@ public class VarArgTest extends CodegenTestCase {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt581.jet");
     }
+
+    public void testKt797() {
+        blackBoxFile("regressions/kt796_797.jet");
+    }
 }

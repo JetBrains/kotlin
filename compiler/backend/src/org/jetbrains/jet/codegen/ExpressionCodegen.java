@@ -979,7 +979,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            loadTypeParameterTypeInfo(typeParameterDescriptor);
+            loadTypeParameterTypeInfo(typeParameterDescriptor, null);
             v.invokevirtual("jet/typeinfo/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
             v.checkcast(asmType(typeParameterDescriptor.getClassObjectType()));
 
@@ -2033,26 +2033,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private void pushTypeArguments(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         if(resolvedCall != null) {
-            Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
-            CallableDescriptor resultingDescriptor = resolvedCall.getCandidateDescriptor();
-            for (TypeParameterDescriptor typeParameterDescriptor : resultingDescriptor.getTypeParameters()) {
-                if(typeParameterDescriptor.isReified()) {
-                    JetType jetType = typeArguments.get(typeParameterDescriptor);
-                    generateTypeInfo(jetType);
+            if(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor) {
+                ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
+                ClassDescriptor containingDeclaration = constructorDescriptor.getContainingDeclaration();
+                if(CodegenUtil.requireTypeInfoConstructorArg(containingDeclaration.getDefaultType())) {
+                    generateTypeInfo(containingDeclaration.getDefaultType(), resolvedCall.getTypeArguments());
+                }
+            }
+            else {
+                Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
+                CallableDescriptor resultingDescriptor = resolvedCall.getCandidateDescriptor();
+                for (TypeParameterDescriptor typeParameterDescriptor : resultingDescriptor.getTypeParameters()) {
+                    if(typeParameterDescriptor.isReified()) {
+                        JetType jetType = typeArguments.get(typeParameterDescriptor);
+                        generateTypeInfo(jetType, typeArguments);
+                    }
                 }
             }
         }
         else {
             throw new UnsupportedOperationException();
-//            for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
-//                pushTypeArgument(jetTypeArgument);
-//            }
         }
     }
 
     public void pushTypeArgument(JetTypeProjection jetTypeArgument) {
         JetType typeArgument = bindingContext.get(BindingContext.TYPE, jetTypeArgument.getTypeReference());
-        generateTypeInfo(typeArgument);
+        generateTypeInfo(typeArgument, null);
     }
 
     private Type generateJavaConstructorCall(JetCallExpression expression) {
@@ -2091,7 +2097,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if(isArray) {
             JetType elementType = typeMapper.getGenericsElementType(arrayType);
             if(elementType != null) {
-                generateTypeInfo(elementType);
+                generateTypeInfo(elementType, null);
                 gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
                 v.invokevirtual("jet/typeinfo/TypeInfo", "newArray", "(I)[Ljava/lang/Object;");
             }
@@ -2193,9 +2199,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 if(getterDescriptor.getReceiverParameter().exists()) {
                     index++;
                 }
-                for (TypeParameterDescriptor typeParameterDescriptor : getterDescriptor.getTypeParameters()) {
+                for (TypeParameterDescriptor typeParameterDescriptor : resolvedGetCall.getCandidateDescriptor().getTypeParameters()) {
                     if(typeParameterDescriptor.isReified()) {
-                        generateTypeInfo(resolvedGetCall.getTypeArguments().get(typeParameterDescriptor));
+                        generateTypeInfo(resolvedGetCall.getTypeArguments().get(typeParameterDescriptor), null);
                         index++;
                     }
                 }
@@ -2215,7 +2221,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
                 for (TypeParameterDescriptor typeParameterDescriptor : setterDescriptor.getOriginal().getTypeParameters()) {
                     if(typeParameterDescriptor.isReified()) {
-                        generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor));
+                        generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor), null);
                         index++;
                     }
                 }
@@ -2503,7 +2509,7 @@ If finally block is present, its last expression is the value of try expression.
             }
         }
         else {
-            generateTypeInfo(jetType);
+            generateTypeInfo(jetType, null);
             expressionToGen.put(TYPE_OBJECT, v);
             if (leaveExpressionOnStack) {
                 v.dupX1();
@@ -2512,7 +2518,7 @@ If finally block is present, its last expression is the value of try expression.
         }
     }
 
-    public void generateTypeInfo(JetType jetType) {
+    public void generateTypeInfo(JetType jetType, Map<TypeParameterDescriptor, JetType> typeArguments) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
             v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
@@ -2521,7 +2527,7 @@ If finally block is present, its last expression is the value of try expression.
 
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
-            loadTypeParameterTypeInfo((TypeParameterDescriptor) declarationDescriptor);
+            loadTypeParameterTypeInfo((TypeParameterDescriptor) declarationDescriptor, typeArguments);
             return;
         }
 
@@ -2551,7 +2557,7 @@ If finally block is present, its last expression is the value of try expression.
                 TypeProjection argument = arguments.get(i);
                 v.dup();
                 v.iconst(i);
-                generateTypeInfo(argument.getType());
+                generateTypeInfo(argument.getType(), typeArguments);
                 genTypeInfoToProjection(v, argument.getProjectionKind());
                 v.astore(TYPE_OBJECT);
             }
@@ -2573,12 +2579,21 @@ If finally block is present, its last expression is the value of try expression.
             throw new UnsupportedOperationException(variance.toString());
     }
 
-    private void loadTypeParameterTypeInfo(TypeParameterDescriptor typeParameterDescriptor) {
+    private void loadTypeParameterTypeInfo(TypeParameterDescriptor typeParameterDescriptor, @Nullable Map<TypeParameterDescriptor, JetType> typeArguments) {
         final StackValue value = typeParameterExpressions.get(typeParameterDescriptor);
         if (value != null) {
             value.put(TYPE_TYPEINFO, v);
             return;
         }
+        
+        if(typeArguments != null) {
+            JetType jetType = typeArguments.get(typeParameterDescriptor);
+            if(jetType != null && !jetType.equals(typeParameterDescriptor.getDefaultType())) {
+                generateTypeInfo(jetType, typeArguments);
+                return;
+            }
+        }
+        
         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
         if (context.getThisDescriptor() != null) {
             ClassDescriptor descriptor = context.getThisDescriptor();
@@ -2589,8 +2604,13 @@ If finally block is present, its last expression is the value of try expression.
             if (containingDeclaration == context.getThisDescriptor()) {
                 if(!CodegenUtil.isInterface(descriptor)) {
                     if (CodegenUtil.hasTypeInfoField(defaultType)) {
-                        v.load(0, TYPE_OBJECT);
-                        v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                        if(!(context instanceof CodegenContext.ConstructorContext)) {
+                            v.load(0, TYPE_OBJECT);
+                            v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                        }
+                        else {
+                            v.load(((ConstructorFrameMap)myFrameMap).getTypeInfoIndex(), TYPE_OBJECT);
+                        }
                     }
                     else {
                         v.getstatic(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
@@ -2598,16 +2618,16 @@ If finally block is present, its last expression is the value of try expression.
                 }
                 else {
                     v.load(0, TYPE_OBJECT);
-                    v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
                 }
             }
             else {
                 v.load(0, TYPE_OBJECT);
-                v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
                 while(descriptor != containingDeclaration) {
                     descriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
-                    v.invokevirtual("jet/typeinfo/TypeInfo", "getOuterTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getOuterObject", "()Ljet/JetObject;");
                 }
+                v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
             }
             v.aconst(ownerType);
             v.iconst(typeParameterDescriptor.getIndex());
@@ -2737,7 +2757,7 @@ If finally block is present, its last expression is the value of try expression.
 
         v.anew(tupleType);
         v.dup();
-        generateTypeInfo(new ProjectionErasingJetType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)));
+        generateTypeInfo(new ProjectionErasingJetType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)), null);
         for (JetExpression entry : entries) {
             gen(entry, TYPE_OBJECT);
         }

@@ -58,7 +58,6 @@ public class JavaPackageScope extends JetScopeImpl {
             return Collections.emptySet();
         }
 
-        System.out.println(psiClass.getQualifiedName());
         return semanticServices.getDescriptorResolver().resolveFunctionGroup(containingDescriptor, psiClass, null, name, true);
 //            return Collections.emptySet();
     }
@@ -78,6 +77,7 @@ public class JavaPackageScope extends JetScopeImpl {
             final PsiPackage javaPackage = semanticServices.getDescriptorResolver().findPackage(packageFQN);
 
             if (javaPackage != null) {
+                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(javaPackage.getQualifiedName()) != null;
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
                 for (PsiPackage psiSubPackage : javaPackage.getSubPackages()) {
@@ -85,6 +85,8 @@ public class JavaPackageScope extends JetScopeImpl {
                 }
 
                 for (PsiClass psiClass : javaPackage.getClasses()) {
+                    if (isKotlinNamespace && "namespace".equals(psiClass.getName())) continue;
+
                     // If this is a Kotlin class, we have already taken it through a containing namespace descriptor
                     ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(psiClass.getQualifiedName());
                     if (kotlinClassDescriptor != null) {
