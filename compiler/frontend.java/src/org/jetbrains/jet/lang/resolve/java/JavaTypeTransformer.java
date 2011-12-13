@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureReader;
+import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureVisitor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collections;
@@ -55,6 +57,19 @@ public class JavaTypeTransformer {
             }
         });
         return result;
+    }
+
+    @NotNull
+    public JetType transformToType(@NotNull String kotlinSignature) {
+        final JetType[] r = new JetType[1];
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, standardLibrary) {
+            @Override
+            protected void done(@NotNull JetType jetType) {
+                r[0] = jetType;
+            }
+        };
+        new JetSignatureReader(kotlinSignature).acceptType(reader);
+        return r[0];
     }
 
     @NotNull

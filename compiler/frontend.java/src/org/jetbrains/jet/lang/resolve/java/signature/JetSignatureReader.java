@@ -1,4 +1,4 @@
-package org.jetbrains.jet.codegen.signature;
+package org.jetbrains.jet.lang.resolve.java.signature;
 
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -57,6 +57,17 @@ public class JetSignatureReader {
             while (pos < len) {
                 pos = parseType(signature, pos, v.visitInterface());
             }
+        }
+    }
+
+    public int acceptType(JetSignatureVisitor v) {
+        return parseType(this.signature, 0, v);
+    }
+
+    public void acceptTypeOnly(JetSignatureVisitor v) {
+        int r = acceptType(v);
+        if (r != signature.length()) {
+            throw new IllegalStateException();
         }
     }
 

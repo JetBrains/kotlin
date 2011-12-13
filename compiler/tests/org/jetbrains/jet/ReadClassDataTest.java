@@ -158,7 +158,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         for (int i = 0; i < a.getValueParameters().size(); ++i) {
             compareAnything(ValueParameterDescriptor.class, a.getValueParameters().get(i), b.getValueParameters().get(i));
         }
-        Assert.assertEquals(a.getReturnType(), b.getReturnType());
+        compareTypes(a.getReturnType(), b.getReturnType());
         System.out.println("fun " + a.getName() + "(...): " + a.getReturnType());
     }
     

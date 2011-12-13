@@ -26,4 +26,9 @@ public @interface JetMethod {
      * @return is this type returnTypeNullable
      */
     boolean nullableReturnType() default false;
+
+    /**
+     * Return type type unless java type is correct Kotlin type.
+     */
+    String returnType () default "";
 }

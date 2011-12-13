@@ -61,7 +61,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                                                       ? Opcodes.ACC_INTERFACE
                                                                                       : 0/*Opcodes.ACC_SUPER*/),
                       signature.getName(),
-                      signature.getGenericSignature(),
+                      signature.getJavaGenericSignature(),
                       signature.getSuperclassName(),
                       signature.getInterfaces().toArray(new String[0])
         );
@@ -77,57 +77,55 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             annotationVisitor.visitEnd();
         }
     }
-    
+
     private JvmClassSignature signature() {
-        String genericSignature;
         List<String> superInterfaces;
 
-        {
-            LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
+        LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
 
-            BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
-
-
-            {   // type parameters
-                List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
-                typeMapper.writeFormalTypeParameters(typeParameters, signatureVisitor);
-            }
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
 
-            {   // superclass
-                signatureVisitor.writeSuperclass();
-                if (superClassType == null) {
-                    signatureVisitor.writeClassBegin(superClass);
-                    signatureVisitor.writeClassEnd();
-                } else {
-                    typeMapper.mapType(superClassType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
-                }
-                signatureVisitor.writeSuperclassEnd();
-            }
-
-
-            {   // superinterfaces
-                superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT_INTERNAL);
-
-                for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-                    JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-                    assert superType != null;
-                    ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                    if (CodegenUtil.isInterface(superClassDescriptor)) {
-                        signatureVisitor.writeInterface();
-                        Type jvmName = typeMapper.mapType(superType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
-                        signatureVisitor.writeInterfaceEnd();
-                        superInterfacesLinkedHashSet.add(jvmName.getInternalName());
-                    }
-                }
-
-                superInterfaces = new ArrayList<String>(superInterfacesLinkedHashSet);
-            }
-
-            // TODO: null if class is not generic and does not have generic superclasses
-            genericSignature = signatureVisitor.makeJavaString();
+        {   // type parameters
+            List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
+            typeMapper.writeFormalTypeParameters(typeParameters, signatureVisitor);
         }
-        return new JvmClassSignature(jvmName(), superClass, superInterfaces, genericSignature);
+        
+        signatureVisitor.writeSupersStart();
+
+        {   // superclass
+            signatureVisitor.writeSuperclass();
+            if (superClassType == null) {
+                signatureVisitor.writeClassBegin(superClass, false);
+                signatureVisitor.writeClassEnd();
+            } else {
+                typeMapper.mapType(superClassType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
+            }
+            signatureVisitor.writeSuperclassEnd();
+        }
+
+
+        {   // superinterfaces
+            superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT_INTERNAL);
+
+            for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
+                JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+                assert superType != null;
+                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+                if (CodegenUtil.isInterface(superClassDescriptor)) {
+                    signatureVisitor.writeInterface();
+                    Type jvmName = typeMapper.mapType(superType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
+                    signatureVisitor.writeInterfaceEnd();
+                    superInterfacesLinkedHashSet.add(jvmName.getInternalName());
+                }
+            }
+
+            superInterfaces = new ArrayList<String>(superInterfacesLinkedHashSet);
+        }
+        
+        signatureVisitor.writeSupersEnd();
+
+        return new JvmClassSignature(jvmName(), superClass, superInterfaces, signatureVisitor.makeJavaString(), signatureVisitor.makeKotlinClassSignature());
     }
 
     private String jvmName() {
@@ -324,7 +322,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             constructorMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-            callableMethod = new CallableMethod("", new JvmMethodSignature(constructorMethod, null) /* TODO */, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
+            callableMethod = new CallableMethod("", new JvmMethodSignature(constructorMethod, null, null, null) /* TODO */, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
