@@ -446,6 +446,12 @@ Object.extend(Function.prototype, (function () {
 })());
 
 Kotlin = {}
+Kotlin.Class = Class;
+Kotlin.Namespace = Namespace;
+Kotlin.Trait = Trait;
+Kotlin.isType = isType;
+
+
 Kotlin.Exceptions = {}
 Kotlin.Exceptions.IndexOutOfBounds = {}
 Kotlin.array = function (len) {
@@ -574,7 +580,60 @@ Kotlin.System = function () {
     };
 }();
 
-Kotlin.Class = Class;
-Kotlin.Namespace = Namespace;
-Kotlin.Trait = Trait;
-Kotlin.isType = isType;
+
+Kotlin.ArrayIterator = Class.create({
+    initialize:function (array) {
+        this.array = array;
+        this.index = 0;
+    },
+    next:function () {
+        return this.array.get(this.index++);
+    },
+    hasNext:function () {
+        return (this.array.size() > this.index);
+    }
+});
+
+Kotlin.RangeIterator = Kotlin.Class.create({initialize:function (start, count, reversed) {
+    this.$start = start;
+    this.$count = count;
+    this.$reversed = reversed;
+}, get_start:function () {
+    return this.$start;
+}, get_count:function () {
+    return this.$count;
+}, set_count:function (tmp$0) {
+    this.$count = tmp$0;
+}, get_reversed:function () {
+    return this.$reversed;
+}, next:function () {
+    this.set_count(this.get_count() - 1);
+    return this.get_start() + (this.get_reversed() ? -this.get_count() : this.get_count());
+}, hasNext:function () {
+    return this.get_count() > 0;
+}
+});
+
+Kotlin.NumberRange = Kotlin.Class.create({initialize:function (start, size, reversed) {
+    this.$start = start;
+    this.$size = size;
+    this.$reversed = reversed;
+}, get_start:function () {
+    return this.$start;
+}, get_size:function () {
+    return this.$size;
+}, get_reversed:function () {
+    return this.$reversed;
+}, get_end:function () {
+    return this.get_start() + this.get_size();
+}, contains:function (number) {
+    if (this.get_reversed()) {
+        return number <= this.get_start() && number > this.get_start() - this.get_size();
+    }
+    else {
+        return number >= this.get_start() && number < this.get_start() + this.get_size();
+    }
+}, iterator:function () {
+    return new Kotlin.RangeIterator(this.get_start(), this.get_size(), this.get_reversed());
+}
+});

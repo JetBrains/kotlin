@@ -20,4 +20,10 @@ public class MiscTest extends AbstractExpressionTest {
     public void namespaceProperties() throws Exception {
         testFunctionOutput("localProperty.jet", "foo", "box", 50);
     }
+
+    @Test
+    public void intRange() throws Exception {
+        // checkOutput("intRange.kt", " ");
+        testFooBoxIsTrue("intRange.kt");
+    }
 }

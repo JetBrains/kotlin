@@ -115,6 +115,7 @@ public final class BindingUtils {
         Boolean isStatement = context.get(BindingContext.STATEMENT, expression);
         assert isStatement != null : "Invalid behaviour of get(BindingContext.STATEMENT)";
         return isStatement;
+        // return IsStatement.isStatement(expression);
     }
 
     @NotNull

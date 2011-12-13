@@ -28,13 +28,23 @@ public final class StandardClasses {
         StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
         declareArray(standardClasses, standardLibrary);
         declareIterator(standardClasses, standardLibrary);
+        declareRange(standardClasses, standardLibrary);
         declareJavaArrayList(standardClasses);
         declareJavaSystem(standardClasses);
-        declareInteger(standardClasses);
+        declareJavaInteger(standardClasses);
         return standardClasses;
     }
 
-    private static void declareInteger(@NotNull StandardClasses standardClasses) {
+    //TODO: duplication
+    private static void declareRange(@NotNull StandardClasses standardClasses, @NotNull JetStandardLibrary standardLibrary) {
+        String intRangeFQName = "jet.IntRange";
+        standardClasses.declareStandardTopLevelObject(intRangeFQName, "NumberRange");
+        standardClasses.declareStandardInnerDeclaration(intRangeFQName, "<init>", "NumberRange");
+        declareMethods(standardClasses, intRangeFQName, "iterator", "contains");
+        declareProperties(standardClasses, intRangeFQName, "start", "size", "end", "reversed");
+    }
+
+    private static void declareJavaInteger(@NotNull StandardClasses standardClasses) {
         String integerFQName = "<java_root>.java.lang.Integer";
         standardClasses.declareStandardTopLevelObject(integerFQName, "Integer");
         declareMethods(standardClasses, integerFQName, "parseInt");
@@ -84,6 +94,15 @@ public final class StandardClasses {
                                        @NotNull String... methodNames) {
         for (String methodName : methodNames) {
             standardClasses.declareStandardInnerDeclaration(classFQName, methodName, methodName);
+        }
+    }
+
+    private static void declareProperties(@NotNull StandardClasses standardClasses,
+                                          @NotNull String classFQName,
+                                          @NotNull String... propertyNames) {
+        for (String propertyName : propertyNames) {
+            standardClasses.declareStandardInnerDeclaration(classFQName,
+                    propertyName, Namer.getNameForGetter(propertyName));
         }
     }
 

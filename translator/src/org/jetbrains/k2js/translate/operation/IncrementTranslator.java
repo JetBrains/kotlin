@@ -11,7 +11,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.reference.AccessTranslator;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
@@ -65,7 +64,9 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     }
 
     private boolean returnValueIgnored() {
-        return isStatement(context().bindingContext(), expression);
+        //TODO: it's a hack but for now there is now legal way to know whether expression is statement or not.
+        return false;
+        //return isStatement(context().bindingContext(), expression);
     }
 
     @NotNull

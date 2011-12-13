@@ -105,4 +105,10 @@ public abstract class TranslationTest {
         testFunctionOutput(filename, "foo", "box", "OK");
     }
 
+    protected void checkOutput(String filename, String expectedResult, String... args) throws Exception {
+        translateFile(filename);
+        runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
+                new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
+    }
+
 }

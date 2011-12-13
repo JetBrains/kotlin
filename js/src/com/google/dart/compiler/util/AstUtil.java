@@ -317,11 +317,11 @@ public class AstUtil {
     }
 
     public static JsBinaryOperation equals(JsExpression arg1, JsExpression arg2) {
-        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2);
+        return new JsBinaryOperation(JsBinaryOperator.EQ, arg1, arg2);
     }
 
     public static JsBinaryOperation notEqual(JsExpression arg1, JsExpression arg2) {
-        return new JsBinaryOperation(JsBinaryOperator.REF_NEQ, arg1, arg2);
+        return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
     }
 
     public static JsExpression equalsTrue(JsExpression expression, JsProgram program) {
