@@ -27,6 +27,7 @@ public class StdlibNames {
     public static final String JET_METHOD_NULLABLE_RETURN_TYPE_FIELD = "nullableReturnType";
 
 
+    public static final String JET_OBJECT_INTERNAL = "jet/JetObject";
     public static final String JET_OBJECT_CLASS = "jet.JetObject";
     public static final String JET_OBJECT_DESCRIPTOR = "Ljet/JetObject;";
 
