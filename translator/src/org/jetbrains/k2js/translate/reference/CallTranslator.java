@@ -23,11 +23,13 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForCallExpression;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isInOperation;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
  * @author Talanov Pavel
  */
+//TODO: move translate() static method into builder (consider!)
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
 
@@ -38,14 +40,14 @@ public final class CallTranslator extends AbstractTranslator {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
                 (context.bindingContext(), unaryExpression.getOperationReference());
         assert descriptor instanceof FunctionDescriptor;
-        return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
+        return translate(context, receiver, arguments, (FunctionDescriptor) descriptor);
     }
 
     //TODO: method too long
     public static JsExpression translate(@NotNull JetDotQualifiedExpression dotExpression,
                                          @NotNull TranslationContext context) {
-        //TODO: look for duplication
         JsExpression receiver = translateReceiver(context, dotExpression);
+        //TODO: util?
         JetExpression selectorExpression = dotExpression.getSelectorExpression();
         assert selectorExpression instanceof JetCallExpression;
         JetCallExpression callExpression = (JetCallExpression) selectorExpression;
@@ -53,7 +55,7 @@ public final class CallTranslator extends AbstractTranslator {
                 translateArgumentList(context, callExpression.getValueArguments());
         FunctionDescriptor descriptor =
                 getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
-        return (new CallTranslator(receiver, arguments, descriptor, context)).translate();
+        return translate(context, receiver, arguments, descriptor);
     }
 
     public static JsExpression translate(@NotNull JetCallExpression callExpression,
@@ -62,18 +64,39 @@ public final class CallTranslator extends AbstractTranslator {
                 getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
         JsExpression receiver = getImplicitReceiver(context, descriptor);
         List<JsExpression> arguments = translateArgumentList(context, callExpression.getValueArguments());
-        return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
+        return translate(context, receiver, arguments, (FunctionDescriptor) descriptor);
     }
 
+    //TODO: refactor
     public static JsExpression translate(@NotNull JetBinaryExpression binaryExpression,
                                          @NotNull TranslationContext context) {
         JsExpression receiver = translateLeftExpression(context, binaryExpression);
         List<JsExpression> arguments = Arrays.asList(translateRightExpression(context, binaryExpression));
-        //TODO: use PSI util method to get operation reference
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
                 (context.bindingContext(), binaryExpression.getOperationReference());
         assert descriptor instanceof FunctionDescriptor;
-        return (new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context)).translate();
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+        if (isInOperation(binaryExpression)) {
+            return translateWithReceiverAndArgumentSwapped(context, receiver, arguments, functionDescriptor);
+        }
+        return translate(context, receiver, arguments, functionDescriptor);
+    }
+
+    @NotNull
+    private static JsExpression translateWithReceiverAndArgumentSwapped(@NotNull TranslationContext context,
+                                                                        @NotNull JsExpression receiver,
+                                                                        @NotNull List<JsExpression> arguments,
+                                                                        @NotNull FunctionDescriptor functionDescriptor) {
+        assert arguments.size() == 1 : "Must have one argument.";
+        return translate(context, arguments.get(0), Arrays.asList(receiver), functionDescriptor);
+    }
+
+    @NotNull
+    private static JsExpression translate(@NotNull TranslationContext context,
+                                          @Nullable JsExpression receiver,
+                                          @NotNull List<JsExpression> arguments,
+                                          @NotNull FunctionDescriptor functionDescriptor) {
+        return (new CallTranslator(receiver, arguments, functionDescriptor, context)).translate();
     }
 
     @Nullable

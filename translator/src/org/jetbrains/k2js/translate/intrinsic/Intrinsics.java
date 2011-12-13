@@ -4,21 +4,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayNullConstructorIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.primitive.PrimitiveBinaryOperationIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.primitive.PrimitiveCompareToIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.primitive.PrimitiveEqualsIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.primitive.PrimitiveUnaryOperationIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
 
 /**
@@ -55,6 +52,7 @@ public final class Intrinsics {
     private void declareOperatorIntrinsics() {
         IntrinsicDeclarationVisitor visitor = new IntrinsicDeclarationVisitor(this);
         for (DeclarationDescriptor descriptor : library.getLibraryScope().getAllDescriptors()) {
+            //noinspection NullableProblems
             descriptor.accept(visitor, null);
         }
     }
@@ -75,25 +73,33 @@ public final class Intrinsics {
         addEqualsIntrinsics(descriptor);
         addUnaryIntrinsics(descriptor);
         addBinaryIntrinsics(descriptor);
+        addRangeToIntrinsics(descriptor);
+    }
+
+    private void addRangeToIntrinsics(@NotNull FunctionDescriptor descriptor) {
+        String functionName = descriptor.getName();
+        if (functionName.equals("rangeTo")) {
+            functionIntrinsics.put(descriptor, PrimitiveRangeToIntrinsic.newInstance());
+        }
     }
 
     private void addCompareToIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
-        if (functionName.equals("compareTo")) {
+        if (functionName.equals(COMPARE_TO)) {
             compareToIntrinsics.put(descriptor, PrimitiveCompareToIntrinsic.newInstance());
         }
     }
 
     private void addEqualsIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
-        if (functionName.equals("equals")) {
+        if (functionName.equals(EQUALS)) {
             equalsIntrinsics.put(descriptor, PrimitiveEqualsIntrinsic.newInstance());
         }
     }
 
     private void addUnaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
         String functionName = descriptor.getName();
-        JetToken token = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(functionName);
+        JetToken token = UNARY_OPERATION_NAMES.inverse().get(functionName);
         if (token == null) return;
         boolean isUnary = !DescriptorUtils.hasParameters(descriptor);
         if (!isUnary) return;
@@ -105,9 +111,9 @@ public final class Intrinsics {
         String functionName = descriptor.getName();
         boolean isUnary = !DescriptorUtils.hasParameters(descriptor);
         if (isUnary) return;
-        JetToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(functionName);
+        JetToken token = BINARY_OPERATION_NAMES.inverse().get(functionName);
         if (token == null) return;
-        //TODO: implement range and contains intrinsic
+        //TODO: implement contains intrinsic
         if (!OperatorTable.hasCorrespondingBinaryOperator(token)) return;
         functionIntrinsics.put(descriptor, PrimitiveBinaryOperationIntrinsic.newInstance(token));
     }

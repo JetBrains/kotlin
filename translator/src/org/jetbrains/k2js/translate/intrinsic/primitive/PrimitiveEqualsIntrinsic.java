@@ -18,6 +18,9 @@ public final class PrimitiveEqualsIntrinsic extends EqualsIntrinsic {
         return new PrimitiveEqualsIntrinsic();
     }
 
+    private PrimitiveEqualsIntrinsic() {
+    }
+
     @NotNull
     public JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {

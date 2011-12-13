@@ -20,6 +20,9 @@ public final class PrimitiveCompareToIntrinsic extends CompareToIntrinsic {
         return new PrimitiveCompareToIntrinsic();
     }
 
+    private PrimitiveCompareToIntrinsic() {
+    }
+
     @NotNull
     public JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {

@@ -19,5 +19,15 @@ public final class RangeTest extends TranslationTest {
         testFooBoxIsTrue("explicitRange.kt");
     }
 
+    @Test
+    public void rangeSugarSyntax() throws Exception {
+        testFooBoxIsTrue("rangeSugarSyntax.kt");
+    }
+
+    @Test
+    public void intInRange() throws Exception {
+        testFooBoxIsTrue("intInRange.kt");
+    }
+
 
 }

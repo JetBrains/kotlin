@@ -17,6 +17,8 @@ import org.jetbrains.k2js.translate.reference.CallTranslator;
 
 import java.util.Arrays;
 
+import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
+import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isEquals;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
@@ -51,19 +53,25 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translate() {
-        if (AssignmentTranslator.isAssignmentOperator(expression)) {
+        if (isAssignmentOperator(expression)) {
             return AssignmentTranslator.translate(expression, context());
         }
-        if (operationDescriptor == null) {
+        if (isNotOverloadable()) {
             return translateAsUnOverloadableBinaryOperation();
         }
-        if (CompareToTranslator.isCompareToCall(expression, context())) {
+        if (isCompareToCall(expression, context())) {
             return CompareToTranslator.translate(expression, context());
         }
+        assert operationDescriptor != null :
+                "Overloadable operations must have not null descriptor";
         if (isEquals(operationDescriptor)) {
             return translateAsEqualsCall();
         }
         return CallTranslator.translate(expression, context());
+    }
+
+    private boolean isNotOverloadable() {
+        return operationDescriptor == null;
     }
 
     @NotNull

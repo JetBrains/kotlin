@@ -52,6 +52,10 @@ public final class PsiUtils {
         return expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
     }
 
+    public static boolean isInOperation(@NotNull JetBinaryExpression binaryExpression) {
+        return binaryExpression.getOperationToken() == JetTokens.IN_KEYWORD;
+    }
+
     @NotNull
     /*package*/ static JetExpression getCallee(@NotNull JetCallExpression expression) {
         JetExpression calleeExpression = expression.getCalleeExpression();

@@ -328,8 +328,11 @@ public class AstUtil {
         return equals(expression, program.getTrueLiteral());
     }
 
-
     public static JsBinaryOperation sum(JsExpression left, JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ADD, left, right);
+    }
+
+    public static JsBinaryOperation subtract(JsExpression left, JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.SUB, left, right);
     }
 }
