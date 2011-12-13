@@ -1,5 +1,7 @@
 namespace std
 
+import java.io.ByteArrayInputStream
+
 // Array "constructor"
 inline fun <T> array(vararg t : T) : Array<T> = t
 
@@ -19,3 +21,9 @@ inline fun shortArray(vararg content : Short)      = content
 inline fun byteArray(vararg content : Byte)        = content
 
 inline fun booleanArray(vararg content : Boolean)  = content
+
+inline val ByteArray.inputStream : ByteArrayInputStream
+    get() = ByteArrayInputStream(this)
+
+inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
+

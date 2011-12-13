@@ -27,47 +27,6 @@ namespace io {
     inline fun println(message : CharArray) { System.out?.println(message) }
     inline fun println() { System.out?.println() }
 
-    val ByteArray.inputStream : ByteArrayInputStream
-        get() = ByteArrayInputStream(this)
-
-//    inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
-
-    fun InputStream.iterator() : ByteIterator =
-        object: ByteIterator() {
-            override val hasNext : Boolean
-                get() = available() > 0
-
-            override fun nextByte() = read().byt
-        }
-
-    val InputStream.buffered : BufferedInputStream
-        get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
-
-//    inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
-
-    val InputStream.reader : InputStreamReader
-        get() = InputStreamReader(this)
-
-    val InputStream.bufferedReader : BufferedReader
-        get() = BufferedReader(reader)
-
-/*
-    inline fun InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
-
-    inline fun InputStream.reader(charsetName: String) = InputStreamReader(this, charsetNme)
-
-    inline fun InputStream.reader(charset: Charset) = InputStreamReader(this, charset)
-
-    inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
-*/
-
-//    val Reader.buffered : BufferedReader
-//        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
-
-//    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
-
-//    val String.reader = StringReader(this)
-
     private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : InputStream() {
         override fun read() : Int {
             return System.`in`?.read() ?: -1
@@ -107,4 +66,38 @@ namespace io {
     }))
 
     fun readLine() : String? = stdin.readLine()
+
+    fun InputStream.iterator() : ByteIterator =
+        object: ByteIterator() {
+            override val hasNext : Boolean
+                get() = available() > 0
+
+            override fun nextByte() = read().byt
+        }
+
+    val InputStream.buffered : BufferedInputStream
+        get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
+
+    //    inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
+
+    val InputStream.reader : InputStreamReader
+        get() = InputStreamReader(this)
+
+    val InputStream.bufferedReader : BufferedReader
+        get() = BufferedReader(reader)
+
+    /*
+    inline fun InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
+
+    inline fun InputStream.reader(charsetName: String) = InputStreamReader(this, charsetNme)
+
+    inline fun InputStream.reader(charset: Charset) = InputStreamReader(this, charset)
+
+    inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
+    */
+
+    //    val Reader.buffered : BufferedReader
+    //        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
+
+    //    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 }

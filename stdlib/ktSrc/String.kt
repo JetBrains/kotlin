@@ -1,5 +1,7 @@
 namespace std
 
+import java.io.StringReader
+
 inline fun <T> T?.plus(str: String?) : String { return toString() + str }
 
 inline fun String.lastIndexOf(s: String)  = (this as java.lang.String).lastIndexOf(s)
@@ -35,8 +37,8 @@ inline fun String.substring(i0 : Int, i1 : Int)  = (this as java.lang.String).su
 inline val String.size : Int
     get() = length()
 
-inline val String.bytes : ByteArray
-    get() = getBytes()
+inline val String.reader : StringReader
+    get() = StringReader(this)
 
 // "constructors" for String
 
@@ -57,3 +59,4 @@ inline fun String(chars : CharArray) = java.lang.String(chars) as String
 inline fun String(stringBuffer : java.lang.StringBuffer) = java.lang.String(stringBuffer) as String
 
 inline fun String(stringBuilder : java.lang.StringBuilder) = java.lang.String(stringBuilder) as String
+
