@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.java;
 
 import org.objectweb.asm.Type;
 
