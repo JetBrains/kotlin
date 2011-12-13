@@ -1,4 +1,5 @@
 namespace demo
+import std.*
 import std.compatibility.*
 open class Test() {
 open fun test() : Unit {

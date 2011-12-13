@@ -57,6 +57,7 @@ public class Converter {
   public static File fileToFileWithCompatibilityImport(@NotNull PsiJavaFile javaFile) {
     final PsiImportList importList = javaFile.getImportList();
     List<Import> imports = importList == null ? Collections.<Import>emptyList() : importsToImportList(importList.getAllImportStatements());
+    imports.add(new Import("std.*"));
     imports.add(new Import("std.compatibility.*"));
     return new File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
   }
