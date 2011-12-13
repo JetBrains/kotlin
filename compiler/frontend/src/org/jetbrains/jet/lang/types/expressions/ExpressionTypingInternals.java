@@ -24,4 +24,6 @@ import org.jetbrains.jet.lang.types.JetType;
     JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context);
 
     void checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @NotNull JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context);
+
+    void checkStatementType(@NotNull JetExpression expression, ExpressionTypingContext context);
 }

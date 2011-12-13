@@ -40,7 +40,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
     private ExpressionTypingVisitorDispatcher(WritableScope writableScope) {
         this.basic = new BasicExpressionTypingVisitor(this);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic);
+            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
         }
         else {
             this.statements = null;
@@ -84,10 +84,22 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
         return getType(expression, context, this);
     }
 
-    @Override
     @Nullable
-    public final JetType getTypeForStatement(@NotNull JetExpression expression, ExpressionTypingContext context) {
-        return getType(expression, context, statements);
+    public final JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        if (!isStatement) return getType(expression, context);
+        if (statements != null) {
+            return getType(expression, context, statements);
+        }
+        return getType(expression, context, createStatementVisitor(context));
+    }
+    
+    private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
+        return new ExpressionTypingVisitorForStatements(this, ExpressionTypingUtils.newWritableScopeImpl(context).setDebugName("statement scope"), basic, controlStructures, patterns);
+    }
+
+    @Override
+    public void checkStatementType(@NotNull JetExpression expression, ExpressionTypingContext context) {
+        expression.accept(createStatementVisitor(context), context);
     }
 
     @Nullable

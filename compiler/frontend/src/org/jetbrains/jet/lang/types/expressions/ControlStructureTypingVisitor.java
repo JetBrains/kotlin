@@ -12,8 +12,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.TaskPrioritizers;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -54,7 +52,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
 
     @Override
-    public JetType visitIfExpression(JetIfExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetType visitIfExpression(JetIfExpression expression, ExpressionTypingContext context) {
+        return visitIfExpression(expression, context, false);
+    }
+
+    public JetType visitIfExpression(JetIfExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression condition = expression.getCondition();
         checkCondition(context.scope, condition, context);
@@ -73,7 +75,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     facade.setResultingDataFlowInfo(elseInfo);
                 }
-                return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+                return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement);
             }
             return null;
         }
@@ -82,10 +84,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (type != null && JetStandardClasses.isNothing(type)) {
                 facade.setResultingDataFlowInfo(thenInfo);
             }
-            return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
+            return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement);
         }
-        JetType thenType = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, contextWithExpectedType.replaceDataFlowInfo(thenInfo));
-        JetType elseType = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, contextWithExpectedType.replaceDataFlowInfo(elseInfo));
+        CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
+        JetType thenType = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo));
+        JetType elseType = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo));
 
         JetType result;
         if (thenType == null) {
@@ -107,11 +110,18 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         else if (jumpInElse && !jumpInThen) {
             facade.setResultingDataFlowInfo(thenInfo);
         }
-        return result;
+        if (result == null) return null;
+        return DataFlowUtils.checkImplicitCast(result, expression, contextWithExpectedType, isStatement);
     }
 
     @Override
-    public JetType visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetType visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext context) {
+        return visitWhileExpression(expression, context, false);
+    }
+
+    public JetType visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression condition = expression.getCondition();
         checkCondition(context.scope, condition, context);
@@ -152,7 +162,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetType visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetType visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext context) {
+        return visitDoWhileExpression(expression, context, false);
+    }
+    public JetType visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression body = expression.getBody();
         JetScope conditionScope = context.scope;
@@ -181,7 +196,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetType visitForExpression(JetForExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetType visitForExpression(JetForExpression expression, ExpressionTypingContext context) {
+        return visitForExpression(expression, context, false);
+    }
+
+    public JetType visitForExpression(JetForExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetParameter loopParameter = expression.getLoopParameter();
         JetExpression loopRange = expression.getLoopRange();
@@ -419,6 +440,4 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         context.labelResolver.recordLabel(expression, context);
         return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
-
-
 }

@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -18,8 +19,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.AUTOCAST_IMPOSSIBLE;
-import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
 
 /**
@@ -153,5 +153,31 @@ public class DataFlowUtils {
         }
         context.trace.report(TYPE_MISMATCH.on(expression, context.expectedType, expressionType));
         return expressionType;
+    }
+
+    @Nullable
+    public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
+        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedType)) {
+            context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
+            return null;
+        }
+        return JetStandardClasses.getUnitType();
+    }
+
+    @Nullable
+    public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement) {
+        if (expressionType != null && context.expectedType == TypeUtils.NO_EXPECTED_TYPE && !isStatement &&
+            (JetStandardClasses.isUnit(expressionType) || JetStandardClasses.isAny(expressionType))) {
+            context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
+
+        }
+        return expressionType;
+    }
+
+    @Nullable
+    public static JetType illegalStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
+        facade.checkStatementType(expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+        context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
+        return null;
     }
 }

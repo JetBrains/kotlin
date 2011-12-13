@@ -13,7 +13,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
@@ -21,7 +20,6 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.ensureBooleanResultWithCustomSubject;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
 /**
@@ -48,7 +46,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetType visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetType visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext context) {
+        return visitWhenExpression(expression, context, false);
+    }
+
+    public JetType visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         // TODO :change scope according to the bound value in the when header
         final JetExpression subjectExpression = expression.getSubjectExpression();
@@ -92,7 +94,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
             JetExpression bodyExpression = whenEntry.getExpression();
             if (bodyExpression != null) {
-                JetType type = facade.getType(bodyExpression, contextWithExpectedType.replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo));
+                ExpressionTypingContext newContext = contextWithExpectedType.replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo);
+                CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
+                JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
                 if (type != null) {
                     expressionTypes.add(type);
                 }
@@ -100,7 +104,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (!expressionTypes.isEmpty()) {
-            return CommonSupertypes.commonSupertype(expressionTypes);
+            return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement);
         }
         else if (expression.getEntries().isEmpty()) {
 //                context.trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression");
