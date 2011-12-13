@@ -208,7 +208,7 @@ public class ExpressionVisitor extends StatementVisitor {
   private static List<String> createConversions(@NotNull PsiCallExpression expression) {
     List<String> conversions = new LinkedList<String>();
     PsiExpressionList argumentList = expression.getArgumentList();
-    PsiExpression[] arguments = argumentList != null? argumentList.getExpressions() : new PsiExpression[]{};
+    PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
     //noinspection UnusedDeclaration
     for (final PsiExpression a : arguments) {
       conversions.add("");
@@ -230,16 +230,25 @@ public class ExpressionVisitor extends StatementVisitor {
       for (int i = 0; i < actualTypes.size(); i++) {
         PsiType actual = actualTypes.get(i);
         PsiType expected = expectedTypes.get(i);
+        PsiExpression argument = arguments[i];
 
-        if (isConversionNeeded(actual, expected)) {
-          conversions.set(i, getPrimitiveTypeConversion(expected.getCanonicalText()));
-        }
+        String conversion = "";
+        if (isConversionNeeded(actual, expected))
+          conversion += getPrimitiveTypeConversion(expected.getCanonicalText());
+
+        PsiType type = argument.getType();
+        if (argument instanceof PsiReferenceExpression &&
+          type != null && Node.PRIMITIVE_TYPES.contains(type.getCanonicalText()) &&
+          ((PsiReferenceExpression) argument).isQualified())
+          conversion += ".sure()";
+
+        conversions.set(i, conversion);
       }
     }
     return conversions;
   }
 
-  static boolean isConversionNeeded(@Nullable final PsiType actual,@Nullable final PsiType expected) {
+  static boolean isConversionNeeded(@Nullable final PsiType actual, @Nullable final PsiType expected) {
     if (actual == null || expected == null)
       return false;
     Map<String, String> typeMap = new HashMap<String, String>();
