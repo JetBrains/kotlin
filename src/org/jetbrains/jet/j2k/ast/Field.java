@@ -14,14 +14,21 @@ import static org.jetbrains.jet.j2k.Converter.getDefaultInitializer;
  */
 public class Field extends Member {
   final Identifier myIdentifier;
+  @NotNull
+  private final String myConversion;
   final Type myType;
   final Element myInitializer;
 
-  public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer) {
+  public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer, @NotNull String conversionForCallChains) {
     myIdentifier = identifier;
+    myConversion = conversionForCallChains;
     myModifiers = modifiers;
     myType = type;
     myInitializer = initializer;
+  }
+
+  public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer) {
+    this(identifier, modifiers, type, initializer, "");
   }
 
   public Element getInitializer() {
@@ -71,6 +78,6 @@ public class Field extends Member {
       return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE + EQUAL + SPACE + getDefaultInitializer(this);
 
     return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE +
-      EQUAL + SPACE + myInitializer.toKotlin();
+      EQUAL + SPACE + myInitializer.toKotlin() + myConversion;
   }
 }

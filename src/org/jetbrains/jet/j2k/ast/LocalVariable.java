@@ -12,12 +12,14 @@ public class LocalVariable extends Expression {
   private final Set<String> myModifiersSet;
   private final Type myType;
   private final Expression myInitializer;
+  private final String myConversion;
 
-  public LocalVariable(Identifier identifier, Set<String> modifiersSet, Type type, Expression initializer) {
+  public LocalVariable(Identifier identifier, Set<String> modifiersSet, Type type, Expression initializer, @NotNull String conversionForExpression) {
     myIdentifier = identifier;
     myModifiersSet = modifiersSet;
     myType = type;
     myInitializer = initializer;
+    myConversion = conversionForExpression;
   }
 
   public boolean hasModifier(String modifier) {
@@ -31,6 +33,6 @@ public class LocalVariable extends Expression {
       return myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
 
     return myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE +
-      EQUAL + SPACE + myInitializer.toKotlin();
+      EQUAL + SPACE + myInitializer.toKotlin() + myConversion;
   }
 }

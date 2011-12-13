@@ -26,9 +26,15 @@ public class Converter {
       add("javax.annotation.Nonnull");
     }
   };
-  @NotNull private static Set<String> ourClassIdentifiers = new HashSet<String>();
-  @NotNull private static final Dispatcher ourDispatcher = new Dispatcher();
-  @Nullable private static PsiType ourMethodReturnType = null;
+  @NotNull
+  private static Set<String> ourClassIdentifiers = new HashSet<String>();
+  @NotNull
+  private static final Dispatcher ourDispatcher = new Dispatcher();
+  @Nullable
+  private static PsiType ourMethodReturnType = null;
+
+  private Converter() {
+  }
 
   public static void setClassIdentifiers(@NotNull Set<String> identifiers) {
     ourClassIdentifiers = identifiers;
@@ -269,7 +275,8 @@ public class Converter {
       new IdentifierImpl(field.getName()), // TODO
       modifiers,
       typeToType(field.getType()),
-      expressionToExpression(field.getInitializer()) // TODO: add modifiers
+      expressionToExpression(field.getInitializer()), // TODO: add modifiers
+      createConversionForCallChains(field.getInitializer(), field.getType())
     );
   }
 
@@ -548,5 +555,105 @@ public class Converter {
       if (modifierList.hasExplicitModifier(PsiModifier.PRIVATE)) modifiersSet.add(Modifier.PRIVATE);
     }
     return modifiersSet;
+  }
+
+  @NotNull
+  public static List<String> createConversions(@NotNull PsiCallExpression expression) {
+    List<String> conversions = new LinkedList<String>();
+    PsiExpressionList argumentList = expression.getArgumentList();
+    PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
+    //noinspection UnusedDeclaration
+    for (final PsiExpression a : arguments) {
+      conversions.add("");
+    }
+
+    PsiMethod resolve = expression.resolveMethod();
+    if (resolve != null) {
+      List<PsiType> expectedTypes = new LinkedList<PsiType>();
+      List<PsiType> actualTypes = new LinkedList<PsiType>();
+
+      for (PsiParameter p : resolve.getParameterList().getParameters())
+        expectedTypes.add(p.getType());
+
+      for (PsiExpression e : arguments)
+        actualTypes.add(e.getType());
+
+      assert actualTypes.size() == expectedTypes.size() : "The type list must have the same length";
+
+      for (int i = 0; i < actualTypes.size(); i++)
+        conversions.set(i, createConversionForExpression(arguments[i], expectedTypes.get(i)));
+    }
+    return conversions;
+  }
+
+  @NotNull
+  public static String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
+    String conversion = "";
+    if (expression != null) {
+      PsiType actualType = expression.getType();
+      if (actualType != null) {
+        if (isConversionNeeded(actualType, expectedType))
+          conversion += getPrimitiveTypeConversion(expectedType.getCanonicalText());
+        if (expression instanceof PsiReferenceExpression && Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText()) && ((PsiReferenceExpression) expression).isQualified())
+          conversion += ".sure()";
+      }
+    }
+    return conversion;
+  }
+
+  public static boolean isConversionNeeded(@Nullable final PsiType actual, @Nullable final PsiType expected) {
+    if (actual == null || expected == null)
+      return false;
+    Map<String, String> typeMap = new HashMap<String, String>();
+    typeMap.put("java.lang.Byte", "byte");
+    typeMap.put("java.lang.Short", "short");
+    typeMap.put("java.lang.Integer", "int");
+    typeMap.put("java.lang.Long", "long");
+    typeMap.put("java.lang.Float", "float");
+    typeMap.put("java.lang.Double", "double");
+    typeMap.put("java.lang.Character", "char");
+    String expectedStr = expected.getCanonicalText();
+    String actualStr = actual.getCanonicalText();
+    boolean o1 = AstUtil.getOrElse(typeMap, actualStr, "").equals(expectedStr);
+    boolean o2 = AstUtil.getOrElse(typeMap, expectedStr, "").equals(actualStr);
+    return !actualStr.equals(expectedStr) && (!(o1 ^ o2));
+  }
+
+  @NotNull
+  public static String getPrimitiveTypeConversion(@NotNull String type) {
+    Map<String, String> conversions = new HashMap<String, String>();
+    conversions.put("byte", "byt");
+    conversions.put("short", "sht");
+    conversions.put("int", "int");
+    conversions.put("long", "lng");
+    conversions.put("float", "flt");
+    conversions.put("double", "dbl");
+    conversions.put("char", "chr");
+
+    conversions.put("java.lang.Byte", "byt");
+    conversions.put("java.lang.Short", "sht");
+    conversions.put("java.lang.Integer", "int");
+    conversions.put("java.lang.Long", "lng");
+    conversions.put("java.lang.Float", "flt");
+    conversions.put("java.lang.Double", "dbl");
+    conversions.put("java.lang.Character", "chr");
+
+    if (conversions.containsKey(type))
+      return "." + conversions.get(type);
+    return "";
+  }
+
+//  @NotNull
+//  private static String applyConversion(Expression expression, String conversion) {
+//    if (conversion.isEmpty())
+//      return expression.toKotlin();
+//    return "(" + expression.toKotlin() + ")" + conversion;
+//  }
+
+  @NotNull
+  public static String createConversionForCallChains(PsiExpression initializer, PsiType type) {
+    if (initializer != null && initializer instanceof PsiReferenceExpression && ((PsiReferenceExpression) initializer).isQualified())
+      return createConversionForExpression(initializer, type);
+    return "";
   }
 }

@@ -4,9 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
-import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.*;
 
@@ -16,7 +14,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
  * @author ignatov
  */
 public class ExpressionVisitor extends StatementVisitor {
-  @Nullable
+  @NotNull
   Expression myResult = Expression.EMPTY_EXPRESSION;
 
   @Override
@@ -204,92 +202,6 @@ public class ExpressionVisitor extends StatementVisitor {
     }
   }
 
-  @NotNull
-  private static List<String> createConversions(@NotNull PsiCallExpression expression) {
-    List<String> conversions = new LinkedList<String>();
-    PsiExpressionList argumentList = expression.getArgumentList();
-    PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
-    //noinspection UnusedDeclaration
-    for (final PsiExpression a : arguments) {
-      conversions.add("");
-    }
-
-    PsiMethod resolve = expression.resolveMethod();
-    if (resolve != null) {
-      List<PsiType> expectedTypes = new LinkedList<PsiType>();
-      List<PsiType> actualTypes = new LinkedList<PsiType>();
-
-      for (PsiParameter p : resolve.getParameterList().getParameters())
-        expectedTypes.add(p.getType());
-
-      for (PsiExpression e : arguments)
-        actualTypes.add(e.getType());
-
-      assert actualTypes.size() == expectedTypes.size() : "The type list must have the same length";
-
-      for (int i = 0; i < actualTypes.size(); i++) {
-        PsiType actual = actualTypes.get(i);
-        PsiType expected = expectedTypes.get(i);
-        PsiExpression argument = arguments[i];
-
-        String conversion = "";
-        if (isConversionNeeded(actual, expected))
-          conversion += getPrimitiveTypeConversion(expected.getCanonicalText());
-
-        PsiType type = argument.getType();
-        if (argument instanceof PsiReferenceExpression &&
-          type != null && Node.PRIMITIVE_TYPES.contains(type.getCanonicalText()) &&
-          ((PsiReferenceExpression) argument).isQualified())
-          conversion += ".sure()";
-
-        conversions.set(i, conversion);
-      }
-    }
-    return conversions;
-  }
-
-  static boolean isConversionNeeded(@Nullable final PsiType actual, @Nullable final PsiType expected) {
-    if (actual == null || expected == null)
-      return false;
-    Map<String, String> typeMap = new HashMap<String, String>();
-    typeMap.put("java.lang.Byte", "byte");
-    typeMap.put("java.lang.Short", "short");
-    typeMap.put("java.lang.Integer", "int");
-    typeMap.put("java.lang.Long", "long");
-    typeMap.put("java.lang.Float", "float");
-    typeMap.put("java.lang.Double", "double");
-    typeMap.put("java.lang.Character", "char");
-    String expectedStr = expected.getCanonicalText();
-    String actualStr = actual.getCanonicalText();
-    boolean o1 = AstUtil.getOrElse(typeMap, actualStr, "").equals(expectedStr);
-    boolean o2 = AstUtil.getOrElse(typeMap, expectedStr, "").equals(actualStr);
-    return !actualStr.equals(expectedStr) && (!(o1 ^ o2));
-  }
-
-  @NotNull
-  static String getPrimitiveTypeConversion(@NotNull String type) {
-    Map<String, String> conversions = new HashMap<String, String>();
-    conversions.put("byte", "byt");
-    conversions.put("short", "sht");
-    conversions.put("int", "int");
-    conversions.put("long", "lng");
-    conversions.put("float", "flt");
-    conversions.put("double", "dbl");
-    conversions.put("char", "chr");
-
-    conversions.put("java.lang.Byte", "byt");
-    conversions.put("java.lang.Short", "sht");
-    conversions.put("java.lang.Integer", "int");
-    conversions.put("java.lang.Long", "lng");
-    conversions.put("java.lang.Float", "flt");
-    conversions.put("java.lang.Double", "dbl");
-    conversions.put("java.lang.Character", "chr");
-
-    if (conversions.containsKey(type))
-      return "." + conversions.get(type);
-    return "";
-  }
-
   @Override
   public void visitCallExpression(PsiCallExpression callExpression) {
     super.visitCallExpression(callExpression);
@@ -313,7 +225,7 @@ public class ExpressionVisitor extends StatementVisitor {
     final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
     final PsiMethod constructor = expression.resolveMethod();
     PsiJavaCodeReferenceElement classReference = expression.getClassOrAnonymousClassReference();
-    final boolean isNotConvertedClass = classReference != null && !Converter.getClassIdentifiers().contains(classReference.getQualifiedName());
+    final boolean isNotConvertedClass = classReference != null && !getClassIdentifiers().contains(classReference.getQualifiedName());
     PsiExpressionList argumentList = expression.getArgumentList();
     PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
     if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {

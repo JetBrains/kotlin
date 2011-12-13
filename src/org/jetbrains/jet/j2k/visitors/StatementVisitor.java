@@ -15,8 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
-import static org.jetbrains.jet.j2k.visitors.ExpressionVisitor.getPrimitiveTypeConversion;
-import static org.jetbrains.jet.j2k.visitors.ExpressionVisitor.isConversionNeeded;
+import static org.jetbrains.jet.j2k.Converter.getPrimitiveTypeConversion;
+import static org.jetbrains.jet.j2k.Converter.isConversionNeeded;
 
 /**
  * @author ignatov

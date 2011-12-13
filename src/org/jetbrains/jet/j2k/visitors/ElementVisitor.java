@@ -30,7 +30,8 @@ public class ElementVisitor extends JavaElementVisitor {
       new IdentifierImpl(variable.getName()), // TODO
       modifiersListToModifiersSet(variable.getModifierList()),
       typeToType(variable.getType(), Converter.isNotNull(variable.getModifierList())),
-      expressionToExpression(variable.getInitializer())
+      expressionToExpression(variable.getInitializer()),
+      createConversionForCallChains(variable.getInitializer(), variable.getType())
     );
   }
 
