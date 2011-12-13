@@ -65,7 +65,7 @@ namespace io {
         }
     }))
 
-    fun readLine() : String? = stdin.readLine()
+    inline fun readLine() : String? = stdin.readLine()
 
     fun InputStream.iterator() : ByteIterator =
         object: ByteIterator() {
@@ -75,29 +75,25 @@ namespace io {
             override fun nextByte() = read().byt
         }
 
-    val InputStream.buffered : BufferedInputStream
-        get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
+    inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
 
-    //    inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
-
-    val InputStream.reader : InputStreamReader
+    inline val InputStream.reader : InputStreamReader
         get() = InputStreamReader(this)
 
-    val InputStream.bufferedReader : BufferedReader
+    inline val InputStream.bufferedReader : BufferedReader
         get() = BufferedReader(reader)
 
-    /*
     inline fun InputStream.reader(charset: Charset) : InputStreamReader  = InputStreamReader(this, charset)
 
-    inline fun InputStream.reader(charsetName: String) = InputStreamReader(this, charsetNme)
-
-    inline fun InputStream.reader(charset: Charset) = InputStreamReader(this, charset)
+    inline fun InputStream.reader(charsetName: String) = InputStreamReader(this, charsetName)
 
     inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
-    */
 
-    //    val Reader.buffered : BufferedReader
-    //        get() = if(this instanceof BufferedReader) this else BufferedReader(this)
+    inline val InputStream.buffered : BufferedInputStream
+        get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
 
-    //    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
+//    inline val Reader.buffered : BufferedReader
+//        get() = if(this is BufferedReader) this else BufferedReader(this)
+
+    inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 }
