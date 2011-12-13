@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JetParameter {
+public @interface JetValueParameter {
     /**
      * @return name of parameter
      */

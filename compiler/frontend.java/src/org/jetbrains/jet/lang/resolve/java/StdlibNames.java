@@ -7,12 +7,12 @@ import org.objectweb.asm.Type;
  */
 public class StdlibNames {
 
-    public static final String JET_PARAMETER_CLASS = "jet.typeinfo.JetParameter";
-    public static final String JET_PARAMETER_DESCRIPTOR = "Ljet/typeinfo/JetParameter;";
+    public static final String JET_VALUE_PARAMETER_CLASS = "jet.typeinfo.JetValueParameter";
+    public static final String JET_VALUE_PARAMETER_DESCRIPTOR = "Ljet/typeinfo/JetValueParameter;";
     
-    public static final String JET_PARAMETER_NAME_FIELD = "name";
-    public static final String JET_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
-    public static final String JET_PARAMETER_NULLABLE_FIELD = "nullable";
+    public static final String JET_VALUE_PARAMETER_NAME_FIELD = "name";
+    public static final String JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
+    public static final String JET_VALUE_PARAMETER_NULLABLE_FIELD = "nullable";
 
 
     public static final String JET_TYPE_PARAMETER_CLASS = "jet.typeinfo.JetTypeParameter";

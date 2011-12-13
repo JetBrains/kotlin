@@ -369,13 +369,13 @@ public class JavaDescriptorResolver {
             PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
             attributes.toString();
 
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_PARAMETER_CLASS)) {
-                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_PARAMETER_NAME_FIELD);
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_VALUE_PARAMETER_CLASS)) {
+                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD);
                 if (nameExpression != null) {
                     name = (String) nameExpression.getValue();
                 }
                 
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_PARAMETER_NULLABLE_FIELD);
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
                 } else {

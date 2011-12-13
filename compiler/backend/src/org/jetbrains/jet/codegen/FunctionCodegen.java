@@ -94,15 +94,15 @@ public class FunctionCodegen {
                 }
 
                 if(kind == OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_PARAMETER_DESCRIPTOR, true);
-                    av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, "this$self");
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_VALUE_PARAMETER_DESCRIPTOR, true);
+                    av.visit(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$self");
                     av.visitEnd();
                 }
                 if(receiverParameter.exists()) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_PARAMETER_DESCRIPTOR, true);
-                    av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, "this$receiver");
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_VALUE_PARAMETER_DESCRIPTOR, true);
+                    av.visit(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$receiver");
                     if(receiverParameter.getType().isNullable()) {
-                        av.visit(StdlibNames.JET_PARAMETER_NULLABLE_FIELD, true);
+                        av.visit(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
                     av.visitEnd();
                 }
@@ -112,14 +112,14 @@ public class FunctionCodegen {
                     av.visitEnd();
                 }
                 for(int i = 0; i != paramDescrs.size(); ++i) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, StdlibNames.JET_PARAMETER_DESCRIPTOR, true);
+                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, StdlibNames.JET_VALUE_PARAMETER_DESCRIPTOR, true);
                     ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                    av.visit(StdlibNames.JET_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
+                    av.visit(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
                     if(parameterDescriptor.hasDefaultValue()) {
-                        av.visit(StdlibNames.JET_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
+                        av.visit(StdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
                     }
                     if(parameterDescriptor.getOutType().isNullable()) {
-                        av.visit(StdlibNames.JET_PARAMETER_NULLABLE_FIELD, true);
+                        av.visit(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
                     av.visitEnd();
                 }
