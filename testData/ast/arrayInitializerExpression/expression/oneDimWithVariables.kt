@@ -1,1 +1,0 @@
-array(a, b, c)

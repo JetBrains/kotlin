@@ -1,1 +1,1 @@
-var a : DoubleArray? = array(1, 2, 3)
+var a : DoubleArray? = doubleArray(1, 2, 3)

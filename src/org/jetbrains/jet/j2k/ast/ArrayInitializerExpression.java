@@ -9,15 +9,26 @@ import java.util.List;
  * @author ignatov
  */
 public class ArrayInitializerExpression extends Expression {
+  private Type myType;
   private final List<Expression> myInitializers;
 
-  public ArrayInitializerExpression(List<Expression> initializers) {
+  public ArrayInitializerExpression(final Type type, List<Expression> initializers) {
+    myType = type;
     myInitializers = initializers;
+
+  }
+
+  @NotNull
+  private static String createArrayFunction(@NotNull final Type type) {
+    String sType = type.convertedToNotNull().toKotlin().replace("Array", "").toLowerCase();
+    if (!sType.equals("any") && PRIMITIVE_TYPES.contains(sType))
+      return sType + "Array";
+    return AstUtil.lowerFirstCharacter(type.convertedToNotNull().toKotlin());
   }
 
   @NotNull
   @Override
   public String toKotlin() {
-    return "array" + "(" + AstUtil.joinNodes(myInitializers, COMMA_WITH_SPACE) + ")";
+    return createArrayFunction(myType) + "(" + AstUtil.joinNodes(myInitializers, COMMA_WITH_SPACE) + ")";
   }
 }

@@ -42,6 +42,7 @@ public class ExpressionVisitor extends StatementVisitor {
   public void visitArrayInitializerExpression(PsiArrayInitializerExpression expression) {
     super.visitArrayInitializerExpression(expression);
     myResult = new ArrayInitializerExpression(
+      typeToType(expression.getType()),
       expressionsToExpressionList(expression.getInitializers())
     );
   }

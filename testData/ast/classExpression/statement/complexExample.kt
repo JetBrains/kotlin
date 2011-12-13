@@ -1,1 +1,1 @@
-var constrArgTypes : Array<Class<*>?>? = array(getJavaClass<Array<String?>?>, getJavaClass<String?>)
+var constrArgTypes : Array<Class<*>?>? = array<Class<*>?>(getJavaClass<Array<String?>?>, getJavaClass<String?>)

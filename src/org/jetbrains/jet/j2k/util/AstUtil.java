@@ -48,6 +48,10 @@ public class AstUtil {
     return string.substring(0, 1).toUpperCase() + string.substring(1);
   }
 
+  public static String lowerFirstCharacter(String string) {
+    return string.substring(0, 1).toLowerCase() + string.substring(1);
+  }
+
   public static List<String> createListWithEmptyString(final List<Expression> arguments) {
     final List<String> conversions = new LinkedList<String>();
     //noinspection UnusedDeclaration

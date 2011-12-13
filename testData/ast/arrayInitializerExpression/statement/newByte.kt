@@ -1,0 +1,1 @@
+var a : ByteArray? = byteArray(1, 2, 3)

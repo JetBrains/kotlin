@@ -1,1 +1,1 @@
-array(1, 2, 3)
+intArray(1, 2, 3)
