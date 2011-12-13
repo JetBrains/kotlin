@@ -1,5 +1,3 @@
-namespace foo
-
 open class MySecondClass() {
 }
 
