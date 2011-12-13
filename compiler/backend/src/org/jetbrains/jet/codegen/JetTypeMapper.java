@@ -248,6 +248,11 @@ public class JetTypeMapper {
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+
+        if (ErrorUtils.isError(descriptor)) {
+            throw new IllegalStateException("should not compile an error type");
+        }
+
         if (standardLibrary.getArray().equals(descriptor)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
