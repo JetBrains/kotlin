@@ -16,10 +16,12 @@ public class Constructor extends Function {
     myIsPrimary = isPrimary;
   }
 
+  @NotNull
   public String primarySignatureToKotlin() {
     return "(" + myParams.toKotlin() + ")";
   }
 
+  @NotNull
   public String primaryBodyToKotlin() {
     return myBlock.toKotlin();
   }

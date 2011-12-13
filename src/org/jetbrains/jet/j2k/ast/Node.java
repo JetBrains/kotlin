@@ -16,28 +16,45 @@ public abstract class Node implements INode {
     return Kind.UNDEFINED;
   }
 
+  @NotNull
   final static Set<String> ONLY_KOTLIN_KEYWORDS = new HashSet<String>(Arrays.asList(
     "namespace", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
   ));
 
+  @NotNull
   public final static Set<String> PRIMITIVE_TYPES = new HashSet<String>(Arrays.asList(
     "double", "float", "long", "int", "short", "byte", "boolean", "char"
   ));
 
   static final String N = System.getProperty("line.separator");
+  @NotNull
   static final String N2 = N + N;
+  @NotNull
   static final String SPACE = " ";
+  @NotNull
   static final String EQUAL = "=";
+  @NotNull
   static final String EMPTY = "";
+  @NotNull
   static final String DOT = ".";
+  @NotNull
   static final String QUESTDOT = "?.";
+  @NotNull
   static final String COLON = ":";
+  @NotNull
   static final String IN = "in";
+  @NotNull
   static final String AT = "@";
+  @NotNull
   static final String DOLLAR = "$";
+  @NotNull
   static final String BACKTICK = "`";
+  @NotNull
   static final String QUEST = "?";
+  @NotNull
   static final String COMMA_WITH_SPACE = "," + SPACE;
+  @NotNull
   static final String STAR = "*";
+  @NotNull
   public static final String ZERO = "0";
 }

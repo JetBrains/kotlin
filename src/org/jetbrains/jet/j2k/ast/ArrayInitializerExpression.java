@@ -25,7 +25,8 @@ public class ArrayInitializerExpression extends Expression {
     return AstUtil.lowerFirstCharacter(type.convertedToNotNull().toKotlin());
   }
 
-  private static String innerTypeStr(final Type type) {
+  @NotNull
+  private static String innerTypeStr(@NotNull final Type type) {
     return type.convertedToNotNull().toKotlin().replace("Array", "").toLowerCase();
   }
 
@@ -38,7 +39,7 @@ public class ArrayInitializerExpression extends Expression {
   }
 
   @NotNull
-  private static String explicitConvertIfNeeded(final Type type, @NotNull final Expression i) {
+  private static String explicitConvertIfNeeded(@NotNull final Type type, @NotNull final Expression i) {
     Set<String> doubleOrFloatTypes = new HashSet<String>(
       Arrays.asList("double", "float", "java.lang.double", "java.lang.float")
     );

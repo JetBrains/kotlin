@@ -9,7 +9,9 @@ import java.util.List;
  * @author ignatov
  */
 public class ReferenceElement extends Element {
+  @NotNull
   private final Identifier myReference;
+  @NotNull
   private final List<Type> myTypes;
 
   public ReferenceElement(@NotNull Identifier reference, @NotNull List<Type> types) {

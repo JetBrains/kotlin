@@ -36,6 +36,7 @@ public class Field extends Member {
     return myType;
   }
 
+  @NotNull
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 

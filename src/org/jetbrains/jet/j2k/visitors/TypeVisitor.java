@@ -25,7 +25,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   }
 
   @Override
-  public Type visitPrimitiveType(PsiPrimitiveType primitiveType) {
+  public Type visitPrimitiveType(@NotNull PsiPrimitiveType primitiveType) {
     final String name = primitiveType.getCanonicalText();
     final IdentifierImpl identifier = new IdentifierImpl(name);
 
@@ -39,14 +39,14 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   }
 
   @Override
-  public Type visitArrayType(PsiArrayType arrayType) {
+  public Type visitArrayType(@NotNull PsiArrayType arrayType) {
     if (myResult == Type.EMPTY_TYPE)
       myResult = new ArrayType(typeToType(arrayType.getComponentType()));
     return super.visitArrayType(arrayType);
   }
 
   @Override
-  public Type visitClassType(PsiClassType classType) {
+  public Type visitClassType(@NotNull PsiClassType classType) {
     final IdentifierImpl identifier = constructClassTypeIdentifier(classType);
     final List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
 
@@ -128,7 +128,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   }
 
   @Override
-  public Type visitWildcardType(PsiWildcardType wildcardType) {
+  public Type visitWildcardType(@NotNull PsiWildcardType wildcardType) {
     if (wildcardType.isExtends())
       myResult = new OutProjectionType(typeToType(wildcardType.getExtendsBound()));
     else if (wildcardType.isSuper())
@@ -139,7 +139,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   }
 
   @Override
-  public Type visitEllipsisType(PsiEllipsisType ellipsisType) {
+  public Type visitEllipsisType(@NotNull PsiEllipsisType ellipsisType) {
     myResult = new VarArg(typeToType(ellipsisType.getComponentType()));
     return super.visitEllipsisType(ellipsisType);
   }

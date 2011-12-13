@@ -13,7 +13,7 @@ public class CaseContainer extends Statement {
   private List<Statement> myCaseStatement;
   private Block myBlock;
 
-  public CaseContainer(final List<Statement> caseStatement, final List<Statement> statements) {
+  public CaseContainer(final List<Statement> caseStatement, @NotNull final List<Statement> statements) {
     myCaseStatement = caseStatement;
     List<Statement> newStatements = new LinkedList<Statement>();
     for (Statement s : statements)

@@ -18,6 +18,7 @@ import java.util.*;
  * @author ignatov
  */
 public class Converter {
+  @NotNull
   private final static Set<String> NOT_NULL_ANNOTATIONS = new HashSet<String>() {
     {
       add("org.jetbrains.annotations.NotNull");
@@ -29,10 +30,11 @@ public class Converter {
   @NotNull private static final Dispatcher ourDispatcher = new Dispatcher();
   @Nullable private static PsiType ourMethodReturnType = null;
 
-  public static void setClassIdentifiers(Set<String> identifiers) {
+  public static void setClassIdentifiers(@NotNull Set<String> identifiers) {
     ourClassIdentifiers = identifiers;
   }
 
+  @NotNull
   public static Set<String> getClassIdentifiers() {
     return new HashSet<String>(ourClassIdentifiers);
   }
@@ -82,7 +84,8 @@ public class Converter {
     return new AnonymousClass(getMembers(anonymousClass));
   }
 
-  private static List<Member> getMembers(PsiClass psiClass) {
+  @NotNull
+  private static List<Member> getMembers(@NotNull PsiClass psiClass) {
     List<Member> members = new LinkedList<Member>();
     for (PsiElement e : psiClass.getChildren()) {
       if (e instanceof PsiMethod) members.add(methodToFunction((PsiMethod) e, true));
@@ -224,7 +227,7 @@ public class Converter {
   }
 
   @NotNull
-  private static Initializer initializerToInitializer(PsiClassInitializer i) {
+  private static Initializer initializerToInitializer(@NotNull PsiClassInitializer i) {
     return new Initializer(
       blockToBlock(i.getBody(), true),
       modifiersListToModifiersSet(i.getModifierList())
@@ -345,7 +348,7 @@ public class Converter {
     );
   }
 
-  private static boolean isNotOpenMethod(final PsiMethod method) {
+  private static boolean isNotOpenMethod(@NotNull final PsiMethod method) {
     if (method.getParent() instanceof PsiClass) {
       final PsiModifierList parentModifierList = ((PsiClass) method.getParent()).getModifierList();
       if ((parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL)) || ((PsiClass) method.getParent()).isEnum())
@@ -454,6 +457,7 @@ public class Converter {
     return result;
   }
 
+  @NotNull
   public static Type typeToType(PsiType type, boolean notNull) {
     Type result = typeToType(type);
     if (notNull)
@@ -516,7 +520,7 @@ public class Converter {
     return false;
   }
 
-  private static boolean isReadOnly(PsiParameter parameter) {
+  private static boolean isReadOnly(@NotNull PsiParameter parameter) {
     for (PsiReference r : (ReferencesSearch.search(parameter))) {
       if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
         return false;
@@ -532,7 +536,7 @@ public class Converter {
   }
 
   @NotNull
-  public static Set<String> modifiersListToModifiersSet(PsiModifierList modifierList) {
+  public static Set<String> modifiersListToModifiersSet(@Nullable PsiModifierList modifierList) {
     HashSet<String> modifiersSet = new HashSet<String>();
     if (modifierList != null) {
       if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT)) modifiersSet.add(Modifier.ABSTRACT);

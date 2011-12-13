@@ -31,7 +31,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitAssertStatement(PsiAssertStatement statement) {
+  public void visitAssertStatement(@NotNull PsiAssertStatement statement) {
     super.visitAssertStatement(statement);
     myResult = new AssertStatement(
       expressionToExpression(statement.getAssertCondition()),
@@ -40,7 +40,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitBlockStatement(PsiBlockStatement statement) {
+  public void visitBlockStatement(@NotNull PsiBlockStatement statement) {
     super.visitBlockStatement(statement);
     myResult = new Block(
       statementsToStatementList(statement.getCodeBlock().getStatements()),
@@ -49,7 +49,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitBreakStatement(PsiBreakStatement statement) {
+  public void visitBreakStatement(@NotNull PsiBreakStatement statement) {
     super.visitBreakStatement(statement);
     if (statement.getLabelIdentifier() == null)
       myResult = new BreakStatement();
@@ -60,7 +60,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitContinueStatement(PsiContinueStatement statement) {
+  public void visitContinueStatement(@NotNull PsiContinueStatement statement) {
     super.visitContinueStatement(statement);
     if (statement.getLabelIdentifier() == null)
       myResult = new ContinueStatement();
@@ -71,7 +71,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitDeclarationStatement(PsiDeclarationStatement statement) {
+  public void visitDeclarationStatement(@NotNull PsiDeclarationStatement statement) {
     super.visitDeclarationStatement(statement);
     myResult = new DeclarationStatement(
       elementsToElementList(statement.getDeclaredElements())
@@ -79,7 +79,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitDoWhileStatement(PsiDoWhileStatement statement) {
+  public void visitDoWhileStatement(@NotNull PsiDoWhileStatement statement) {
     super.visitDoWhileStatement(statement);
     myResult = new DoWhileStatement(
       expressionToExpression(statement.getCondition()),
@@ -88,13 +88,13 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitExpressionStatement(PsiExpressionStatement statement) {
+  public void visitExpressionStatement(@NotNull PsiExpressionStatement statement) {
     super.visitExpressionStatement(statement);
     myResult = expressionToExpression(statement.getExpression());
   }
 
   @Override
-  public void visitExpressionListStatement(PsiExpressionListStatement statement) {
+  public void visitExpressionListStatement(@NotNull PsiExpressionListStatement statement) {
     super.visitExpressionListStatement(statement);
     myResult =
       new ExpressionListStatement(expressionsToExpressionList(statement.getExpressionList().getExpressions()));
@@ -151,7 +151,7 @@ public class StatementVisitor extends ElementVisitor {
     }
   }
 
-  private static boolean isOnceWritableIterator(PsiLocalVariable firstChild) {
+  private static boolean isOnceWritableIterator(@Nullable PsiLocalVariable firstChild) {
     int counter = 0;
     if (firstChild != null)
       for (PsiReference r : (ReferencesSearch.search(firstChild))) {
@@ -164,7 +164,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitForeachStatement(PsiForeachStatement statement) {
+  public void visitForeachStatement(@NotNull PsiForeachStatement statement) {
     super.visitForeachStatement(statement);
     myResult = new ForeachStatement(
       parameterToParameter(statement.getIterationParameter()),
@@ -174,7 +174,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitIfStatement(PsiIfStatement statement) {
+  public void visitIfStatement(@NotNull PsiIfStatement statement) {
     super.visitIfStatement(statement);
     myResult = new IfStatement(
       expressionToExpression(statement.getCondition()),
@@ -184,7 +184,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitLabeledStatement(PsiLabeledStatement statement) {
+  public void visitLabeledStatement(@NotNull PsiLabeledStatement statement) {
     super.visitLabeledStatement(statement);
     myResult = new LabelStatement(
       identifierToIdentifier(statement.getLabelIdentifier()),
@@ -193,7 +193,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitSwitchLabelStatement(PsiSwitchLabelStatement statement) {
+  public void visitSwitchLabelStatement(@NotNull PsiSwitchLabelStatement statement) {
     super.visitSwitchLabelStatement(statement);
     myResult = statement.isDefaultCase() ?
       new DefaultSwitchLabelStatement() :
@@ -201,7 +201,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitSwitchStatement(PsiSwitchStatement statement) {
+  public void visitSwitchStatement(@NotNull PsiSwitchStatement statement) {
     super.visitSwitchStatement(statement);
     myResult = new SwitchContainer(
       expressionToExpression(statement.getExpression()),
@@ -253,6 +253,7 @@ public class StatementVisitor extends ElementVisitor {
     return false;
   }
 
+  @NotNull
   private static List<PsiStatement> getAllToNextBreak(@NotNull final List<PsiStatement> allStatements, final int start) {
     List<PsiStatement> result = new LinkedList<PsiStatement>();
     for (int i = start; i < allStatements.size(); i++) {
@@ -288,7 +289,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitSynchronizedStatement(PsiSynchronizedStatement statement) {
+  public void visitSynchronizedStatement(@NotNull PsiSynchronizedStatement statement) {
     super.visitSynchronizedStatement(statement);
     myResult = new SynchronizedStatement(
       expressionToExpression(statement.getLockExpression()),
@@ -297,7 +298,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitThrowStatement(PsiThrowStatement statement) {
+  public void visitThrowStatement(@NotNull PsiThrowStatement statement) {
     super.visitThrowStatement(statement);
     myResult = new ThrowStatement(
       expressionToExpression(statement.getException())
@@ -305,7 +306,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitTryStatement(PsiTryStatement statement) {
+  public void visitTryStatement(@NotNull PsiTryStatement statement) {
     super.visitTryStatement(statement);
 
     List<CatchStatement> catches = new LinkedList<CatchStatement>();
@@ -324,7 +325,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitWhileStatement(PsiWhileStatement statement) {
+  public void visitWhileStatement(@NotNull PsiWhileStatement statement) {
     super.visitWhileStatement(statement);
     myResult = new WhileStatement(
       expressionToExpression(statement.getCondition()),
@@ -333,7 +334,7 @@ public class StatementVisitor extends ElementVisitor {
   }
 
   @Override
-  public void visitReturnStatement(PsiReturnStatement statement) {
+  public void visitReturnStatement(@NotNull PsiReturnStatement statement) {
     super.visitReturnStatement(statement);
     PsiExpression returnValue = statement.getReturnValue();
     String conversion = "";

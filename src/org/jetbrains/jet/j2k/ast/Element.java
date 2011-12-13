@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public abstract class Element extends Node {
+  @NotNull
   public static final Element EMPTY_ELEMENT = new EmptyElement();
 
   public boolean isEmpty() {

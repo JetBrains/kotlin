@@ -1,5 +1,7 @@
 package org.jetbrains.jet.j2k.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Set;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Set;
 public abstract class Member extends Node implements IMember {
   Set<String> myModifiers;
 
+  @NotNull
   String accessModifier() {
     for (String m : myModifiers)
       if (m.equals(Modifier.PUBLIC) || m.equals(Modifier.PROTECTED) || m.equals(Modifier.PRIVATE))

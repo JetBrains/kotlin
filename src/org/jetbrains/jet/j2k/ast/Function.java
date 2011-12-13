@@ -44,6 +44,7 @@ public class Function extends Member {
     return myBlock;
   }
 
+  @NotNull
   private String typeParametersToKotlin() {
     return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
   }

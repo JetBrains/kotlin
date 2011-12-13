@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public abstract class Type extends Element {
+  @NotNull
   public static final Type EMPTY_TYPE = new EmptyType();
   boolean myNullable = true;
 
@@ -15,6 +16,7 @@ public abstract class Type extends Element {
     return Kind.TYPE;
   }
 
+  @NotNull
   public Type convertedToNotNull() {
     myNullable = false;
     return this;

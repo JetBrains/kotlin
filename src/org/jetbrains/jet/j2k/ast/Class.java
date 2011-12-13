@@ -15,6 +15,7 @@ import static org.jetbrains.jet.j2k.util.AstUtil.*;
  * @author ignatov
  */
 public class Class extends Member {
+  @NotNull
   String TYPE = "class";
   final Identifier myName;
   private final List<Expression> myBaseClassParams;
@@ -65,6 +66,7 @@ public class Class extends Member {
     return false;
   }
 
+  @NotNull
   String typeParameterWhereToKotlin() {
     if (hasWhere()) {
       List<String> wheres = new LinkedList<String>();
@@ -118,6 +120,7 @@ public class Class extends Member {
     return result;
   }
 
+  @NotNull
   String typeParametersToKotlin() {
     return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
   }
@@ -131,6 +134,7 @@ public class Class extends Member {
       return nodesToKotlin(myExtendsTypes);
   }
 
+  @NotNull
   String implementTypesToKotlin() {
     List<String> allTypes = new LinkedList<String>() {
       {
@@ -141,6 +145,7 @@ public class Class extends Member {
     return allTypes.size() == 0 ? EMPTY : SPACE + COLON + SPACE + join(allTypes, COMMA_WITH_SPACE);
   }
 
+  @NotNull
   String modifiersToKotlin() {
     List<String> modifierList = new LinkedList<String>();
 
@@ -166,6 +171,7 @@ public class Class extends Member {
     return isAbstract();
   }
 
+  @NotNull
   String bodyToKotlin() {
     return SPACE + "{" + N +
       primaryConstructorBodyToKotlin() + N +
@@ -174,7 +180,8 @@ public class Class extends Member {
       "}";
   }
 
-  private static List<Member> getStatic(List<? extends Member> members) {
+  @NotNull
+  private static List<Member> getStatic(@NotNull List<? extends Member> members) {
     List<Member> result = new LinkedList<Member>();
     for (Member m : members)
       if (m.isStatic())
@@ -182,7 +189,8 @@ public class Class extends Member {
     return result;
   }
 
-  private static List<Member> getNonStatic(List<? extends Member> members) {
+  @NotNull
+  private static List<Member> getNonStatic(@NotNull List<? extends Member> members) {
     List<Member> result = new LinkedList<Member>();
     for (Member m : members)
       if (!m.isStatic())
@@ -190,6 +198,7 @@ public class Class extends Member {
     return result;
   }
 
+  @NotNull
   private String classObjectToKotlin() {
     final List<Member> staticMembers = new LinkedList<Member>(secondaryConstructorsAsStaticInitFunction());
     staticMembers.addAll(getStatic(membersExceptConstructors()));

@@ -16,6 +16,7 @@ import java.util.List;
  * @author ignatov
  */
 abstract class TestCaseBuilder {
+  @NotNull
   private static final FilenameFilter emptyFilter = new FilenameFilter() {
     @Override
     public boolean accept(File file, String name) {
@@ -23,6 +24,7 @@ abstract class TestCaseBuilder {
     }
   };
 
+  @NotNull
   public static String getTestDataPathBase() {
     return "testData";
   }
@@ -42,13 +44,13 @@ abstract class TestCaseBuilder {
   }
 
   @NotNull
-  private static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+  private static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
     TestSuite suite = new TestSuite(dataPath);
     final String extensionJava = ".jav";
 
     final FilenameFilter extensionFilter = new FilenameFilter() {
       @Override
-      public boolean accept(File dir, String name) {
+      public boolean accept(File dir, @NotNull String name) {
         return name.endsWith(extensionJava);
       }
     };
@@ -66,7 +68,7 @@ abstract class TestCaseBuilder {
     File dir = new File(baseDataDir + dataPath);
     FileFilter dirFilter = new FileFilter() {
       @Override
-      public boolean accept(File pathname) {
+      public boolean accept(@NotNull File pathname) {
         return pathname.isDirectory();
       }
     };

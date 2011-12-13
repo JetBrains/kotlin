@@ -10,6 +10,7 @@ import java.util.List;
  * @author ignatov
  */
 public class Block extends Statement {
+  @NotNull
   public final static Block EMPTY_BLOCK = new Block();
 
   private List<Statement> myStatements;

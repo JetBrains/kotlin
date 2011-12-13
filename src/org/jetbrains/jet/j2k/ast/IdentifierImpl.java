@@ -36,6 +36,7 @@ public class IdentifierImpl extends Expression implements Identifier {
     return myName.length() == 0;
   }
 
+  @NotNull
   private static String quote(String str) {
     return BACKTICK + str + BACKTICK;
   }

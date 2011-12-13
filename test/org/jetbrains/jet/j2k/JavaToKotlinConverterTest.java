@@ -8,6 +8,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.visitors.ClassVisitor;
 
 import java.io.File;
@@ -64,6 +65,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return myDataPath + File.separator + myName + ".jav";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return "testData";
@@ -77,11 +79,13 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
     return jdkFromIdeaHome();
   }
 
+  @NotNull
   @Override
   public String getName() {
     return "test_" + myName;
   }
 
+  @NotNull
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(TestCaseBuilder.suiteForDirectory(getTestDataPathBase(), "/ast", true, new TestCaseBuilder.NamedTestFactory() {
@@ -143,7 +147,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   }
 
   @NotNull
-  private static String prettify(String code) {
+  private static String prettify(@Nullable String code) {
     if (code == null)
       return "";
     return code

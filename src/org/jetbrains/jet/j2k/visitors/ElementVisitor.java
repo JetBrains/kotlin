@@ -2,6 +2,7 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
@@ -13,6 +14,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
  * @author ignatov
  */
 public class ElementVisitor extends JavaElementVisitor {
+  @Nullable
   private Element myResult = Element.EMPTY_ELEMENT;
 
   @NotNull
@@ -21,7 +23,7 @@ public class ElementVisitor extends JavaElementVisitor {
   }
 
   @Override
-  public void visitLocalVariable(PsiLocalVariable variable) {
+  public void visitLocalVariable(@NotNull PsiLocalVariable variable) {
     super.visitLocalVariable(variable);
 
     myResult = new LocalVariable(
@@ -33,7 +35,7 @@ public class ElementVisitor extends JavaElementVisitor {
   }
 
   @Override
-  public void visitExpressionList(PsiExpressionList list) {
+  public void visitExpressionList(@NotNull PsiExpressionList list) {
     super.visitExpressionList(list);
     myResult = new ExpressionList(
       expressionsToExpressionList(list.getExpressions()),
@@ -42,7 +44,7 @@ public class ElementVisitor extends JavaElementVisitor {
   }
 
   @Override
-  public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
+  public void visitReferenceElement(@NotNull PsiJavaCodeReferenceElement reference) {
     super.visitReferenceElement(reference);
 
     final List<Type> types = typesToTypeList(reference.getTypeParameters());
@@ -67,13 +69,13 @@ public class ElementVisitor extends JavaElementVisitor {
   }
 
   @Override
-  public void visitTypeElement(PsiTypeElement type) {
+  public void visitTypeElement(@NotNull PsiTypeElement type) {
     super.visitTypeElement(type);
     myResult = new TypeElement(typeToType(type.getType()));
   }
 
   @Override
-  public void visitTypeParameter(PsiTypeParameter classParameter) {
+  public void visitTypeParameter(@NotNull PsiTypeParameter classParameter) {
     super.visitTypeParameter(classParameter);
     myResult = new TypeParameter(
       new IdentifierImpl(classParameter.getName()), // TODO
@@ -82,7 +84,7 @@ public class ElementVisitor extends JavaElementVisitor {
   }
 
   @Override
-  public void visitParameterList(PsiParameterList list) {
+  public void visitParameterList(@NotNull PsiParameterList list) {
     super.visitParameterList(list);
     myResult = new ParameterList(
       parametersToParameterList(list.getParameters())

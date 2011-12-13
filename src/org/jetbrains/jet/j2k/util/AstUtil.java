@@ -1,6 +1,7 @@
 package org.jetbrains.jet.j2k.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.Expression;
 import org.jetbrains.jet.j2k.ast.INode;
 
@@ -15,7 +16,7 @@ public class AstUtil {
   private AstUtil() {
   }
 
-  private static String join(final String[] array, final String delimiter) {
+  private static String join(@NotNull final String[] array, @Nullable final String delimiter) {
     StringBuilder buffer = new StringBuilder();
     boolean haveDelimiter = (delimiter != null);
 
@@ -29,30 +30,34 @@ public class AstUtil {
     return buffer.toString();
   }
 
-  public static String joinNodes(final List<? extends INode> nodes, final String delimiter) {
+  public static String joinNodes(@NotNull final List<? extends INode> nodes, final String delimiter) {
     return join(nodesToKotlin(nodes), delimiter);
   }
 
-  public static String join(final List<String> array, final String delimiter) {
+  public static String join(@NotNull final List<String> array, final String delimiter) {
     return join(array.toArray(new String[array.size()]), delimiter);
   }
 
-  public static List<String> nodesToKotlin(List<? extends INode> nodes) {
+  @NotNull
+  public static List<String> nodesToKotlin(@NotNull List<? extends INode> nodes) {
     List<String> result = new LinkedList<String>();
     for (INode n : nodes)
       result.add(n.toKotlin());
     return result;
   }
 
-  public static String upperFirstCharacter(String string) {
+  @NotNull
+  public static String upperFirstCharacter(@NotNull String string) {
     return string.substring(0, 1).toUpperCase() + string.substring(1);
   }
 
-  public static String lowerFirstCharacter(String string) {
+  @NotNull
+  public static String lowerFirstCharacter(@NotNull String string) {
     return string.substring(0, 1).toLowerCase() + string.substring(1);
   }
 
-  public static List<String> createListWithEmptyString(final List<Expression> arguments) {
+  @NotNull
+  public static List<String> createListWithEmptyString(@NotNull final List<Expression> arguments) {
     final List<String> conversions = new LinkedList<String>();
     //noinspection UnusedDeclaration
     for (Expression argument : arguments) conversions.add("");
@@ -77,7 +82,7 @@ public class AstUtil {
       return "(" + f + ")" + s;
   }
 
-  public static <T> T getOrElse(Map<T, T> map, T e, T orElse) {
+  public static <T> T getOrElse(@NotNull Map<T, T> map, T e, T orElse) {
     if (map.containsKey(e))
       return map.get(e);
     return orElse;

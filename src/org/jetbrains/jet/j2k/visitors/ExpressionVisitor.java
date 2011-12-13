@@ -16,6 +16,7 @@ import static org.jetbrains.jet.j2k.Converter.*;
  * @author ignatov
  */
 public class ExpressionVisitor extends StatementVisitor {
+  @Nullable
   Expression myResult = Expression.EMPTY_EXPRESSION;
 
   @Override
@@ -30,7 +31,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitArrayAccessExpression(PsiArrayAccessExpression expression) {
+  public void visitArrayAccessExpression(@NotNull PsiArrayAccessExpression expression) {
     super.visitArrayAccessExpression(expression);
     myResult = new ArrayAccessExpression(
       expressionToExpression(expression.getArrayExpression()),
@@ -39,7 +40,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitArrayInitializerExpression(PsiArrayInitializerExpression expression) {
+  public void visitArrayInitializerExpression(@NotNull PsiArrayInitializerExpression expression) {
     super.visitArrayInitializerExpression(expression);
     myResult = new ArrayInitializerExpression(
       typeToType(expression.getType()),
@@ -48,7 +49,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitAssignmentExpression(PsiAssignmentExpression expression) {
+  public void visitAssignmentExpression(@NotNull PsiAssignmentExpression expression) {
     super.visitAssignmentExpression(expression);
 
     // TODO: simplify
@@ -111,7 +112,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitBinaryExpression(PsiBinaryExpression expression) {
+  public void visitBinaryExpression(@NotNull PsiBinaryExpression expression) {
     super.visitBinaryExpression(expression);
 
     if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT)
@@ -129,13 +130,13 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitClassObjectAccessExpression(PsiClassObjectAccessExpression expression) {
+  public void visitClassObjectAccessExpression(@NotNull PsiClassObjectAccessExpression expression) {
     super.visitClassObjectAccessExpression(expression);
     myResult = new ClassObjectAccessExpression(elementToElement(expression.getOperand()));
   }
 
   @Override
-  public void visitConditionalExpression(PsiConditionalExpression expression) {
+  public void visitConditionalExpression(@NotNull PsiConditionalExpression expression) {
     super.visitConditionalExpression(expression);
     myResult = new ParenthesizedExpression(
       new IfStatement(
@@ -147,13 +148,13 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitExpressionList(PsiExpressionList list) {
+  public void visitExpressionList(@NotNull PsiExpressionList list) {
     super.visitExpressionList(list);
     myResult = new ExpressionList(expressionsToExpressionList(list.getExpressions()));
   }
 
   @Override
-  public void visitInstanceOfExpression(PsiInstanceOfExpression expression) {
+  public void visitInstanceOfExpression(@NotNull PsiInstanceOfExpression expression) {
     super.visitInstanceOfExpression(expression);
     myResult = new IsOperator(
       expressionToExpression(expression.getOperand()),
@@ -161,7 +162,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitLiteralExpression(PsiLiteralExpression expression) {
+  public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
     super.visitLiteralExpression(expression);
 
     final Object value = expression.getValue();
@@ -286,7 +287,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitNewExpression(PsiNewExpression expression) {
+  public void visitNewExpression(@NotNull PsiNewExpression expression) {
     super.visitNewExpression(expression);
 
     if (expression.getArrayInitializer() != null) // new Foo[] {}
@@ -343,7 +344,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitParenthesizedExpression(PsiParenthesizedExpression expression) {
+  public void visitParenthesizedExpression(@NotNull PsiParenthesizedExpression expression) {
     super.visitParenthesizedExpression(expression);
     myResult = new ParenthesizedExpression(
       expressionToExpression(expression.getExpression())
@@ -351,7 +352,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitPostfixExpression(PsiPostfixExpression expression) {
+  public void visitPostfixExpression(@NotNull PsiPostfixExpression expression) {
     super.visitPostfixExpression(expression);
     myResult = new PostfixOperator(
       getOperatorString(expression.getOperationSign().getTokenType()),
@@ -360,7 +361,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitPrefixExpression(PsiPrefixExpression expression) {
+  public void visitPrefixExpression(@NotNull PsiPrefixExpression expression) {
     super.visitPrefixExpression(expression);
     if (expression.getOperationTokenType() == JavaTokenType.TILDE)
       myResult = new DummyMethodCallExpression(
@@ -374,7 +375,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitReferenceExpression(PsiReferenceExpression expression) {
+  public void visitReferenceExpression(@NotNull PsiReferenceExpression expression) {
     super.visitReferenceExpression(expression);
 
     final boolean isFieldReference = isFieldReference(expression, getContainingClass(expression));
@@ -448,7 +449,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return false;
   }
 
-  private static boolean isInsideSecondaryConstructor(PsiReferenceExpression expression) {
+  private static boolean isInsideSecondaryConstructor(@NotNull PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -458,7 +459,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return false;
   }
 
-  private static boolean isInsidePrimaryConstructor(PsiExpression expression) {
+  private static boolean isInsidePrimaryConstructor(@NotNull PsiExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor())
@@ -479,7 +480,7 @@ public class ExpressionVisitor extends StatementVisitor {
     return null;
   }
 
-  private static boolean isThisExpression(PsiReferenceExpression expression) {
+  private static boolean isThisExpression(@NotNull PsiReferenceExpression expression) {
     for (PsiReference r : expression.getReferences())
       if (r.getCanonicalText().equals("this")) {
         final PsiElement res = r.resolve();
@@ -490,7 +491,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitSuperExpression(PsiSuperExpression expression) {
+  public void visitSuperExpression(@NotNull PsiSuperExpression expression) {
     super.visitSuperExpression(expression);
     final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
     myResult = new SuperExpression(
@@ -501,7 +502,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitThisExpression(PsiThisExpression expression) {
+  public void visitThisExpression(@NotNull PsiThisExpression expression) {
     super.visitThisExpression(expression);
     final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
     myResult = new ThisExpression(
@@ -512,7 +513,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitTypeCastExpression(PsiTypeCastExpression expression) {
+  public void visitTypeCastExpression(@NotNull PsiTypeCastExpression expression) {
     super.visitTypeCastExpression(expression);
 
     final PsiTypeElement castType = expression.getCastType();
@@ -525,7 +526,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @Override
-  public void visitPolyadicExpression(PsiPolyadicExpression expression) {
+  public void visitPolyadicExpression(@NotNull PsiPolyadicExpression expression) {
     super.visitPolyadicExpression(expression);
     myResult = new PolyadicExpression(
       expressionsToExpressionList(expression.getOperands()),
