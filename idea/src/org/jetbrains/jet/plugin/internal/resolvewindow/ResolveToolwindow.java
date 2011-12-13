@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -190,9 +191,9 @@ public class ResolveToolwindow extends JPanel {
                 result.append("Log: \n").append(log).append(bar);
             }
 
-            Map<JetType, ConstraintSystemImpl.TypeValue> knowns = debugInfo.get(BOUNDS_FOR_KNOWNS);
+            Map<JetType, BoundsOwner> knowns = debugInfo.get(BOUNDS_FOR_KNOWNS);
             renderMap(knowns, result);
-            Map<TypeParameterDescriptor, ConstraintSystemImpl.TypeValue> unknowns = debugInfo.get(BOUNDS_FOR_UNKNOWNS);
+            Map<TypeParameterDescriptor, BoundsOwner> unknowns = debugInfo.get(BOUNDS_FOR_UNKNOWNS);
             renderMap(unknowns, result);
 
             result.append(bar);
@@ -205,17 +206,17 @@ public class ResolveToolwindow extends JPanel {
         return result.toString();
     }
     
-    private <K> void renderMap(Map<K, ConstraintSystemImpl.TypeValue> map, StringBuilder builder) {
+    private <K> void renderMap(Map<K, BoundsOwner> map, StringBuilder builder) {
         if (map == null) return;
 
-        for (Map.Entry<K, ConstraintSystemImpl.TypeValue> entry : map.entrySet()) {
+        for (Map.Entry<K, BoundsOwner> entry : map.entrySet()) {
             K key = entry.getKey();
-            ConstraintSystemImpl.TypeValue typeValue = entry.getValue();
+            BoundsOwner typeValue = entry.getValue();
             builder.append("Bounds for ").append(key).append("\n");
-            for (ConstraintSystemImpl.TypeValue bound : typeValue.getLowerBounds()) {
+            for (BoundsOwner bound : typeValue.getLowerBounds()) {
                 builder.append("    >: ").append(bound).append("\n");
             }
-            for (ConstraintSystemImpl.TypeValue bound : typeValue.getUpperBounds()) {
+            for (BoundsOwner bound : typeValue.getUpperBounds()) {
                 builder.append("    <: ").append(bound).append("\n");
             }
         }

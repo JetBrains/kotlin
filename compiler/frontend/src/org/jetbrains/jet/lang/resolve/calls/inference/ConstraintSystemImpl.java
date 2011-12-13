@@ -143,7 +143,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                                 }
                             }
 
-                            listener.log("minimal solution from lowerbounds for " + this + " is " + commonSupertype);
+                            listener.log("minimal solution from lowerbounds for ", this, " is ", commonSupertype);
                             value = new KnownType(commonSupertype);
                         }
                         else {
@@ -247,10 +247,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         @Override
-        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
+        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
             boolean result = delegate.assertEqualTypes(a, b, typeCheckingProcedure);
             if (!result) {
-                listener.error("-- Failed to equate " + a + " and " + b);
+                listener.error("-- Failed to equate ", a, " and ", b);
             }
             return result;
         }
@@ -259,16 +259,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
             boolean result = delegate.assertEqualTypeConstructors(a, b);
             if (!result) {
-                listener.error("-- Type constructors are not equal: " + a + " and " + b);
+                listener.error("-- Type constructors are not equal: ", a, " and ", b);
             }
             return result;
         }
 
         @Override
-        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
+        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
             boolean result = delegate.assertSubtype(subtype, supertype, typeCheckingProcedure);
             if (!result) {
-                listener.error("-- " + subtype + " can't be a subtype of " + supertype);
+                listener.error("-- ", subtype, " can't be a subtype of ", supertype);
             }
             return result;
         }
@@ -277,7 +277,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
             boolean result = delegate.noCorrespondingSupertype(subtype, supertype);
             if (!result) {
-                listener.error("-- " + subtype + " has no supertype corresponding to " + supertype);
+                listener.error("-- ", subtype, " has no supertype corresponding to ", supertype);
             }
             return result;
         }
@@ -294,7 +294,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private TypeCheckingProcedure createConstraintExpander() {
         return new TypeCheckingProcedure(new TypeConstraintBuilderAdapter(new TypingConstraints() {
             @Override
-            public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, TypeCheckingProcedure typeCheckingProcedure) {
+            public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
                 TypeValue aValue = getTypeValueFor(a);
                 TypeValue bValue = getTypeValueFor(b);
 
@@ -309,7 +309,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             }
 
             @Override
-            public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, TypeCheckingProcedure typeCheckingProcedure) {
+            public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
                 TypeValue subtypeValue = getTypeValueFor(subtype);
                 TypeValue supertypeValue = getTypeValueFor(supertype);
 
@@ -389,7 +389,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private void addSubtypingConstraintOnTypeValues(TypeValue typeValueForLower, TypeValue typeValueForUpper) {
-        listener.log("Constraint added: " + typeValueForLower + " :< " + typeValueForUpper);
+        listener.log("Constraint added: ", typeValueForLower, " :< ", typeValueForUpper);
         if (typeValueForLower != typeValueForUpper) {
             typeValueForLower.addUpperBound(typeValueForUpper);
             typeValueForUpper.addLowerBound(typeValueForLower);
@@ -409,7 +409,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                     KnownType knownBoundType = (KnownType) upperBound;
                     boolean ok = constraintExpander.isSubtypeOf(jetType, knownBoundType.getType());
                     if (!ok) {
-                        listener.error("Error while expanding '" + jetType + " :< " + knownBoundType.getType() + "'");
+                        listener.error("Error while expanding '", jetType, " :< ", knownBoundType.getType(), "'");
                         return new Solution().registerError("Mismatch while expanding constraints");
                     }
                 }
@@ -443,11 +443,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         for (UnknownType unknownType : unknownTypes.values()) {
-            listener.constraintsForUnknown(unknownType.getTypeParameterDescriptor(), unknownType);
+//            listener.constraintsForUnknown(unknownType.getTypeParameterDescriptor(), unknownType);
         }
 
         for (KnownType knownType : knownTypes.values()) {
-            listener.constraintsForKnownType(knownType.getType(), knownType);
+//            listener.constraintsForKnownType(knownType.getType(), knownType);
         }
 
         // Find inconsistencies
@@ -477,14 +477,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 JetType boundingType = solution.getSubstitutor().substitute(upperBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(type, boundingType)) { // TODO
                     solution.registerError("Constraint violation: " + type + " is not a subtype of " + boundingType);
-                    listener.error("Constraint violation: " + type + " :< " + boundingType);
+                    listener.error("Constraint violation: ", type, " :< ", boundingType);
                 }
             }
             for (TypeValue lowerBound : typeValue.getLowerBounds()) {
                 JetType boundingType = solution.getSubstitutor().substitute(lowerBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(boundingType, type)) {
                     solution.registerError("Constraint violation: " + boundingType + " is not a subtype of " + type);
-                    listener.error("Constraint violation: " + boundingType + " :< " + type);
+                    listener.error("Constraint violation: ", boundingType, " :< ", type);
                 }
             }
         }
@@ -542,7 +542,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
                     TypeProjection typeProjection = new TypeProjection(getValue(descriptor));
 
-                    listener.log(descriptor + " |-> " + typeProjection);
+                    listener.log(descriptor, " |-> ", typeProjection);
 
                     return typeProjection;
                 }

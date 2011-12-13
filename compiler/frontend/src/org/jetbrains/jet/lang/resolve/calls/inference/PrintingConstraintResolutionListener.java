@@ -12,13 +12,13 @@ import java.util.Set;
 public class PrintingConstraintResolutionListener implements ConstraintResolutionListener {
 
     @Override
-    public void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, ConstraintSystemImpl.TypeValue typeValue) {
+    public void constraintsForUnknown(TypeParameterDescriptor typeParameterDescriptor, BoundsOwner typeValue) {
         println("Constraints for " + typeParameterDescriptor);
         printTypeValue(typeValue);
     }
 
     @Override
-    public void constraintsForKnownType(JetType type, ConstraintSystemImpl.TypeValue typeValue) {
+    public void constraintsForKnownType(JetType type, BoundsOwner typeValue) {
         println("Constraints for " + type);
         printTypeValue(typeValue);
     }
@@ -31,20 +31,24 @@ public class PrintingConstraintResolutionListener implements ConstraintResolutio
     }
 
     @Override
-    public void log(Object message) {
-        println(message);
+    public void log(Object... messageFragments) {
+        for (Object fragment : messageFragments) {
+            println(fragment);
+        }
     }
 
     @Override
-    public void error(Object message) {
-        println(message);
+    public void error(Object... messageFragments) {
+        for (Object fragment : messageFragments) {
+            println(fragment);
+        }
     }
 
-    private void printTypeValue(ConstraintSystemImpl.TypeValue typeValue) {
-        for (ConstraintSystemImpl.TypeValue bound : typeValue.getUpperBounds()) {
+    private void printTypeValue(BoundsOwner typeValue) {
+        for (BoundsOwner bound : typeValue.getUpperBounds()) {
             println(" :< " + bound);
         }
-        for (ConstraintSystemImpl.TypeValue bound : typeValue.getLowerBounds()) {
+        for (BoundsOwner bound : typeValue.getLowerBounds()) {
             println(" :> " + bound);
         }
     }

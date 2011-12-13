@@ -1,18 +1,40 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
  */
 public class TypeSubstitutor {
+
+    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
+        final Set<TypeConstructor> constructors = Sets.newHashSet();
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
+            constructors.add(typeParameterDescriptor.getTypeConstructor());
+        }
+        final TypeProjection projection = new TypeProjection(type);
+
+        return create(new TypeSubstitution() {
+            @Override
+            public TypeProjection get(TypeConstructor key) {
+                if (constructors.contains(key)) {
+                    return projection;
+                }
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        });
+    }
 
     public interface TypeSubstitution {
         TypeSubstitution EMPTY = new TypeSubstitution() {
