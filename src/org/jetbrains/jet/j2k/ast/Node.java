@@ -39,4 +39,5 @@ public abstract class Node implements INode {
   static final String QUEST = "?";
   static final String COMMA_WITH_SPACE = "," + SPACE;
   static final String STAR = "*";
+  public static final String ZERO = "0";
 }

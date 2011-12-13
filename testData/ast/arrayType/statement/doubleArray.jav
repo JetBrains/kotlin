@@ -1,1 +1,0 @@
-double[] a = new double[]{1, 2, 3}

@@ -14,6 +14,12 @@ public class LiteralExpression extends Expression {
 
   @NotNull
   @Override
+  public Kind getKind() {
+    return Kind.LITERAL;
+  }
+
+  @NotNull
+  @Override
   public String toKotlin() {
     return myIdentifier.toKotlin();
   }
