@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.signature.JetSignatureWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.signature.SignatureWriter;
@@ -29,6 +30,9 @@ public class BothSignatureWriter {
     
     private final SignatureWriter signatureWriter = new SignatureWriter();
     private final SignatureVisitor signatureVisitor;
+
+    private final JetSignatureWriter jetSignatureWriter = new JetSignatureWriter();
+
     private final Mode mode;
 
     public BothSignatureWriter(Mode mode) {
