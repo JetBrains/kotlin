@@ -57,6 +57,7 @@ public final class Intrinsics {
         }
     }
 
+    //TODO: delete or include
     private void declareArrayIntrinsics() {
         FunctionDescriptor constructorFunction = getFunctionByName(library.getLibraryScope(), "Array");
         functionIntrinsics.put(constructorFunction, ArrayNullConstructorIntrinsic.INSTANCE);

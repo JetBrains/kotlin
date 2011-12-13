@@ -2,9 +2,17 @@ namespace foo
 
 class RangeIterator(val start : Int, var count : Int, val reversed : Boolean) {
 
+    var i = start
+
     fun next() : Int {
         --count
-        return start + if (reversed) -count else count;
+        if (reversed) {
+            i--
+            return i + 1
+        } else {
+            i++
+            return i - 1
+        }
     }
 
 
@@ -14,7 +22,7 @@ class RangeIterator(val start : Int, var count : Int, val reversed : Boolean) {
 class NumberRange(val start : Int, val size : Int, val reversed : Boolean) {
 
     val end : Int
-    get() = start + size
+    get() = if (reversed) start - size + 1 else start + size - 1
 
     fun contains(number : Int) : Boolean {
         if (reversed) {
@@ -44,7 +52,7 @@ fun testRange() : Boolean {
     if (!oneToFive.contains(4)) return false;
     if (!(oneToFive.start == 1)) return false;
     if (!(oneToFive.size == 4)) return false;
-    if (!(oneToFive.end == 5)) return false;
+    if (!(oneToFive.end == 4)) return false;
 
     var sum = 0;
     for (i in oneToFive) {
@@ -62,7 +70,7 @@ fun testRange() : Boolean {
 
 fun testReversedRange() : Boolean {
 
-    System.out?.println("Testing revesed range.");
+    System.out?.println("Testing reversed range.");
 
     val tenToFive = NumberRange(10, 5, true);
 
@@ -75,6 +83,10 @@ fun testReversedRange() : Boolean {
     if (!tenToFive.contains(8)) return false;
     if (!tenToFive.contains(9)) return false;
     if (!tenToFive.contains(10)) return false;
+
+    if (!(tenToFive.start == 10)) return false;
+    if (!(tenToFive.size == 5)) return false;
+    if (!(tenToFive.end == 6)) return false;
 
     for (i in tenToFive) {
         System.out?.println(i)

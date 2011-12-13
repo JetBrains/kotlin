@@ -14,7 +14,7 @@ fun box() : Boolean {
     if (!oneToFive.contains(4)) return false;
     if (!(oneToFive.start == 1)) return false;
     if (!(oneToFive.size == 4)) return false;
-    if (!(oneToFive.end == 5)) return false;
+    if (!(oneToFive.end == 4)) return false;
 
     var sum = 0;
     for (i in oneToFive) {
@@ -28,4 +28,8 @@ fun box() : Boolean {
 
     return true;
 
+}
+
+fun main() {
+    box()
 }

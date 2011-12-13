@@ -19,17 +19,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.dart.compiler.util.AstUtil.not;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForCallExpression;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.isInOperation;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isInOrNotInOperation;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isNotInOperation;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
  * @author Talanov Pavel
  */
-//TODO: move translate() static method into builder (consider!)
+//TODO: move translate() static methods into builder (consider!)
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
 
@@ -76,10 +78,26 @@ public final class CallTranslator extends AbstractTranslator {
                 (context.bindingContext(), binaryExpression.getOperationReference());
         assert descriptor instanceof FunctionDescriptor;
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-        if (isInOperation(binaryExpression)) {
-            return translateWithReceiverAndArgumentSwapped(context, receiver, arguments, functionDescriptor);
+        if (isInOrNotInOperation(binaryExpression)) {
+            JsExpression inRangeCheck = translateAsInOperation(context, receiver, arguments, functionDescriptor);
+            return mayBeWrapWithNegation(inRangeCheck, isNotInOperation(binaryExpression));
         }
         return translate(context, receiver, arguments, functionDescriptor);
+    }
+
+    public static JsExpression mayBeWrapWithNegation(@NotNull JsExpression expression, boolean shouldWrap) {
+        if (shouldWrap) {
+            return not(expression);
+        } else {
+            return expression;
+        }
+    }
+
+    private static JsExpression translateAsInOperation(@NotNull TranslationContext context,
+                                                       @NotNull JsExpression receiver,
+                                                       @NotNull List<JsExpression> arguments,
+                                                       @NotNull FunctionDescriptor functionDescriptor) {
+        return translateWithReceiverAndArgumentSwapped(context, receiver, arguments, functionDescriptor);
     }
 
     @NotNull

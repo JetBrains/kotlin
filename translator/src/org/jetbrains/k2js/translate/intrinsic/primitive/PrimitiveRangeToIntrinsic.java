@@ -1,6 +1,7 @@
 package org.jetbrains.k2js.translate.intrinsic.primitive;
 
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
+import com.google.dart.compiler.backend.js.ast.JsBooleanLiteral;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
@@ -30,11 +31,14 @@ public final class PrimitiveRangeToIntrinsic implements FunctionIntrinsic {
                               @NotNull TranslationContext context) {
         assert arguments.size() == 1 : "RangeTo must have one argument.";
         JsExpression rangeEnd = arguments.get(0);
-        JsBinaryOperation rangeSize = AstUtil.subtract(rangeEnd, rangeStart);
+        JsBinaryOperation rangeSize = AstUtil.sum(AstUtil.subtract(rangeEnd, rangeStart),
+                context.program().getNumberLiteral(1));
         //TODO: provide a way not to hard code this value
         JsNew numberRangeConstructorInvocation
                 = new JsNew(AstUtil.newQualifiedNameRef("Kotlin.NumberRange"));
-        numberRangeConstructorInvocation.setArguments(Arrays.asList(rangeStart, rangeSize));
+        //TODO: add tests and correct expression for reversed ranges.
+        JsBooleanLiteral isRangeReversed = context.program().getFalseLiteral();
+        numberRangeConstructorInvocation.setArguments(Arrays.asList(rangeStart, rangeSize, isRangeReversed));
         return numberRangeConstructorInvocation;
     }
 }

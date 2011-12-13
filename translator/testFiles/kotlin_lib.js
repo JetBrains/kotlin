@@ -451,6 +451,14 @@ Kotlin.Namespace = Namespace;
 Kotlin.Trait = Trait;
 Kotlin.isType = isType;
 
+Kotlin.equals = function (obj1, obj2) {
+    if (typeof obj1 == "object") {
+        if (obj1.equals != undefined) {
+            return obj1.equals(obj2);
+        }
+    }
+    return (obj1 === obj2);
+};
 
 Kotlin.Exceptions = {}
 Kotlin.Exceptions.IndexOutOfBounds = {}
@@ -529,6 +537,14 @@ Kotlin.ArrayList = Class.create({
             this.array[i] = this.array[i + 1];
         }
         this.$size--;
+    },
+    contains:function (obj) {
+        for (var i = 0; i < this.$size; ++i) {
+            if (Kotlin.equals(this.array[i], obj)) {
+                return true;
+            }
+        }
+        return false;
     }
 });
 
@@ -560,10 +576,12 @@ Kotlin.System = function () {
     var output = "";
 
     var print = function (obj) {
-        output += obj;
+        if (obj !== undefined) {
+            output += obj;
+        }
     };
     var println = function (obj) {
-        output += obj;
+        this.print(obj);
         output += "\n";
     };
 
@@ -598,6 +616,7 @@ Kotlin.RangeIterator = Kotlin.Class.create({initialize:function (start, count, r
     this.$start = start;
     this.$count = count;
     this.$reversed = reversed;
+    this.$i = this.get_start();
 }, get_start:function () {
     return this.$start;
 }, get_count:function () {
@@ -606,9 +625,20 @@ Kotlin.RangeIterator = Kotlin.Class.create({initialize:function (start, count, r
     this.$count = tmp$0;
 }, get_reversed:function () {
     return this.$reversed;
+}, get_i:function () {
+    return this.$i;
+}, set_i:function (tmp$0) {
+    this.$i = tmp$0;
 }, next:function () {
     this.set_count(this.get_count() - 1);
-    return this.get_start() + (this.get_reversed() ? -this.get_count() : this.get_count());
+    if (this.get_reversed()) {
+        this.set_i(this.get_i() - 1);
+        return this.get_i() + 1;
+    }
+    else {
+        this.set_i(this.get_i() + 1);
+        return this.get_i() - 1;
+    }
 }, hasNext:function () {
     return this.get_count() > 0;
 }
@@ -625,7 +655,7 @@ Kotlin.NumberRange = Kotlin.Class.create({initialize:function (start, size, reve
 }, get_reversed:function () {
     return this.$reversed;
 }, get_end:function () {
-    return this.get_start() + this.get_size();
+    return this.get_reversed() ? this.get_start() - this.get_size() + 1 : this.get_start() + this.get_size() - 1;
 }, contains:function (number) {
     if (this.get_reversed()) {
         return number <= this.get_start() && number > this.get_start() - this.get_size();

@@ -335,4 +335,8 @@ public class AstUtil {
     public static JsBinaryOperation subtract(JsExpression left, JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.SUB, left, right);
     }
+
+    public static JsPrefixOperation not(JsExpression expression) {
+        return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
+    }
 }
