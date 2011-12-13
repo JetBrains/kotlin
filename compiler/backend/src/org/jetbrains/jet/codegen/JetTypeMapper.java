@@ -57,6 +57,9 @@ public class JetTypeMapper {
     public static final Type ARRAY_DOUBLE_TYPE = Type.getType(double[].class);
     public static final Type ARRAY_BOOL_TYPE = Type.getType(boolean[].class);
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
+    public static final Type JET_PARAMETER_TYPE = Type.getObjectType("jet/typeinfo/JetParameter");
+    public static final Type JET_TYPE_PARAMETER_TYPE = Type.getObjectType("jet/typeinfo/JetTypeParameter");
+    public static final Type JET_METHOD_TYPE = Type.getObjectType("jet/typeinfo/JetMethod");
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;

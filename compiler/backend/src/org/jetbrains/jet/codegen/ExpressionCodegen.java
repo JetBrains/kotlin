@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
@@ -2619,16 +2618,16 @@ If finally block is present, its last expression is the value of try expression.
                 }
                 else {
                     v.load(0, TYPE_OBJECT);
-                    v.invokeinterface(StdlibNames.JET_OBJECT_TYPE.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
                 }
             }
             else {
                 v.load(0, TYPE_OBJECT);
                 while(descriptor != containingDeclaration) {
                     descriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
-                    v.invokeinterface(StdlibNames.JET_OBJECT_TYPE.getInternalName(), "getOuterObject", "()Ljet/JetObject;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getOuterObject", "()Ljet/JetObject;");
                 }
-                v.invokeinterface(StdlibNames.JET_OBJECT_TYPE.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+                v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
             }
             v.aconst(ownerType);
             v.iconst(typeParameterDescriptor.getIndex());

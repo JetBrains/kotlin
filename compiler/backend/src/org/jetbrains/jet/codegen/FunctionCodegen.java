@@ -86,7 +86,7 @@ public class FunctionCodegen {
             if(v.generateCode()) {
                 int start = 0;
                 if(kind != OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitAnnotation(StdlibNames.JET_METHOD_TYPE.getDescriptor(), true);
+                    AnnotationVisitor av = mv.visitAnnotation(JetTypeMapper.JET_METHOD_TYPE.getDescriptor(), true);
                     if(functionDescriptor.getReturnType().isNullable()) {
                         av.visit(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
                     }

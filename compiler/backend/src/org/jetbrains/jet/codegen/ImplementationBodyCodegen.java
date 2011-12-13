@@ -6,7 +6,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.StdlibNames;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -60,7 +59,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         getSuperClass();
 
         List<String> interfaces = new ArrayList<String>();
-        interfaces.add(StdlibNames.JET_OBJECT_TYPE.getInternalName());
+        interfaces.add(JetTypeMapper.TYPE_JET_OBJECT.getInternalName());
         interfaces.addAll(getSuperInterfaces(myClass));
 
         boolean isAbstract = false;
