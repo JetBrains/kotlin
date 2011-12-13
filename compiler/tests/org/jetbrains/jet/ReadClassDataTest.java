@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
@@ -159,6 +161,20 @@ public class ReadClassDataTest extends UsefulTestCase {
         Assert.assertEquals(a.getReturnType(), b.getReturnType());
         System.out.println("fun " + a.getName() + "(...): " + a.getReturnType());
     }
+    
+    private void compareAnything(Object a, Object b) {
+        if (a instanceof JetType || b instanceof JetType) {
+            compareTypes((JetType) a, (JetType) b);
+        } else {
+            Assert.assertEquals(a, b);
+        }
+    }
+    
+    private void compareTypes(JetType a, JetType b) {
+        // cannot just call a.equals(b) because "a" and "b" were created in different environments,
+        // TypeConstructor does not override equals()
+        Assert.assertEquals(a.toString(), b.toString());
+    }
 
     private <T> void compareAnything(Class<T> clazz, T a, T b) {
         System.out.println("Comparing " + clazz);
@@ -182,7 +198,7 @@ public class ReadClassDataTest extends UsefulTestCase {
             System.out.println(method.getName());
             Object ap = invoke(method, a);
             Object bp = invoke(method, b);
-            Assert.assertEquals(ap, bp);
+            compareAnything(ap, bp);
         }
     }
     
