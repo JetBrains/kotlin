@@ -10,9 +10,9 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
@@ -40,43 +40,57 @@ public final class K2JSTranslator {
     public K2JSTranslator() {
     }
 
-    public void translateFile(String inputFile, String outputFile) throws Exception {
+    public void translateFile(@NotNull String inputFile, @NotNull String outputFile) throws Exception {
 
-        try {
+        JetFile PsiFile = loadPsiFile(inputFile);
 
-            final File rtJar = CompileEnvironment.findRtJar(true);
-            myEnvironment.addToClasspath(rtJar);
+        JsProgram program = generateProgram(PsiFile);
 
-            JetNamespace namespace = loadPsiFile(inputFile).getRootNamespace();
-
-            BindingContext bindingContext = JetTestUtils.analyzeNamespace(namespace,
-                    JetControlFlowDataTraceFactory.EMPTY);
-
-            JsProgram program = Translation.generateAst(bindingContext, namespace, myEnvironment.getProject());
-
-            CodeGenerator generator = new CodeGenerator();
-            generator.generateToFile(program, new File(outputFile));
-
-        } catch (CompileEnvironmentException e) {
-            System.out.println(e.getMessage());
-        }
+        CodeGenerator generator = new CodeGenerator();
+        generator.generateToFile(program, new File(outputFile));
     }
 
-    protected String loadFile(String path) throws IOException {
+    @NotNull
+    public String translateString(@NotNull String programText) {
+        JetFile PsiFile = createPsiFile("test", programText);
+        JsProgram program = generateProgram(PsiFile);
+
+        CodeGenerator generator = new CodeGenerator();
+        return generator.generateToString(program);
+    }
+
+    @NotNull
+    private JsProgram generateProgram(@NotNull JetFile psiFile) {
+        final File rtJar = CompileEnvironment.findRtJar(true);
+        myEnvironment.addToClasspath(rtJar);
+
+        JetNamespace namespace = psiFile.getRootNamespace();
+
+        BindingContext bindingContext = JetTestUtils.analyzeNamespace(namespace,
+                JetControlFlowDataTraceFactory.EMPTY);
+
+        return Translation.generateAst(bindingContext, namespace, myEnvironment.getProject());
+    }
+
+    @NotNull
+    protected String loadFile(@NotNull String path) throws IOException {
         return doLoadFile(path);
     }
 
-    protected String doLoadFile(String path) throws IOException {
+    @NotNull
+    protected String doLoadFile(@NotNull String path) throws IOException {
         String text = FileUtil.loadFile(new File(path), CharsetToolkit.UTF8).trim();
         text = StringUtil.convertLineSeparators(text);
         return text;
     }
 
-    protected JetFile createPsiFile(String name, String text) {
+    @NotNull
+    protected JetFile createPsiFile(@NotNull String name, @NotNull String text) {
         return (JetFile) createFile(name + ".jet", text);
     }
 
-    protected JetFile loadPsiFile(String name) {
+    @NotNull
+    protected JetFile loadPsiFile(@NotNull String name) {
         try {
             return createPsiFile(name, loadFile(name));
         } catch (IOException e) {
@@ -84,6 +98,7 @@ public final class K2JSTranslator {
         }
     }
 
+    @NotNull
     protected PsiFile createFile(@NonNls String name, String text) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);

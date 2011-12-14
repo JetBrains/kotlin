@@ -12,6 +12,8 @@ import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getSuperclassDescriptors;
 
+//TODO: can optimise using less dumb implementation
+
 /**
  * @author Talanov Pavel
  */
