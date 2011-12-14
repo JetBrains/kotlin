@@ -19,39 +19,7 @@ public class JetSignatureReader {
     public void accept(final JetSignatureVisitor v) {
         String signature = this.signature;
         int len = signature.length();
-        int pos;
-        char c;
-
-        if (signature.charAt(0) == '<') {
-            pos = 2;
-            do {
-                TypeInfoVariance variance;
-                if (signature.substring(pos).startsWith("in ")) {
-                    variance = TypeInfoVariance.IN;
-                    pos += "in ".length();
-                } else if (signature.substring(pos).startsWith("out ")) {
-                    variance = TypeInfoVariance.OUT;
-                    pos += "out ".length();
-                } else {
-                    variance = TypeInfoVariance.INVARIANT;
-                    pos += "".length();
-                }
-                int end = signature.indexOf(':', pos);
-                v.visitFormalTypeParameter(signature.substring(pos - 1, end), variance);
-                pos = end + 1;
-
-                c = signature.charAt(pos);
-                if (c == 'L' || c == '[' || c == 'T') {
-                    pos = parseType(signature, pos, v.visitClassBound());
-                }
-
-                while ((c = signature.charAt(pos++)) == ':') {
-                    pos = parseType(signature, pos, v.visitInterfaceBound());
-                }
-            } while (c != '>');
-        } else {
-            pos = 0;
-        }
+        int pos = acceptFormalTypeParameters(v);
 
         if (signature.charAt(pos) == '(') {
             pos++;
@@ -67,6 +35,52 @@ public class JetSignatureReader {
             while (pos < len) {
                 pos = parseType(signature, pos, v.visitInterface());
             }
+        }
+    }
+
+    public int acceptFormalTypeParameters(JetSignatureVisitor v) {
+        int pos;
+        char c;
+        if (signature.length() > 0 && signature.charAt(0) == '<') {
+            pos = 1;
+            do {
+                TypeInfoVariance variance;
+                if (signature.substring(pos).startsWith("in ")) {
+                    variance = TypeInfoVariance.IN;
+                    pos += "in ".length();
+                } else if (signature.substring(pos).startsWith("out ")) {
+                    variance = TypeInfoVariance.OUT;
+                    pos += "out ".length();
+                } else {
+                    variance = TypeInfoVariance.INVARIANT;
+                    pos += "".length();
+                }
+                int end = signature.indexOf(':', pos);
+                if (end < 0) {
+                    throw new IllegalStateException();
+                }
+                v.visitFormalTypeParameter(signature.substring(pos, end), variance);
+                pos = end + 1;
+
+                c = signature.charAt(pos);
+                if (c == 'L' || c == '[' || c == 'T' || c == '?') {
+                    pos = parseType(signature, pos, v.visitClassBound());
+                }
+
+                while ((c = signature.charAt(pos++)) == ':') {
+                    pos = parseType(signature, pos, v.visitInterfaceBound());
+                }
+            } while (c != '>');
+        } else {
+            pos = 0;
+        }
+        return pos;
+    }
+    
+    public void acceptFormalTypeParametersOnly(JetSignatureVisitor v) {
+        int r = acceptFormalTypeParameters(v);
+        if (r != signature.length()) {
+            throw new IllegalStateException();
         }
     }
 
