@@ -40,7 +40,7 @@ public final class K2JSTranslator {
     public K2JSTranslator() {
     }
 
-    public void translate(String inputFile, String outputFile) throws Exception {
+    public void translateFile(String inputFile, String outputFile) throws Exception {
 
         try {
 

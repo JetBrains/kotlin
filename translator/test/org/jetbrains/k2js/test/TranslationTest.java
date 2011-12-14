@@ -57,7 +57,7 @@ public abstract class TranslationTest {
     }
 
     protected void translateFile(String filename) throws Exception {
-        (new K2JSTranslator()).translate(getInputFilePath(filename), getOutputFilePath(filename));
+        (new K2JSTranslator()).translateFile(getInputFilePath(filename), getOutputFilePath(filename));
     }
 
     protected List<String> generateFilenameList(String inputFile) {

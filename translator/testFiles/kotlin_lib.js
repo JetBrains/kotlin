@@ -493,6 +493,9 @@ Kotlin.Array = Class.create({
     },
     iterator:function () {
         return new Kotlin.ArrayIterator(this);
+    },
+    indices:function() {
+        return new Kotlin.NumberRange(0, this.size(), false);
     }
 });
 

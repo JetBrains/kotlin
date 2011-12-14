@@ -73,19 +73,21 @@ public final class StandardClasses {
         ClassDescriptor iteratorClass = (ClassDescriptor)
                 standardLibrary.getLibraryScope().getClassifier("Iterator");
         assert iteratorClass != null;
-        standardClasses.declareStandardTopLevelObject(iteratorClass, "ArrayIterator");
+        standardClasses.declareTopLevel(iteratorClass, "ArrayIterator");
         declareMethods(standardClasses, getFQName(iteratorClass), "next", "hasNext");
     }
 
     private static void declareArray(@NotNull StandardClasses standardClasses,
                                      @NotNull JetStandardLibrary standardLibrary) {
         ClassDescriptor arrayClass = standardLibrary.getArray();
-        standardClasses.declareStandardTopLevelObject(arrayClass, "Array");
+        standardClasses.declareTopLevel(arrayClass, "Array");
         FunctionDescriptor nullConstructorFunction = getFunctionByName(standardLibrary.getLibraryScope(), "Array");
-        standardClasses.declareStandardTopLevelObject(nullConstructorFunction, "array");
+        standardClasses.declareTopLevel(nullConstructorFunction, "array");
         PropertyDescriptor sizeProperty =
                 getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "size");
-        standardClasses.declareStandardInnerDeclaration(sizeProperty, "size");
+        standardClasses.declareInner(sizeProperty, "size");
+        PropertyDescriptor indices = getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "indices");
+        standardClasses.declareInner(indices, "indices");
     }
 
 
@@ -120,8 +122,8 @@ public final class StandardClasses {
         this.kotlinScope = kotlinScope;
     }
 
-    private void declareStandardTopLevelObject(@NotNull DeclarationDescriptor descriptor,
-                                               @NotNull String kotlinLibName) {
+    private void declareTopLevel(@NotNull DeclarationDescriptor descriptor,
+                                 @NotNull String kotlinLibName) {
         declareStandardTopLevelObject(DescriptorUtils.getFQName(descriptor), kotlinLibName);
     }
 
@@ -130,8 +132,8 @@ public final class StandardClasses {
         scopeMap.put(fullQualifiedName, new JsScope(kotlinScope, "standard object " + kotlinLibName));
     }
 
-    private void declareStandardInnerDeclaration(@NotNull DeclarationDescriptor descriptor,
-                                                 @NotNull String kotlinLibName) {
+    private void declareInner(@NotNull DeclarationDescriptor descriptor,
+                              @NotNull String kotlinLibName) {
         String containingFQName = DescriptorUtils.getFQName(getContainingDeclaration(descriptor));
         declareStandardInnerDeclaration(containingFQName, descriptor.getName(), kotlinLibName);
     }
