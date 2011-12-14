@@ -198,6 +198,10 @@ trait Hashable {
 class Boolean : Comparable<Boolean> {
   fun not() : Boolean
 
+  fun and(other : Boolean) : Boolean
+
+  fun or(other : Boolean) : Boolean
+
   fun xor(other : Boolean) : Boolean
 
   fun equals(other : Any?) : Boolean
