@@ -1,12 +1,14 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
 * @author yole
 */
 public class GeneratedClassLoader extends ClassLoader {
     private final ClassFileFactory state;
 
-    public GeneratedClassLoader(ClassFileFactory state) {
+    public GeneratedClassLoader(@NotNull ClassFileFactory state) {
         super(GeneratedClassLoader.class.getClassLoader());
         this.state = state;
     }
