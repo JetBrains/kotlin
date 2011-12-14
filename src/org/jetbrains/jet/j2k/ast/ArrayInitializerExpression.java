@@ -20,9 +20,9 @@ public class ArrayInitializerExpression extends Expression {
   @NotNull
   private static String createArrayFunction(@NotNull final Type type) {
     String sType = innerTypeStr(type);
-    if (!sType.equals("any") && PRIMITIVE_TYPES.contains(sType))
-      return sType + "Array";
-    return AstUtil.lowerFirstCharacter(type.convertedToNotNull().toKotlin());
+    if (PRIMITIVE_TYPES.contains(sType))
+      return sType + "Array"; // intArray
+    return AstUtil.lowerFirstCharacter(type.convertedToNotNull().toKotlin()); // array<Foo?>
   }
 
   @NotNull

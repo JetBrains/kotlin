@@ -12,6 +12,16 @@ public class ArrayType extends Type {
     myType = type;
   }
 
+  public Type getInnerType() {
+    return myType;
+  }
+
+  @NotNull
+  @Override
+  public Kind getKind() {
+    return Kind.ARRAY_TYPE;
+  }
+
   @NotNull
   @Override
   public String toKotlin() {

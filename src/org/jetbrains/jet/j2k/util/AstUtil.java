@@ -87,4 +87,10 @@ public class AstUtil {
       return map.get(e);
     return orElse;
   }
+
+  public static String replaceLastQuest(String str) {
+    if (str.endsWith("?"))
+      return str.substring(0, str.length() - 1);
+    return str;
+  }
 }

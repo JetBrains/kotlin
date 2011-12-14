@@ -214,11 +214,10 @@ public class ExpressionVisitor extends StatementVisitor {
   @Override
   public void visitNewExpression(@NotNull PsiNewExpression expression) {
     super.visitNewExpression(expression);
-
-    if (expression.getArrayInitializer() != null) // new Foo[] {}
+    if (expression.getArrayInitializer() != null) // new Foo[] {Foo(1), Foo(2)}
       myResult = createNewEmptyArray(expression);
     else if (expression.getArrayDimensions().length > 0) { // new Foo[5]
-      myResult = createNewNonEmptyArray(expression);
+      myResult = createNewEmptyArrayWithoutInitialization(expression);
     } else { // new Class(): common case
       myResult = createNewClassExpression(expression);
     }
@@ -254,12 +253,10 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  private static NewClassExpression createNewNonEmptyArray(@NotNull PsiNewExpression expression) {
-    final List<Expression> callExpression = expressionsToExpressionList(expression.getArrayDimensions());
-    callExpression.add(new IdentifierImpl("{null}")); // TODO: remove
-    return new NewClassExpression(
-      typeToType(expression.getType()),
-      callExpression
+  private static Expression createNewEmptyArrayWithoutInitialization(@NotNull PsiNewExpression expression) {
+    return new ArrayWithoutInitializationExpression(
+      typeToType(expression.getType(), true),
+      expressionsToExpressionList(expression.getArrayDimensions())
     );
   }
 
