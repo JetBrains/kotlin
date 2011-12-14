@@ -593,7 +593,8 @@ public class Converter {
       if (actualType != null) {
         if (isConversionNeeded(actualType, expectedType))
           conversion += getPrimitiveTypeConversion(expectedType.getCanonicalText());
-        if (expression instanceof PsiReferenceExpression && Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText()) && ((PsiReferenceExpression) expression).isQualified())
+        if (Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText()) && (expression instanceof PsiReferenceExpression && ((PsiReferenceExpression) expression).isQualified() ||
+          expression instanceof PsiMethodCallExpression))
           conversion += ".sure()";
       }
     }
@@ -651,7 +652,7 @@ public class Converter {
 
   @NotNull
   public static SureCallChainExpression createSureCallOnlyForChain(PsiExpression expression, PsiType type) {
-    String conversion = (expression != null && expression instanceof PsiReferenceExpression && ((PsiReferenceExpression) expression).isQualified()) ?
+    String conversion = (expression != null && (expression instanceof PsiReferenceExpression || expression instanceof PsiMethodCallExpression)) ?
       createConversionForExpression(expression, type) : "";
     return new SureCallChainExpression(expressionToExpression(expression), conversion);
   }
