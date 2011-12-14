@@ -376,7 +376,7 @@ public abstract class TypeInfo<T> implements JetObject {
                 return false;
             }
             if (superType.projections == null || superType.projections.length != projections.length) {
-                throw new IllegalArgumentException("inconsistent type infos for the same class");
+                throw new IllegalArgumentException("inconsistent type info for the same class");
             }
             for (int i = 0; i < projections.length; i++) {
                 // TODO handle variance here
@@ -451,18 +451,18 @@ public abstract class TypeInfo<T> implements JetObject {
             if(klass == null)
                 return null;
 
-            lock.readLock().lock();
+//            lock.readLock().lock();
             Signature sig = map.get(klass);
-            lock.readLock().unlock();
+//            lock.readLock().unlock();
             if (sig == null) {
-                lock.writeLock().lock();
+//                lock.writeLock().lock();
 
                 sig = map.get(klass);
                 if (sig == null) {
                     sig = internalParse(klass);
                 }
 
-                lock.writeLock().unlock();
+//                lock.writeLock().unlock();
             }
             return sig;
         }
