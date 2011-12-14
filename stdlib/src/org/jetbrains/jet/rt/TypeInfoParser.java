@@ -71,52 +71,56 @@ class TypeInfoParser {
         signature.varNames = new HashMap<String, Integer>();
         signature.superTypes = new ArrayList<TypeInfo>();
         new JetSignatureReader(annotationValue).accept(new JetSignatureExceptionsAdapter() {
-            int varIndex = 0;
 
             @Override
-            public void visitFormalTypeParameter(String name, final TypeInfoVariance variance) {
+            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
 
-                final TypeInfoVar typeInfoVar = new TypeInfoVar(signature, signature.variables.size());
-
-                signature.varNames.put(name, signature.variables.size());
-                TypeInfoProjection typeInfoProjection = new TypeInfoProjection() {
-                    @Override
-                    public TypeInfoVariance getVariance() {
-                        return variance;
-                    }
-
-                    @Override
-                    public TypeInfo getType() {
-                        return typeInfoVar;
-                    }
-
-                    @Override
-                    public String toString() {
-                        return typeInfoVar.toString();
-                    }
-                };
-
-                signature.variables.add(typeInfoProjection);
-                // TODO: supers
                 // TODO: nullability
-            }
 
-            @Override
-            public JetSignatureVisitor visitClassBound() {
-                return new SignatureParserJetSignatureAdapter(signature.klazz.getClassLoader(), signature) {
+                return new JetSignatureExceptionsAdapter() {
                     @Override
-                    protected void done(TypeInfo typeInfo) {
-                        // TODO
+                    public JetSignatureVisitor visitClassBound() {
+                        return new SignatureParserJetSignatureAdapter(signature.klazz.getClassLoader(), signature) {
+                            @Override
+                            protected void done(TypeInfo typeInfo) {
+                                // TODO
+                            }
+                        };
                     }
-                };
-            }
 
-            @Override
-            public JetSignatureVisitor visitInterfaceBound() {
-                return new SignatureParserJetSignatureAdapter(signature.klazz.getClassLoader(), signature) {
                     @Override
-                    protected void done(TypeInfo typeInfo) {
-                        // TODO
+                    public JetSignatureVisitor visitInterfaceBound() {
+                        return new SignatureParserJetSignatureAdapter(signature.klazz.getClassLoader(), signature) {
+                            @Override
+                            protected void done(TypeInfo typeInfo) {
+                                // TODO
+                            }
+                        };
+                    }
+
+                    @Override
+                    public void visitFormalTypeParameterEnd() {
+                        final TypeInfoVar typeInfoVar = new TypeInfoVar(signature, signature.variables.size());
+
+                        signature.varNames.put(name, signature.variables.size());
+                        TypeInfoProjection typeInfoProjection = new TypeInfoProjection() {
+                            @Override
+                            public TypeInfoVariance getVariance() {
+                                return variance;
+                            }
+
+                            @Override
+                            public TypeInfo getType() {
+                                return typeInfoVar;
+                            }
+
+                            @Override
+                            public String toString() {
+                                return typeInfoVar.toString();
+                            }
+                        };
+
+                        signature.variables.add(typeInfoProjection);
                     }
                 };
             }

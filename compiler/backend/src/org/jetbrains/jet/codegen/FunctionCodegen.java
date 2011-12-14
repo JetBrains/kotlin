@@ -93,6 +93,9 @@ public class FunctionCodegen {
                     if (jvmSignature.getKotlinReturnType() != null) {
                         av.visit(StdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
                     }
+                    if (jvmSignature.getKotlinTypeParameter() != null) {
+                        av.visit(StdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
+                    }
                     av.visitEnd();
                 }
 

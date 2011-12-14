@@ -59,17 +59,19 @@ public class JetSignatureReader {
                 if (end < 0) {
                     throw new IllegalStateException();
                 }
-                v.visitFormalTypeParameter(signature.substring(pos, end), variance);
+                JetSignatureVisitor parameterVisitor = v.visitFormalTypeParameter(signature.substring(pos, end), variance);
                 pos = end + 1;
 
                 c = signature.charAt(pos);
                 if (c == 'L' || c == '[' || c == 'T' || c == '?') {
-                    pos = parseType(signature, pos, v.visitClassBound());
+                    pos = parseType(signature, pos, parameterVisitor.visitClassBound());
                 }
 
                 while ((c = signature.charAt(pos++)) == ':') {
-                    pos = parseType(signature, pos, v.visitInterfaceBound());
+                    pos = parseType(signature, pos, parameterVisitor.visitInterfaceBound());
                 }
+                
+                parameterVisitor.visitFormalTypeParameterEnd();
             } while (c != '>');
         } else {
             pos = 0;

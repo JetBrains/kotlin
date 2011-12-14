@@ -7,7 +7,12 @@ import jet.typeinfo.TypeInfoVariance;
  */
 public class JetSignatureAdapter implements JetSignatureVisitor {
     @Override
-    public void visitFormalTypeParameter(String name, TypeInfoVariance variance) {
+    public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance) {
+        return this;
+    }
+
+    @Override
+    public void visitFormalTypeParameterEnd() {
     }
 
     @Override

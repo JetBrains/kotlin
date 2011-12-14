@@ -14,14 +14,15 @@ public class JvmMethodSignature {
     private final Method asmMethod;
     /** Null when we don't care about type parameters */
     private final String genericsSignature;
-    // TODO: type parameters
+    private final String kotlinTypeParameter;
     private final List<String> kotlinParameterTypes;
     private final String kotlinReturnType;
 
     public JvmMethodSignature(@NotNull Method asmMethod, @Nullable String genericsSignature,
-            @Nullable List<String> kotlinParameterTypes, @Nullable String kotlinReturnType) {
+            @Nullable String kotlinTypeParameters, @Nullable List<String> kotlinParameterTypes, @Nullable String kotlinReturnType) {
         this.asmMethod = asmMethod;
         this.genericsSignature = genericsSignature;
+        this.kotlinTypeParameter = kotlinTypeParameters;
         this.kotlinParameterTypes = kotlinParameterTypes;
         this.kotlinReturnType = kotlinReturnType;
     }
@@ -32,6 +33,10 @@ public class JvmMethodSignature {
 
     public String getGenericsSignature() {
         return genericsSignature;
+    }
+
+    public String getKotlinTypeParameter() {
+        return kotlinTypeParameter;
     }
 
     public List<String> getKotlinParameterTypes() {
