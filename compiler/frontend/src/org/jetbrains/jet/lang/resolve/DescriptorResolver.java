@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -449,8 +450,8 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property) {
-        JetType type = getVariableType(scope, property, false); // For a local variable the type must not be deferred
+    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property, DataFlowInfo dataFlowInfo) {
+        JetType type = getVariableType(scope, property, dataFlowInfo, false); // For a local variable the type must not be deferred
 
         return resolveLocalVariableDescriptorWithType(containingDeclaration, property, type);
     }
@@ -548,9 +549,9 @@ public class DescriptorResolver {
                 ? ReceiverDescriptor.NO_RECEIVER
                 : new ExtensionReceiver(propertyDescriptor, receiverType);
 
-        JetScope scope2 = getPropertyDeclarationInnerScope(scope, propertyDescriptor, typeParameterDescriptors, receiverDescriptor);
+        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, propertyDescriptor, typeParameterDescriptors, receiverDescriptor);
 
-        JetType type = getVariableType(scope2, property, true);
+        JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true);
 
         JetType inType = isVar ? type : null;
         propertyDescriptor.setType(inType, type, typeParameterDescriptors, DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), receiverDescriptor);
@@ -580,7 +581,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private JetType getVariableType(@NotNull final JetScope scope, @NotNull final JetProperty property, boolean allowDeferred) {
+    private JetType getVariableType(@NotNull final JetScope scope, @NotNull final JetProperty property, @NotNull final DataFlowInfo dataFlowInfo, boolean allowDeferred) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
@@ -598,8 +599,7 @@ public class DescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
-                        //JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
-                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE);
+                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo);
                     }
                 };
                 if (allowDeferred) {
