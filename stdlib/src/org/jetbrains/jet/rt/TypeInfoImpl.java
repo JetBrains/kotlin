@@ -1,4 +1,4 @@
-package jet.typeinfo.internal;
+package org.jetbrains.jet.rt;
 
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;

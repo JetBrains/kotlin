@@ -1,4 +1,4 @@
-package jet.typeinfo.internal;
+package org.jetbrains.jet.rt;
 
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
@@ -27,7 +27,7 @@ public abstract class TypeInfoProjectionImpl implements TypeInfoProjection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        jet.typeinfo.internal.TypeInfoProjectionImpl that = (jet.typeinfo.internal.TypeInfoProjectionImpl) o;
+        TypeInfoProjectionImpl that = (TypeInfoProjectionImpl) o;
         // no need to compare variance as we compared classes already
         return type.equals(that.type);
     }

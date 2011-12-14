@@ -2,8 +2,8 @@ package jet.typeinfo;
 
 import jet.JetObject;
 import jet.Tuple0;
-import jet.typeinfo.internal.TypeInfoImpl;
-import jet.typeinfo.internal.TypeInfoProjectionImpl;
+import org.jetbrains.jet.rt.TypeInfoImpl;
+import org.jetbrains.jet.rt.TypeInfoProjectionImpl;
 
 /**
  * @author abreslav

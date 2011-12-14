@@ -1,12 +1,10 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import jet.typeinfo.TypeInfoVariance;
-import jet.typeinfo.internal.signature.JetSignatureAdapter;
-import jet.typeinfo.internal.signature.JetSignatureExceptionsAdapter;
+import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import jet.typeinfo.internal.signature.JetSignatureVisitor;
+import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
