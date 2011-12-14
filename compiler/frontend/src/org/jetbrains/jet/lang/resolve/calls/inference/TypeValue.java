@@ -18,7 +18,7 @@ public class TypeValue implements BoundsOwner {
     private final Variance positionVariance;
     private final TypeParameterDescriptor typeParameterDescriptor; // Null for known types
     private final JetType originalType;
-    private JetType value; // For an unknown — the value found by constraint resolution, for a known — just it's value
+    private JetType value; // For an unknown - the value found by constraint resolution, for a known - just it's value
 
     // Unknown type
     public TypeValue(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance) {
