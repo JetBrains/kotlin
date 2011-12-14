@@ -1,3 +1,3 @@
 namespace test
 
-fun ff(): String? = ""
+fun ff(): java.lang.CharSequence? = null
