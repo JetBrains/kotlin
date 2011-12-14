@@ -7,7 +7,12 @@ import jet.typeinfo.TypeInfoVariance;
  */
 public class JetSignatureExceptionsAdapter implements JetSignatureVisitor {
     @Override
-    public void visitFormalTypeParameter(String name, TypeInfoVariance variance) {
+    public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void visitFormalTypeParameterEnd() {
         throw new IllegalStateException();
     }
 

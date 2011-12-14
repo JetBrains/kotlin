@@ -200,6 +200,10 @@ public class BothSignatureWriter {
         signatureVisitor().visitFormalTypeParameter(name);
         jetSignatureWriter.visitFormalTypeParameter(name, translateVariance(variance));
     }
+    
+    public void writeFormalTypeParameterEnd() {
+        jetSignatureWriter.visitFormalTypeParameterEnd();
+    }
 
     public void writerFormalTypeParametersStart() {
         checkTopLevel();
@@ -342,9 +346,9 @@ public class BothSignatureWriter {
         // TODO: return null if not generic
         return signatureWriter.toString();
     }
-
+    
     @NotNull
-    public List<String> makeKotlinSignatures() {
+    public List<String> makeKotlinParameterTypes() {
         checkState(State.METHOD_END);
         // TODO: return nulls if equal to #makeJavaString
         return kotlinParameterTypes;
@@ -354,6 +358,11 @@ public class BothSignatureWriter {
     public String makeKotlinReturnTypeSignature() {
         checkState(State.METHOD_END);
         return kotlinReturnType;
+    }
+    
+    public String makeKotlinMethodTypeParameters() {
+        checkState(State.METHOD_END);
+        return kotlinClassParameters;
     }
 
     @Nullable

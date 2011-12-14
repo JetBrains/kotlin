@@ -323,7 +323,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             constructorMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-            callableMethod = new CallableMethod("", new JvmMethodSignature(constructorMethod, null, null, null) /* TODO */, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
+            callableMethod = new CallableMethod("", new JvmMethodSignature(constructorMethod, null, null, null, null) /* TODO */, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);

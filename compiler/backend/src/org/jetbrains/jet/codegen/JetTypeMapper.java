@@ -519,10 +519,12 @@ public class JetTypeMapper {
         }
         Method method = new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
         if (signatureVisitor == null) {
-            return new JvmMethodSignature(method, null, null, null);
+            return new JvmMethodSignature(method, null, null, null, null);
         } else {
             return new JvmMethodSignature(method, signatureVisitor.makeJavaString(),
-                    signatureVisitor.makeKotlinSignatures(), signatureVisitor.makeKotlinReturnTypeSignature());
+                    signatureVisitor.makeKotlinMethodTypeParameters(),
+                    signatureVisitor.makeKotlinParameterTypes(),
+                    signatureVisitor.makeKotlinReturnTypeSignature());
         }
     }
 
@@ -568,6 +570,8 @@ public class JetTypeMapper {
                 }
             }
         }
+        
+        signatureVisitor.writeFormalTypeParameterEnd();
 
     }
 
@@ -583,7 +587,7 @@ public class JetTypeMapper {
         }
         Type returnType = mapReturnType(f.getReturnType());
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()])), null, null, null);
+        return new JvmMethodSignature(new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()])), null, null, null, null);
     }
 
 
@@ -608,7 +612,7 @@ public class JetTypeMapper {
         }
 
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null, null, null);
+        return new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null, null, null, null);
     }
 
     @Nullable
@@ -638,7 +642,7 @@ public class JetTypeMapper {
         params.add(mapType(inType));
 
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null);
+        return new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null, null);
     }
 
     private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, List<Type> valueParameterTypes) {
@@ -660,7 +664,7 @@ public class JetTypeMapper {
         }
 
         Method method = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-        return new JvmMethodSignature(method, null, null, null); // TODO: generics signature
+        return new JvmMethodSignature(method, null, null, null, null); // TODO: generics signature
     }
 
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind) {

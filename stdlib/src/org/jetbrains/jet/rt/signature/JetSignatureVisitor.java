@@ -30,7 +30,9 @@ public interface JetSignatureVisitor {
      *
      * @param name the name of the formal parameter.
      */
-    void visitFormalTypeParameter(String name, TypeInfoVariance variance);
+    JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance);
+
+    void visitFormalTypeParameterEnd();
 
     /**
      * Visits the class bound of the last visited formal type parameter.

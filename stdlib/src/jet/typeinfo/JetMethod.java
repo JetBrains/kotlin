@@ -23,6 +23,12 @@ public @interface JetMethod {
     JetTypeProjection[] returnTypeProjections() default {};
 
     /**
+     * Serialized method type parameters.
+     * @return
+     */
+    String typeParameters() default "";
+
+    /**
      * @return is this type returnTypeNullable
      */
     boolean nullableReturnType() default false;
