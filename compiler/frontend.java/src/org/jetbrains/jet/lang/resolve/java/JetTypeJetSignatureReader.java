@@ -34,7 +34,7 @@ public abstract class JetTypeJetSignatureReader implements JetSignatureVisitor {
     
 
     @Override
-    public void visitFormalTypeParameter(String name) {
+    public void visitFormalTypeParameter(String name, Variance variance) {
         throw new IllegalStateException();
     }
 

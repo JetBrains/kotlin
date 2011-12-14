@@ -1,11 +1,13 @@
 package org.jetbrains.jet.lang.resolve.java.signature;
 
+import org.jetbrains.jet.lang.types.Variance;
+
 /**
  * @author Stepan Koltsov
  */
 public class JetSignatureAdapter implements JetSignatureVisitor {
     @Override
-    public void visitFormalTypeParameter(String name) {
+    public void visitFormalTypeParameter(String name, Variance variance) {
     }
 
     @Override

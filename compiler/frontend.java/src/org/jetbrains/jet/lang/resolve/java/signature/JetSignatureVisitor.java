@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java.signature;
 
+import org.jetbrains.jet.lang.types.Variance;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
@@ -30,7 +31,7 @@ public interface JetSignatureVisitor {
      *
      * @param name the name of the formal parameter.
      */
-    void visitFormalTypeParameter(String name);
+    void visitFormalTypeParameter(String name, Variance variance);
 
     /**
      * Visits the class bound of the last visited formal type parameter.
