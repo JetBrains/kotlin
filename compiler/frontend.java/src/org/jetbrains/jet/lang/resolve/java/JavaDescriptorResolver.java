@@ -341,11 +341,14 @@ public class JavaDescriptorResolver {
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
             ValueParameterDescriptor valueParameterDescriptor = resolveParameterDescriptor(containingDeclaration, i, parameter);
-            result.add(valueParameterDescriptor);
+            if (valueParameterDescriptor != null) {
+                result.add(valueParameterDescriptor);
+            }
         }
         return result;
     }
 
+    @Nullable
     private ValueParameterDescriptor resolveParameterDescriptor(DeclarationDescriptor containingDeclaration, int i, PsiParameter parameter) {
         PsiType psiType = parameter.getType();
 
@@ -389,6 +392,8 @@ public class JavaDescriptorResolver {
                 if (signatureExpression != null) {
                     typeFromAnnotation = (String) signatureExpression.getValue();
                 }
+            } else if (annotation.getQualifiedName().equals(StdlibNames.JET_TYPE_PARAMETER_CLASS)) {
+                return null;
             }
         }
         
