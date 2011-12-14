@@ -1,88 +1,81 @@
-package jet.typeinfo.internal.signature;
+package org.jetbrains.jet.rt.signature;
 
 import jet.typeinfo.TypeInfoVariance;
 
 /**
  * @author Stepan Koltsov
  */
-public class JetSignatureExceptionsAdapter implements JetSignatureVisitor {
+public class JetSignatureAdapter implements JetSignatureVisitor {
     @Override
     public void visitFormalTypeParameter(String name, TypeInfoVariance variance) {
-        throw new IllegalStateException();
     }
 
     @Override
     public JetSignatureVisitor visitClassBound() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public JetSignatureVisitor visitInterfaceBound() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public JetSignatureVisitor visitSuperclass() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public JetSignatureVisitor visitInterface() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public JetSignatureVisitor visitParameterType() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public JetSignatureVisitor visitReturnType() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public JetSignatureVisitor visitExceptionType() {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public void visitBaseType(char descriptor, boolean nullable) {
-        throw new IllegalStateException();
     }
 
     @Override
     public void visitTypeVariable(String name, boolean nullable) {
-        throw new IllegalStateException();
     }
 
     @Override
     public JetSignatureVisitor visitArrayType(boolean nullable) {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public void visitClassType(String name, boolean nullable) {
-        throw new IllegalStateException();
     }
 
     @Override
     public void visitInnerClassType(String name, boolean nullable) {
-        throw new IllegalStateException();
     }
 
     @Override
     public void visitTypeArgument() {
-        throw new IllegalStateException();
     }
 
     @Override
     public JetSignatureVisitor visitTypeArgument(char wildcard) {
-        throw new IllegalStateException();
+        return this;
     }
 
     @Override
     public void visitEnd() {
-        throw new IllegalStateException();
     }
 }

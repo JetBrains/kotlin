@@ -1,12 +1,12 @@
-package jet.typeinfo.internal;
+package org.jetbrains.jet.rt;
 
 import jet.typeinfo.JetSignature;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import jet.typeinfo.TypeInfoVariance;
-import jet.typeinfo.internal.signature.JetSignatureExceptionsAdapter;
-import jet.typeinfo.internal.signature.JetSignatureReader;
-import jet.typeinfo.internal.signature.JetSignatureVisitor;
+import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
+import org.jetbrains.jet.rt.signature.JetSignatureReader;
+import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;

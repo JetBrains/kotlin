@@ -1,4 +1,4 @@
-package jet.typeinfo.internal.signature;
+package org.jetbrains.jet.rt.signature;
 
 import jet.typeinfo.TypeInfoVariance;
 

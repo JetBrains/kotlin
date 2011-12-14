@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
-import jet.typeinfo.internal.signature.JetSignatureReader;
+import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
