@@ -21,7 +21,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
   Collections.<!UNRESOLVED_REFERENCE!>emptyList<!>
   Collections.emptyList<Int>
   Collections.emptyList<Int>()
-  Collections.emptyList()
+  Collections.<!TYPE_INFERENCE_FAILED!>emptyList()<!>
 
   Collections.singleton<Int>(1) : Set<Int>?
   Collections.singleton<Int>(<!ERROR_COMPILE_TIME_VALUE!>1.0<!>)

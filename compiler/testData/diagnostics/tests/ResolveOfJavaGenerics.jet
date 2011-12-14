@@ -6,7 +6,8 @@ fun test(<!UNUSED_PARAMETER!>a<!> : annotation.RetentionPolicy) {
 }
 
 fun test() {
-  java.util.Collections.emptyList()
+  java.util.Collections.<!TYPE_INFERENCE_FAILED!>emptyList()<!>
+  val <!UNUSED_VARIABLE!>a<!> : java.util.Collection<String>? = java.util.Collections.emptyList()
 }
 
 fun test(<!UNUSED_PARAMETER!>a<!> : java.lang.Comparable<Int>) {

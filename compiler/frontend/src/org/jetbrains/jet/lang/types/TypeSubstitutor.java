@@ -20,7 +20,7 @@ public class TypeSubstitutor {
         }
         final TypeProjection projection = new TypeProjection(type);
 
-        return create(new TypeSubstitution() {
+        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 if (constructors.contains(key)) {

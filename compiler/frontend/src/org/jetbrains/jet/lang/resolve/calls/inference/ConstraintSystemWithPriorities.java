@@ -10,7 +10,10 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.PARAMETER_BOUND;
 
@@ -200,7 +203,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         else {
             // One unknown and one known
             if (upper.isKnown()) {
-                if (TypeUtils.canHaveSubtypes(typeChecker, upper.getType())) {
+                if (!TypeUtils.canHaveSubtypes(typeChecker, upper.getType())) {
                     // Upper bound is final -> we have to equate the lower bounds to it
                     return expandEqualityConstraint(lower, upper);
                 }
@@ -225,17 +228,8 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         Solution solution = new Solution();
         // At this point we only have type values, no bounds added for them, no values computed for unknown types
 
-        // Generate low-priority constraints from bounds
-        for (Map.Entry<TypeParameterDescriptor, TypeValue> entry : Sets.newHashSet(unknownTypes.entrySet())) {
-            TypeParameterDescriptor typeParameterDescriptor = entry.getKey();
-            TypeValue typeValue = entry.getValue();
-            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
-                addSubtypingConstraint(PARAMETER_BOUND.assertSubtyping(typeValue.getOriginalType(), getTypeValueFor(upperBound).getOriginalType()));
-            }
-            for (JetType lowerBound : typeParameterDescriptor.getLowerBounds()) {
-                addSubtypingConstraint(PARAMETER_BOUND.assertSubtyping(getTypeValueFor(lowerBound).getOriginalType(), typeValue.getOriginalType()));
-            }
-        }
+        // After the parameters are inferred we will make sure the initial constraints are satisfied
+        PriorityQueue<SubtypingConstraint> constraintsToEnsureAfterInference = new PriorityQueue<SubtypingConstraint>(constraintQueue);
 
         // Expand and solve constraints
         while (!constraintQueue.isEmpty()) {
@@ -247,7 +241,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
             boolean success = expandSubtypingConstraint(lower, upper);
             if (!success) {
                 solution.registerError(constraint.getErrorMessage());
-                break;
+//                break;
             }
 
             // (???) Propagate info
@@ -256,25 +250,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
             if (unsolvedUnknowns.isEmpty()) break;
         }
 
-        // Now, let's check the rest of the constraints
-
-        // Expand custom bounds, e.g. List<T> <: List<Int>
-//        for (Map.Entry<JetType, TypeValue> entry : Sets.newHashSet(knownTypes.entrySet())) {
-//            JetType jetType = entry.getKey();
-//            TypeValue typeValue = entry.getValue();
-//
-//            for (TypeValue upperBound : typeValue.getUpperBounds()) {
-//                if (upperBound.isKnown()) {
-//                    boolean ok = constraintExpander.isSubtypeOf(jetType, upperBound.getType());
-//                    if (!ok) {
-//                        listener.error("Error while expanding '" + jetType + " :< " + upperBound.getType() + "'");
-//                        return new Solution().registerError("Mismatch while expanding constraints");
-//                    }
-//                }
-//            }
-//
-//            // Lower bounds. Probably not needed for known types, as everything is symmetrical anyway
-//        }
 
         // effective bounds for each node
 //        Set<TypeValue> visited = Sets.newHashSet();
@@ -282,6 +257,16 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
 //            transitiveClosure(unknownType, visited);
 //        }
 
+        assert constraintQueue.isEmpty() || unsolvedUnknowns.isEmpty() : constraintQueue + " " + unsolvedUnknowns;
+
+        for (TypeValue unknown : unsolvedUnknowns) {
+            if (!computeValueFor(unknown)) {
+                listener.error("Not enough data to compute value for ", unknown);
+                solution.registerError("Not enough data to compute value for " + unknown + ". Please, specify type arguments explicitly");
+            }
+        }
+
+        // Logging
         for (TypeValue unknownType : unknownTypes.values()) {
             listener.constraintsForUnknown(unknownType.getTypeParameterDescriptor(), unknownType);
         }
@@ -289,21 +274,115 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
             listener.constraintsForKnownType(knownType.getType(), knownType);
         }
 
+        // Now, let's check the rest of the constraints and re-check the initial ones
+
+        // Add constraints for the declared bounds for parameters
+        // Maybe these bounds could reconcile some resolution earlier? Then, move them up
+        for (Map.Entry<TypeParameterDescriptor, TypeValue> entry : Sets.newHashSet(unknownTypes.entrySet())) {
+            TypeParameterDescriptor typeParameterDescriptor = entry.getKey();
+            TypeValue unknown = entry.getValue();
+            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+                constraintsToEnsureAfterInference.add(PARAMETER_BOUND.assertSubtyping(unknown.getOriginalType(), getTypeValueFor(upperBound).getOriginalType()));
+//                unknown.addUpperBound(new TypeValue(upperBound));
+            }
+            for (JetType lowerBound : typeParameterDescriptor.getLowerBounds()) {
+                constraintsToEnsureAfterInference.add(PARAMETER_BOUND.assertSubtyping(getTypeValueFor(lowerBound).getOriginalType(), unknown.getOriginalType()));
+//                unknown.addLowerBound(new TypeValue(lowerBound));
+            }
+        }
+
+
         // Find inconsistencies
 
-        // Compute values and check that all bounds are respected by solutions:
+        // Check that all bounds are respected by solutions:
         // we have set some of them from equality constraints with known types
         // and thus the bounds may be violated if some of the constraints conflict
-        for (TypeValue unknownType : unknownTypes.values()) {
-            check(unknownType, solution);
+
+
+        for (SubtypingConstraint constraint : constraintsToEnsureAfterInference) {
+            JetType substitutedSubtype = solution.getSubstitutor().substitute(constraint.getSubtype(), Variance.INVARIANT); // TODO
+            if (substitutedSubtype == null) continue;
+            JetType substitutedSupertype = solution.getSubstitutor().substitute(constraint.getSupertype(), Variance.INVARIANT); // TODO
+            if (substitutedSupertype == null) continue;
+
+            if (!typeChecker.isSubtypeOf(substitutedSubtype, substitutedSupertype)) {
+                solution.registerError(constraint.getErrorMessage());
+                listener.error("Constraint violation: ", substitutedSubtype, " :< ", substitutedSupertype, " message: ", constraint.getErrorMessage());
+            }
         }
-        for (TypeValue knownType : knownTypes.values()) {
-            check(knownType, solution);
-        }
+
+
+//        for (TypeValue unknownType : unknownTypes.values()) {
+//            check(unknownType, solution);
+//        }
+//
+//        for (TypeValue knownType : knownTypes.values()) {
+//            check(knownType, solution);
+//        }
+
 
         listener.done(solution, unknownTypes.keySet());
 
         return solution;
+    }
+
+    private final Set<TypeValue> beingComputed = Sets.newHashSet();
+    
+    public boolean computeValueFor(TypeValue unknown) {
+        assert !unknown.isKnown();
+        if (beingComputed.contains(unknown)) {
+            throw new LoopInTypeVariableConstraintsException();
+        }
+        if (!unknown.hasValue()) {
+            beingComputed.add(unknown);
+            try {
+                if (unknown.getPositionVariance() == Variance.IN_VARIANCE) {
+                    // maximal solution
+                    throw new UnsupportedOperationException();
+                }
+                else {
+                    // minimal solution
+
+                    Set<TypeValue> lowerBounds = unknown.getLowerBounds();
+                    Set<TypeValue> upperBounds = unknown.getUpperBounds();
+                    if (!lowerBounds.isEmpty()) {
+                        Set<JetType> types = getTypes(lowerBounds);
+
+                        JetType commonSupertype = CommonSupertypes.commonSupertype(types);
+                        for (TypeValue upperBound : upperBounds) {
+                            if (!typeChecker.isSubtypeOf(commonSupertype, upperBound.getType())) {
+                                return false;
+                            }
+                        }
+
+                        listener.log("minimal solution from lower bounds for ", this, " is ", commonSupertype);
+                        assignValueTo(unknown, commonSupertype);
+                    }
+                    else if (!upperBounds.isEmpty()) {
+                        Set<JetType> types = getTypes(upperBounds);
+                        JetType intersect = TypeUtils.intersect(typeChecker, types);
+
+                        if (intersect == null) return false;
+
+                        assignValueTo(unknown, intersect);
+                    }
+                    else {
+                        return false; // No bounds to compute the value from
+                    }
+                }
+            } finally {
+                beingComputed.remove(unknown);
+            }
+        }
+        return true;
+    }
+
+    private static Set<JetType> getTypes(Set<TypeValue> lowerBounds) {
+        Set<JetType> types = Sets.newHashSet();
+        for (TypeValue lowerBound : lowerBounds) {
+            types.add(lowerBound.getType());
+        }
+        return types;
     }
 
     private void transitiveClosure(TypeValue current, Set<TypeValue> visited) {
@@ -324,6 +403,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
     }
 
     private void check(TypeValue typeValue, Solution solution) {
+        if (!typeValue.hasValue()) return;
         try {
             JetType resultingType = typeValue.getType();
             JetType type = solution.getSubstitutor().substitute(resultingType, Variance.INVARIANT); // TODO
@@ -377,7 +457,11 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
 
                     if (!unknownTypes.containsKey(descriptor)) return null;
 
-                    TypeProjection typeProjection = new TypeProjection(getValue(descriptor));
+                    JetType value = getValue(descriptor);
+                    if (value == null) {
+                        return null;
+                    }
+                    TypeProjection typeProjection = new TypeProjection(value);
 
                     listener.log(descriptor, " |-> ", typeProjection);
 
@@ -411,7 +495,8 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
 
         @Override
         public JetType getValue(TypeParameterDescriptor typeParameterDescriptor) {
-            return getTypeVariable(typeParameterDescriptor).getType();
+            TypeValue typeVariable = getTypeVariable(typeParameterDescriptor);
+            return typeVariable.hasValue() ? typeVariable.getType() : null;
         }
 
         @NotNull
