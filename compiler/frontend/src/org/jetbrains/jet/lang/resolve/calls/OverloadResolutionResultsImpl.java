@@ -9,7 +9,7 @@ import java.util.Collections;
 /**
 * @author abreslav
 */
-public class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
+/*package*/ class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallImpl<D> descriptor) {
         return new OverloadResolutionResultsImpl<D>(Code.SUCCESS, Collections.singleton(descriptor));
@@ -40,15 +40,21 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
 
     @Override
     @NotNull
-    public Collection<ResolvedCallImpl<D>> getResults() {
+    public Collection<ResolvedCallImpl<D>> getResultingCalls() {
         return results;
     }
 
     @Override
     @NotNull
-    public ResolvedCallImpl<D> getResult() {
-        assert singleDescriptor();
+    public ResolvedCallImpl<D> getResultingCall() {
+        assert singleResult();
         return results.iterator().next();
+    }
+
+    @NotNull
+    @Override
+    public D getResultingDescriptor() {
+        return getResultingCall().getResultingDescriptor();
     }
 
     @Override
@@ -63,7 +69,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     }
 
     @Override
-    public boolean singleDescriptor() {
+    public boolean singleResult() {
         return isSuccess() || resultCode == Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH;
     }
 

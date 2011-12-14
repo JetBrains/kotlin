@@ -28,17 +28,20 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
     }
 
     @NotNull
-    Collection<? extends ResolvedCall<? extends D>> getResults();
+    Collection<? extends ResolvedCall<? extends D>> getResultingCalls();
 
     @NotNull
-    ResolvedCall<? extends D> getResult();
+    ResolvedCall<D> getResultingCall();
+
+    @NotNull
+    D getResultingDescriptor();
 
     @NotNull
     Code getResultCode();
 
     boolean isSuccess();
 
-    boolean singleDescriptor();
+    boolean singleResult();
 
     boolean isNothing();
 

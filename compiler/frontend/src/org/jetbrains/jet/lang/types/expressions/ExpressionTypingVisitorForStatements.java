@@ -11,7 +11,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -223,14 +223,14 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (receiver == null) return null;
 
         Call call = CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide);
-        ResolvedCall<FunctionDescriptor> setFunctionCall = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
+        OverloadResolutionResults<FunctionDescriptor> setFunctionResults = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
                 call,
                 arrayAccessExpression,
                 "set");
-        if (setFunctionCall == null) return null;
-        FunctionDescriptor setFunctionDescriptor = setFunctionCall.getResultingDescriptor();
+        if (!setFunctionResults.isSuccess()) return null;
+        FunctionDescriptor setFunctionDescriptor = setFunctionResults.getResultingDescriptor();
 
-        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunctionCall);
+        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunctionResults.getResultingCall());
 
 //        if (getterNeeded) {
 //            ResolvedCall<FunctionDescriptor> getFunctionCall = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(

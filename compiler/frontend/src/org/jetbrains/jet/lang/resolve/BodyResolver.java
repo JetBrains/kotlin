@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +10,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -122,10 +122,11 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY).resolveCall(
+                        OverloadResolutionResults<FunctionDescriptor> results = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY).resolveCall(
                                 context.getTrace(), scopeForConstructor,
                                 CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
-                        if (supertype != null) {
+                        if (results.isSuccess()) {
+                            JetType supertype = results.getResultingDescriptor().getReturnType();
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                             if (classDescriptor != null) {
