@@ -2,6 +2,7 @@ package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +60,14 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateTypePattern(@NotNull JsExpression expressionToMatch,
                                               @NotNull JetTypePattern pattern) {
+        //TODO: HACK to make some examples work
+        JsName className = getClassReference(pattern).getName();
+        if (className.getIdent().equals("String")) {
+            return AstUtil.typeof(expressionToMatch, program().getStringLiteral("string"));
+        }
+        if (className.getIdent().equals("Int")) {
+            return AstUtil.typeof(expressionToMatch, program().getStringLiteral("number"));
+        }
 
         JsInvocation isCheck = AstUtil.newInvocation(context().namer().isOperationReference(),
                 expressionToMatch, getClassReference(pattern));
@@ -79,7 +88,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression getClassReference(@NotNull JetTypePattern pattern) {
+    private JsNameRef getClassReference(@NotNull JetTypePattern pattern) {
         JetTypeReference typeReference = getTypeReference(pattern);
         return getClassNameReferenceForTypeReference(typeReference);
     }

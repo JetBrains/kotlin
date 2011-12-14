@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -158,6 +159,13 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private JsExpression getterCall() {
+        //TODO: HACK to make standard example work
+        if (DescriptorUtils.getFQName(propertyDescriptor).equals("jet.String.length")) {
+            JsNameRef lengthMethodReference = AstUtil.newQualifiedNameRef("length");
+            AstUtil.setQualifier(lengthMethodReference, translateQualifier());
+            return lengthMethodReference;
+        }
+
         JsName getterName = getGetterName();
         return qualifiedAccessorInvocation(getterName);
     }

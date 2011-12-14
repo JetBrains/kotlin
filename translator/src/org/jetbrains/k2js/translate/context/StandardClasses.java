@@ -29,10 +29,17 @@ public final class StandardClasses {
         declareArray(standardClasses, standardLibrary);
         declareIterator(standardClasses, standardLibrary);
         declareRange(standardClasses);
+        declareString(standardClasses);
         declareJavaArrayList(standardClasses);
         declareJavaSystem(standardClasses);
         declareJavaInteger(standardClasses);
         return standardClasses;
+    }
+
+    private static void declareString(@NotNull StandardClasses standardClasses) {
+        String stringFQName = "jet.String";
+        standardClasses.declareStandardTopLevelObject(stringFQName, "String");
+        standardClasses.declareStandardInnerDeclaration(stringFQName, "length", "length");
     }
 
     //TODO: duplication

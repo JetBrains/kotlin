@@ -339,4 +339,8 @@ public class AstUtil {
     public static JsPrefixOperation not(JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }
+
+    public static JsBinaryOperation typeof(JsExpression expression, JsStringLiteral string) {
+        return equals(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
+    }
 }
