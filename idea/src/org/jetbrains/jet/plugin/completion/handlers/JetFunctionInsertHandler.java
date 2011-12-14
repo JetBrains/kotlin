@@ -22,6 +22,10 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
+        if (context.getCompletionChar() == '(') {
+            context.setAddCompletionChar(false);
+        }
+
         int startOffset = context.getStartOffset();
         int lookupStringLength = item.getLookupString().length();
         int endOffset = startOffset + lookupStringLength;

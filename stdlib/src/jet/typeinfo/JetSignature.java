@@ -7,6 +7,8 @@ import java.util.*;
 
 /**
  * @author alex.tkachman
+ *
+ * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Retention(RetentionPolicy.RUNTIME)
 @interface JetSignature {

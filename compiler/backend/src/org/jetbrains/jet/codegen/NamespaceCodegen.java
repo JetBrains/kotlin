@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -43,7 +44,8 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        final CodegenContext context = CodegenContext.STATIC.intoNamespace(state.getBindingContext().get(BindingContext.NAMESPACE, namespace));
+        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.NAMESPACE, namespace);
+        final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);

@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
  * The fact of receiver presence must be deducted from presence of 'this$receiver' parameter
  *
  * @author alex.tkachman
+ *
+ * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,4 +26,9 @@ public @interface JetMethod {
      * @return is this type returnTypeNullable
      */
     boolean nullableReturnType() default false;
+
+    /**
+     * Return type type unless java type is correct Kotlin type.
+     */
+    String returnType () default "";
 }

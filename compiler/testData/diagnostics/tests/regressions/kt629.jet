@@ -18,6 +18,6 @@ fun box() : Boolean {
 
 
 fun box2() : Boolean {
-    var <!UNUSED_VARIABLE!>c<!> = A()
+    var c = A()
     return (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>c.p = "yeah"<!>) && true
 }

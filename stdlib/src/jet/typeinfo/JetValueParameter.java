@@ -9,10 +9,12 @@ import java.lang.annotation.Target;
  * Annotation for parameters
  *
  * @author alex.tkachman
+ *
+ * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JetParameter {
+public @interface JetValueParameter {
     /**
      * @return name of parameter
      */
@@ -32,4 +34,9 @@ public @interface JetParameter {
      * @return if this parameter has default value
      */
     boolean hasDefaultValue () default false;
+
+    /**
+     * @return type unless Java type is correct Kotlin type.
+     */
+    String type() default "";
 }

@@ -577,7 +577,7 @@ public class JetControlFlowProcessor {
             JetExpression defaultValue = parameter.getDefaultValue();
             builder.declare(parameter);
             if (defaultValue != null) {
-                builder.read(defaultValue);
+                value(defaultValue, inCondition);
             }
             builder.write(parameter, parameter);
         }

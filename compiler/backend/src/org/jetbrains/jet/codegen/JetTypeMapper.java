@@ -18,9 +18,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.signature.SignatureVisitor;
-import org.objectweb.asm.signature.SignatureWriter;
-import org.objectweb.asm.util.CheckSignatureAdapter;
 
 import java.util.*;
 
@@ -57,7 +54,7 @@ public class JetTypeMapper {
     public static final Type ARRAY_DOUBLE_TYPE = Type.getType(double[].class);
     public static final Type ARRAY_BOOL_TYPE = Type.getType(boolean[].class);
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
-    public static final Type JET_PARAMETER_TYPE = Type.getObjectType("jet/typeinfo/JetParameter");
+    public static final Type JET_PARAMETER_TYPE = Type.getObjectType("jet/typeinfo/JetValueParameter");
     public static final Type JET_TYPE_PARAMETER_TYPE = Type.getObjectType("jet/typeinfo/JetTypeParameter");
     public static final Type JET_METHOD_TYPE = Type.getObjectType("jet/typeinfo/JetMethod");
 
@@ -165,16 +162,16 @@ public class JetTypeMapper {
         return mapReturnType(jetType, null);
     }
 
-    @NotNull private Type mapReturnType(final JetType jetType, @Nullable SignatureVisitor signatureVisitor) {
+    @NotNull private Type mapReturnType(final JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
         if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             if (signatureVisitor != null) {
-                signatureVisitor.visitBaseType('V');
+                signatureVisitor.writeAsmType(Type.VOID_TYPE, false);
             }
             return Type.VOID_TYPE;
         }
         if (jetType.equals(JetStandardClasses.getNullableNothingType())) {
             if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, TYPE_OBJECT);
+                visitAsmType(signatureVisitor, TYPE_OBJECT, false);
             }
             return TYPE_OBJECT;
         }
@@ -226,10 +223,10 @@ public class JetTypeMapper {
     }
     
     @NotNull public Type mapType(final JetType jetType) {
-        return mapType(jetType, (SignatureVisitor) null);
+        return mapType(jetType, (BothSignatureWriter) null);
     }
 
-    @NotNull private Type mapType(JetType jetType, @Nullable SignatureVisitor signatureVisitor) {
+    @NotNull private Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
         return mapType(jetType, OwnerKind.IMPLEMENTATION, signatureVisitor);
     }
 
@@ -237,17 +234,22 @@ public class JetTypeMapper {
         return mapType(jetType, kind, null);
     }
 
-    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable SignatureVisitor signatureVisitor) {
+    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable BothSignatureWriter signatureVisitor) {
         return mapType(jetType, kind, signatureVisitor, false);
     }
 
-    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable SignatureVisitor signatureVisitor, boolean boxPrimitive) {
+    @NotNull public Type mapType(JetType jetType, OwnerKind kind, @Nullable BothSignatureWriter signatureVisitor, boolean boxPrimitive) {
         Type known = knowTypes.get(jetType);
         if (known != null) {
             return mapKnownAsmType(jetType, known, signatureVisitor, boxPrimitive);
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+
+        if (ErrorUtils.isError(descriptor)) {
+            throw new IllegalStateException("should not compile an error type");
+        }
+
         if (standardLibrary.getArray().equals(descriptor)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
@@ -255,8 +257,9 @@ public class JetTypeMapper {
             JetType memberType = jetType.getArguments().get(0).getType();
             
             if (signatureVisitor != null) {
-                SignatureVisitor arraySignatureVisitor = signatureVisitor.visitArrayType();
-                mapType(memberType, kind, arraySignatureVisitor, true);
+                signatureVisitor.writeArrayType(jetType.isNullable());
+                mapType(memberType, kind, signatureVisitor, true);
+                signatureVisitor.writeArrayEnd();
             }
             
             if (!isGenericsArray(jetType)) {
@@ -268,7 +271,7 @@ public class JetTypeMapper {
 
         if (JetStandardClasses.getAny().equals(descriptor)) {
             if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, TYPE_OBJECT);
+                visitAsmType(signatureVisitor, TYPE_OBJECT, jetType.isNullable());
             }
             return TYPE_OBJECT;
         }
@@ -279,13 +282,14 @@ public class JetTypeMapper {
             Type asmType = Type.getObjectType(name + (kind == OwnerKind.TRAIT_IMPL ? "$$TImpl" : ""));
 
             if (signatureVisitor != null) {
-                signatureVisitor.visitClassType(asmType.getInternalName());
+                signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable());
                 for (TypeProjection proj : jetType.getArguments()) {
                     // TODO: +-
-                    SignatureVisitor argumentSignatureVisitor = signatureVisitor.visitTypeArgument('=');
-                    mapType(proj.getType(), kind, argumentSignatureVisitor, true);
+                    signatureVisitor.writeTypeArgument('=');
+                    mapType(proj.getType(), kind, signatureVisitor, true);
+                    signatureVisitor.writeTypeArgumentEnd();
                 }
-                signatureVisitor.visitEnd();
+                signatureVisitor.writeClassEnd();
             }
 
             return asmType;
@@ -294,7 +298,7 @@ public class JetTypeMapper {
         if (descriptor instanceof TypeParameterDescriptor) {
             if (signatureVisitor != null) {
                 TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) jetType.getConstructor().getDeclarationDescriptor();
-                signatureVisitor.visitTypeVariable(typeParameterDescriptor.getName());
+                signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), jetType.isNullable());
             }
 
             return mapType(((TypeParameterDescriptor) descriptor).getUpperBoundsAsType(), kind);
@@ -303,34 +307,19 @@ public class JetTypeMapper {
         throw new UnsupportedOperationException("Unknown type " + jetType);
     }
     
-    private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable SignatureVisitor signatureVisitor, boolean genericTypeParameter) {
+    private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable BothSignatureWriter signatureVisitor, boolean genericTypeParameter) {
         if (signatureVisitor != null) {
             if (genericTypeParameter) {
-                visitAsmType(signatureVisitor, boxType(asmType));
+                visitAsmType(signatureVisitor, boxType(asmType), jetType.isNullable());
             } else {
-                visitAsmType(signatureVisitor, asmType);
+                visitAsmType(signatureVisitor, asmType, jetType.isNullable());
             }
         }
         return asmType;
     }
 
-    public static void visitAsmType(SignatureVisitor visitor, Type asmType) {
-        switch (asmType.getSort()) {
-        case Type.OBJECT:
-            visitor.visitClassType(asmType.getInternalName());
-            visitor.visitEnd();
-            return;
-        case Type.ARRAY:
-            SignatureVisitor elementSignatureVisitor = visitor.visitArrayType();
-            visitAsmType(elementSignatureVisitor, asmType.getElementType());
-            return;
-        default:
-            String descriptor = asmType.getDescriptor();
-            if (descriptor.length() != 1) {
-                throw new IllegalStateException();
-            }
-            visitor.visitBaseType(descriptor.charAt(0));
-        }
+    public static void visitAsmType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
+        visitor.writeAsmType(asmType, nullable);
     }
 
     public static Type unboxType(final Type type) {
@@ -385,8 +374,6 @@ public class JetTypeMapper {
 
         return asmType;
     }
-
-    public static final boolean DEBUG_SIGNATURE_WRITER = true;
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
         if(functionDescriptor == null)
@@ -451,22 +438,12 @@ public class JetTypeMapper {
             needGenericSignature = false;
         }
         
-        SignatureWriter signatureWriter = null;
-        SignatureVisitor signatureVisitor = null;
+        BothSignatureWriter signatureVisitor = null;
         if (needGenericSignature) {
-            signatureWriter = new SignatureWriter();
-            signatureVisitor = DEBUG_SIGNATURE_WRITER ? new CheckSignatureAdapter(CheckSignatureAdapter.METHOD_SIGNATURE, signatureWriter) : signatureWriter;
+            signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
         }
 
-        for (TypeParameterDescriptor typeParameterDescriptor : f.getTypeParameters()) {
-            if (signatureVisitor != null) {
-                signatureVisitor.visitFormalTypeParameter(typeParameterDescriptor.getName());
-                SignatureVisitor classBoundVisitor = signatureVisitor.visitClassBound();
-                // TODO: wrong base
-                visitAsmType(classBoundVisitor, TYPE_OBJECT);
-                // TODO: interfaces
-            }
-        }
+        writeFormalTypeParameters(f.getTypeParameters(), signatureVisitor);
 
         final ReceiverDescriptor receiverTypeRef = f.getReceiverParameter();
         final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
@@ -484,24 +461,114 @@ public class JetTypeMapper {
             parameterTypes.add(type);
         }
         if (receiverType != null) {
-            parameterTypes.add(mapType(receiverType, signatureVisitor != null ? signatureVisitor.visitParameterType() : null));
+            if (signatureVisitor != null) {
+                signatureVisitor.writeParameterType();
+            }
+            parameterTypes.add(mapType(receiverType, signatureVisitor));
+            if (signatureVisitor != null) {
+                signatureVisitor.writeParameterTypeEnd();
+            }
         }
+        if (signatureVisitor != null) {
+            signatureVisitor.writeParametersStart();
+        }
+
         for (TypeParameterDescriptor parameterDescriptor : f.getTypeParameters()) {
             if(parameterDescriptor.isReified()) {
                 parameterTypes.add(TYPE_TYPEINFO);
                 if (signatureVisitor != null) {
-                    visitAsmType(signatureVisitor.visitParameterType(), TYPE_TYPEINFO);
+                    signatureVisitor.writeParameterType();
+                    visitAsmType(signatureVisitor, TYPE_TYPEINFO, false);
+                    signatureVisitor.writeParameterTypeEnd();
                 }
             }
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            Type type = mapType(parameter.getOutType(), signatureVisitor != null ? signatureVisitor.visitParameterType() : null);
+            if (signatureVisitor != null) {
+                signatureVisitor.writeParameterType();
+            }
+            Type type = mapType(parameter.getOutType(), signatureVisitor);
+            if (signatureVisitor != null) {
+                signatureVisitor.writeParameterTypeEnd();
+            }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }
-        Type returnType = f instanceof ConstructorDescriptor ? Type.VOID_TYPE : mapReturnType(f.getReturnType(), signatureVisitor != null ? signatureVisitor.visitReturnType() : null);
+        
+        if (signatureVisitor != null) {
+            signatureVisitor.writeParametersEnd();
+        }
+        
+        Type returnType;
+        if (f instanceof ConstructorDescriptor) {
+            returnType = Type.VOID_TYPE;
+            if (signatureVisitor != null) {
+                signatureVisitor.writeReturnType();
+                visitAsmType(signatureVisitor, Type.VOID_TYPE, false);
+                signatureVisitor.writeReturnTypeEnd();
+            }
+        } else {
+            if (signatureVisitor != null) {
+                signatureVisitor.writeReturnType();
+                returnType = mapReturnType(f.getReturnType(), signatureVisitor);
+                signatureVisitor.writeReturnTypeEnd();
+            }
+            else {
+                returnType = mapReturnType(f.getReturnType(), null);
+            }
+        }
         Method method = new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
-        return new JvmMethodSignature(method, signatureWriter != null ? signatureWriter.toString() : null);
+        if (signatureVisitor == null) {
+            return new JvmMethodSignature(method, null, null, null);
+        } else {
+            return new JvmMethodSignature(method, signatureVisitor.makeJavaString(),
+                    signatureVisitor.makeKotlinSignatures(), signatureVisitor.makeKotlinReturnTypeSignature());
+        }
+    }
+
+
+    public void writeFormalTypeParameters(List<TypeParameterDescriptor> typeParameters, BothSignatureWriter signatureVisitor) {
+        if (signatureVisitor == null) {
+            return;
+        }
+
+        signatureVisitor.writerFormalTypeParametersStart();
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+            writeFormalTypeParameter(typeParameterDescriptor, signatureVisitor);
+        }
+        signatureVisitor.writeFormalTypeParametersEnd();
+    }
+
+    private void writeFormalTypeParameter(TypeParameterDescriptor typeParameterDescriptor, BothSignatureWriter signatureVisitor) {
+        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName());
+
+        classBound:
+        {
+            signatureVisitor.writeClassBound();
+
+            for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
+                if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
+                    if (!CodegenUtil.isInterface(jetType)) {
+                        mapType(jetType, signatureVisitor);
+                        break classBound;
+                    }
+                }
+            }
+
+            // "extends Object" seems to be not optional according to ClassFileFormat-Java5.pdf
+        }
+        signatureVisitor.writeClassBoundEnd();
+
+        for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
+            if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
+                if (CodegenUtil.isInterface(jetType)) {
+                    signatureVisitor.writeInterfaceBound();
+                    mapType(jetType, signatureVisitor);
+                    signatureVisitor.writeInterfaceBoundEnd();
+                }
+            }
+        }
+
     }
 
     public JvmMethodSignature mapSignature(String name, FunctionDescriptor f) {
@@ -516,7 +583,7 @@ public class JetTypeMapper {
         }
         Type returnType = mapReturnType(f.getReturnType());
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()])), null);
+        return new JvmMethodSignature(new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()])), null, null, null);
     }
 
 
@@ -541,7 +608,7 @@ public class JetTypeMapper {
         }
 
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null);
+        return new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null, null, null);
     }
 
     @Nullable
@@ -571,7 +638,7 @@ public class JetTypeMapper {
         params.add(mapType(inType));
 
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null);
+        return new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null);
     }
 
     private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, List<Type> valueParameterTypes) {
@@ -593,7 +660,7 @@ public class JetTypeMapper {
         }
 
         Method method = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-        return new JvmMethodSignature(method, null); // TODO: generics signature
+        return new JvmMethodSignature(method, null, null, null); // TODO: generics signature
     }
 
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind) {

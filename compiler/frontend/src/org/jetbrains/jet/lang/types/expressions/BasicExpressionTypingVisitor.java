@@ -110,11 +110,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context) {
+        return visitParenthesizedExpression(expression, context, false);
+    }
+
+    public JetType visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context, boolean isStatement) {
         JetExpression innerExpression = expression.getExpression();
         if (innerExpression == null) {
             return null;
         }
-        return DataFlowUtils.checkType(facade.getType(innerExpression, context.replaceScope(context.scope)), expression, context);
+        return DataFlowUtils.checkType(facade.getType(innerExpression, context.replaceScope(context.scope), isStatement), expression, context);
     }
 
     @Override
@@ -479,7 +483,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context) {
-        return context.getServices().getBlockReturnedType(context.scope, expression, CoercionStrategy.NO_COERCION, context);
+        return visitBlockExpression(expression, context, false);
+    }
+
+    public JetType visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        return context.getServices().getBlockReturnedType(context.scope, expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context);
     }
 
     @Override
@@ -611,6 +619,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
+        return visitUnaryExpression(expression, context, false);
+    }
+
+    public JetType visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context, boolean isStatement) {
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return null;
         JetSimpleNameExpression operationSign = expression.getOperationReference();
@@ -619,9 +631,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             referencedName = referencedName == null ? " <?>" : referencedName;
             context.labelResolver.enterLabeledElement(referencedName.substring(1), baseExpression);
             // TODO : Some processing for the label?
-            JetType type = DataFlowUtils.checkType(facade.getType(baseExpression, context.replaceExpectedReturnType(context.expectedType)), expression, context);
+            ExpressionTypingContext newContext = context.replaceExpectedReturnType(context.expectedType);
+            JetType type = facade.getType(baseExpression, newContext, isStatement);
             context.labelResolver.exitLabeledElement(baseExpression);
-            return type;
+            return DataFlowUtils.checkType(type, expression, context);
         }
         IElementType operationType = operationSign.getReferencedNameElementType();
         String name = OperatorConventions.UNARY_OPERATION_NAMES.get(operationType);
@@ -835,6 +848,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private JetType assignmentIsNotAnExpressionError(JetBinaryExpression expression, ExpressionTypingContext context) {
+        facade.checkStatementType(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
         context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
         return null;
     }

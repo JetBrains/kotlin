@@ -95,7 +95,7 @@ public class ErrorUtils {
             true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_CONSTRUCTOR_GROUP, ERROR_CONSTRUCTOR);
     }
 
-    private static JetScope getErrorScope() {
+    public static JetScope getErrorScope() {
         return ERROR_SCOPE;
     }
 

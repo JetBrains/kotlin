@@ -326,9 +326,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testLoops() throws Exception {
-        assertType("while (1) {1}", "Unit");
-        assertType("do {1} while(1)", "Unit");
-        assertType("for (i in 1) {1}", "Unit");
+        assertType("{ while (1) {1} }", "fun(): Unit");
+        assertType("{ do {1} while(1) }", "fun(): Unit");
+        assertType("{ for (i in 1) {1} }", "fun(): Unit");
     }
 
     public void testFunctionLiterals() throws Exception {

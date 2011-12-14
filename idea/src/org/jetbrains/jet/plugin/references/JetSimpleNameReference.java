@@ -17,12 +17,16 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
@@ -105,6 +109,7 @@ class JetSimpleNameReference extends JetPsiReference {
             @NotNull Iterable<DeclarationDescriptor> descriptors, @NotNull final JetScope scope
     ) {
         final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
+
         descriptorsSet.removeAll(
                 Collections2.filter(JetScopeUtils.getAllExtensions(scope), new Predicate<CallableDescriptor>() {
                     @Override
@@ -121,6 +126,11 @@ class JetSimpleNameReference extends JetPsiReference {
             @NotNull final JetScope externalScope,
             @NotNull final ReceiverDescriptor receiverDescriptor
     ) {
+        // It's impossible to add extension function for namespace
+        if (receiverDescriptor.getType() instanceof NamespaceType) {
+            return descriptors;
+        }
+
         Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
         descriptorsSet.addAll(Collections2.filter(JetScopeUtils.getAllExtensions(externalScope),
@@ -138,7 +148,7 @@ class JetSimpleNameReference extends JetPsiReference {
         List<LookupElement> result = Lists.newArrayList();
 
         for (final DeclarationDescriptor descriptor : descriptors) {
-            LookupElementBuilder element = LookupElementBuilder.create(descriptor.getName());
+            LookupElementBuilder element = LookupElementBuilder.create(descriptor, descriptor.getName());
             String typeText = "";
             String tailText = "";
             boolean tailTextGrayed = false;
@@ -155,6 +165,7 @@ class JetSimpleNameReference extends JetPsiReference {
                                DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getOutType());
                     }
                 }, ",") + ")";
+                
 
                 // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
                 // TODO: Support omitting brackets for one argument functions
@@ -175,6 +186,7 @@ class JetSimpleNameReference extends JetPsiReference {
             else {
                 typeText = DescriptorRenderer.TEXT.render(descriptor);
             }
+            
             element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText);
 
             PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getOriginal());

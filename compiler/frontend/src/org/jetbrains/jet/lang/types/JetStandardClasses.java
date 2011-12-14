@@ -242,6 +242,11 @@ public class JetStandardClasses {
     public static JetType getAnyType() {
         return ANY_TYPE;
     }
+    
+    public static boolean isAny(JetType type) {
+        return !(type instanceof NamespaceType) &&
+               type.getConstructor() == ANY_TYPE.getConstructor();
+    }
 
     public static JetType getNullableAnyType() {
         return NULLABLE_ANY_TYPE;

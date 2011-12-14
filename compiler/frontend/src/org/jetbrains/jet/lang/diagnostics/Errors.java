@@ -232,6 +232,14 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> RETURN_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "This function must return a value of type {0}");
     ParameterizedDiagnosticFactory1<JetType> EXPECTED_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "Expected a value of type {0}");
     ParameterizedDiagnosticFactory1<JetType> ASSIGNMENT_TYPE_MISMATCH = ParameterizedDiagnosticFactory1.create(ERROR, "Expected a value of type {0}. Assignment operation is not an expression, so it does not return any value");
+    ParameterizedDiagnosticFactory1<JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = ParameterizedDiagnosticFactory1.create(WARNING, "Type was casted to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast");
+    ParameterizedDiagnosticFactory1<JetExpression> EXPRESSION_EXPECTED = new ParameterizedDiagnosticFactory1<JetExpression>(ERROR, "{0} is not an expression, and only expression are allowed here") {
+        @Override
+        protected String makeMessageFor(JetExpression expression) {
+            String expressionType = expression.toString();
+            return expressionType.substring(0, 1) + expressionType.substring(1).toLowerCase();
+        }
+    };
 
     ParameterizedDiagnosticFactory1<JetType> UPPER_BOUND_VIOLATED = ParameterizedDiagnosticFactory1.create(ERROR, "An upper bound {0} is violated"); // TODO : Message
     ParameterizedDiagnosticFactory1<JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = ParameterizedDiagnosticFactory1.create(ERROR, "{0} is a final type, and thus a class object cannot extend it");

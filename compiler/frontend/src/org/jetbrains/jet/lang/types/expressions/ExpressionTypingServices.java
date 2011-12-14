@@ -48,7 +48,11 @@ public class ExpressionTypingServices {
 
     @NotNull
     public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType) {
-        JetType type = getType(scope, expression, expectedType);
+        return safeGetType(scope, expression, expectedType, DataFlowInfo.EMPTY);
+    }
+
+    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
+        JetType type = getType(scope, expression, expectedType, dataFlowInfo);
         if (type != null) {
             return type;
         }
@@ -61,7 +65,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, DataFlowInfo dataFlowInfo) {
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
@@ -133,7 +137,7 @@ public class ExpressionTypingServices {
             getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context);
         }
         else {
-            expressionTypingFacade.getType(bodyExpression, newContext);
+            expressionTypingFacade.getType(bodyExpression, newContext, !blockBody);
         }
     }
 
@@ -159,7 +163,7 @@ public class ExpressionTypingServices {
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
         expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                                                                                          trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN, false));
+                                                                                          trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN, false), !function.hasBlockBody());
         //todo function literals
         final Collection<JetExpression> returnedExpressions = Lists.newArrayList();
         if (function.hasBlockBody()) {
@@ -225,13 +229,13 @@ public class ExpressionTypingServices {
                         final boolean[] mismatch = new boolean[1];
                         ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
                         newContext = createContext(newContext, errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
-                        result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
+                        result = blockLevelVisitor.getType(statementExpression, newContext, true);
                         if (mismatch[0]) {
                             TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
                             mismatch[0] = false;
                             ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
                             newContext = createContext(newContext, interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE, context.expectedReturnType);
-                            result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
+                            result = blockLevelVisitor.getType(statementExpression, newContext, true);
                             if (mismatch[0]) {
                                 temporaryTraceExpectingUnit.commit();
                             }
@@ -245,11 +249,11 @@ public class ExpressionTypingServices {
                     }
                     else {
                         newContext = createContext(newContext, trace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
-                        result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
+                        result = blockLevelVisitor.getType(statementExpression, newContext, true);
                     }
                 }
                 else {
-                    result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
+                    result = blockLevelVisitor.getType(statementExpression, newContext, true);
                     if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT) {
                         boolean mightBeUnit = false;
                         if (statementExpression instanceof JetDeclaration) {
@@ -271,7 +275,7 @@ public class ExpressionTypingServices {
                 }
             }
             else {
-                result = blockLevelVisitor.getTypeForStatement(statementExpression, newContext);
+                result = blockLevelVisitor.getType(statementExpression, newContext, true);
             }
 
             DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();

@@ -376,7 +376,7 @@ public abstract class TypeInfo<T> implements JetObject {
                 return false;
             }
             if (superType.projections == null || superType.projections.length != projections.length) {
-                throw new IllegalArgumentException("inconsistent type infos for the same class");
+                throw new IllegalArgumentException("inconsistent type info for the same class");
             }
             for (int i = 0; i < projections.length; i++) {
                 // TODO handle variance here
@@ -451,18 +451,18 @@ public abstract class TypeInfo<T> implements JetObject {
             if(klass == null)
                 return null;
 
-            lock.readLock().lock();
+//            lock.readLock().lock();
             Signature sig = map.get(klass);
-            lock.readLock().unlock();
+//            lock.readLock().unlock();
             if (sig == null) {
-                lock.writeLock().lock();
+//                lock.writeLock().lock();
 
                 sig = map.get(klass);
                 if (sig == null) {
                     sig = internalParse(klass);
                 }
 
-                lock.writeLock().unlock();
+//                lock.writeLock().unlock();
             }
             return sig;
         }
@@ -536,13 +536,20 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         public void parseVars(Signature signature) {
-            while(cur < string.length && string[cur] == 'T') {
-                if(signature.variables == null) {
-                    signature.variables  = new LinkedList<TypeInfoProjection>();
-                    signature.varNames = new HashMap<String, Integer>();
+            if (cur < string.length && string[cur] == '<') {
+                cur++;
+                while(cur < string.length && string[cur] != '>') {
+                    if(signature.variables == null) {
+                        signature.variables  = new LinkedList<TypeInfoProjection>();
+                        signature.varNames = new HashMap<String, Integer>();
+                    }
+                    if (string[cur] != 'T') {
+                        throw new IllegalStateException(new String(string));
+                    }
+                    cur++;
+                    signature.variables.add(parseVar(signature));
                 }
                 cur++;
-                signature.variables.add(parseVar(signature));
             }
             signature.variables = signature.variables == null ? Collections.<TypeInfoProjection>emptyList() : signature.variables;
             signature.varNames  = signature.varNames == null ? Collections.<String,Integer>emptyMap() : signature.varNames;
