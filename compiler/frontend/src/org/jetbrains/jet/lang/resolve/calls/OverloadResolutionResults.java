@@ -4,13 +4,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
-* @author abreslav
-*/
-public class OverloadResolutionResults<D extends CallableDescriptor> {
-    public enum Code {
+ * @author abreslav
+ */
+public interface OverloadResolutionResults<D extends CallableDescriptor> {
+    enum Code {
         SUCCESS(true),
         NAME_NOT_FOUND(false),
         SINGLE_CANDIDATE_ARGUMENT_MISMATCH(false),
@@ -26,69 +25,22 @@ public class OverloadResolutionResults<D extends CallableDescriptor> {
         boolean isSuccess() {
             return success;
         }
-
-    }
-
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> success(@NotNull ResolvedCallImpl<D> descriptor) {
-        return new OverloadResolutionResults<D>(Code.SUCCESS, Collections.singleton(descriptor));
-    }
-
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> nameNotFound() {
-        return new OverloadResolutionResults<D>(Code.NAME_NOT_FOUND, Collections.<ResolvedCallImpl<D>>emptyList());
-    }
-
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> singleFailedCandidate(ResolvedCallImpl<D> candidate) {
-        return new OverloadResolutionResults<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
-    }
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> manyFailedCandidates(Collection<ResolvedCallImpl<D>> failedCandidates) {
-        return new OverloadResolutionResults<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
-    }
-
-    public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(Collection<ResolvedCallImpl<D>> descriptors) {
-        return new OverloadResolutionResults<D>(Code.AMBIGUITY, descriptors);
-    }
-
-    private final Collection<ResolvedCallImpl<D>> results;
-    private final Code resultCode;
-
-    private OverloadResolutionResults(@NotNull Code resultCode, @NotNull Collection<ResolvedCallImpl<D>> results) {
-        this.results = results;
-        this.resultCode = resultCode;
     }
 
     @NotNull
-    public Collection<ResolvedCallImpl<D>> getResults() {
-        return results;
-    }
+    Collection<? extends ResolvedCall<? extends D>> getResults();
 
     @NotNull
-    public ResolvedCallImpl<D> getResult() {
-        assert singleDescriptor();
-        return results.iterator().next();
-    }
+    ResolvedCall<? extends D> getResult();
 
     @NotNull
-    public Code getResultCode() {
-        return resultCode;
-    }
+    Code getResultCode();
 
-    public boolean isSuccess() {
-        return resultCode.isSuccess();
-    }
+    boolean isSuccess();
 
-    public boolean singleDescriptor() {
-        return isSuccess() || resultCode == Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH;
-    }
+    boolean singleDescriptor();
 
-    public boolean isNothing() {
-        return resultCode == Code.NAME_NOT_FOUND;
-    }
+    boolean isNothing();
 
-    public boolean isAmbiguity() {
-        return resultCode == Code.AMBIGUITY;
-    }
-//
-//    public OverloadResolutionResults<D> newContents(@NotNull Collection<D> functionDescriptors) {
-//        return new OverloadResolutionResults<D>(resultCode, functionDescriptors);
-//    }
+    boolean isAmbiguity();
 }

@@ -15,7 +15,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -740,7 +740,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 String name = "equals";
                 if (right != null) {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
-                    OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
+                    OverloadResolutionResultsImpl<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
                             receiver, "equals",
                             Collections.singletonList(JetStandardClasses.getNullableAnyType()));
                     if (resolutionResults.isSuccess()) {

@@ -372,10 +372,10 @@ public class CallResolver {
         };
 
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
-        OverloadResolutionResults<D> resultsForFirstNonemptyCandidateSet = null;
+        OverloadResolutionResultsImpl<D> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
-            OverloadResolutionResults<D> results = performResolution(temporaryTrace, scope, expectedType, task, tracing);
+            OverloadResolutionResultsImpl<D> results = performResolution(temporaryTrace, scope, expectedType, task, tracing);
             if (results.isSuccess()) {
                 temporaryTrace.commit();
 
@@ -407,7 +407,7 @@ public class CallResolver {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> performResolution(
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolution(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope, @NotNull JetType expectedType,
             @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing
@@ -593,7 +593,7 @@ public class CallResolver {
             }
         }
         
-        OverloadResolutionResults<D> results = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates);
+        OverloadResolutionResultsImpl<D> results = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates);
         if (!results.singleDescriptor()) {
             checkTypesWithNoCallee(trace, scope, task.getCall());
         }
@@ -740,7 +740,7 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeResultAndReportErrors(
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
             BindingTrace trace,
             TracingStrategy tracing,
             Set<ResolvedCallImpl<D>> successfulCandidates,
@@ -748,7 +748,7 @@ public class CallResolver {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (successfulCandidates.size() > 0) {
-            OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(successfulCandidates, true);
+            OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulCandidates, true);
             if (results.isAmbiguity()) {
                 // This check is needed for the following case:
                 //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
@@ -772,15 +772,15 @@ public class CallResolver {
                         }
                     }
                     if (!thisLevel.isEmpty()) {
-                        OverloadResolutionResults<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
+                        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
                         if (results.isSuccess()) {
                             results.getResult().getTrace().commit();
-                            return OverloadResolutionResults.singleFailedCandidate(results.getResult());
+                            return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResult());
                         }
 
                         tracing.noneApplicable(trace, results.getResults());
                         tracing.recordAmbiguity(trace, results.getResults());
-                        return OverloadResolutionResults.manyFailedCandidates(results.getResults());
+                        return OverloadResolutionResultsImpl.manyFailedCandidates(results.getResults());
                     }
                 }
                 assert false : "Should not be reachable, cause every status must belong to some level";
@@ -789,17 +789,17 @@ public class CallResolver {
                 if (noOverrides.size() != 1) {
                     tracing.noneApplicable(trace, noOverrides);
                     tracing.recordAmbiguity(trace, noOverrides);
-                    return OverloadResolutionResults.manyFailedCandidates(noOverrides);
+                    return OverloadResolutionResultsImpl.manyFailedCandidates(noOverrides);
                 }
                 failedCandidates = noOverrides;
             }
             ResolvedCallImpl<D> failed = failedCandidates.iterator().next();
             failed.getTrace().commit();
-            return OverloadResolutionResults.singleFailedCandidate(failed);
+            return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
         }
         else {
             tracing.unresolvedReference(trace);
-            return OverloadResolutionResults.nameNotFound();
+            return OverloadResolutionResultsImpl.nameNotFound();
         }
     }
 
@@ -810,7 +810,7 @@ public class CallResolver {
         return true;
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> chooseAndReportMaximallySpecific(Set<ResolvedCallImpl<D>> candidates, boolean discriminateGenerics) {
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(Set<ResolvedCallImpl<D>> candidates, boolean discriminateGenerics) {
         if (candidates.size() != 1) {
             Set<ResolvedCallImpl<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
             for (Iterator<ResolvedCallImpl<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
@@ -825,26 +825,26 @@ public class CallResolver {
             }
             ResolvedCallImpl<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, false);
             if (maximallySpecific != null) {
-                return OverloadResolutionResults.success(maximallySpecific);
+                return OverloadResolutionResultsImpl.success(maximallySpecific);
             }
 
             if (discriminateGenerics) {
                 ResolvedCallImpl<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
                 if (maximallySpecificGenericsDiscriminated != null) {
-                    return OverloadResolutionResults.success(maximallySpecificGenericsDiscriminated);
+                    return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
                 }
             }
 
             Set<ResolvedCallImpl<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
 
-            return OverloadResolutionResults.ambiguity(noOverrides);
+            return OverloadResolutionResultsImpl.ambiguity(noOverrides);
         }
         else {
             ResolvedCallImpl<D> result = candidates.iterator().next();
 
             TemporaryBindingTrace temporaryTrace = result.getTrace();
             temporaryTrace.commit();
-            return OverloadResolutionResults.success(result);
+            return OverloadResolutionResultsImpl.success(result);
         }
     }
 
@@ -868,7 +868,7 @@ public class CallResolver {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResultsImpl<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
         List<ResolvedCallImpl<FunctionDescriptor>> result = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
 
         BindingTraceContext trace = new BindingTraceContext();
