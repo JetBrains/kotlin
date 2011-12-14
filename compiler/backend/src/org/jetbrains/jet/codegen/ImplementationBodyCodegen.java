@@ -71,9 +71,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.visitOuterClass(typeMapper.mapType(((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), null, null);
         }
 
-        if(myClass instanceof JetClass) {
+        if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, "Ljet/typeinfo/JetSignature;", true);
-            annotationVisitor.visit("value", SignatureUtil.classToSignature((JetClass)myClass, bindingContext, typeMapper));
+            //annotationVisitor.visit("value", SignatureUtil.classToSignature((JetClass)myClass, bindingContext, typeMapper));
+            annotationVisitor.visit("value", signature.getKotlinGenericSignature());
             annotationVisitor.visitEnd();
         }
     }

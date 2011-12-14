@@ -52,6 +52,7 @@ public class BothSignatureWriter {
 
     private JetSignatureWriter jetSignatureWriter;
     
+    private String kotlinClassParameters;
     private String kotlinClassSignature;
     
     private List<String> kotlinParameterTypes = new ArrayList<String>();
@@ -207,7 +208,16 @@ public class BothSignatureWriter {
     }
 
     public void writeFormalTypeParametersEnd() {
+        jetSignatureWriter.visitSuperclass(); // just to call endFormals
+
+        kotlinClassParameters = jetSignatureWriter.toString();
+
         jetSignatureWriter = null;
+
+        if (DEBUG_SIGNATURE_WRITER) {
+            new JetSignatureReader(kotlinClassParameters).acceptFormalTypeParametersOnly(new JetSignatureAdapter());
+        }
+
         checkState(State.TYPE_PARAMETERS);
     }
 
@@ -285,6 +295,11 @@ public class BothSignatureWriter {
     public void writeSupersEnd() {
         kotlinClassSignature = jetSignatureWriter.toString();
         jetSignatureWriter = null;
+
+        if (DEBUG_SIGNATURE_WRITER) {
+            new JetSignatureReader(kotlinClassSignature).accept(new JetSignatureAdapter());
+        }
+
         transitionState(State.SUPERS, State.CLASS_END);
     }
 
@@ -344,7 +359,13 @@ public class BothSignatureWriter {
     @Nullable
     public String makeKotlinClassSignature() {
         checkState(State.CLASS_END);
-        return kotlinClassSignature; 
+        if (kotlinClassParameters == null) {
+            throw new IllegalStateException();
+        }
+        if (kotlinClassSignature == null) {
+            throw new IllegalStateException();
+        }
+        return kotlinClassParameters + kotlinClassSignature;
     }
 
 }

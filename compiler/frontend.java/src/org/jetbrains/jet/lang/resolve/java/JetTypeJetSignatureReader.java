@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import jet.typeinfo.TypeInfoVariance;
+import jet.typeinfo.internal.signature.JetSignatureAdapter;
+import jet.typeinfo.internal.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -20,7 +22,7 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public abstract class JetTypeJetSignatureReader implements JetSignatureVisitor {
+public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAdapter {
     
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JetStandardLibrary jetStandardLibrary;
@@ -30,47 +32,6 @@ public abstract class JetTypeJetSignatureReader implements JetSignatureVisitor {
         this.jetStandardLibrary = jetStandardLibrary;
     }
     
-    
-
-    @Override
-    public void visitFormalTypeParameter(String name, TypeInfoVariance variance) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitClassBound() {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitInterfaceBound() {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitSuperclass() {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitInterface() {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitParameterType() {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitReturnType() {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitExceptionType() {
-        throw new IllegalStateException();
-    }
     
     private JetType getPrimitiveType(char descriptor, boolean nullable) {
         if (!nullable) {
@@ -124,16 +85,6 @@ public abstract class JetTypeJetSignatureReader implements JetSignatureVisitor {
         done(getPrimitiveType(descriptor, nullable));
     }
 
-    @Override
-    public void visitTypeVariable(String name, boolean nullable) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public JetSignatureVisitor visitArrayType(boolean nullable) {
-        throw new IllegalStateException();
-    }
-
 
     private ClassDescriptor classDescriptor;
     private boolean nullable;
@@ -150,16 +101,6 @@ public abstract class JetTypeJetSignatureReader implements JetSignatureVisitor {
         this.typeArguments = new ArrayList<TypeProjection>();
     }
 
-    @Override
-    public void visitInnerClassType(String name, boolean nullable) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void visitTypeArgument() {
-        throw new IllegalStateException();
-    }
-    
     private static Variance parseVariance(char wildcard) {
         switch (wildcard) {
             case '=': return Variance.INVARIANT;
