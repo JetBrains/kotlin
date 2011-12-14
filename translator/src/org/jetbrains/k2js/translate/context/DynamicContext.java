@@ -57,12 +57,6 @@ public class DynamicContext {
     }
 
     @NotNull
-    public TemporaryVariable declareTemporaryWithName(@NotNull String preferredName,
-                                                      @NotNull JsExpression initExpression) {
-        return new TemporaryVariable(namingScope.declareTemporaryWithName(preferredName), initExpression);
-    }
-
-    @NotNull
     public JsName declareLocalVariable(@NotNull DeclarationDescriptor descriptor) {
         return namingScope.declareVariable(descriptor, descriptor.getName());
     }
@@ -72,6 +66,7 @@ public class DynamicContext {
         return namingScope.jsScope();
     }
 
+    //TODO:
     @NotNull
     public JsBlock jsBlock() {
         return currentBlock;

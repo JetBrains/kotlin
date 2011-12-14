@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-//TODO: implement aliasesForDescriptors stack for this need TESTS
 public class Aliaser {
 
     public static Aliaser newInstance() {
@@ -30,7 +29,6 @@ public class Aliaser {
         return thisAliases.peek().makeRef();
     }
 
-    @SuppressWarnings("NullableProblems")
     public void setAliasForThis(@NotNull JsName alias) {
         thisAliases.push(alias);
     }

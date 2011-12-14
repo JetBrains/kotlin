@@ -14,6 +14,7 @@ import static com.google.dart.compiler.util.AstUtil.sum;
 /**
  * @author Talanov Pavel
  */
+//TODO: add toString call for non-primitive object
 public final class StringTemplateTranslator extends AbstractTranslator {
 
     @NotNull

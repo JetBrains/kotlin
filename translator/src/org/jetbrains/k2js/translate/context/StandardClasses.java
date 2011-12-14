@@ -28,7 +28,7 @@ public final class StandardClasses {
         StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
         declareArray(standardClasses, standardLibrary);
         declareIterator(standardClasses, standardLibrary);
-        declareRange(standardClasses, standardLibrary);
+        declareRange(standardClasses);
         declareJavaArrayList(standardClasses);
         declareJavaSystem(standardClasses);
         declareJavaInteger(standardClasses);
@@ -36,7 +36,7 @@ public final class StandardClasses {
     }
 
     //TODO: duplication
-    private static void declareRange(@NotNull StandardClasses standardClasses, @NotNull JetStandardLibrary standardLibrary) {
+    private static void declareRange(@NotNull StandardClasses standardClasses) {
         String intRangeFQName = "jet.IntRange";
         standardClasses.declareStandardTopLevelObject(intRangeFQName, "NumberRange");
         standardClasses.declareStandardInnerDeclaration(intRangeFQName, "<init>", "NumberRange");

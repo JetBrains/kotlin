@@ -78,10 +78,6 @@ public final class NamingScope {
         return scope.declareTemporary();
     }
 
-    public JsName declareTemporaryWithName(@NotNull String preferredName) {
-        return scope.declareName(preferredName);
-    }
-
     @NotNull
     public JsScope jsScope() {
         return scope;

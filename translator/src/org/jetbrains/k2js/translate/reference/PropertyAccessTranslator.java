@@ -213,7 +213,8 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private JsName getGetterName() {
-        //TODO: hack alert. properties for standard objects that do not have their implementation do not have getters
+        //TODO: hack alert. properties for standard objects that do not have their implementation
+        // do not have getters and thus this workaround is needed
         if (context().isStandardObject(propertyDescriptor)) {
             return context().getNameForStandardObject(propertyDescriptor);
         }

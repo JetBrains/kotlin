@@ -23,6 +23,7 @@ public final class IntrinsicDeclarationVisitor extends DeclarationDescriptorVisi
     public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @Nullable Void nothing) {
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            //noinspection NullableProblems
             memberDescriptor.accept(this, null);
         }
         return null;
