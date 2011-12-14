@@ -48,7 +48,11 @@ public class ExpressionTypingServices {
 
     @NotNull
     public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType) {
-        JetType type = getType(scope, expression, expectedType);
+        return safeGetType(scope, expression, expectedType, DataFlowInfo.EMPTY);
+    }
+
+    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
+        JetType type = getType(scope, expression, expectedType, dataFlowInfo);
         if (type != null) {
             return type;
         }
@@ -61,7 +65,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, DataFlowInfo dataFlowInfo) {
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
