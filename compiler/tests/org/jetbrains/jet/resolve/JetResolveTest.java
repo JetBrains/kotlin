@@ -16,7 +16,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -113,7 +113,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 //        JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
 
         CallResolver callResolver = new CallResolver(JetSemanticServices.createSemanticServices(getProject()), DataFlowInfo.EMPTY);
-        OverloadResolutionResults<FunctionDescriptor> functions = callResolver.resolveExactSignature(
+        OverloadResolutionResultsImpl<FunctionDescriptor> functions = callResolver.resolveExactSignature(
                 classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);
         for (ResolvedCallImpl<FunctionDescriptor> resolvedCall : functions.getResults()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();

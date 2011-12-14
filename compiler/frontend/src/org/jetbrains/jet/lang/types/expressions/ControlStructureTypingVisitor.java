@@ -10,10 +10,8 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.TaskPrioritizers;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -237,7 +235,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @Nullable
     private JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
         JetExpression loopRangeExpression = loopRange.getExpression();
-        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = context.resolveExactSignature(loopRange, "iterator", Collections.<JetType>emptyList());
+        OverloadResolutionResultsImpl<FunctionDescriptor> iteratorResolutionResults = context.resolveExactSignature(loopRange, "iterator", Collections.<JetType>emptyList());
         if (iteratorResolutionResults.isSuccess()) {
             FunctionDescriptor iteratorFunction = iteratorResolutionResults.getResult().getResultingDescriptor();
 
@@ -259,7 +257,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
             }
 
-            OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
+            OverloadResolutionResultsImpl<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
             if (nextResolutionResults.isAmbiguity()) {
                 context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
             } else if (nextResolutionResults.isNothing()) {
@@ -288,7 +286,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Nullable
     private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
+        OverloadResolutionResultsImpl<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
         } else if (hasNextResolutionResults.isNothing()) {
