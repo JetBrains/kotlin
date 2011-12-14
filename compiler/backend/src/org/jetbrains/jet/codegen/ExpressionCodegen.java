@@ -2475,9 +2475,13 @@ If finally block is present, its last expression is the value of try expression.
             return hasTypeInfoForInstanceOf(type.getArguments().get(0).getType());
         }
 
-        for(TypeParameterDescriptor proj : classDescriptor.getTypeConstructor().getParameters()) {
-            if(proj.isReified()) {
-                return true;
+        for (int i = 0; i < type.getArguments().size(); i++) {
+            TypeParameterDescriptor typeParameterDescriptor = classDescriptor.getTypeConstructor().getParameters().get(i);
+            if(typeParameterDescriptor.isReified()) {
+               TypeProjection typeProjection = type.getArguments().get(i);
+               if( !typeProjection.getType().equals(typeParameterDescriptor.getUpperBoundsAsType())) {
+                    return true;
+               }
             }
         }
 

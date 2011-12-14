@@ -30,7 +30,7 @@ class StandardFList<T> (override val head: T, override val tail: FList<T>) : FLi
 
 fun <T> FList<T>.plus2(element: T): FList<T> =
     when(this) {
-        is EmptyFList<T> => OneElementFList<T>(element)
+        is EmptyFList<*> => OneElementFList<T>(element)
         else => StandardFList<T>(element, this)
     }
 
