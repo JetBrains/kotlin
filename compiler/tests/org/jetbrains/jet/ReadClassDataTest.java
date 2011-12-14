@@ -21,8 +21,10 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -30,13 +32,16 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -154,6 +159,12 @@ public class ReadClassDataTest extends UsefulTestCase {
     
     private void compareFunctions(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
         Assert.assertEquals(a.getName(), b.getName());
+        
+        Assert.assertEquals(a.getTypeParameters().size(), b.getTypeParameters().size());
+        for (int i = 0; i < a.getTypeParameters().size(); ++i) {
+            compareAnything(TypeParameterDescriptor.class, a.getTypeParameters().get(i), b.getTypeParameters().get(i));
+        }
+        
         Assert.assertEquals(a.getValueParameters().size(), b.getValueParameters().size());
         for (int i = 0; i < a.getValueParameters().size(); ++i) {
             compareAnything(ValueParameterDescriptor.class, a.getValueParameters().get(i), b.getValueParameters().get(i));
@@ -165,15 +176,41 @@ public class ReadClassDataTest extends UsefulTestCase {
     private void compareAnything(Object a, Object b) {
         if (a instanceof JetType || b instanceof JetType) {
             compareTypes((JetType) a, (JetType) b);
+        } else if (a instanceof TypeConstructor && b instanceof TypeConstructor) {
+            compareTypeConstructors((TypeConstructor) a, (TypeConstructor) b);
+        } else if (a instanceof List<?> || b instanceof List<?>) {
+            compareLists((List<?>) a, (List<?>) b);
+        } else if (a instanceof TypeProjection || b instanceof TypeProjection) {
+            compareTypeProjections((TypeProjection) a, (TypeProjection) b);
+        } else if (a instanceof TypeParameterDescriptor || b instanceof TypeParameterDescriptor) {
+            compareTypeParameterDescriptors((TypeParameterDescriptor) a, (TypeParameterDescriptor) b);
         } else {
             Assert.assertEquals(a, b);
         }
     }
     
-    private void compareTypes(JetType a, JetType b) {
-        // cannot just call a.equals(b) because "a" and "b" were created in different environments,
-        // TypeConstructor does not override equals()
+    private void compareTypeParameterDescriptors(TypeParameterDescriptor a, TypeParameterDescriptor b) {
+        compareAnything(TypeParameterDescriptor.class, a, b);
+    }
+    
+    private void compareTypeProjections(TypeProjection a, TypeProjection b) {
+        compareAnything(TypeProjection.class, a, b);
+    }
+    
+    private void compareLists(List<?> a, List<?> b) {
+        Assert.assertEquals(a.size(), b.size());
+        for (int i = 0; i < a.size(); ++i) {
+            compareAnything(a.get(i), b.get(i));
+        }
+    }
+
+    private void compareTypeConstructors(TypeConstructor a, TypeConstructor b) {
+        //compareAnything(TypeConstructor.class, a, b);
         Assert.assertEquals(a.toString(), b.toString());
+    }
+
+    private void compareTypes(JetType a, JetType b) {
+        compareAnything(JetType.class, a, b);
     }
 
     private <T> void compareAnything(Class<T> clazz, T a, T b) {
@@ -185,12 +222,30 @@ public class ReadClassDataTest extends UsefulTestCase {
             if (!isGetter(method)) {
                 continue;
             }
+
+            if (JetScope.class.isAssignableFrom(method.getReturnType())) {
+                continue;
+            }
+
             if (method.getName().equals("getContainingDeclaration")) {
+                continue;
+            }
+            
+            if (method.getName().equals("isReified")) {
+                // TODO
                 continue;
             }
             
             if (clazz.equals(ValueParameterDescriptor.class)) {
                 if (method.getName().equals("isRef") || method.getName().equals("getOriginal")) {
+                    continue;
+                }
+            }
+            
+            if (method.getDeclaringClass().equals(DeclarationDescriptorImpl.class)
+                    || method.getDeclaringClass().equals(DeclarationDescriptor.class))
+            {
+                if (method.getName().equals("getOriginal")) {
                     continue;
                 }
             }
