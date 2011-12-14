@@ -536,13 +536,20 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         public void parseVars(Signature signature) {
-            while(cur < string.length && string[cur] == 'T') {
-                if(signature.variables == null) {
-                    signature.variables  = new LinkedList<TypeInfoProjection>();
-                    signature.varNames = new HashMap<String, Integer>();
+            if (cur < string.length && string[cur] == '<') {
+                cur++;
+                while(cur < string.length && string[cur] != '>') {
+                    if(signature.variables == null) {
+                        signature.variables  = new LinkedList<TypeInfoProjection>();
+                        signature.varNames = new HashMap<String, Integer>();
+                    }
+                    if (string[cur] != 'T') {
+                        throw new IllegalStateException(new String(string));
+                    }
+                    cur++;
+                    signature.variables.add(parseVar(signature));
                 }
                 cur++;
-                signature.variables.add(parseVar(signature));
             }
             signature.variables = signature.variables == null ? Collections.<TypeInfoProjection>emptyList() : signature.variables;
             signature.varNames  = signature.varNames == null ? Collections.<String,Integer>emptyMap() : signature.varNames;

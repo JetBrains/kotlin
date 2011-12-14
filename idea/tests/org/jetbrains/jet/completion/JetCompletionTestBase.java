@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.BufferedReader;
@@ -59,6 +60,11 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
         assertContainsItems(itemsShouldExist(getFile().getText()));
         assertNotContainItems(itemsShouldAbsent(getFile().getText()));
+        
+        Integer itemsNumber = getExpectedNumber(getFile().getText());
+        if (itemsNumber != null) {
+            assertEquals(itemsNumber.intValue(), myItems.length);
+        }
     }
 
     @Override
@@ -85,6 +91,16 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
         return findListWithPrefix("// ABSENT:", fileText);
     }
 
+    @Nullable
+    private static Integer getExpectedNumber(String fileText) {
+        final String[] numberStrings = findListWithPrefix("// NUMBER:", fileText);
+        if (numberStrings.length > 0) {
+            return Integer.parseInt(numberStrings[0]);
+        }
+
+        return null;
+    }
+    
     @NotNull
     private static String[] findListWithPrefix(String prefix, String fileText) {
         ArrayList<String> result = new ArrayList<String>();

@@ -90,6 +90,9 @@ public class FunctionCodegen {
                     if(functionDescriptor.getReturnType().isNullable()) {
                         av.visit(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
                     }
+                    if (jvmSignature.getKotlinReturnType() != null) {
+                        av.visit(StdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
+                    }
                     av.visitEnd();
                 }
 
@@ -120,6 +123,9 @@ public class FunctionCodegen {
                     }
                     if(parameterDescriptor.getOutType().isNullable()) {
                         av.visit(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
+                    }
+                    if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
+                        av.visit(StdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i));
                     }
                     av.visitEnd();
                 }

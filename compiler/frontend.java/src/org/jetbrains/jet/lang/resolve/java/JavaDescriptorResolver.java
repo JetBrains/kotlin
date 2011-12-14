@@ -360,6 +360,7 @@ public class JavaDescriptorResolver {
 
         boolean changeNullable = false;
         boolean nullable = true;
+        String typeFromAnnotation = null;
         
         // TODO: must be very slow, make it lazy?
         String name = parameter.getName() != null ? parameter.getName() : "p" + i;
@@ -383,10 +384,20 @@ public class JavaDescriptorResolver {
                     nullable = false;
                     changeNullable = true;
                 }
+                
+                PsiLiteralExpression signatureExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD);
+                if (signatureExpression != null) {
+                    typeFromAnnotation = (String) signatureExpression.getValue();
+                }
             }
         }
         
-        JetType outType = semanticServices.getTypeTransformer().transformToType(psiType);
+        JetType outType;
+        if (typeFromAnnotation != null) {
+            outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation);
+        } else {
+            outType = semanticServices.getTypeTransformer().transformToType(psiType);
+        }
         return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 i,
@@ -509,6 +520,8 @@ public class JavaDescriptorResolver {
     private JetType makeReturnType(PsiType returnType, PsiMethod method) {
         boolean changeNullable = false;
         boolean nullable = true;
+        
+        String returnTypeFromAnnotation = null;
 
         for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
             if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD_CLASS)) {
@@ -520,9 +533,19 @@ public class JavaDescriptorResolver {
                     nullable = false;
                     changeNullable = true;
                 }
+                
+                PsiLiteralExpression returnTypeExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_RETURN_TYPE_FIELD);
+                if (returnTypeExpression != null) {
+                    returnTypeFromAnnotation = (String) returnTypeExpression.getValue();
+                }
             }
         }
-        JetType transformedType = semanticServices.getTypeTransformer().transformToType(returnType);
+        JetType transformedType;
+        if (returnTypeFromAnnotation != null) {
+            transformedType = semanticServices.getTypeTransformer().transformToType(returnTypeFromAnnotation);
+        } else {
+            transformedType = semanticServices.getTypeTransformer().transformToType(returnType);
+        }
         if (changeNullable) {
             return TypeUtils.makeNullableAsSpecified(transformedType, nullable);
         } else {

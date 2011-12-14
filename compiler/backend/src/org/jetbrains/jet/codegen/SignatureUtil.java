@@ -68,6 +68,10 @@ public class SignatureUtil {
 
     private static void genTypeParams(JetClass type, StringBuilder sb) {
         List<JetTypeParameter> parameters = type.getTypeParameterList().getParameters();
+        if (parameters.isEmpty()) {
+            return;
+        }
+        sb.append('<');
         for(JetTypeParameter param : parameters) {
             sb.append("T");
             Variance variance = param.getVariance();
@@ -78,5 +82,6 @@ public class SignatureUtil {
             sb.append(param.getName());
             sb.append(";");
         }
+        sb.append('>');
     }
 }

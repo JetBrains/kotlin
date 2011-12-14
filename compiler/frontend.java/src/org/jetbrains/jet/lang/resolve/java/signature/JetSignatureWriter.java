@@ -1,4 +1,4 @@
-package org.jetbrains.jet.codegen.signature;
+package org.jetbrains.jet.lang.resolve.java.signature;
 
 import org.objectweb.asm.signature.SignatureWriter;
 

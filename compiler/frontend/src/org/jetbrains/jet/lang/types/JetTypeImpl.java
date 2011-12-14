@@ -21,7 +21,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     private final boolean nullable;
     private JetScope memberScope;
 
-    public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, JetScope memberScope) {
+    public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<TypeProjection> arguments, JetScope memberScope) {
         super(annotations);
         this.constructor = constructor;
         this.nullable = nullable;
