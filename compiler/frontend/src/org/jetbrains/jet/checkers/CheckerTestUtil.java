@@ -1,12 +1,15 @@
 package org.jetbrains.jet.checkers;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,7 +44,7 @@ public class CheckerTestUtil {
         ArrayList<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(bindingContext.getDiagnostics());
         for (TextRange textRange : AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            diagnostics.add(new SyntaxErrorDiagnostic(textRange));
+            diagnostics.add(new SyntaxErrorDiagnostic(textRange, root.getContainingFile()));
         }
         return diagnostics;
     }
@@ -176,15 +179,22 @@ public class CheckerTestUtil {
         Collection<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(bindingContext.getDiagnostics());
         for (TextRange syntaxError : syntaxErrors) {
-            diagnostics.add(new SyntaxErrorDiagnostic(syntaxError));
+            diagnostics.add(new SyntaxErrorDiagnostic(syntaxError, psiFile));
         }
 
         return addDiagnosticMarkersToText(psiFile, diagnostics);
     }
 
-    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, Collection<Diagnostic> diagnostics) {
+    public static StringBuffer addDiagnosticMarkersToText(@NotNull final PsiFile psiFile, Collection<Diagnostic> diagnostics) {
         StringBuffer result = new StringBuffer();
         String text = psiFile.getText();
+        diagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
+            @Override
+            public boolean apply(@Nullable Diagnostic diagnostic) {
+                if (diagnostic == null || !psiFile.equals(diagnostic.getFactory().getPsiFile(diagnostic))) return false;
+                return true;
+            }
+        });
         if (!diagnostics.isEmpty()) {
             List<DiagnosticDescriptor> diagnosticDescriptors = getSortedDiagnosticDescriptors(diagnostics);
 
@@ -265,7 +275,7 @@ public class CheckerTestUtil {
         @NotNull
         @Override
         public PsiFile getPsiFile(@NotNull Diagnostic diagnostic) {
-            throw new IllegalStateException();
+            return ((SyntaxErrorDiagnostic)diagnostic).getPsiFile();
         }
 
         @NotNull
@@ -275,12 +285,14 @@ public class CheckerTestUtil {
         }
     }
 
-    public static class SyntaxErrorDiagnostic implements Diagnostic {
+    public static class SyntaxErrorDiagnostic implements DiagnosticWithTextRange {
 
         private final TextRange textRange;
+        private final PsiFile psiFile;
 
-        public SyntaxErrorDiagnostic(TextRange textRange) {
+        public SyntaxErrorDiagnostic(@NotNull TextRange textRange, @NotNull PsiFile psiFile) {
             this.textRange = textRange;
+            this.psiFile = psiFile;
         }
 
         @NotNull
@@ -300,6 +312,18 @@ public class CheckerTestUtil {
         public Severity getSeverity() {
             throw new IllegalStateException();
         }
+
+        @NotNull
+        @Override
+        public TextRange getTextRange() {
+            return textRange;
+        }
+
+        @NotNull
+        @Override
+        public PsiFile getPsiFile() {
+            return psiFile;
+        }
     }
     
     private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(Collection<Diagnostic> diagnostics) {
@@ -308,9 +332,7 @@ public class CheckerTestUtil {
 
         List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
         DiagnosticDescriptor currentDiagnosticDescriptor = null;
-        for (Iterator<Diagnostic> iterator = list.iterator(); iterator.hasNext(); ) {
-            Diagnostic diagnostic = iterator.next();
-
+        for (Diagnostic diagnostic : list) {
             TextRange textRange = getTextRange(diagnostic);
             if (currentDiagnosticDescriptor != null && currentDiagnosticDescriptor.equalRange(textRange)) {
                 currentDiagnosticDescriptor.diagnostics.add(diagnostic);
