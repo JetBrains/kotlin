@@ -148,7 +148,7 @@ class JetSimpleNameReference extends JetPsiReference {
         List<LookupElement> result = Lists.newArrayList();
 
         for (final DeclarationDescriptor descriptor : descriptors) {
-            LookupElementBuilder element = LookupElementBuilder.create(descriptor.getName());
+            LookupElementBuilder element = LookupElementBuilder.create(descriptor, descriptor.getName());
             String typeText = "";
             String tailText = "";
             boolean tailTextGrayed = false;
@@ -165,6 +165,7 @@ class JetSimpleNameReference extends JetPsiReference {
                                DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getOutType());
                     }
                 }, ",") + ")";
+                
 
                 // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
                 // TODO: Support omitting brackets for one argument functions
@@ -185,6 +186,7 @@ class JetSimpleNameReference extends JetPsiReference {
             else {
                 typeText = DescriptorRenderer.TEXT.render(descriptor);
             }
+            
             element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText);
 
             PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getOriginal());
