@@ -1,3 +1,3 @@
 namespace test
 
-fun fff(a: String?) = 1
+fun fff(a: java.lang.CharSequence?) = 1
