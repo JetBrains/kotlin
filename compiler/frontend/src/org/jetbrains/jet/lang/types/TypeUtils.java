@@ -361,6 +361,7 @@ public class TypeUtils {
                 fullSubstitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
             }
         }
+        if (JetStandardClasses.isNothingOrNullableNothing(context)) return;
         for (JetType supertype : context.getConstructor().getSupertypes()) {
             fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
         }
