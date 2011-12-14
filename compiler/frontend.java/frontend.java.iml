@@ -8,6 +8,7 @@
     <orderEntry type="jdk" jdkName="IDEA 10.x" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="stdlib" />
   </component>
 </module>
 
