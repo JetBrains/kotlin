@@ -128,7 +128,9 @@ public final class StandardClasses {
     }
 
     private void declareStandardTopLevelObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
-        nameMap.put(fullQualifiedName, kotlinScope.declareName(kotlinLibName));
+        JsName declaredName = kotlinScope.declareName(kotlinLibName);
+        declaredName.setObfuscatable(false);
+        nameMap.put(fullQualifiedName, declaredName);
         scopeMap.put(fullQualifiedName, new JsScope(kotlinScope, "standard object " + kotlinLibName));
     }
 
@@ -143,7 +145,9 @@ public final class StandardClasses {
                                                  @NotNull String kotlinLibName) {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
         String fullQualifiedMethodName = fullQualifiedClassName + "." + shortMethodName;
-        nameMap.put(fullQualifiedMethodName, classScope.declareName(kotlinLibName));
+        JsName declaredName = classScope.declareName(kotlinLibName);
+        declaredName.setObfuscatable(false);
+        nameMap.put(fullQualifiedMethodName, declaredName);
     }
 
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {

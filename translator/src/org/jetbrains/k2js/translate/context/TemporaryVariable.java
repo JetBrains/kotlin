@@ -27,7 +27,7 @@ public final class TemporaryVariable {
     }
 
     @NotNull
-        /*package*/ JsName name() {
+    public JsName name() {
         return variableName;
     }
 

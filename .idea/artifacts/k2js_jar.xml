@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="k2js:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/k2js_jar</output-path>
+    <root id="archive" name="k2js.jar">
+      <element id="module-output" name="backend" />
+      <element id="module-output" name="frontend" />
+      <element id="module-output" name="frontend.java" />
+      <element id="module-output" name="stdlib" />
+      <element id="module-output" name="jetTests" />
+      <element id="module-output" name="translator" />
+      <element id="module-output" name="js" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/translator/lib/js.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/translator/lib/junit-4.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/translator/lib/guava-10.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../Kotlin/jet/lib/asm-util-3.3.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

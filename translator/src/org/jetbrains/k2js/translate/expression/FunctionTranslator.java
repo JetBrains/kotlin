@@ -26,17 +26,21 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithSc
 public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
+    public static FunctionTranslator newInstance(@NotNull JetDeclarationWithBody function,
+                                                 @NotNull TranslationContext context) {
+        return new FunctionTranslator(function, context);
+    }
+
+    //TODO: implement more generic and safe way
+    private static final String RECEIVER_PARAMETER_NAME = "receiver";
+
+    @NotNull
     private final JetDeclarationWithBody functionDeclaration;
     @NotNull
     private final JsFunction functionObject;
     @NotNull
     private final TranslationContext functionBodyContext;
 
-    @NotNull
-    public static FunctionTranslator newInstance(@NotNull JetDeclarationWithBody function,
-                                                 @NotNull TranslationContext context) {
-        return new FunctionTranslator(function, context);
-    }
 
     private FunctionTranslator(@NotNull JetDeclarationWithBody functionDeclaration,
                                @NotNull TranslationContext context) {
@@ -58,7 +62,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     public JsExpression translateAsLiteral() {
         TemporaryVariable aliasForThis = context().newAliasForThis();
         JsFunction function = generateFunctionObject();
-        context().removeAliasForThis();
+        context().removeAliasForThis(aliasForThis.name());
         return AstUtil.newSequence(aliasForThis.assignmentExpression(), function);
     }
 
@@ -72,7 +76,8 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void restoreContext() {
         if (isExtensionFunction()) {
-            functionBodyContext.removeAliasForThis();
+            JsName receiverAlias = functionBodyContext.jsScope().findExistingName(RECEIVER_PARAMETER_NAME);
+            functionBodyContext.removeAliasForThis(receiverAlias);
         }
     }
 
@@ -165,19 +170,14 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
-        boolean isExtensionFunction = isExtensionFunction();
-        if (isExtensionFunction) {
-            JsName receiver = functionBodyContext.jsScope().declareName("receiver");
+        if (isExtensionFunction()) {
+            JsName receiver = functionBodyContext.jsScope().declareName(RECEIVER_PARAMETER_NAME);
             context().aliaser().setAliasForThis(receiver);
             jsParameters.add(new JsParameter(receiver));
         }
     }
 
     private boolean isExtensionFunction() {
-//        if (!(functionDeclaration instanceof JetNamedFunction)) {
-//            return false;
-//        }
-
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context().bindingContext(), functionDeclaration);
         return DescriptorUtils.isExtensionFunction(functionDescriptor);
     }

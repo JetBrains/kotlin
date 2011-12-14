@@ -47,4 +47,9 @@ public final class ExtensionFunctionTest extends TranslationTest {
     public void extensionLiteralPassedToFunction() throws Exception {
         testFooBoxIsTrue("extensionLiteralPassedToFunction.kt");
     }
+
+    @Test
+    public void extensionInsideFunctionLiteral() throws Exception {
+        testFooBoxIsTrue("extensionInsideFunctionLiteral.kt");
+    }
 }

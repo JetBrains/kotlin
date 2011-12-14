@@ -1,5 +1,7 @@
 package org.jetbrains.k2js.translate.general;
 
+import com.google.dart.compiler.backend.js.JsNamer;
+import com.google.dart.compiler.backend.js.JsPrettyNamer;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import com.intellij.openapi.project.Project;
@@ -98,6 +100,10 @@ public final class Translation {
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
         block.addStatement(Translation.translateNamespace(namespace, context));
+
+        JsNamer namer = new JsPrettyNamer();
+        namer.exec(context.program());
+
         return context.program();
     }
 

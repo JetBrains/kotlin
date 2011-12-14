@@ -157,13 +157,13 @@ public final class TranslationContext {
 
     @NotNull
     public TemporaryVariable newAliasForThis() {
-        TemporaryVariable aliasForThis = dynamicContext.declareTemporaryWithName("that", new JsThisRef());
+        TemporaryVariable aliasForThis = dynamicContext.declareTemporary(new JsThisRef());
         aliaser().setAliasForThis(aliasForThis.name());
         return aliasForThis;
     }
 
-    public void removeAliasForThis() {
-        aliaser().removeAliasForThis();
+    public void removeAliasForThis(@NotNull JsName aliasToRemove) {
+        aliaser().removeAliasForThis(aliasToRemove);
     }
 
     @NotNull
