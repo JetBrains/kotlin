@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureAdapter;
 import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureReader;
 import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureWriter;
+import org.jetbrains.jet.lang.types.Variance;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.signature.SignatureWriter;
@@ -182,11 +183,11 @@ public class BothSignatureWriter {
         jetSignatureWriter.visitTypeVariable(name, nullable);
     }
     
-    public void writeFormalTypeParameter(final String name) {
+    public void writeFormalTypeParameter(final String name, Variance variance) {
         checkTopLevel();
 
         signatureVisitor().visitFormalTypeParameter(name);
-        jetSignatureWriter.visitFormalTypeParameter(name);
+        jetSignatureWriter.visitFormalTypeParameter(name, variance);
     }
 
     public void writerFormalTypeParametersStart() {

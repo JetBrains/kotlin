@@ -73,7 +73,6 @@ public class SignatureUtil {
         }
         sb.append('<');
         for(JetTypeParameter param : parameters) {
-            sb.append("T");
             Variance variance = param.getVariance();
             if(variance == Variance.IN_VARIANCE)
                 sb.append("in ");

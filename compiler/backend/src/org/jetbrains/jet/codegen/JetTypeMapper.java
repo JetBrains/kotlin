@@ -540,7 +540,7 @@ public class JetTypeMapper {
     }
 
     private void writeFormalTypeParameter(TypeParameterDescriptor typeParameterDescriptor, BothSignatureWriter signatureVisitor) {
-        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName());
+        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName(), typeParameterDescriptor.getVariance());
 
         classBound:
         {
