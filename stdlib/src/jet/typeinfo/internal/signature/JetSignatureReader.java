@@ -1,8 +1,6 @@
-package org.jetbrains.jet.lang.resolve.java.signature;
+package jet.typeinfo.internal.signature;
 
-import org.jetbrains.jet.lang.types.Variance;
-import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
+import jet.typeinfo.TypeInfoVariance;
 
 /**
  * @author Stepan Koltsov
@@ -27,15 +25,15 @@ public class JetSignatureReader {
         if (signature.charAt(0) == '<') {
             pos = 2;
             do {
-                Variance variance;
+                TypeInfoVariance variance;
                 if (signature.substring(pos).startsWith("in ")) {
-                    variance = Variance.IN_VARIANCE;
+                    variance = TypeInfoVariance.IN;
                     pos += "in ".length();
                 } else if (signature.substring(pos).startsWith("out ")) {
-                    variance = Variance.OUT_VARIANCE;
+                    variance = TypeInfoVariance.OUT;
                     pos += "out ".length();
                 } else {
-                    variance = Variance.INVARIANT;
+                    variance = TypeInfoVariance.INVARIANT;
                     pos += "".length();
                 }
                 int end = signature.indexOf(':', pos);
