@@ -136,9 +136,13 @@ public class ExpressionVisitor extends StatementVisitor {
   @Override
   public void visitConditionalExpression(@NotNull PsiConditionalExpression expression) {
     super.visitConditionalExpression(expression);
+    PsiExpression condition = expression.getCondition();
+    Expression e = condition.getType() != null ?
+      createSureCallOnlyForChain(condition, condition.getType()) :
+      expressionToExpression(condition);
     myResult = new ParenthesizedExpression(
       new IfStatement(
-        expressionToExpression(expression.getCondition()),
+        e,
         expressionToExpression(expression.getThenExpression()),
         expressionToExpression(expression.getElseExpression())
       )

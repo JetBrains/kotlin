@@ -275,8 +275,7 @@ public class Converter {
       new IdentifierImpl(field.getName()), // TODO
       modifiers,
       typeToType(field.getType()),
-      expressionToExpression(field.getInitializer()), // TODO: add modifiers
-      createConversionForCallChains(field.getInitializer(), field.getType())
+      createSureCallOnlyForChain(field.getInitializer(), field.getType()) // TODO: add modifiers
     );
   }
 
@@ -651,9 +650,9 @@ public class Converter {
 //  }
 
   @NotNull
-  public static String createConversionForCallChains(PsiExpression initializer, PsiType type) {
-    if (initializer != null && initializer instanceof PsiReferenceExpression && ((PsiReferenceExpression) initializer).isQualified())
-      return createConversionForExpression(initializer, type);
-    return "";
+  public static SureCallChainExpression createSureCallOnlyForChain(PsiExpression expression, PsiType type) {
+    String conversion = (expression != null && expression instanceof PsiReferenceExpression && ((PsiReferenceExpression) expression).isQualified()) ?
+      createConversionForExpression(expression, type) : "";
+    return new SureCallChainExpression(expressionToExpression(expression), conversion);
   }
 }

@@ -15,8 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
-import static org.jetbrains.jet.j2k.Converter.getPrimitiveTypeConversion;
-import static org.jetbrains.jet.j2k.Converter.isConversionNeeded;
 
 /**
  * @author ignatov
@@ -81,8 +79,12 @@ public class StatementVisitor extends ElementVisitor {
   @Override
   public void visitDoWhileStatement(@NotNull PsiDoWhileStatement statement) {
     super.visitDoWhileStatement(statement);
+    PsiExpression condition = statement.getCondition();
+    Expression expression = condition != null && condition.getType() != null ?
+      createSureCallOnlyForChain(condition, condition.getType()) :
+      expressionToExpression(condition);
     myResult = new DoWhileStatement(
-      expressionToExpression(statement.getCondition()),
+      expression,
       statementToStatement(statement.getBody())
     );
   }
@@ -176,8 +178,12 @@ public class StatementVisitor extends ElementVisitor {
   @Override
   public void visitIfStatement(@NotNull PsiIfStatement statement) {
     super.visitIfStatement(statement);
+    PsiExpression condition = statement.getCondition();
+    Expression expression = condition != null && condition.getType() != null ?
+      createSureCallOnlyForChain(condition, condition.getType()) :
+      expressionToExpression(condition);
     myResult = new IfStatement(
-      expressionToExpression(statement.getCondition()),
+      expression,
       statementToStatement(statement.getThenBranch()),
       statementToStatement(statement.getElseBranch())
     );
@@ -327,8 +333,12 @@ public class StatementVisitor extends ElementVisitor {
   @Override
   public void visitWhileStatement(@NotNull PsiWhileStatement statement) {
     super.visitWhileStatement(statement);
+    PsiExpression condition = statement.getCondition();
+    Expression expression = condition != null && condition.getType() != null ?
+      createSureCallOnlyForChain(condition, condition.getType()) :
+      expressionToExpression(condition);
     myResult = new WhileStatement(
-      expressionToExpression(statement.getCondition()),
+      expression,
       statementToStatement(statement.getBody())
     );
   }
