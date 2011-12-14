@@ -1,7 +1,6 @@
-package org.jetbrains.jet.lang.resolve.java.signature;
+package jet.typeinfo.internal.signature;
 
-import org.jetbrains.jet.lang.types.Variance;
-import org.objectweb.asm.signature.SignatureWriter;
+import jet.typeinfo.TypeInfoVariance;
 
 /**
  * @author Stepan Koltsov
@@ -44,16 +43,16 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     // ------------------------------------------------------------------------
 
     @Override
-    public void visitFormalTypeParameter(final String name, Variance variance) {
+    public void visitFormalTypeParameter(final String name, TypeInfoVariance variance) {
         if (!hasFormals) {
             hasFormals = true;
             buf.append('<');
         }
         switch (variance) {
-            case OUT_VARIANCE:
+            case OUT:
                 buf.append("out ");
                 break;
-            case IN_VARIANCE:
+            case IN:
                 buf.append("in ");
                 break;
             case INVARIANT:

@@ -1,11 +1,10 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureReader;
-import org.jetbrains.jet.lang.resolve.java.signature.JetSignatureVisitor;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import jet.typeinfo.internal.signature.JetSignatureVisitor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -34,7 +33,7 @@ public abstract class JetTypeJetSignatureReader implements JetSignatureVisitor {
     
 
     @Override
-    public void visitFormalTypeParameter(String name, Variance variance) {
+    public void visitFormalTypeParameter(String name, TypeInfoVariance variance) {
         throw new IllegalStateException();
     }
 
