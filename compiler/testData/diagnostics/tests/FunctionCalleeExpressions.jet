@@ -42,7 +42,7 @@ fun main(args : Array<String>) {
 
     val b = fooT2<Int>()(1)
     b : Int
-    <!TYPE_INFERENCE_FAILED!>fooT2()<!>(1) // : Any?
+    <!TYPE_INFERENCE_FAILED!>fooT2()<!>(<!ERROR_COMPILE_TIME_VALUE!>1<!>) // : Any?
 
     <!CALLEE_NOT_A_FUNCTION!>1<!>()
     <!CALLEE_NOT_A_FUNCTION!>1<!>{}

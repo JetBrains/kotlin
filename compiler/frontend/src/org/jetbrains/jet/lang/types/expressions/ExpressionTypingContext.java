@@ -10,10 +10,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.calls.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsImpl;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -173,30 +170,31 @@ import java.util.Map;
 
 ////////// Call resolution utilities
 
-    @Nullable
-    public ResolvedCall<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
         return getCallResolver().resolveCallWithGivenName(trace, scope, call, functionReference, name, expectedType);
     }
 
-    @Nullable
-    public FunctionDescriptor resolveCallWithGivenNameToDescriptor(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
-        ResolvedCall<FunctionDescriptor> resolvedCall = resolveCallWithGivenName(call, functionReference, name);
-        return resolvedCall == null ? null : resolvedCall.getResultingDescriptor();
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenNameToDescriptor(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
+        return resolveCallWithGivenName(call, functionReference, name);
+//        return results == null ? null : results.getResultingDescriptor();
     }
 
     @Nullable
     public JetType resolveCall(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetCallExpression callExpression) {
-        return getCallResolver().resolveCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType);
+        OverloadResolutionResults<FunctionDescriptor> results = getCallResolver().resolveCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType);
+        return results.singleResult() ? results.getResultingDescriptor().getReturnType() : null;
     }
 
-    @Nullable
-    public VariableDescriptor resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
+    @NotNull
+    public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
         return getCallResolver().resolveSimpleProperty(trace, scope, call, expectedType);
     }
 
     @NotNull
-    public OverloadResolutionResultsImpl<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
         return getCallResolver().resolveExactSignature(scope, receiver, name, parameterTypes);
     }
 }

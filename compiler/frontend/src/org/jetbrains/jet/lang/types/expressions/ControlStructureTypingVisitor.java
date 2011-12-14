@@ -10,8 +10,8 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -258,9 +258,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @Nullable
     private JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
         JetExpression loopRangeExpression = loopRange.getExpression();
-        OverloadResolutionResultsImpl<FunctionDescriptor> iteratorResolutionResults = context.resolveExactSignature(loopRange, "iterator", Collections.<JetType>emptyList());
+        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = context.resolveExactSignature(loopRange, "iterator", Collections.<JetType>emptyList());
         if (iteratorResolutionResults.isSuccess()) {
-            FunctionDescriptor iteratorFunction = iteratorResolutionResults.getResult().getResultingDescriptor();
+            FunctionDescriptor iteratorFunction = iteratorResolutionResults.getResultingCall().getResultingDescriptor();
 
             context.trace.record(LOOP_RANGE_ITERATOR, loopRangeExpression, iteratorFunction);
 
@@ -280,13 +280,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
             }
 
-            OverloadResolutionResultsImpl<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
+            OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
             if (nextResolutionResults.isAmbiguity()) {
                 context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
             } else if (nextResolutionResults.isNothing()) {
                 context.trace.report(NEXT_MISSING.on(loopRangeExpression));
             } else {
-                FunctionDescriptor nextFunction = nextResolutionResults.getResult().getResultingDescriptor();
+                FunctionDescriptor nextFunction = nextResolutionResults.getResultingCall().getResultingDescriptor();
                 context.trace.record(LOOP_RANGE_NEXT, loopRange.getExpression(), nextFunction);
                 return nextFunction.getReturnType();
             }
@@ -294,11 +294,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         else {
             if (iteratorResolutionResults.isAmbiguity()) {
 //                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
-//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResults()) {
+//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResultingCalls()) {
 //                        stringBuffer.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
 //                    }
 //                    errorMessage = stringBuffer.toString();
-                context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResults()));
+                context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResultingCalls()));
             }
             else {
                 context.trace.report(ITERATOR_MISSING.on(loopRangeExpression));
@@ -309,19 +309,19 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Nullable
     private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        OverloadResolutionResultsImpl<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
+        OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
         } else if (hasNextResolutionResults.isNothing()) {
             return null;
         } else {
             assert hasNextResolutionResults.isSuccess();
-            JetType hasNextReturnType = hasNextResolutionResults.getResult().getResultingDescriptor().getReturnType();
+            JetType hasNextReturnType = hasNextResolutionResults.getResultingDescriptor().getReturnType();
             if (!isBoolean(context.semanticServices, hasNextReturnType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
             }
         }
-        return hasNextResolutionResults.getResult().getResultingDescriptor();
+        return hasNextResolutionResults.getResultingCall().getResultingDescriptor();
     }
 
     @Nullable
