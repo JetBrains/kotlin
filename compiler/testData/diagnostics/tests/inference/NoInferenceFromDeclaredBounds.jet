@@ -1,0 +1,9 @@
+fun fooT2<T>() : fun(t : T) : T {
+  return {it}
+}
+
+val n : Nothing = null.sure()
+
+fun test() {
+    <!TYPE_INFERENCE_FAILED!>fooT2()<!>(1)
+}

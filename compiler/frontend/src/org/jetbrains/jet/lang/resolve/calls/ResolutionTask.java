@@ -13,7 +13,7 @@ import java.util.Collection;
  *
  * @author abreslav
  */
-/*package*/ class ResolutionTask<D extends CallableDescriptor> {
+public class ResolutionTask<D extends CallableDescriptor> {
     private final Call call;
     private final Collection<ResolvedCallImpl<D>> candidates;
     private final DataFlowInfo dataFlowInfo;

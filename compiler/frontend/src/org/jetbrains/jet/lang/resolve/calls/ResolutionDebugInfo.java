@@ -20,12 +20,13 @@ import java.util.Map;
 public class ResolutionDebugInfo {
     public static final WritableSlice<One, List<? extends ResolutionTask<? extends CallableDescriptor>>> TASKS = Slices.createSimpleSlice();
     public static final WritableSlice<One, ResolvedCall<? extends CallableDescriptor>> RESULT = Slices.createSimpleSlice();
-    public static final WritableSlice<One, StringBuilder> ERRORS = Slices.createSimpleSlice();
-    public static final WritableSlice<One, StringBuilder> LOG = Slices.createSimpleSlice();
-    public static final WritableSlice<One, Map<TypeParameterDescriptor, BoundsOwner>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
-    public static final WritableSlice<One, Map<JetType, BoundsOwner>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
-    public static final WritableSlice<One, ConstraintSystemSolution> SOLUTION = Slices.createSimpleSlice();
-    public static final WritableSlice<One, Collection<TypeParameterDescriptor>> UNKNOWNS = Slices.createSimpleSlice();
+
+    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, StringBuilder> ERRORS = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, StringBuilder> LOG = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Map<TypeParameterDescriptor, BoundsOwner>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Map<JetType, BoundsOwner>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, ConstraintSystemSolution> SOLUTION = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Collection<TypeParameterDescriptor>> UNKNOWNS = Slices.createSimpleSlice();
 
     static {
         BasicWritableSlice.initSliceDebugNames(ResolutionDebugInfo.class);

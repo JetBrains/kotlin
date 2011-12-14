@@ -28,11 +28,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -43,6 +40,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -52,6 +50,9 @@ import static org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo.*;
  * @author abreslav
  */
 public class ResolveToolwindow extends JPanel {
+
+    public static final String BAR = "\n\n===\n\n";
+
     public static class Factory implements ToolWindowFactory {
         @Override
         public void createToolWindowContent(Project project, ToolWindow toolWindow) {
@@ -176,36 +177,49 @@ public class ResolveToolwindow extends JPanel {
     }
 
     private String renderDebugInfo(PsiElement currentElement, @Nullable ResolutionDebugInfo.Data debugInfo, @Nullable ResolvedCall<? extends CallableDescriptor> call) {
-        final String bar = "\n\n===\n\n";
-
         StringBuilder result = new StringBuilder();
-
+        
         if (debugInfo != null) {
-            StringBuilder errors = debugInfo.get(ERRORS);
-            if (errors != null) {
-                result.append("Errors: \n").append(errors).append(bar);
+            List<? extends ResolutionTask<? extends CallableDescriptor>> resolutionTasks = debugInfo.get(TASKS);
+            for (ResolutionTask<? extends CallableDescriptor> resolutionTask : resolutionTasks) {
+                for (ResolvedCallImpl<? extends CallableDescriptor> resolvedCall : resolutionTask.getCandidates()) {
+                    renderResolutionLogForCall(debugInfo, resolvedCall, result);
+                }
             }
-
-            StringBuilder log = debugInfo.get(LOG);
-            if (log != null) {
-                result.append("Log: \n").append(log).append(bar);
-            }
-
-            Map<JetType, BoundsOwner> knowns = debugInfo.get(BOUNDS_FOR_KNOWNS);
-            renderMap(knowns, result);
-            Map<TypeParameterDescriptor, BoundsOwner> unknowns = debugInfo.get(BOUNDS_FOR_UNKNOWNS);
-            renderMap(unknowns, result);
-
-            result.append(bar);
 
             call = debugInfo.get(RESULT);
         }
 
-        renderCall(result, call);
+        if (call != null) {
+            renderCall(result, call);
+        }
+        else {
+            result.append("Resolved call is null\n");
+        }
         result.append(currentElement + ": " + currentElement.getText());
         return result.toString();
     }
-    
+
+    private void renderResolutionLogForCall(Data debugInfo, ResolvedCallImpl<? extends CallableDescriptor> resolvedCall, StringBuilder result) {
+        result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
+        StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
+        if (errors != null) {
+            result.append("Errors: \n").append(errors).append(BAR);
+        }
+
+        StringBuilder log = debugInfo.getByKey(LOG, resolvedCall);
+        if (log != null) {
+            result.append("Log: \n").append(log).append(BAR);
+        }
+
+        Map<JetType, BoundsOwner> knowns = debugInfo.getByKey(BOUNDS_FOR_KNOWNS, resolvedCall);
+        renderMap(knowns, result);
+        Map<TypeParameterDescriptor, BoundsOwner> unknowns = debugInfo.getByKey(BOUNDS_FOR_UNKNOWNS, resolvedCall);
+        renderMap(unknowns, result);
+
+        result.append(BAR);
+    }
+
     private <K> void renderMap(Map<K, BoundsOwner> map, StringBuilder builder) {
         if (map == null) return;
 

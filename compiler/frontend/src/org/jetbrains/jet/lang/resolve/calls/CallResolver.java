@@ -101,7 +101,7 @@ public class CallResolver {
     }
 
     @Nullable
-    public FunctionDescriptor resolveSimpleCallToFunctionDescriptor(
+    private FunctionDescriptor resolveSimpleCallToFunctionDescriptor(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull final Call call,
@@ -439,7 +439,7 @@ public class CallResolver {
 
                     ResolutionDebugInfo.Data debugInfo = trace.get(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, task.getCall().getCallElement());
 
-                    ConstraintSystem constraintSystem = new ConstraintSystemImpl(new DebugConstraintResolutionListener(debugInfo));
+                    ConstraintSystem constraintSystem = new ConstraintSystemWithPriorities(new DebugConstraintResolutionListener(candidateCall, debugInfo));
 
                     // If the call is recursive, e.g.
                     //   fun foo<T>(t : T) : T = foo(t)
@@ -472,7 +472,7 @@ public class CallResolver {
                             TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(temporaryTrace);
                             ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, traceForUnknown);
                             JetType type = temporaryServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getOutType(), Variance.INVARIANT));
-                            if (type != null) {
+                            if (type != null && !ErrorUtils.isErrorType(type)) {
                                 constraintSystem.addSubtypingConstraint(VALUE_ARGUMENT.assertSubtyping(type, effectiveExpectedType));
                             }
                             else {
@@ -513,7 +513,16 @@ public class CallResolver {
                     }
                     else {
                         tracing.typeInferenceFailed(temporaryTrace, solution.getStatus());
-                        candidateCall.setStatus(checkAllValueArguments(scope, tracing, task, candidateCall));
+//                        // Substitute DONT_CARE types to make further type checking as tolerant as possible
+//                        D candidateWithDontCares = (D) candidate.substitute(TypeSubstitutor.makeConstantSubstitutor(candidate.getTypeParameters(), DONT_CARE));
+//                        if (candidateWithDontCares == null) {
+//                            candidateWithDontCares = (D) candidate.substitute(TypeSubstitutor.makeConstantSubstitutor(candidate.getTypeParameters(), Variance.INVARIANT, DONT_CARE));
+//                        }
+//                        if (!ErrorUtils.isErrorType(candidateWithDontCares.getReturnType())) {
+//                            // Returning an error type provokes overload resolution ambiguities that mask errors
+//                            candidateCall.setResultingDescriptor(candidateWithDontCares);
+//                        }
+                        candidateCall.setStatus(OTHER_ERROR.combine(checkAllValueArguments(scope, tracing, task, candidateCall)));
                     }
                 }
                 else {
@@ -699,7 +708,7 @@ public class CallResolver {
             for (JetExpression argumentExpression : argumentExpressions) {
                 ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, candidateCall.getTrace());
                 JetType type = temporaryServices.getType(scope, argumentExpression, parameterType, dataFlowInfo);
-                if (type == null) {
+                if (type == null || ErrorUtils.isErrorType(type)) {
                     candidateCall.argumentHasNoType();
                 }
                 else if (!semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {

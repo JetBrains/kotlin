@@ -19,7 +19,7 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
   Collections.<error>emptyList</error>
   Collections.emptyList<Int>
   Collections.emptyList<Int>()
-  Collections.emptyList()
+  Collections.<error>emptyList()</error>
 
   Collections.singleton<Int>(1) : Set<Int>?
   Collections.singleton<Int>(<error>1.0</error>)

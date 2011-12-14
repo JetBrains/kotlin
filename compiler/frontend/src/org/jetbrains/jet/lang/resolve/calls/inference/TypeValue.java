@@ -32,6 +32,7 @@ public class TypeValue implements BoundsOwner {
         this.positionVariance = null;
         this.typeParameterDescriptor = null;
         this.originalType = knownType;
+        this.value = knownType;
     }
 
     public boolean isKnown() {
@@ -40,6 +41,11 @@ public class TypeValue implements BoundsOwner {
 
     public TypeParameterDescriptor getTypeParameterDescriptor() {
         return typeParameterDescriptor;
+    }
+
+    @NotNull
+    public Variance getPositionVariance() {
+        return positionVariance;
     }
 
     @Override
@@ -78,5 +84,10 @@ public class TypeValue implements BoundsOwner {
 
     public boolean hasValue() {
         return value != null;
+    }
+
+    @Override
+    public String toString() {
+        return isKnown() ? getType().toString() : (getTypeParameterDescriptor() + (hasValue() ? " |-> " + getType() : ""));
     }
 }

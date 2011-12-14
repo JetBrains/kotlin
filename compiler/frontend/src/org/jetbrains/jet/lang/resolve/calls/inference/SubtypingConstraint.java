@@ -36,4 +36,9 @@ public class SubtypingConstraint {
     public String getErrorMessage() {
         return type.makeErrorMessage(this);
     }
+
+    @Override
+    public String toString() {
+        return getSubtype() + " :< " + getSupertype();
+    }
 }
