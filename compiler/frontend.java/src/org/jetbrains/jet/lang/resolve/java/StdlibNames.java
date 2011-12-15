@@ -7,32 +7,33 @@ import org.objectweb.asm.Type;
  */
 public class StdlibNames {
 
-    public static final String JET_VALUE_PARAMETER_CLASS = "jet.typeinfo.JetValueParameter";
-    public static final String JET_VALUE_PARAMETER_DESCRIPTOR = "Ljet/typeinfo/JetValueParameter;";
-    
+    public static final JvmClassName JET_VALUE_PARAMETER = new JvmClassName("jet.typeinfo.JetValueParameter");
+
     public static final String JET_VALUE_PARAMETER_NAME_FIELD = "name";
     public static final String JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
     public static final String JET_VALUE_PARAMETER_NULLABLE_FIELD = "nullable";
     public static final String JET_VALUE_PARAMETER_TYPE_FIELD = "type";
 
 
-    public static final String JET_TYPE_PARAMETER_CLASS = "jet.typeinfo.JetTypeParameter";
-    public static final String JET_TYPE_PARAMETER_DESCRIPTOR = "Ljet/typeinfo/JetTypeParameter;";
-    
+    public static final JvmClassName JET_TYPE_PARAMETER = new JvmClassName("jet.typeinfo.JetTypeParameter");
+
     public static final String JET_TYPE_PARAMETER_NAME_FIELD = "name";
 
 
-    public static final String JET_METHOD_CLASS = "jet.typeinfo.JetMethod";
-    public static final String JET_METHOD_DESCRIPTOR = "Ljet/typeinfo/JetMethod;";
-    
+    public static final JvmClassName JET_METHOD = new JvmClassName("jet.typeinfo.JetMethod");
+
     public static final String JET_METHOD_NULLABLE_RETURN_TYPE_FIELD = "nullableReturnType";
     public static final String JET_METHOD_RETURN_TYPE_FIELD = "returnType";
     public static final String JET_METHOD_TYPE_PARAMETERS_FIELD = "typeParameters";
     
 
-    public static final String JET_OBJECT_INTERNAL = "jet/JetObject";
-    public static final String JET_OBJECT_CLASS = "jet.JetObject";
-    public static final String JET_OBJECT_DESCRIPTOR = "Ljet/JetObject;";
+    public static final JvmClassName JET_CLASS = new JvmClassName("jet.typeinfo.JetClass");
+    
+    public static final String JET_CLASS_SIGNATURE = "signature";
+    
+
+    public static final JvmClassName JET_OBJECT = new JvmClassName("jet.JetObject");
+
 
     private StdlibNames() {
     }

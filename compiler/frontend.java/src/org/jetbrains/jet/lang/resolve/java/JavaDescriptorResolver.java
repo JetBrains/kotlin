@@ -381,7 +381,7 @@ public class JavaDescriptorResolver {
             PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
             attributes.toString();
 
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_VALUE_PARAMETER_CLASS)) {
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_VALUE_PARAMETER.getFqName())) {
                 PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD);
                 if (nameExpression != null) {
                     name = (String) nameExpression.getValue();
@@ -400,7 +400,7 @@ public class JavaDescriptorResolver {
                 if (signatureExpression != null) {
                     typeFromAnnotation = (String) signatureExpression.getValue();
                 }
-            } else if (annotation.getQualifiedName().equals(StdlibNames.JET_TYPE_PARAMETER_CLASS)) {
+            } else if (annotation.getQualifiedName().equals(StdlibNames.JET_TYPE_PARAMETER.getFqName())) {
                 return null;
             }
         }
@@ -531,7 +531,7 @@ public class JavaDescriptorResolver {
 
     private List<TypeParameterDescriptor> resolveMethodTypeParameters(PsiMethod method, FunctionDescriptorImpl functionDescriptorImpl) {
         for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD_CLASS)) {
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD.getFqName())) {
                 PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD);
                 if (attributeValue != null) {
                     String typeParametersString = (String) attributeValue.getValue();
@@ -600,7 +600,7 @@ public class JavaDescriptorResolver {
         String returnTypeFromAnnotation = null;
 
         for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD_CLASS)) {
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD.getFqName())) {
                 PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
