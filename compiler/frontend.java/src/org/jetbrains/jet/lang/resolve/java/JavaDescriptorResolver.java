@@ -163,7 +163,11 @@ public class JavaDescriptorResolver {
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
         if (psiConstructors.length == 0) {
-            if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT) && !psiClass.isInterface()) {
+            // We need to create default constructors for classes and abstract classes.
+            // Example:
+            // class Kotlin() : Java() {}
+            // abstract public class Java {}
+            if (!psiClass.isInterface()) {
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
