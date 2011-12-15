@@ -14,24 +14,28 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
  */
 public class JavaBridgeConfiguration implements Configuration {
 
-    public static Configuration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace) {
-        return new JavaBridgeConfiguration(project, trace);
+    public static Configuration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, Configuration delegateConfiguration) {
+        return new JavaBridgeConfiguration(project, trace, delegateConfiguration);
     }
 
     private final JavaSemanticServices javaSemanticServices;
+    private final Configuration delegateConfiguration;
 
-    private JavaBridgeConfiguration(Project project, BindingTrace trace) {
+    private JavaBridgeConfiguration(Project project, BindingTrace trace, Configuration delegateConfiguration) {
         this.javaSemanticServices = new JavaSemanticServices(project, JetSemanticServices.createSemanticServices(project), trace);
+        this.delegateConfiguration = delegateConfiguration;
     }
 
     @Override
-    public void addDefaultImports(BindingTrace trace, WritableScope rootScope) {
+    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope) {
         rootScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         rootScope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
+        delegateConfiguration.addDefaultImports(trace, rootScope);
     }
 
     @Override
-    public void extendNamespaceScope(BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
+    public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         namespaceMemberScope.importScope(new JavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor), namespaceDescriptor, javaSemanticServices));
+        delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
     }
 }

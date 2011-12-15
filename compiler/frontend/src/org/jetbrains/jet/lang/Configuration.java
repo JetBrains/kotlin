@@ -11,19 +11,19 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 public interface Configuration {
     Configuration EMPTY = new Configuration() {
         @Override
-        public void addDefaultImports(BindingTrace trace, WritableScope rootScope) {
+        public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope) {
         }
 
         @Override
-        public void extendNamespaceScope(BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
+        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
     };
 
-    void addDefaultImports(BindingTrace trace, WritableScope rootScope);
+    void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope);
 
     /**
      *
      * This method is called every time a namespace descriptor is created. Use it to add extra descriptors to the namespace, e.g. merge a Java package with a Kotlin one
      */
-    void extendNamespaceScope(BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
+    void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
 }
