@@ -29,7 +29,7 @@ public final class ClassSorter {
     private final BindingContext bindingContext;
 
     @NotNull
-    static public List<JetClass> sortUsingInheritanceOrder(@NotNull List<JetClass> original,
+    public static List<JetClass> sortUsingInheritanceOrder(@NotNull List<JetClass> original,
                                                            @NotNull BindingContext bindingContext) {
         ClassSorter sorter = new ClassSorter(original, bindingContext);
         return sorter.sortUsingInheritanceOrder();

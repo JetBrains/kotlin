@@ -85,6 +85,7 @@ public final class CallTranslator extends AbstractTranslator {
         return translate(context, receiver, arguments, functionDescriptor);
     }
 
+    @NotNull
     public static JsExpression mayBeWrapWithNegation(@NotNull JsExpression expression, boolean shouldWrap) {
         if (shouldWrap) {
             return not(expression);
@@ -167,6 +168,7 @@ public final class CallTranslator extends AbstractTranslator {
         return functionIntrinsic.apply(receiver, arguments, context());
     }
 
+    @NotNull
     private JsInvocation methodCall() {
         return AstUtil.newInvocation(calleeReference(), arguments);
     }
@@ -209,6 +211,7 @@ public final class CallTranslator extends AbstractTranslator {
         return methodReference;
     }
 
+    @NotNull
     private JsExpression extensionFunctionReference(@NotNull JsExpression methodReference) {
         JsExpression qualifier = TranslationUtils.getExtensionFunctionImplicitReceiver(context(), functionDescriptor);
         if (qualifier != null) {

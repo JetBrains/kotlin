@@ -20,7 +20,7 @@ import java.util.List;
 public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
 
 
-    protected InitializerVisitor() {
+    /*package*/ InitializerVisitor() {
     }
 
     @Override

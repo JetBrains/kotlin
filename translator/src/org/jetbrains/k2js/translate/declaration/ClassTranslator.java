@@ -29,15 +29,15 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.findAncestorCla
 public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
+    public static JsInvocation translateClass(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+        return (new ClassTranslator(classDeclaration, context)).translateClass();
+    }
+
+    @NotNull
     private final DeclarationBodyVisitor declarationBodyVisitor = new DeclarationBodyVisitor();
 
     @NotNull
     private final JetClass classDeclaration;
-
-    @NotNull
-    static public JsInvocation translateClass(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
-        return (new ClassTranslator(classDeclaration, context)).translateClass();
-    }
 
     private ClassTranslator(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
         super(context.newClass(classDeclaration));

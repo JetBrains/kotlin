@@ -17,7 +17,6 @@ import java.util.List;
  */
 public abstract class AbstractInitializerTranslator extends AbstractTranslator {
 
-
     @NotNull
     protected final InitializerVisitor visitor;
     @NotNull

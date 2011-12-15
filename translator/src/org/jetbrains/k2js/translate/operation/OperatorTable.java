@@ -12,6 +12,8 @@ import java.util.Map;
 /**
  * @author Pavel Talanov
  */
+
+//TODO: change using guava builders
 public final class OperatorTable {
 
     private static Map<JetToken, JsBinaryOperator> binaryOperatorsMap = new HashMap<JetToken, JsBinaryOperator>();
