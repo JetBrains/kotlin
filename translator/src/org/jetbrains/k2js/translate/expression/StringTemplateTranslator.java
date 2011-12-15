@@ -23,7 +23,6 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         return (new StringTemplateTranslator(expression, context).translate());
     }
 
-
     @NotNull
     private final JetStringTemplateExpression expression;
 

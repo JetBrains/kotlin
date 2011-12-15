@@ -46,9 +46,6 @@ public final class CompareToTranslator extends AbstractTranslator {
     private final JetBinaryExpression expression;
 
     @NotNull
-    private final JetToken operationToken;
-
-    @NotNull
     private final FunctionDescriptor descriptor;
 
     private CompareToTranslator(@NotNull JetBinaryExpression expression,
@@ -59,8 +56,7 @@ public final class CompareToTranslator extends AbstractTranslator {
                 getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
         assert functionDescriptor != null : "CompareTo should always have a descriptor";
         this.descriptor = functionDescriptor;
-        this.operationToken = getOperationToken(expression);
-        assert (OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken));
+        assert (OperatorConventions.COMPARISON_OPERATIONS.contains(getOperationToken(expression)));
     }
 
     @NotNull
@@ -73,7 +69,7 @@ public final class CompareToTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression overloadedCompareTo() {
-        JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(operationToken);
+        JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(getOperationToken(expression));
         JsExpression methodCall = CallTranslator.translate(expression, context());
         return new JsBinaryOperation(correspondingOperator, methodCall, TranslationUtils.zeroLiteral(context()));
     }
