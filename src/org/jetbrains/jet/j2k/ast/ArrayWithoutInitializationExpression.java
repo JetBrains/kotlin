@@ -20,33 +20,34 @@ public class ArrayWithoutInitializationExpression extends Expression {
   @NotNull
   @Override
   public String toKotlin() {
-    if (myType.getKind() == Kind.ARRAY_TYPE) {
-      if (myExpressions.size() == 1)
-        return oneDim(myType, myExpressions.get(0));
-      if (myExpressions.size() == 2) {
-        Type innerType = ((ArrayType) myType).getInnerType();
-        return oneDim(myType, myExpressions.get(0), "{" + SPACE +
-          oneDim(innerType, myExpressions.get(1)) + SPACE + "}");
-      }
-    }
+    if (myType.getKind() == Kind.ARRAY_TYPE)
+      return constructInnerType((ArrayType) myType, myExpressions);
     return getConstructorName(myType);
   }
 
-  private static String oneDim(Type type, Expression size) {
+  @NotNull
+  private static String constructInnerType(@NotNull ArrayType hostType, @NotNull List<Expression> expressions) {
+    if (expressions.size() == 1)
+      return oneDim(hostType, expressions.get(0));
+    Type innerType = hostType.getInnerType();
+    if (expressions.size() > 1 && innerType.getKind() == Kind.ARRAY_TYPE)
+      return oneDim(hostType, expressions.get(0), "{" + constructInnerType((ArrayType) innerType, expressions.subList(1, expressions.size())) + "}");
+    return getConstructorName(hostType);
+  }
+
+  @NotNull
+  private static String oneDim(@NotNull Type type, @NotNull Expression size) {
     return oneDim(type, size, EMPTY);
   }
 
-  private static String oneDim(Type type, Expression size, String init) {
+  @NotNull
+  private static String oneDim(@NotNull Type type, @NotNull Expression size, @NotNull String init) {
     String commaWithInit = init.isEmpty() ? EMPTY : COMMA_WITH_SPACE + init;
     return getConstructorName(type) + "(" + size.toKotlin() + commaWithInit + ")";
   }
 
-  public static String getConstructorName(Type type) {
-//    if (type instanceof ArrayType) {
-//      String innerTypeStr = ((ArrayType) type).getInnerType().toKotlin().toLowerCase();
-//      if (PRIMITIVE_TYPES.contains(innerTypeStr))
-//        return innerTypeStr + "Array";
-//    }
+  @NotNull
+  public static String getConstructorName(@NotNull Type type) {
     return AstUtil.replaceLastQuest(type.toKotlin());
   }
 }
