@@ -134,7 +134,7 @@ label
 
 literalConstant
   : "true" | "false"
-  : StringWithTemplates
+  : stringTemplate
   : NoEscapeString
   : IntegerLiteral
   : HexadecimalLiteral
@@ -142,6 +142,22 @@ literalConstant
   : FloatLiteral
   : "null"
   ;
+
+stringTemplate
+  : "\"" stringTemplateElement* "\""
+  ;
+
+stringTemplateElement
+  : RegularStringPart
+  : ShortTemplateEntrySTART (SimpleName | "this")
+  : EscapeSequence
+  : longTemplate
+  ;
+
+longTemplate
+  : "${" expression "}"
+  ;
+
 
 isRHS
   : pattern

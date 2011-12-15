@@ -161,6 +161,25 @@ JetFile: StringTemplates.jet
           PsiElement(OPEN_QUOTE)('"')
           SHORT_STRING_TEMPLATE_ENTRY
             PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+            THIS_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(this)('this')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)(' must be')
+          SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+            PsiErrorElement:Keyword cannot be used as a reference
+              PsiElement(as)('as')
+          SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('abc')
           PsiElement(CLOSING_QUOTE)('"')

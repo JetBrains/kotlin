@@ -7,6 +7,7 @@ fun demo() {
   fun buzz(f : fun () : Any?) : Int  = 1
   val sdf = 1
   val foo = 3;
+    "$this must be$as$t"
     "$abc"
     "$abc\"
     "$"

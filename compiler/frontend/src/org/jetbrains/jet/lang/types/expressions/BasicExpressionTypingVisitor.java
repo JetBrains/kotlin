@@ -916,7 +916,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
                     JetExpression entryExpression = entry.getExpression();
                     if (entryExpression != null) {
-                        facade.getType(entryExpression, context.replaceScope(context.scope));
+                        facade.getType(entryExpression, context);
                     }
                     value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
                 }

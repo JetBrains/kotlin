@@ -59,7 +59,7 @@ public class CallResolver {
         JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
         String referencedName = nameExpression.getReferencedName();
         if (referencedName == null) {
-            return null;
+            return OverloadResolutionResultsImpl.nameNotFound();
         }
         TaskPrioritizer<VariableDescriptor> task_prioritizer;
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {

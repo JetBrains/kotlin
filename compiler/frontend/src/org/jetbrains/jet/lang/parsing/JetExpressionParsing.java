@@ -1,9 +1,11 @@
 package org.jetbrains.jet.lang.parsing;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -17,6 +19,16 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW, DOT);
+
+    private static final ImmutableMap<String, JetToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
+
+    private static ImmutableMap<String, JetToken> tokenSetToMap(TokenSet tokens) {
+        ImmutableMap.Builder<String, JetToken> builder = ImmutableMap.builder();
+        for (IElementType token : tokens.getTypes()) {
+            builder.put(token.toString(), (JetToken) token);
+        }
+        return builder.build();
+    }
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
@@ -587,7 +599,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * stringTemplateElement
      *   : RegularStringPart
-     *   : ShortTemplateEntrySTART SimpleName
+     *   : ShortTemplateEntrySTART (SimpleName | "this")
      *   : EscapeSequence
      *   : longTemplate
      *   ;
@@ -611,9 +623,25 @@ public class JetExpressionParsing extends AbstractJetParsing {
             PsiBuilder.Marker entry = mark();
             advance(); // SHORT_TEMPLATE_ENTRY_START
 
-            PsiBuilder.Marker reference = mark();
-            expect(IDENTIFIER, "Expecting a name");
-            reference.done(REFERENCE_EXPRESSION);
+            if (at(THIS_KEYWORD)) {
+                PsiBuilder.Marker thisExpression = mark();
+                PsiBuilder.Marker reference = mark();
+                advance(); // THIS_KEYWORD
+                reference.done(REFERENCE_EXPRESSION);
+                thisExpression.done(THIS_EXPRESSION);
+            }
+            else {
+                JetToken keyword = KEYWORD_TEXTS.get(myBuilder.getTokenText());
+                if (keyword != null) {
+                    myBuilder.remapCurrentToken(keyword);
+                    errorAndAdvance("Keyword cannot be used as a reference");
+                }
+                else {
+                    PsiBuilder.Marker reference = mark();
+                    expect(IDENTIFIER, "Expecting a name");
+                    reference.done(REFERENCE_EXPRESSION);
+                }
+            }
 
             entry.done(SHORT_STRING_TEMPLATE_ENTRY);
         }
