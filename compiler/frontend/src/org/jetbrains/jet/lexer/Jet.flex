@@ -121,6 +121,10 @@ LONG_TEMPLATE_ENTRY_END=\}
                                             yypushback(yylength() - 1);
                                             return JetTokens.SHORT_TEMPLATE_ENTRY_START;
                                        }
+// Only *this* keyword is itself an expression valid in this position
+// *null*, *true* and *false* are also keywords and expression, but it does not make sense to put them
+// in a string template for it'd be easier to just type them in without a dollar
+<SHORT_TEMPLATE_ENTRY> "this"          { popState(); return JetTokens.THIS_KEYWORD; }
 <SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return JetTokens.IDENTIFIER; }
 
 <STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
