@@ -17,6 +17,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
@@ -124,9 +125,9 @@ public class JavaDescriptorResolver {
                 resolveParentDescriptor(psiClass), psiClass.isInterface() ? ClassKind.TRAIT : ClassKind.CLASS
         );
         classDescriptor.setName(name);
-
+        
         List<JetType> supertypes = new ArrayList<JetType>();
-        List<TypeParameterDescriptor> typeParameters = makeUninitializedTypeParameters(classDescriptor, psiClass.getTypeParameters());
+        List<TypeParameterDescriptor> typeParameters = resolveClassTypeParameters(psiClass, classDescriptor);
         classDescriptor.setTypeConstructor(new TypeConstructorImpl(
                 classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
@@ -144,8 +145,11 @@ public class JavaDescriptorResolver {
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
 
-        // UGLY HACK
-        initializeTypeParameters(psiClass);
+        // TODO: initialize
+        if (psiClass.getModifierList().findAnnotation(StdlibNames.JET_CLASS.getFqName()) == null) {
+            // UGLY HACK (Andrey Breslav is not sure what did he mean)
+            initializeTypeParameters(psiClass);
+        }
 
         supertypes.addAll(getSupertypes(psiClass));
         if (psiClass.isInterface()) {
@@ -191,6 +195,82 @@ public class JavaDescriptorResolver {
         semanticServices.getTrace().record(BindingContext.CLASS, psiClass, classDescriptor);
 
         return classDescriptor;
+    }
+
+    private List<TypeParameterDescriptor> resolveClassTypeParameters(PsiClass psiClass, JavaClassDescriptor classDescriptor) {
+        for (PsiAnnotation annotation : psiClass.getModifierList().getAnnotations()) {
+            if (annotation.getQualifiedName().equals(StdlibNames.JET_CLASS.getFqName())) {
+                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_CLASS_SIGNATURE);
+                if (attributeValue != null) {
+                    String typeParametersString = (String) attributeValue.getValue();
+                    if (typeParametersString != null) {
+                        return resolveClassTypeParametersFromJetSignature(typeParametersString, classDescriptor);
+                    }
+                }
+            }
+        }
+        return makeUninitializedTypeParameters(classDescriptor, psiClass.getTypeParameters());
+    }
+
+    /**
+     * @see #resolveMethodTypeParametersFromJetSignature(String, FunctionDescriptor)
+     */
+    private List<TypeParameterDescriptor> resolveClassTypeParametersFromJetSignature(String jetSignature, final JavaClassDescriptor classDescriptor) {
+        final List<TypeParameterDescriptor> r = new ArrayList<TypeParameterDescriptor>();
+        new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
+            @Override
+            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
+                return new JetSignatureExceptionsAdapter() {
+                    int index = 0;
+
+                    @Override
+                    public JetSignatureVisitor visitClassBound() {
+                        return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
+                            @Override
+                            protected void done(@NotNull JetType jetType) {
+                                // TODO
+                            }
+                        };
+                    }
+
+                    @Override
+                    public JetSignatureVisitor visitInterfaceBound() {
+                        return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
+                            @Override
+                            protected void done(@NotNull JetType jetType) {
+                                // TODO
+                            }
+                        };
+                    }
+
+                    @Override
+                    public void visitFormalTypeParameterEnd() {
+                        TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
+                                classDescriptor,
+                                Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
+                                true, // TODO: wrong
+                                JetSignatureUtils.translateVariance(variance),
+                                name,
+                                ++index);
+                        r.add(typeParameter);
+                    }
+
+                };
+            }
+
+            @Override
+            public JetSignatureVisitor visitSuperclass() {
+                // TODO
+                return new JetSignatureAdapter();
+            }
+
+            @Override
+            public JetSignatureVisitor visitInterface() {
+                // TODO
+                return new JetSignatureAdapter();
+            }
+        });
+        return r;
     }
 
     private DeclarationDescriptor resolveParentDescriptor(PsiClass psiClass) {
@@ -542,7 +622,10 @@ public class JavaDescriptorResolver {
         initializeTypeParameters(method);
         return typeParameters;
     }
-    
+
+    /**
+     * @see #resolveClassTypeParametersFromJetSignature(String, JavaClassDescriptor)
+     */
     private List<TypeParameterDescriptor> resolveMethodTypeParametersFromJetSignature(String jetSignature, final FunctionDescriptor functionDescriptor) {
         final List<TypeParameterDescriptor> r = new ArrayList<TypeParameterDescriptor>();
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {

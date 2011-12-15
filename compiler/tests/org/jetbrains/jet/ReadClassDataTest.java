@@ -153,15 +153,21 @@ public class ReadClassDataTest extends UsefulTestCase {
         String bs = serializeContent((ClassDescriptor) b);
 
         Assert.assertEquals(as, bs);
-        System.out.println(a);
+        System.out.println(as);
     }
     
     private String serializeContent(ClassDescriptor klass) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("class ");
-
+        
         serialize(klass, sb);
+
+        if (!klass.getTypeConstructor().getParameters().isEmpty()) {
+            sb.append("<");
+            serializeCommaSeparated(klass.getTypeConstructor().getParameters(), sb);
+            sb.append(">");
+        }
 
         // TODO: supers
         // TODO: constructors
