@@ -3,6 +3,8 @@ package org.jetbrains.jet.util.slicedmap;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Do nothing but dispatching all invokes to internal writable slice.
+ *
  * @author abreslav
  */
 public class DelegatingSlice<K, V> implements WritableSlice<K, V> {
@@ -17,10 +19,12 @@ public class DelegatingSlice<K, V> implements WritableSlice<K, V> {
         return delegate.isCollective();
     }
 
+    @Override
     public boolean check(K key, V value) {
         return delegate.check(key, value);
     }
 
+    @Override
     public void afterPut(MutableSlicedMap map, K key, V value) {
         delegate.afterPut(map, key, value);
     }
@@ -30,10 +34,12 @@ public class DelegatingSlice<K, V> implements WritableSlice<K, V> {
         return delegate.getRewritePolicy();
     }
 
+    @Override
     public SlicedMapKey<K, V> makeKey(K key) {
         return delegate.makeKey(key);
     }
 
+    @Override
     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
         return delegate.computeValue(map, key, value, valueNotFound);
     }

@@ -42,7 +42,7 @@ public class QuickFixes {
 
         add(Errors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_NOT_IN_CLASS, removeAbstractModifierFactory);
-
+        
         JetIntentionActionFactory<JetProperty> removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
         add(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removePartsFromPropertyFactory);
@@ -115,6 +115,9 @@ public class QuickFixes {
         JetIntentionActionFactory<JetSimpleNameExpression> changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         add(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         add(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
+
+        JetIntentionActionFactory<JetSimpleNameExpression> unresolvedReferenceFactory = ImportClassFix.createFactory();
+        add(Errors.UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actionMap.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class JetQuickFixTest  extends LightQuickFixTestCase {
+public class JetQuickFixTest extends LightQuickFixTestCase {
     private final String dataPath;
     private final String name;
     private static FilenameFilter quickFixTestsFilter;

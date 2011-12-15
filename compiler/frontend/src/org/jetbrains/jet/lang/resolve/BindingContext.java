@@ -138,7 +138,7 @@ public interface BindingContext {
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
     WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.<JetParameter, PropertyDescriptor>sliceBuilder().build();
 
-    WritableSlice<String, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<String, ClassDescriptor>(DO_NOTHING);
+    WritableSlice<String, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<String, ClassDescriptor>(DO_NOTHING, true);
     WritableSlice<String, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR = new BasicWritableSlice<String, NamespaceDescriptor>(DO_NOTHING);
 
     @SuppressWarnings("UnusedDeclaration")

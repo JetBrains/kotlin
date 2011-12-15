@@ -24,7 +24,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid();
+        return element.isValid() && file.getManager().isInProject(file);
     }
 
     @Override

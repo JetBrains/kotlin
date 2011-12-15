@@ -6,7 +6,7 @@ import java.lang.reflect.Modifier;
 /**
 * @author abreslav
 */
-public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
+public class BasicWritableSlice<K, V> implements WritableSlice<K, V> {
 
     public static Void initSliceDebugNames(Class<?> declarationOwner) {
         for (Field field : declarationOwner.getFields()) {
@@ -26,9 +26,15 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
     
     private String debugName;
     private final RewritePolicy rewritePolicy;
+    private final boolean isCollective;
 
     public BasicWritableSlice(RewritePolicy rewritePolicy) {
+        this(rewritePolicy, false);
+    }
+
+    public BasicWritableSlice(RewritePolicy rewritePolicy, boolean isCollective) {
         this.rewritePolicy = rewritePolicy;
+        this.isCollective = isCollective;
     }
 
     @Override
@@ -62,7 +68,7 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
 
     @Override
     public boolean isCollective() {
-        return false;
+        return isCollective;
     }
 
     @Override

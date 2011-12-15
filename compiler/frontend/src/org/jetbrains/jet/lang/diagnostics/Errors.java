@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -43,6 +43,7 @@ public interface Errors {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     };
+
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = new UnresolvedReferenceDiagnosticFactory("Unresolved reference");
 
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.REDECLARATION;
