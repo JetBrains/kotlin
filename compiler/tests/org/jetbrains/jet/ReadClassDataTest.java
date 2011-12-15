@@ -237,7 +237,12 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serialize(Variance variance, StringBuilder sb) {
-        sb.append(variance);
+        if (variance == Variance.INVARIANT) {
+
+        } else {
+            sb.append(variance);
+            sb.append(' ');
+        }
     } 
     
     private void serialize(JetType type, StringBuilder sb) {
@@ -318,9 +323,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serialize(TypeParameterDescriptor param, StringBuilder sb) {
-        if (param.getVariance() != Variance.INVARIANT) {
-            serialize(param.getVariance(), sb);
-        }
+        serialize(param.getVariance(), sb);
         sb.append(param.getName());
         // TODO: serialize bounds
     }

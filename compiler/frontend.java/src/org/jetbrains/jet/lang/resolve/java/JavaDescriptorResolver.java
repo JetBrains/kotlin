@@ -551,7 +551,7 @@ public class JavaDescriptorResolver {
         final List<TypeParameterDescriptor> r = new ArrayList<TypeParameterDescriptor>();
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
             @Override
-            public JetSignatureVisitor visitFormalTypeParameter(final String name, TypeInfoVariance variance) {
+            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
 
                 return new JetSignatureExceptionsAdapter() {
                     int index = 0;
@@ -582,7 +582,7 @@ public class JavaDescriptorResolver {
                                 functionDescriptor,
                                 Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
                                 true, // TODO: wrong
-                                Variance.INVARIANT, // TOOD: wrong
+                                JetSignatureUtils.translateVariance(variance),
                                 name,
                                 ++index);
                         r.add(typeParameter);
