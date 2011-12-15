@@ -166,6 +166,12 @@ public class ClassGenTest extends CodegenTestCase {
         assertEquals(0xFF0000, rgbMethod.invoke(redValue));
     }
 
+    public void testClassObjFields() throws Exception {
+        loadText("class A() { class object { val value = 10 } }\n" +
+                 "fun box() = if(A.value == 10) \"OK\" else \"fail\"");
+        blackBox();
+    }
+
     public void testKt249() throws Exception {
         blackBoxFile("regressions/kt249.jet");
     }
