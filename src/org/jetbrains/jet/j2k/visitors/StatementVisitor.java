@@ -347,15 +347,12 @@ public class StatementVisitor extends ElementVisitor {
   public void visitReturnStatement(@NotNull PsiReturnStatement statement) {
     super.visitReturnStatement(statement);
     PsiExpression returnValue = statement.getReturnValue();
-    String conversion = "";
-
     PsiType methodReturnType = Converter.getMethodReturnType();
-    if (returnValue != null && methodReturnType != null && isConversionNeeded(returnValue.getType(), methodReturnType)) {
-      conversion = getPrimitiveTypeConversion(methodReturnType.getCanonicalText());
-    }
+    Expression expression = returnValue != null && methodReturnType != null ?
+      createSureCallOnlyForChain(returnValue, methodReturnType) :
+      expressionToExpression(returnValue);
     myResult = new ReturnStatement(
-      expressionToExpression(returnValue),
-      conversion
+      expression
     );
   }
 }

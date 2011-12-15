@@ -591,11 +591,12 @@ public class Converter {
     if (expression != null) {
       PsiType actualType = expression.getType();
       if (actualType != null) {
+        if (Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText()) && (expression instanceof PsiReferenceExpression
+          && ((PsiReferenceExpression) expression).isQualified() || expression instanceof PsiMethodCallExpression)
+          && expressionToExpression(expression).toKotlin().contains("?."))
+          conversion += ".sure()";
         if (isConversionNeeded(actualType, expectedType))
           conversion += getPrimitiveTypeConversion(expectedType.getCanonicalText());
-        if (Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText()) && (expression instanceof PsiReferenceExpression && ((PsiReferenceExpression) expression).isQualified() ||
-          expression instanceof PsiMethodCallExpression))
-          conversion += ".sure()";
       }
     }
     return conversion;
