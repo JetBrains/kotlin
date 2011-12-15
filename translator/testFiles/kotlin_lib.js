@@ -40,7 +40,7 @@ function $A(iterable) {
     extend(Object, {
         extend:extend,
         keys:Object.keys || keys,
-        values:values,
+        values:values
     });
 })();
 

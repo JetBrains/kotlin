@@ -17,6 +17,6 @@ public final class AppletTest extends TranslationTest {
 
     @Test
     public void simpleTest() throws Exception {
-        System.out.println((new K2JSTranslatorApplet()).translate("fun main(args : Array<String>) {}"));
+        (new K2JSTranslatorApplet()).translate("fun main(args : Array<String>) {}", " a 3 1   2134");
     }
 }

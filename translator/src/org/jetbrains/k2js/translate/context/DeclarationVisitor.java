@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getOwnDeclarations;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.nameForNamespace;
 
 /**
  * @author Talanov Pavel
@@ -121,15 +122,6 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
         JsName namespaceName = declareName(descriptor, context, nameForNamespace(descriptor));
         NamingScope namespaceScope = declareScope(descriptor, context, "namespace " + namespaceName.getIdent());
         return context.innerDeclaration(namespaceScope, namespaceName);
-    }
-
-    @NotNull
-    private String nameForNamespace(@NotNull NamespaceDescriptor descriptor) {
-        String name = descriptor.getName();
-        if (name.equals("")) {
-            return "Anonymous";
-        }
-        return name;
     }
 
     private void declareMembers(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {

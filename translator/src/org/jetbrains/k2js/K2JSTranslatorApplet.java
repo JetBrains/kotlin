@@ -10,10 +10,11 @@ import java.applet.Applet;
 public final class K2JSTranslatorApplet extends Applet {
 
     @NotNull
-    public String translate(@NotNull String code) {
-        String generatedCode = (new K2JSTranslator()).translateString(code);
+    public String translate(@NotNull String code, @NotNull String arguments) {
+        String generatedCode = (new K2JSTranslator()).translateStringWithCallToMain(code, arguments);
         System.out.println("GENERATED JAVASCRIPT CODE:\n-----------------------------------\n");
         System.out.println(generatedCode);
         return generatedCode;
     }
+
 }

@@ -13,6 +13,8 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/translator/lib/junit-4.10.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/translator/lib/guava-10.0.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../../Kotlin/jet/lib/asm-util-3.3.1.jar" path-in-jar="/" />
+      <element id="module-output" name="idea_fix" />
+      <element id="file-copy" path="E:/rt.jar" />
     </root>
   </artifact>
 </component>

@@ -11,6 +11,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -20,56 +21,74 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.utils.JetTestUtils;
+import org.jetbrains.k2js.utils.GenerationUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getNamespaceDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.nameForNamespace;
+import static org.jetbrains.k2js.utils.JetTestUtils.analyzeNamespace;
 
 /**
  * @author Talanov Pavel
  */
 public final class K2JSTranslator {
 
-    private final JetCoreEnvironment myEnvironment = new JetCoreEnvironment(new Disposable() {
+    @NotNull
+    private final JetCoreEnvironment environment = new JetCoreEnvironment(new Disposable() {
 
         @Override
         public void dispose() {
         }
     });
 
+    @Nullable
+    private BindingContext bindingContext = null;
+
     public K2JSTranslator() {
     }
 
     public void translateFile(@NotNull String inputFile, @NotNull String outputFile) throws Exception {
-
         JetFile PsiFile = loadPsiFile(inputFile);
-
+        includeRtJar();
         JsProgram program = generateProgram(PsiFile);
-
         CodeGenerator generator = new CodeGenerator();
         generator.generateToFile(program, new File(outputFile));
     }
 
     @NotNull
-    public String translateString(@NotNull String programText) {
-        JetFile PsiFile = createPsiFile("test", programText);
-        JsProgram program = generateProgram(PsiFile);
+    public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) {
+        JetFile file = createPsiFile("test", programText);
+        String programCode = generateProgramCode(file);
+        String callToMain = generateCallToMain(file, argumentsString);
+        return programCode + callToMain;
+    }
 
+    private String generateProgramCode(JetFile psiFile) {
+        JsProgram program = generateProgram(psiFile);
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
     }
 
     @NotNull
     private JsProgram generateProgram(@NotNull JetFile psiFile) {
-        final File rtJar = CompileEnvironment.findRtJar(true);
-        myEnvironment.addToClasspath(rtJar);
 
         JetNamespace namespace = psiFile.getRootNamespace();
 
-        BindingContext bindingContext = JetTestUtils.analyzeNamespace(namespace,
+        bindingContext = analyzeNamespace(namespace,
                 JetControlFlowDataTraceFactory.EMPTY);
+        assert bindingContext != null;
 
-        return Translation.generateAst(bindingContext, namespace, myEnvironment.getProject());
+        return Translation.generateAst(bindingContext, namespace, environment.getProject());
+    }
+
+    private void includeRtJar() {
+        final File rtJar = CompileEnvironment.findRtJar(true);
+        environment.addToClasspath(rtJar);
     }
 
     @NotNull
@@ -102,7 +121,34 @@ public final class K2JSTranslator {
     protected PsiFile createFile(@NonNls String name, String text) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(myEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(environment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+    }
+
+
+    @NotNull
+    public String generateCallToMain(@NotNull JetFile file, String argumentString) {
+        String namespaceName = getRootNamespaceName(file);
+
+        List<String> arguments = parseString(argumentString);
+        return GenerationUtils.generateCallToMain(namespaceName, arguments);
+    }
+
+    @NotNull
+    private List<String> parseString(@NotNull String argumentString) {
+        List<String> result = new ArrayList<String>();
+        StringTokenizer stringTokenizer = new StringTokenizer(argumentString);
+        while (stringTokenizer.hasMoreTokens()) {
+            result.add(stringTokenizer.nextToken());
+        }
+        return result;
+    }
+
+    //TODO: make "anonymous" a constant
+    @NotNull
+    private String getRootNamespaceName(@NotNull JetFile psiFile) {
+        JetNamespace namespace = psiFile.getRootNamespace();
+        assert bindingContext != null;
+        return nameForNamespace(getNamespaceDescriptor(bindingContext, namespace));
     }
 
 }

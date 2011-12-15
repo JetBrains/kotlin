@@ -121,4 +121,13 @@ public final class DescriptorUtils {
     public static boolean isExtensionFunction(@NotNull FunctionDescriptor functionDescriptor) {
         return (functionDescriptor.getReceiverParameter().exists());
     }
+
+    @NotNull
+    public static String nameForNamespace(@NotNull NamespaceDescriptor descriptor) {
+        String name = descriptor.getName();
+        if (name.equals("")) {
+            return "Anonymous";
+        }
+        return name;
+    }
 }

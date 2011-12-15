@@ -1,6 +1,7 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.utils.GenerationUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -36,18 +37,7 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
     }
 
     private void runMain(Context context, Scriptable scope) {
-        context.evaluateString(scope, execMain(), "function call", 0, null);
-    }
-
-    @NotNull
-    private String execMain() {
-        String constructArguments = "var args = Kotlin.array(" + arguments.size() + ");\n";
-        int index = 0;
-        for (String argument : arguments) {
-            constructArguments = constructArguments + "args.set(" + index + ", \"" + argument + "\");\n";
-            index++;
-        }
-        String callMain = "Anonymous.main(args);\n";
-        return constructArguments + callMain;
+        String callToMain = GenerationUtils.generateCallToMain("Anonymous", arguments);
+        context.evaluateString(scope, callToMain, "function call", 0, null);
     }
 }
