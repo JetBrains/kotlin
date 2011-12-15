@@ -50,9 +50,6 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    protected abstract JsExpression translate();
-
-    @NotNull
     protected JsExpression translateAsMethodCall() {
         if (returnValueIgnored() || isPrefix(expression)) {
             return asPrefix();

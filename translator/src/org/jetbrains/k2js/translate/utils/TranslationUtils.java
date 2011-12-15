@@ -48,7 +48,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
+    private static JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
         JetExpression jetExpression = argument.getArgumentExpression();
         if (jetExpression == null) {
             throw new AssertionError("Argument with no expression encountered!");
@@ -108,8 +108,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef getThisQualifiedNameReference(@NotNull TranslationContext context,
-                                                          @NotNull JsName name) {
+    private static JsNameRef getThisQualifiedNameReference(@NotNull TranslationContext context,
+                                                           @NotNull JsName name) {
         JsExpression qualifier = getThisQualifier(context);
         JsNameRef reference = name.makeRef();
         AstUtil.setQualifier(reference, qualifier);
@@ -117,7 +117,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression getThisQualifier(@NotNull TranslationContext context) {
+    private static JsExpression getThisQualifier(@NotNull TranslationContext context) {
         JsExpression qualifier;
         if (context.aliaser().hasAliasForThis()) {
             qualifier = context.aliaser().getAliasForThis();

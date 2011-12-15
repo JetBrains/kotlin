@@ -16,8 +16,8 @@ import java.util.Map;
 //TODO: change using guava builders
 public final class OperatorTable {
 
-    private static Map<JetToken, JsBinaryOperator> binaryOperatorsMap = new HashMap<JetToken, JsBinaryOperator>();
-    private static Map<JetToken, JsUnaryOperator> unaryOperatorsMap = new HashMap<JetToken, JsUnaryOperator>();
+    private static final Map<JetToken, JsBinaryOperator> binaryOperatorsMap = new HashMap<JetToken, JsBinaryOperator>();
+    private static final Map<JetToken, JsUnaryOperator> unaryOperatorsMap = new HashMap<JetToken, JsUnaryOperator>();
 
     static {
         unaryOperatorsMap.put(JetTokens.PLUSPLUS, JsUnaryOperator.INC);     //++

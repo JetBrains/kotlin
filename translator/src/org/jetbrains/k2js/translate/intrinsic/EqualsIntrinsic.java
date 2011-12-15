@@ -14,7 +14,7 @@ public abstract class EqualsIntrinsic implements Intrinsic {
         this.isNegated = isNegated;
     }
 
-    public boolean isNegated() {
+    protected boolean isNegated() {
         return isNegated;
     }
 }

@@ -18,7 +18,7 @@ public class Aliaser {
     @NotNull
     private final Map<DeclarationDescriptor, JsName> aliasesForDescriptors = new HashMap<DeclarationDescriptor, JsName>();
     @NotNull
-    private Stack<JsName> thisAliases = new Stack<JsName>();
+    private final Stack<JsName> thisAliases = new Stack<JsName>();
 
     private Aliaser() {
     }

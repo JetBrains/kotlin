@@ -31,59 +31,59 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 public final class Translation {
 
     @NotNull
-    static public FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
+    public static FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
                                                         @NotNull TranslationContext context) {
         return FunctionTranslator.newInstance(function, context);
     }
 
     @NotNull
-    static public JsStatement translateNamespace(@NotNull JetNamespace namespace,
+    public static JsStatement translateNamespace(@NotNull JetNamespace namespace,
                                                  @NotNull TranslationContext context) {
         return NamespaceTranslator.translateNamespace(namespace, context);
     }
 
     @NotNull
-    static public JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
+    public static JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
                                                          @NotNull TranslationContext context) {
         return ClassTranslator.translateClass(classDeclaration, context);
     }
 
     @NotNull
-    static public PatternTranslator patternTranslator(@NotNull TranslationContext context) {
+    public static PatternTranslator patternTranslator(@NotNull TranslationContext context) {
         return PatternTranslator.newInstance(context);
     }
 
     @NotNull
-    static public JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+    public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
         return expression.accept(new ExpressionVisitor(), context);
     }
 
     @NotNull
-    static public JsExpression translateAsExpression(@NotNull JetExpression expression,
+    public static JsExpression translateAsExpression(@NotNull JetExpression expression,
                                                      @NotNull TranslationContext context) {
         return AstUtil.convertToExpression(translateExpression(expression, context));
     }
 
     @NotNull
-    static public JsStatement translateAsStatement(@NotNull JetExpression expression,
+    public static JsStatement translateAsStatement(@NotNull JetExpression expression,
                                                    @NotNull TranslationContext context) {
         return AstUtil.convertToStatement(translateExpression(expression, context));
     }
 
     @NotNull
-    static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
+    public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
                                                  @NotNull TranslationContext context) {
         return WhenTranslator.translateWhenExpression(expression, context);
     }
 
     @NotNull
-    static public JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClass classDeclaration,
+    public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClass classDeclaration,
                                                                        @NotNull TranslationContext context) {
         return (new ClassInitializerTranslator(classDeclaration, context)).generateInitializeMethod();
     }
 
     @NotNull
-    static public JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull JetNamespace namespace,
+    public static JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull JetNamespace namespace,
                                                                            @NotNull TranslationContext context) {
         return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
     }

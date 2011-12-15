@@ -25,12 +25,11 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
                 .translate();
     }
 
-    protected IntrinsicIncrementTranslator(@NotNull JetUnaryExpression expression,
-                                           @NotNull TranslationContext context) {
+    private IntrinsicIncrementTranslator(@NotNull JetUnaryExpression expression,
+                                         @NotNull TranslationContext context) {
         super(expression, context);
     }
 
-    @Override
     @NotNull
     protected JsExpression translate() {
         if (isPrimitiveExpressionIncrement()) {

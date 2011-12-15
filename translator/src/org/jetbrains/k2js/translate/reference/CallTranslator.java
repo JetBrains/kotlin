@@ -86,7 +86,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsExpression mayBeWrapWithNegation(@NotNull JsExpression expression, boolean shouldWrap) {
+    private static JsExpression mayBeWrapWithNegation(@NotNull JsExpression expression, boolean shouldWrap) {
         if (shouldWrap) {
             return not(expression);
         } else {

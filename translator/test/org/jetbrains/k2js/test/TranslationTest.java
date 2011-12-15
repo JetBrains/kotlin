@@ -14,7 +14,7 @@ import java.util.List;
  */
 public abstract class TranslationTest {
 
-    final protected static String TEST_FILES = "translator/testFiles/";
+    private final static String TEST_FILES = "translator/testFiles/";
     final private static String CASES = "cases/";
     final private static String OUT = "out/";
     final private static String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";

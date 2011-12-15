@@ -98,7 +98,7 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
+    private static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
         DeclarationDescriptor superClassDescriptor =
                 type.getConstructor().getDeclarationDescriptor();
         assert superClassDescriptor instanceof ClassDescriptor
@@ -190,8 +190,8 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
-                                                  @NotNull JetExpression expression) {
+    private static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
+                                                   @NotNull JetExpression expression) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
         assert resolvedCall != null : "Must resolve to a call.";
         return resolvedCall;

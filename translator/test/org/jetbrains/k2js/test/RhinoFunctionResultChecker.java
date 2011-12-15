@@ -11,9 +11,9 @@ import static org.junit.Assert.assertTrue;
  */
 public final class RhinoFunctionResultChecker implements RhinoResultChecker {
 
-    final String namespaceName;
-    final String functionName;
-    final Object expectedResult;
+    private final String namespaceName;
+    private final String functionName;
+    private final Object expectedResult;
 
     public RhinoFunctionResultChecker(@Nullable String namespaceName, String functionName, Object expectedResult) {
         this.namespaceName = namespaceName;

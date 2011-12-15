@@ -29,7 +29,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getImplicitRec
  */
 public final class PropertyAccessTranslator extends AccessTranslator {
 
-    private static String MESSAGE = "Cannot be accessor call. Use canBeProperty*Call to ensure this method " +
+    private static final String MESSAGE = "Cannot be accessor call. Use canBeProperty*Call to ensure this method " +
             "can be called safely.";
 
 

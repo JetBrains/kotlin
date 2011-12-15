@@ -34,7 +34,7 @@ public final class IntrinsicArrayUtils {
     }
 
     @NotNull
-    public static JsExpression throwOutOfBoundsException() {
+    private static JsExpression throwOutOfBoundsException() {
         //TODO: think about exception
         return new JsThisRef();
     }

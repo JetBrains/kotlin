@@ -31,7 +31,6 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
         this.operationReference = getMethodReferenceForOverloadedOperation(context, expression);
     }
 
-    @Override
     @NotNull
     protected JsExpression translate() {
         return translateAsMethodCall();

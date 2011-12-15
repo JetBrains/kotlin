@@ -31,7 +31,7 @@ public class StaticContext {
     private final JsProgram program;
 
     @NotNull
-    public final BindingContext bindingContext;
+    private final BindingContext bindingContext;
 
     @NotNull
     private final Declarations declarations;
