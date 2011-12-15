@@ -1,6 +1,6 @@
 package org.jetbrains.jet.rt;
 
-import jet.typeinfo.JetSignature;
+import jet.typeinfo.JetClass;
 import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import jet.typeinfo.TypeInfoVariance;
@@ -51,9 +51,9 @@ class TypeInfoParser {
             return signature;
         }
 
-        JetSignature annotation = (JetSignature) klass.getAnnotation(JetSignature.class);
+        JetClass annotation = (JetClass) klass.getAnnotation(JetClass.class);
         if(annotation != null) {
-            String value = annotation.value();
+            String value = annotation.signature();
             if(value != null) {
                 Class enclosingClass = klass.getEnclosingClass();
                 Signature signature = new Signature(klass);

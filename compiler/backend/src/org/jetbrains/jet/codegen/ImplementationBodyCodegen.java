@@ -72,9 +72,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
-            AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, "Ljet/typeinfo/JetSignature;", true);
-            //annotationVisitor.visit("value", SignatureUtil.classToSignature((JetClass)myClass, bindingContext, typeMapper));
-            annotationVisitor.visit("value", signature.getKotlinGenericSignature());
+            AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, StdlibNames.JET_CLASS.getDescriptor(), true);
+            annotationVisitor.visit(StdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
             annotationVisitor.visitEnd();
         }
     }
@@ -107,7 +106,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
         {   // superinterfaces
-            superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT_INTERNAL);
+            superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT.getInternalName());
 
             for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
