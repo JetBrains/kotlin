@@ -364,6 +364,28 @@ public class Converter {
   }
 
   private static boolean isOverrideAnyMethodExceptMethodsFromObject(@NotNull PsiMethod method) {
+    boolean counter = normalCase(method);
+    if (counter)
+      return true;
+    if (isInheritFromObject(method))
+      return caseForObject(method);
+    return false;
+  }
+
+  private static boolean caseForObject(@NotNull PsiMethod method) {
+    PsiClass containing = method.getContainingClass();
+    if (containing != null) {
+      for (PsiClassType s : containing.getSuperTypes()) {
+        String canonicalText = s.getCanonicalText();
+        if (!canonicalText.equals("java.lang.Object") && !getClassIdentifiers().contains(canonicalText)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean normalCase(@NotNull PsiMethod method) {
     int counter = 0;
     for (HierarchicalMethodSignature s : method.getHierarchicalMethodSignature().getSuperSignatures()) {
       PsiClass containingClass = s.getMethod().getContainingClass();
@@ -372,6 +394,17 @@ public class Converter {
         counter++;
     }
     return counter > 0;
+  }
+
+  private static boolean isInheritFromObject(@NotNull PsiMethod method) {
+    List<HierarchicalMethodSignature> superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures();
+    for (HierarchicalMethodSignature s : superSignatures) {
+      PsiClass containingClass = s.getMethod().getContainingClass();
+      String qualifiedName = containingClass != null ? containingClass.getQualifiedName() : "";
+      if (qualifiedName != null && qualifiedName.equals("java.lang.Object"))
+        return true;
+    }
+    return false;
   }
 
   private static boolean isOverrideObjectDirect(@NotNull final PsiMethod method) {
@@ -652,7 +685,7 @@ public class Converter {
 //  }
 
   @NotNull
-  public static SureCallChainExpression createSureCallOnlyForChain(PsiExpression expression, PsiType type) {
+  public static SureCallChainExpression createSureCallOnlyForChain(@Nullable PsiExpression expression, @NotNull PsiType type) {
     String conversion = (expression != null && (expression instanceof PsiReferenceExpression || expression instanceof PsiMethodCallExpression)) ?
       createConversionForExpression(expression, type) : "";
     return new SureCallChainExpression(expressionToExpression(expression), conversion);
