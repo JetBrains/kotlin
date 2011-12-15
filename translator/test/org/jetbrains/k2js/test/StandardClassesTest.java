@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public class StandardClassesTest extends TranslationTest {
     final private static String MAIN = "standardClasses/";

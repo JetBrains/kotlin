@@ -17,7 +17,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class StandardClasses {
 

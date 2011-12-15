@@ -12,7 +12,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class TranslationContext {
 

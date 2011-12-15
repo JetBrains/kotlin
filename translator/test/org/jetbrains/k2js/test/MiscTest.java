@@ -3,7 +3,7 @@ package org.jetbrains.k2js.test;
 import org.junit.Test;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  *         <p/>
  *         This class contains tests that do not fall in any particular category
  *         most probably because that functionality has very little support

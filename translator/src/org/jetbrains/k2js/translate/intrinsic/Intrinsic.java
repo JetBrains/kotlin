@@ -7,7 +7,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public interface Intrinsic {
 

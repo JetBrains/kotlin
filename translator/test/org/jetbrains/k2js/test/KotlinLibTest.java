@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public class KotlinLibTest extends TranslationTest {
 

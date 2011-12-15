@@ -5,7 +5,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public abstract class CompareToIntrinsic implements Intrinsic {
 

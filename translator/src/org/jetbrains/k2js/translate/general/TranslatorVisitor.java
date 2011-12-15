@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.psi.JetVisitor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  *         <p/>
  *         This class is a base class for all visitors. It contains code that is shared among them.
  */

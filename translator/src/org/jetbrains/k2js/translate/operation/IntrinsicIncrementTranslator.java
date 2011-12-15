@@ -13,7 +13,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isPrefix;
 
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class IntrinsicIncrementTranslator extends IncrementTranslator {
 

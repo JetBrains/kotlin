@@ -15,7 +15,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class PatternTranslator extends AbstractTranslator {
 

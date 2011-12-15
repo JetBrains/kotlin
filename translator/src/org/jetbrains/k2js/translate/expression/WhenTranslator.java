@@ -16,7 +16,7 @@ import static com.google.dart.compiler.util.AstUtil.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 //TODO: look into using temporary variable for counter
 public class WhenTranslator extends AbstractTranslator {

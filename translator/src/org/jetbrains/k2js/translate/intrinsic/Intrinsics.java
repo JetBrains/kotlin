@@ -22,7 +22,7 @@ import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class Intrinsics {
 

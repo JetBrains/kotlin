@@ -14,7 +14,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getImplicitReceiver;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public class ReferenceTranslator extends AbstractTranslator {
 

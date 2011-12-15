@@ -23,7 +23,7 @@ import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  *         <p/>
  *         This class provides a interface which all translators use to interact with each other.
  *         Goal is to simlify interaction between translators.

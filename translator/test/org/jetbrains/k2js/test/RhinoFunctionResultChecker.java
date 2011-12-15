@@ -7,7 +7,7 @@ import org.mozilla.javascript.Scriptable;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class RhinoFunctionResultChecker implements RhinoResultChecker {
 

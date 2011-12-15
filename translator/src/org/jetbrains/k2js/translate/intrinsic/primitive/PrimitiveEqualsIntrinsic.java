@@ -9,7 +9,7 @@ import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class PrimitiveEqualsIntrinsic extends EqualsIntrinsic {
 

@@ -15,7 +15,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ForTranslator extends AbstractTranslator {
 

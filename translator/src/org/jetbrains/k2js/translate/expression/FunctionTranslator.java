@@ -21,7 +21,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithSc
 
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class FunctionTranslator extends AbstractTranslator {
 

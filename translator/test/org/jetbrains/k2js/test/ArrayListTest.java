@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ArrayListTest extends JavaClassesTest {
 

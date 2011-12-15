@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ClassDeclarationTranslator extends AbstractTranslator {
 

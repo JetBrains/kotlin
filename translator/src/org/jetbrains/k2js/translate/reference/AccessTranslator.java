@@ -7,7 +7,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public abstract class AccessTranslator extends AbstractTranslator {
 

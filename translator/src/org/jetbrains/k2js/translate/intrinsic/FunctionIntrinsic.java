@@ -1,7 +1,7 @@
 package org.jetbrains.k2js.translate.intrinsic;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public interface FunctionIntrinsic extends Intrinsic {
 

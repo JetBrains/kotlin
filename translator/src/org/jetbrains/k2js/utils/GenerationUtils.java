@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class GenerationUtils {
 

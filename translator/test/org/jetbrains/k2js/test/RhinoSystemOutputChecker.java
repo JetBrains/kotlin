@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class RhinoSystemOutputChecker implements RhinoResultChecker {
 

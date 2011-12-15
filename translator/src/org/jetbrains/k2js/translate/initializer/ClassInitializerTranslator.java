@@ -21,7 +21,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ClassInitializerTranslator extends AbstractInitializerTranslator {
 

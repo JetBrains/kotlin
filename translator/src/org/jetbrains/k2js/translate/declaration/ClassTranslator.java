@@ -24,7 +24,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescrip
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.findAncestorClass;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ClassTranslator extends AbstractTranslator {
 

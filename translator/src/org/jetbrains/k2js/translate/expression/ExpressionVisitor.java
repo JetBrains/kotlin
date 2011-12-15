@@ -27,7 +27,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 

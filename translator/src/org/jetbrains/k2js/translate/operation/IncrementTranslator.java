@@ -17,7 +17,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public abstract class IncrementTranslator extends AbstractTranslator {
 

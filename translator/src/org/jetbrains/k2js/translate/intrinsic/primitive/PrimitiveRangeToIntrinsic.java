@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class PrimitiveRangeToIntrinsic implements FunctionIntrinsic {
 

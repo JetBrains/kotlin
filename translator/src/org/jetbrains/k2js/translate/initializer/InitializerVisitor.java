@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
 

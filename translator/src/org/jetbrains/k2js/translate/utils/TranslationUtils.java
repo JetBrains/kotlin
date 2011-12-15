@@ -19,7 +19,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isExtensionFunction;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class TranslationUtils {
 

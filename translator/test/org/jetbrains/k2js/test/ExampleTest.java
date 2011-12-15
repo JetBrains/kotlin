@@ -1,7 +1,7 @@
 package org.jetbrains.k2js.test;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ExampleTest extends TranslationTest {
 

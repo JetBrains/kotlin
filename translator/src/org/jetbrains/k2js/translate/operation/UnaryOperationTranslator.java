@@ -7,7 +7,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 
 public final class UnaryOperationTranslator {

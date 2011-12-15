@@ -29,7 +29,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isNotInOperation;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 //TODO: move translate() static methods into builder (consider!)
 //TODO: write tests on calling backing fields as functions

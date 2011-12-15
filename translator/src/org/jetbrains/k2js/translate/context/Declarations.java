@@ -11,10 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class Declarations {
-
 
     @NotNull
     public static Declarations newInstance(@NotNull NamingScope rootScope) {

@@ -15,7 +15,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getSuperclassDescr
 //TODO: can optimise using less dumb implementation
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ClassSorter {
 

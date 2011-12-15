@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class DescriptorUtils {
 

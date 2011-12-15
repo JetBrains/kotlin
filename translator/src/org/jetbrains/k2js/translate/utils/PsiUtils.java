@@ -8,7 +8,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class PsiUtils {
 

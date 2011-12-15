@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ReferenceAccessTranslator extends AccessTranslator {
 

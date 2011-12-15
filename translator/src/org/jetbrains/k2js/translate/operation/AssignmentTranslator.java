@@ -16,7 +16,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOpe
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public abstract class AssignmentTranslator extends AbstractTranslator {
 

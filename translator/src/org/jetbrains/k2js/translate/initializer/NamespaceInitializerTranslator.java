@@ -9,7 +9,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class NamespaceInitializerTranslator extends AbstractInitializerTranslator {
 

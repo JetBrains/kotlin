@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public abstract class TranslationTest {
 

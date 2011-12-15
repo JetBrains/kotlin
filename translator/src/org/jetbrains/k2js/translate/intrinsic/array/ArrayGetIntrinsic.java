@@ -11,7 +11,7 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public enum ArrayGetIntrinsic implements FunctionIntrinsic {
 

@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
 

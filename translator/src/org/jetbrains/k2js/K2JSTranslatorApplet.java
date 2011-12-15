@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.applet.Applet;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class K2JSTranslatorApplet extends Applet {
 

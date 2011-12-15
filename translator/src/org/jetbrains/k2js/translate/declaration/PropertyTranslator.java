@@ -21,7 +21,7 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class PropertyTranslator extends AbstractTranslator {
 

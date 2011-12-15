@@ -10,7 +10,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodReferenceForOverloadedOperation;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 // TODO: provide better increment translator logic
 public final class OverloadedIncrementTranslator extends IncrementTranslator {

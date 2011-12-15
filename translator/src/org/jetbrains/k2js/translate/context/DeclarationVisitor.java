@@ -9,7 +9,7 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getOwnDeclarati
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.nameForNamespace;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void, DeclarationContext> {
 

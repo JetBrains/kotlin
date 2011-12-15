@@ -17,7 +17,7 @@ import java.util.List;
 import static com.google.dart.compiler.util.AstUtil.convertToBlock;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class TryTranslator extends AbstractTranslator {
 

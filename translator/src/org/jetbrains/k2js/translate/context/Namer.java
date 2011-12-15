@@ -7,7 +7,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 
 public final class Namer {

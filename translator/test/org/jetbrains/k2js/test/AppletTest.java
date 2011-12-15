@@ -4,7 +4,7 @@ import org.jetbrains.k2js.K2JSTranslatorApplet;
 import org.junit.Test;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class AppletTest extends TranslationTest {
 

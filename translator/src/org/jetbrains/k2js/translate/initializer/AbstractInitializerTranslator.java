@@ -13,7 +13,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public abstract class AbstractInitializerTranslator extends AbstractTranslator {
 

@@ -27,7 +27,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRight
 
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class BinaryOperationTranslator extends AbstractTranslator {
 

@@ -18,7 +18,7 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class ArrayAccessTranslator extends AccessTranslator {
 

@@ -12,7 +12,7 @@ import org.jetbrains.k2js.translate.operation.OperatorTable;
 import java.util.List;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class PrimitiveBinaryOperationIntrinsic implements FunctionIntrinsic {
 

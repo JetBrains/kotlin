@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 //TODO: provide helper methods for different parts of context
 public abstract class AbstractTranslator {

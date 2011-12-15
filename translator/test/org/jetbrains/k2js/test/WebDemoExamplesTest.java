@@ -3,7 +3,7 @@ package org.jetbrains.k2js.test;
 import org.junit.Test;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class WebDemoExamplesTest extends TranslationTest {
 

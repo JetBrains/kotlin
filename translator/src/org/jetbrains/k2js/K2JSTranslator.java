@@ -34,7 +34,7 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.nameForNamespac
 import static org.jetbrains.k2js.utils.JetTestUtils.analyzeNamespace;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  */
 public final class K2JSTranslator {
 

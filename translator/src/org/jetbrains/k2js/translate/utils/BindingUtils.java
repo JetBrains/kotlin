@@ -19,7 +19,7 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDesc
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isVariableDescriptor;
 
 /**
- * @author Talanov Pavel
+ * @author Pavel Talanov
  *         <p/>
  *         This class contains some code related to BindingContext use. Intention is not to pollute other classes.
  */
