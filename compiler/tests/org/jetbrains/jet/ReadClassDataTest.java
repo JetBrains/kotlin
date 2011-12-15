@@ -153,15 +153,21 @@ public class ReadClassDataTest extends UsefulTestCase {
         String bs = serializeContent((ClassDescriptor) b);
 
         Assert.assertEquals(as, bs);
-        System.out.println(a);
+        System.out.println(as);
     }
     
     private String serializeContent(ClassDescriptor klass) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("class ");
-
+        
         serialize(klass, sb);
+
+        if (!klass.getTypeConstructor().getParameters().isEmpty()) {
+            sb.append("<");
+            serializeCommaSeparated(klass.getTypeConstructor().getParameters(), sb);
+            sb.append(">");
+        }
 
         // TODO: supers
         // TODO: constructors
@@ -200,7 +206,6 @@ public class ReadClassDataTest extends UsefulTestCase {
 
     private static Object invoke(Method method, Object thiz, Object... args) {
         try {
-            method.setAccessible(true);
             return method.invoke(thiz, args);
         } catch (Exception e) {
             throw new RuntimeException("failed to invoke " + method + ": " + e, e);
@@ -229,7 +234,7 @@ public class ReadClassDataTest extends UsefulTestCase {
             sb.append("vararg ");
             serialize(valueParameter.getVarargElementType());
         } else {
-            serialize(valueParameter.getOutType());
+            serialize(valueParameter.getOutType(), sb);
         }
         if (valueParameter.hasDefaultValue()) {
             sb.append(" = ?");
@@ -237,7 +242,12 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serialize(Variance variance, StringBuilder sb) {
-        sb.append(variance);
+        if (variance == Variance.INVARIANT) {
+
+        } else {
+            sb.append(variance);
+            sb.append(' ');
+        }
     } 
     
     private void serialize(JetType type, StringBuilder sb) {
@@ -274,7 +284,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         }
     }
     
-    private void serialize(Object o, StringBuilder sb) {
+    private Method getMethodToSerialize(Object o) {
         // TODO: cache
         for (Method method : ReadClassDataTest.class.getDeclaredMethods()) {
             if (!method.getName().equals("serialize")) {
@@ -290,11 +300,16 @@ public class ReadClassDataTest extends UsefulTestCase {
                 continue;
             }
             if (method.getParameterTypes()[0].isInstance(o)) {
-                invoke(method, this, o, sb);
-                return;
+                method.setAccessible(true);
+                return method;
             }
         }
         throw new IllegalStateException("don't know how to serialize " + o + " (of " + o.getClass() + ")");
+    }
+    
+    private void serialize(Object o, StringBuilder sb) {
+        Method method = getMethodToSerialize(o);
+        invoke(method, this, o, sb);
     }
 
     private void serialize(ModuleDescriptor module, StringBuilder sb) {
@@ -318,9 +333,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serialize(TypeParameterDescriptor param, StringBuilder sb) {
-        if (param.getVariance() != Variance.INVARIANT) {
-            serialize(param.getVariance(), sb);
-        }
+        serialize(param.getVariance(), sb);
         sb.append(param.getName());
         // TODO: serialize bounds
     }

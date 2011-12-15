@@ -11,7 +11,7 @@ import java.util.*;
  * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JetSignature {
-    String value();
+public @interface JetClass {
+    String signature();
 
 }

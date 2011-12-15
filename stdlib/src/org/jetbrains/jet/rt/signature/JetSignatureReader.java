@@ -36,6 +36,10 @@ public class JetSignatureReader {
                 pos = parseType(signature, pos, v.visitInterface());
             }
         }
+        
+        if (pos != signature.length()) {
+            throw new IllegalStateException();
+        }
     }
 
     public int acceptFormalTypeParameters(JetSignatureVisitor v) {

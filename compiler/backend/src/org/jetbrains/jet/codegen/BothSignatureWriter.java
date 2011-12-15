@@ -1,8 +1,8 @@
 package org.jetbrains.jet.codegen;
 
-import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureWriter;
@@ -184,21 +184,12 @@ public class BothSignatureWriter {
         signatureVisitor().visitTypeVariable(name);
         jetSignatureWriter.visitTypeVariable(name, nullable);
     }
-    
-    private TypeInfoVariance translateVariance(Variance variance) {
-        switch (variance) {
-            case IN_VARIANCE: return TypeInfoVariance.IN;
-            case OUT_VARIANCE: return TypeInfoVariance.OUT;
-            case INVARIANT: return TypeInfoVariance.INVARIANT;
-            default: throw new IllegalStateException();
-        }
-    }
-    
+
     public void writeFormalTypeParameter(final String name, Variance variance) {
         checkTopLevel();
 
         signatureVisitor().visitFormalTypeParameter(name);
-        jetSignatureWriter.visitFormalTypeParameter(name, translateVariance(variance));
+        jetSignatureWriter.visitFormalTypeParameter(name, JetSignatureUtils.translateVariance(variance));
     }
     
     public void writeFormalTypeParameterEnd() {
