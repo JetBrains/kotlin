@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -40,14 +41,7 @@ public class ImportsResolver {
                 continue;
             }
             if (importDirective.isAllUnder()) {
-                JetExpression importedReference = importDirective.getImportedReference();
-                if (importedReference != null) {
-                    ExpressionTypingServices typeInferrerServices = context.getSemanticServices().getTypeInferrerServices(context.getTrace());
-                    JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference);
-                    if (type != null) {
-                        namespaceScope.importScope(type.getMemberScope());
-                    }
-                }
+                importNamespace(importDirective, namespaceScope, context.getTrace(), context.getSemanticServices());
             }
             else {
                 ClassifierDescriptor classifierDescriptor = null;
@@ -104,5 +98,18 @@ public class ImportsResolver {
                 }
             }
         }
+    }
+
+    public static boolean importNamespace(JetImportDirective importDirective, WritableScope namespaceScope, @NotNull BindingTrace trace, @NotNull JetSemanticServices services) {
+        JetExpression importedReference = importDirective.getImportedReference();
+        if (importedReference != null) {
+            ExpressionTypingServices typeInferrerServices = services.getTypeInferrerServices(trace);
+            JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference);
+            if (type != null) {
+                namespaceScope.importScope(type.getMemberScope());
+                return true;
+            }
+        }
+        return false;
     }
 }

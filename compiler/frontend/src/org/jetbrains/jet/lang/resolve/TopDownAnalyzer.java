@@ -91,7 +91,9 @@ public class TopDownAnalyzer {
     public static void processStandardLibraryNamespace(
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
-            @NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
+            @NotNull WritableScope outerScope,
+            @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
+            @NotNull JetNamespace namespace) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
         context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
         context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);

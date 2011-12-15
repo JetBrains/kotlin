@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -94,7 +95,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             bindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(getProject(), namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
         else {
-            bindingContext = AnalyzingUtils.getInstance().analyzeNamespaces(getProject(), Configuration.EMPTY, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+            bindingContext = AnalyzingUtils.analyzeNamespaces(getProject(), Configuration.EMPTY, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY, JetSemanticServices.createSemanticServices(getProject()));
         }
 
         StringBuilder actualText = new StringBuilder();

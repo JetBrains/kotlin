@@ -31,12 +31,6 @@ import java.util.Map;
  */
 public class AnalyzingUtils {
 
-    private static final AnalyzingUtils INSTANCE = new AnalyzingUtils();
-
-    public static AnalyzingUtils getInstance() {
-        return INSTANCE;
-    }
-
     public static void checkForSyntacticErrors(@NotNull PsiElement root) {
         root.acceptChildren(new PsiElementVisitor() {
             @Override
@@ -75,19 +69,25 @@ public class AnalyzingUtils {
 
     // --------------------------------------------------------------------------------------------------------------------------
 
-    public BindingContext analyzeNamespaces(
+    public static BindingContext analyzeNamespaces(
             @NotNull Project project,
             @NotNull Configuration configuration,
             @NotNull Collection<? extends JetDeclaration> declarations,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
+            @NotNull JetSemanticServices semanticServices) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        return analyzeNamespacesWithGivenTrace(project, configuration, declarations, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext);
+        return analyzeNamespacesWithGivenTrace(project, configuration, declarations, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext, semanticServices);
     }
 
-    public BindingContext analyzeNamespacesWithGivenTrace(Project project, Configuration configuration, Collection<? extends JetDeclaration> declarations, Predicate<PsiFile> filesToAnalyzeCompletely, JetControlFlowDataTraceFactory flowDataTraceFactory, BindingTraceContext bindingTraceContext) {
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
-
+    public static BindingContext analyzeNamespacesWithGivenTrace(
+            @NotNull Project project,
+            @NotNull Configuration configuration,
+            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
+            @NotNull BindingTraceContext bindingTraceContext,
+            @NotNull JetSemanticServices semanticServices) {
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
