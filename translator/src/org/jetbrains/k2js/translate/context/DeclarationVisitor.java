@@ -15,9 +15,11 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
 
     @NotNull
     private final Declarations declarations;
+    private final boolean shouldObfuscate;
 
-    /*package*/ DeclarationVisitor(@NotNull Declarations declarations) {
+    /*package*/ DeclarationVisitor(@NotNull Declarations declarations, boolean obfuscateNames) {
         this.declarations = declarations;
+        this.shouldObfuscate = obfuscateNames;
     }
 
     @NotNull
@@ -38,7 +40,7 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     @NotNull
     private JsName declareName(@NotNull DeclarationDescriptor descriptor, @NotNull DeclarationContext context,
                                @NotNull String name) {
-        JsName jsName = context.getScope().declareVariable(descriptor, name);
+        JsName jsName = context.getScope().declareVariable(descriptor, name, shouldObfuscate);
         declarations.putName(descriptor, jsName);
         declarations.putQualifier(descriptor, context.getQualifier());
         return jsName;

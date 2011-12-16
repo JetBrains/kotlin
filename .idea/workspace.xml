@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AnalysisUIOptions">
-    <option name="SCOPE_TYPE" value="4" />
+    <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
@@ -16,9 +16,9 @@
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="pr">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/DeclarationVisitor.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/DeclarationVisitor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Declarations.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Declarations.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/NamingScope.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/NamingScope.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" afterPath="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -135,7 +135,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaPackageScope.java" line="93" class="org.jetbrains.jet.lang.resolve.java.JavaPackageScope" package="org.jetbrains.jet.lang.resolve.java">
+      <breakpoint url="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaPackageScope.java" line="92" class="org.jetbrains.jet.lang.resolve.java.JavaPackageScope" package="org.jetbrains.jet.lang.resolve.java">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -196,8 +196,8 @@
       <property name="field_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByClasses" value="true" />
       <property name="exception_breakpoints_viewId" value="TABLE" />
-      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="field_breakpoints_viewId" value="TABLE" />
+      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByMethods" value="false" />
     </ui_properties>
   </component>
@@ -205,23 +205,25 @@
     <favorites_list name="k2js" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.60393256">
+    <splitter split-orientation="horizontal" split-proportion="0.58356744">
       <split-first>
         <leaf>
-          <file leaf-file-name="NamingScope.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="NamingScope.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/NamingScope.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="54" column="10" selection-start="1582" selection-end="1582" vertical-scroll-proportion="-0.0018348624">
+                <state line="71" column="10" selection-start="2280" selection-end="2280" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Intrinsics.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/intrinsic/Intrinsics.java">
+          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="26" column="19" selection-start="1158" selection-end="1158" vertical-scroll-proportion="0.0">
-                  <folding />
+                <state line="78" column="37" selection-start="2936" selection-end="2936" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="e#5123#5131#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -229,50 +231,32 @@
           <file leaf-file-name="DeclarationVisitor.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/DeclarationVisitor.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="13" column="19" selection-start="454" selection-end="454" vertical-scroll-proportion="0.0">
+                <state line="42" column="92" selection-start="1862" selection-end="1862" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="DescriptorUtils.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
+          <file leaf-file-name="Declarations.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Declarations.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="71" column="0" selection-start="2787" selection-end="2787" vertical-scroll-proportion="0.0">
+                <state line="49" column="68" selection-start="1956" selection-end="1956" vertical-scroll-proportion="0.8257042">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="methodOverload.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/nameClashes/out/methodOverload.js">
+          <file leaf-file-name="WebDemoExamplesTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/WebDemoExamplesTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="20" column="23" selection-start="347" selection-end="347" vertical-scroll-proportion="0.0">
+                <state line="79" column="16" selection-start="2176" selection-end="2176" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="StandardClasses.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="116" column="0" selection-start="5897" selection-end="5897" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="arrayFunctionConstructor.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/out/arrayFunctionConstructor.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="1" column="27" selection-start="25" selection-end="25" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="arrayIsFilledWithNulls.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/out/arrayIsFilledWithNulls.js">
+          <file leaf-file-name="isCheck.js" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/testFiles/webDemoExamples/out/isCheck.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
                   <folding />
@@ -280,10 +264,28 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="classDerivesFromTraitAndClass.kt" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/testFiles/trait/cases/classDerivesFromTraitAndClass.kt">
+          <file leaf-file-name="StandardClassesTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+                <state line="47" column="16" selection-start="1138" selection-end="1138" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="PsiPackageImpl.class" pinned="false" current="false" current-in-tab="false">
+            <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 112.121/lib/idea.jar!/com/intellij/psi/impl/file/PsiPackageImpl.class">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="90" column="0" selection-start="5313" selection-end="5313" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="NonNls.class" pinned="false" current="false" current-in-tab="false">
+            <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 112.121/lib/annotations.jar!/org/jetbrains/annotations/NonNls.class">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="8" column="18" selection-start="563" selection-end="563" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -320,10 +322,19 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="JavaPackageScope.java" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="JavaPackageScope.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaPackageScope.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="51" column="79" selection-start="1986" selection-end="1986" vertical-scroll-proportion="0.0">
+                <state line="88" column="99" selection-start="3428" selection-end="3428" vertical-scroll-proportion="0.79577464">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="WritableScopeImpl.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/scopes/WritableScopeImpl.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="86" column="0" selection-start="2760" selection-end="2760" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -338,10 +349,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Call.java" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="Call.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/Call.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="45" column="66" selection-start="959" selection-end="959" vertical-scroll-proportion="1.1431035">
+                <state line="45" column="66" selection-start="959" selection-end="959" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -380,10 +391,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/operation/IncrementTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/operation/IntrinsicIncrementTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/operation/OverloadedIncrementTranslator.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/PropertyAccessTranslator.java" />
         <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" />
         <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/AppletTest.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/nameClashes/cases/methodOverload.kt" />
@@ -392,10 +399,14 @@
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslatorApplet.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/ErrorSender.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/nameClashes/out/methodOverload.js" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/NamingScope.java" />
+        <option value="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaPackageScope.java" />
+        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/WebDemoExamplesTest.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/DeclarationVisitor.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Declarations.java" />
       </list>
     </option>
   </component>
@@ -486,26 +497,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="k2js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="examples" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -520,12 +511,132 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testFiles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testFiles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webDemoExamples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testFiles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tuple" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testFiles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tuple" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cases" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testFiles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="trait" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="k2js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="examples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
@@ -538,9 +649,9 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -766,17 +877,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
-      <JSDebuggerConfigurationSettings>
-        <option name="engineId" value="embedded" />
-        <option name="fileUrl" />
-      </JSDebuggerConfigurationSettings>
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -800,6 +900,17 @@
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
         <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
+      <JSDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSDebuggerConfigurationSettings>
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
@@ -943,13 +1054,13 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20363443" sideWeight="0.284342" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.7002882" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23890968" sideWeight="0.6042267" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39865515" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3957733" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23890968" sideWeight="0.6051873" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39481267" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.0908605" sideWeight="0.7146974" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39865515" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="JsTestDriver Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907662" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1034,88 +1145,53 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/out/arraysIterator.js">
+    <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 112.121/lib/idea.jar!/com/intellij/openapi/vfs/impl/jar/JarHandlerBase.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="5" column="13" selection-start="171" selection-end="171" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
+    <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 112.121/lib/annotations.jar!/org/jetbrains/annotations/NonNls.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="16" selection-start="708" selection-end="708" vertical-scroll-proportion="0.0">
+        <state line="8" column="18" selection-start="563" selection-end="563" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="57" selection-start="2608" selection-end="2608" vertical-scroll-proportion="0.0">
+        <state line="78" column="37" selection-start="2936" selection-end="2936" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#5082#5090#0" expanded="true" />
+            <element signature="e#5123#5131#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/kotlin_lib.js">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/NamingScope.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="389" column="10" selection-start="9551" selection-end="9551" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/nameClashes/out/methodOverload.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="23" selection-start="347" selection-end="347" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="0" selection-start="2787" selection-end="2787" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/intrinsic/Intrinsics.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="19" selection-start="1158" selection-end="1158" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/DeclarationVisitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="19" selection-start="454" selection-end="454" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/JsPrettyNamer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="13" selection-start="602" selection-end="602" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/calls/CallResolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="23" selection-start="3867" selection-end="3867" vertical-scroll-proportion="0.0">
+        <state line="71" column="10" selection-start="2280" selection-end="2280" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/psi/Call.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="66" selection-start="959" selection-end="959" vertical-scroll-proportion="1.1431035">
+        <state line="45" column="66" selection-start="959" selection-end="959" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/org/jetbrains/jet/lang/resolve/scopes/WritableScopeImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="116" column="0" selection-start="5897" selection-end="5897" vertical-scroll-proportion="0.0">
+        <state line="86" column="0" selection-start="2760" selection-end="2760" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files (x86)/JetBrains/IntelliJ IDEA Community Edition 112.121/lib/idea.jar!/com/intellij/psi/impl/file/PsiPackageImpl.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="0" selection-start="5313" selection-end="5313" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1127,9 +1203,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/StandardClassesTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="16" selection-start="1138" selection-end="1138" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/JavaPackageScope.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="99" selection-start="3428" selection-end="3428" vertical-scroll-proportion="0.79577464">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/translator/testFiles/standardClasses/out/arrayIsFilledWithNulls.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/testFiles/webDemoExamples/out/isCheck.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/WebDemoExamplesTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="79" column="16" selection-start="2176" selection-end="2176" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/DeclarationVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="92" selection-start="1862" selection-end="1862" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1141,9 +1252,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/NamingScope.java">
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/Declarations.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="10" selection-start="1582" selection-end="1582" vertical-scroll-proportion="-0.0018348624">
+        <state line="49" column="68" selection-start="1956" selection-end="1956" vertical-scroll-proportion="0.8257042">
           <folding />
         </state>
       </provider>

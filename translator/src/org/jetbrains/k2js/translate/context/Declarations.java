@@ -34,13 +34,13 @@ public final class Declarations {
     }
 
     public void extractDeclarations(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationVisitor visitor = new DeclarationVisitor(this);
+        DeclarationVisitor visitor = new DeclarationVisitor(this, true);
         descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, null));
     }
 
     public void extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary,
                                        @NotNull JsNameRef standardLibraryObjectName) {
-        DeclarationVisitor visitor = new DeclarationVisitor(this);
+        DeclarationVisitor visitor = new DeclarationVisitor(this, false);
         for (DeclarationDescriptor descriptor :
                 standardLibrary.getLibraryScope().getAllDescriptors()) {
             descriptor.accept(visitor, DeclarationContext.rootContext(rootScope,

@@ -59,25 +59,41 @@ public final class NamingScope {
     @NotNull
     public JsName declareVariable(@NotNull DeclarationDescriptor descriptor,
                                   @NotNull String name) {
-        JsName declaredName = scope.declareName(mayBeObfuscateName(name));
+        JsName declaredName = scope.declareName(mayBeObfuscateName(name, false));
+        descriptorToNameMap.put(descriptor, declaredName);
+        return declaredName;
+    }
+
+    @NotNull
+    public JsName declareVariable(@NotNull DeclarationDescriptor descriptor,
+                                  @NotNull String name, boolean obfuscateIfNotUnique) {
+        JsName declaredName = scope.declareName(mayBeObfuscateName(name, obfuscateIfNotUnique));
         descriptorToNameMap.put(descriptor, declaredName);
         return declaredName;
     }
 
     //TODO: temporary solution
     @NotNull
-    private String mayBeObfuscateName(@NotNull String name) {
+    private String mayBeObfuscateName(@NotNull String name, boolean shouldObfuscate) {
+        if (!shouldObfuscate) {
+            return name;
+        }
+        return doObfuscate(name);
+    }
+
+    @NotNull
+    private String doObfuscate(@NotNull String name) {
         int obfuscate = 0;
         String result = name;
-//        while (true) {
-//            JsName existingNameWithSameIdent = scope.findExistingName(result);
-//            boolean isDuplicate = (existingNameWithSameIdent != null) && (scope.ownsName(existingNameWithSameIdent));
-//
-//            if (!isDuplicate) break;
-//
-//            result = name + "$" + obfuscate;
-//            obfuscate++;
-//        }
+        while (true) {
+            JsName existingNameWithSameIdent = scope.findExistingName(result);
+            boolean isDuplicate = (existingNameWithSameIdent != null) && (scope.ownsName(existingNameWithSameIdent));
+
+            if (!isDuplicate) break;
+
+            result = name + "$" + obfuscate;
+            obfuscate++;
+        }
         return result;
     }
 

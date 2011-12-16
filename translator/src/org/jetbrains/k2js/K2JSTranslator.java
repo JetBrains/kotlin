@@ -9,7 +9,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetCoreEnvironment;
@@ -70,7 +69,8 @@ public final class K2JSTranslator {
         return programCode + flushOutput + callToMain + programOutput;
     }
 
-    private String generateProgramCode(JetFile psiFile) {
+    @NotNull
+    private String generateProgramCode(@NotNull JetFile psiFile) {
         JsProgram program = generateProgram(psiFile);
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
@@ -120,7 +120,7 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    protected PsiFile createFile(@NonNls String name, String text) {
+    protected PsiFile createFile(@NotNull String name, @NotNull String text) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(environment.getProject()))
@@ -129,7 +129,7 @@ public final class K2JSTranslator {
 
 
     @NotNull
-    public String generateCallToMain(@NotNull JetFile file, String argumentString) {
+    public String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
         String namespaceName = getRootNamespaceName(file);
 
         List<String> arguments = parseString(argumentString);
