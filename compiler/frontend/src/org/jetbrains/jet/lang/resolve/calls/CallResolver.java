@@ -19,6 +19,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -344,7 +345,7 @@ public class CallResolver {
                     if (callElement instanceof JetBinaryExpression) {
                         JetBinaryExpression binaryExpression = (JetBinaryExpression) callElement;
                         JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
-                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : OperatorConventions.getNameForOperationSymbol(operationReference.getReferencedNameElementType());
+                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : OperatorConventions.getNameForOperationSymbol((JetToken) operationReference.getReferencedNameElementType());
                         JetExpression right = binaryExpression.getRight();
                         if (right != null) {
                             trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, right.getText()));
@@ -506,15 +507,6 @@ public class CallResolver {
                     }
                     else {
                         tracing.typeInferenceFailed(temporaryTrace, solution.getStatus());
-//                        // Substitute DONT_CARE types to make further type checking as tolerant as possible
-//                        D candidateWithDontCares = (D) candidate.substitute(TypeSubstitutor.makeConstantSubstitutor(candidate.getTypeParameters(), DONT_CARE));
-//                        if (candidateWithDontCares == null) {
-//                            candidateWithDontCares = (D) candidate.substitute(TypeSubstitutor.makeConstantSubstitutor(candidate.getTypeParameters(), Variance.INVARIANT, DONT_CARE));
-//                        }
-//                        if (!ErrorUtils.isErrorType(candidateWithDontCares.getReturnType())) {
-//                            // Returning an error type provokes overload resolution ambiguities that mask errors
-//                            candidateCall.setResultingDescriptor(candidateWithDontCares);
-//                        }
                         candidateCall.setStatus(OTHER_ERROR.combine(checkAllValueArguments(scope, tracing, task, candidateCall)));
                     }
                 }
