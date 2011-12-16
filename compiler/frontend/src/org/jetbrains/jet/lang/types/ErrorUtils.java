@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -196,10 +197,22 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(@NotNull JetType type) {
-        return type != TypeUtils.NO_EXPECTED_TYPE &&(
-               (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
-               type instanceof ErrorTypeImpl ||
-               isError(type.getConstructor()));
+        return type != TypeUtils.NO_EXPECTED_TYPE && !(type instanceof NamespaceType) &&
+               (
+                    (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
+                    type instanceof ErrorTypeImpl ||
+                    isError(type.getConstructor())
+               );
+    }
+
+    public static boolean containsErrorType(@Nullable JetType type) {
+        if (type == null) return false;
+        if (type instanceof NamespaceType) return false;
+        if (isErrorType(type)) return true;
+        for (TypeProjection projection : type.getArguments()) {
+            if (containsErrorType(projection.getType())) return true;
+        }
+        return false;
     }
 
     public static boolean isError(@NotNull DeclarationDescriptor candidate) {
