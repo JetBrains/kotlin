@@ -14,6 +14,8 @@ import org.jetbrains.jet.j2k.visitors.*;
 
 import java.util.*;
 
+import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
+
 /**
  * @author ignatov
  */
@@ -378,7 +380,7 @@ public class Converter {
     if (containing != null) {
       for (PsiClassType s : containing.getSuperTypes()) {
         String canonicalText = s.getCanonicalText();
-        if (!canonicalText.equals("java.lang.Object") && !getClassIdentifiers().contains(canonicalText)) {
+        if (!canonicalText.equals(JAVA_LANG_OBJECT) && !getClassIdentifiers().contains(canonicalText)) {
           return true;
         }
       }
@@ -391,7 +393,7 @@ public class Converter {
     for (HierarchicalMethodSignature s : method.getHierarchicalMethodSignature().getSuperSignatures()) {
       PsiClass containingClass = s.getMethod().getContainingClass();
       String qualifiedName = containingClass != null ? containingClass.getQualifiedName() : "";
-      if (qualifiedName != null && !qualifiedName.equals("java.lang.Object"))
+      if (qualifiedName != null && !qualifiedName.equals(JAVA_LANG_OBJECT))
         counter++;
     }
     return counter > 0;
@@ -402,7 +404,7 @@ public class Converter {
     for (HierarchicalMethodSignature s : superSignatures) {
       PsiClass containingClass = s.getMethod().getContainingClass();
       String qualifiedName = containingClass != null ? containingClass.getQualifiedName() : "";
-      if (qualifiedName != null && qualifiedName.equals("java.lang.Object"))
+      if (qualifiedName != null && qualifiedName.equals(JAVA_LANG_OBJECT))
         return true;
     }
     return false;
@@ -413,7 +415,7 @@ public class Converter {
     if (superSignatures.size() == 1) {
       final PsiClass containingClass = superSignatures.get(0).getMethod().getContainingClass();
       final String qualifiedName = containingClass != null ? containingClass.getQualifiedName() : "";
-      if (qualifiedName != null && qualifiedName.equals("java.lang.Object"))
+      if (qualifiedName != null && qualifiedName.equals(JAVA_LANG_OBJECT))
         return true;
     }
     return false;
@@ -640,13 +642,13 @@ public class Converter {
     if (actual == null || expected == null)
       return false;
     Map<String, String> typeMap = new HashMap<String, String>();
-    typeMap.put("java.lang.Byte", "byte");
-    typeMap.put("java.lang.Short", "short");
-    typeMap.put("java.lang.Integer", "int");
-    typeMap.put("java.lang.Long", "long");
-    typeMap.put("java.lang.Float", "float");
-    typeMap.put("java.lang.Double", "double");
-    typeMap.put("java.lang.Character", "char");
+    typeMap.put(JAVA_LANG_BYTE, "byte");
+    typeMap.put(JAVA_LANG_SHORT, "short");
+    typeMap.put(JAVA_LANG_INTEGER, "int");
+    typeMap.put(JAVA_LANG_LONG, "long");
+    typeMap.put(JAVA_LANG_FLOAT, "float");
+    typeMap.put(JAVA_LANG_DOUBLE, "double");
+    typeMap.put(JAVA_LANG_CHARACTER, "char");
     String expectedStr = expected.getCanonicalText();
     String actualStr = actual.getCanonicalText();
     boolean o1 = AstUtil.getOrElse(typeMap, actualStr, "").equals(expectedStr);
@@ -665,13 +667,13 @@ public class Converter {
     conversions.put("double", "dbl");
     conversions.put("char", "chr");
 
-    conversions.put("java.lang.Byte", "byt");
-    conversions.put("java.lang.Short", "sht");
-    conversions.put("java.lang.Integer", "int");
-    conversions.put("java.lang.Long", "lng");
-    conversions.put("java.lang.Float", "flt");
-    conversions.put("java.lang.Double", "dbl");
-    conversions.put("java.lang.Character", "chr");
+    conversions.put(JAVA_LANG_BYTE, "byt");
+    conversions.put(JAVA_LANG_SHORT, "sht");
+    conversions.put(JAVA_LANG_INTEGER, "int");
+    conversions.put(JAVA_LANG_LONG, "lng");
+    conversions.put(JAVA_LANG_FLOAT, "flt");
+    conversions.put(JAVA_LANG_DOUBLE, "dbl");
+    conversions.put(JAVA_LANG_CHARACTER, "chr");
 
     if (conversions.containsKey(type))
       return "." + conversions.get(type);

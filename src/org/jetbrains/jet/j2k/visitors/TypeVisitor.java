@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +16,18 @@ import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
  * @author ignatov
  */
 public class TypeVisitor extends PsiTypeVisitor<Type> {
+  public static final String JAVA_LANG_BYTE = "java.lang.Byte";
+  public static final String JAVA_LANG_CHARACTER = "java.lang.Character";
+  public static final String JAVA_LANG_DOUBLE = "java.lang.Double";
+  public static final String JAVA_LANG_FLOAT = "java.lang.Float";
+  public static final String JAVA_LANG_INTEGER = "java.lang.Integer";
+  public static final String JAVA_LANG_LONG = "java.lang.Long";
+  public static final String JAVA_LANG_SHORT = "java.lang.Short";
+  public static final String JAVA_LANG_BOOLEAN = "java.lang.Boolean";
+  public static final String JAVA_LANG_OBJECT = "java.lang.Object";
+  public static final String JAVA_LANG_STRING = "java.lang.String";
+  public static final String JAVA_LANG_ITERABLE = "java.lang.Iterable";
+  public static final String JAVA_UTIL_ITERATOR = "java.util.Iterator";
   private Type myResult = Type.EMPTY_TYPE;
 
   @NotNull
@@ -63,10 +74,10 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     if (psiClass != null) {
       String qualifiedName = psiClass.getQualifiedName();
       if (qualifiedName != null) {
-        if (qualifiedName.equals("java.lang.Iterable"))
-          return new IdentifierImpl("java.lang.Iterable");
-        if (qualifiedName.equals("java.util.Iterator"))
-          return new IdentifierImpl("java.util.Iterator");
+        if (qualifiedName.equals(JAVA_LANG_ITERABLE))
+          return new IdentifierImpl(JAVA_LANG_ITERABLE);
+        if (qualifiedName.equals(JAVA_UTIL_ITERATOR))
+          return new IdentifierImpl(JAVA_UTIL_ITERATOR);
       }
     }
     final String classTypeName = createQualifiedName(classType);
@@ -115,15 +126,15 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   @NotNull
   private static String getClassTypeName(@NotNull PsiClassType classType) {
     String canonicalTypeStr = classType.getCanonicalText();
-    if (canonicalTypeStr.equals("java.lang.Object")) return "Any";
-    if (canonicalTypeStr.equals("java.lang.Byte")) return "Byte";
-    if (canonicalTypeStr.equals("java.lang.Character")) return "Char";
-    if (canonicalTypeStr.equals("java.lang.Double")) return "Double";
-    if (canonicalTypeStr.equals("java.lang.Float")) return "Float";
-    if (canonicalTypeStr.equals("java.lang.Integer")) return "Int";
-    if (canonicalTypeStr.equals("java.lang.Long")) return "Long";
-    if (canonicalTypeStr.equals("java.lang.Short")) return "Short";
-    if (canonicalTypeStr.equals("java.lang.Boolean")) return "Boolean";
+    if (canonicalTypeStr.equals(JAVA_LANG_OBJECT)) return "Any";
+    if (canonicalTypeStr.equals(JAVA_LANG_BYTE)) return "Byte";
+    if (canonicalTypeStr.equals(JAVA_LANG_CHARACTER)) return "Char";
+    if (canonicalTypeStr.equals(JAVA_LANG_DOUBLE)) return "Double";
+    if (canonicalTypeStr.equals(JAVA_LANG_FLOAT)) return "Float";
+    if (canonicalTypeStr.equals(JAVA_LANG_INTEGER)) return "Int";
+    if (canonicalTypeStr.equals(JAVA_LANG_LONG)) return "Long";
+    if (canonicalTypeStr.equals(JAVA_LANG_SHORT)) return "Short";
+    if (canonicalTypeStr.equals(JAVA_LANG_BOOLEAN)) return "Boolean";
     return classType.getClassName() != null ? classType.getClassName() : classType.getCanonicalText();
   }
 

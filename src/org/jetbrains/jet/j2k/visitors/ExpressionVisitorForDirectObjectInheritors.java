@@ -7,6 +7,8 @@ import org.jetbrains.jet.j2k.ast.DummyMethodCallExpression;
 import org.jetbrains.jet.j2k.ast.DummyStringExpression;
 import org.jetbrains.jet.j2k.ast.IdentifierImpl;
 
+import static org.jetbrains.jet.j2k.visitors.TypeVisitor.JAVA_LANG_OBJECT;
+
 /**
  * @author ignatov
  */
@@ -34,7 +36,7 @@ public class ExpressionVisitorForDirectObjectInheritors extends ExpressionVisito
     if (referenceName != null && referenceName.equals(methodName)) {
       if (qualifierExpression instanceof PsiSuperExpression) {
         PsiType type = qualifierExpression.getType();
-        if (type != null && type.getCanonicalText().equals("java.lang.Object"))
+        if (type != null && type.getCanonicalText().equals(JAVA_LANG_OBJECT))
           return true;
       }
     }
