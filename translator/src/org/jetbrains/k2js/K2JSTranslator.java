@@ -63,10 +63,11 @@ public final class K2JSTranslator {
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) {
         JetFile file = createPsiFile("test", programText);
-        String programCode = generateProgramCode(file);
+        String programCode = generateProgramCode(file) + "\n";
+        String flushOutput = "Kotlin.System.flush();\n";
         String callToMain = generateCallToMain(file, argumentsString);
-        String programOutput = "Kotlin.System.output();";
-        return programCode + callToMain + programOutput;
+        String programOutput = "Kotlin.System.output();\n";
+        return programCode + flushOutput + callToMain + programOutput;
     }
 
     private String generateProgramCode(JetFile psiFile) {

@@ -115,7 +115,6 @@ public final class StandardClasses {
         }
     }
 
-
     @NotNull
     private final JsScope kotlinScope;
 

@@ -387,6 +387,9 @@ Kotlin.System = function () {
         },
         output:function () {
             return output;
+        },
+        flush:function () {
+            output = "";
         }
     };
 }();

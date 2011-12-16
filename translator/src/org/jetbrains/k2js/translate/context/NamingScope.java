@@ -69,8 +69,13 @@ public final class NamingScope {
     private String mayBeObfuscateName(@NotNull String name) {
         int obfuscate = 0;
         String result = name;
-//        while (scope.findExistingName(result) != null) {
-//            result = name + "_" + obfuscate;
+//        while (true) {
+//            JsName existingNameWithSameIdent = scope.findExistingName(result);
+//            boolean isDuplicate = (existingNameWithSameIdent != null) && (scope.ownsName(existingNameWithSameIdent));
+//
+//            if (!isDuplicate) break;
+//
+//            result = name + "$" + obfuscate;
 //            obfuscate++;
 //        }
         return result;
