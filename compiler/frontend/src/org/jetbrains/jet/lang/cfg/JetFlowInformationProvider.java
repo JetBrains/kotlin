@@ -556,10 +556,10 @@ public class JetFlowInformationProvider {
                     JetDeclaration element = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
                     if (element instanceof JetNamedDeclaration) {
                         PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
-                        PsiElement elementToMark = nameIdentifier != null ? nameIdentifier : element;
+                        if (nameIdentifier == null) return;
                         if (variableStatus == null || variableStatus == VariableStatus.UNUSED) {
                             if (element instanceof JetProperty) {
-                                trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, elementToMark, variableDescriptor));
+                                trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, nameIdentifier, variableDescriptor));
                             }
                             else if (element instanceof JetParameter) {
                                 PsiElement psiElement = element.getParent().getParent();
@@ -569,13 +569,13 @@ public class JetFlowInformationProvider {
                                     assert descriptor instanceof FunctionDescriptor;
                                     FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                                     if (!isMain && !functionDescriptor.getModality().isOverridable() && functionDescriptor.getOverriddenDescriptors().isEmpty()) {
-                                        trace.report(Errors.UNUSED_PARAMETER.on((JetParameter) element, elementToMark, variableDescriptor));
+                                        trace.report(Errors.UNUSED_PARAMETER.on((JetParameter) element, nameIdentifier, variableDescriptor));
                                     }
                                 }
                             }
                         }
                         else if (variableStatus == VariableStatus.ONLY_WRITTEN && element instanceof JetProperty) {
-                            trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, elementToMark, variableDescriptor));
+                            trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, nameIdentifier, variableDescriptor));
                         }
                         else if (variableStatus == VariableStatus.WRITTEN && element instanceof JetProperty) {
                             JetExpression initializer = ((JetProperty) element).getInitializer();

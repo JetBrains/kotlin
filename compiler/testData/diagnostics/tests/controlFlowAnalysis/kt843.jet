@@ -1,0 +1,8 @@
+//KT-843 Don't highlight incomplete variables as unused
+
+namespace kt843
+
+fun main(args : Array<String>) {
+    // Integer type
+    val // this word is grey, which looks strange
+<!SYNTAX!>}<!SYNTAX!><!><!>
