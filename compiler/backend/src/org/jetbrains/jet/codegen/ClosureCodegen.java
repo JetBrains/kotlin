@@ -23,6 +23,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -213,9 +214,12 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         int argCount = captureThis ? 1 : 0;
         argCount += (captureReceiver != null ? 1 : 0);
 
+        ArrayList<VariableDescriptor> variableDescriptors = new ArrayList<VariableDescriptor>();
+        
         for (DeclarationDescriptor descriptor : closure.keySet()) {
             if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 argCount++;
+                variableDescriptors.add((VariableDescriptor) descriptor);
             }
             else if(descriptor instanceof FunctionDescriptor) {
                 assert captureReceiver != null;
@@ -271,7 +275,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                         k++;
                     }
                     else {
-                        fieldName = "$" + (i-k);
+                        VariableDescriptor removed = variableDescriptors.remove(0);
+                        fieldName = "$" + removed.getName();
                         i++;
                     }
                 }

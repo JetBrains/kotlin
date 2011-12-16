@@ -45,7 +45,7 @@ public class ObjectOrClosureCodegen {
             final Type type = sharedVarType != null ? sharedVarType : localType;
 
             StackValue outerValue = StackValue.local(idx, type);
-            final String fieldName = "$" + (closure.size() + 1); // + "$" + vd.getName();
+            final String fieldName = "$" + vd.getName();
             StackValue innerValue = sharedVarType != null ? StackValue.fieldForSharedVar(localType, name, fieldName) : StackValue.field(type, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
