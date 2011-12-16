@@ -17,6 +17,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
@@ -102,7 +103,8 @@ public class DebugInfoAnnotator implements Annotator {
                         }
                         boolean resolved = target != null;
                         boolean unresolved = unresolvedReferences.contains(expression);
-                        if (declarationDescriptor != null && !ApplicationManager.getApplication().isUnitTestMode() && ErrorUtils.isError(declarationDescriptor)) {
+                        JetType expressionType = bindingContext.get(EXPRESSION_TYPE, expression);
+                        if (declarationDescriptor != null && !ApplicationManager.getApplication().isUnitTestMode() && (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
                             holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element").setTextAttributes(JetHighlighter.JET_RESOLVED_TO_ERROR);
                         }
                         if (resolved && unresolved) {
