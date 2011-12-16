@@ -9,8 +9,8 @@ import java.util.List;
  * @author ignatov
  */
 public class SwitchContainer extends Statement {
-  private Expression myExpression;
-  private List<CaseContainer> myCaseContainers;
+  private final Expression myExpression;
+  private final List<CaseContainer> myCaseContainers;
 
   public SwitchContainer(final Expression expression, final List<CaseContainer> caseContainers) {
     myExpression = expression;

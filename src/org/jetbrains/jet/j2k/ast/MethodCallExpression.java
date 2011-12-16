@@ -11,12 +11,12 @@ import java.util.List;
 public class MethodCallExpression extends Expression {
   private final Expression myMethodCall;
   private final List<Expression> myArguments;
-  private List<String> myConversions;
+  private final List<String> myConversions;
   private final boolean myIsResultNullable;
   private final List<Type> myTypeParameters;
 
-  public MethodCallExpression(Expression methodCall, List<Expression> arguments, boolean nullable, List<Type> typeParameters) {
-    this(methodCall, arguments, AstUtil.createListWithEmptyString(arguments), nullable, typeParameters);
+  public MethodCallExpression(Expression methodCall, List<Expression> arguments, List<Type> typeParameters) {
+    this(methodCall, arguments, AstUtil.createListWithEmptyString(arguments), false, typeParameters);
   }
 
   public MethodCallExpression(Expression methodCall, List<Expression> arguments, List<String> conversions, boolean nullable, List<Type> typeParameters) {

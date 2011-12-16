@@ -622,7 +622,7 @@ public class Converter {
   }
 
   @NotNull
-  public static String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
+  private static String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
     String conversion = "";
     if (expression != null) {
       PsiType actualType = expression.getType();
@@ -638,7 +638,7 @@ public class Converter {
     return conversion;
   }
 
-  public static boolean isConversionNeeded(@Nullable final PsiType actual, @Nullable final PsiType expected) {
+  private static boolean isConversionNeeded(@Nullable final PsiType actual, @Nullable final PsiType expected) {
     if (actual == null || expected == null)
       return false;
     Map<String, String> typeMap = new HashMap<String, String>();
@@ -657,7 +657,7 @@ public class Converter {
   }
 
   @NotNull
-  public static String getPrimitiveTypeConversion(@NotNull String type) {
+  private static String getPrimitiveTypeConversion(@NotNull String type) {
     Map<String, String> conversions = new HashMap<String, String>();
     conversions.put("byte", "byt");
     conversions.put("short", "sht");

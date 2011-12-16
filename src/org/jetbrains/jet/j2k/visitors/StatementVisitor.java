@@ -80,6 +80,7 @@ public class StatementVisitor extends ElementVisitor {
   public void visitDoWhileStatement(@NotNull PsiDoWhileStatement statement) {
     super.visitDoWhileStatement(statement);
     PsiExpression condition = statement.getCondition();
+    @SuppressWarnings("ConstantConditions")
     Expression expression = condition != null && condition.getType() != null ?
       createSureCallOnlyForChain(condition, condition.getType()) :
       expressionToExpression(condition);
@@ -179,6 +180,7 @@ public class StatementVisitor extends ElementVisitor {
   public void visitIfStatement(@NotNull PsiIfStatement statement) {
     super.visitIfStatement(statement);
     PsiExpression condition = statement.getCondition();
+    @SuppressWarnings("ConstantConditions")
     Expression expression = condition != null && condition.getType() != null ?
       createSureCallOnlyForChain(condition, condition.getType()) :
       expressionToExpression(condition);
@@ -334,6 +336,7 @@ public class StatementVisitor extends ElementVisitor {
   public void visitWhileStatement(@NotNull PsiWhileStatement statement) {
     super.visitWhileStatement(statement);
     PsiExpression condition = statement.getCondition();
+    @SuppressWarnings("ConstantConditions")
     Expression expression = condition != null && condition.getType() != null ?
       createSureCallOnlyForChain(condition, condition.getType()) :
       expressionToExpression(condition);

@@ -9,7 +9,7 @@ import java.util.*;
  * @author ignatov
  */
 public class ArrayInitializerExpression extends Expression {
-  private Type myType;
+  private final Type myType;
   private final List<Expression> myInitializers;
 
   public ArrayInitializerExpression(final Type type, List<Expression> initializers) {

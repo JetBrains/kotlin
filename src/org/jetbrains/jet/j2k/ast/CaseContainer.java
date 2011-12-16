@@ -10,8 +10,8 @@ import java.util.List;
  * @author ignatov
  */
 public class CaseContainer extends Statement {
-  private List<Statement> myCaseStatement;
-  private Block myBlock;
+  private final List<Statement> myCaseStatement;
+  private final Block myBlock;
 
   public CaseContainer(final List<Statement> caseStatement, @NotNull final List<Statement> statements) {
     myCaseStatement = caseStatement;

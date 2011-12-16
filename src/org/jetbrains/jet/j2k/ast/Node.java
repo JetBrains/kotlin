@@ -54,5 +54,5 @@ public abstract class Node implements INode {
   @NotNull
   static final String STAR = "*";
   @NotNull
-  public static final String ZERO = "0";
+  protected static final String ZERO = "0";
 }

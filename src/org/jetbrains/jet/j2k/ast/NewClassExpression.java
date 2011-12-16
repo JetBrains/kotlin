@@ -17,7 +17,7 @@ public class NewClassExpression extends Expression {
   @Nullable
   private AnonymousClass myAnonymousClass = null;
 
-  public NewClassExpression(Element name, List<Expression> arguments) {
+  private NewClassExpression(Element name, List<Expression> arguments) {
     myName = name;
     myQualifier = EMPTY_EXPRESSION;
     myArguments = arguments;

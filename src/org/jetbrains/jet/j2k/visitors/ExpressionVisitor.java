@@ -139,8 +139,9 @@ public class ExpressionVisitor extends StatementVisitor {
   public void visitConditionalExpression(@NotNull PsiConditionalExpression expression) {
     super.visitConditionalExpression(expression);
     PsiExpression condition = expression.getCondition();
-    Expression e = condition.getType() != null ?
-      createSureCallOnlyForChain(condition, condition.getType()) :
+    PsiType type = condition.getType();
+    Expression e = type != null ?
+      createSureCallOnlyForChain(condition, type) :
       expressionToExpression(condition);
     myResult = new ParenthesizedExpression(
       new IfStatement(
@@ -250,7 +251,6 @@ public class ExpressionVisitor extends StatementVisitor {
       new MethodCallExpression(
         new IdentifierImpl("init"),
         expressionsToExpressionList(arguments),
-        false,
         typeParameters));
   }
 
@@ -303,7 +303,6 @@ public class ExpressionVisitor extends StatementVisitor {
     super.visitReferenceExpression(expression);
 
     final boolean isFieldReference = isFieldReference(expression, getContainingClass(expression));
-    final boolean hasDollar = isFieldReference && isInsidePrimaryConstructor(expression);
     final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
     final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
     final boolean isThis = isThisExpression(expression);
@@ -325,7 +324,7 @@ public class ExpressionVisitor extends StatementVisitor {
   }
 
   @NotNull
-  static String getClassNameWithConstructor(@NotNull PsiReferenceExpression expression) {
+  private static String getClassNameWithConstructor(@NotNull PsiReferenceExpression expression) {
     PsiElement context = expression.getContext();
     while (context != null) {
       if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {

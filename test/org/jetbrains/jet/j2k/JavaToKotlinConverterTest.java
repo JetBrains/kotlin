@@ -88,7 +88,7 @@ public class JavaToKotlinConverterTest extends LightDaemonAnalyzerTestCase {
   @NotNull
   public static Test suite() {
     TestSuite suite = new TestSuite();
-    suite.addTest(TestCaseBuilder.suiteForDirectory(getTestDataPathBase(), "/ast", true, new TestCaseBuilder.NamedTestFactory() {
+    suite.addTest(TestCaseBuilder.suiteForDirectory(getTestDataPathBase(), "/ast", new TestCaseBuilder.NamedTestFactory() {
       @NotNull
       @Override
       public Test createTest(@NotNull String dataPath, @NotNull String name) {

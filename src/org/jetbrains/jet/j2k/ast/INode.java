@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface INode {
   @NotNull
-  public String toKotlin();
+  String toKotlin();
 
   @NotNull
-  public Kind getKind();
+  Kind getKind();
 
-  public enum Kind {
+  enum Kind {
     UNDEFINED, TYPE, CONSTRUCTOR, BREAK, CONTINUE, VARARG, TRAIT, ASSIGNMENT_EXPRESSION, CALL_CHAIN, LITERAL, ARRAY_TYPE,
   }
 }

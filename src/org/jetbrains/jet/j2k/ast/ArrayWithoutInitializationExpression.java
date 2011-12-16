@@ -47,7 +47,7 @@ public class ArrayWithoutInitializationExpression extends Expression {
   }
 
   @NotNull
-  public static String getConstructorName(@NotNull Type type) {
+  private static String getConstructorName(@NotNull Type type) {
     return AstUtil.replaceLastQuest(type.toKotlin());
   }
 }

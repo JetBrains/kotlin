@@ -11,7 +11,7 @@ import java.util.Set;
  * @author ignatov
  */
 public class ClassVisitor extends JavaRecursiveElementVisitor {
-  private Set<String> myClassIdentifiers;
+  private final Set<String> myClassIdentifiers;
 
   public ClassVisitor() {
     myClassIdentifiers = new HashSet<String>();

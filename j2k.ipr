@@ -585,6 +585,7 @@
       <words>
         <w>kotlin</w>
         <w>nullable</w>
+        <w>ushr</w>
       </words>
     </dictionary>
   </component>

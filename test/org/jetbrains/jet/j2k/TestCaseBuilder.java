@@ -39,8 +39,8 @@ abstract class TestCaseBuilder {
   }
 
   @NotNull
-  public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
-    return suiteForDirectory(baseDataDir, dataPath, recursive, emptyFilter, factory);
+  public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, @NotNull NamedTestFactory factory) {
+    return suiteForDirectory(baseDataDir, dataPath, true, emptyFilter, factory);
   }
 
   @NotNull

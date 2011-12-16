@@ -17,7 +17,7 @@ public class ElementVisitor extends JavaElementVisitor {
   @Nullable
   private Element myResult = Element.EMPTY_ELEMENT;
 
-  @NotNull
+  @Nullable
   public Element getResult() {
     return myResult;
   }

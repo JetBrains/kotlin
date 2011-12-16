@@ -23,11 +23,11 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
   public static final String JAVA_LANG_INTEGER = "java.lang.Integer";
   public static final String JAVA_LANG_LONG = "java.lang.Long";
   public static final String JAVA_LANG_SHORT = "java.lang.Short";
-  public static final String JAVA_LANG_BOOLEAN = "java.lang.Boolean";
+  private static final String JAVA_LANG_BOOLEAN = "java.lang.Boolean";
   public static final String JAVA_LANG_OBJECT = "java.lang.Object";
   public static final String JAVA_LANG_STRING = "java.lang.String";
-  public static final String JAVA_LANG_ITERABLE = "java.lang.Iterable";
-  public static final String JAVA_UTIL_ITERATOR = "java.util.Iterator";
+  private static final String JAVA_LANG_ITERABLE = "java.lang.Iterable";
+  private static final String JAVA_UTIL_ITERATOR = "java.util.Iterator";
   private Type myResult = Type.EMPTY_TYPE;
 
   @NotNull

@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Identifier extends INode {
   @NotNull
-  public static Identifier EMPTY_IDENTIFIER = new IdentifierImpl("");
+  Identifier EMPTY_IDENTIFIER = new IdentifierImpl("");
 
-  public boolean isEmpty();
+  boolean isEmpty();
 
   String getName();
 }
