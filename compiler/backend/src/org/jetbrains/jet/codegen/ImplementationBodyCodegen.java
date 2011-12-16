@@ -494,7 +494,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.load(k, StackValue.refType(sharedVarType));
                     k += StackValue.refType(sharedVarType).getSize();
-                    iv.putfield(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$" + (l+1), sharedVarType.getDescriptor());
+                    iv.putfield(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$" + varDescr.getName(), sharedVarType.getDescriptor());
                     l++;
                 }
             }

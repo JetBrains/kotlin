@@ -1,4 +1,3 @@
-/*
 fun s0() : Boolean {
     val y = "222"
     val foo = {
@@ -127,7 +126,7 @@ fun t8() : Boolean {
     return x == 30.sht
 }
 
-fun t9(x: Int) : Boolean {
+fun t9(var x: Int) : Boolean {
     while(x < 100) {
        x++
     }
@@ -146,7 +145,7 @@ fun t10() : Boolean {
     return y == 2
 }
 
-fun t11(x: Int) : Int {
+fun t11(var x: Int) : Int {
     val foo = {
         x = x + 1
         val bar = {
@@ -160,7 +159,7 @@ fun t11(x: Int) : Int {
     }
     return x
 }
-*/
+
 fun t12(x: Int) : Int {
     var y = x
     val runnable = object : Runnable {
@@ -175,7 +174,6 @@ fun t12(x: Int) : Int {
 }
 
 fun box(): String {
-/*
     if (!s0()) return "s0 fail"
     if (!s1()) return "s1 fail"
     if (!t1()) return "t1 fail"
@@ -189,7 +187,6 @@ fun box(): String {
     if (!t9(0)) return "t9 fail"
     if (!t10()) return "t10 fail"
     if (t11(1) != 104) return "t11 fail"
-*/
     if (t12(0) != 100) return "t12 fail"
 
     return "OK"

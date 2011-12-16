@@ -40,12 +40,13 @@ inline fun  FloatArray.binarySearch(fromIndex: Int, toIndex: Int, key: Float)  =
 inline fun DoubleArray.binarySearch(fromIndex: Int, toIndex: Int, key: Double) = Arrays.binarySearch(this, fromIndex, toIndex, key)
 inline fun   CharArray.binarySearch(fromIndex: Int, toIndex: Int, key: Char)   = Arrays.binarySearch(this, fromIndex, toIndex, key)
 
+/*
 inline fun <T> Array<T>.binarySearch(key: T, comparator: fun(T,T):Int) = Arrays.binarySearch(this, key, object: java.util.Comparator<T> {
     override fun compare(a: T, b: T) = comparator(a, b)
 
     override fun equals(obj: Any?) = obj.identityEquals(this)
 })
-
+*/
 inline fun   BooleanArray.fill(value: Boolean) = Arrays.fill(this, value)
 inline fun      ByteArray.fill(value: Byte)    = Arrays.fill(this, value)
 inline fun     ShortArray.fill(value: Short)   = Arrays.fill(this, value)
