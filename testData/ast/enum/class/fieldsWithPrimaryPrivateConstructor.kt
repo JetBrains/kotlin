@@ -1,6 +1,6 @@
 enum class Color(c : Int) {
 {
-$code = c
+code = c
 }
 WHITE : Color(21)
 BLACK : Color(22)

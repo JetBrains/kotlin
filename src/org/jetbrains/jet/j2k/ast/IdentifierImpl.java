@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IdentifierImpl extends Expression implements Identifier {
   private final String myName;
-  private boolean myHasDollar = false;
   private boolean myIsNullable = true;
   private boolean myQuotingNeeded = true;
 
@@ -20,20 +19,20 @@ public class IdentifierImpl extends Expression implements Identifier {
     myIsNullable = isNullable;
   }
 
-  public IdentifierImpl(String name, boolean hasDollar, boolean isNullable) {
+  public IdentifierImpl(String name, boolean isNullable, boolean quotingNeeded) {
     myName = name;
-    myHasDollar = hasDollar;
     myIsNullable = isNullable;
-  }
-
-  public IdentifierImpl(String name, boolean hasDollar, boolean isNullable, boolean quotingNeeded) {
-    this(name, hasDollar,  isNullable);
     myQuotingNeeded = quotingNeeded;
   }
 
   @Override
   public boolean isEmpty() {
     return myName.length() == 0;
+  }
+
+  @Override
+  public String getName() {
+    return myName;
   }
 
   @NotNull
@@ -55,8 +54,6 @@ public class IdentifierImpl extends Expression implements Identifier {
   @NotNull
   @Override
   public String toKotlin() {
-    if (myHasDollar)
-      return DOLLAR + ifNeedQuote();
     return ifNeedQuote();
   }
 }

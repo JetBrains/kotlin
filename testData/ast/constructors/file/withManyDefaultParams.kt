@@ -1,13 +1,13 @@
-public open class Test(myName : String?, a : Boolean, b : Double, c : Float, d : Long, e : Int, f : Short, g : Char) {
+public open class Test(_myName : String?, _a : Boolean, _b : Double, _c : Float, _d : Long, _e : Int, _f : Short, _g : Char) {
 {
-$myName = myName
-$a = a
-$b = b
-$c = c
-$d = d
-$e = e
-$f = f
-$g = g
+myName = _myName
+a = _a
+b = _b
+c = _c
+d = _d
+e = _e
+f = _f
+g = _g
 }
 private val myName : String? = null
 private var a : Boolean = false

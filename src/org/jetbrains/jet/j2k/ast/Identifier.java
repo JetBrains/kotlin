@@ -10,4 +10,6 @@ public interface Identifier extends INode {
   public static Identifier EMPTY_IDENTIFIER = new IdentifierImpl("");
 
   public boolean isEmpty();
+
+  String getName();
 }

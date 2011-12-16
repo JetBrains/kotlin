@@ -1,7 +1,7 @@
 namespace test
 public open class Test(str : String) {
 {
-$myStr = str
+myStr = str
 }
 var myStr : String? = "String2"
 open public fun sout(str : String) : Unit {

@@ -1,7 +1,7 @@
 namespace demo
 enum class Color(c : Int) {
 {
-$code = c
+code = c
 }
 private var code : Int = 0
 public fun getCode() : Int {

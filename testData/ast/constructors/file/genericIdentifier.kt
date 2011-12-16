@@ -1,7 +1,7 @@
-public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
+public open class Identifier<T>(_myName : T?, _myHasDollar : Boolean) {
 {
-$myName = myName
-$myHasDollar = myHasDollar
+myName = _myName
+myHasDollar = _myHasDollar
 }
 private val myName : T? = null
 private var myHasDollar : Boolean = false

@@ -2,7 +2,7 @@ namespace com.voltvoodoo.saplo4j.model
 import java.io.Serializable
 public open class Language(code : String?) : Serializable {
 {
-this.$code = code
+this.code = code
 }
 protected var code : String? = null
 override public fun toString() : String? {

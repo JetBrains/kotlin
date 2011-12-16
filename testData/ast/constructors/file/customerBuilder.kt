@@ -2,8 +2,8 @@ namespace org.test.customer
 open class Customer(first : String?, last : String?) {
 {
 doSmthBefore()
-$_firstName = first
-$_lastName = last
+_firstName = first
+_lastName = last
 doSmthAfter()
 }
 public val _firstName : String? = null

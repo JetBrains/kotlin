@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
 
@@ -188,7 +189,7 @@ public class ExpressionVisitor extends StatementVisitor {
       if (canonicalTypeStr.equals("char") || canonicalTypeStr.equals("java.lang.Character"))
         isQuotingNeeded = false;
     }
-    myResult = new LiteralExpression(new IdentifierImpl(text, false, false, isQuotingNeeded));
+    myResult = new LiteralExpression(new IdentifierImpl(text, false, isQuotingNeeded));
   }
 
   @Override
@@ -310,15 +311,11 @@ public class ExpressionVisitor extends StatementVisitor {
 
     Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
 
-    if (hasDollar)
-      identifier = new IdentifierImpl(expression.getReferenceName(), hasDollar, isNullable);
-    else {
-      final String temporaryObject = "__";
-      if (hasReceiver)
-        identifier = new CallChainExpression(new IdentifierImpl(temporaryObject, false), new IdentifierImpl(expression.getReferenceName(), isNullable));
-      else if (insideSecondaryConstructor && isThis)
-        identifier = new IdentifierImpl("val " + temporaryObject + " = " + className); // TODO: hack
-    }
+    final String temporaryObject = "__";
+    if (hasReceiver)
+      identifier = new CallChainExpression(new IdentifierImpl(temporaryObject, false), new IdentifierImpl(expression.getReferenceName(), isNullable));
+    else if (insideSecondaryConstructor && isThis)
+      identifier = new IdentifierImpl("val " + temporaryObject + " = " + className); // TODO: hack
 
     myResult = new CallChainExpression(
       expressionToExpression(expression.getQualifierExpression()),

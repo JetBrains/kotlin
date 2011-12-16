@@ -1,8 +1,8 @@
 open class C(arg1 : Int) {
 {
-$myArg1 = arg1
-$myArg2 = 0
-$myArg3 = 0
+myArg1 = arg1
+myArg2 = 0
+myArg3 = 0
 }
 val myArg1 : Int = 0
 var myArg2 : Int = 0

@@ -115,7 +115,8 @@ public class Converter {
   @NotNull
   private static List<Parameter> createParametersFromFields(@NotNull List<? extends Field> fields) {
     List<Parameter> result = new LinkedList<Parameter>();
-    for (Field f : fields) result.add(new Parameter(f.getIdentifier(), f.getType()));
+    for (Field f : fields)
+      result.add(new Parameter(new IdentifierImpl("_" + f.getIdentifier().getName()), f.getType()));
     return result;
   }
 
@@ -124,7 +125,7 @@ public class Converter {
     List<Statement> result = new LinkedList<Statement>();
     for (Field f : fields) {
       final String identifierToKotlin = f.getIdentifier().toKotlin();
-      result.add(new DummyStringExpression("$" + identifierToKotlin + " = " + identifierToKotlin));
+      result.add(new DummyStringExpression(identifierToKotlin + " = " + "_" + identifierToKotlin));
     }
     return result;
   }

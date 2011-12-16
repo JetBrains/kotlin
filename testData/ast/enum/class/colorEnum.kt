@@ -1,7 +1,7 @@
 namespace demo
 enum class MyEnum(_color : Int) {
 {
-$color = _color
+color = _color
 }
 RED : MyEnum(10)
 BLUE : MyEnum(20)

@@ -46,8 +46,6 @@ public abstract class Node implements INode {
   @NotNull
   static final String AT = "@";
   @NotNull
-  static final String DOLLAR = "$";
-  @NotNull
   static final String BACKTICK = "`";
   @NotNull
   static final String QUEST = "?";
