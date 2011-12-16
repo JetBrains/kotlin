@@ -65,7 +65,8 @@ public final class K2JSTranslator {
         JetFile file = createPsiFile("test", programText);
         String programCode = generateProgramCode(file);
         String callToMain = generateCallToMain(file, argumentsString);
-        return programCode + callToMain;
+        String programOutput = "Kotlin.System.output();";
+        return programCode + callToMain + programOutput;
     }
 
     private String generateProgramCode(JetFile psiFile) {
@@ -121,7 +122,8 @@ public final class K2JSTranslator {
     protected PsiFile createFile(@NonNls String name, String text) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(environment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(environment.getProject()))
+                .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
     }
 
 

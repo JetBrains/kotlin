@@ -59,9 +59,21 @@ public final class NamingScope {
     @NotNull
     public JsName declareVariable(@NotNull DeclarationDescriptor descriptor,
                                   @NotNull String name) {
-        JsName declaredName = scope.declareName(name);
+        JsName declaredName = scope.declareName(mayBeObfuscateName(name));
         descriptorToNameMap.put(descriptor, declaredName);
         return declaredName;
+    }
+
+    //TODO: temporary solution
+    @NotNull
+    private String mayBeObfuscateName(@NotNull String name) {
+        int obfuscate = 0;
+        String result = name;
+//        while (scope.findExistingName(result) != null) {
+//            result = name + "_" + obfuscate;
+//            obfuscate++;
+//        }
+        return result;
     }
 
     @NotNull

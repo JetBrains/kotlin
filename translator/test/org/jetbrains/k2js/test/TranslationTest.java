@@ -15,9 +15,9 @@ import java.util.List;
 public abstract class TranslationTest {
 
     private final static String TEST_FILES = "translator/testFiles/";
-    final private static String CASES = "cases/";
-    final private static String OUT = "out/";
-    final private static String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
+    private static final String CASES = "cases/";
+    private static final String OUT = "out/";
+    private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
 
     protected abstract String mainDirectory();
 
@@ -88,12 +88,12 @@ public abstract class TranslationTest {
     }
 
     protected void runRhinoTest(List<String> fileNames, RhinoResultChecker checker) throws Exception {
-        Context cx = Context.enter();
-        Scriptable scope = cx.initStandardObjects();
+        Context context = Context.enter();
+        Scriptable scope = context.initStandardObjects();
         for (String filename : fileNames) {
-            runFileWithRhino(filename, cx, scope);
+            runFileWithRhino(filename, context, scope);
         }
-        checker.runChecks(cx, scope);
+        checker.runChecks(context, scope);
         Context.exit();
     }
 
