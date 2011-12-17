@@ -103,6 +103,38 @@ trait Iterable<out T> {
   fun iterator() : Iterator<T>
 }
 
+trait ByteIterable : Iterable<Byte> {
+  override fun iterator() : ByteIterator
+}
+
+trait ShortIterable : Iterable<Short> {
+  override fun iterator() : ShortIterator
+}
+
+trait IntIterable : Iterable<Int> {
+  override fun iterator() : IntIterator
+}
+
+trait LongIterable : Iterable<Long> {
+  override fun iterator() : LongIterator
+}
+
+trait FloatIterable : Iterable<Float> {
+  override fun iterator() : FloatIterator
+}
+
+trait DoubleIterable : Iterable<Double> {
+  override fun iterator() : DoubleIterator
+}
+
+trait BooleanIterable : Iterable<Boolean> {
+  override fun iterator() : BooleanIterator
+}
+
+trait CharIterable : Iterable<Char> {
+  override fun iterator() : CharIterator
+}
+
 fun Array<T>(val size : Int) : Array<T?>
 
 class Array<T>(val size : Int, init : fun(Int) : T) {
@@ -230,7 +262,7 @@ trait Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
-class IntRange(val start : Int, size : Int, reversed : Boolean = false) : Range<Int>, Iterable<Int> {
+class IntRange(val start : Int, size : Int, reversed : Boolean = false) : Range<Int>, IntIterable {
     fun iterator () : Iterator<Int>
 
     fun contains (elem: Int) : Boolean
