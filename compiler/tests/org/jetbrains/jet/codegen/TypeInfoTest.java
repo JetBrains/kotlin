@@ -138,6 +138,11 @@ public class TypeInfoTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testKt511() throws Exception {
+        blackBoxFile("regressions/kt511.jet");
+//        System.out.println(generateToText());
+    }
+
     public void testInner() throws Exception {
         blackBoxFile("typeInfo/inner.jet");
         System.out.println(generateToText());
