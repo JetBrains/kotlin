@@ -12,6 +12,11 @@ public class ArrayGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testKt779 () throws Exception {
+        blackBoxFile("regressions/kt779.jet");
+//        System.out.println(generateToText());
+    }
+
     public void testCreateMultiInt () throws Exception {
         loadText("fun foo() = Array<Array<Int>> (5, { Array<Int>(it, {239}) })");
         Method foo = generateFunction();
