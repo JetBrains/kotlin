@@ -44,7 +44,7 @@ fun fails(block: fun() : Any) {
 }
 
 fun todo(block: fun(): Any) {
-  // Ignore the code :)
+  println("TODO at " + Exception().getStackTrace()?.get(1))
 }
 
 /*

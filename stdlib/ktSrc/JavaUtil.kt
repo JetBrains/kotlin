@@ -11,7 +11,7 @@ val Collection<*>.empty : Boolean
     get() = isEmpty()
 
 /** Returns a new ArrayList with a variable number of initial elements */
-fun arrayList<T>(vararg values: T) : ArrayList<T> {
+inline fun arrayList<T>(vararg values: T) : ArrayList<T> {
   val answer = ArrayList<T>()
   for (v in values)
     answer.add(v)
@@ -19,7 +19,7 @@ fun arrayList<T>(vararg values: T) : ArrayList<T> {
 }
 
 /** Returns a new HashSet with a variable number of initial elements */
-fun hashSet<T>(vararg values: T) : HashSet<T> {
+inline fun hashSet<T>(vararg values: T) : HashSet<T> {
   val answer = HashSet<T>()
   for (v in values)
     answer.add(v)
@@ -46,7 +46,7 @@ protected fun <T,R> Set<T>.create(defaultSize: Int? = null) : Set<R> {
 
 
 /** Returns true if any elements in the collection match the given predicate */
-fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
+inline fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
   for (elem in this) {
     if (predicate(elem)) {
       return true
@@ -56,7 +56,7 @@ fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
 }
 
 /** Returns true if all elements in the collection match the given predicate */
-fun <T> java.lang.Iterable<T>.all(predicate: fun(T): Boolean) : Boolean {
+inline fun <T> java.lang.Iterable<T>.all(predicate: fun(T): Boolean) : Boolean {
   for (elem in this) {
     if (!predicate(elem)) {
       return false
@@ -66,7 +66,7 @@ fun <T> java.lang.Iterable<T>.all(predicate: fun(T): Boolean) : Boolean {
 }
 
 /** Returns the first item in the collection which matches the given predicate or null if none matched */
-fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
+inline fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
   for (elem in this) {
     if (predicate(elem))
       return elem
@@ -77,7 +77,7 @@ fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
 /** Returns a new collection containing all elements in this collection which match the given predicate */
 // TODO using: Collection<T> for the return type - I wonder if this exact type could be
 // deduced somewhat from the This.Type; e.g. returning Set on a Set, Array on Array etc
-fun <T> java.lang.Iterable<T>.filter(predicate: fun(T): Boolean) : Collection<T> {
+inline fun <T> java.lang.Iterable<T>.filter(predicate: fun(T): Boolean) : Collection<T> {
   val result = this.create<T,T>()
   for (elem in this) {
     if (predicate(elem))
@@ -86,8 +86,47 @@ fun <T> java.lang.Iterable<T>.filter(predicate: fun(T): Boolean) : Collection<T>
   return result
 }
 
+/**
+  * Returns the result of transforming each item in the collection to a one or more values which
+  * are concatenated together into a single collection
+  */
+// TODO should use Iterable instead of Collection in transform?
+inline fun <T, out R> java.lang.Iterable<T>.flatMap(transform: fun(T): Collection<R>) : Collection<R> {
+  val result = this.create<T,R>()
+  for (elem in this) {
+    val coll = transform(elem)
+    if (coll != null) {
+      for (r in coll) {
+        result.add(r)
+      }
+    }
+  }
+  return result
+}
+
+/** Performs the given operation on each element inside the collection */
+inline fun <T> java.lang.Iterable<T>.foreach(operation: fun(element: T) : Unit) {
+  for (elem in this)
+    operation(elem)
+}
+
+/** Creates a String from all the elements in the collection, using the seperator between them and using the given prefix and postfix if supplied */
+inline fun <T> java.lang.Iterable<T>.join(separator: String, prefix: String = "", postfix: String = "") : String {
+  val buffer = StringBuilder(prefix)
+  var first = true
+  for (elem in this) {
+    if (first)
+      first = false
+    else
+      buffer.append(separator)
+    buffer.append(elem)
+  }
+  buffer.append(postfix)
+  return buffer.toString().sure()
+}
+
 /** Returns a new collection containing the results of applying the given function to each element in this collection */
-fun <T, R> java.lang.Iterable<T>.map(transform : fun(T) : R) : Collection<R> {
+inline fun <T, R> java.lang.Iterable<T>.map(transform : fun(T) : R) : Collection<R> {
   val result = this.create<T,R>()
   for (item in this)
     result.add(transform(item))
@@ -95,9 +134,91 @@ fun <T, R> java.lang.Iterable<T>.map(transform : fun(T) : R) : Collection<R> {
 }
 
 /** Returns a new collection containing the results of applying the given function to each element in this collection */
-fun <T, R> java.util.Collection<T>.map(transform : fun(T) : R) : Collection<R> {
+inline fun <T, R> java.util.Collection<T>.map(transform : fun(T) : R) : Collection<R> {
   val result = this.create<T,R>(this.size)
   for (item in this)
     result.add(transform(item))
   return result
 }
+
+inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
+  val answer = this.toList()
+  answer.sort()
+  return answer
+}
+
+inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+  val answer = this.toList()
+  answer.sort(comparator)
+  return answer
+}
+
+/**
+  TODO figure out necessary variance/generics ninja stuff... :)
+inline fun <in T> java.lang.Iterable<T>.sort(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
+  val answer = this.toList()
+  val comparator = java.util.Comparator<T>() {
+    fun compare(o1: T, o2: T): Int {
+      val v1 = transform(o1)
+      val v2 = transform(o2)
+      if (v1 == v2) {
+        return 0
+      } else {
+        return v1.compareTo(v2)
+      }
+    }
+  }
+  answer.sort(comparator)
+  return answer
+}
+*/
+
+inline fun <T> java.lang.Iterable<T>.toList() : List<T> {
+  if (this is List<T>)
+    return this
+  else {
+    val list = ArrayList<T>()
+    for (elem in this)
+      list.add(elem)
+    return list
+  }
+}
+
+inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
+  if (this is Array<T>)
+    return this
+  else {
+    val answer = Array<T>(this.size)
+    var idx = 0
+    for (elem in this)
+      answer[idx++] = elem
+    return answer as Array<T>
+  }
+}
+
+
+// List APIs
+
+inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : Unit {
+  Collections.sort(this)
+}
+
+inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Comparator<T>) : Unit {
+  Collections.sort(this, comparator)
+}
+
+val <T> List<T>.head : T?
+    get() = this.get(0)
+
+val <T> List<T>.first : T?
+    get() = this.head
+
+val <T> List<T>.tail : T?
+    get() {
+      val s = this.size
+      return if (s > 0) this.get(s - 1) else null
+
+    }
+val <T> List<T>.last : T?
+  get() = this.tail
+
