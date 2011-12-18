@@ -1,5 +1,6 @@
 namespace test.apicheck
 
+import std.util.*
 import java.util.*
 
 trait Traversable<T> {

@@ -141,13 +141,13 @@ inline fun <T, R> java.util.Collection<T>.map(transform : fun(T) : R) : Collecti
   return result
 }
 
-inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
+inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList() : List<T> {
   val answer = this.toList()
   answer.sort()
   return answer
 }
 
-inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> {
   val answer = this.toList()
   answer.sort(comparator)
   return answer
@@ -155,20 +155,9 @@ inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort(comparator
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
-inline fun <in T> java.lang.Iterable<T>.sort(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
+inline fun <in T> java.lang.Iterable<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
   val answer = this.toList()
-  val comparator = java.util.Comparator<T>() {
-    fun compare(o1: T, o2: T): Int {
-      val v1 = transform(o1)
-      val v2 = transform(o2)
-      if (v1 == v2) {
-        return 0
-      } else {
-        return v1.compareTo(v2)
-      }
-    }
-  }
-  answer.sort(comparator)
+  answer.sort(transform)
   return answer
 }
 */
@@ -206,6 +195,24 @@ inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : Unit {
 inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Comparator<T>) : Unit {
   Collections.sort(this, comparator)
 }
+
+/**
+  TODO figure out necessary variance/generics ninja stuff... :)
+inline fun <in T> List<T>.sort(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
+  val comparator = java.util.Comparator<T>() {
+    fun compare(o1: T, o2: T): Int {
+      val v1 = transform(o1)
+      val v2 = transform(o2)
+      if (v1 == v2) {
+        return 0
+      } else {
+        return v1.compareTo(v2)
+      }
+    }
+  }
+  answer.sort(comparator)
+}
+*/
 
 val <T> List<T>.head : T?
     get() = this.get(0)
