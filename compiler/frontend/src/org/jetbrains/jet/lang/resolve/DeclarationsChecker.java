@@ -221,18 +221,17 @@ public class DeclarationsChecker {
         boolean backingFieldRequired = context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
 
         PsiElement nameIdentifier = property.getNameIdentifier();
-        ASTNode nameNode = nameIdentifier == null ? property.getNode() : nameIdentifier.getNode();
 
-        if (inTrait && backingFieldRequired && hasAccessorImplementation) {
-            context.getTrace().report(BACKING_FIELD_IN_TRAIT.on(nameNode));
+        if (inTrait && backingFieldRequired && hasAccessorImplementation && nameIdentifier != null) {
+            context.getTrace().report(BACKING_FIELD_IN_TRAIT.on(nameIdentifier));
         }
         if (initializer == null) {
-            if (backingFieldRequired && !inTrait && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
+            if (nameIdentifier != null && backingFieldRequired && !inTrait && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || hasAccessorImplementation) {
-                    context.getTrace().report(MUST_BE_INITIALIZED.on(nameNode));
+                    context.getTrace().report(MUST_BE_INITIALIZED.on(nameIdentifier));
                 }
                 else {
-                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property, nameNode));
+                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property, nameIdentifier));
                 }
             }
             return;
