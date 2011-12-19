@@ -1,13 +1,10 @@
 package org.jetbrains.jet;
 
-import com.intellij.lang.LanguageASTFactory;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.psi.impl.source.tree.JavaASTFactory;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
@@ -69,8 +66,6 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
     @Override
     protected void runTest() throws Throwable {
         jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
-
-        LanguageASTFactory.INSTANCE.addExplicitExtension(JavaLanguage.INSTANCE, new JavaASTFactory());
 
 
         String text = FileUtil.loadFile(ktFile);
