@@ -1,19 +1,10 @@
 namespace lockperformance
 
+import std.concurrent.*
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
-
-fun thread(f: fun ()) {
-    val thread = Thread(
-        object: Runnable {
-            override fun run() {
-                f()
-            }
-        }
-    )
-    thread.start()
-}
 
 fun <T> Int.latch(op: fun CountDownLatch.() : T) : T {
     val cdl = CountDownLatch(this)
@@ -22,7 +13,7 @@ fun <T> Int.latch(op: fun CountDownLatch.() : T) : T {
     return res
 }
 
-fun Int.times(action: fun Int.()) {
+fun Int.times(action: fun():Unit) {
     for(i in 0..this-1)
         action()
 }
