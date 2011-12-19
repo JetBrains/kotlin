@@ -65,10 +65,24 @@ public class JavaDescriptorResolver {
     private static class TypeParameterDescriptorInitialization {
         private final TypeParameterDescriptorOrigin origin;
         private final TypeParameterDescriptor descriptor;
+        @Nullable
+        private final List<JetType> upperBoundsForKotlin;
+        @Nullable
+        private final List<JetType> lowerBoundsForKotlin;
 
-        private TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin origin, TypeParameterDescriptor descriptor) {
-            this.origin = origin;
+        private TypeParameterDescriptorInitialization(TypeParameterDescriptor descriptor) {
+            this.origin = TypeParameterDescriptorOrigin.JAVA;
             this.descriptor = descriptor;
+            this.upperBoundsForKotlin = null;
+            this.lowerBoundsForKotlin = null;
+        }
+
+        private TypeParameterDescriptorInitialization(TypeParameterDescriptor descriptor,
+                List<JetType> upperBoundsForKotlin, List<JetType> lowerBoundsForKotlin) {
+            this.origin = TypeParameterDescriptorOrigin.KOTLIN;
+            this.descriptor = descriptor;
+            this.upperBoundsForKotlin = upperBoundsForKotlin;
+            this.lowerBoundsForKotlin = lowerBoundsForKotlin;
         }
     }
 
@@ -229,13 +243,71 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    private PsiTypeParameter getPsiTypeParameterByName(PsiTypeParameterListOwner clazz, String ownerName, String name) {
+    private PsiTypeParameter getPsiTypeParameterByName(PsiTypeParameterListOwner clazz, String name) {
         for (PsiTypeParameter typeParameter : clazz.getTypeParameters()) {
             if (typeParameter.getName().equals(name)) {
                 return typeParameter; 
             }
         }
-        throw new IllegalStateException("PsiTypeParameter '" + name + "' is not found in '" + ownerName + "'");
+        throw new IllegalStateException("PsiTypeParameter '" + name + "' is not found");
+    }
+
+    private abstract class JetSignatureTypeParameterVisitor extends JetSignatureExceptionsAdapter {
+        
+        private final DeclarationDescriptor containingDeclaration;
+        private final PsiTypeParameterListOwner psiOwner;
+        private final String name;
+        private final TypeInfoVariance variance;
+
+        protected JetSignatureTypeParameterVisitor(DeclarationDescriptor containingDeclaration, PsiTypeParameterListOwner psiOwner,
+                String name, TypeInfoVariance variance)
+        {
+            this.containingDeclaration = containingDeclaration;
+            this.psiOwner = psiOwner;
+            this.name = name;
+            this.variance = variance;
+        }
+
+        int index = 0;
+
+        List<JetType> upperBounds = new ArrayList<JetType>();
+        List<JetType> lowerBounds = new ArrayList<JetType>();
+
+        @Override
+        public JetSignatureVisitor visitClassBound() {
+            return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
+                @Override
+                protected void done(@NotNull JetType jetType) {
+                    upperBounds.add(jetType);
+                }
+            };
+        }
+
+        @Override
+        public JetSignatureVisitor visitInterfaceBound() {
+            return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
+                @Override
+                protected void done(@NotNull JetType jetType) {
+                    upperBounds.add(jetType);
+                }
+            };
+        }
+
+        @Override
+        public void visitFormalTypeParameterEnd() {
+            TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
+                    containingDeclaration,
+                    Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
+                    true, // TODO: wrong
+                    JetSignatureUtils.translateVariance(variance),
+                    name,
+                    ++index);
+            PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(psiOwner, name);
+            typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(typeParameter, upperBounds, lowerBounds));
+            done(typeParameter);
+        }
+        
+        protected abstract void done(TypeParameterDescriptor typeParameterDescriptor);
     }
 
     /**
@@ -246,43 +318,11 @@ public class JavaDescriptorResolver {
         new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
-                return new JetSignatureExceptionsAdapter() {
-                    int index = 0;
-
+                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, variance) {
                     @Override
-                    public JetSignatureVisitor visitClassBound() {
-                        return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
-                            @Override
-                            protected void done(@NotNull JetType jetType) {
-                                // TODO
-                            }
-                        };
+                    protected void done(TypeParameterDescriptor typeParameterDescriptor) {
+                        r.add(typeParameterDescriptor);
                     }
-
-                    @Override
-                    public JetSignatureVisitor visitInterfaceBound() {
-                        return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
-                            @Override
-                            protected void done(@NotNull JetType jetType) {
-                                // TODO
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void visitFormalTypeParameterEnd() {
-                        TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
-                                classDescriptor,
-                                Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
-                                true, // TODO: wrong
-                                JetSignatureUtils.translateVariance(variance),
-                                name,
-                                ++index);
-                        PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(clazz, clazz.getQualifiedName(), name);
-                        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin.KOTLIN, typeParameter));
-                        r.add(typeParameter);
-                    }
-
                 };
             }
 
@@ -332,14 +372,23 @@ public class JavaDescriptorResolver {
                 psiTypeParameter.getName(),
                 psiTypeParameter.getIndex()
         );
-        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin.JAVA, typeParameterDescriptor));
+        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(typeParameterDescriptor));
         return typeParameterDescriptor;
     }
 
     private void initializeTypeParameter(PsiTypeParameter typeParameter, TypeParameterDescriptorInitialization typeParameterDescriptorInitialization) {
         TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorInitialization.descriptor;
         if (typeParameterDescriptorInitialization.origin == TypeParameterDescriptorOrigin.KOTLIN) {
-            // TODO
+            List<?> upperBounds = typeParameterDescriptorInitialization.upperBoundsForKotlin;
+            if (upperBounds.size() == 0){
+                typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
+            } else {
+                for (JetType upperBound : typeParameterDescriptorInitialization.upperBoundsForKotlin) {
+                    typeParameterDescriptor.addUpperBound(upperBound);
+                }
+            }
+
+            // TODO: lower bounds
         } else {
             PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
             if (referencedTypes.length == 0){
@@ -667,44 +716,14 @@ public class JavaDescriptorResolver {
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
-
-                return new JetSignatureExceptionsAdapter() {
-                    int index = 0;
-
+                
+                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, variance) {
                     @Override
-                    public JetSignatureVisitor visitClassBound() {
-                        return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
-                            @Override
-                            protected void done(@NotNull JetType jetType) {
-                                // TODO
-                            }
-                        };
-                    }
-
-                    @Override
-                    public JetSignatureVisitor visitInterfaceBound() {
-                        return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
-                            @Override
-                            protected void done(@NotNull JetType jetType) {
-                                // TODO
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void visitFormalTypeParameterEnd() {
-                        TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
-                                functionDescriptor,
-                                Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
-                                true, // TODO: wrong
-                                JetSignatureUtils.translateVariance(variance),
-                                name,
-                                ++index);
-                        PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(method, method.getName(), name);
-                        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin.KOTLIN, typeParameter));
-                        r.add(typeParameter);
+                    protected void done(TypeParameterDescriptor typeParameterDescriptor) {
+                        r.add(typeParameterDescriptor);
                     }
                 };
+
             }
         });
         return r;

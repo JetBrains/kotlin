@@ -32,6 +32,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -259,16 +260,20 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serializeCommaSeparated(List<?> list, StringBuilder sb) {
+        serializeSeparated(list, sb, ", ");
+    }
+
+    private void serializeSeparated(List<?> list, StringBuilder sb, String sep) {
         boolean first = true;
         for (Object o : list) {
             if (!first) {
-                sb.append(", ");
+                sb.append(sep);
             }
             serialize(o, sb);
             first = false;
         }
     }
-    
+
     private Method getMethodToSerialize(Object o) {
         // TODO: cache
         for (Method method : ReadClassDataTest.class.getDeclaredMethods()) {
@@ -296,6 +301,10 @@ public class ReadClassDataTest extends UsefulTestCase {
         Method method = getMethodToSerialize(o);
         invoke(method, this, o, sb);
     }
+    
+    private void serialize(String s, StringBuilder sb) {
+        sb.append(s);
+    }
 
     private void serialize(ModuleDescriptor module, StringBuilder sb) {
         // nop
@@ -316,11 +325,20 @@ public class ReadClassDataTest extends UsefulTestCase {
         sb.append(".");
         sb.append(ns.getName());
     }
-    
+
     private void serialize(TypeParameterDescriptor param, StringBuilder sb) {
         serialize(param.getVariance(), sb);
         sb.append(param.getName());
-        // TODO: serialize bounds
+        if (!param.getUpperBounds().isEmpty()) {
+            sb.append(" : ");
+            List<String> list = new ArrayList<String>();
+            for (JetType upper : param.getUpperBounds()) {
+                list.add(serialize(upper));
+            }
+            Collections.sort(list);
+            serializeSeparated(list, sb, " & "); // TODO: use where
+        }
+        // TODO: lower bounds
     }
     
 

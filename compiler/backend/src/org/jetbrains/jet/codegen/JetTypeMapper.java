@@ -550,6 +550,9 @@ public class JetTypeMapper {
             signatureVisitor.writeClassBound();
 
             for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
+                if (jetType.equals(JetStandardClasses.getNullableAnyType())) {
+                    continue;
+                }
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                     if (!CodegenUtil.isInterface(jetType)) {
                         mapType(jetType, signatureVisitor);
