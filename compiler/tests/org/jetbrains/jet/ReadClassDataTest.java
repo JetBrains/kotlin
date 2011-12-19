@@ -145,7 +145,8 @@ public class ReadClassDataTest extends UsefulTestCase {
     private String serializeContent(ClassDescriptor klass) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("class ");
+        serialize(klass.getKind(), sb);
+        sb.append(" ");
         
         serialize(klass, sb);
 
@@ -184,6 +185,19 @@ public class ReadClassDataTest extends UsefulTestCase {
 
         sb.append("}\n");
         return sb.toString();
+    }
+    
+    private void serialize(ClassKind kind, StringBuilder sb) {
+        switch (kind) {
+            case CLASS:
+                sb.append("class");
+                break;
+            case TRAIT:
+                sb.append("trait");
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
 
