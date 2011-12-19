@@ -14,20 +14,21 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.util.ui.UIUtil;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Nikolay Krasko
  */
-public abstract class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
+public class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
 
     public final static String MAIN_SUBSTRING = ".Main";
     public final static String DATA_SUBSTRING = ".Data";
@@ -42,7 +43,7 @@ public abstract class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase 
         setName("testRun");
     }
 
-    protected boolean shouldBeAvailableAfterExecution() {
+    protected static boolean shouldBeAvailableAfterExecution() {
         return false;
     }
 
@@ -187,5 +188,39 @@ public abstract class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase 
 
     public static boolean isMainFile(String fileName) {
         return fileName.contains(MAIN_SUBSTRING);
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
+
+        FilenameFilter multifileFileNameFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.startsWith("before") && JetPsiCheckerMultifileTest.isMainFile(s);
+            }
+        };
+
+        JetTestCaseBuilder.NamedTestFactory multiFileNamedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
+            @NotNull
+            @Override
+            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
+                return new JetPsiCheckerMultifileTest(dataPath, name);
+            }
+        };
+
+        File dir = new File(getTestDataPathBase());
+        List<String> subDirs = Arrays.asList(dir.list());
+        Collections.sort(subDirs);
+        for (String subDirName : subDirs) {
+            final TestSuite multiFileTestSuite = JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, multifileFileNameFilter, multiFileNamedTestFactory);
+            if (multiFileTestSuite.countTestCases() != 0) {
+                suite.addTest(multiFileTestSuite);
+            }
+        }
+        return suite;
+    }
+
+    public static String getTestDataPathBase() {
+        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData/quickfix/";
     }
 }

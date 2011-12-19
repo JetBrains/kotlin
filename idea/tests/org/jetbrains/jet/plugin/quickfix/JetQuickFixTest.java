@@ -39,12 +39,6 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
             }
         };
     }
-    
-    public static class JetPsiCheckerMultifileTestImpl extends JetPsiCheckerMultifileTest {
-        public JetPsiCheckerMultifileTestImpl(String dataPath, String name) {
-            super(dataPath, name);
-        }
-    }
 
     public static Test suite() {
         //setFilter(); //to launch only part of tests
@@ -57,13 +51,6 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
             }
         };
 
-        FilenameFilter multifileFileNameFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return s.startsWith("before") && JetPsiCheckerMultifileTest.isMainFile(s);
-            }
-        };
-
         JetTestCaseBuilder.NamedTestFactory singleFileNamedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
@@ -72,29 +59,14 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
             }
         };
 
-        JetTestCaseBuilder.NamedTestFactory multiFileNamedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetPsiCheckerMultifileTestImpl(dataPath, name);
-            }
-        };
-
         File dir = new File(getTestDataPathBase());
         List<String> subDirs = Arrays.asList(quickFixTestsFilter != null ? dir.list(quickFixTestsFilter) : dir.list());
         Collections.sort(subDirs);
         for (String subDirName : subDirs) {
-
             final TestSuite singleFileTestSuite = JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, singleFileNameFilter, singleFileNamedTestFactory);
             if (singleFileTestSuite.countTestCases() != 0) {
                 suite.addTest(singleFileTestSuite);
             }
-
-            final TestSuite multiFileTestSuite = JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, multifileFileNameFilter, multiFileNamedTestFactory);
-            if (multiFileTestSuite.countTestCases() != 0) {
-                suite.addTest(multiFileTestSuite);
-            }
-
         }
         return suite;
     }
