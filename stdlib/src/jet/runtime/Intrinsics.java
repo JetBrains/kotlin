@@ -1,5 +1,7 @@
 package jet.runtime;
 
+import jet.Function0;
+
 import java.util.ArrayList;
 
 /**
@@ -27,6 +29,12 @@ public class Intrinsics {
     
     public static int compare(boolean thisVal, boolean anotherVal) {
         return (thisVal == anotherVal ? 0 : (anotherVal ? 1 : -1));
+    }
+
+    public static <R> R stupidSync(Object lock, Function0<R> block) {
+        synchronized (lock) {
+            return block.invoke();
+        }
     }
 
     private static Throwable sanitizeStackTrace(Throwable throwable) {

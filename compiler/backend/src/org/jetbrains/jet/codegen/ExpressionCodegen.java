@@ -1403,7 +1403,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return mask;
     }
 
-    private int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
+    public int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         if(resolvedCall != null) {
             return pushMethodArguments(resolvedCall, valueParameterTypes);

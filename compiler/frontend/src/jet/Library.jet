@@ -34,6 +34,8 @@ namespace io {
   fun readLine() : String?
 }
 
+fun <R> Any.synchronized(block : fun() : R) : R
+
 fun Any?.identityEquals(other : Any?) : Boolean // = this === other
 
 // Can't write a body due to a bootstrapping problem (see JET-74)

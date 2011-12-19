@@ -240,4 +240,10 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("controlStructures/quicksort.jet");
 //        System.out.println(generateToText());
     }
+
+    public void testSynchronized() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("controlStructures/sync.jet");
+//        System.out.println(generateToText());
+    }
 }

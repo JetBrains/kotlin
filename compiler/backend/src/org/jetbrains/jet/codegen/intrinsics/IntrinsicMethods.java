@@ -20,6 +20,7 @@ import java.util.*;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
@@ -89,6 +90,7 @@ public class IntrinsicMethods {
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, new StringPlus());
         declareOverload(myStdLib.getLibraryScope().getFunctions("Array"), 1, new NewArray());
         declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("synchronized"), 1, new StupidSync());
 
         declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT);
         declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT);
