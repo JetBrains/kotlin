@@ -550,9 +550,6 @@ public class JetTypeMapper {
             signatureVisitor.writeClassBound();
 
             for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
-                if (jetType.equals(JetStandardClasses.getNullableAnyType())) {
-                    continue;
-                }
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                     if (!CodegenUtil.isInterface(jetType)) {
                         mapType(jetType, signatureVisitor);
@@ -561,7 +558,10 @@ public class JetTypeMapper {
                 }
             }
 
-            // "extends Object" seems to be not optional according to ClassFileFormat-Java5.pdf
+            // "extends Object" is optional according to ClassFileFormat-Java5.pdf
+            // but javac complaints to signature:
+            // <P:>Ljava/lang/Object;
+            // TODO: avoid writing java/lang/Object if interface list is not empty
         }
         signatureVisitor.writeClassBoundEnd();
 

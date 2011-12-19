@@ -252,6 +252,23 @@ public class JavaDescriptorResolver {
         throw new IllegalStateException("PsiTypeParameter '" + name + "' is not found");
     }
 
+
+    // cache
+    protected ClassDescriptor javaLangObject;
+
+    @NotNull
+    private ClassDescriptor getJavaLangObject() {
+        if (javaLangObject == null) {
+            javaLangObject = resolveClass("java.lang.Object");
+        }
+        return javaLangObject;
+    }
+
+    private boolean isJavaLangObject(JetType type) {
+        return type.getConstructor().getDeclarationDescriptor() == getJavaLangObject();
+    }
+
+
     private abstract class JetSignatureTypeParameterVisitor extends JetSignatureExceptionsAdapter {
         
         private final DeclarationDescriptor containingDeclaration;
@@ -272,12 +289,15 @@ public class JavaDescriptorResolver {
 
         List<JetType> upperBounds = new ArrayList<JetType>();
         List<JetType> lowerBounds = new ArrayList<JetType>();
-
+        
         @Override
         public JetSignatureVisitor visitClassBound() {
             return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary()) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
+                    if (isJavaLangObject(jetType)) {
+                        return;
+                    }
                     upperBounds.add(jetType);
                 }
             };
