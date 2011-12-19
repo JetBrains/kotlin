@@ -160,9 +160,6 @@ public class ReadClassDataTest extends UsefulTestCase {
 
         sb.append(" {\n");
 
-        if (false) {
-            // TODO: for some reason I don't understand scope of ClassDescriptor came from source is empty
-        
         List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
         for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
             typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
@@ -170,10 +167,19 @@ public class ReadClassDataTest extends UsefulTestCase {
 
         JetScope memberScope = klass.getMemberScope(typeArguments);
         for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+            // TODO
+            if (member.getName().equals("equals") || member.getName().equals("hashCode")
+                    || member.getName().equals("wait") || member.getName().equals("notify") || member.getName().equals("notifyAll")
+                    || member.getName().equals("toString") || member.getName().equals("getClass")
+                    || member.getName().equals("clone") || member.getName().equals("finalize")
+                    || member.getName().equals("getTypeInfo") || member.getName().equals("$setTypeInfo") || member.getName().equals("$typeInfo")
+                )
+            {
+                continue;
+            }
+            sb.append("    ");
             serialize(member, sb);
             sb.append("\n");
-        }
-
         }
 
         sb.append("}\n");
@@ -211,6 +217,17 @@ public class ReadClassDataTest extends UsefulTestCase {
         serializeCommaSeparated(fun.getValueParameters(), sb);
         sb.append("): ");
         serialize(fun.getReturnType(), sb);
+    }
+    
+    private void serialize(PropertyDescriptor prop, StringBuilder sb) {
+        if (prop.isVar()) {
+            sb.append("var ");
+        } else {
+            sb.append("val ");
+        }
+        sb.append(prop.getName());
+        sb.append(": ");
+        serialize(prop.getOutType(), sb);
     }
     
     private void serialize(ValueParameterDescriptor valueParameter, StringBuilder sb) {
