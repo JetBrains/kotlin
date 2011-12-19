@@ -40,7 +40,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         };
     }
     
-    private static class JetPsiCheckerMultifileTestImpl extends JetPsiCheckerMultifileTest {
+    public static class JetPsiCheckerMultifileTestImpl extends JetPsiCheckerMultifileTest {
         public JetPsiCheckerMultifileTestImpl(String dataPath, String name) {
             super(dataPath, name);
         }
