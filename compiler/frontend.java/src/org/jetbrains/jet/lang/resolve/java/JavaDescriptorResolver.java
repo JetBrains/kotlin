@@ -56,9 +56,24 @@ public class JavaDescriptorResolver {
             return visitor.visitDeclarationDescriptor(this, data);
         }
     };
+    
+    private enum TypeParameterDescriptorOrigin {
+        JAVA,
+        KOTLIN,
+    }
+    
+    private static class TypeParameterDescriptorInitialization {
+        private final TypeParameterDescriptorOrigin origin;
+        private final TypeParameterDescriptor descriptor;
+
+        private TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin origin, TypeParameterDescriptor descriptor) {
+            this.origin = origin;
+            this.descriptor = descriptor;
+        }
+    }
 
     protected final Map<String, ClassDescriptor> classDescriptorCache = Maps.newHashMap();
-    protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
+    protected final Map<PsiTypeParameter, TypeParameterDescriptorInitialization> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
     protected final Map<PsiElement, NamespaceDescriptor> namespaceDescriptorCache = Maps.newHashMap();
@@ -264,7 +279,7 @@ public class JavaDescriptorResolver {
                                 name,
                                 ++index);
                         PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(clazz, clazz.getQualifiedName(), name);
-                        typeParameterDescriptorCache.put(psiTypeParameter, typeParameter);
+                        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin.KOTLIN, typeParameter));
                         r.add(typeParameter);
                     }
 
@@ -317,21 +332,26 @@ public class JavaDescriptorResolver {
                 psiTypeParameter.getName(),
                 psiTypeParameter.getIndex()
         );
-        typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
+        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin.JAVA, typeParameterDescriptor));
         return typeParameterDescriptor;
     }
 
-    private void initializeTypeParameter(PsiTypeParameter typeParameter, TypeParameterDescriptor typeParameterDescriptor) {
-        PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
-        if (referencedTypes.length == 0){
-            typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
-        }
-        else if (referencedTypes.length == 1) {
-            typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0]));
-        }
-        else {
-            for (PsiClassType referencedType : referencedTypes) {
-                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType));
+    private void initializeTypeParameter(PsiTypeParameter typeParameter, TypeParameterDescriptorInitialization typeParameterDescriptorInitialization) {
+        TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorInitialization.descriptor;
+        if (typeParameterDescriptorInitialization.origin == TypeParameterDescriptorOrigin.KOTLIN) {
+            // TODO
+        } else {
+            PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
+            if (referencedTypes.length == 0){
+                typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
+            }
+            else if (referencedTypes.length == 1) {
+                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0]));
+            }
+            else {
+                for (PsiClassType referencedType : referencedTypes) {
+                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType));
+                }
             }
         }
         typeParameterDescriptor.setInitialized();
@@ -339,13 +359,13 @@ public class JavaDescriptorResolver {
 
     private void initializeTypeParameters(PsiTypeParameterListOwner typeParameterListOwner) {
         for (PsiTypeParameter psiTypeParameter : typeParameterListOwner.getTypeParameters()) {
-            initializeTypeParameter(psiTypeParameter, resolveTypeParameter(psiTypeParameter));
+            initializeTypeParameter(psiTypeParameter, resolveTypeParameterInitialization(psiTypeParameter));
         }
     }
 
     @NotNull
-    private TypeParameterDescriptor resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
-        TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
+    private TypeParameterDescriptorInitialization resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
+        TypeParameterDescriptorInitialization typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
         assert typeParameterDescriptor != null : psiTypeParameter.getText();
         return typeParameterDescriptor;
     }
@@ -681,7 +701,7 @@ public class JavaDescriptorResolver {
                                 name,
                                 ++index);
                         PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(method, method.getName(), name);
-                        typeParameterDescriptorCache.put(psiTypeParameter, typeParameter);
+                        typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(TypeParameterDescriptorOrigin.KOTLIN, typeParameter));
                         r.add(typeParameter);
                     }
                 };
@@ -733,7 +753,8 @@ public class JavaDescriptorResolver {
                                         (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibility.PROTECTED : Visibility.INTERNAL));
     }
 
-    public TypeParameterDescriptor resolveTypeParameter(PsiTypeParameter typeParameter) {
+    @NotNull
+    private TypeParameterDescriptorInitialization resolveTypeParameterInitialization(PsiTypeParameter typeParameter) {
         PsiTypeParameterListOwner owner = typeParameter.getOwner();
         if (owner instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) owner;
@@ -757,5 +778,9 @@ public class JavaDescriptorResolver {
             return resolveTypeParameter(functionDescriptor, typeParameter);
         }
         throw new IllegalStateException("Unknown parent type: " + owner);
+    }
+
+    public TypeParameterDescriptor resolveTypeParameter(PsiTypeParameter typeParameter) {
+        return resolveTypeParameterInitialization(typeParameter).descriptor;
     }
 }
