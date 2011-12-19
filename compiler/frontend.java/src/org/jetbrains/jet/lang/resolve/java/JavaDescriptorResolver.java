@@ -145,11 +145,8 @@ public class JavaDescriptorResolver {
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
 
-        // TODO: initialize
-        if (psiClass.getModifierList().findAnnotation(StdlibNames.JET_CLASS.getFqName()) == null) {
-            // UGLY HACK (Andrey Breslav is not sure what did he mean)
-            initializeTypeParameters(psiClass);
-        }
+        // UGLY HACK (Andrey Breslav is not sure what did he mean)
+        initializeTypeParameters(psiClass);
 
         supertypes.addAll(getSupertypes(psiClass));
         if (psiClass.isInterface()) {
@@ -208,7 +205,7 @@ public class JavaDescriptorResolver {
                 if (attributeValue != null) {
                     String typeParametersString = (String) attributeValue.getValue();
                     if (typeParametersString != null) {
-                        return resolveClassTypeParametersFromJetSignature(typeParametersString, classDescriptor);
+                        return resolveClassTypeParametersFromJetSignature(typeParametersString, psiClass, classDescriptor);
                     }
                 }
             }
@@ -216,10 +213,20 @@ public class JavaDescriptorResolver {
         return makeUninitializedTypeParameters(classDescriptor, psiClass.getTypeParameters());
     }
 
+    @NotNull
+    private PsiTypeParameter getPsiTypeParameterByName(PsiTypeParameterListOwner clazz, String ownerName, String name) {
+        for (PsiTypeParameter typeParameter : clazz.getTypeParameters()) {
+            if (typeParameter.getName().equals(name)) {
+                return typeParameter; 
+            }
+        }
+        throw new IllegalStateException("PsiTypeParameter '" + name + "' is not found in '" + ownerName + "'");
+    }
+
     /**
      * @see #resolveMethodTypeParametersFromJetSignature(String, FunctionDescriptor)
      */
-    private List<TypeParameterDescriptor> resolveClassTypeParametersFromJetSignature(String jetSignature, final JavaClassDescriptor classDescriptor) {
+    private List<TypeParameterDescriptor> resolveClassTypeParametersFromJetSignature(String jetSignature, final PsiClass clazz, final JavaClassDescriptor classDescriptor) {
         final List<TypeParameterDescriptor> r = new ArrayList<TypeParameterDescriptor>();
         new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
             @Override
@@ -256,6 +263,8 @@ public class JavaDescriptorResolver {
                                 JetSignatureUtils.translateVariance(variance),
                                 name,
                                 ++index);
+                        PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(clazz, clazz.getQualifiedName(), name);
+                        typeParameterDescriptorCache.put(psiTypeParameter, typeParameter);
                         r.add(typeParameter);
                     }
 
