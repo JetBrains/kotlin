@@ -334,6 +334,7 @@ public class JavaDescriptorResolver {
                 typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType));
             }
         }
+        typeParameterDescriptor.setInitialized();
     }
 
     private void initializeTypeParameters(PsiTypeParameterListOwner typeParameterListOwner) {
@@ -625,7 +626,9 @@ public class JavaDescriptorResolver {
                 if (attributeValue != null) {
                     String typeParametersString = (String) attributeValue.getValue();
                     if (typeParametersString != null) {
-                        return resolveMethodTypeParametersFromJetSignature(typeParametersString, functionDescriptorImpl);
+                        List<TypeParameterDescriptor> r = resolveMethodTypeParametersFromJetSignature(typeParametersString, method, functionDescriptorImpl);
+                        initializeTypeParameters(method);
+                        return r;
                     }
                 }
             }
@@ -637,9 +640,9 @@ public class JavaDescriptorResolver {
     }
 
     /**
-     * @see #resolveClassTypeParametersFromJetSignature(String, JavaClassDescriptor)
+     * @see #resolveClassTypeParametersFromJetSignature(String, com.intellij.psi.PsiClass, JavaClassDescriptor) 
      */
-    private List<TypeParameterDescriptor> resolveMethodTypeParametersFromJetSignature(String jetSignature, final FunctionDescriptor functionDescriptor) {
+    private List<TypeParameterDescriptor> resolveMethodTypeParametersFromJetSignature(String jetSignature, final PsiMethod method, final FunctionDescriptor functionDescriptor) {
         final List<TypeParameterDescriptor> r = new ArrayList<TypeParameterDescriptor>();
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
             @Override
@@ -677,6 +680,8 @@ public class JavaDescriptorResolver {
                                 JetSignatureUtils.translateVariance(variance),
                                 name,
                                 ++index);
+                        PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(method, method.getName(), name);
+                        typeParameterDescriptorCache.put(psiTypeParameter, typeParameter);
                         r.add(typeParameter);
                     }
                 };

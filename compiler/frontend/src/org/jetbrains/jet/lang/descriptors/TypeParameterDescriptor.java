@@ -28,6 +28,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             int index) {
         TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index);
         typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
+        typeParameterDescriptor.setInitialized();
         return typeParameterDescriptor;
     }
 
@@ -52,6 +53,8 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     private final boolean reified;
 
+    private boolean initialized = false;
+
     private TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
@@ -74,25 +77,61 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                 upperBounds);
     }
 
+    public void setInitialized() {
+        if (initialized) {
+            throw new IllegalStateException();
+        }
+        initialized = true;
+    }
+
+    private void checkInitialized() {
+        if (!initialized) {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void checkUninitialized() {
+        if (initialized) {
+            throw new IllegalStateException();
+        }
+    }
+
     public boolean isReified() {
+        checkInitialized();
         return reified;
     }
 
     public Variance getVariance() {
+        checkInitialized();
         return variance;
     }
 
     public void addUpperBound(@NotNull JetType bound) {
+        checkUninitialized();
+        doAddUpperBound(bound);
+    }
+
+    private void doAddUpperBound(JetType bound) {
         upperBounds.add(bound); // TODO : Duplicates?
+    }
+
+    public void addDefaultUpperBound() {
+        checkUninitialized();
+
+        if (upperBounds.isEmpty()) {
+            doAddUpperBound(JetStandardClasses.getDefaultBound());
+        }
     }
 
     @NotNull
     public Set<JetType> getUpperBounds() {
+        checkInitialized();
         return upperBounds;
     }
 
     @NotNull
     public JetType getUpperBoundsAsType() {
+        checkInitialized();
         if (upperBoundsAsType == null) {
             assert upperBounds != null : "Upper bound list is null in " + getName();
             assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
@@ -106,11 +145,13 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @NotNull
     public Set<JetType> getLowerBounds() {
+        //checkInitialized();
         return Collections.singleton(JetStandardClasses.getNothingType());
     }
 
     @NotNull
     public JetType getLowerBoundsAsType() {
+        checkInitialized();
         return JetStandardClasses.getNothingType();
     }
     
@@ -118,6 +159,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
+        //checkInitialized();
         return typeConstructor;
     }
 
@@ -135,12 +177,14 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        checkInitialized();
         return visitor.visitTypeParameterDescriptor(this, data);
     }
 
     @NotNull
     @Override
     public JetType getDefaultType() {
+        //checkInitialized();
         if (defaultType == null) {
             defaultType = new JetTypeImpl(
                             Collections.<AnnotationDescriptor>emptyList(),
@@ -159,6 +203,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @Override
     public JetType getClassObjectType() {
+        checkInitialized();
         if (classObjectUpperBounds.isEmpty()) return null;
 
         if (classObjectBoundsAsType == null) {
@@ -176,15 +221,19 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     }
 
     public void addClassObjectBound(@NotNull JetType bound) {
+        checkUninitialized();
         classObjectUpperBounds.add(bound); // TODO : Duplicates?
     }
 
     public int getIndex() {
+        checkInitialized();
         return index;
     }
     
     @NotNull
     public TypeParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new TypeParameterDescriptor(newOwner, Lists.newArrayList(getAnnotations()), reified, variance, getName(), index);
+        TypeParameterDescriptor copy = new TypeParameterDescriptor(newOwner, Lists.newArrayList(getAnnotations()), reified, variance, getName(), index);
+        copy.initialized = this.initialized;
+        return  copy;
     }
 }

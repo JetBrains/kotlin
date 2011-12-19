@@ -44,6 +44,7 @@ public class DescriptorSubstitutor {
                     descriptor.getVariance(),
                     descriptor.getName(),
                     descriptor.getIndex());
+            substituted.setInitialized();
 
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjection(substituted.getDefaultType()));
 
