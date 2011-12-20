@@ -156,15 +156,11 @@ inline fun <T> java.lang.Iterable<T>.toList() : List<T> {
 }
 
 inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
-  if (this is Array<T>)
-    return this
-  else {
-    val answer = Array<T>(this.size)
-    var idx = 0
-    for (elem in this)
-      answer[idx++] = elem
-    return answer as Array<T>
-  }
+  val answer = Array<T>(this.size)
+  var idx = 0
+  for (elem in this)
+    answer[idx++] = elem
+  return answer as Array<T>
 }
 
 

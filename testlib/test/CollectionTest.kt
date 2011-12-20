@@ -104,7 +104,7 @@ class CollectionTest() : TestSupport() {
 
   fun testForeach() {
     var count = 0
-    val x = data.foreach{ count += it.length }
+    data.foreach{ count += it.length }
     assertEquals(6, count)
   }
 
