@@ -256,11 +256,13 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serialize(ValueParameterDescriptor valueParameter, StringBuilder sb) {
+        if (valueParameter.getVarargElementType() != null) {
+            sb.append("vararg ");
+        }
         sb.append(valueParameter.getName());
         sb.append(": ");
         if (valueParameter.getVarargElementType() != null) {
-            sb.append("vararg ");
-            serialize(valueParameter.getVarargElementType());
+            serialize(valueParameter.getVarargElementType(), sb);
         } else {
             serialize(valueParameter.getOutType(), sb);
         }
