@@ -233,6 +233,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
         Label end = continueLabel == null ? new Label() : continueLabel;
+        
+        if(continueLabel != null)
+            asmType = Type.VOID_TYPE;
 
         gen(thenExpression, asmType);
 
