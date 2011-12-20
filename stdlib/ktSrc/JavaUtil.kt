@@ -77,6 +77,7 @@ inline fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
 /** Returns a new collection containing all elements in this collection which match the given predicate */
 // TODO using: Collection<T> for the return type - I wonder if this exact type could be
 // deduced somewhat from the This.Type; e.g. returning Set on a Set, Array on Array etc
+/*
 inline fun <T> java.lang.Iterable<T>.filter(predicate: fun(T): Boolean) : Collection<T> {
   val result = this.create<T,T>()
   for (elem in this) {
@@ -85,6 +86,7 @@ inline fun <T> java.lang.Iterable<T>.filter(predicate: fun(T): Boolean) : Collec
   }
   return result
 }
+*/
 
 /**
   * Returns the result of transforming each item in the collection to a one or more values which
