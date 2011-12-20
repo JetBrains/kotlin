@@ -126,9 +126,7 @@ public abstract class ClassBodyCodegen {
                 }
 
                 mv.visitInsn(Opcodes.RETURN);
-                mv.visitMaxs(0, 0);
-
-                mv.visitEnd();
+                FunctionCodegen.endVisit(v, "static initializer", myClass);
             }
         }
     }

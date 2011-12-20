@@ -223,7 +223,7 @@ public class FunctionCodegen {
                     k += type.getSize();
                 }
 
-                mv.visitMaxs(0, 0);
+                endVisit(mv, null, fun);
                 mv.visitEnd();
 
                 generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind);
@@ -231,6 +231,16 @@ public class FunctionCodegen {
         }
 
         generateDefaultIfNeeded(context, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind);
+    }
+
+    public static void endVisit(MethodVisitor mv, String description, PsiElement method) {
+        try {
+            mv.visitMaxs(0, 0);
+        }
+        catch (Throwable t) {
+            throw new CompilationException("wrong code generated" + (description != null ? " for " + description : "") + t.getClass().getName() + " " + t.getMessage(), t, method);
+        }
+        mv.visitEnd();
     }
 
     static void generateBridgeIfNeeded(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
@@ -390,7 +400,7 @@ public class FunctionCodegen {
 
                 iv.areturn(jvmSignature.getReturnType());
 
-                mv.visitMaxs(0, 0);
+                endVisit(mv, "default method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
                 mv.visitEnd();
             }
         }
@@ -426,7 +436,7 @@ public class FunctionCodegen {
                 if(jvmSignature.getReturnType() == Type.VOID_TYPE)
                     iv.aconst(null);
                 iv.areturn(overriden.getReturnType());
-                mv.visitMaxs(0, 0);
+                endVisit(mv, "bridge method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
                 mv.visitEnd();
             }
         }

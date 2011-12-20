@@ -8,7 +8,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Stdlib" exported="" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -18,6 +17,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="stdlib" exported="" />
   </component>
 </module>
 

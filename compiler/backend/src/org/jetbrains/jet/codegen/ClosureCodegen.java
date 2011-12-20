@@ -147,8 +147,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
             mv.visitLabel(ret);
             mv.visitInsn(ARETURN);
-            mv.visitMaxs(0,0);
-            mv.visitEnd();
+            FunctionCodegen.endVisit(mv, "$getInstance", fun);
         }
     }
 
@@ -205,8 +204,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
             iv.areturn(JetTypeMapper.TYPE_OBJECT);
 
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
+            FunctionCodegen.endVisit(mv, "bridge", fun);
         }
     }
 
@@ -286,8 +284,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
             iv.visitInsn(RETURN);
 
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
+            FunctionCodegen.endVisit(iv, "constructor", fun);
         }
         return constructor;
     }
