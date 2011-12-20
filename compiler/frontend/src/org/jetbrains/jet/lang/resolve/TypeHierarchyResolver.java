@@ -32,19 +32,17 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  */
 public class TypeHierarchyResolver {
     private final TopDownAnalysisContext context;
-    private final ImportsResolver importsResolver;
     private LinkedList<MutableClassDescriptor> topologicalOrder;
 
 
     public TypeHierarchyResolver(TopDownAnalysisContext context) {
         this.context = context;
-        this.importsResolver = new ImportsResolver(context);
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
-        importsResolver.processTypeImports();
+        context.getImportsResolver().processTypeImports();
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)

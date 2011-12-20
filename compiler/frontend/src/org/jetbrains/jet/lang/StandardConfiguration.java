@@ -7,7 +7,6 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 /**
@@ -15,24 +14,19 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
  */
 public class StandardConfiguration implements Configuration {
     private Project project;
-    private JetSemanticServices services;
 
-    public static StandardConfiguration createStandardConfiguration(Project project, JetSemanticServices services) {
-        return new StandardConfiguration(services, project);
+    public static StandardConfiguration createStandardConfiguration(Project project) {
+        return new StandardConfiguration(project);
     }
 
-    private StandardConfiguration(JetSemanticServices services, Project project) {
-        this.services = services;
+    private StandardConfiguration(Project project) {
         this.project = project;
     }
 
     @Override
     public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope) {
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
         JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, "std.*");
-        if (ImportsResolver.importNamespace(importDirective, rootScope, temporaryTrace, services)) {
-            temporaryTrace.commit();
-        }
+        new ImportsResolver.ImportResolver(trace, true).processImportReference(importDirective, rootScope, rootScope);
     }
 
     @Override

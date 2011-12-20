@@ -68,11 +68,28 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
+    public void importNamespaceAlias(@NotNull String aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();
 
         allDescriptors.add(namespaceDescriptor);
         super.importNamespaceAlias(aliasName, namespaceDescriptor);
+    }
+
+    @Override
+    public void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor) {
+        checkMayWrite();
+
+        addFunctionDescriptor(functionDescriptor);
+        super.importFunctionAlias(aliasName, functionDescriptor);
+
+    }
+
+    @Override
+    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
+        checkMayWrite();
+
+        addVariableDescriptor(variableDescriptor);
+        super.importVariableAlias(aliasName, variableDescriptor);
     }
 
     @NotNull
@@ -238,6 +255,24 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkForRedeclaration(name, namespaceDescriptor);
         getNamespaceAliases().put(name, namespaceDescriptor);
         allDescriptors.add(namespaceDescriptor);
+    }
+
+    @Override
+    public void addFunctionAlias(@NotNull String name, @NotNull FunctionDescriptor functionDescriptor) {
+        checkMayWrite();
+        
+        checkForRedeclaration(name, functionDescriptor);
+        getFunctionGroups().put(name, functionDescriptor);
+        allDescriptors.add(functionDescriptor);
+    }
+
+    @Override
+    public void addVariableAlias(@NotNull String name, @NotNull VariableDescriptor variableDescriptor) {
+        checkMayWrite();
+        
+        checkForRedeclaration(name, variableDescriptor);
+        getVariableClassOrNamespaceDescriptors().put(name, variableDescriptor);
+        allDescriptors.add(variableDescriptor);
     }
 
     private void checkForRedeclaration(String name, DeclarationDescriptor classifierDescriptor) {

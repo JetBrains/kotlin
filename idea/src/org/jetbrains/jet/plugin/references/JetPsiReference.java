@@ -81,7 +81,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (psiElement != null) {
             return psiElement;
         }
-        Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
+        Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
         return file;
     }
@@ -89,12 +89,12 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
-        Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>> resolvedCalls = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
-        if (resolvedCalls == null) return ResolveResult.EMPTY_ARRAY;
-        ResolveResult[] results = new ResolveResult[resolvedCalls.size()];
+        Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
+        if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
+        ResolveResult[] results = new ResolveResult[declarationDescriptors.size()];
         int i = 0;
-        for (ResolvedCallImpl<? extends DeclarationDescriptor> resolvedCall : resolvedCalls) {
-            PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, resolvedCall.getResultingDescriptor());
+        for (DeclarationDescriptor descriptor : declarationDescriptors) {
+            PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, descriptor);
             if (element != null) {
                 results[i] = new PsiElementResolveResult(element, true);
                 i++;

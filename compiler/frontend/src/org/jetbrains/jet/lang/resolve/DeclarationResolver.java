@@ -29,6 +29,7 @@ public class DeclarationResolver {
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
+        context.getImportsResolver().processMembersImports();
     }
 
     private void resolveConstructorHeaders() {

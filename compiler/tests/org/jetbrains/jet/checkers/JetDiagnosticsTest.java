@@ -52,10 +52,19 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             expectedText = textWithMarkers;
             clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
             jetFile = createCheckAndReturnPsiFile(fileName, clearText);
+            for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
+                diagnosedRange.setFile(jetFile);
+            }
         }
 
         public void getActualText(BindingContext bindingContext, StringBuilder actualText) {
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile), new CheckerTestUtil.DiagnosticDiffCallbacks() {
+                @NotNull
+                @Override
+                public PsiFile getFile() {
+                    return jetFile;
+                }
+
                 @Override
                 public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
                     String message = "Missing " + type + DiagnosticUtils.atLocation(jetFile, new TextRange(expectedStart, expectedEnd));
@@ -95,7 +104,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             bindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(getProject(), namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
         else {
-            bindingContext = AnalyzingUtils.analyzeNamespaces(getProject(), Configuration.EMPTY, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY, JetSemanticServices.createSemanticServices(getProject()));
+            bindingContext = AnalyzingUtils.analyzeNamespaces(getProject(), Configuration.EMPTY, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
 
         StringBuilder actualText = new StringBuilder();

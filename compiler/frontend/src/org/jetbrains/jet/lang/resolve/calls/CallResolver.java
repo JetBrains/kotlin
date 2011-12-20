@@ -260,7 +260,11 @@ public class CallResolver {
 
             @Override
             public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallImpl<D>> candidates) {
-                trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, candidates);
+                Collection<D> descriptors = Sets.newHashSet();
+                for (ResolvedCallImpl<D> candidate : candidates) {
+                    descriptors.add(candidate.getCandidateDescriptor());
+                }
+                trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, descriptors);
             }
 
             @Override

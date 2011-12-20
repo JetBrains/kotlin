@@ -30,6 +30,10 @@ public interface WritableScope extends JetScope {
     void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor);
 
     void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor);
+    
+    void addFunctionAlias(@NotNull String name, @NotNull FunctionDescriptor functionDescriptor);
+    
+    void addVariableAlias(@NotNull String name, @NotNull VariableDescriptor variableDescriptor);
 
     void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
 
@@ -42,5 +46,9 @@ public interface WritableScope extends JetScope {
 
     void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor);
+    void importNamespaceAlias(@NotNull String aliasName, @NotNull NamespaceDescriptor namespaceDescriptor);
+    
+    void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor);
+    
+    void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor);
 }
