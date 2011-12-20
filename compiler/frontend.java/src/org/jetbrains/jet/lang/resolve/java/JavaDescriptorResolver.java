@@ -555,10 +555,6 @@ public class JavaDescriptorResolver {
         // TODO: must be very slow, make it lazy?
         String name = parameter.getName() != null ? parameter.getName() : "p" + i;
         for (PsiAnnotation annotation : parameter.getModifierList().getAnnotations()) {
-            // TODO: softcode annotation name
-
-            PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
-            attributes.toString();
 
             if (annotation.getQualifiedName().equals(StdlibNames.JET_VALUE_PARAMETER.getFqName())) {
                 PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD);
