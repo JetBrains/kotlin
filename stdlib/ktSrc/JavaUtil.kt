@@ -18,6 +18,14 @@ inline fun arrayList<T>(vararg values: T) : ArrayList<T> {
   return answer;
 }
 
+/** Returns a new LinkedList with a variable number of initial elements */
+inline fun linkedList<T>(vararg values: T) : LinkedList<T> {
+  val answer = LinkedList<T>()
+  for (v in values)
+    answer.add(v)
+  return answer;
+}
+
 /** Returns a new HashSet with a variable number of initial elements */
 inline fun hashSet<T>(vararg values: T) : HashSet<T> {
   val answer = HashSet<T>()
@@ -25,25 +33,6 @@ inline fun hashSet<T>(vararg values: T) : HashSet<T> {
     answer.add(v)
   return answer;
 }
-
-/** Returns a new collection for the results of a helper method */
-protected fun <T,R> java.lang.Iterable<T>.create(defaultSize: Int? = null) : Collection<R> {
-  if (defaultSize != null) {
-    return ArrayList<R>(defaultSize)
-  } else {
-    return ArrayList<R>()
-  }
-}
-
-protected fun <T,R> Set<T>.create(defaultSize: Int? = null) : Set<R> {
-  if (defaultSize != null) {
-    return HashSet<R>(defaultSize)
-  } else {
-    return HashSet<R>()
-  }
-}
-
-
 
 /** Returns true if any elements in the collection match the given predicate */
 inline fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
@@ -75,26 +64,19 @@ inline fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
 }
 
 /** Returns a new collection containing all elements in this collection which match the given predicate */
-// TODO using: Collection<T> for the return type - I wonder if this exact type could be
-// deduced somewhat from the This.Type; e.g. returning Set on a Set, Array on Array etc
-/*
-inline fun <T> java.lang.Iterable<T>.filter(predicate: fun(T): Boolean) : Collection<T> {
-  val result = this.create<T,T>()
+inline fun <T> java.lang.Iterable<T>.filter(result: Collection<T> = ArrayList<T>(), predicate: fun(T): Boolean) : Collection<T> {
   for (elem in this) {
     if (predicate(elem))
       result.add(elem)
   }
   return result
 }
-*/
 
 /**
   * Returns the result of transforming each item in the collection to a one or more values which
   * are concatenated together into a single collection
   */
-// TODO should use Iterable instead of Collection in transform?
-inline fun <T, out R> java.lang.Iterable<T>.flatMap(transform: fun(T): Collection<R>) : Collection<R> {
-  val result = this.create<T,R>()
+inline fun <T, out R> java.lang.Iterable<T>.flatMap(result: Collection<R> = ArrayList<R>(), transform: fun(T): Collection<R>) : Collection<R> {
   for (elem in this) {
     val coll = transform(elem)
     if (coll != null) {
@@ -128,16 +110,14 @@ inline fun <T> java.lang.Iterable<T>.join(separator: String, prefix: String = ""
 }
 
 /** Returns a new collection containing the results of applying the given function to each element in this collection */
-inline fun <T, R> java.lang.Iterable<T>.map(transform : fun(T) : R) : Collection<R> {
-  val result = this.create<T,R>()
+inline fun <T, R> java.lang.Iterable<T>.map(result: Collection<R> = ArrayList<R>(), transform : fun(T) : R) : Collection<R> {
   for (item in this)
     result.add(transform(item))
   return result
 }
 
 /** Returns a new collection containing the results of applying the given function to each element in this collection */
-inline fun <T, R> java.util.Collection<T>.map(transform : fun(T) : R) : Collection<R> {
-  val result = this.create<T,R>(this.size)
+inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<R>(this.size), transform : fun(T) : R) : Collection<R> {
   for (item in this)
     result.add(transform(item))
   return result

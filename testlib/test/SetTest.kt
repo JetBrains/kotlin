@@ -1,5 +1,6 @@
 namespace test.collections
 
+import std.*
 import std.io.*
 import std.util.*
 import std.test.*

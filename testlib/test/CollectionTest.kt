@@ -1,11 +1,11 @@
 namespace test.collections
 
-import std.test.*
-
 // TODO can we avoid importing all this stuff by default I wonder?
 // e.g. making println and the collection builder methods public by default?
+import std.*
 import std.io.*
 import std.util.*
+import std.test.*
 import java.util.*
 
 class CollectionTest() : TestSupport() {
@@ -37,6 +37,36 @@ class CollectionTest() : TestSupport() {
     }
     assertEquals(1, foo.size)
     assertEquals(arrayList("foo"), foo)
+  }
+
+  fun testFilterIntoLinkedList() {
+    // TODO would be nice to avoid the <String>
+    val foo = data.filter(linkedList<String>()){it.startsWith("f")}
+
+    assert {
+      foo.all{it.startsWith("f")}
+    }
+    assertEquals(1, foo.size)
+    assertEquals(linkedList("foo"), foo)
+
+    assert {
+      foo is LinkedList<String>
+    }
+  }
+
+  fun testFilterIntoSortedSet() {
+    // TODO would be nice to avoid the <String>
+    val foo = data.filter(hashSet<String>()){it.startsWith("f")}
+
+    assert {
+      foo.all{it.startsWith("f")}
+    }
+    assertEquals(1, foo.size)
+    assertEquals(hashSet("foo"), foo)
+
+    assert {
+      foo is HashSet<String>
+    }
   }
 
   fun testFind() {
