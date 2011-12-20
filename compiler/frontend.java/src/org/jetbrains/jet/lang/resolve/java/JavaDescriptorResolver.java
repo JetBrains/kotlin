@@ -636,7 +636,7 @@ public class JavaDescriptorResolver {
 
                 PsiLiteralExpression receiverExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD);
                 if (receiverExpression != null) {
-                    receiver = true;
+                    receiver = (Boolean) receiverExpression.getValue();
                 }
 
 
