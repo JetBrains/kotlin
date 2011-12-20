@@ -11,28 +11,13 @@ val Collection<*>.empty : Boolean
     get() = isEmpty()
 
 /** Returns a new ArrayList with a variable number of initial elements */
-inline fun arrayList<T>(vararg values: T) : ArrayList<T> {
-  val answer = ArrayList<T>()
-  for (v in values)
-    answer.add(v)
-  return answer;
-}
+inline fun arrayList<T>(vararg values: T) : ArrayList<T> = values.to(ArrayList<T>(values.size))
 
 /** Returns a new LinkedList with a variable number of initial elements */
-inline fun linkedList<T>(vararg values: T) : LinkedList<T> {
-  val answer = LinkedList<T>()
-  for (v in values)
-    answer.add(v)
-  return answer;
-}
+inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(LinkedList<T>())
 
 /** Returns a new HashSet with a variable number of initial elements */
-inline fun hashSet<T>(vararg values: T) : HashSet<T> {
-  val answer = HashSet<T>()
-  for (v in values)
-    answer.add(v)
-  return answer;
-}
+inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
 
 /** Returns true if any elements in the collection match the given predicate */
 inline fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
@@ -123,6 +108,13 @@ inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<
   return result
 }
 
+// TODO would be nice to not have to write extension methods for Array, Iterable and Iterator
+
+inline fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
+  for (elem in this)
+    result.add(elem)
+  return result
+}
 
 inline fun <T, C: Collection<T>> java.lang.Iterable<T>.to(result: C) : C {
   for (elem in this)
