@@ -68,6 +68,10 @@ public class FunctionCodegen {
         {
             flags |= ACC_VARARGS;
         }
+        
+        if (functionDescriptor.getModality() == Modality.FINAL) {
+            flags |= ACC_FINAL;
+        }
 
         OwnerKind kind = context.getContextKind();
 

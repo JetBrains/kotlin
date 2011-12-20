@@ -146,6 +146,10 @@ public class ReadClassDataTest extends UsefulTestCase {
     private String serializeContent(ClassDescriptor klass) {
 
         StringBuilder sb = new StringBuilder();
+        
+        serialize(klass.getModality(), sb);
+        sb.append(" ");
+        
         serialize(klass.getKind(), sb);
         sb.append(" ");
         
@@ -221,6 +225,9 @@ public class ReadClassDataTest extends UsefulTestCase {
     
     
     private void serialize(FunctionDescriptor fun, StringBuilder sb) {
+        serialize(fun.getModality(), sb);
+        sb.append(" ");
+
         sb.append("fun ");
         if (!fun.getTypeParameters().isEmpty()) {
             sb.append("<");
@@ -278,7 +285,11 @@ public class ReadClassDataTest extends UsefulTestCase {
             sb.append(variance);
             sb.append(' ');
         }
-    } 
+    }
+    
+    private void serialize(Modality modality, StringBuilder sb) {
+        sb.append(modality.name().toLowerCase());
+    }
     
     private void serialize(JetType type, StringBuilder sb) {
         serialize(type.getConstructor().getDeclarationDescriptor(), sb);
