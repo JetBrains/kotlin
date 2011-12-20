@@ -130,7 +130,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public StackValue genQualified(StackValue receiver, JetElement selector) {
         markLineNumber(selector);
-        return selector.accept(this, receiver);
+        try {
+            return selector.accept(this, receiver);
+        }
+        catch(CompilationException e) {
+            throw e;
+        }
+        catch (Throwable error) {
+            throw new CompilationException(error.getMessage(), error, selector);
+        }
     }
 
     public StackValue gen(JetElement expr) {
@@ -204,7 +212,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         JetExpression elseExpression = expression.getElse();
 
         if (thenExpression == null && elseExpression == null) {
-            throw new CompilationException();
+            throw new CompilationException("Both brunches of if/else are null", null, expression);
         }
 
         if (isEmptyExpression(thenExpression)) {
@@ -225,6 +233,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
         Label end = continueLabel == null ? new Label() : continueLabel;
+        
+        if(continueLabel != null)
+            asmType = Type.VOID_TYPE;
 
         gen(thenExpression, asmType);
 
@@ -1126,7 +1137,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
         if(resolvedCall == null) {
-            throw new CompilationException("Cannot resolve: " + callee.getText());
+            throw new CompilationException("Cannot resolve: " + callee.getText(), null, expression);
         }
         receiver = StackValue.receiver(resolvedCall, receiver, this, null);
 
@@ -1403,7 +1414,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return mask;
     }
 
-    private int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
+    public int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         if(resolvedCall != null) {
             return pushMethodArguments(resolvedCall, valueParameterTypes);
@@ -2074,7 +2085,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
         if(resolvedCall == null) {
             assert callee != null;
-            throw new CompilationException("Cannot resolve: " + callee.getText());
+            throw new CompilationException("Cannot resolve: " + callee.getText(), null, expression);
         }
 
         FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
@@ -2098,7 +2109,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             if (args.size() != 1) {
-                throw new CompilationException("primitive array constructor requires one argument");
+                throw new CompilationException("primitive array constructor requires one argument", null, expression);
             }
         }
 
@@ -2782,15 +2793,6 @@ If finally block is present, its last expression is the value of try expression.
         v.dup();
         v.invokespecial(className, "<init>", "()V");
         v.athrow();
-    }
-
-    private static class CompilationException extends RuntimeException {
-        private CompilationException() {
-        }
-
-        private CompilationException(String message) {
-            super(message);
-        }
     }
 
     @Override

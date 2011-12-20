@@ -66,7 +66,6 @@ public class JetTypeMapper {
     private final HashMap<JetType,String> knowTypeNames = new HashMap<JetType, String>();
     private final HashMap<JetType,Type> knowTypes = new HashMap<JetType, Type>();
 
-    public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
     public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
     public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
     public static final Type TYPE_SHARED_VAR = Type.getObjectType("jet/runtime/SharedVar$Object");
@@ -86,6 +85,8 @@ public class JetTypeMapper {
     public static final Type TYPE_LONG_ITERATOR = Type.getObjectType("jet/LongIterator");
     public static final Type TYPE_FLOAT_ITERATOR = Type.getObjectType("jet/FloatIterator");
     public static final Type TYPE_DOUBLE_ITERATOR = Type.getObjectType("jet/DoubleIterator");
+    public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
+    public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
     public JetStandardLibrary getStandardLibrary() {
         return standardLibrary;
@@ -557,7 +558,10 @@ public class JetTypeMapper {
                 }
             }
 
-            // "extends Object" seems to be not optional according to ClassFileFormat-Java5.pdf
+            // "extends Object" is optional according to ClassFileFormat-Java5.pdf
+            // but javac complaints to signature:
+            // <P:>Ljava/lang/Object;
+            // TODO: avoid writing java/lang/Object if interface list is not empty
         }
         signatureVisitor.writeClassBoundEnd();
 

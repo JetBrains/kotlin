@@ -259,7 +259,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
 
         assert constraintQueue.isEmpty() || unsolvedUnknowns.isEmpty() : constraintQueue + " " + unsolvedUnknowns;
 
-        for (TypeValue unknown : unsolvedUnknowns) {
+        for (TypeValue unknown : Sets.newLinkedHashSet(unsolvedUnknowns)) {
             if (!computeValueFor(unknown)) {
                 listener.error("Not enough data to compute value for ", unknown);
                 solution.registerError("Not enough data to compute value for " + unknown + ". Please, specify type arguments explicitly");

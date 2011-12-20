@@ -43,26 +43,30 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
     public static Test suite() {
         //setFilter(); //to launch only part of tests
         TestSuite suite = new TestSuite();
-        FilenameFilter fileNameFilter = new FilenameFilter() {
+
+        FilenameFilter singleFileNameFilter = new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                if (s.startsWith("before")) return true;
-                return false;
+                return s.startsWith("before") && !JetPsiCheckerMultifileTest.isMultiFileName(s);
             }
         };
-        JetTestCaseBuilder.NamedTestFactory namedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
+
+        JetTestCaseBuilder.NamedTestFactory singleFileNamedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetQuickFixTest(dataPath, name);
             }
         };
+
         File dir = new File(getTestDataPathBase());
         List<String> subDirs = Arrays.asList(quickFixTestsFilter != null ? dir.list(quickFixTestsFilter) : dir.list());
         Collections.sort(subDirs);
         for (String subDirName : subDirs) {
-            suite.addTest(JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, fileNameFilter, namedTestFactory));
-
+            final TestSuite singleFileTestSuite = JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, singleFileNameFilter, singleFileNamedTestFactory);
+            if (singleFileTestSuite.countTestCases() != 0) {
+                suite.addTest(singleFileTestSuite);
+            }
         }
         return suite;
     }

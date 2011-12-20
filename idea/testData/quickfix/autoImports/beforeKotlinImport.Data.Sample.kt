@@ -1,0 +1,3 @@
+namespace TestData
+
+class TestSample() {}

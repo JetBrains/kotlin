@@ -16,10 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.CompilationErrorHandler;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -102,7 +99,12 @@ public class JetCompiler implements TranslatingCompiler {
                     generationState.compileCorrectNamespaces(bindingContext, namespaces, new CompilationErrorHandler() {
                         @Override
                         public void reportException(Throwable exception, String fileUrl) {
-                            compileContext.addMessage(CompilerMessageCategory.WARNING, exception.getClass().getCanonicalName() + ": " + exception.getMessage(), fileUrl, 0, 0);
+                            if(exception instanceof CompilationException) {
+                                report((CompilationException) exception, compileContext);
+                            }
+                            else {
+                                compileContext.addMessage(CompilerMessageCategory.ERROR, exception.getClass().getCanonicalName() + ": " + exception.getMessage(), fileUrl, 0, 0);
+                            }
                         }
                     });
 ///////////
@@ -172,6 +174,29 @@ public class JetCompiler implements TranslatingCompiler {
         }
         else {
             compileContext.addMessage(severity, diagnostic.getMessage(), virtualFile.getUrl(), line + 1, col);
+        }
+    }
+
+    private void report(CompilationException diagnostic, CompileContext compileContext) {
+        PsiFile psiFile = diagnostic.getElement().getContainingFile();
+        TextRange textRange = diagnostic.getElement().getTextRange();
+        Document document = psiFile.getViewProvider().getDocument();
+        int line;
+        int col;
+        if (document != null) {
+            line = document.getLineNumber(textRange.getStartOffset());
+            col = textRange.getStartOffset() - document.getLineStartOffset(line) + 1;
+        }
+        else {
+            line = -1;
+            col = -1;
+        }
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        if (virtualFile == null) {
+            compileContext.addMessage(ERROR, "[Internal Error] No virtual file for PsiFile. Diagnostic: " + diagnostic.getMessage(), "", -1, -1);
+        }
+        else {
+            compileContext.addMessage(ERROR, diagnostic.getMessage(), virtualFile.getUrl(), line + 1, col);
         }
     }
 

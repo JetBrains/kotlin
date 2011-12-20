@@ -381,9 +381,9 @@ public class DescriptorResolver {
         }
 
         for (TypeParameterDescriptor parameter : parameters) {
-            if (parameter.getUpperBounds().isEmpty()) {
-                parameter.addUpperBound(JetStandardClasses.getDefaultBound());
-            }
+            parameter.addDefaultUpperBound();
+
+            parameter.setInitialized();
 
             if (JetStandardClasses.isNothing(parameter.getUpperBoundsAsType())) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();

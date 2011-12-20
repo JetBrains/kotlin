@@ -154,8 +154,7 @@ public class PropertyCodegen {
                         type.getDescriptor());
             }
             iv.areturn(type);
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
+            FunctionCodegen.endVisit(mv, "getter", origin);
         }
     }
 
@@ -207,7 +206,7 @@ public class PropertyCodegen {
             }
 
             iv.visitInsn(Opcodes.RETURN);
-            mv.visitMaxs(0, 0);
+            FunctionCodegen.endVisit(mv, "setter", origin);
             mv.visitEnd();
         }
     }

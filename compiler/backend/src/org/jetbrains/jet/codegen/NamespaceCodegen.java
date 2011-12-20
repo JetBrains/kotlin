@@ -62,8 +62,11 @@ public class NamespaceCodegen {
             else if (declaration instanceof JetNamedFunction) {
                 try {
                     functionCodegen.gen((JetNamedFunction) declaration);
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to generate function " + declaration.getName(), e);
+                } catch (CompilationException e) {
+                    throw e;
+                }
+                catch (Exception e) {
+                    throw new CompilationException("Failed to generate function " + declaration.getName(), e, declaration);
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
@@ -107,7 +110,7 @@ public class NamespaceCodegen {
             }
 
             mv.visitInsn(RETURN);
-            mv.visitMaxs(0, 0);
+            FunctionCodegen.endVisit(mv, "static initializer for namespace", namespace);
             mv.visitEnd();
         }
     }
@@ -134,8 +137,7 @@ public class NamespaceCodegen {
                 v.visitFieldInsn(PUTSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");
                 v.visitLabel(end);
                 v.visitInsn(ARETURN);
-                v.visitMaxs(0, 0);
-                v.visitEnd();
+                FunctionCodegen.endVisit(v, "type info method", namespace);
             }
         }
     }

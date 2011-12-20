@@ -1,7 +1,6 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -41,7 +40,7 @@ public final class WholeProjectAnalyzerFacade {
             final Set<JetDeclaration> namespaces = Sets.newLinkedHashSet();
             final ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
 
-            if (rootManager != null && !ApplicationManager.getApplication().isUnitTestMode()) {
+            if (rootManager != null /* && !ApplicationManager.getApplication().isUnitTestMode() */) {
                 VirtualFile[] contentRoots = rootManager.getContentRoots();
 
                 CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
@@ -57,7 +56,6 @@ public final class WholeProjectAnalyzerFacade {
                         }
                     }
                 });
-                
             }
 
             namespaces.add(rootFile.getRootNamespace());

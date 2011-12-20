@@ -13,6 +13,7 @@ public class StdlibNames {
     public static final String JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
     public static final String JET_VALUE_PARAMETER_NULLABLE_FIELD = "nullable";
     public static final String JET_VALUE_PARAMETER_TYPE_FIELD = "type";
+    public static final String JET_VALUE_PARAMETER_RECEIVER_FIELD = "receiver";
 
 
     public static final JvmClassName JET_TYPE_PARAMETER = new JvmClassName("jet.typeinfo.JetTypeParameter");

@@ -198,8 +198,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
                         iv.areturn(method.getReturnType());
-                        mv.visitMaxs(0,0);
-                        mv.visitEnd();
+                        FunctionCodegen.endVisit(iv, "accessor", null);
                     }
                 }
                 else if(entry.getValue() instanceof PropertyDescriptor) {
@@ -222,8 +221,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
                         iv.areturn(method.getReturnType());
-                        mv.visitMaxs(0,0);
-                        mv.visitEnd();
+                        FunctionCodegen.endVisit(iv, "accessor", null);
                     }
 
                     method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getAsmMethod();
@@ -248,8 +246,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
                         iv.areturn(method.getReturnType());
-                        mv.visitMaxs(0,0);
-                        mv.visitEnd();
+                        FunctionCodegen.endVisit(iv, "accessor", null);
                     }
                 }
                 else {
@@ -465,8 +462,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             outer.visitVarInsn(Opcodes.ALOAD, 0);
             outer.visitFieldInsn(Opcodes.GETFIELD, classname, "this$0", outerType.getDescriptor());
             outer.visitInsn(Opcodes.ARETURN);
-            outer.visitMaxs(0, 0);
-            outer.visitEnd();
+            FunctionCodegen.endVisit(outer, "getOuterObject", myClass);
         }
 
         if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
@@ -518,8 +514,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateTraitMethods(codegen);
 
         mv.visitInsn(Opcodes.RETURN);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        FunctionCodegen.endVisit(mv, "constructor", myClass);
 
         FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod, constructorDescriptor, OwnerKind.IMPLEMENTATION);
     }
@@ -572,8 +567,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                     iv.checkcast(function.getReturnType());
                                 }
                                 iv.areturn(function.getReturnType());
-                                mv.visitMaxs(0, 0);
-                                mv.visitEnd();
+                                FunctionCodegen.endVisit(iv, "trait method", bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fun));
                             }
 
                             FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
@@ -708,8 +702,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             mv.visitInsn(Opcodes.RETURN);
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
+            FunctionCodegen.endVisit(mv, "constructor", null);
         }
     }
 
@@ -821,8 +814,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
                     iv.areturn(JetTypeMapper.TYPE_TYPEINFO);
-                    mv.visitMaxs(0, 0);
-                    mv.visitEnd();
+                    FunctionCodegen.endVisit(iv, "getTypeInfo", myClass);
                 }
 
                 mv = v.newMethod(myClass, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL, "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V", null, null);
@@ -834,8 +826,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.load(1, JetTypeMapper.TYPE_OBJECT);
                     iv.putfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
                     mv.visitInsn(Opcodes.RETURN);
-                    mv.visitMaxs(0, 0);
-                    mv.visitEnd();
+                    FunctionCodegen.endVisit(iv, "$setTypeInfo", myClass);
                 }
             }
         }
@@ -853,8 +844,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
             v.getstatic(owner, "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
             v.areturn(JetTypeMapper.TYPE_TYPEINFO);
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
+            FunctionCodegen.endVisit(v, "getTypeInfo", myClass);
         }
     }
 

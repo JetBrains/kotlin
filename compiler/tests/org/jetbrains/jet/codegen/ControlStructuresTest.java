@@ -231,8 +231,25 @@ public class ControlStructuresTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testKt772() throws Exception {
+        blackBoxFile("regressions/kt772.jet");
+//        System.out.println(generateToText());
+    }
+
     public void testQuicksort() throws Exception {
         blackBoxFile("controlStructures/quicksort.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testSynchronized() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("controlStructures/sync.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testIfInWhile() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("controlStructures/ifInWhile.jet");
 //        System.out.println(generateToText());
     }
 }

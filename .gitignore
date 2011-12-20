@@ -8,3 +8,4 @@ out
 .idea/codeStyleSettings.xml
 .idea/workspace.xml
 tmp
+*TestMy.java

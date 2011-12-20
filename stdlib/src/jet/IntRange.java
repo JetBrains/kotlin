@@ -2,7 +2,7 @@ package jet;
 
 import jet.typeinfo.TypeInfo;
 
-public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObject {
+public final class IntRange implements Range<Integer>, IntIterable, JetObject {
     private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
 
     private final int start;
@@ -39,7 +39,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public IntIterator iterator() {
         return new MyIterator(start, count);
     }
 
@@ -66,7 +66,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         }
     }
 
-    private static class MyIterator implements Iterator<Integer> {
+    private static class MyIterator extends IntIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private int cur;
@@ -86,7 +86,7 @@ public final class IntRange implements Range<Integer>, Iterable<Integer>, JetObj
         }
 
         @Override
-        public Integer next() {
+        public int nextInt() {
             count--;
             if(reversed) {
                 return cur--;
