@@ -691,8 +691,8 @@ public class JavaDescriptorResolver {
                 null,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 typeParameters,
-                semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
-                semanticServices.getDescriptorResolver().makeReturnType(returnType, method),
+                resolveParameterDescriptors(functionDescriptorImpl, parameters),
+                makeReturnType(returnType, method),
                 Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
                 resolveVisibilityFromPsiModifiers(method)
         );
