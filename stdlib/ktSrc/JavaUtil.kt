@@ -123,17 +123,22 @@ inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<
   return result
 }
 
-inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList() : List<T> {
-  val answer = this.toList()
-  answer.sort()
-  return answer
+
+inline fun <T, C: Collection<T>> java.lang.Iterable<T>.to(result: C) : C {
+  for (elem in this)
+    result.add(elem)
+  return result
 }
 
-inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> {
-  val answer = this.toList()
-  answer.sort(comparator)
-  return answer
-}
+inline fun <T> java.lang.Iterable<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
+
+inline fun <T> java.lang.Iterable<T>.toList() : List<T> = this.to(ArrayList<T>())
+
+inline fun <T> java.lang.Iterable<T>.toSet() : Set<T> = this.to(HashSet<T>())
+
+inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList() : List<T> = toList().sort()
+
+inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> = toList().sort(comparator)
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
@@ -143,17 +148,6 @@ inline fun <in T> java.lang.Iterable<T>.toSortedList(transform: fun(T) : java.la
   return answer
 }
 */
-
-inline fun <T> java.lang.Iterable<T>.toList() : List<T> {
-  if (this is List<T>)
-    return this
-  else {
-    val list = ArrayList<T>()
-    for (elem in this)
-      list.add(elem)
-    return list
-  }
-}
 
 inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
   val answer = Array<T>(this.size)
@@ -166,12 +160,14 @@ inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
 
 // List APIs
 
-inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : Unit {
+inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : List<T> {
   Collections.sort(this)
+  return this
 }
 
-inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Comparator<T>) : Unit {
+inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
   Collections.sort(this, comparator)
+  return this
 }
 
 /**
