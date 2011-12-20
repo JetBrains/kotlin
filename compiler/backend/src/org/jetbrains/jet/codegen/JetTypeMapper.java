@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;
@@ -180,7 +181,39 @@ public class JetTypeMapper {
     }
 
     private HashMap<DeclarationDescriptor,Map<DeclarationDescriptor,String>> naming = new HashMap<DeclarationDescriptor, Map<DeclarationDescriptor, String>>();
-    
+
+    private String getStableNameForObject(JetObjectDeclaration object, DeclarationDescriptor descriptor) {
+        String local = getLocalNameForObject(object);
+        if (local == null) return null;
+
+        DeclarationDescriptor containingClass = getContainingClass(descriptor);
+        if (containingClass != null) {
+            return getFQName(containingClass) + "$" + local;
+        }
+        else {
+            return getFQName(getContainingNamespace(descriptor)) + "/" + local;
+        }
+    }
+
+    private static String getLocalNameForObject(JetObjectDeclaration object) {
+        PsiElement parent = object.getParent();
+        if (parent instanceof JetObjectLiteralExpression) {
+            PsiElement expressionParent = parent.getParent();
+
+            if (expressionParent instanceof JetProperty) {
+                JetProperty property = (JetProperty) expressionParent;
+                if (property.getInitializer() == parent) {
+                    return property.getName();
+                }
+            }
+        }
+        else if (parent instanceof JetClassObject) {
+            return "$ClassObject";
+        }
+
+        return null;
+    }
+
     public String getFQName(DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
 
@@ -200,7 +233,17 @@ public class JetTypeMapper {
 
             name = map.get(descriptor);
             if(name == null) {
-                name = getFQName(container) + "$" + (map.size()+1);
+                PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+                if (declaration instanceof JetObjectDeclaration) {
+                    String stable = getStableNameForObject((JetObjectDeclaration) declaration, descriptor);
+                    if (stable != null) {
+                        name = stable;
+                    }
+                }
+
+                if (name == null) {
+                    name = getFQName(container) + "$" + (map.size()+1);
+                }
                 map.put(descriptor, name);
             }
             return name;
@@ -222,7 +265,19 @@ public class JetTypeMapper {
 
         return name;
     }
-    
+
+    private static ClassDescriptor getContainingClass(DeclarationDescriptor descriptor) {
+        DeclarationDescriptor parent = descriptor.getContainingDeclaration();
+        if (parent == null || parent instanceof ClassDescriptor) return (ClassDescriptor) parent;
+        return getContainingClass(parent);
+    }
+
+    private static NamespaceDescriptor getContainingNamespace(DeclarationDescriptor descriptor) {
+        DeclarationDescriptor parent = descriptor.getContainingDeclaration();
+        if (parent == null || parent instanceof NamespaceDescriptor) return (NamespaceDescriptor) parent;
+        return getContainingNamespace(parent);
+    }
+
     @NotNull public Type mapType(final JetType jetType) {
         return mapType(jetType, (BothSignatureWriter) null);
     }
