@@ -1,8 +1,8 @@
-namespace unresolved
+package unresolved
 
 fun testGenericArgumentsCount() {
-    val <!UNUSED_VARIABLE!>p1<!>: Tuple2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = (2, 2)
-    val <!UNUSED_VARIABLE!>p2<!>: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Tuple2<!> = (2, 2)
+    val <!UNUSED_VARIABLE!>p1<!>: Tuple2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = #(2, 2)
+    val <!UNUSED_VARIABLE!>p2<!>: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Tuple2<!> = #(2, 2)
 }
 
 fun testUnresolved() {
@@ -16,8 +16,8 @@ fun testUnresolved() {
     s.<!UNRESOLVED_REFERENCE!>foo<!>()
 
     when(<!UNRESOLVED_REFERENCE!>a<!>) {
-        is Int => <!UNRESOLVED_REFERENCE!>a<!>
-        is String => <!UNRESOLVED_REFERENCE!>a<!>
+        is Int -> <!UNRESOLVED_REFERENCE!>a<!>
+        is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
     //TODO

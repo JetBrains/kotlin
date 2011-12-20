@@ -1,6 +1,6 @@
 // +JDK
 
-namespace kt469
+package kt469
 
 //KT-512 plusAssign() : Unit does not work properly
 import java.util.*

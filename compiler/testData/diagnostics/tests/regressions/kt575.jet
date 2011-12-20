@@ -1,6 +1,6 @@
 // KT-575 Cannot ++ a class object member
 
-namespace kt575
+package kt575
 
 class Creature() {
     class object {

@@ -180,6 +180,9 @@ public class TypeResolver {
         if (result[0] == null) {
             return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
         }
+        if (nullable) {
+            return TypeUtils.makeNullable(result[0]);
+        }
         return result[0];
     }
 

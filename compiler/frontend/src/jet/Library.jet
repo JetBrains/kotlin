@@ -34,7 +34,7 @@ namespace io {
   fun readLine() : String?
 }
 
-fun <R> Any.synchronized(block : fun() : R) : R
+fun <R> Any.synchronized(block : () -> R) : R
 
 fun Any?.identityEquals(other : Any?) : Boolean // = this === other
 
@@ -139,7 +139,7 @@ trait CharIterable : Iterable<Char> {
 
 fun Array<T>(val size : Int) : Array<T?>
 
-class Array<T>(val size : Int, init : fun(Int) : T) {
+class Array<T>(val size : Int, init : (Int) -> T) {
   fun get(index : Int) : T
   fun set(index : Int, value : T) : Unit
 

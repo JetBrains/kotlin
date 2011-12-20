@@ -85,7 +85,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 
     @Override
     public void runTest() throws Exception {
-        String testFileName = name + ".jet";
+        String testFileName = name + ".kt";
 
         String expectedText = loadFile(testFileName);
 

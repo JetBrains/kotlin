@@ -1,7 +1,7 @@
 //KT-462 Consider allowing initializing properties via property names when it is safe
 //KT-598 Allow to use backing fields after this expression
 
-namespace kt462
+package kt462
 
 abstract class TestInitializationWithoutBackingField() {
     val valWithBackingField : Int

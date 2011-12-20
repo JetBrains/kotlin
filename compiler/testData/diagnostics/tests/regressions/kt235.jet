@@ -1,36 +1,36 @@
 //KT-235 Illegal assignment return type
 // +JDK
 
-namespace kt235
+package kt235
 
 fun main(args: Array<String>) {
     val array = MyArray()
-    val <!UNUSED_VARIABLE!>f<!> = { (): String =>
+    val <!UNUSED_VARIABLE!>f<!> = { (): String ->
        <!EXPECTED_TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected
     }
-    val <!UNUSED_VARIABLE!>g<!> = {(): String =>
+    val <!UNUSED_VARIABLE!>g<!> = {(): String ->
        var x = 1
        <!EXPECTED_TYPE_MISMATCH!>x += 2<!>  //no error, but it should be here
     }
-    val <!UNUSED_VARIABLE!>h<!> = {(): String =>
+    val <!UNUSED_VARIABLE!>h<!> = {(): String ->
        var x = 1
        <!EXPECTED_TYPE_MISMATCH!>x = 2<!>  //the same
     }
     val array1 = MyArray1()
-    val <!UNUSED_VARIABLE!>i<!> = { (): String =>
+    val <!UNUSED_VARIABLE!>i<!> = { (): String ->
        <!EXPECTED_TYPE_MISMATCH!>array1[2] = 23<!>
     }
 
-    val <!UNUSED_VARIABLE!>fi<!> = { (): Int =>
+    val <!UNUSED_VARIABLE!>fi<!> = { (): Int ->
        <!ASSIGNMENT_TYPE_MISMATCH!>array[2] = 23<!>
     }
-    val <!UNUSED_VARIABLE!>gi<!> = {(): Int =>
+    val <!UNUSED_VARIABLE!>gi<!> = {(): Int ->
        var x = 1
        <!ASSIGNMENT_TYPE_MISMATCH!>x += 21<!>
     }
 
     var m: MyNumber = MyNumber()
-    val <!UNUSED_VARIABLE!>a<!> = { (): MyNumber =>
+    val <!UNUSED_VARIABLE!>a<!> = { (): MyNumber ->
         <!UNUSED_CHANGED_VALUE!>m++<!>
     }
 }

@@ -6,7 +6,7 @@ bq. See [Expressions]
 h3. Precedence
 
 ||*Precedence*||Title||Symbols||
-|Highest|Postfix|{{\+\+}}, {{\-\-}}, {{#}}, {{.}}, {{?.}}, {{?}}|
+|Highest|Postfix|{{\+\+}}, {{\-\-}}, {{.}}, {{?.}}, {{?}}|
 | |Prefix|{{-}}, {{\+}}, {{\+\+}}, {{\-\-}}, {{!}}, [{{@label}}|#LabelName], {{@}}, {{@@}} |
 | |Type RHS|{{:}}, {{as}}, {{as?}} |
 | |Multiplicative|{{*}}, {{/}}, {{%}} |
@@ -19,7 +19,6 @@ h3. Precedence
 | |Equality|{{==}}, {{\!==}}|
 | |Conjunction|{{&&}}|
 | |Disjunction|{{\|\|}}|
-| |Arrow|{{\->}}|
 |Lowest|Assignment|{{=}}, {{+=}}, {{-=}}, {{*=}}, {{/=}}, {{%=}}|
 
 h3. Rules
@@ -41,17 +40,12 @@ Decreasing precedence:
   equalityOperation
   "&&"
   "||"
-  "->"
   assignmentOperator
 */
 
 
 expression
-  : arrowTupleExpression (assignmentOperator arrowTupleExpression)?
-  ;
-
-arrowTupleExpression
-  : disjunction ("->" disjunction)*
+  : disjunction (assignmentOperator disjunction)*
   ;
 
 disjunction
@@ -109,7 +103,7 @@ postfixUnaryExpression
 
 // !!! When you add here, remember to update the FIRST set in the parser
 atomicExpression
-  : "(" expression ")" // see tupleLiteral
+  : "(" expression ")"
   : literalConstant
   : functionLiteral
   : tupleLiteral
@@ -230,7 +224,7 @@ callSuffix
   ;
 
 memberAccessOperation
-  : "." : "?." : "#" : "?"
+  : "." : "?." : "?"
   ;
 
 typeArguments
@@ -249,17 +243,15 @@ jump
 // yield ?
   ;
 
-// Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
-// to put a tuple, write write ((e))
 tupleLiteral
-  : "(" (((SimpleName "=")? expression){","})? ")"
+  : "#" "(" (((SimpleName "=")? expression){","})? ")"
   ;
 
 // one can use "it" as a parameter name
 functionLiteral
   : "{" statements "}"
-  : "{" (modifiers SimpleName){","} "=>" statements "}"
-  : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" statements "}"
+  : "{" (modifiers SimpleName){","} "->" statements "}"
+  : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "->" statements "}"
   ;
 
 statements

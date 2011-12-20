@@ -1,6 +1,6 @@
-namespace jet121 {
+package jet121 {
   fun box() : String {
-    val answer = apply("OK") { String.() : Int =>
+    val answer = apply("OK") { String.() : Int ->
       get(0)
       length
     }
@@ -8,7 +8,7 @@ namespace jet121 {
     return if (answer == 2) "OK" else "FAIL"
   }
 
-  fun apply(arg:String, f : fun String.() : Int) : Int {
+  fun apply(arg:String, f :  String.() -> Int) : Int {
       return arg.f()
   }
 }

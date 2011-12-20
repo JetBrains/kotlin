@@ -13,7 +13,7 @@ class A {
     }
 }
 
-namespace deepSpace {
+package deepSpace {
     <!CONFLICTING_OVERLOADS!>fun c(<!UNUSED_PARAMETER!>s<!>: String)<!> {
     }
 
@@ -32,23 +32,23 @@ namespace deepSpace {
 
 // check no error in overload in different namespaces
 
-namespace ns1 {
+package ns1 {
     fun e() = 1
 }
 
-namespace ns2 {
+package ns2 {
     fun e() = 1
 }
 
-namespace ns3 {
-    namespace ns1 {
+package ns3 {
+    package ns1 {
         fun e() = 1
     }
 }
 
 // check same rules apply for ext functions
 
-namespace extensionFunctions {
+package extensionFunctions {
     <!CONFLICTING_OVERLOADS!>fun Int.qwe(<!UNUSED_PARAMETER!>a<!>: Float)<!> = 1
     
     <!CONFLICTING_OVERLOADS!>fun Int.qwe(<!UNUSED_PARAMETER!>a<!>: Float)<!> = 2
@@ -60,7 +60,7 @@ namespace extensionFunctions {
 
 // check no error when regular function and extension function have same name
 
-namespace extensionAndRegular {
+package extensionAndRegular {
     fun who() = 1
     
     fun Int.who() = 1
@@ -68,7 +68,7 @@ namespace extensionAndRegular {
 
 // constructor vs. fun overload
 
-namespace constructorVsFun {
+package constructorVsFun {
     class <!CONFLICTING_OVERLOADS!>a()<!> { }
 
     <!CONFLICTING_OVERLOADS!>fun a()<!> = 1

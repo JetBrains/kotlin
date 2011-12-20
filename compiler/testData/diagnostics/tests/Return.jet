@@ -1,4 +1,4 @@
-namespace <!SYNTAX!>return<!>
+package <!SYNTAX!>return<!>
 
 class A {
     fun outer() {

@@ -1,4 +1,4 @@
-namespace lol
+package lol
 
 class B() {
     fun plusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
