@@ -246,4 +246,10 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("controlStructures/sync.jet");
 //        System.out.println(generateToText());
     }
+
+    public void testIfInWhile() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("controlStructures/ifInWhile.jet");
+//        System.out.println(generateToText());
+    }
 }

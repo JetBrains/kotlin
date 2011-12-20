@@ -1,5 +1,7 @@
 namespace lockperformance
 
+import std.io.*
+import std.util.*
 import std.concurrent.*
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,41 +15,37 @@ fun <T> Int.latch(op: fun CountDownLatch.() : T) : T {
     return res
 }
 
-fun Int.times(action: fun():Unit) {
-    for(i in 0..this-1)
-        action()
-}
-
 fun main(args: Array<String>) {
     val processors = Runtime.getRuntime().sure().availableProcessors()
     var threadNum = 1
     while(threadNum <= 1024) {
         val counter = AtomicInteger()
 
-        val start = System.currentTimeMillis()
-        threadNum.latch{
-            val lock = ReentrantLock()
-            threadNum.times {
-                thread {
-                    while(true) {
-                        lock.lock()
-                        try {
-                            if (counter.get() == 100000000) {
-                                countDown();
-                                break;
-                            } else {
-                                counter.incrementAndGet();
+        val duration = millisTime {
+            threadNum.latch{
+                val lock = ReentrantLock()
+                for(i in 0..threadNum-1) {
+                    thread {
+                        while(true) {
+                            lock.lock()
+                            try {
+                                if (counter.get() == 100000000) {
+                                    countDown();
+                                    break;
+                                } else {
+                                    counter.incrementAndGet();
+                                }
                             }
-                        }
-                        finally {
-                            lock.unlock()
+                            finally {
+                                lock.unlock()
+                            }
                         }
                     }
                 }
             }
         }
 
-        System.out?.println(threadNum.toString() + " " + (System.currentTimeMillis() - start));
+        println(threadNum.toString() + " " + duration)
 
         if(threadNum < 2 * processors)
             threadNum = threadNum + 1
