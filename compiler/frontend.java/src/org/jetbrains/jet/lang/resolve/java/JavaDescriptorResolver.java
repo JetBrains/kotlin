@@ -608,6 +608,7 @@ public class JavaDescriptorResolver {
         String typeFromAnnotation = null;
         
         boolean receiver = false;
+        boolean hasDefaultValue = false;
         
         // TODO: must be very slow, make it lazy?
         String name = parameter.getName() != null ? parameter.getName() : "p" + i;
@@ -638,6 +639,11 @@ public class JavaDescriptorResolver {
                 if (receiverExpression != null) {
                     receiver = (Boolean) receiverExpression.getValue();
                 }
+                
+                PsiLiteralExpression hasDefaultValueExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD);
+                if (hasDefaultValueExpression != null) {
+                    hasDefaultValue = (Boolean) hasDefaultValueExpression.getValue();
+                }
 
 
             } else if (annotation.getQualifiedName().equals(StdlibNames.JET_TYPE_PARAMETER.getFqName())) {
@@ -661,7 +667,7 @@ public class JavaDescriptorResolver {
                     name,
                     null, // TODO : review
                     changeNullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
-                    false,
+                    hasDefaultValue,
                     varargElementType
             ));
         }
