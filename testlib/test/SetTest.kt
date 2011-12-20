@@ -28,19 +28,16 @@ class SetTest() : TestSupport() {
   }
 
   fun testFilter() {
-    val foo = data.filter{it.startsWith("f")}
+    val foo = data.filter{it.startsWith("f")}.toSet()
 
     assert {
       foo.all{it.startsWith("f")}
     }
     assertEquals(1, foo.size)
-    assertEquals(arrayList("foo"), foo)
+    assertEquals(hashSet("foo"), foo)
 
-    // TODO ideally foo would now be a set
-    todo {
-      assert("Filter on a Set should return a Set") {
-        foo is Set<String>
-      }
+    assert("Filter on a Set should return a Set") {
+      foo is Set<String>
     }
   }
 
