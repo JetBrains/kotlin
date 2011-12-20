@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.java.StdlibNames;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -86,8 +86,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
-            AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, StdlibNames.JET_CLASS.getDescriptor(), true);
-            annotationVisitor.visit(StdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
+            AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
+            annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
             annotationVisitor.visitEnd();
         }
     }
@@ -120,7 +120,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
         {   // superinterfaces
-            superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT.getInternalName());
+            superInterfacesLinkedHashSet.add(JvmStdlibNames.JET_OBJECT.getInternalName());
 
             for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
