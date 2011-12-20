@@ -3,13 +3,11 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
-import org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
@@ -87,7 +85,8 @@ public class CallableMethod implements Callable {
         else {
             if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
                 desc = desc.replace("(", "(L" + getOwner() + ";");
-            v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + "$$TImpl" : getOwner(), getSignature().getAsmMethod().getName() + "$default", desc);
+            v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + JvmAbi.TRAIT_IMPL_SUFFIX
+                                                                                                 : getOwner(), getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
     }
 
