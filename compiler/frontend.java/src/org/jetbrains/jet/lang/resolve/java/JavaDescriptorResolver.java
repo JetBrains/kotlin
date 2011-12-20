@@ -106,9 +106,14 @@ public class JavaDescriptorResolver {
         this.semanticServices = semanticServices;
     }
 
-    @NotNull
+    @Nullable
     public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
         String qualifiedName = psiClass.getQualifiedName();
+        
+        if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
+            // TODO: only if -$$TImpl class is created by Kotlin
+            return null;
+        }
 
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
@@ -127,6 +132,12 @@ public class JavaDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull String qualifiedName) {
+        
+        if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
+            // TODO: only if -$$TImpl class is created by Kotlin
+            return null;
+        }
+        
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
         if (kotlinClassDescriptor != null) {
@@ -753,6 +764,9 @@ public class JavaDescriptorResolver {
             return functionDescriptor;
         }
         DeclarationDescriptor classDescriptor = method.hasModifierProperty(PsiModifier.STATIC) ? resolveNamespace(method.getContainingClass()) : resolveClass(method.getContainingClass());
+        if (classDescriptor == null) {
+            return null;
+        }
         PsiParameter[] parameters = method.getParameterList().getParameters();
         FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
                 owner,

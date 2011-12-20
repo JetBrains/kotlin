@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -123,6 +124,8 @@ public class ReadClassDataTest extends UsefulTestCase {
             if (ad instanceof ClassifierDescriptor) {
                 ClassifierDescriptor bd = nsb.getMemberScope().getClassifier(ad.getName());
                 compareClassifiers((ClassifierDescriptor) ad, bd);
+                
+                Assert.assertNull(nsb.getMemberScope().getClassifier(ad.getName() + JvmAbi.TRAIT_IMPL_SUFFIX));
             } else if (ad instanceof FunctionDescriptor) {
                 Set<FunctionDescriptor> functions = nsb.getMemberScope().getFunctions(ad.getName());
                 Assert.assertTrue(functions.size() >= 1);

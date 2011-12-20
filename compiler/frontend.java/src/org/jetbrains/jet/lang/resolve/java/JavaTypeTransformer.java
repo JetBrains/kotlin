@@ -94,6 +94,9 @@ public class JavaTypeTransformer {
                     }
 
                     ClassDescriptor descriptor = resolver.resolveClass(psiClass);
+                    if (descriptor == null) {
+                        return ErrorUtils.createErrorType("Unresolve java class: " + classType.getPresentableText());
+                    }
 
                     List<TypeProjection> arguments = Lists.newArrayList();
                     if (classType.isRaw()) {
