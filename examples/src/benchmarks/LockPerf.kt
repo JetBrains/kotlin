@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     while(threadNum <= 1024) {
         val counter = AtomicInteger()
 
-        val duration = millisTime {
+        val duration = measureTimeMillis {
             threadNum.latch{
                 val lock = ReentrantLock()
                 for(i in 0..threadNum-1) {
