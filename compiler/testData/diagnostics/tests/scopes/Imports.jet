@@ -1,0 +1,32 @@
+//FILE:a.kt
+namespace a
+
+import b.B        //class
+import b.foo      //function
+import b.ext      //extension function
+import b.value    //property
+import b.C.bar    //function from class object
+import b.C.cValue //property from class object
+
+fun test(arg: B) {
+    foo(value)
+    arg.ext()
+}
+
+//FILE:b.kt
+namespace b
+
+class B() {}
+
+fun foo(<!UNUSED_PARAMETER!>i<!>: Int) {}
+
+fun B.ext() {}
+
+val value = 0
+
+class C() {
+    class object {
+        fun bar() {}
+        val cValue = 1
+    }
+}

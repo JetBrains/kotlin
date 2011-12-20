@@ -74,9 +74,9 @@ public class AnalyzingUtils {
             @NotNull Configuration configuration,
             @NotNull Collection<? extends JetDeclaration> declarations,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull JetSemanticServices semanticServices) {
+            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         return analyzeNamespacesWithGivenTrace(project, configuration, declarations, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext, semanticServices);
     }
 

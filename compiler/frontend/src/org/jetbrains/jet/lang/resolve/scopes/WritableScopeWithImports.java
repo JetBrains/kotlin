@@ -3,10 +3,7 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.ArrayList;
@@ -173,12 +170,26 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     
     
     @Override
-    public void importNamespaceAlias(String aliasName, NamespaceDescriptor namespaceDescriptor) {
+    public void importNamespaceAlias(@NotNull String aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addNamespaceAlias(aliasName, namespaceDescriptor);
     }
-    
+
+    @Override
+    public void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor) {
+        checkMayWrite();
+
+        getCurrentIndividualImportScope().addFunctionAlias(aliasName, functionDescriptor);
+    }
+
+    @Override
+    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
+        checkMayWrite();
+
+        getCurrentIndividualImportScope().addVariableAlias(aliasName, variableDescriptor);
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration();

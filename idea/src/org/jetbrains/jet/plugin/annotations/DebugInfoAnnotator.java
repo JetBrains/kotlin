@@ -95,7 +95,7 @@ public class DebugInfoAnnotator implements Annotator {
                                 target = labelTarget.getText();
                             }
                             else {
-                                Collection<? extends ResolvedCallImpl<? extends DeclarationDescriptor>> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, expression);
+                                Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, expression);
                                 if (declarationDescriptors != null) {
                                     target = "[" + declarationDescriptors.size() + " descriptors]";
                                 }

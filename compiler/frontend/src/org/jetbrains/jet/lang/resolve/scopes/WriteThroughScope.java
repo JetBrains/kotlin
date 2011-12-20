@@ -162,6 +162,20 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
+    public void addVariableAlias(@NotNull String name, @NotNull VariableDescriptor variableDescriptor) {
+        checkMayWrite();
+        
+        writableWorker.addVariableAlias(name, variableDescriptor);
+    }
+
+    @Override
+    public void addFunctionAlias(@NotNull String name, @NotNull FunctionDescriptor functionDescriptor) {
+        checkMayWrite();
+
+        writableWorker.addFunctionAlias(name, functionDescriptor);
+    }
+
+    @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();
 

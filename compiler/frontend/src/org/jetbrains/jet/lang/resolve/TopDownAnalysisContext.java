@@ -27,6 +27,7 @@ import java.util.Set;
     private final Configuration configuration;
 
     private final DescriptorResolver descriptorResolver;
+    private final ImportsResolver importsResolver;
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     protected final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
@@ -48,6 +49,7 @@ import java.util.Set;
         this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+        this.importsResolver = new ImportsResolver(this);
         this.analyzeCompletely = analyzeCompletely;
         this.configuration = configuration;
         this.declaredLocally = declaredLocally;
@@ -98,6 +100,10 @@ import java.util.Set;
 
     public DescriptorResolver getDescriptorResolver() {
         return descriptorResolver;
+    }
+
+    public ImportsResolver getImportsResolver() {
+        return importsResolver;
     }
 
     public Map<JetClass, MutableClassDescriptor> getClasses() {

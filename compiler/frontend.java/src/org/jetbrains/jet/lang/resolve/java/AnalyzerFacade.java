@@ -85,7 +85,7 @@ public class AnalyzerFacade {
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         return AnalyzingUtils.analyzeNamespacesWithGivenTrace(
                 project,
-                JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, StandardConfiguration.createStandardConfiguration(project, semanticServices)),
+                JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, StandardConfiguration.createStandardConfiguration(project)),
                 declarations,
                 filesToAnalyzeCompletely,
                 flowDataTraceFactory,
