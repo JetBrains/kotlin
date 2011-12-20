@@ -1,4 +1,4 @@
-namespace org2
+package org2
 
 enum class Test {
     A

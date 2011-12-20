@@ -1,4 +1,4 @@
-namespace bitwise_demo
+package bitwise_demo
 
 fun Long?.shl(bits : Int?) : Long = this.sure().shl(bits.sure())
 

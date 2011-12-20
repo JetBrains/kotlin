@@ -1,4 +1,4 @@
-namespace mult_constructors_3_bug
+package mult_constructors_3_bug
 
 public open class Identifier() {
     private var myNullable : Boolean = true

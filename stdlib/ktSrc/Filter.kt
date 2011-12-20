@@ -1,4 +1,4 @@
-namespace std
+package std
 
 import java.util.*
 import java.lang.Iterable
@@ -6,7 +6,7 @@ import java.lang.Iterable
 /*
 Filters given iterator
 */
-inline fun <T> java.util.Iterator<T>.filter(f: fun(T): Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, f)
+inline fun <T> java.util.Iterator<T>.filter(f: (T)-> Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, f)
 
 /*
 Adds filtered elements in to given container
@@ -28,15 +28,15 @@ Create iterator filtering given java.lang.Iterable
 inline fun <T> java.lang.Iterable<T>.filter(f: fun(T): Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
 */
 
-private class FilterIterator<T>(val original: java.util.Iterator<T>, val filter: fun(T): Boolean) : java.util.Iterator<T> {
+private class FilterIterator<T>(val original: java.util.Iterator<T>, val filter: (T)-> Boolean) : java.util.Iterator<T> {
     var state = 0
     var nextElement: T? = null
 
     override fun hasNext(): Boolean =
         when(state) {
-                1 => true  // checked and next present
-                2 => false // checked and next not present
-                else => {
+                1 -> true  // checked and next present
+                2 -> false // checked and next not present
+                else -> {
                     while(original.hasNext()) {
                         val candidate = original.next()
                         if((filter)(candidate)) {

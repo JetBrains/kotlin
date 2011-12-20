@@ -3,7 +3,7 @@ class Request(val path: String) {
 }
 
 class Handler() {
-    fun Int.times(op: fun(): Unit) {
+    fun Int.times(op: ()-> Unit) {
         for(i in 0..this)
             op()
     }

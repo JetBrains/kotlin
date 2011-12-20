@@ -485,7 +485,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testTupleLiteral() throws Exception {
-        loadText("fun foo() = (1, \"foo\")");
+        loadText("fun foo() = #(1, \"foo\")");
 //        System.out.println(generateToText());
         final Method main = generateFunction("foo");
         Tuple2 tuple2 = (Tuple2) main.invoke(null);
@@ -494,7 +494,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testParametrizedTupleLiteral() throws Exception {
-        loadText("fun <E,D> E.foo(extra: java.util.List<D>) = (1, \"foo\", this, extra)");
+        loadText("fun <E,D> E.foo(extra: java.util.List<D>) = #(1, \"foo\", this, extra)");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         Tuple4 tuple4 = (Tuple4) main.invoke(null, "aaa", TypeInfo.STRING_TYPE_INFO, TypeInfo.INT_TYPE_INFO, Arrays.asList(10));

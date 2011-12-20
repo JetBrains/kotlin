@@ -1,12 +1,12 @@
 import java.util.ArrayList
 
-fun launch(f : fun() : Unit) {
+fun launch(f : () -> Unit) {
     f()
 }
 
 fun box(): String {
     val list = ArrayList<Int>()
-    val foo : fun() : Unit = {
+    val foo : () -> Unit = {
         list.add(2)  //first exception
     }
     foo()

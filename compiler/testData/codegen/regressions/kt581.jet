@@ -1,4 +1,4 @@
-namespace whats.the.difference
+package whats.the.difference
 
 import java.util.HashSet
 

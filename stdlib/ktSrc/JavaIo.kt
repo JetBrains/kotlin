@@ -1,6 +1,6 @@
-namespace std
+package std
 
-namespace io {
+package io {
     import java.io.*
     import java.nio.charset.*
 

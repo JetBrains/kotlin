@@ -1,4 +1,4 @@
-namespace array_test
+package array_test
 
 fun box() : String {
     var array : IntArray? = IntArray(10)

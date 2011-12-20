@@ -1,4 +1,4 @@
-namespace demo_range
+package demo_range
 
 fun Int?.rangeTo(other : Int?) : IntRange = this.sure().rangeTo(other.sure())
 

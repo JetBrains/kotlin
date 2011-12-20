@@ -1,4 +1,4 @@
-namespace demo
+package demo
 
 public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
     {

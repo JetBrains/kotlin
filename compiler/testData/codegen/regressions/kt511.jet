@@ -1,4 +1,4 @@
-namespace one_extends_base
+package one_extends_base
 
 open class Base<T>(name : T?) {
     var myName : T?

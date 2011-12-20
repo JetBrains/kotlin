@@ -1,4 +1,4 @@
-namespace std.concurrent
+package std.concurrent
 
 import java.lang.*
 
@@ -21,7 +21,7 @@ inline var Thread.contextClassLoader : ClassLoader?
     get() = getContextClassLoader()
     set(loader: ClassLoader?) { setContextClassLoader(loader) }
 
-fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, block: fun():Unit) : Thread {
+fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, block: ()->Unit) : Thread {
     val thread = object: Thread() {
         override fun run() {
             block()
