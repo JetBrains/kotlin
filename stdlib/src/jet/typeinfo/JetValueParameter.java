@@ -36,6 +36,11 @@ public @interface JetValueParameter {
     boolean hasDefaultValue () default false;
 
     /**
+     * @return if this parameter is receiver
+     */
+    boolean receiver() default false;
+
+    /**
      * @return type unless Java type is correct Kotlin type.
      */
     String type() default "";

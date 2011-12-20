@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
@@ -226,11 +227,21 @@ public class ReadClassDataTest extends UsefulTestCase {
             serializeCommaSeparated(fun.getTypeParameters(), sb);
             sb.append(">");
         }
+
+        if (fun.getReceiverParameter().exists()) {
+            serialize(fun.getReceiverParameter(), sb);
+            sb.append(".");
+        }
+
         sb.append(fun.getName());
         sb.append("(");
         serializeCommaSeparated(fun.getValueParameters(), sb);
         sb.append("): ");
         serialize(fun.getReturnType(), sb);
+    }
+    
+    private void serialize(ExtensionReceiver extensionReceiver, StringBuilder sb) {
+        serialize(extensionReceiver.getType(), sb);
     }
     
     private void serialize(PropertyDescriptor prop, StringBuilder sb) {

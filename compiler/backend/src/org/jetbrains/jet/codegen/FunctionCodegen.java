@@ -110,6 +110,7 @@ public class FunctionCodegen {
                     if(receiverParameter.getType().isNullable()) {
                         av.visit(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
+                    av.visit(StdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, true);
                     av.visitEnd();
                 }
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
