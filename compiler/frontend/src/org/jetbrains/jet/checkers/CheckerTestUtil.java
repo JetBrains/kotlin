@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -50,6 +51,7 @@ public class CheckerTestUtil {
     }
 
     public interface DiagnosticDiffCallbacks {
+        @NotNull PsiFile getFile();
         void missingDiagnostic(String type, int expectedStart, int expectedEnd);
         void unexpectedDiagnostic(String type, int actualStart, int actualEnd);
     }
@@ -129,6 +131,7 @@ public class CheckerTestUtil {
 
     private static void unexpectedDiagnostics(List<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
         for (Diagnostic diagnostic : actual) {
+            if (!diagnostic.getFactory().getPsiFile(diagnostic).equals(callbacks.getFile())) continue;
             TextRange textRange = getTextRange(diagnostic);
             callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
         }
@@ -136,6 +139,7 @@ public class CheckerTestUtil {
 
     private static void missingDiagnostics(DiagnosticDiffCallbacks callbacks, DiagnosedRange currentExpected) {
         for (String type : currentExpected.getDiagnostics()) {
+            if (!currentExpected.getFile().equals(callbacks.getFile())) return;
             callbacks.missingDiagnostic(type, currentExpected.getStart(), currentExpected.getEnd());
         }
     }
@@ -393,6 +397,7 @@ public class CheckerTestUtil {
         private final int start;
         private int end;
         private final Multiset<String> diagnostics = HashMultiset.create();
+        private PsiFile file;
 
         private DiagnosedRange(int start) {
             this.start = start;
@@ -416,6 +421,15 @@ public class CheckerTestUtil {
         
         public void addDiagnostic(String diagnostic) {
             diagnostics.add(diagnostic);
+        }
+
+        public void setFile(@NotNull PsiFile file) {
+            this.file = file;
+        }
+
+        @NotNull
+        public PsiFile getFile() {
+            return file;
         }
     }
 }

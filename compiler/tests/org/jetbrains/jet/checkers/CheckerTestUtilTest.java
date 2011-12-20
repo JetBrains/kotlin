@@ -2,6 +2,7 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -79,7 +80,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
             this.expected = expectedMessages;
         }
 
-        public void test(PsiFile psiFile) {
+        public void test(final @NotNull PsiFile psiFile) {
             BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(
                     ((JetFile) psiFile).getRootNamespace(),
                     JetControlFlowDataTraceFactory.EMPTY);
@@ -88,6 +89,9 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
             List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
             CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
+            for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
+                diagnosedRange.setFile(psiFile);
+            }
 
             List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile);
             Collections.sort(diagnostics, CheckerTestUtil.DIAGNOSTIC_COMPARATOR);
@@ -98,6 +102,12 @@ public class CheckerTestUtilTest extends JetLiteFixture {
             final List<String> actualMessages = Lists.newArrayList();
 
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
+                @NotNull
+                @Override
+                public PsiFile getFile() {
+                    return psiFile;
+                }
+
                 @Override
                 public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
                     String message = "Missing " + type + " at " + expectedStart + " to " + expectedEnd;
