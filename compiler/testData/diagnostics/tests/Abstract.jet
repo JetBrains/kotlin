@@ -1,6 +1,6 @@
 // +JDK
 
-namespace abstract
+package abstract
 
 class MyClass() {
     //properties
@@ -180,7 +180,7 @@ enum class MyEnum() {
 
 abstract enum class MyAbstractEnum() {}
 
-namespace MyNamespace {
+package MyNamespace {
     //properties
     val <!MUST_BE_INITIALIZED!>a<!>: Int
     val a1: Int = 1

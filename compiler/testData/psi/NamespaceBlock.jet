@@ -1,16 +1,16 @@
-namespace foo.bar.goo
+package foo.bar.goo
 
 import foo as bar
 
-namespace foof {
+package foof {
     import foo.bar.*;
 
     class Foo {}
 
-    namespace bar {
+    package bar {
       class Bar {}
 
-      namespace ns {
+      package ns {
             class X
 
             class Y
@@ -21,9 +21,9 @@ namespace foof {
 
 class Bar<T> {}
 
-namespace foo {}
+package foo {}
 
-namespace bar {
+package bar {
     import sdf
 
 }

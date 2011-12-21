@@ -1,4 +1,4 @@
-namespace dollar
+package dollar
 
 open class `$$$$$`() {
 }

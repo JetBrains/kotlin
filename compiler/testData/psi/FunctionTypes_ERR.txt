@@ -10,11 +10,9 @@ JetFile: FunctionTypes_ERR.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -28,7 +26,7 @@ JetFile: FunctionTypes_ERR.jet
             PsiWhiteSpace(' ')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE

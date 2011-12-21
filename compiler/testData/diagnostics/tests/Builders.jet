@@ -2,7 +2,7 @@
 
 import java.util.*
 
-namespace html {
+package html {
 
   abstract class Factory<T> {
     abstract fun create() : T
@@ -16,7 +16,7 @@ namespace html {
     val children = ArrayList<Element>()
     val attributes = HashMap<String, String>()
 
-    protected fun initTag<T : Element>(init : fun T.() : Unit) : T
+    protected fun initTag<T : Element>(init :  T.() -> Unit) : T
       where class object T : Factory<T>{
       val tag = T.create()
       tag.init()
@@ -36,9 +36,9 @@ namespace html {
       override fun create() = HTML()
     }
 
-    fun head(init : fun Head.() : Unit) = initTag<Head>(init)
+    fun head(init :  Head.() -> Unit) = initTag<Head>(init)
 
-    fun body(init : fun Body.() : Unit) = initTag<Body>(init)
+    fun body(init :  Body.() -> Unit) = initTag<Body>(init)
   }
 
   class Head() : TagWithText("head") {
@@ -46,7 +46,7 @@ namespace html {
       override fun create() = Head()
     }
 
-    fun title(init : fun Title.() : Unit) = initTag<Title>(init)
+    fun title(init :  Title.() -> Unit) = initTag<Title>(init)
   }
 
   class Title() : TagWithText("title")
@@ -59,10 +59,10 @@ namespace html {
       override fun create() = Body()
     }
 
-    fun b(init : fun B.() : Unit) = initTag<B>(init)
-    fun p(init : fun P.() : Unit) = initTag<P>(init)
-    fun h1(init : fun H1.() : Unit) = initTag<H1>(init)
-    fun a(href : String, init : fun A.() : Unit) {
+    fun b(init :  B.() -> Unit) = initTag<B>(init)
+    fun p(init :  P.() -> Unit) = initTag<P>(init)
+    fun h1(init :  H1.() -> Unit) = initTag<H1>(init)
+    fun a(href : String, init :  A.() -> Unit) {
       val a = initTag<A>(init)
       a.href = href
     }
@@ -79,7 +79,7 @@ namespace html {
 
   fun Map<String, String>.set(key : String, value : String) = this.put(key, value)
 
-  fun html(init : fun HTML.() : Unit) : HTML {
+  fun html(init :  HTML.() -> Unit) : HTML {
     val html = HTML()
     html.init()
     return html
@@ -87,7 +87,7 @@ namespace html {
 
 }
 
-namespace foo {
+package foo {
 
 import html.*
 

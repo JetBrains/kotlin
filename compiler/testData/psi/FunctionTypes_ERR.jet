@@ -1,1 +1,1 @@
-type f = fun (a, ) : b
+type f =  (a, ) -> b

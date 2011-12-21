@@ -1,6 +1,6 @@
 //kt-411 Wrong type expected when returning from a function literal
 
-namespace kt411
+package kt411
 
 fun f() {
     invoker(
@@ -9,17 +9,17 @@ fun f() {
     }
     )
 }
-fun invoker(<!UNUSED_PARAMETER!>gen<!> : fun() : Int) : Int  = 0
+fun invoker(<!UNUSED_PARAMETER!>gen<!> : () -> Int) : Int  = 0
 
 //more tests
 fun t1() {
-    val <!UNUSED_VARIABLE!>v<!> = @{ () : Int =>
+    val <!UNUSED_VARIABLE!>v<!> = @{ () : Int ->
         return@ 111
     }
 }
 
 fun t2() : String {
-    val <!UNUSED_VARIABLE!>g<!> : fun(): Int = @{
+    val <!UNUSED_VARIABLE!>g<!> : ()-> Int = @{
         if (true) {
             return@ 1
         }
@@ -41,7 +41,7 @@ fun t3() : String {
     }
     )
     invoker(
-    @{ (): Int =>
+    @{ (): Int ->
         return@ 1
     }
     )
@@ -54,10 +54,10 @@ fun t3() : String {
 }
 
 fun t4() : Int {
-    val <!UNUSED_VARIABLE!>h<!> : fun (): String = @l{
+    val <!UNUSED_VARIABLE!>h<!> :  ()-> String = @l{
         return@l "a"
     }
-    val <!UNUSED_VARIABLE!>g<!> : fun (): String = @{ () : String =>
+    val <!UNUSED_VARIABLE!>g<!> :  ()-> String = @{ () : String ->
         return@ "a"
     }
 

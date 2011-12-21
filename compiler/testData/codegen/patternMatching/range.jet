@@ -3,9 +3,9 @@ fun isDigit(a: Int) : String {
     aa.add(239)
 
     return when(a) {
-      in aa => "array list"
-      in 0..9 => "digit"
-     !in 0..100 => "not small"
-      else => "something"
+      in aa -> "array list"
+      in 0..9 -> "digit"
+     !in 0..100 -> "not small"
+      else -> "something"
     }
 }

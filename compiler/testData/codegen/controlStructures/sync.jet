@@ -1,7 +1,7 @@
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
-fun thread(block: fun():Unit ) {
+fun thread(block: ()->Unit ) {
     val thread = object: Thread() {
         override fun run() {
             block()

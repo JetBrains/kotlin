@@ -671,15 +671,13 @@ JetFile: Precedence.jet
           OPERATION_REFERENCE
             PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('c')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('c')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           REFERENCE_EXPRESSION
@@ -788,16 +786,14 @@ JetFile: Precedence.jet
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(as)('as')
-          PsiWhiteSpace(' ')
+          PsiWhiteSpace('  ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
@@ -868,16 +864,14 @@ JetFile: Precedence.jet
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(AS_SAFE)('as?')
-          PsiWhiteSpace(' ')
+          PsiWhiteSpace('  ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
@@ -1003,16 +997,14 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
               PsiElement(as)('as')
-            PsiWhiteSpace(' ')
+            PsiWhiteSpace('  ')
             TYPE_REFERENCE
               FUNCTION_TYPE
-                PsiElement(fun)('fun')
-                PsiWhiteSpace(' ')
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
                   USER_TYPE
@@ -1104,16 +1096,14 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
               PsiElement(AS_SAFE)('as?')
-            PsiWhiteSpace(' ')
+            PsiWhiteSpace('  ')
             TYPE_REFERENCE
               FUNCTION_TYPE
-                PsiElement(fun)('fun')
-                PsiWhiteSpace(' ')
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
                   USER_TYPE

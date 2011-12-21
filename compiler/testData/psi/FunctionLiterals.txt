@@ -35,7 +35,7 @@ JetFile: FunctionLiterals.jet
               VALUE_PARAMETER
                 PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -51,7 +51,7 @@ JetFile: FunctionLiterals.jet
                 PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -74,7 +74,7 @@ JetFile: FunctionLiterals.jet
                       PsiElement(IDENTIFIER)('A')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -104,7 +104,7 @@ JetFile: FunctionLiterals.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -127,7 +127,7 @@ JetFile: FunctionLiterals.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -147,7 +147,7 @@ JetFile: FunctionLiterals.jet
                 PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -168,67 +168,6 @@ JetFile: FunctionLiterals.jet
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('A')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('a')
-                PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('B')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            BLOCK
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n    ')
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('a')
-                PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('A')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('a')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            BLOCK
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n    ')
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('a')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER
@@ -242,6 +181,33 @@ JetFile: FunctionLiterals.jet
                       PsiElement(IDENTIFIER)('B')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            BLOCK
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('A')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
@@ -249,7 +215,41 @@ JetFile: FunctionLiterals.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            BLOCK
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('B')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -263,7 +263,7 @@ JetFile: FunctionLiterals.jet
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -277,28 +277,7 @@ JetFile: FunctionLiterals.jet
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            BLOCK
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n    ')
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -319,7 +298,28 @@ JetFile: FunctionLiterals.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            BLOCK
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -340,7 +340,7 @@ JetFile: FunctionLiterals.jet
                 PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -368,7 +368,7 @@ JetFile: FunctionLiterals.jet
                       PsiElement(IDENTIFIER)('A')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -403,7 +403,7 @@ JetFile: FunctionLiterals.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -431,7 +431,7 @@ JetFile: FunctionLiterals.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               REFERENCE_EXPRESSION
@@ -449,7 +449,7 @@ JetFile: FunctionLiterals.jet
               VALUE_PARAMETER
                 PsiElement(IDENTIFIER)('y')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             BLOCK
               INTEGER_CONSTANT
@@ -459,56 +459,41 @@ JetFile: FunctionLiterals.jet
         FUNCTION_LITERAL_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
-            VALUE_PARAMETER_LIST
-              VALUE_PARAMETER
-                MODIFIER_LIST
-                  ANNOTATION
-                    PsiElement(LBRACKET)('[')
-                    ANNOTATION_ENTRY
-                      CONSTRUCTOR_CALLEE
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('a')
-                    PsiElement(RBRACKET)(']')
+            BLOCK
+              ANNOTATED_EXPRESSION
+                ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ANNOTATION_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('x')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              VALUE_PARAMETER
-                MODIFIER_LIST
-                  ANNOTATION
-                    PsiElement(LBRACKET)('[')
-                    ANNOTATION_ENTRY
-                      CONSTRUCTOR_CALLEE
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('b')
-                    PsiElement(RBRACKET)(']')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+              PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                PsiElement(LBRACKET)('[')
+                PsiElement(IDENTIFIER)('b')
+                PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('y')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              VALUE_PARAMETER
-                MODIFIER_LIST
-                  ANNOTATION
-                    PsiElement(LBRACKET)('[')
-                    ANNOTATION_ENTRY
-                      CONSTRUCTOR_CALLEE
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('c')
-                    PsiElement(RBRACKET)(']')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                PsiElement(LBRACKET)('[')
+                PsiElement(IDENTIFIER)('c')
+                PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('z')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            BLOCK
-              INTEGER_CONSTANT
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
                 PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RBRACE)('}')
+            PsiWhiteSpace('\n')
             PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+        PsiErrorElement:Expecting '}
+          <empty list>

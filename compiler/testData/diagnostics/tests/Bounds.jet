@@ -1,4 +1,4 @@
-namespace boundsWithSubstitutors {
+package boundsWithSubstitutors {
     open class A<T>
     class B<X : A<X>>()
 
@@ -18,10 +18,10 @@ namespace boundsWithSubstitutors {
   open class A {}
   open class B<T : A>()
 
-  abstract class C<T : B<<!UPPER_BOUND_VIOLATED!>Int<!>>, X : fun (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) : (B<<!UPPER_BOUND_VIOLATED!>Any<!>>, B<A>)>() : B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>() { // 2 errors
+  abstract class C<T : B<<!UPPER_BOUND_VIOLATED!>Int<!>>, X :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> #(B<<!UPPER_BOUND_VIOLATED!>Any<!>>, B<A>)>() : B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>() { // 2 errors
     val a = B<<!UPPER_BOUND_VIOLATED!>Char<!>>() // error
 
-    abstract val x : fun (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) : B<<!UPPER_BOUND_VIOLATED!>Any<!>>
+    abstract val x :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> B<<!UPPER_BOUND_VIOLATED!>Any<!>>
   }
 
 

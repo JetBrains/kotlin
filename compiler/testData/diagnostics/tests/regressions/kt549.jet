@@ -1,9 +1,9 @@
 //KT-549 type inference failed
 // +JDK
 
-namespace demo
+package demo
 
-  fun filter<T>(list : Array<T>, filter : fun (T) : Boolean) : java.util.List<T> {
+  fun filter<T>(list : Array<T>, filter :  (T) -> Boolean) : java.util.List<T> {
     val answer = java.util.ArrayList<T>();
     for (l in list) {
       if (filter(l)) answer.add(l)

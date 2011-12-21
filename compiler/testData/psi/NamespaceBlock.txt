@@ -1,7 +1,7 @@
 JetFile: NamespaceBlock.jet
   NAMESPACE
     NAMESPACE_HEADER
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
@@ -23,7 +23,7 @@ JetFile: NamespaceBlock.jet
     PsiWhiteSpace('\n\n')
     NAMESPACE
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foof')
       PsiWhiteSpace(' ')
@@ -56,7 +56,7 @@ JetFile: NamespaceBlock.jet
         PsiWhiteSpace('\n\n    ')
         NAMESPACE
           NAMESPACE_HEADER
-            PsiElement(namespace)('namespace')
+            PsiElement(namespace)('package')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace(' ')
@@ -76,7 +76,7 @@ JetFile: NamespaceBlock.jet
             PsiWhiteSpace('\n\n      ')
             NAMESPACE
               NAMESPACE_HEADER
-                PsiElement(namespace)('namespace')
+                PsiElement(namespace)('package')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('ns')
               PsiWhiteSpace(' ')
@@ -119,7 +119,7 @@ JetFile: NamespaceBlock.jet
     PsiWhiteSpace('\n\n')
     NAMESPACE
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
@@ -130,7 +130,7 @@ JetFile: NamespaceBlock.jet
     PsiWhiteSpace('\n\n')
     NAMESPACE
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')

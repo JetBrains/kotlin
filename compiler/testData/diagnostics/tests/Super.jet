@@ -1,4 +1,4 @@
-namespace example;
+package example;
 
 fun any(<!UNUSED_PARAMETER!>a<!> : Any) {}
 
@@ -7,7 +7,7 @@ fun notAnExpression() {
     if (<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) {} else {} // not an expression
     val <!UNUSED_VARIABLE!>x<!> = <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> // not an expression
     when (1) {
-        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> => 1 // not an expression
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> -> 1 // not an expression
     }
 
 }
@@ -33,8 +33,8 @@ class A<E>() : C(), T {
         super<<!NOT_A_SUPERTYPE!>E<!>>@A.bar()
         super<<!NOT_A_SUPERTYPE!>Int<!>>.foo()
         super<<!SYNTAX!><!>>.foo()
-        super<<!NOT_A_SUPERTYPE!>fun() : Unit<!>>.foo()
-        super<<!NOT_A_SUPERTYPE!>()<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>() -> Unit<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>#()<!>>.foo()
         super<T><!UNRESOLVED_REFERENCE!>@B<!>.foo()
         super<C><!UNRESOLVED_REFERENCE!>@B<!>.bar()
     }

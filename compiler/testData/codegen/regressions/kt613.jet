@@ -1,4 +1,4 @@
-namespace name
+package name
 
 class Test() {
   var i = 5

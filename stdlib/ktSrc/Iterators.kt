@@ -1,4 +1,4 @@
-namespace std.util
+package std.util
 
 import java.util.*
 import java.util.Iterator

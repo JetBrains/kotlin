@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.java.StdlibNames;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -47,19 +47,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         boolean isAbstract = false;
         boolean isInterface = false;
+        boolean isFinal = false;
         if(myClass instanceof JetClass) {
-           if(((JetClass) myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD))
+            JetClass jetClass = (JetClass) myClass;
+            if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD))
                isAbstract = true;
-            if(((JetClass) myClass).isTrait()) {
+            if (jetClass.isTrait()) {
                 isAbstract = true;
                 isInterface = true;
             }
+            if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD)) {
+                isFinal = true;
+            }
         }
 
+        int access = 0;
+        access |= Opcodes.ACC_PUBLIC;
+        if (isAbstract) {
+            access |= Opcodes.ACC_ABSTRACT;
+        }
+        if (isInterface) {
+            access |= Opcodes.ACC_INTERFACE; // ACC_SUPER
+        }
+        if (isFinal) {
+            access |= Opcodes.ACC_FINAL;
+        }
         v.defineClass(myClass, Opcodes.V1_6,
-                      Opcodes.ACC_PUBLIC | (isAbstract ? Opcodes.ACC_ABSTRACT : 0) | (isInterface
-                                                                                      ? Opcodes.ACC_INTERFACE
-                                                                                      : 0/*Opcodes.ACC_SUPER*/),
+                access,
                       signature.getName(),
                       signature.getJavaGenericSignature(),
                       signature.getSuperclassName(),
@@ -72,8 +86,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
-            AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, StdlibNames.JET_CLASS.getDescriptor(), true);
-            annotationVisitor.visit(StdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
+            AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
+            annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
             annotationVisitor.visitEnd();
         }
     }
@@ -106,7 +120,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
         {   // superinterfaces
-            superInterfacesLinkedHashSet.add(StdlibNames.JET_OBJECT.getInternalName());
+            superInterfacesLinkedHashSet.add(JvmStdlibNames.JET_OBJECT.getInternalName());
 
             for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());

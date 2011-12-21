@@ -1,4 +1,4 @@
-namespace toplevelObjectDeclarations {
+package toplevelObjectDeclarations {
   open class Foo(y : Int) {
     open fun foo() : Int = 1
   }
@@ -28,7 +28,7 @@ namespace toplevelObjectDeclarations {
   val z = y.foo()
 }
 
-namespace nestedObejcts {
+package nestedObejcts {
   object A {
     val b = B
     val d = A.B.A
@@ -58,7 +58,7 @@ namespace nestedObejcts {
   val e = B.<!UNRESOLVED_REFERENCE!>A<!>.B
 }
 
-namespace localObjects {
+package localObjects {
   object A {
     val x : Int = 0
   }

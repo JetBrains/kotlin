@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -123,6 +124,8 @@ public class ReadClassDataTest extends UsefulTestCase {
             if (ad instanceof ClassifierDescriptor) {
                 ClassifierDescriptor bd = nsb.getMemberScope().getClassifier(ad.getName());
                 compareClassifiers((ClassifierDescriptor) ad, bd);
+                
+                Assert.assertNull(nsb.getMemberScope().getClassifier(ad.getName() + JvmAbi.TRAIT_IMPL_SUFFIX));
             } else if (ad instanceof FunctionDescriptor) {
                 Set<FunctionDescriptor> functions = nsb.getMemberScope().getFunctions(ad.getName());
                 Assert.assertTrue(functions.size() >= 1);
@@ -146,6 +149,10 @@ public class ReadClassDataTest extends UsefulTestCase {
     private String serializeContent(ClassDescriptor klass) {
 
         StringBuilder sb = new StringBuilder();
+        
+        serialize(klass.getModality(), sb);
+        sb.append(" ");
+        
         serialize(klass.getKind(), sb);
         sb.append(" ");
         
@@ -221,6 +228,9 @@ public class ReadClassDataTest extends UsefulTestCase {
     
     
     private void serialize(FunctionDescriptor fun, StringBuilder sb) {
+        serialize(fun.getModality(), sb);
+        sb.append(" ");
+
         sb.append("fun ");
         if (!fun.getTypeParameters().isEmpty()) {
             sb.append("<");
@@ -256,11 +266,13 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
     
     private void serialize(ValueParameterDescriptor valueParameter, StringBuilder sb) {
+        if (valueParameter.getVarargElementType() != null) {
+            sb.append("vararg ");
+        }
         sb.append(valueParameter.getName());
         sb.append(": ");
         if (valueParameter.getVarargElementType() != null) {
-            sb.append("vararg ");
-            serialize(valueParameter.getVarargElementType());
+            serialize(valueParameter.getVarargElementType(), sb);
         } else {
             serialize(valueParameter.getOutType(), sb);
         }
@@ -276,7 +288,11 @@ public class ReadClassDataTest extends UsefulTestCase {
             sb.append(variance);
             sb.append(' ');
         }
-    } 
+    }
+    
+    private void serialize(Modality modality, StringBuilder sb) {
+        sb.append(modality.name().toLowerCase());
+    }
     
     private void serialize(JetType type, StringBuilder sb) {
         serialize(type.getConstructor().getDeclarationDescriptor(), sb);

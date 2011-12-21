@@ -2,7 +2,7 @@ fun foo(u : Unit) : Int = 1
 
 fun test() : Int {
     foo(1)
-    val a : fun() : Unit = {
+    val a : () -> Unit = {
         foo(1)
     }
     return 1 - "1"

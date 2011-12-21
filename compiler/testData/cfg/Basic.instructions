@@ -121,17 +121,17 @@ sink:
     <SINK>         NEXT:[]               PREV:[<END>]
 =====================
 == flfun ==
-fun flfun(f : fun () : Any) : Unit {}
+fun flfun(f : () -> Any) : Unit {}
 ---------------------
 l0:
-    <START>                NEXT:[v(f : fun () : Any)]    PREV:[]
-    v(f : fun () : Any)    NEXT:[w(f)]                   PREV:[<START>]
-    w(f)                   NEXT:[read (Unit)]            PREV:[v(f : fun () : Any)]
-    read (Unit)            NEXT:[<END>]                  PREV:[w(f)]
+    <START>             NEXT:[v(f : () -> Any)]    PREV:[]
+    v(f : () -> Any)    NEXT:[w(f)]                PREV:[<START>]
+    w(f)                NEXT:[read (Unit)]         PREV:[v(f : () -> Any)]
+    read (Unit)         NEXT:[<END>]               PREV:[w(f)]
 l1:
-    <END>                  NEXT:[<SINK>]                 PREV:[read (Unit)]
+    <END>               NEXT:[<SINK>]              PREV:[read (Unit)]
 error:
-    <ERROR>                NEXT:[]                       PREV:[]
+    <ERROR>             NEXT:[]                    PREV:[]
 sink:
-    <SINK>                 NEXT:[]                       PREV:[<END>]
+    <SINK>              NEXT:[]                    PREV:[<END>]
 =====================

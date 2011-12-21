@@ -163,6 +163,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 
 "namespace"  { return JetTokens.NAMESPACE_KEYWORD ;}
 "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
+"package"    { return JetTokens.NAMESPACE_KEYWORD ;}
 "return"     { return JetTokens.RETURN_KEYWORD ;}
 "object"     { return JetTokens.OBJECT_KEYWORD ;}
 "while"      { return JetTokens.WHILE_KEYWORD ;}

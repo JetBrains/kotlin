@@ -1,8 +1,8 @@
-namespace unresolved
+package unresolved
 
 fun testGenericArgumentsCount() {
-    val <warning>p1</warning>: Tuple2<error><Int></error> = (2, 2)
-    val <warning>p2</warning>: <error>Tuple2</error> = (2, 2)
+    val <warning>p1</warning>: Tuple2<error><Int></error> = #(2, 2)
+    val <warning>p2</warning>: <error>Tuple2</error> = #(2, 2)
 }
 
 fun testUnresolved() {
@@ -16,8 +16,8 @@ fun testUnresolved() {
     s.<error>foo</error>()
 
     when(<error>a</error>) {
-        is Int => <error>a</error>
-        is String => <error>a</error>
+        is Int -> <error>a</error>
+        is String -> <error>a</error>
     }
 
     //TODO

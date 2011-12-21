@@ -16,11 +16,9 @@ JetFile: Comparison.jet
         PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -37,7 +35,7 @@ JetFile: Comparison.jet
                     PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -255,11 +253,9 @@ JetFile: Comparison.jet
         PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -276,7 +272,7 @@ JetFile: Comparison.jet
                     PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -343,7 +339,7 @@ JetFile: Comparison.jet
               PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(DOUBLE_ARROW)('=>')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace('\n  ')
           BLOCK
             PROPERTY

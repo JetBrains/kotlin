@@ -1,6 +1,6 @@
 //KT-629 Assignments are parsed as expressions.
 
-namespace kt629
+package kt629
 
 class A() {
     var p = "yeah"

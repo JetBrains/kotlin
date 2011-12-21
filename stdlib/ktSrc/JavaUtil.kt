@@ -1,4 +1,4 @@
-namespace std.util
+package std.util
 
 import java.util.*
 
@@ -20,7 +20,7 @@ inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(LinkedLi
 inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
 
 /** Returns true if any elements in the collection match the given predicate */
-inline fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
+inline fun <T> java.lang.Iterable<T>.any(predicate: (T)-> Boolean) : Boolean {
   for (elem in this) {
     if (predicate(elem)) {
       return true
@@ -30,7 +30,7 @@ inline fun <T> java.lang.Iterable<T>.any(predicate: fun(T): Boolean) : Boolean {
 }
 
 /** Returns true if all elements in the collection match the given predicate */
-inline fun <T> java.lang.Iterable<T>.all(predicate: fun(T): Boolean) : Boolean {
+inline fun <T> java.lang.Iterable<T>.all(predicate: (T)-> Boolean) : Boolean {
   for (elem in this) {
     if (!predicate(elem)) {
       return false
@@ -40,7 +40,7 @@ inline fun <T> java.lang.Iterable<T>.all(predicate: fun(T): Boolean) : Boolean {
 }
 
 /** Returns the first item in the collection which matches the given predicate or null if none matched */
-inline fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
+inline fun <T> java.lang.Iterable<T>.find(predicate: (T)-> Boolean) : T? {
   for (elem in this) {
     if (predicate(elem))
       return elem
@@ -49,7 +49,7 @@ inline fun <T> java.lang.Iterable<T>.find(predicate: fun(T): Boolean) : T? {
 }
 
 /** Returns a new collection containing all elements in this collection which match the given predicate */
-inline fun <T> java.lang.Iterable<T>.filter(result: Collection<T> = ArrayList<T>(), predicate: fun(T): Boolean) : Collection<T> {
+inline fun <T> java.lang.Iterable<T>.filter(result: Collection<T> = ArrayList<T>(), predicate: (T)-> Boolean) : Collection<T> {
   for (elem in this) {
     if (predicate(elem))
       result.add(elem)
@@ -61,7 +61,7 @@ inline fun <T> java.lang.Iterable<T>.filter(result: Collection<T> = ArrayList<T>
   * Returns the result of transforming each item in the collection to a one or more values which
   * are concatenated together into a single collection
   */
-inline fun <T, out R> java.lang.Iterable<T>.flatMap(result: Collection<R> = ArrayList<R>(), transform: fun(T): Collection<R>) : Collection<R> {
+inline fun <T, out R> java.lang.Iterable<T>.flatMap(result: Collection<R> = ArrayList<R>(), transform: (T)-> Collection<R>) : Collection<R> {
   for (elem in this) {
     val coll = transform(elem)
     if (coll != null) {
@@ -74,7 +74,7 @@ inline fun <T, out R> java.lang.Iterable<T>.flatMap(result: Collection<R> = Arra
 }
 
 /** Performs the given operation on each element inside the collection */
-inline fun <T> java.lang.Iterable<T>.foreach(operation: fun(element: T) : Unit) {
+inline fun <T> java.lang.Iterable<T>.foreach(operation: (element: T) -> Unit) {
   for (elem in this)
     operation(elem)
 }
@@ -95,14 +95,14 @@ inline fun <T> java.lang.Iterable<T>.join(separator: String, prefix: String = ""
 }
 
 /** Returns a new collection containing the results of applying the given function to each element in this collection */
-inline fun <T, R> java.lang.Iterable<T>.map(result: Collection<R> = ArrayList<R>(), transform : fun(T) : R) : Collection<R> {
+inline fun <T, R> java.lang.Iterable<T>.map(result: Collection<R> = ArrayList<R>(), transform : (T) -> R) : Collection<R> {
   for (item in this)
     result.add(transform(item))
   return result
 }
 
 /** Returns a new collection containing the results of applying the given function to each element in this collection */
-inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<R>(this.size), transform : fun(T) : R) : Collection<R> {
+inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<R>(this.size), transform : (T) -> R) : Collection<R> {
   for (item in this)
     result.add(transform(item))
   return result
@@ -211,7 +211,7 @@ val Map<*,*>.empty : Boolean
 */
 
 /** Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key */
-inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: fun(): V) : V {
+inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
   val current = this.get(key)
   if (current != null) {
     return current
@@ -221,7 +221,7 @@ inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: fun(): V) : 
 }
 
 /** Returns the value for the given key or the result of the defaultValue function is put into the map for the given value and returned */
-inline fun <K,V> java.util.Map<K,V>.getOrElseUpdate(key: K, defaultValue: fun(): V) : V {
+inline fun <K,V> java.util.Map<K,V>.getOrElseUpdate(key: K, defaultValue: ()-> V) : V {
   val current = this.get(key)
   if (current != null) {
     return current

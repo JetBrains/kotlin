@@ -2,7 +2,7 @@
 
 import html.* // Must not be an error
 
-namespace html {
+package html {
 
   abstract class Factory<T> {
     fun create() : T? = null

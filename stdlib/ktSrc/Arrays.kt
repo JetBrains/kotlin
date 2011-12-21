@@ -1,4 +1,4 @@
-namespace std
+package std
 
 import java.io.ByteArrayInputStream
 

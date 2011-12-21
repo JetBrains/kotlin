@@ -244,14 +244,13 @@ JetFile: NewlinesInParentheses.jet
               DECOMPOSER_PATTERN
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace(' ')
-                PsiElement(AT)('@')
-                PsiWhiteSpace('\n    ')
+                PsiWhiteSpace(' \n    ')
                 DECOMPOSER_ARGUMENT_LIST
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -269,7 +268,7 @@ JetFile: NewlinesInParentheses.jet
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -281,14 +280,13 @@ JetFile: NewlinesInParentheses.jet
               DECOMPOSER_PATTERN
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace('\n    ')
-                PsiElement(AT)('@')
-                PsiWhiteSpace(' ')
+                PsiWhiteSpace('\n     ')
                 DECOMPOSER_ARGUMENT_LIST
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -306,7 +304,7 @@ JetFile: NewlinesInParentheses.jet
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -322,7 +320,7 @@ JetFile: NewlinesInParentheses.jet
                     PsiElement(LPAR)('(')
                     PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -343,14 +341,13 @@ JetFile: NewlinesInParentheses.jet
             OPERATION_REFERENCE
               PsiElement(is)('is')
             PsiWhiteSpace(' ')
-            TYPE_PATTERN
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-        PsiWhiteSpace('\n  ')
-        TUPLE
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
+            DECOMPOSER_PATTERN
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
+              PsiWhiteSpace('\n  ')
+              DECOMPOSER_ARGUMENT_LIST
+                PsiElement(HASH)('#')
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

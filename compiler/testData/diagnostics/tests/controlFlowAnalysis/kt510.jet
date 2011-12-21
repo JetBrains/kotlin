@@ -1,6 +1,6 @@
 //KT-510 `this.` allows initialization without backing field
 
-namespace kt510
+package kt510
 
 public open class Identifier1() {
     var field : Boolean

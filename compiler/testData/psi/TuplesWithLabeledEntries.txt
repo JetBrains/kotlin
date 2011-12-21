@@ -10,6 +10,7 @@ JetFile: TuplesWithLabeledEntries.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TUPLE
+        PsiElement(HASH)('#')
         PsiElement(LPAR)('(')
         LABELED_TUPLE_ENTRY
           PsiElement(IDENTIFIER)('a')
@@ -28,6 +29,7 @@ JetFile: TuplesWithLabeledEntries.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TUPLE
+        PsiElement(HASH)('#')
         PsiElement(LPAR)('(')
         LABELED_TUPLE_ENTRY
           PsiElement(IDENTIFIER)('a')

@@ -1,8 +1,8 @@
 fun set(<!UNUSED_PARAMETER!>key<!> : String, <!UNUSED_PARAMETER!>value<!> : String) {
   val a : String? = ""
   when (a) {
-    "" => a<!UNSAFE_CALL!>.<!>get(0)
-    is String, is Any => a.compareTo("")
-    else => a.toString()
+    "" -> a<!UNSAFE_CALL!>.<!>get(0)
+    is String, is Any -> a.compareTo("")
+    else -> a.toString()
   }
 }

@@ -1,5 +1,5 @@
 fun Int?.optint() : Unit {}
-val Int?.optval : Unit = ()
+val Int?.optval : Unit = #()
 
 fun <T, E> T.foo(<warning>x</warning> : E, y : A) : T   {
   y.plus(1)

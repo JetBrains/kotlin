@@ -1,7 +1,7 @@
 // KT-362 Don't allow autocasts on vals that are not internal
-namespace example;
+package example;
 
-namespace test {
+package test {
     public class Public() {
         public val public : Int? = 1;
         protected val protected : Int? = 1;

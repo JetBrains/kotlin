@@ -4,7 +4,7 @@ JetFile: NamespaceBlockFirst.jet
       <empty list>
     NAMESPACE
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foobar')
       PsiWhiteSpace(' ')

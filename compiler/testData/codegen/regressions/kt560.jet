@@ -1,4 +1,4 @@
-namespace while_bug_1
+package while_bug_1
 
 import java.io.*
 

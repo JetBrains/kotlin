@@ -1,6 +1,6 @@
 //KT-455 Do not repeat errors in definite assignment checks
 
-namespace kt455
+package kt455
 
 fun foo() {
     val a: Int

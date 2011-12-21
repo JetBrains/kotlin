@@ -74,19 +74,19 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testWildcardPattern() throws Exception {
-        loadText("fun foo(x: String) = when(x) { is * => \"something\" }");
+        loadText("fun foo(x: String) = when(x) { is * -> \"something\" }");
         Method foo = generateFunction();
         assertEquals("something", foo.invoke(null, ""));
     }
 
     public void testNoReturnType() throws Exception {
-        loadText("fun foo(x: String) = when(x) { is * => \"x\" }");
+        loadText("fun foo(x: String) = when(x) { is * -> \"x\" }");
         Method foo = generateFunction();
         assertEquals("x", foo.invoke(null, ""));
     }
 
     public void testTuplePattern() throws Exception {
-        loadText("fun foo(x: (Any, Any)) = when(x) { is (1,2) => \"one,two\"; else => \"something\" }");
+        loadText("fun foo(x: #(Any, Any)) = when(x) { is #(1,2) -> \"one,two\"; else -> \"something\" }");
         Method foo = generateFunction();
         final Object result;
         try {
@@ -118,14 +118,14 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testNames() throws Exception {
-        loadText("fun foo(x: (Any, Any)) = when(x) { is (val a is String, *) => a; else => \"something\" }");
+        loadText("fun foo(x: #(Any, Any)) = when(x) { is #(val a is String, *) -> a; else -> \"something\" }");
         Method foo = generateFunction();
         assertEquals("JetBrains", foo.invoke(null, new Tuple2<String, String>(null, "JetBrains", "s.r.o.")));
         assertEquals("something", foo.invoke(null, new Tuple2<Integer, Integer>(null, 1, 2)));
     }
 
     public void testMultipleConditions() throws Exception {
-        loadText("fun foo(x: Any) = when(x) { is 0, 1 => \"bit\"; else => \"something\" }");
+        loadText("fun foo(x: Any) = when(x) { is 0, 1 -> \"bit\"; else -> \"something\" }");
         Method foo = generateFunction();
         assertEquals("bit", foo.invoke(null, 0));
         assertEquals("bit", foo.invoke(null, 1));

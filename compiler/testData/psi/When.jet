@@ -1,7 +1,7 @@
 fun foo() {
   return false
 
-  fun a() = {when(x) { is a => b }}
+  fun a() = {when(x) { is a -> b }}
 
   // foo
   fun b() {}
@@ -13,20 +13,20 @@ fun foo() {
                           
   }
   when (e) {
-    is a => foo
+    is a -> foo
   }
   when (e) {
-    is Tree @ (a, b) => foo
-    is null => foo
-    is 1 => foo
-    is A.b => foo
-    is 1.0 => foo
-    is 'c' => foo
-    is "sadfsa" => foo
-    is """ddd""" => foo
-    is * => foo
-    is val a is Foo => foo
-    is (val a is Foo, b) => foo
+    is Tree  #(a, b) -> foo
+    is null -> foo
+    is 1 -> foo
+    is A.b -> foo
+    is 1.0 -> foo
+    is 'c' -> foo
+    is "sadfsa" -> foo
+    is """ddd""" -> foo
+    is * -> foo
+    is val a is Foo -> foo
+    is #(val a is Foo, b) -> foo
   }
   when (when(when (e) {
 
@@ -39,45 +39,45 @@ fun foo() {
 
 fun foo() {
   when (val a = e) {
-    is Tree => c
-    is Tree @ (null, val r) => c
-    is a @ (a, b) => c
-    is a @ (a, b) => c
-    is a.a @ (a, b) => c
-    is a.a @ (foo = a, bar = b) => c
-    is namespace.a.a @ (a, b) => c
-    is a @ (val a is T, b) => c
-    is a @ (b, 1) => c
-    in 1..2 => dsf
-    !in 2 => sd
-    !is t => d
-    is fun (foo) : Bar => fgpp
-    is (1, val a is Foo, *, Foo, bar) => d
-    is (Foo, val a in 1..2, *, val _ !is Foo, val bar is foo.bar<a> @ (a)) => d
-    is (Int, Int) => 2
-    is val a : Foo => 2
-    else => foo
+    is Tree -> c
+    is Tree  #(null, val r) -> c
+    is a  #(a, b) -> c
+    is a  #(a, b) -> c
+    is a.a  #(a, b) -> c
+    is a.a  #(foo = a, bar = b) -> c
+    is namespace.a.a  #(a, b) -> c
+    is a  #(val a is T, b) -> c
+    is a  #(b, 1) -> c
+    in 1..2 -> dsf
+    !in 2 -> sd
+    !is t -> d
+    is  (foo) -> Bar -> fgpp
+    is #(1, val a is Foo, *, Foo, bar) -> d
+    is #(Foo, val a in 1..2, *, val _ !is Foo, val bar is foo.bar<a>  #(a)) -> d
+    is #(Int, Int) -> 2
+    is val a : Foo -> 2
+    else -> foo
   }
 }
 
 fun foo() {
   when (val a = e) {
     is Tree,
-    is Tree @ (null, val r),
-    is a @ (a, b) => c
+    is Tree  #(null, val r),
+    is a  #(a, b) -> c
     1, foo(), bar, 2 + 3,
-    is a @ (a, b) => c
-    is a.a @ (val b, b) => c
+    is a  #(a, b) -> c
+    is a.a  #(val b, b) -> c
   }
 }
 
 fun whenWithoutCondition(i : Int) {
   val j = 12
   when {
-    3 => -1
-    i == 3 => -1
-    j < i, j == i => -1
-    i is Int => 1
-    else => 2
+    3 -> -1
+    i == 3 -> -1
+    j < i, j == i -> -1
+    i is Int -> 1
+    else -> 2
   }
 }

@@ -6,7 +6,7 @@ JetFile: FileStart_ERR.jet
       PsiElement(DIV)('/')
     NAMESPACE
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')

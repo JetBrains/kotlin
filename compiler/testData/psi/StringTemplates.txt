@@ -64,16 +64,14 @@ JetFile: StringTemplates.jet
               PsiElement(IDENTIFIER)('f')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     NULLABLE_TYPE
@@ -105,16 +103,14 @@ JetFile: StringTemplates.jet
               PsiElement(IDENTIFIER)('f')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     NULLABLE_TYPE

@@ -16,11 +16,15 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
+    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS);
+    private final Stack<Boolean> joinComplexTokens = new Stack<Boolean>();
+
     private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
 
     public SemanticWhitespaceAwarePsiBuilderImpl(final PsiBuilder delegate) {
         super(delegate);
         newlinesEnabled.push(true);
+        joinComplexTokens.push(true);
     }
 
     @Override
@@ -75,22 +79,28 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
         newlinesEnabled.pop();
     }
 
-    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS);
-    private boolean joinComplexTokens = true;
+    private boolean joinComplexTokens() {
+        return joinComplexTokens.peek();
+    }
+
+    @Override
+    public void restoreJoiningComplexTokensState() {
+        joinComplexTokens.pop();
+    }
 
     @Override
     public void enableJoiningComplexTokens() {
-        joinComplexTokens = true;
+        joinComplexTokens.push(true);
     }
 
     @Override
     public void disableJoiningComplexTokens() {
-        joinComplexTokens = false;
+        joinComplexTokens.push(false);
     }
 
     @Override
     public IElementType getTokenType() {
-        if (!joinComplexTokens) return super.getTokenType();
+        if (!joinComplexTokens()) return super.getTokenType();
         return getJoinedTokenType(super.getTokenType(), 1);
     }
 
@@ -105,7 +115,7 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     @Override
     public void advanceLexer() {
-        if (!joinComplexTokens) {
+        if (!joinComplexTokens()) {
             super.advanceLexer();
             return;
         }
@@ -123,7 +133,7 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     @Override
     public String getTokenText() {
-        if (!joinComplexTokens) return super.getTokenText();
+        if (!joinComplexTokens()) return super.getTokenText();
         IElementType tokenType = getTokenType();
         if (complexTokens.contains(tokenType)) {
                 if (tokenType == ELVIS) return "?:";
@@ -134,7 +144,7 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     @Override
     public IElementType lookAhead(int steps) {
-        if (!joinComplexTokens) return super.lookAhead(steps);
+        if (!joinComplexTokens()) return super.lookAhead(steps);
 
         if (complexTokens.contains(getTokenType())) {
             return super.lookAhead(steps + 1);

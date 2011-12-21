@@ -1,6 +1,6 @@
 // +JDK
 
-namespace kt_250_617_10
+package kt_250_617_10
 
 import java.util.ArrayList
 import java.util.HashMap

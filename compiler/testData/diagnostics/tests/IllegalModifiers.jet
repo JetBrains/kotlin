@@ -1,4 +1,4 @@
-namespace illegal_modifiers
+package illegal_modifiers
 
 abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()

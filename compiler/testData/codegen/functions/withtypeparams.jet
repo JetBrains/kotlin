@@ -1,5 +1,5 @@
 class X<T> () {
-    fun getTypeChecker() = { (a : Any) => a is T }
+    fun getTypeChecker() = { (a : Any) -> a is T }
 }
 
 fun box() : String {

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 class List<T>(len: Int) {
   val a : Array<T?> = Array<T?>(len)

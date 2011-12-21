@@ -1,22 +1,22 @@
 // KT-355 Resolve imports after all symbols are built
 
-namespace a {
+package a {
   import b.*
   val x : X = X()
 }
 
-namespace b {
+package b {
   class X() {
 
   }
 }
 
-namespace c {
+package c {
   import d.X
   val x : X = X()
 }
 
-namespace d {
+package d {
   class X() {
 
   }

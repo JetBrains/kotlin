@@ -1,6 +1,6 @@
-namespace root
+package root
 
-namespace a {
+package a {
 
 }
 

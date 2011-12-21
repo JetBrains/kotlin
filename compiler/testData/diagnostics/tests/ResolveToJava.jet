@@ -49,6 +49,6 @@ fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
 }
 
 
-namespace xxx {
+package xxx {
   import java.lang.Class;
 }

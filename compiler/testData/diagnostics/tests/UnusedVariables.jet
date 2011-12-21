@@ -1,4 +1,4 @@
-namespace unused_variables
+package unused_variables
 
 fun testSimpleCases() {
     var i = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>2<!>
@@ -103,11 +103,11 @@ fun testInnerFunctions() {
 
 fun testFunctionLiterals() {
     var x = 1
-    var <!UNUSED_VARIABLE!>fl<!> = { (): Int =>
+    var <!UNUSED_VARIABLE!>fl<!> = { (): Int ->
         x
     }
     var y = 2
-    var <!UNUSED_VARIABLE!>fl1<!> = { (): Unit =>
+    var <!UNUSED_VARIABLE!>fl1<!> = { (): Unit ->
         doSmth(y)
     }
 }

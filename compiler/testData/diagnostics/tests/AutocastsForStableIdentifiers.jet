@@ -1,6 +1,6 @@
-namespace example;
+package example;
 
-namespace ns {
+package ns {
     val y : Any? = 2
 }
 

@@ -22,6 +22,7 @@ JetFile: SimpleExpressions.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           TUPLE
+            PsiElement(HASH)('#')
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -325,6 +326,7 @@ JetFile: SimpleExpressions.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           TUPLE
+            PsiElement(HASH)('#')
             PsiElement(LPAR)('(')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('10')

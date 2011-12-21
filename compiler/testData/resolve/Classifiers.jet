@@ -8,7 +8,7 @@ namespace qualified_this {
         ~xx~val Int.xx = `xx`this : Int
         ~xx()~fun Int.xx() {
             `xx()`this : Int
-            val a = {Int.() => `xx()`this`xx()`@xx + this}
+            val a = {Int.() -> `xx()`this`xx()`@xx + this}
 
         }
       }

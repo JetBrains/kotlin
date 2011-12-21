@@ -1,6 +1,6 @@
-namespace kotlin
+package kotlin
 
-namespace modules {
+package modules {
 
 import java.util.*
 import jet.modules.*
@@ -8,7 +8,7 @@ import jet.modules.*
 class ModuleSetBuilder(): IModuleSetBuilder {
     val modules: ArrayList<IModuleBuilder?> = ArrayList<IModuleBuilder?>()
 
-    fun module(name: String, callback: fun ModuleBuilder.()) {
+    fun module(name: String, callback:  ModuleBuilder.() -> Unit) {
         val builder = ModuleBuilder(name)
         builder.callback()
         modules.add(builder)

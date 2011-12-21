@@ -1,8 +1,8 @@
 // +JDK
 
-namespace foobar
+package foobar
 
-namespace a {
+package a {
     import java.*
 
     val a : util.List<Int>? = null
@@ -14,7 +14,7 @@ abstract class Foo<T>() {
     abstract val x : T<Int>
 }
 
-namespace a {
+package a {
     import java.util.*
 
     val b : List<Int>? = a

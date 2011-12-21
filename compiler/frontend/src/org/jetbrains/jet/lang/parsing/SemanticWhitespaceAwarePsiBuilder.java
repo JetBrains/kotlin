@@ -13,6 +13,7 @@ public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
     void enableNewlines();
     void restoreNewlinesState();
 
+    void restoreJoiningComplexTokensState();
     void enableJoiningComplexTokens();
     void disableJoiningComplexTokens();
 }

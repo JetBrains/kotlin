@@ -1,4 +1,4 @@
 fun isString(x: Any) = when(x) {
-  is String => "string"
-  else => "something"
+  is String -> "string"
+  else -> "something"
 }

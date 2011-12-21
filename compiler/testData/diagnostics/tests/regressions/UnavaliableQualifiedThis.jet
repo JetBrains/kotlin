@@ -2,7 +2,7 @@ trait Iterator<out T> {
  fun next() : T
  val hasNext : Boolean
 
- fun <R> map(transform: fun(element: T) : R) : Iterator<R> =
+ fun <R> map(transform: (element: T) -> R) : Iterator<R> =
     object : Iterator<R> {
       override fun next() : R = transform(<!NO_THIS!>this@map<!>.next())
 

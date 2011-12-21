@@ -94,7 +94,10 @@ public class JavaPackageScope extends JetScopeImpl {
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
-                        allDescriptors.add(descriptorResolver.resolveClass(psiClass));
+                        ClassDescriptor classDescriptor = descriptorResolver.resolveClass(psiClass);
+                        if (classDescriptor != null) {
+                            allDescriptors.add(classDescriptor);
+                        }
                     }
                 }
             }

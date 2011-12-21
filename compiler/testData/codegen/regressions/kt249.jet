@@ -1,4 +1,4 @@
-namespace x
+package x
 
 class Outer() {
     class object {

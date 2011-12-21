@@ -1,6 +1,6 @@
 // KT-302 Report an error when inheriting many implementations of the same member
 
-namespace kt302
+package kt302
 
 trait A {
     open fun foo() {}

@@ -1,4 +1,4 @@
-namespace qualified_expressions
+package qualified_expressions
 
 fun test(s: String?) {
    val <!UNUSED_VARIABLE!>a<!>: Int = <!TYPE_MISMATCH!>s?.length<!>

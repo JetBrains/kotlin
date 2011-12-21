@@ -37,7 +37,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, FUN_KEYWORD, LPAR, CAPITALIZED_THIS_KEYWORD);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, FUN_KEYWORD, LPAR, CAPITALIZED_THIS_KEYWORD, HASH);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
 
     public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
@@ -847,7 +847,7 @@ public class JetParsing extends AbstractJetParsing {
 
         parseReceiverType("property", propertyNameFollow, lastDot);
 
-        myBuilder.enableJoiningComplexTokens();
+        myBuilder.restoreJoiningComplexTokensState();
 
         if (at(COLON)) {
             advance(); // COLON
@@ -985,7 +985,7 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.disableJoiningComplexTokens();
         int lastDot = findLastBefore(RECEIVER_TYPE_TERMINATORS, TokenSet.create(LPAR), true);
         parseReceiverType("function", TokenSet.create(LT, LPAR, COLON, EQ), lastDot);
-        myBuilder.enableJoiningComplexTokens();
+        myBuilder.restoreJoiningComplexTokensState();
 
         TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
 
@@ -1281,17 +1281,54 @@ public class JetParsing extends AbstractJetParsing {
      *   : typeDescriptor "?"
      */
     public void parseTypeRef() {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents();
+        typeRefMarker.done(TYPE_REFERENCE);
+    }
+
+    private PsiBuilder.Marker parseTypeRefContents() {
+        // Disabling token merge is required for cases like
+        //    Int?.(Foo) -> Bar
+        // we don't support this case now
+//        myBuilder.disableJoiningComplexTokens();
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(false);
 
         if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
             parseUserType();
         }
-        else if (at(FUN_KEYWORD)) {
-            parseFunctionType();
+        else if (at(HASH)) {
+            parseTupleType();
         }
         else if (at(LPAR)) {
-            parseTupleType();
+            PsiBuilder.Marker functionOrParenthesizedType = mark();
+
+            // This may be a function parameter list or just a prenthesized type
+            advance(); // LPAR
+            parseTypeRefContents().drop(); // parenthesized types, no reference element around it is needed
+
+            if (at(RPAR)) {
+                advance(); // RPAR
+                if (at(ARROW)) {
+                    // It's a function type with one parameter specified
+                    //    (A) -> B
+                    functionOrParenthesizedType.rollbackTo();
+                    parseFunctionType();
+                }
+                else {
+                    // It's a parenthesized type
+                    //    (A)
+                    functionOrParenthesizedType.drop();
+                }
+            }
+            else {
+                // This must be a function type
+                //   (A, B) -> C
+                // or
+                //   (a : A) -> C
+                functionOrParenthesizedType.rollbackTo();
+                parseFunctionType();
+            }
+
         }
         else if (at(CAPITALIZED_THIS_KEYWORD)) {
             parseSelfType();
@@ -1299,7 +1336,7 @@ public class JetParsing extends AbstractJetParsing {
         else {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
-                            TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
+                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
         }
 
         while (at(QUEST)) {
@@ -1310,20 +1347,29 @@ public class JetParsing extends AbstractJetParsing {
 
             typeRefMarker = precede;
         }
-        typeRefMarker.done(TYPE_REFERENCE);
-    }
 
-    /*
-     * selfType
-     *   : "This"
-     *   ;
-     */
-    private void parseSelfType() {
-        assert _at(CAPITALIZED_THIS_KEYWORD);
+        if (at(DOT)) {
+            // This is a receiver for a function type
+            //  A.(B) -> C
+            //   ^
 
-        PsiBuilder.Marker type = mark();
-        advance(); // CAPITALIZED_THIS_KEYWORD
-        type.done(SELF_TYPE);
+            PsiBuilder.Marker precede = typeRefMarker.precede();
+            typeRefMarker.done(TYPE_REFERENCE);
+
+            advance(); // DOT
+            
+            if (at(LPAR)) {
+                parseFunctionTypeContents().drop();
+            }
+            else {
+                error("Expecting function type");
+            }
+            typeRefMarker = precede.precede();
+
+            precede.done(FUNCTION_TYPE);
+        }
+//        myBuilder.restoreJoiningComplexTokensState();
+        return typeRefMarker;
     }
 
     /*
@@ -1341,11 +1387,16 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker reference = mark();
         while (true) {
-            expect(IDENTIFIER, "Type name expected", TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW));
+            expect(IDENTIFIER, "Expecting type name", TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW));
             reference.done(REFERENCE_EXPRESSION);
 
             parseTypeArgumentList(-1);
             if (!at(DOT)) {
+                break;
+            }
+            if (lookahead(1) == LPAR) {
+                // This may be a receiver for a function type
+                //   Int.(Int) -> Int
                 break;
             }
 
@@ -1358,6 +1409,19 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         userType.done(USER_TYPE);
+    }
+
+    /*
+     * selfType
+     *   : "This"
+     *   ;
+     */
+    private void parseSelfType() {
+        assert _at(CAPITALIZED_THIS_KEYWORD);
+
+        PsiBuilder.Marker type = mark();
+        advance(); // CAPITALIZED_THIS_KEYWORD
+        type.done(SELF_TYPE);
     }
 
     /*
@@ -1410,18 +1474,18 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * tupleType
-     *   : "(" type{","}? ")"
-     *   : "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
+     *   : "#" "(" type{","}? ")"
+     *   : "#" "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
      *   ;
      */
     private void parseTupleType() {
-        // TODO : prohibit (a)
-        assert _at(LPAR);
+        assert _at(HASH);
 
         PsiBuilder.Marker tuple = mark();
 
         myBuilder.disableNewlines();
-        advance(); // LPAR
+        advance(); // HASH
+        expect(LPAR, "Expecting a tuple type in the form of '#(...)");
 
         if (!at(RPAR)) {
             while (true) {
@@ -1456,32 +1520,38 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionType
-     *   : "fun" (type ".")? "(" (parameter | modifiers type){","} ")" (":" type)? // Unit by default
+     *   : (type ".")? "(" (parameter | modifiers type){","} ")" "->" type?
      *   ;
      */
     private void parseFunctionType() {
-        assert _at(FUN_KEYWORD);
+        parseFunctionTypeContents().done(FUNCTION_TYPE);
+    }
 
+    private PsiBuilder.Marker parseFunctionTypeContents() {
+//        assert _at(LPAR) : tt();
+        if (!_at(LPAR))
+            System.out.println(myBuilder.getTokenText());
         PsiBuilder.Marker functionType = mark();
 
-        advance(); // FUN_KEYWORD
-
-        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(COLON), false);
-        if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
-            // TODO : -1 is a hack?
-            createTruncatedBuilder(lastLPar - 1).parseTypeRef();
-            advance(); // DOT
-        }
+//        advance(); // LPAR
+//
+//        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(COLON), false);
+//        if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
+//            TODO : -1 is a hack?
+//            createTruncatedBuilder(lastLPar - 1).parseTypeRef();
+//            advance(); // DOT
+//        }
 
         parseValueParameterList(true, TokenSet.EMPTY);
 
-        if (at(COLON)) {
-            advance(); // COLON // expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
+//        if (at(COLON)) {
+//            advance(); // COLON // expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
 
-            parseTypeRef();
-        }
+        expect(ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST);
+        parseTypeRef();
+//        }
 
-        functionType.done(FUNCTION_TYPE);
+        return functionType;//.done(FUNCTION_TYPE);
     }
 
     /*

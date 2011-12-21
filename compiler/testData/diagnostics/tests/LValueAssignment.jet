@@ -1,4 +1,4 @@
-namespace lvalue_assignment
+package lvalue_assignment
 
 open class B() {
     var b: Int = 2
@@ -38,7 +38,7 @@ class D() {
 
 fun cannotBe(var <!UNUSED_PARAMETER!>i<!>: Int) {
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
-    <!VARIABLE_EXPECTED!>()<!> = ();
+    <!VARIABLE_EXPECTED!>#()<!> = #();
 
     (<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as<!> Int<!>) = 34
     (<!VARIABLE_EXPECTED!>i is Int<!>) = false
