@@ -25,7 +25,7 @@ abstract class XXX() {
     abstract val a14 : n.B.(Int) -> Int
     abstract val a15 : Int? .(Int) -> Int
     abstract val a152 : (Int?).(Int) -> Int
-    abstract val a151 : Int?.(Int) -> Int
+//    abstract val a151 : Int?.(Int) -> Int
     abstract val a16 : (Int) -> (Int) -> Int
     abstract val a17 : ((Int) -> Int).(Int) -> Int
     abstract val a18 : (Int) -> ((Int) -> Int)
@@ -43,7 +43,7 @@ abstract class YYY() {
     abstract val a14 : n.B.(a : Int) -> Int
     abstract val a15 : Int? .(a : Int) -> Int
     abstract val a152 : (Int?).(a : Int) -> Int
-abstract val a151 : Int?.(a : Int) -> Int
+//abstract val a151 : Int?.(a : Int) -> Int
     abstract val a16 : (a : Int) -> (a : Int) -> Int
     abstract val a17 : ((a : Int) -> Int).(a : Int) -> Int
     abstract val a18 : (a : Int) -> ((a : Int) -> Int)

@@ -1286,7 +1286,10 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private PsiBuilder.Marker parseTypeRefContents() {
-        myBuilder.disableJoiningComplexTokens();
+        // Disabling token merge is required for cases like
+        //    Int?.(Foo) -> Bar
+        // we don't support this case now
+//        myBuilder.disableJoiningComplexTokens();
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(false);
 
@@ -1365,7 +1368,7 @@ public class JetParsing extends AbstractJetParsing {
 
             precede.done(FUNCTION_TYPE);
         }
-        myBuilder.restoreJoiningComplexTokensState();
+//        myBuilder.restoreJoiningComplexTokensState();
         return typeRefMarker;
     }
 
