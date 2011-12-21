@@ -2,25 +2,25 @@ fun foo() {
   when (e) {
   }
   when (e) {
-    is  => foo
-    !is  => foo
-    in  => foo
-    !in  => foo
-    => foo
+    is  -> foo
+    !is  -> foo
+    in  -> foo
+    !in  -> foo
+    -> foo
     else
   }
   when (e) {
-    is  =>
-    !is  =>
-    in  =>
-    !in  =>
-    !in  => ;
-    =>
+    is  ->
+    !is  ->
+    in  ->
+    !in  ->
+    !in  -> ;
+    ->
     else
-    else =>
+    else ->
   }
   when (e) {
-    is - => foo
-    is (, , 1, , ) => foo
+    is - -> foo
+    is #(, , 1, , ) -> foo
   }
 }

@@ -1,4 +1,4 @@
-namespace foo.bar.goo
+package foo.bar.goo
 
 import namespace.foo
 import foo

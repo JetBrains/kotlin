@@ -1,2 +1,2 @@
-/namespace foo.bar
+/package foo.bar
 import foo

@@ -10,11 +10,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -35,7 +33,7 @@ JetFile: FunctionTypes.jet
                     PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -50,11 +48,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -64,7 +60,7 @@ JetFile: FunctionTypes.jet
                     PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -79,16 +75,14 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             ANNOTATION
@@ -113,19 +107,18 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
@@ -137,11 +130,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -165,7 +156,7 @@ JetFile: FunctionTypes.jet
                     PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -180,11 +171,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -198,7 +187,7 @@ JetFile: FunctionTypes.jet
                     PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -213,16 +202,14 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -237,19 +224,18 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
@@ -261,11 +247,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -307,7 +291,7 @@ JetFile: FunctionTypes.jet
                     PsiElement(IDENTIFIER)('bar')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -322,11 +306,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -347,7 +329,7 @@ JetFile: FunctionTypes.jet
                     PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -362,11 +344,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -380,11 +360,9 @@ JetFile: FunctionTypes.jet
               PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -394,7 +372,7 @@ JetFile: FunctionTypes.jet
                             PsiElement(IDENTIFIER)('a')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -402,7 +380,7 @@ JetFile: FunctionTypes.jet
                         PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -417,11 +395,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -435,11 +411,9 @@ JetFile: FunctionTypes.jet
               PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -449,7 +423,7 @@ JetFile: FunctionTypes.jet
                             PsiElement(IDENTIFIER)('a')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -457,20 +431,19 @@ JetFile: FunctionTypes.jet
                         PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace('  ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 TUPLE_TYPE
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
@@ -482,11 +455,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -506,11 +477,9 @@ JetFile: FunctionTypes.jet
               PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -523,7 +492,7 @@ JetFile: FunctionTypes.jet
                             PsiElement(IDENTIFIER)('a')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -531,20 +500,19 @@ JetFile: FunctionTypes.jet
                         PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace('  ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 TUPLE_TYPE
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
@@ -556,11 +524,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -570,10 +536,11 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
@@ -585,11 +552,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -603,10 +568,11 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
@@ -618,11 +584,9 @@ JetFile: FunctionTypes.jet
       TYPE_PARAMETER_LIST
         <empty list>
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      PsiWhiteSpace('  ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -659,10 +623,11 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
@@ -676,20 +641,18 @@ JetFile: FunctionTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           TYPE_REFERENCE
+            ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace('  ')
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
@@ -698,10 +661,11 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
@@ -715,20 +679,18 @@ JetFile: FunctionTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           TYPE_REFERENCE
+            ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace('  ')
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -741,10 +703,11 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
@@ -758,20 +721,18 @@ JetFile: FunctionTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
         FUNCTION_TYPE
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
           TYPE_REFERENCE
+            ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace('  ')
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -807,9 +768,10 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             TUPLE_TYPE
+              PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')

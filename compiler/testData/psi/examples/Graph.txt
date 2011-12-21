@@ -469,11 +469,9 @@ JetFile: Graph.jet
               PsiElement(IDENTIFIER)('handler')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -483,7 +481,7 @@ JetFile: Graph.jet
                             PsiElement(IDENTIFIER)('V')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -612,11 +610,9 @@ JetFile: Graph.jet
                   PsiElement(IDENTIFIER)('handler')
                   PsiWhiteSpace(' ')
                   PsiElement(COLON)(':')
-                  PsiWhiteSpace(' ')
+                  PsiWhiteSpace('  ')
                   TYPE_REFERENCE
                     FUNCTION_TYPE
-                      PsiElement(fun)('fun')
-                      PsiWhiteSpace(' ')
                       VALUE_PARAMETER_LIST
                         PsiElement(LPAR)('(')
                         VALUE_PARAMETER
@@ -626,7 +622,7 @@ JetFile: Graph.jet
                                 PsiElement(IDENTIFIER)('V')
                         PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
-                      PsiElement(COLON)(':')
+                      PsiElement(ARROW)('->')
                       PsiWhiteSpace(' ')
                       TYPE_REFERENCE
                         USER_TYPE
@@ -784,11 +780,9 @@ JetFile: Graph.jet
               PsiElement(IDENTIFIER)('handler')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('  ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -798,7 +792,7 @@ JetFile: Graph.jet
                             PsiElement(IDENTIFIER)('V')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -935,7 +929,7 @@ JetFile: Graph.jet
                                       VALUE_PARAMETER
                                         PsiElement(IDENTIFIER)('n')
                                     PsiWhiteSpace(' ')
-                                    PsiElement(DOUBLE_ARROW)('=>')
+                                    PsiElement(ARROW)('->')
                                     PsiWhiteSpace('\n          ')
                                     BLOCK
                                       IF

@@ -57,6 +57,7 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
             TYPE_PROJECTION
               TYPE_REFERENCE
                 TUPLE_TYPE
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -90,6 +91,7 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
                 PsiWhiteSpace(' ')
                 THEN
                   TUPLE
+                    PsiElement(HASH)('#')
                     PsiElement(LPAR)('(')
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('1')
@@ -107,6 +109,7 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
                 PsiWhiteSpace(' ')
                 ELSE
                   TUPLE
+                    PsiElement(HASH)('#')
                     PsiElement(LPAR)('(')
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('2')

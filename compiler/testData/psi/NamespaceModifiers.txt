@@ -14,7 +14,7 @@ JetFile: NamespaceModifiers.jet
                     PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('name')
       PsiElement(SEMICOLON)(';')
@@ -32,7 +32,7 @@ JetFile: NamespaceModifiers.jet
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace(' ')
@@ -49,7 +49,7 @@ JetFile: NamespaceModifiers.jet
             PsiElement(private)('private')
           PsiWhiteSpace(' ')
           NAMESPACE_HEADER
-            PsiElement(namespace)('namespace')
+            PsiElement(namespace)('package')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')

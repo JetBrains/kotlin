@@ -50,7 +50,7 @@ JetFile: ShortAnnotations.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('zoo')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('aa')
     PsiWhiteSpace('\n\n')
@@ -105,7 +105,7 @@ JetFile: ShortAnnotations.jet
                   PsiElement(IDENTIFIER)('zoo')
       PsiWhiteSpace(' ')
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace(' ')
@@ -1134,7 +1134,7 @@ JetFile: ShortAnnotations.jet
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')

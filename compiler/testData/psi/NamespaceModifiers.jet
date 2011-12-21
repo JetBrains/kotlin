@@ -1,9 +1,9 @@
-public [a] namespace name;
+public [a] package name;
 
-[a] namespace a {
+[a] package a {
   val foo
 
-  private namespace b {
+  private package b {
 
   }
 }

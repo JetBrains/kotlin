@@ -3,8 +3,8 @@ fun demo() {
   val a = ""
   val asd = 1
   val bar = 5
-  fun map(f : fun () : Any?) : Int  = 1
-  fun buzz(f : fun () : Any?) : Int  = 1
+  fun map(f :  () -> Any?) : Int  = 1
+  fun buzz(f :  () -> Any?) : Int  = 1
   val sdf = 1
   val foo = 3;
     "$this must be$as$t"
