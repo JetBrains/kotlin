@@ -662,7 +662,7 @@ public class JavaDescriptorResolver {
         }
         
         JetType outType;
-        if (typeFromAnnotation != null) {
+        if (typeFromAnnotation != null && typeFromAnnotation.length() > 0) {
             outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation);
         } else {
             outType = semanticServices.getTypeTransformer().transformToType(psiType);
@@ -858,7 +858,7 @@ public class JavaDescriptorResolver {
             }
         }
         JetType transformedType;
-        if (returnTypeFromAnnotation != null) {
+        if (returnTypeFromAnnotation != null && returnTypeFromAnnotation.length() > 0) {
             transformedType = semanticServices.getTypeTransformer().transformToType(returnTypeFromAnnotation);
         } else {
             transformedType = semanticServices.getTypeTransformer().transformToType(returnType);

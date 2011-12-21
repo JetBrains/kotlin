@@ -134,7 +134,7 @@ public class FunctionCodegen {
                         av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
                     if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
-                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i));
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start));
                     }
                     av.visitEnd();
                 }

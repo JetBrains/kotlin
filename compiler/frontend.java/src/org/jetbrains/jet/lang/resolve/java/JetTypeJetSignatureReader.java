@@ -132,6 +132,12 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     }
 
     @Override
+    public void visitTypeVariable(String name, boolean nullable) {
+        // TODO: need a way to get type TypeParameterDescriptor by name
+        throw new IllegalStateException();
+    }
+
+    @Override
     public void visitEnd() {
         JetType jetType = new JetTypeImpl(
                 Collections.<AnnotationDescriptor>emptyList(),
