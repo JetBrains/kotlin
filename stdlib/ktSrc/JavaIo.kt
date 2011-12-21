@@ -67,6 +67,26 @@ namespace io {
 
     inline fun readLine() : String? = stdin.readLine()
 
+    /** Uses the given resource then closes it to ensure its closed again */
+    inline fun <T: Closeable, R> T.use(block: fun(T): R) : R {
+      var closed = false
+      try {
+        return block(this)
+      } catch (e: Exception) {
+        try {
+          this.close()
+        } catch (closeException: Exception) {
+          // eat the closeException as we are already throwing the original cause
+          // and we don't want to mask the real exception
+        }
+        throw e
+      } finally {
+        if (!closed) {
+          this.close()
+        }
+      }
+    }
+
     fun InputStream.iterator() : ByteIterator =
         object: ByteIterator() {
             override val hasNext : Boolean
@@ -95,5 +115,22 @@ namespace io {
 //    inline val Reader.buffered : BufferedReader
 //        get() = if(this is BufferedReader) this else BufferedReader(this)
 
+    inline fun Reader.buffered() = BufferedReader(this)
+
     inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
+
+    inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
+
+    protected class LineIterator(val reader: BufferedReader) : Iterator<String> {
+      var nextLine: String? = null
+
+      override val hasNext: Boolean
+        get() {
+          nextLine = reader.readLine()
+          return nextLine != null
+        }
+
+      override fun next(): String = nextLine.sure()
+    }
+
 }
