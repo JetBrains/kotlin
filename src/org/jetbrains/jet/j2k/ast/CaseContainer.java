@@ -25,6 +25,6 @@ public class CaseContainer extends Statement {
   @NotNull
   @Override
   public String toKotlin() {
-    return AstUtil.joinNodes(myCaseStatement, COMMA_WITH_SPACE) + SPACE + "=>" + SPACE + myBlock.toKotlin();
+    return AstUtil.joinNodes(myCaseStatement, COMMA_WITH_SPACE) + SPACE + "->" + SPACE + myBlock.toKotlin();
   }
 }

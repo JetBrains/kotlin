@@ -7,32 +7,32 @@ System.out?.println(o)
 open public fun test(i : Int) : Unit {
 var monthString : String? = "<empty>"
 when (i) {
-1 => {
+1 -> {
 print(1)
 print(2)
 print(3)
 print(4)
 print(5)
 }
-2 => {
+2 -> {
 print(2)
 print(3)
 print(4)
 print(5)
 }
-3 => {
+3 -> {
 print(3)
 print(4)
 print(5)
 }
-4 => {
+4 -> {
 print(4)
 print(5)
 }
-5 => {
+5 -> {
 print(5)
 }
-6 => {
+6 -> {
 print(6)
 print(7)
 print(8)
@@ -41,7 +41,7 @@ print(10)
 print(11)
 monthString = "December"
 }
-7 => {
+7 -> {
 print(7)
 print(8)
 print(9)
@@ -49,32 +49,32 @@ print(10)
 print(11)
 monthString = "December"
 }
-8 => {
+8 -> {
 print(8)
 print(9)
 print(10)
 print(11)
 monthString = "December"
 }
-9 => {
+9 -> {
 print(9)
 print(10)
 print(11)
 monthString = "December"
 }
-10 => {
+10 -> {
 print(10)
 print(11)
 monthString = "December"
 }
-11 => {
+11 -> {
 print(11)
 monthString = "December"
 }
-12 => {
+12 -> {
 monthString = "December"
 }
-else => {
+else -> {
 monthString = "Invalid month"
 }
 }

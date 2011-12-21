@@ -5,43 +5,43 @@ open public fun main(args : Array<String?>?) : Unit {
 var month : Int = 8
 var monthString : String?
 when (month) {
-1 => {
+1 -> {
 monthString = "January"
 }
-2 => {
+2 -> {
 monthString = "February"
 }
-3 => {
+3 -> {
 monthString = "March"
 }
-4 => {
+4 -> {
 monthString = "April"
 }
-5 => {
+5 -> {
 monthString = "May"
 }
-6 => {
+6 -> {
 monthString = "June"
 }
-7 => {
+7 -> {
 monthString = "July"
 }
-8 => {
+8 -> {
 monthString = "August"
 }
-9 => {
+9 -> {
 monthString = "September"
 }
-10 => {
+10 -> {
 monthString = "October"
 }
-11 => {
+11 -> {
 monthString = "November"
 }
-12 => {
+12 -> {
 monthString = "December"
 }
-else => {
+else -> {
 monthString = "Invalid month"
 }
 }
