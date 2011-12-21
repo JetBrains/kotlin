@@ -5,6 +5,7 @@ package org.jetbrains.jet.plugin.java;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
@@ -40,40 +41,49 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     private final JetFile file;
-    private final String className;
+    private final String qualifiedName;
     private PsiClass delegate;
 
-    public JetLightClass(PsiManager manager, JetFile file, String className) {
+    public JetLightClass(PsiManager manager, JetFile file, String qualifiedName) {
         super(manager, JetLanguage.INSTANCE);
         this.file = file;
-        this.className = className;
+        this.qualifiedName = qualifiedName;
     }
 
     @Override
     public String getName() {
-        return className;
+        int idx = qualifiedName.lastIndexOf('.');
+        return idx > 0 ? qualifiedName.substring(idx + 1) : qualifiedName;
     }
 
     @Override
     public PsiElement copy() {
-        return new JetLightClass(getManager(), file, className);
+        return new JetLightClass(getManager(), file, qualifiedName);
+    }
+
+    @Override
+    public PsiFile getContainingFile() {
+        return file;
     }
 
     @Override
     public PsiClass getDelegate() {
         if (delegate == null) {
-            delegate = findClass(className, getStub());
+            delegate = findClass(qualifiedName, getStub());
+            if (delegate == null) {
+                delegate = findClass(qualifiedName, getStub());
+            }
         }
         return delegate;
     }
 
-    private static PsiClass findClass(String name, StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && name.equals(((PsiClassStub) stub).getName())) {
+    private static PsiClass findClass(String fqn, StubElement<?> stub) {
+        if (stub instanceof PsiClassStub && Comparing.equal(fqn, ((PsiClassStub) stub).getQualifiedName())) {
             return (PsiClass) stub.getPsi();
         }
 
         for (StubElement child : stub.getChildrenStubs()) {
-            PsiClass answer = findClass(name, child);
+            PsiClass answer = findClass(fqn, child);
             if (answer != null) return answer;
         }
 
@@ -82,8 +92,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public String getQualifiedName() {
-        String fqName = JetPsiUtil.getFQName(file.getRootNamespace());
-        return fqName.length() == 0 ? className : fqName + "." + className;
+        return qualifiedName;
     }
 
     private PsiJavaFileStub getStub() {
@@ -163,4 +172,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         return answer;
     }
 
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
+    }
 }

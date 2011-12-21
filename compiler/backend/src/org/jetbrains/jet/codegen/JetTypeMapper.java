@@ -196,20 +196,10 @@ public class JetTypeMapper {
         }
     }
 
-    private static String getLocalNameForObject(JetObjectDeclaration object) {
+    public static String getLocalNameForObject(JetObjectDeclaration object) {
         PsiElement parent = object.getParent();
-        if (parent instanceof JetObjectLiteralExpression) {
-            PsiElement expressionParent = parent.getParent();
-
-            if (expressionParent instanceof JetProperty) {
-                JetProperty property = (JetProperty) expressionParent;
-                if (property.getInitializer() == parent) {
-                    return property.getName();
-                }
-            }
-        }
-        else if (parent instanceof JetClassObject) {
-            return "$ClassObject";
+        if (parent instanceof JetClassObject) {
+            return "ClassObject$";
         }
 
         return null;

@@ -15,6 +15,7 @@ import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -73,19 +74,46 @@ public class JavaElementFinder extends PsiElementFinder {
             final String packageName = JetPsiUtil.getFQName(rootNamespace);
             if (packageName != null && qualifiedName.startsWith(packageName)) {
                 if (qualifiedName.equals(fqn(packageName, "namespace"))) {
-                    answer.add(new JetLightClass(psiManager, file, "namespace"));
+                    answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
-                
-                for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
-                    if (declaration instanceof JetClassOrObject) {
-                        if (qualifiedName.equals(fqn(packageName, declaration.getName()))) {
-                            answer.add(new JetLightClass(psiManager, file, declaration.getName()));
-                        }
+                else {
+                    for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
+                        scanClasses(answer, declaration, qualifiedName, packageName, file);
                     }
                 }
             }
         }
         return answer.toArray(new PsiClass[answer.size()]);
+    }
+
+    private void scanClasses(List<PsiClass> answer, JetDeclaration declaration, String qualifiedName, String containerFqn, JetFile file) {
+        if (declaration instanceof JetClassOrObject) {
+            String localName = getLocalName(declaration);
+            if (localName != null) {
+                String fqn = fqn(containerFqn, localName);
+                if (qualifiedName.equals(fqn)) {
+                    answer.add(new JetLightClass(psiManager, file, qualifiedName));
+                }
+                else {
+                    for (JetDeclaration child : ((JetClassOrObject) declaration).getDeclarations()) {
+                        scanClasses(answer, child, qualifiedName, fqn, file);
+                    }
+                }
+            }
+        }
+        else if (declaration instanceof JetClassObject) {
+            scanClasses(answer, ((JetClassObject) declaration).getObjectDeclaration(), qualifiedName, containerFqn, file);
+        }
+    }
+
+    private static String getLocalName(JetDeclaration declaration) {
+        String given = declaration.getName();
+        if (given != null) return given;
+
+        if (declaration instanceof JetObjectDeclaration) {
+            return JetTypeMapper.getLocalNameForObject((JetObjectDeclaration) declaration);
+        }
+        return null;
     }
 
     @Override
@@ -99,7 +127,7 @@ public class JavaElementFinder extends PsiElementFinder {
                 answer.add("namespace");
                 for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
-                        answer.add(declaration.getName());
+                        answer.add(getLocalName(declaration));
                     }
                 }
             }
@@ -135,10 +163,10 @@ public class JavaElementFinder extends PsiElementFinder {
         for (JetFile file : filesInScope) {
             final JetNamespace rootNamespace = file.getRootNamespace();
             if (packageFQN.equals(JetPsiUtil.getFQName(rootNamespace))) {
-                answer.add(new JetLightClass(psiManager, file, "namespace"));
+                answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, "namespace")));
                 for (JetDeclaration declaration : rootNamespace.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
-                        answer.add(new JetLightClass(psiManager, file, declaration.getName()));
+                        answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, getLocalName(declaration))));
                     }
                 }
             }
