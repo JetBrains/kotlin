@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.StdlibNames;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -48,6 +49,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isAbstract = false;
         boolean isInterface = false;
         boolean isFinal = false;
+        boolean isStatic = false;
+        
         if(myClass instanceof JetClass) {
             JetClass jetClass = (JetClass) myClass;
             if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD))
@@ -59,6 +62,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
                 isFinal = true;
             }
+        }
+        else if (myClass.getParent() instanceof JetClassObject) {
+            isStatic = true;
         }
 
         int access = 0;
@@ -72,6 +78,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isFinal) {
             access |= Opcodes.ACC_FINAL;
         }
+        if (isStatic) {
+            access |= Opcodes.ACC_STATIC;
+        }
         v.defineClass(myClass, Opcodes.V1_6,
                 access,
                       signature.getName(),
@@ -81,8 +90,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
 
-        if(descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-            v.visitOuterClass(typeMapper.mapType(((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), null, null);
+        ClassDescriptor container = getContainingClassDescriptor(descriptor);
+        if(container != null) {
+            v.visitOuterClass(typeMapper.mapType(container.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), null, null);
         }
 
         if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
@@ -90,6 +100,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
             annotationVisitor.visitEnd();
         }
+    }
+
+    private static ClassDescriptor getContainingClassDescriptor(ClassDescriptor decl) {
+        DeclarationDescriptor container = decl.getContainingDeclaration();
+        while (container != null && !(container instanceof NamespaceDescriptor)) {
+            if (container instanceof ClassDescriptor) return (ClassDescriptor) container;
+            container = container.getContainingDeclaration();
+        }
+        return null;
     }
 
     private JvmClassSignature signature() {
