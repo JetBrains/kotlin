@@ -4,25 +4,25 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is * => 1
-      is <error>String</error> => 1
-      !is Int => 1
-      is Any? => 1
-      <error>s</error> => 1
-      1 => 1
-      1 + <error>a</error> => 1
-      in 1..<error>a</error> => 1
-      !in 1..<error>a</error> => 1
-      // Commented for KT-621 .<!error>a</!error> => 1
-      // Commented for KT-621 .equals(1).<!error>a</!error> => 1
-      // Commented for KT-621 <!warning>?.</!warning>equals(1) => 1
-      else => 1
+      is * -> 1
+      is <error>String</error> -> 1
+      !is Int -> 1
+      is Any? -> 1
+      <error>s</error> -> 1
+      1 -> 1
+      1 + <error>a</error> -> 1
+      in 1..<error>a</error> -> 1
+      !in 1..<error>a</error> -> 1
+      // Commented for KT-621 .<!error>a</!error> -> 1
+      // Commented for KT-621 .equals(1).<!error>a</!error> -> 1
+      // Commented for KT-621 <!warning>?.</!warning>equals(1) -> 1
+      else -> 1
     }
 
     // Commented for KT-621
     // return when (<!warning>x</!warning>?:null) {
-    //   <!error>.</!error>foo() => 1
-    //   ?.equals(1).equals(2) => 1
+    //   <!error>.</!error>foo() -> 1
+    //   ?.equals(1).equals(2) -> 1
     // }
     return 0
 }
@@ -34,33 +34,33 @@ fun test() {
   val s = "";
 
   when (x) {
-    <error>s</error> => 1
-    is <error>""</error> => 1
-    x => 1
-    is 1 => 1
-    is <error>(1, 1)</error> => 1
+    <error>s</error> -> 1
+    is <error>""</error> -> 1
+    x -> 1
+    is 1 -> 1
+    is <error>#(1, 1)</error> -> 1
   }
 
-  val z = (1, 1)
+  val z = #(1, 1)
 
   when (z) {
-    is (*, *) => 1
-    is (*, 1) => 1
-    is (1, 1) => 1
-    is (1, <error>"1"</error>) => 1
-    is <error>(1, "1", *)</error> => 1
-    is boo @ (1, <error>"a"</error>, *) => 1
-    is boo @ <error>(1, *)</error> => 1
-  }
-
-  when (z) {
-    <error>else => 1</error>
-    (1, 1) => 2
+    is #(*, *) -> 1
+    is #(*, 1) -> 1
+    is #(1, 1) -> 1
+    is #(1, <error>"1"</error>) -> 1
+    is <error>#(1, "1", *)</error> -> 1
+    is boo #(1, <error>"a"</error>, *) -> 1
+    is boo <error>#(1, *)</error> -> 1
   }
 
   when (z) {
-    else => 1
+    <error>else -> 1</error>
+    #(1, 1) -> 2
+  }
+
+  when (z) {
+    else -> 1
   }
 }
 
-val (Int, Int).boo : (Int, Int, Int) = (1, 1, 1)
+val #(Int, Int).boo : #(Int, Int, Int) = #(1, 1, 1)
