@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="kotlinLibrary" level="project" />
+    <orderEntry type="library" name="libs" level="project" />
   </component>
 </module>
 
