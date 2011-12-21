@@ -56,7 +56,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isAbstract = true;
                 isInterface = true;
             }
-            if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD)) {
+            if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
                 isFinal = true;
             }
         }
