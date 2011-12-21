@@ -5,7 +5,7 @@ import org.objectweb.asm.Type;
 /**
  * @author Stepan Koltsov
  */
-public class StdlibNames {
+public class JvmStdlibNames {
 
     public static final JvmClassName JET_VALUE_PARAMETER = new JvmClassName("jet.typeinfo.JetValueParameter");
 
@@ -36,6 +36,6 @@ public class StdlibNames {
     public static final JvmClassName JET_OBJECT = new JvmClassName("jet.JetObject");
 
 
-    private StdlibNames() {
+    private JvmStdlibNames() {
     }
 }

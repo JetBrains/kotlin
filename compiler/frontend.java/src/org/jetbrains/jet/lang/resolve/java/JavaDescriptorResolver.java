@@ -9,7 +9,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import jet.typeinfo.TypeInfoVariance;
-import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -107,9 +106,14 @@ public class JavaDescriptorResolver {
         this.semanticServices = semanticServices;
     }
 
-    @NotNull
+    @Nullable
     public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
         String qualifiedName = psiClass.getQualifiedName();
+        
+        if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
+            // TODO: only if -$$TImpl class is created by Kotlin
+            return null;
+        }
 
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
@@ -128,6 +132,12 @@ public class JavaDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull String qualifiedName) {
+        
+        if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
+            // TODO: only if -$$TImpl class is created by Kotlin
+            return null;
+        }
+        
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
         if (kotlinClassDescriptor != null) {
@@ -234,8 +244,8 @@ public class JavaDescriptorResolver {
 
     private List<TypeParameterDescriptor> resolveClassTypeParameters(PsiClass psiClass, JavaClassDescriptor classDescriptor) {
         for (PsiAnnotation annotation : psiClass.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_CLASS.getFqName())) {
-                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_CLASS_SIGNATURE);
+            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_CLASS.getFqName())) {
+                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_CLASS_SIGNATURE);
                 if (attributeValue != null) {
                     String typeParametersString = (String) attributeValue.getValue();
                     if (typeParametersString != null) {
@@ -608,18 +618,19 @@ public class JavaDescriptorResolver {
         String typeFromAnnotation = null;
         
         boolean receiver = false;
+        boolean hasDefaultValue = false;
         
         // TODO: must be very slow, make it lazy?
         String name = parameter.getName() != null ? parameter.getName() : "p" + i;
         for (PsiAnnotation annotation : parameter.getModifierList().getAnnotations()) {
 
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_VALUE_PARAMETER.getFqName())) {
-                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD);
+            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_VALUE_PARAMETER.getFqName())) {
+                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD);
                 if (nameExpression != null) {
                     name = (String) nameExpression.getValue();
                 }
                 
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD);
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
                 } else {
@@ -628,19 +639,24 @@ public class JavaDescriptorResolver {
                     changeNullable = true;
                 }
                 
-                PsiLiteralExpression signatureExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD);
+                PsiLiteralExpression signatureExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD);
                 if (signatureExpression != null) {
                     typeFromAnnotation = (String) signatureExpression.getValue();
                 }
 
 
-                PsiLiteralExpression receiverExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD);
+                PsiLiteralExpression receiverExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD);
                 if (receiverExpression != null) {
-                    receiver = true;
+                    receiver = (Boolean) receiverExpression.getValue();
+                }
+                
+                PsiLiteralExpression hasDefaultValueExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD);
+                if (hasDefaultValueExpression != null) {
+                    hasDefaultValue = (Boolean) hasDefaultValueExpression.getValue();
                 }
 
 
-            } else if (annotation.getQualifiedName().equals(StdlibNames.JET_TYPE_PARAMETER.getFqName())) {
+            } else if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_TYPE_PARAMETER.getFqName())) {
                 return JvmMethodParameterMeaning.typeInfo(new Object());
             }
         }
@@ -661,7 +677,7 @@ public class JavaDescriptorResolver {
                     name,
                     null, // TODO : review
                     changeNullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
-                    false,
+                    hasDefaultValue,
                     varargElementType
             ));
         }
@@ -748,6 +764,9 @@ public class JavaDescriptorResolver {
             return functionDescriptor;
         }
         DeclarationDescriptor classDescriptor = method.hasModifierProperty(PsiModifier.STATIC) ? resolveNamespace(method.getContainingClass()) : resolveClass(method.getContainingClass());
+        if (classDescriptor == null) {
+            return null;
+        }
         PsiParameter[] parameters = method.getParameterList().getParameters();
         FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
                 owner,
@@ -776,8 +795,8 @@ public class JavaDescriptorResolver {
 
     private List<TypeParameterDescriptor> resolveMethodTypeParameters(PsiMethod method, FunctionDescriptorImpl functionDescriptorImpl) {
         for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD.getFqName())) {
-                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD);
+            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_METHOD.getFqName())) {
+                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD);
                 if (attributeValue != null) {
                     String typeParametersString = (String) attributeValue.getValue();
                     if (typeParametersString != null) {
@@ -822,8 +841,8 @@ public class JavaDescriptorResolver {
         String returnTypeFromAnnotation = null;
 
         for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(StdlibNames.JET_METHOD.getFqName())) {
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD);
+            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_METHOD.getFqName())) {
+                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD);
                 if (nullableExpression != null) {
                     nullable = (Boolean) nullableExpression.getValue();
                 } else {
@@ -832,7 +851,7 @@ public class JavaDescriptorResolver {
                     changeNullable = true;
                 }
                 
-                PsiLiteralExpression returnTypeExpression = (PsiLiteralExpression) annotation.findAttributeValue(StdlibNames.JET_METHOD_RETURN_TYPE_FIELD);
+                PsiLiteralExpression returnTypeExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD);
                 if (returnTypeExpression != null) {
                     returnTypeFromAnnotation = (String) returnTypeExpression.getValue();
                 }
