@@ -24,11 +24,6 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
-     <action id="GreatSyntacticShift" class="org.jetbrains.jet.plugin.actions.ShiftAction"
-             text="GreatSyntacticShift">
-         <!--<keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>-->
-         <add-to-group group-id="CodeMenu" anchor="last"/>
-     </action>
      <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
              text="Toggle Error Reporting">
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
