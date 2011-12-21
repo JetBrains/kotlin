@@ -10,7 +10,7 @@ import std.util.*
 import java.util.*
 
 class MapTest() : TestSupport() {
-  val data = HashMap<String, Int>()
+  val data: Map<String,Int> = HashMap<String, Int>()
 
   fun testGetOrElse() {
     val a = data.getOrElse("foo"){2}

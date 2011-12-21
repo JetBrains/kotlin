@@ -23,7 +23,7 @@ class SetTest() : TestSupport() {
       data.all{it.length == 3}
     }
     assertNot {
-      data.all{s => s.startsWith("b")}
+      data.all{(s: String) -> s.startsWith("b")}
     }
   }
 
@@ -59,7 +59,7 @@ class SetTest() : TestSupport() {
       we should be able to remove the explicit type on the function
       http://youtrack.jetbrains.net/issue/KT-849
     */
-    val lengths = data.map<String,Int>{s => s.length}
+    val lengths = data.map<String,Int>{(s: String) -> s.length}
     assert {
       lengths.all{it == 3}
     }

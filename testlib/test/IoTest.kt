@@ -5,12 +5,13 @@ import std.test.*
 import std.io.*
 import std.util.*
 import java.io.*
+import java.util.*
 
 class IoTest() : TestSupport() {
   val file = File("test/HelloWorld.txt")
 
   fun testUse() {
-    val list = arrayList<String>()
+    val list = ArrayList<String>()
 
     val reader = FileReader(file).buffered()
     reader.close()

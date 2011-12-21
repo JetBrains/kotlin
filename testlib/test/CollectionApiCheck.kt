@@ -6,24 +6,24 @@ import java.util.*
 trait Traversable<T> {
 
   /** Returns true if any elements in the collection match the given predicate */
-  fun any(predicate: fun(T): Boolean) : Boolean
+  fun any(predicate: (T)-> Boolean) : Boolean
 
   /** Returns true if all elements in the collection match the given predicate */
-  fun all(predicate: fun(T): Boolean) : Boolean
+  fun all(predicate: (T)-> Boolean) : Boolean
 
   /** Returns the first item in the collection which matches the given predicate or null if none matched */
-  fun find(predicate: fun(T): Boolean) : T?
+  fun find(predicate: (T)-> Boolean) : T?
 
   /** Returns a new collection containing all elements in this collection which match the given predicate */
   // TODO using: Collection<T> for the return type - I wonder if this exact type could be
   // deduced somewhat from the This.Type; e.g. returning Set on a Set, Array on Array etc
-  fun filter(predicate: fun(T): Boolean) : Collection<T>
+  fun filter(predicate: (T)-> Boolean) : Collection<T>
 
   /** Performs the given operation on each element inside the collection */
-  fun foreach(operation: fun(element: T) : Unit)
+  fun foreach(operation: (element: T)-> Unit)
 
   /** Returns a new collection containing the results of applying the given function to each element in this collection */
-  fun <T, R> java.lang.Iterable<T>.map(transform : fun(T) : R) : Collection<R>
+  fun <T, R> java.lang.Iterable<T>.map(transform : (T)-> R) : Collection<R>
 }
 
 /**

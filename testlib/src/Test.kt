@@ -9,18 +9,18 @@ import org.junit.runner.*
 import org.junit.runner.notification.*
 import junit.framework.*
 
-fun assert(message: String, block: fun() : Boolean) {
+fun assert(message: String, block: ()-> Boolean) {
   val actual = block()
   Assert.assertTrue(message, actual)
 }
 
-fun assert(block: fun() : Boolean) = assert(block.toString(), block)
+fun assert(block: ()-> Boolean) = assert(block.toString(), block)
 
-fun assertNot(message: String, block: fun() : Boolean) {
+fun assertNot(message: String, block: ()-> Boolean) {
   assert(message){ !block() }
 }
 
-fun assertNot(block: fun() : Boolean) = assertNot(block.toString(), block)
+fun assertNot(block: ()-> Boolean) = assertNot(block.toString(), block)
 
 fun assert(actual: Boolean, message: String) {
   println("Answer: ${actual} for ${message}")
@@ -34,7 +34,7 @@ fun assertNull(actual: Any?, message: String = "") {
   Assert.assertNull(message, actual)
 }
 
-fun fails(block: fun() : Any) {
+fun fails(block: ()-> Any) {
   try {
     block()
     Assert.fail("Expected an exception to be thrown")
@@ -43,7 +43,7 @@ fun fails(block: fun() : Any) {
   }
 }
 
-fun todo(block: fun(): Any) {
+fun todo(block: ()-> Any) {
   println("TODO at " + Exception().getStackTrace()?.get(1) + " for " + block)
 }
 
