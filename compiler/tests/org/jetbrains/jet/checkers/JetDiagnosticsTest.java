@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -85,7 +84,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 
     @Override
     public void runTest() throws Exception {
-        String testFileName = name + ".kt";
+        String testFileName = name + ".jet";
 
         String expectedText = loadFile(testFileName);
 

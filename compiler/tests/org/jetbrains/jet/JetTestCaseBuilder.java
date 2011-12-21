@@ -48,7 +48,7 @@ public abstract class JetTestCaseBuilder {
     }
 
     public static void appendTestsInDirectory(String baseDataDir, String dataPath, boolean recursive, final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
-        final String extensionJet = ".jet.jet";
+        final String extensionJet = ".jet";
         final String extensionKt = ".kt";
         final FilenameFilter extensionFilter = new FilenameFilter() {
             @Override

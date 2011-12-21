@@ -1354,7 +1354,13 @@ public class JetParsing extends AbstractJetParsing {
             typeRefMarker.done(TYPE_REFERENCE);
 
             advance(); // DOT
-            parseFunctionTypeContents().drop();
+            
+            if (at(LPAR)) {
+                parseFunctionTypeContents().drop();
+            }
+            else {
+                error("Expecting function type");
+            }
             typeRefMarker = precede.precede();
 
             precede.done(FUNCTION_TYPE);
@@ -1519,8 +1525,9 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private PsiBuilder.Marker parseFunctionTypeContents() {
-        assert _at(LPAR) : tt();
-//
+//        assert _at(LPAR) : tt();
+        if (!_at(LPAR))
+            System.out.println(myBuilder.getTokenText());
         PsiBuilder.Marker functionType = mark();
 
 //        advance(); // LPAR

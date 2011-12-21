@@ -1082,83 +1082,112 @@ public class JetExpressionParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         advance(); // LBRACE
 
-        int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(ARROW), new At(RBRACE)) {
-            @Override
-            public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-                return openBraces == 0;
+        boolean paramsFound = false;
+
+        if (at(ARROW)) {
+            //   { -> ...}
+            advance(); // ARROW
+            mark().done(VALUE_PARAMETER_LIST);
+            paramsFound = true;
+        }
+        else if (at(LPAR)) {
+            // Look for ARROW after matching RPAR
+            //   {(a, b) -> ...}
+
+            {
+                PsiBuilder.Marker rollbackMarker = mark();
+
+                parseFunctionLiteralParametersAndType();
+
+                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
             }
-        });
 
-        boolean doubleArrowPresent = doubleArrowPos >= 0;
-        if (doubleArrowPresent) {
-            boolean dontExpectParameters = false;
-
-            int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
-            if (lastDot >= 0) { // There is a receiver type
-                createTruncatedBuilder(lastDot).parseTypeRef();
-
-                expect(DOT, "Expecting '.'");
-
-                if (!at(LPAR)) {
-                    int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));
-
-                    if (firstLParPos >= 0) {
-                        errorUntilOffset("Expecting '('", firstLParPos);
-                    } else {
-                        errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}",
-                            doubleArrowPos);
-                        dontExpectParameters = true;
+            if (!paramsFound) {
+                // If not found, try a typeRef DOT and then LPAR .. RPAR ARROW
+                //   {((A) -> B).(x) -> ... }
+                PsiBuilder.Marker rollbackMarker = mark();
+                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RPAR)));
+                if (lastDot >= 0) {
+                    createTruncatedBuilder(lastDot).parseTypeRef();
+                    if (at(DOT)) {
+                        advance(); // DOT
+                        parseFunctionLiteralParametersAndType();
                     }
                 }
 
+                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
             }
-
-            if (at(LPAR)) {
-                parseFunctionLiteralParameterList();
-
-                if (at(COLON)) {
-                    advance(); // COLON
-                    if (at(ARROW)) {
-                        error("Expecting a type");
-                    }
-                    else {
-                        myJetParsing.parseTypeRef();
-                    }
-                }
-            }
-            else if (!dontExpectParameters) {
-                PsiBuilder.Marker parameterList = mark();
-
-                while (!eof()) {
-                    PsiBuilder.Marker parameter = mark();
-
-                    int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
-                    createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
-
-                    expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
-
-                    parameter.done(VALUE_PARAMETER);
-
-                    if (at(COLON)) {
-                        errorUntilOffset("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}", doubleArrowPos);
-                    }
-                    else if (at(ARROW)) {
-                        break;
-                    }
-                    else if (!at(COMMA)) {
-                        errorUntilOffset("Expecting '=>' or ','", doubleArrowPos);
-                    }
-                    else {
-                        advance(); // COMMA
-                    }
-                }
-
-                parameterList.done(VALUE_PARAMETER_LIST);
-            }
-
-            expectNoAdvance(ARROW, "Expecting '=>'");
         }
         else {
+            if (at(IDENTIFIER)) {
+                // Try to parse a simple name list followed by an ARROW
+                //   {a -> ...}
+                //   {a, b -> ...}
+                PsiBuilder.Marker rollbackMarker = mark();
+                parseFunctionLiteralShorthandParameterList();
+                parseOptionalFunctionLiteralType();
+                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+            }
+            if (!paramsFound && atSet(JetParsing.TYPE_REF_FIRST)) {
+                // Try to parse a type DOT valueParameterList ARROW
+                //   {A.(b) -> ...}
+                PsiBuilder.Marker rollbackMarker = mark();
+                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RBRACE)));
+                if (lastDot >= 0) { // There is a receiver type
+                    createTruncatedBuilder(lastDot).parseTypeRef();
+                }
+
+                if (at(DOT)) {
+                    advance(); // DOT
+                    parseFunctionLiteralParametersAndType();
+                    paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+                }
+                else {
+                    rollbackMarker.rollbackTo();
+                }
+            }
+//            int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(ARROW), new At(RBRACE)) {
+//                @Override
+//                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
+//                    return openBraces == 0;
+//                }
+//            });
+//
+//            boolean doubleArrowPresent = doubleArrowPos >= 0;
+//            if (doubleArrowPresent) {
+//                boolean dontExpectParameters = false;
+//
+//                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
+//                if (lastDot >= 0) { // There is a receiver type
+//                    createTruncatedBuilder(lastDot).parseTypeRef();
+//
+//                    expect(DOT, "Expecting '.'");
+//
+//                    if (!at(LPAR)) {
+//                        int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));
+//
+//                        if (firstLParPos >= 0) {
+//                            errorUntilOffset("Expecting '('", firstLParPos);
+//                        } else {
+//                            errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}",
+//                                doubleArrowPos);
+//                            dontExpectParameters = true;
+//                        }
+//                    }
+//
+//                }
+//
+//                if (at(LPAR)) {
+//                    parseFunctionLiteralParametersAndType();
+//                }
+//                else if (!dontExpectParameters) {
+//                    parseFunctionLiteralShorthandParameterList();
+//                }
+//
+//                expectNoAdvance(ARROW, "Expecting '=>'");
+//            }
+        }
+        if (!paramsFound) {
             if (preferBlock) {
                 literal.drop();
                 parseStatements();
@@ -1178,6 +1207,74 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         literal.done(FUNCTION_LITERAL);
         literalExpression.done(FUNCTION_LITERAL_EXPRESSION);
+    }
+
+    private boolean rollbackOrDropAt(PsiBuilder.Marker rollbackMarker, IElementType dropAt) {
+        if (at(dropAt)) {
+            advance(); // dropAt
+            rollbackMarker.drop();
+            return true;
+        }
+        rollbackMarker.rollbackTo();
+        return false;
+    }
+
+    /*
+     * SimpleName{,}
+     */
+    private void parseFunctionLiteralShorthandParameterList() {
+        PsiBuilder.Marker parameterList = mark();
+
+        while (!eof()) {
+            PsiBuilder.Marker parameter = mark();
+
+//            int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
+//            createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
+
+            expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
+
+            parameter.done(VALUE_PARAMETER);
+
+            if (at(COLON)) {
+                PsiBuilder.Marker errorMarker = mark();
+                advance(); // COLON
+                myJetParsing.parseTypeRef();
+                errorMarker.error("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}");
+            }
+            else if (at(ARROW)) {
+                break;
+            }
+            else if (at(COMMA)) {
+                advance(); // COMMA
+            }
+            else {
+                error("Expecting '->' or ','");
+                break;
+            }
+        }
+
+        parameterList.done(VALUE_PARAMETER_LIST);
+    }
+
+    private void parseFunctionLiteralParametersAndType() {
+        parseFunctionLiteralParameterList();
+
+        parseOptionalFunctionLiteralType();
+    }
+
+    /*
+     * (":" type)?
+     */
+    private void parseOptionalFunctionLiteralType() {
+        if (at(COLON)) {
+            advance(); // COLON
+            if (at(ARROW)) {
+                error("Expecting a type");
+            }
+            else {
+                myJetParsing.parseTypeRef();
+            }
+        }
     }
 
     /*

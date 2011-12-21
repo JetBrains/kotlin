@@ -86,7 +86,7 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testTuplePattern() throws Exception {
-        loadText("fun foo(x: (Any, Any)) = when(x) { is #(1,2) -> \"one,two\"; else -> \"something\" }");
+        loadText("fun foo(x: #(Any, Any)) = when(x) { is #(1,2) -> \"one,two\"; else -> \"something\" }");
         Method foo = generateFunction();
         final Object result;
         try {
