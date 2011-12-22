@@ -82,17 +82,11 @@ class CollectionTest() : TestSupport() {
   }
 
   fun testFlatMap() {
-    /**
-      TODO compiler bug
-      we should be able to remove the explicit type on the function
-      http://youtrack.jetbrains.net/issue/KT-849
-    */
-    // TODO there should be a neater way to do this :)
-
     val characters = arrayList('f', 'o', 'o', 'b', 'a', 'r')
+    // TODO figure out how to get a line like this to compile :)
     /*
     val characters = data.flatMap<String,Character>{
-      Arrays.asList((it as java.lang.String).toCharArray()) as Collection<Character>
+      it.toCharArray().toList() as Collection<Character>
     }
     */
     todo {
