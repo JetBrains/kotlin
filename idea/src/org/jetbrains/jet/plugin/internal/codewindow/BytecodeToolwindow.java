@@ -27,6 +27,8 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import javax.swing.*;
 import java.awt.*;
@@ -178,8 +180,9 @@ public class BytecodeToolwindow extends JPanel {
     protected String generateToText(JetFile file) {
         GenerationState state = new GenerationState(myProject, ClassBuilderFactory.TEXT);
         try {
-            AnalyzingUtils.checkForSyntacticErrors(file);
-            state.compile(file);
+            BindingContext binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+            AnalyzingUtils.throwExceptionOnErrors(binding);
+            state.compileCorrectNamespaces(binding, Collections.singletonList(file.getRootNamespace()));
         } catch (Exception e) {
             StringWriter out = new StringWriter(1024);
             e.printStackTrace(new PrintWriter(out));
