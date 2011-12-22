@@ -111,28 +111,31 @@ inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReade
 inline val InputStream.buffered : BufferedInputStream
     get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
 
-//    inline val Reader.buffered : BufferedReader
+//  inline val Reader.buffered : BufferedReader
 //        get() = if(this is BufferedReader) this else BufferedReader(this)
 
-inline fun Reader.buffered() = BufferedReader(this)
+inline fun Reader.buffered(): BufferedReader = if(this is BufferedReader) this else BufferedReader(this)
 
 inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 
+inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffered().use<BufferedReader, T>{block(it.lineIterator())}
+/**
+ * Returns an iterator over each line.
+ * <b>Note</b> the caller must close the underlying <code>BufferedReader</code>
+ * when the iteration is finished; as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
+ * may terminate the iteration early.
+ * <br>
+ * We suggest you try the method useLines() instead which closes the stream when the processing is complete.
+ */
 inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
 
 protected class LineIterator(val reader: BufferedReader) : Iterator<String> {
   private var nextLine: String? = null
-  private var closed = false
 
   override val hasNext: Boolean
     get() {
       nextLine = reader.readLine()
-      val answer = nextLine != null
-      if (! answer && !closed) {
-        closed = true
-        reader.close()
-      }
-      return answer
+      return nextLine != null
     }
 
   override fun next(): String = nextLine.sure()
