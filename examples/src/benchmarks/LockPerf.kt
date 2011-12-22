@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
-fun <T> Int.latch(op: fun CountDownLatch.() : T) : T {
+fun <T> Int.latch(op:  CountDownLatch.() -> T) : T {
     val cdl = CountDownLatch(this)
     val res = cdl.op()
     cdl.await()
