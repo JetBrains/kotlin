@@ -784,6 +784,8 @@ public class JetTypeMapper {
     }
 
     private void initKnownTypeNames() {
+        knowTypeNames.put(JetStandardClasses.getAnyType(), "ANY_TYPE_INFO");
+        knowTypeNames.put(JetStandardClasses.getNullableAnyType(), "NULLABLE_ANY_TYPE_INFO");
         knowTypeNames.put(standardLibrary.getIntType(), "INT_TYPE_INFO");
         knowTypeNames.put(standardLibrary.getNullableIntType(), "NULLABLE_INT_TYPE_INFO");
         knowTypeNames.put(standardLibrary.getLongType(), "LONG_TYPE_INFO");

@@ -12,6 +12,7 @@ import org.jetbrains.jet.rt.TypeInfoProjectionImpl;
  */
 public abstract class TypeInfo<T> implements JetObject {
 
+    public static final TypeInfo<Object> ANY_TYPE_INFO = getTypeInfo(Object.class, false);
     public static final TypeInfo<Byte> BYTE_TYPE_INFO = getTypeInfo(Byte.class, false);
     public static final TypeInfo<Short> SHORT_TYPE_INFO = getTypeInfo(Short.class, false);
     public static final TypeInfo<Integer> INT_TYPE_INFO = getTypeInfo(Integer.class, false);
@@ -33,6 +34,7 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<String> STRING_TYPE_INFO = getTypeInfo(String.class, false);
     public static final TypeInfo<Tuple0> TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, false);
 
+    public static final TypeInfo<Object> NULLABLE_ANY_TYPE_INFO = getTypeInfo(Object.class, true);
     public static final TypeInfo<Byte> NULLABLE_BYTE_TYPE_INFO = getTypeInfo(Byte.class, true);
     public static final TypeInfo<Short> NULLABLE_SHORT_TYPE_INFO = getTypeInfo(Short.class, true);
     public static final TypeInfo<Integer> NULLABLE_INT_TYPE_INFO = getTypeInfo(Integer.class, true);
