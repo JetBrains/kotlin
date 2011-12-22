@@ -10,6 +10,11 @@ import java.util.*
 class IoTest() : TestSupport() {
   val file = File("test/HelloWorld.txt")
 
+  fun testLineIterator() {
+    val list = FileReader(file).buffered().lineIterator().toArrayList()
+    assertEquals(arrayList("Hello", "World"), list)
+  }
+
   fun testUse() {
     val list = ArrayList<String>()
 
@@ -18,7 +23,7 @@ class IoTest() : TestSupport() {
 
     /**
     TODO compiler error?
-    reader.use<BufferedReader,Unit>{
+    reader.use{
       val line = it.readLine()
       if (line != null) {
         list.add(line)
@@ -28,5 +33,4 @@ class IoTest() : TestSupport() {
     assertEquals(arrayList("Hello", "World"), list)
     */
   }
-
 }

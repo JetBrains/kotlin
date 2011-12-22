@@ -67,8 +67,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
 inline fun readLine() : String? = stdin.readLine()
 
 /** Uses the given resource then closes it to ensure its closed again */
-/*
-inline fun <T: Closeable, R> T.use(block: fun(T): R) : R {
+inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
   var closed = false
   try {
     return block(this)
@@ -86,7 +85,6 @@ inline fun <T: Closeable, R> T.use(block: fun(T): R) : R {
     }
   }
 }
-*/
 
 fun InputStream.iterator() : ByteIterator =
     object: ByteIterator() {
@@ -120,19 +118,23 @@ inline fun Reader.buffered() = BufferedReader(this)
 
 inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 
-/*
 inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
 
 protected class LineIterator(val reader: BufferedReader) : Iterator<String> {
-  var nextLine: String? = null
+  private var nextLine: String? = null
+  private var closed = false
 
   override val hasNext: Boolean
     get() {
       nextLine = reader.readLine()
-      return nextLine != null
+      val answer = nextLine != null
+      if (! answer && !closed) {
+        closed = true
+        reader.close()
+      }
+      return answer
     }
 
   override fun next(): String = nextLine.sure()
 }
-*/
 
