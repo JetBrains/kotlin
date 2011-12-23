@@ -6,7 +6,7 @@ import std.util.*
 import java.io.*
 import java.util.*
 
-fun generateFile(outFile: File, header: String, typeName: String, inputFile: File) {
+fun generateFile(outFile: File, header: String, inputFile: File, f: (String)-> String) {
   println("Parsing $inputFile and writing $outFile")
 
   outFile.getParentFile()?.mkdirs()
@@ -23,7 +23,8 @@ fun generateFile(outFile: File, header: String, typeName: String, inputFile: Fil
         val line = iter.next()
 
         if (line.startsWith("package")) continue
-        val xform = line.replaceAll("java.lang.Iterable<T>", typeName).replaceAll("java.util.Collection<T>", typeName)
+
+        val xform = f(line)
         writer.println(xform)
       }
     } finally {
@@ -53,7 +54,22 @@ fun main(args: Array<String>) {
     }
   }
   val srcDir = File(stdlib, "ktSrc")
-  val input = File(srcDir, "JavaIterables.kt")
   val outDir = File(srcDir, "generated")
-  generateFile(File(outDir, "ArraysGenerated.kt"), "package std", "Array<T>", input)
+
+
+  generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package std", File(srcDir, "JavaIterables.kt")) {
+      it.replaceAll("java.lang.Iterable<T>", "Array<T>")
+  }
+
+  generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package std", File(srcDir, "JavaIterables.kt")) {
+    it.replaceAll("java.lang.Iterable<T>", "Iterable<T>")
+  }
+
+  generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package std.util", File(srcDir, "JavaCollections.kt")) {
+    it.replaceAll("java.util.Collection<T>", "java.lang.Iterable<T>").replaceAll("(this.size)", "")
+  }
+
+  generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package std.util", File(srcDir, "JavaCollections.kt")) {
+    it.replaceAll("java.util.Collection<T>", "Array<T>")
+  }
 }

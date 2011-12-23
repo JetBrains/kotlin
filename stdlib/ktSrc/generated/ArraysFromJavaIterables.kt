@@ -1,6 +1,5 @@
 // NOTE this file is auto-generated from stdlib/ktSrc/JavaIterables.kt
 package std
-// Note: this file is used to generate methods on Array<T> too
 
 import java.util.*
 
@@ -77,22 +76,6 @@ inline fun <T> Array<T>.join(separator: String, prefix: String = "", postfix: St
   }
   buffer.append(postfix)
   return buffer.toString().sure()
-}
-
-/** Returns a new collection containing the results of applying the given function to each element in this collection */
-/*
-inline fun <T, R> Array<T>.map(result: Collection<R> = ArrayList<R>(), transform : (T) -> R) : Collection<R> {
-  for (item in this)
-    result.add(transform(item))
-  return result
-}
-*/
-
-/** Returns a new collection containing the results of applying the given function to each element in this collection */
-inline fun <T, R> Array<T>.map(result: Collection<R> = ArrayList<R>(this.size), transform : (T) -> R) : Collection<R> {
-  for (item in this)
-    result.add(transform(item))
-  return result
 }
 
 inline fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
