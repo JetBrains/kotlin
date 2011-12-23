@@ -9,6 +9,13 @@ import std.test.*
 import java.util.*
 
 /*
+  TODO generates compiler error
+  see: http://youtrack.jetbrains.net/issue/KT-866
+
+val justBody = body {
+    +"Hello world"
+  }
+
 fun result(args : List<String>) =
   html {
     head {
@@ -38,12 +45,6 @@ fun result(args : List<String>) =
       }
     }
   }
-  */
-
-/*
-val justBody = body {
-    +"Hello world"
-  }
 */
 
 class TemplateHtmlTest() : TestSupport() {
@@ -51,13 +52,16 @@ class TemplateHtmlTest() : TestSupport() {
   }
 
 /*
-  fun testHtmlFUnction() {
-    val text = result(arrayList("a", "b", "c"))
-    println(text)
-  }
+ TODO: compiler bug
+ see: http://youtrack.jetbrains.net/issue/KT-866
 
   fun testJustBody() {
     println(justBody)
+  }
+
+  fun testHtmlFunction() {
+    val text = result(arrayList("a", "b", "c"))
+    println(text)
   }
 
   fun testEmbeddedFunction() {

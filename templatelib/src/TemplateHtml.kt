@@ -84,6 +84,9 @@ class H1() : BodyTag("h1")
 class A() : BodyTag("a") {
   var href: String? = null
   /*
+    TODO this doesn't compile
+    see http://youtrack.jetbrains.net/issue/KT-866
+
     var href : String
       get() = attributes["href"]
       set(value) { attributes["href"] = value }
