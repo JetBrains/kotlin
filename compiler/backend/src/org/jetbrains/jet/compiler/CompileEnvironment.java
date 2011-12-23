@@ -123,6 +123,11 @@ public class CompileEnvironment {
         if (rtJar.exists()) {
             return rtJar;
         }
+
+        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
+        if (classesJar.exists()) {
+            return classesJar;
+        }
         return null;
     }
 
