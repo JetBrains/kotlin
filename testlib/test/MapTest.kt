@@ -32,4 +32,12 @@ class MapTest() : TestSupport() {
 
     assertEquals(1, data.size())
   }
+
+  /** TODO can't seem to define size/empty properties for Map
+  fun testSizeAndEmpty() {
+    assert{ data.empty }
+
+    assertEquals(data.size, 0)
+  }
+  */
 }
