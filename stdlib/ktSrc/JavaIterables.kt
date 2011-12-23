@@ -22,6 +22,16 @@ inline fun <T> java.lang.Iterable<T>.all(predicate: (T)-> Boolean) : Boolean {
   return true
 }
 
+/** Returns the number of items which match the given predicate  */
+inline fun <T> java.lang.Iterable<T>.count(predicate: (T)-> Boolean) : Int {
+  var answer = 0
+  for (elem in this) {
+    if (predicate(elem))
+      answer += 1
+  }
+  return answer
+}
+
 /** Returns the first item in the collection which matches the given predicate or null if none matched */
 inline fun <T> java.lang.Iterable<T>.find(predicate: (T)-> Boolean) : T? {
   for (elem in this) {

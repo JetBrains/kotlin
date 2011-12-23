@@ -29,6 +29,12 @@ class CollectionTest() : TestSupport() {
     }
   }
 
+  fun testCount() {
+    assertEquals(1, data.count{it.startsWith("b")})
+    // TODO size should implement size property to be polymorphic with collections
+    assertEquals(2, data.count{it.length == 3})
+  }
+
   fun testFilter() {
     val foo = data.filter{it.startsWith("f")}
 
@@ -153,5 +159,4 @@ class CollectionTest() : TestSupport() {
       }
     }
   }
-
 }
