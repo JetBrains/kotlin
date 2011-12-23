@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 class Outer() {
     class Inner() {
