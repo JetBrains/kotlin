@@ -15,6 +15,7 @@ class EmailTemplate(var name: String = "James", var time: Date = Date()) : TextT
 
 /**
  TODO compile error
+ http://youtrack.jetbrains.net/issue/KT-865
 
 class MoreDryTemplate(var name: String = "James", var time: Date = Date()) : TextTemplate() {
   override fun render() {
