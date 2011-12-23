@@ -41,6 +41,15 @@ inline fun <T> Array<T>.filter(result: Collection<T> = ArrayList<T>(), predicate
   return result
 }
 
+/** Returns a new collection containing all elements in this collection which do not match the given predicate */
+inline fun <T> Array<T>.filterNot(result: Collection<T> = ArrayList<T>(), predicate: (T)-> Boolean) : Collection<T> {
+  for (elem in this) {
+    if (!predicate(elem))
+      result.add(elem)
+  }
+  return result
+}
+
 /**
   * Returns the result of transforming each item in the collection to a one or more values which
   * are concatenated together into a single collection

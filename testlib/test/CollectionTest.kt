@@ -39,6 +39,16 @@ class CollectionTest() : TestSupport() {
     assertEquals(arrayList("foo"), foo)
   }
 
+  fun testFilterNot() {
+    val foo = data.filterNot{it.startsWith("b")}
+
+    assert {
+      foo.all{it.startsWith("f")}
+    }
+    assertEquals(1, foo.size)
+    assertEquals(arrayList("foo"), foo)
+  }
+
   fun testFilterIntoLinkedList() {
     // TODO would be nice to avoid the <String>
     val foo = data.filter(linkedList<String>()){it.startsWith("f")}
