@@ -118,6 +118,24 @@ class CollectionTest() : TestSupport() {
     assertEquals(6, count)
   }
 
+  fun testGroupBy() {
+    val words = arrayList("a", "ab", "abc", "def", "abcd")
+    /*
+     TODO inference engine should not need this type info?
+     */
+    val byLength = words.groupBy<String,Int>{it.length}
+    assertEquals(4, byLength.size())
+
+    println("Grouped by length is: $byLength")
+    /*
+     TODO compiler bug...
+
+    val l3 = byLength.getOrElse(3, {ArrayList<String>()})
+    assertEquals(2, l3.size)
+    */
+
+  }
+
   fun testJoin() {
     val text = data.join("-", "<", ">")
     assertEquals("<foo-bar>", text)

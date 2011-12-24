@@ -81,6 +81,20 @@ inline fun <T> java.lang.Iterable<T>.foreach(operation: (element: T) -> Unit) {
     operation(elem)
 }
 
+/**
+ * Iterates through the collection performing the transformation on each element and using the result
+ * as the key in a map to group elements by the result
+ */
+inline fun <T,K> java.lang.Iterable<T>.groupBy(result: Map<K,List<T>> = HashMap<K,List<T>>(), toKey: (T)-> K) : Map<K,List<T>> {
+  for (elem in this) {
+    val key = toKey(elem)
+    val list = result.getOrElseUpdate(key){ ArrayList<T>() }
+    list.add(elem)
+  }
+  return result
+}
+
+
 /** Creates a String from all the elements in the collection, using the seperator between them and using the given prefix and postfix if supplied */
 inline fun <T> java.lang.Iterable<T>.join(separator: String, prefix: String = "", postfix: String = "") : String {
   val buffer = StringBuilder(prefix)
