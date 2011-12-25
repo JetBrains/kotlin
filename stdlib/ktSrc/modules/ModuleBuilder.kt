@@ -1,6 +1,4 @@
-package kotlin
-
-package modules {
+package kotlin.modules
 
 import java.util.*
 import jet.modules.*
@@ -77,6 +75,5 @@ open class ModuleBuilder(val name: String): IModuleBuilder {
 class ModuleBuilder2(name: String): ModuleBuilder(name) {
 
 
-}
 }
 
