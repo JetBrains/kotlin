@@ -37,6 +37,9 @@ public class CompileSession {
     }
     
     public void addSources(String path) {
+        if(path == null)
+            return;
+
         VirtualFile vFile = myEnvironment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
             myErrors.add("File/directory not found: " + path);
@@ -68,15 +71,15 @@ public class CompileSession {
     public void addSources(VirtualFile vFile) {
         if  (vFile.isDirectory())  {
             for (VirtualFile virtualFile : vFile.getChildren()) {
-                if (virtualFile.getFileType() == JetFileType.INSTANCE) {
-                    addSources(virtualFile);
-                }
+                addSources(virtualFile);
             }
         }
         else {
-            PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
-            if (psiFile instanceof JetFile) {
-                mySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
+            if (vFile.getFileType() == JetFileType.INSTANCE) {
+                PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
+                if (psiFile instanceof JetFile) {
+                    mySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
+                }
             }
         }
     }
@@ -121,8 +124,9 @@ public class CompileSession {
         else {
             final File runtimeJarPath = CompileEnvironment.getRuntimeJarPath();
             if (runtimeJarPath != null && runtimeJarPath.exists()) {
-                // todo
-                throw new UnsupportedOperationException("Loading of stdlib sources from jar");
+                VirtualFile runtimeJar = myEnvironment.getLocalFileSystem().findFileByPath(runtimeJarPath.getAbsolutePath());
+                VirtualFile jarRoot = myEnvironment.getJarFileSystem().findFileByPath(runtimeJar.getPath() + "!/stdlib/ktSrc");
+                addSources(jarRoot);
             }
             else {
                 return false;
