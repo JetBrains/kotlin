@@ -5,8 +5,14 @@ package modules {
 import java.util.*
 import jet.modules.*
 
+fun moduleSet(description: ModuleSetBuilder.() -> Unit) = description
+
+fun module(name: String, description: ModuleBuilder.() -> Unit) = moduleSet {
+    module(name, description)
+}
+
 class ModuleSetBuilder(): IModuleSetBuilder {
-    val modules: ArrayList<IModuleBuilder?> = ArrayList<IModuleBuilder?>()
+    private val modules = ArrayList<IModuleBuilder?>()
 
     fun module(name: String, callback:  ModuleBuilder.() -> Unit) {
         val builder = ModuleBuilder(name)

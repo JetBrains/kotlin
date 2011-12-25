@@ -7,6 +7,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
+import jet.ExtensionFunction0;
+import jet.ExtensionFunction10;
+import jet.Function1;
 import jet.modules.IModuleBuilder;
 import jet.modules.IModuleSetBuilder;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +21,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -198,17 +202,19 @@ public class CompileEnvironment {
             final IModuleSetBuilder moduleSetBuilder = (IModuleSetBuilder) moduleSetBuilderClass.newInstance();
 
             Class namespaceClass = loader.loadClass("namespace");
-            final Method[] methods = namespaceClass.getMethods();
+            final Field[] fields = namespaceClass.getDeclaredFields();
             boolean modulesDefined = false;
-            for (Method method : methods) {
-                if (method.getName().equals("defineModules")) {
-                    method.invoke(null, moduleSetBuilder);
+            for (Field field : fields) {
+                if (field.getName().equals("modules")) {
+                    field.setAccessible(true);
+                    ExtensionFunction0 defineMudules = (ExtensionFunction0) field.get(null);
+                    defineMudules.invoke(moduleSetBuilder);
                     modulesDefined = true;
                     break;
                 }
             }
             if (!modulesDefined) {
-                throw new CompileEnvironmentException("Module script " + moduleFile + " must define a defineModules() method");
+                throw new CompileEnvironmentException("Module script " + moduleFile + " must define a modules() property");
             }
             return moduleSetBuilder;
         } catch (Exception e) {
