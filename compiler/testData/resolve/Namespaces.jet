@@ -1,6 +1,6 @@
-namespace root
+package root
 
-~a~namespace a {
+~a~package a {
     import java.*
 
     ~a.a~val a : util.List<Int>? = null
@@ -9,7 +9,7 @@ namespace root
 
 }
 
-namespace a {
+package a {
     import java.util.*
 
     ~a.b~val b : List<Int>? = null

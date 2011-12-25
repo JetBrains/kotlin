@@ -1,11 +1,11 @@
-namespace redeclarations {
+package redeclarations {
   object <error>A</error> {
     val x : Int = 0
 
     val A = 1
   }
 
-  namespace <error>A</error> {
+  package <error>A</error> {
     class A {}
   }
 

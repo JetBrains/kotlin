@@ -1,4 +1,4 @@
-namespace Test.MyTest
+package Test.MyTest
 
 fun test() {
     Test.<caret>

@@ -1,4 +1,4 @@
-namespace testDslExample
+package testDslExample
 
 import std.io.*
 import std.test.*

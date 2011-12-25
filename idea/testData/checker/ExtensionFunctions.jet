@@ -37,7 +37,7 @@ val <T> T.<error>foo</error> : T
 
 fun Int.foo() = this
 
-namespace null_safety {
+package null_safety {
 
         fun parse(<warning>cmd</warning>: String): Command? { return null  }
         class Command() {

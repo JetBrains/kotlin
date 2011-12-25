@@ -1,4 +1,4 @@
-namespace lockperformance
+package lockperformance
 
 import std.io.*
 import std.util.*

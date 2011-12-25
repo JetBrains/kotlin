@@ -1,4 +1,4 @@
-namespace Jet87
+package Jet87
 
 open class A() {
   fun foo() : Int = 1

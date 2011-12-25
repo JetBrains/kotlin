@@ -1,4 +1,4 @@
-namespace flist
+package flist
 
 abstract class FList<T> {
     abstract val head : T

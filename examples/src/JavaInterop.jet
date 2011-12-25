@@ -1,4 +1,4 @@
-namespace JavaInterop
+package JavaInterop
 
 import java.util.*
 

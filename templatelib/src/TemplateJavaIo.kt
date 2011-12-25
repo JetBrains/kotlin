@@ -1,6 +1,6 @@
 // Server side Java IO code to avoid coupling
 // the core template code to java.* for easier JS porting
-namespace std.template.io
+package std.template.io
 
 import std.template.*
 import java.io.Writer

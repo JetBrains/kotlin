@@ -1,7 +1,7 @@
 // One of the two passes is making a scope and turning vals into functions
 // See KT-76
 
-namespace x
+package x
 
 val b : Foo = Foo()
 val a1 = b.compareTo(2)

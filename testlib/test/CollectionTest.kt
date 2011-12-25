@@ -1,4 +1,4 @@
-namespace test.collections
+package test.collections
 
 // TODO can we avoid importing all this stuff by default I wonder?
 // e.g. making println and the collection builder methods public by default?

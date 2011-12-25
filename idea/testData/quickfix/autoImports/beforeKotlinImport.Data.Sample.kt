@@ -1,3 +1,3 @@
-namespace TestData
+package TestData
 
 class TestSample() {}

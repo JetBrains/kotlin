@@ -1,4 +1,4 @@
-namespace spectralnorm
+package spectralnorm
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

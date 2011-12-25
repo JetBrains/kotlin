@@ -1,6 +1,6 @@
-namespace jet
+package jet
 
-namespace typeinfo {
+package typeinfo {
     class TypeInfo<out T> {
       fun isSubtypeOf(other : TypeInfo<*>) : Boolean
       fun isInstance(obj : Any?) : Boolean
@@ -10,7 +10,7 @@ namespace typeinfo {
     fun typeinfo<T>(expression : T) : TypeInfo<T>
 }
 
-namespace io {
+package io {
   fun print(message : Any?)
   fun print(message : Int)
   fun print(message : Long)

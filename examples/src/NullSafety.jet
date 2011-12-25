@@ -1,4 +1,4 @@
-namespace NullSafety
+package NullSafety
 
 fun <T : Any> T?.npe() : T =
   if (this == null)

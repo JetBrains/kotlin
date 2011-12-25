@@ -1,5 +1,5 @@
 //FILE:a.kt
-namespace a
+package a
 
 import b.B        //class
 import b.foo      //function
@@ -14,7 +14,7 @@ fun test(arg: B) {
 }
 
 //FILE:b.kt
-namespace b
+package b
 
 class B() {}
 

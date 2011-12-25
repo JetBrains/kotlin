@@ -1,5 +1,5 @@
 // "Add return type declaration" "false"
-namespace a
+package a
 
 class A() {
     public fun <caret>foo()

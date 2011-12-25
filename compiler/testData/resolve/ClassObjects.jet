@@ -1,4 +1,4 @@
-namespace Jet86
+package Jet86
 
 ~A~class A {
   class object {

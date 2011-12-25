@@ -1,4 +1,4 @@
-namespace test.collections
+package test.collections
 
 import std.test.*
 

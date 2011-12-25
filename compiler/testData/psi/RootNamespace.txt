@@ -43,7 +43,7 @@ JetFile: RootNamespace.jet
               DOT_QUALIFIED_EXPRESSION
                 DOT_QUALIFIED_EXPRESSION
                   ROOT_NAMESPACE
-                    PsiElement(namespace)('namespace')
+                    PsiElement(namespace)('package')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
@@ -58,7 +58,7 @@ JetFile: RootNamespace.jet
               DOT_QUALIFIED_EXPRESSION
                 DOT_QUALIFIED_EXPRESSION
                   ROOT_NAMESPACE
-                    PsiElement(namespace)('namespace')
+                    PsiElement(namespace)('package')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
@@ -92,7 +92,7 @@ JetFile: RootNamespace.jet
                       DOT_QUALIFIED_EXPRESSION
                         DOT_QUALIFIED_EXPRESSION
                           ROOT_NAMESPACE
-                            PsiElement(namespace)('namespace')
+                            PsiElement(namespace)('package')
                           PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('foo')

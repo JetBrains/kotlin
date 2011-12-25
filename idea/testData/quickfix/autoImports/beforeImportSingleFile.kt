@@ -1,10 +1,10 @@
 // "Import Class" "true"
-namespace a
+package a
 
 fun test() {
     val v = <caret>M
 }
 
-namespace b {
+package b {
     class M() { }
 }

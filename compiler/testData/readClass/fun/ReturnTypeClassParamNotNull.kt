@@ -1,4 +1,4 @@
-namespace test
+package test
 
 import java.util.List
 import java.util.ArrayList

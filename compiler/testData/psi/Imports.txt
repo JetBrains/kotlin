@@ -14,7 +14,7 @@ JetFile: Imports.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')

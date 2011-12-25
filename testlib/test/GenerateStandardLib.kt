@@ -1,4 +1,4 @@
-namespace kotlin.tools
+package kotlin.tools
 
 import std.*
 import std.io.*

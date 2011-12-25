@@ -1,4 +1,4 @@
-namespace container_test
+package container_test
 
 class Container<T>(var t : T) {
     fun getT() : T = t

@@ -1,4 +1,4 @@
-namespace test.apicheck
+package test.apicheck
 
 import std.util.*
 import java.util.*

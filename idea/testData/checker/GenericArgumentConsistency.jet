@@ -13,28 +13,28 @@ trait BB1 : BA1<Int> {}
 trait BB2 : <error>BA1<Any>, BB1</error> {}
 
 
-namespace x {
+package x {
     trait AA1<out T> {}
     trait AB1 : AA1<Int> {}
     trait AB3 : AA1<Comparable<Int>> {}
     trait AB2 : AA1<Number>, AB1, AB3 {}
 }
 
-namespace x2 {
+package x2 {
     trait AA1<out T> {}
     trait AB1 : AA1<Any> {}
     trait AB3 : AA1<Comparable<Int>> {}
     trait AB2 : <error>AA1<Number>, AB1, AB3</error> {}
 }
 
-namespace x3 {
+package x3 {
     trait AA1<in T> {}
     trait AB1 : AA1<Any> {}
     trait AB3 : AA1<Comparable<Int>> {}
     trait AB2 : AA1<Number>, AB1, AB3 {}
 }
 
-namespace sx2 {
+package sx2 {
     trait AA1<in T> {}
     trait AB1 : AA1<Int> {}
     trait AB3 : AA1<Comparable<Int>> {}

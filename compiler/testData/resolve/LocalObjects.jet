@@ -1,4 +1,4 @@
-namespace localObjects {
+package localObjects {
   object ~A~A {
     ~x~val x : Int
   }

@@ -1,4 +1,4 @@
-namespace jet.collections.set
+package jet.collections.set
 
 import jet.collections.sized.ISized
 import jet.collections.iterable.IIterable

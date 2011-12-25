@@ -1,4 +1,4 @@
-namespace quicksort
+package quicksort
 
 fun IntArray.swap(i:Int, j:Int) {
     val temp = this[i]

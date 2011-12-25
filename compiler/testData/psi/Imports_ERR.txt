@@ -14,7 +14,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiErrorElement:Expecting '.'
         <empty list>
       PsiWhiteSpace(' ')
@@ -26,7 +26,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiErrorElement:Expecting qualified name
@@ -37,7 +37,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiElement(DOT)('.')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION

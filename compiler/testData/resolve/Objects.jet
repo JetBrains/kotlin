@@ -1,4 +1,4 @@
-namespace toplevelObjectDeclarations {
+package toplevelObjectDeclarations {
   class Foo(y : Int) {
     ~foo()~open fun foo() : Int = 1
   }

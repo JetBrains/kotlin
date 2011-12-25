@@ -1,5 +1,5 @@
 // "Import Class" "true"
-namespace a
+package a
 
 import a.b.M
 
@@ -7,6 +7,6 @@ fun test() {
     val v = M
 }
 
-namespace b {
+package b {
     class M() { }
 }

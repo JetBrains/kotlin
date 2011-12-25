@@ -1,4 +1,4 @@
-namespace HelloNamesRealistic
+package HelloNamesRealistic
 
 fun main(args : Array<String>) {
     val names = args.join(", ")

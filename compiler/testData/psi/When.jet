@@ -45,7 +45,7 @@ fun foo() {
     is a  #(a, b) -> c
     is a.a  #(a, b) -> c
     is a.a  #(foo = a, bar = b) -> c
-    is namespace.a.a  #(a, b) -> c
+    is package.a.a  #(a, b) -> c
     is a  #(val a is T, b) -> c
     is a  #(b, 1) -> c
     in 1..2 -> dsf

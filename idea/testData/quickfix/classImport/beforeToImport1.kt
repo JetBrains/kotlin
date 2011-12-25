@@ -1,5 +1,5 @@
 // "Remove initializer from property" "true"
-namespace a
+package a
 
 import java.util.Collections
 

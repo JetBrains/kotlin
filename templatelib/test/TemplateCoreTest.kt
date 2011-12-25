@@ -1,4 +1,4 @@
-namespace std.template
+package std.template
 
 import std.*
 import std.template.io.*

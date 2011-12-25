@@ -1,4 +1,4 @@
-namespace generics;
+package generics;
 
 import java.util.*
 

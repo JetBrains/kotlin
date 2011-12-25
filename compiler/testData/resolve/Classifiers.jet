@@ -1,4 +1,4 @@
-namespace qualified_this {
+package qualified_this {
     ~qtA~class A(val a:Int) {
 
       ~qtB~class B() {

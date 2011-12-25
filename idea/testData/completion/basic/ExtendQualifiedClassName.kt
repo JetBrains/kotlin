@@ -1,4 +1,4 @@
-namespace Test.SubTest.AnotherTest
+package Test.SubTest.AnotherTest
 
 open class TestClass {
 }

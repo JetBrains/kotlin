@@ -1,4 +1,4 @@
-namespace std.test
+package std.test
 
 import std.io.*
 import std.util.*

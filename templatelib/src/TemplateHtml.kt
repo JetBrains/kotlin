@@ -1,4 +1,4 @@
-namespace std.template.html
+package std.template.html
 
 import std.*
 import std.template.*

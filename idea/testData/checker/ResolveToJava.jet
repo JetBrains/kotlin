@@ -47,6 +47,6 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
 }
 
 
-namespace xxx {
+package xxx {
   import java.lang.Class;
 }

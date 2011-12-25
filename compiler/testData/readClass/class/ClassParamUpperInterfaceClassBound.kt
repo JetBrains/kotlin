@@ -1,3 +1,3 @@
-namespace test
+package test
 
 class Clock<A> where A : java.lang.CharSequence, A : java.lang.Number

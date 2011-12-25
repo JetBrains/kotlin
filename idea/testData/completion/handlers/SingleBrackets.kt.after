@@ -1,4 +1,4 @@
-namespace Test.MyTest
+package Test.MyTest
 
 class A {
     class object {
