@@ -72,12 +72,15 @@ JetFile: Properties_ERR.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+          PsiElement(DOT)('.')
           REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+            PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('bar')
-      PsiErrorElement:Property getter or setter expected
-        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting property name
+        <empty list>
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
@@ -148,16 +151,19 @@ JetFile: Properties_ERR.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('f')
+          PsiElement(DOT)('.')
           REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('f')
+            PsiElement(IDENTIFIER)('d')
       PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('d')
-      PsiErrorElement:Property getter or setter expected
-        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting property name
         PsiElement(MINUS)('-')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace('\n\n')
     PROPERTY

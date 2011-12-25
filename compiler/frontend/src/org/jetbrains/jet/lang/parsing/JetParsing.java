@@ -826,12 +826,12 @@ public class JetParsing extends AbstractJetParsing {
 
         boolean typeParametersDeclared = at(LT) ? parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON)) : false;
 
-        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
+        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
 
         myBuilder.disableJoiningComplexTokens();
 
         // TODO: extract constant
-        int lastDot = matchTokenStreamPredicate(new FirstBefore(
+        int lastDot = matchTokenStreamPredicate(new LastBefore(
                 new AtSet(DOT, SAFE_ACCESS),
                 new AbstractTokenStreamPredicate() {
                     @Override
