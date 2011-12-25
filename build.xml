@@ -42,11 +42,11 @@
         </java>
     </target>
 
-    <target name="jarRT" depends="compileStdlib">
+    <target name="jarRT" depends="compile">
         <jar destfile="${output}/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
-            <fileset dir="${output}/classes/stdlib"/>
-            <fileset dir="${basedir}/stdlib/ktSrc"/>
+            <!--<fileset dir="${output}/classes/stdlib"/>-->
+            <fileset dir="${basedir}" includes="stdlib/ktSrc/*.*"/>
         </jar>
     </target>
 
