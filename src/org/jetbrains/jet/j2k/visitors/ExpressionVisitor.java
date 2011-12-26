@@ -311,11 +311,11 @@ public class ExpressionVisitor extends StatementVisitor {
 
     Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
 
-    final String temporaryObject = "__";
+    final String __ = "__";
     if (hasReceiver)
-      identifier = new CallChainExpression(new IdentifierImpl(temporaryObject, false), new IdentifierImpl(expression.getReferenceName(), isNullable));
+      identifier = new CallChainExpression(new IdentifierImpl(__, false), new IdentifierImpl(expression.getReferenceName(), isNullable));
     else if (insideSecondaryConstructor && isThis)
-      identifier = new IdentifierImpl("val " + temporaryObject + " = " + className); // TODO: hack
+      identifier = new IdentifierImpl("val __ = " + className); // TODO: hack
 
     myResult = new CallChainExpression(
       expressionToExpression(expression.getQualifierExpression()),

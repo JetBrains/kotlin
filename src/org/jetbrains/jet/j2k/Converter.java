@@ -563,10 +563,13 @@ public class Converter {
   }
 
   private static boolean isReadOnly(@NotNull PsiParameter parameter) {
-    for (PsiReference r : (ReferencesSearch.search(parameter))) {
-      if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
-        return false;
+    try {
+      for (PsiReference r : (ReferencesSearch.search(parameter))) {
+        if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
+          return false;
+        }
       }
+    } catch (IllegalArgumentException ignored) {
     }
     return true;
   }
