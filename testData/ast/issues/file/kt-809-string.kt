@@ -1,6 +1,6 @@
 package demo
 open class Container() {
-var myString : String? = 1
+var myString : String? = "1"
 }
 open class One() {
 class object {
