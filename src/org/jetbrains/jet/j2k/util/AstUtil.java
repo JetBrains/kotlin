@@ -2,7 +2,6 @@ package org.jetbrains.jet.j2k.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.j2k.ast.Expression;
 import org.jetbrains.jet.j2k.ast.INode;
 
 import java.util.LinkedList;
@@ -57,10 +56,10 @@ public class AstUtil {
   }
 
   @NotNull
-  public static List<String> createListWithEmptyString(@NotNull final List<Expression> arguments) {
+  public static <T> List<String> createListWithEmptyString(@NotNull final List<T> arguments) {
     final List<String> conversions = new LinkedList<String>();
     //noinspection UnusedDeclaration
-    for (Expression argument : arguments) conversions.add("");
+    for (T argument : arguments) conversions.add("");
     return conversions;
   }
 

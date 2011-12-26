@@ -125,7 +125,8 @@ public class ExpressionVisitor extends StatementVisitor {
         new BinaryExpression(
           expressionToExpression(expression.getLOperand()),
           expressionToExpression(expression.getROperand()),
-          getOperatorString(expression.getOperationSign().getTokenType())
+          getOperatorString(expression.getOperationSign().getTokenType()),
+          createConversions(expression, PsiType.BOOLEAN)
         );
   }
 
@@ -449,7 +450,8 @@ public class ExpressionVisitor extends StatementVisitor {
     super.visitPolyadicExpression(expression);
     myResult = new PolyadicExpression(
       expressionsToExpressionList(expression.getOperands()),
-      getOperatorString(expression.getOperationTokenType())
+      getOperatorString(expression.getOperationTokenType()),
+      createConversions(expression, PsiType.BOOLEAN)
     );
   }
 }

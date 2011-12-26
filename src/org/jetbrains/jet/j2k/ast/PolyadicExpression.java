@@ -11,16 +11,19 @@ import java.util.List;
 public class PolyadicExpression extends Expression {
   private final List<Expression> myExpressions;
   private final String myToken;
+  private final List<String> myConversions;
 
-  public PolyadicExpression(List<Expression> expressions, String token) {
+  public PolyadicExpression(List<Expression> expressions, String token, List<String> conversions) {
     super();
     myExpressions = expressions;
     myToken = token;
+    myConversions = conversions;
   }
 
   @NotNull
   @Override
   public String toKotlin() {
-    return "(" + AstUtil.joinNodes(myExpressions, SPACE + myToken + SPACE) + ")";
+    List<String> expressionsWithConversions = AstUtil.applyConversions(AstUtil.nodesToKotlin(myExpressions), myConversions);
+    return "(" + AstUtil.join(expressionsWithConversions, SPACE + myToken + SPACE) + ")";
   }
 }

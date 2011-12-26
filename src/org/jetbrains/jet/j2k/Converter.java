@@ -601,9 +601,9 @@ public class Converter {
 
   @NotNull
   public static List<String> createConversions(@NotNull PsiCallExpression expression) {
-    List<String> conversions = new LinkedList<String>();
     PsiExpressionList argumentList = expression.getArgumentList();
     PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
+    List<String> conversions = new LinkedList<String>();
     //noinspection UnusedDeclaration
     for (final PsiExpression a : arguments) {
       conversions.add("");
@@ -629,18 +629,40 @@ public class Converter {
   }
 
   @NotNull
+  public static List<String> createConversions(@NotNull PsiPolyadicExpression expression, PsiType expectedType) {
+    PsiExpression[] arguments = expression.getOperands();
+    int length = arguments.length;
+    List<String> conversions = new LinkedList<String>();
+
+    List<PsiType> expectedTypes = Collections.nCopies(length, expectedType);
+    List<PsiType> actualTypes = new LinkedList<PsiType>();
+
+    for (PsiExpression e : arguments)
+      actualTypes.add(e.getType());
+
+    assert actualTypes.size() == expectedTypes.size() : "The type list must have the same length";
+
+    for (int i = 0; i < actualTypes.size(); i++)
+      conversions.add(i, createConversionForExpression(arguments[i], expectedTypes.get(i)));
+
+    return conversions;
+  }
+
+  @NotNull
   private static String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
     String conversion = "";
     if (expression != null) {
       PsiType actualType = expression.getType();
-      if (actualType != null) {
-        if (Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText()) && (expression instanceof PsiReferenceExpression
-          && ((PsiReferenceExpression) expression).isQualified() || expression instanceof PsiMethodCallExpression)
-          && expressionToExpression(expression).toKotlin().contains("?."))
-          conversion += ".sure()";
+      boolean isPrimitiveTypeOrNull = actualType == null || Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText());
+      boolean isRef = (expression instanceof PsiReferenceExpression && ((PsiReferenceExpression) expression).isQualified() || expression instanceof PsiMethodCallExpression);
+      boolean containsQuestDot = expressionToExpression(expression).toKotlin().contains("?.");
+
+      if (isPrimitiveTypeOrNull && isRef && containsQuestDot)
+        conversion += ".sure()";
+
+      if (actualType != null)
         if (isConversionNeeded(actualType, expectedType))
           conversion += getPrimitiveTypeConversion(expectedType.getCanonicalText());
-      }
     }
     return conversion;
   }

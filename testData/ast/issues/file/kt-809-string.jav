@@ -1,7 +1,7 @@
 package demo;
 
 class Container {
-  String myString = 1;
+  String myString = "1";
 }
 
 class One {
