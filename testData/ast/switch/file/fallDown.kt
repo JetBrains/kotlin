@@ -16,3 +16,4 @@ System.out?.println(monthString)
 }
 }
 }
+fun main(args : Array<String?>?) = SwitchDemo.main(args)

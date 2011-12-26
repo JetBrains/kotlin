@@ -14,6 +14,7 @@ import org.jetbrains.jet.j2k.visitors.*;
 
 import java.util.*;
 
+import static org.jetbrains.jet.j2k.ConverterUtil.createMainFunction;
 import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
 
 /**
@@ -58,17 +59,21 @@ public class Converter {
 
   @NotNull
   public static File fileToFile(@NotNull PsiJavaFile javaFile) {
-    final PsiImportList importList = javaFile.getImportList();
-    List<Import> imports = importList == null ? Collections.<Import>emptyList() : importsToImportList(importList.getAllImportStatements());
-    return new File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
+    return fileToFile(javaFile, Collections.<String>emptyList());
   }
 
   @NotNull
   public static File fileToFileWithCompatibilityImport(@NotNull PsiJavaFile javaFile) {
+    return fileToFile(javaFile, Collections.singletonList("std.compatibility.*"));
+  }
+
+  @NotNull
+  private static File fileToFile(PsiJavaFile javaFile, List<String> additionalImports) {
     final PsiImportList importList = javaFile.getImportList();
     List<Import> imports = importList == null ? Collections.<Import>emptyList() : importsToImportList(importList.getAllImportStatements());
-    imports.add(new Import("std.compatibility.*"));
-    return new File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()));
+    for (String i : additionalImports)
+      imports.add(new Import(i));
+    return new File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()), createMainFunction(javaFile));
   }
 
   @NotNull
