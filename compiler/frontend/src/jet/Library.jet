@@ -1,6 +1,6 @@
 package jet
 
-package typeinfo {
+//package typeinfo {
     class TypeInfo<out T> {
       fun isSubtypeOf(other : TypeInfo<*>) : Boolean
       fun isInstance(obj : Any?) : Boolean
@@ -8,31 +8,7 @@ package typeinfo {
 
     fun typeinfo<T>() : TypeInfo<T>
     fun typeinfo<T>(expression : T) : TypeInfo<T>
-}
-
-package io {
-  fun print(message : Any?)
-  fun print(message : Int)
-  fun print(message : Long)
-  fun print(message : Byte)
-  fun print(message : Short)
-  fun print(message : Char)
-  fun print(message : Boolean)
-  fun print(message : Float)
-  fun print(message : Double)
-
-  fun println(message : Any?)
-  fun println(message : Int)
-  fun println(message : Long)
-  fun println(message : Byte)
-  fun println(message : Short)
-  fun println(message : Char)
-  fun println(message : Boolean)
-  fun println(message : Float)
-  fun println(message : Double)
-
-  fun readLine() : String?
-}
+//}
 
 fun <R> Any.synchronized(block : () -> R) : R
 

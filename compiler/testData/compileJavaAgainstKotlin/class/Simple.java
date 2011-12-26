@@ -1,7 +1,7 @@
 
 class Simple {
     {
-        jet.typeinfo.TypeInfo blabla = null;
+        jet.TypeInfo blabla = null;
         new Impossible<String>(blabla);
     }
 }

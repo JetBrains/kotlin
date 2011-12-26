@@ -3,13 +3,6 @@
  */
 package jet;
 
-import jet.typeinfo.TypeInfo;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-
 public abstract class Function0<R> extends DefaultJetObject {
     protected Function0(TypeInfo typeInfo) {
         super(typeInfo);
@@ -30,7 +23,7 @@ public abstract class Function0<R> extends DefaultJetObject {
 //                      " */\n" +
 //                      "package jet;\n" +
 //                      "\n" +
-//                      "import jet.typeinfo.TypeInfo;\n" +
+//                      "import jet.TypeInfo;\n" +
 //                      "public abstract class Function" + i + "<");
 //            for(int k = 1; k <= i; k++)
 //                out.print("D" + k + ", ");
@@ -61,7 +54,7 @@ public abstract class Function0<R> extends DefaultJetObject {
 //                      " */\n" +
 //                      "package jet;\n" +
 //                      "\n" +
-//                      "import jet.typeinfo.TypeInfo;\n" +
+//                      "import jet.TypeInfo;\n" +
 //                      "public abstract class ExtensionFunction" + i + "<E, ");
 //            for(int k = 1; k <= i; k++)
 //                out.print("D" + k + ", ");

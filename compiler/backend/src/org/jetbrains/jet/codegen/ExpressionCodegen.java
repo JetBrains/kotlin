@@ -991,7 +991,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
             loadTypeParameterTypeInfo(typeParameterDescriptor, null);
-            v.invokevirtual("jet/typeinfo/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
+            v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
             v.checkcast(asmType(typeParameterDescriptor.getClassObjectType()));
 
             return StackValue.onStack(TYPE_OBJECT);
@@ -2118,7 +2118,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if(elementType != null) {
                 generateTypeInfo(elementType, null);
                 gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
-                v.invokevirtual("jet/typeinfo/TypeInfo", "newArray", "(I)[Ljava/lang/Object;");
+                v.invokevirtual("jet/TypeInfo", "newArray", "(I)[Ljava/lang/Object;");
             }
             else {
                 gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
@@ -2543,14 +2543,14 @@ If finally block is present, its last expression is the value of try expression.
             if (leaveExpressionOnStack) {
                 v.dupX1();
             }
-            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
+            v.invokevirtual("jet/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
         }
     }
 
     public void generateTypeInfo(JetType jetType, Map<TypeParameterDescriptor, JetType> typeArguments) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
-            v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
+            v.getstatic("jet/TypeInfo", knownTypeInfo, "Ljet/TypeInfo;");
             return;
         }
 
@@ -2562,14 +2562,14 @@ If finally block is present, its last expression is the value of try expression.
 
         if(!CodegenUtil.hasTypeInfoField(jetType) && !(bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetType.getConstructor().getDeclarationDescriptor()) instanceof PsiClass)) {
             // TODO: we need some better checks here
-            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
+            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$staticTypeInfo", "Ljet/TypeInfo;");
             return;
         }
         
         boolean hasUnsubstituted = TypeUtils.hasUnsubstitutedTypeParameters(jetType);
         if(!hasUnsubstituted) {
             int typeInfoConstantIndex = context.getTypeInfoConstantIndex(jetType);
-            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/typeinfo/TypeInfo;");
+            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/TypeInfo;");
             return;
         }
 
@@ -2590,10 +2590,10 @@ If finally block is present, its last expression is the value of try expression.
                 genTypeInfoToProjection(v, argument.getProjectionKind());
                 v.astore(TYPE_OBJECT);
             }
-            v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
+            v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/TypeInfo;");
         }
         else {
-            v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
+            v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
         }
     }
 
@@ -2601,9 +2601,9 @@ If finally block is present, its last expression is the value of try expression.
         if(variance == Variance.INVARIANT)
             v.checkcast(TYPE_TYPEINFOPROJECTION);
         else if(variance == Variance.IN_VARIANCE)
-            v.invokestatic("jet/typeinfo/TypeInfo", "inProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
+            v.invokestatic("jet/TypeInfo", "inProjection", "(Ljet/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
         else if(variance == Variance.OUT_VARIANCE)
-            v.invokestatic("jet/typeinfo/TypeInfo", "outProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
+            v.invokestatic("jet/TypeInfo", "outProjection", "(Ljet/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
         else
             throw new UnsupportedOperationException(variance.toString());
     }
@@ -2635,19 +2635,19 @@ If finally block is present, its last expression is the value of try expression.
                     if (CodegenUtil.hasTypeInfoField(defaultType)) {
                         if(!(context instanceof CodegenContext.ConstructorContext)) {
                             v.load(0, TYPE_OBJECT);
-                            v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                            v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
                         }
                         else {
                             v.load(((ConstructorFrameMap)myFrameMap).getTypeInfoIndex(), TYPE_OBJECT);
                         }
                     }
                     else {
-                        v.getstatic(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                        v.getstatic(ownerType.getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
                     }
                 }
                 else {
                     v.load(0, TYPE_OBJECT);
-                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/TypeInfo;");
                 }
             }
             else {
@@ -2656,11 +2656,11 @@ If finally block is present, its last expression is the value of try expression.
                     descriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
                     v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getOuterObject", "()Ljet/JetObject;");
                 }
-                v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+                v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getTypeInfo", "()Ljet/TypeInfo;");
             }
             v.aconst(ownerType);
             v.iconst(typeParameterDescriptor.getIndex());
-            v.invokevirtual("jet/typeinfo/TypeInfo", "getArgumentType", "(Ljava/lang/Class;I)Ljet/typeinfo/TypeInfo;");
+            v.invokevirtual("jet/TypeInfo", "getArgumentType", "(Ljava/lang/Class;I)Ljet/TypeInfo;");
             return;
         }
         throw new UnsupportedOperationException("don't know what this type parameter resolves to");
@@ -2780,7 +2780,7 @@ If finally block is present, its last expression is the value of try expression.
 
         final String className = "jet/Tuple" + entries.size();
         Type tupleType = Type.getObjectType(className);
-        StringBuilder signature = new StringBuilder("(Ljet/typeinfo/TypeInfo;");
+        StringBuilder signature = new StringBuilder("(Ljet/TypeInfo;");
         for (int i = 0; i != entries.size(); ++i) {
             signature.append("Ljava/lang/Object;");
         }

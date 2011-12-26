@@ -3,7 +3,7 @@ package org.jetbrains.jet.codegen;
 import jet.IntRange;
 import jet.Tuple2;
 import jet.Tuple4;
-import jet.typeinfo.TypeInfo;
+import jet.TypeInfo;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;

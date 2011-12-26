@@ -1,7 +1,7 @@
-package jet.typeinfo;
+package jet;
 
-import jet.JetObject;
-import jet.Tuple0;
+import jet.typeinfo.TypeInfoProjection;
+import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.jet.rt.TypeInfoImpl;
 import org.jetbrains.jet.rt.TypeInfoProjectionImpl;
 

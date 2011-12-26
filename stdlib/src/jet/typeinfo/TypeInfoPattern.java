@@ -1,5 +1,7 @@
 package jet.typeinfo;
 
+import jet.TypeInfo;
+
 /**
  * This class represents how type info of super class should be matched against type parameters of subclass.
  *

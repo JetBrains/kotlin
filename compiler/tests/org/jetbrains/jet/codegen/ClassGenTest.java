@@ -18,7 +18,7 @@ public class ClassGenTest extends CodegenTestCase {
         final Class aClass = loadClass("SimpleClass", generateClassesInFile());
         final Method[] methods = aClass.getDeclaredMethods();
         // public int SimpleClass.foo()
-        // public jet.typeinfo.TypeInfo SimpleClass.getTypeInfo()
+        // public jet.TypeInfo SimpleClass.getTypeInfo()
         assertEquals(2, methods.length);
     }
 

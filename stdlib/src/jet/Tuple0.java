@@ -1,7 +1,5 @@
 package jet;
 
-import jet.typeinfo.TypeInfo;
-
 /**
  * @author alex.tkachman
  */

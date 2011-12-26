@@ -1,7 +1,5 @@
 package jet;
 
-import jet.typeinfo.TypeInfo;
-
 public final class LongRange implements Range<Long>, LongIterable, JetObject {
     private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
 

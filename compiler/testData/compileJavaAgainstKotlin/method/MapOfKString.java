@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 class MapOfKString {
     public static void gfgdgfg() {
-        jet.typeinfo.TypeInfo useless = null;
+        jet.TypeInfo useless = null;
         
         Map<BigDecimal, String> map = new HashMap<BigDecimal, String>();
         

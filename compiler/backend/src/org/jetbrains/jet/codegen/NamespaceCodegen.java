@@ -121,11 +121,11 @@ public class NamespaceCodegen {
             for(int index = 0; index != context.typeInfoConstantsCount; index++) {
                 JetType type = context.reverseTypeInfoConstants.get(index);
                 String fieldName = "$typeInfoCache$" + index;
-                v.newField(null, ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, fieldName, "Ljet/typeinfo/TypeInfo;", null, null);
+                v.newField(null, ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, fieldName, "Ljet/TypeInfo;", null, null);
 
-                MethodVisitor mmv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getCachedTypeInfo$" + index, "()Ljet/typeinfo/TypeInfo;", null, null);
+                MethodVisitor mmv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getCachedTypeInfo$" + index, "()Ljet/TypeInfo;", null, null);
                 InstructionAdapter v = new InstructionAdapter(mmv);
-                v.visitFieldInsn(GETSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");
+                v.visitFieldInsn(GETSTATIC, jvmClassName, fieldName, "Ljet/TypeInfo;");
                 v.visitInsn(DUP);
                 Label end = new Label();
                 v.visitJumpInsn(IFNONNULL, end);
@@ -134,7 +134,7 @@ public class NamespaceCodegen {
                 generateTypeInfo(context, v, type, state.getTypeMapper(), type);
                 v.dup();
 
-                v.visitFieldInsn(PUTSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");
+                v.visitFieldInsn(PUTSTATIC, jvmClassName, fieldName, "Ljet/TypeInfo;");
                 v.visitLabel(end);
                 v.visitInsn(ARETURN);
                 FunctionCodegen.endVisit(v, "type info method", namespace);
@@ -145,21 +145,21 @@ public class NamespaceCodegen {
     private static void generateTypeInfo(CodegenContext context, InstructionAdapter v, JetType jetType, JetTypeMapper typeMapper, JetType root) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
-            v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
+            v.getstatic("jet/TypeInfo", knownTypeInfo, "Ljet/TypeInfo;");
             return;
         }
 
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
         if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor) && !JetStandardClasses.getAny().equals(declarationDescriptor)) {
             // TODO: we need some better checks here
-            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
             return;
         }
 
         boolean hasUnsubstituted = TypeUtils.hasUnsubstitutedTypeParameters(jetType);
         if(!jetType.equals(root) && !hasUnsubstituted) {
             int typeInfoConstantIndex = context.getTypeInfoConstantIndex(jetType);
-            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/typeinfo/TypeInfo;");
+            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/TypeInfo;");
             return;
         }
 
@@ -180,10 +180,10 @@ public class NamespaceCodegen {
                 ExpressionCodegen.genTypeInfoToProjection(v, argument.getProjectionKind());
                 v.astore(JetTypeMapper.TYPE_OBJECT);
             }
-            v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
+            v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/TypeInfo;");
         }
         else {
-            v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
+            v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
         }
     }
 

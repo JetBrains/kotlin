@@ -1,6 +1,6 @@
 package jet.typeinfo;
 
-import java.util.List;
+import jet.TypeInfo;
 
 /**
  * @author alex.tkachman

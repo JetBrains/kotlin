@@ -3,7 +3,6 @@
  */
 package jet;
 
-import jet.typeinfo.TypeInfo;
 public abstract class ExtensionFunction13<E, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D11, D12, D13, R> extends DefaultJetObject {
     protected ExtensionFunction13(TypeInfo<?> typeInfo) {
         super(typeInfo);

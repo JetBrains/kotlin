@@ -1,7 +1,7 @@
 class Point() {
 }
 
-fun foo() : typeinfo.TypeInfo<Point> {
+fun foo() : TypeInfo<Point> {
   val p = Point();
-  return typeinfo.typeinfo<Point>(p);
+  return typeinfo<Point>(p);
 }
