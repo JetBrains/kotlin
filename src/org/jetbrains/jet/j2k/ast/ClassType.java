@@ -11,9 +11,15 @@ import java.util.List;
  */
 public class ClassType extends Type {
   private final Identifier myType;
-  private final List<Type> myParameters;
+  private final List<? extends Element> myParameters;
 
-  public ClassType(Identifier type, List<Type> parameters) {
+  public ClassType(Identifier type, List<? extends Element> parameters, boolean nullable) {
+    myType = type;
+    myParameters = parameters;
+    myNullable = nullable;
+  }
+
+  public ClassType(Identifier type, List<? extends Element> parameters) {
     myType = type;
     myParameters = parameters;
   }
