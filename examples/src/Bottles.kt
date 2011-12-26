@@ -1,4 +1,4 @@
-namespace bottles;
+package bottles;
 
 fun main(args: Array<String>) {
     var bottles: Int = 99;

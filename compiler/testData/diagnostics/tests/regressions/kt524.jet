@@ -1,7 +1,7 @@
 // KT-524 sure() returns T
 // +JDK
 
-namespace StringBuilder
+package StringBuilder
 
 import java.lang.StringBuilder
 

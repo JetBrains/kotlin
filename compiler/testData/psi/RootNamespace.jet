@@ -1,13 +1,13 @@
-namespace foo.bar;
+package foo.bar;
 
 class X
 
-namespace foo.bar {
+package foo.bar {
   fun foo() {
-    namespace.foo.bar.X
-    namespace.foo.bar.X()
+    package.foo.bar.X
+    package.foo.bar.X()
     when (e) {
-      is namespace.foo.bar.X @ (x) => {}
+      is package.foo.bar.X  #(x) -> {}
     }
   }
 }

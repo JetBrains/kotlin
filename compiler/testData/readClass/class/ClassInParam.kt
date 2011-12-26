@@ -1,3 +1,3 @@
-namespace test
+package test
 
 class Wine<in T>

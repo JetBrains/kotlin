@@ -1,8 +1,8 @@
-namespace foo.bar.goo
+package foo.bar.goo
 
-import namespace ;
-import namespace.*
-import namespace. ;
+import package ;
+import package.*
+import package. ;
 
 import foo as
 import foo.

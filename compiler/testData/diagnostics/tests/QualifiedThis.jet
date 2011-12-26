@@ -21,7 +21,7 @@ fun foo1() : Unit {
   this<!UNRESOLVED_REFERENCE!>@a<!>
 }
 
-namespace closures {
+package closures {
     class A(val a:Int) {
 
       class B() {
@@ -31,10 +31,10 @@ namespace closures {
         val Int.xx = this : Int
         fun Char.xx() : Any {
           this : Char
-          val <!UNUSED_VARIABLE!>a<!> = {Double.() => this : Double + this@xx : Char}
-          val <!UNUSED_VARIABLE!>b<!> = @a{Double.() => this@a : Double + this@xx : Char}
-          val <!UNUSED_VARIABLE!>c<!> = @a{() => <!NO_THIS!>this@a<!> + this@xx : Char}
-          return (@a{Double.() => this@a : Double + this@xx : Char})
+          val <!UNUSED_VARIABLE!>a<!> = {Double.() -> this : Double + this@xx : Char}
+          val <!UNUSED_VARIABLE!>b<!> = @a{Double.() -> this@a : Double + this@xx : Char}
+          val <!UNUSED_VARIABLE!>c<!> = @a{() -> <!NO_THIS!>this@a<!> + this@xx : Char}
+          return (@a{Double.() -> this@a : Double + this@xx : Char})
         }
       }
     }

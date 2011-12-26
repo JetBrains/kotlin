@@ -11,8 +11,8 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/grammar/grammar.iml" filepath="$PROJECT_DIR$/grammar/grammar.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea.iml" filepath="$PROJECT_DIR$/idea/idea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shift/shift.iml" filepath="$PROJECT_DIR$/shift/shift.iml" />
       <module fileurl="file://$PROJECT_DIR$/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/stdlib/stdlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/testlib/testlib.iml" filepath="$PROJECT_DIR$/testlib/testlib.iml" />
     </modules>
   </component>
 </project>

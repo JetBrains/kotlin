@@ -1,4 +1,4 @@
-namespace jet.collections
+package jet.collections
 
 import java.util.NoSuchElementException
 

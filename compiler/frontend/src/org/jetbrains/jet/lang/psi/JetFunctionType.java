@@ -7,6 +7,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ import java.util.List;
  * @author max
  */
 public class JetFunctionType extends JetTypeElement {
+
+    public static final JetToken RETURN_TYPE_SEPARATOR = JetTokens.ARROW;
+
     public JetFunctionType(@NotNull ASTNode node) {
         super(node);
     }
@@ -65,7 +69,7 @@ public class JetFunctionType extends JetTypeElement {
         PsiElement child = getFirstChild();
         while (child != null) {
             IElementType tt = child.getNode().getElementType();
-            if (tt == JetTokens.LPAR || tt == JetTokens.COLON) break;
+            if (tt == JetTokens.LPAR || tt == RETURN_TYPE_SEPARATOR) break;
             if (child instanceof JetTypeReference) {
                 return (JetTypeReference) child;
             }
@@ -81,7 +85,7 @@ public class JetFunctionType extends JetTypeElement {
         PsiElement child = getFirstChild();
         while (child != null) {
             IElementType tt = child.getNode().getElementType();
-            if (tt == JetTokens.COLON) {
+            if (tt == RETURN_TYPE_SEPARATOR) {
                 colonPassed = true;
             }
             if (colonPassed && child instanceof JetTypeReference) {

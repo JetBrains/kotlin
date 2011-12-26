@@ -2,6 +2,7 @@ package org.jetbrains.jet;
 
 import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.lang.java.JavaParserDefinition;
+import com.intellij.mock.MockApplication;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -18,5 +19,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         registerFileType(JetFileType.INSTANCE, "jet");
         registerParserDefinition(new JavaParserDefinition());
         registerParserDefinition(new JetParserDefinition());
+    }
+
+    public MockApplication getApplication() {
+        return myApplication;
     }
 }

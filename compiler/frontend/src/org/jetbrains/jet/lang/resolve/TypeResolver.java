@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
@@ -173,12 +174,16 @@ public class TypeResolver {
 
                 @Override
                 public void visitJetElement(JetElement element) {
-                    throw new IllegalArgumentException("Unsupported type: " + element);
+                    trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"));
+//                    throw new IllegalArgumentException("Unsupported type: " + element);
                 }
             });
         }
         if (result[0] == null) {
             return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
+        }
+        if (nullable) {
+            return TypeUtils.makeNullable(result[0]);
         }
         return result[0];
     }

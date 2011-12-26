@@ -1,6 +1,6 @@
-namespace override
+package override
 
-namespace normal {
+package normal {
     trait MyTrait {
         fun foo()
     }
@@ -37,7 +37,7 @@ namespace normal {
     }
 }
 
-namespace generics {
+package generics {
     trait MyTrait<T> {
         fun foo(t: T) : T
     }

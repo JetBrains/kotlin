@@ -1,4 +1,4 @@
-namespace jet.collections.iterable
+package jet.collections.iterable
 
 import jet.collections.iterator.IIterator
 

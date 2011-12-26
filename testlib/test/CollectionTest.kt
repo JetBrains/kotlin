@@ -1,4 +1,4 @@
-namespace test.collections
+package test.collections
 
 // TODO can we avoid importing all this stuff by default I wonder?
 // e.g. making println and the collection builder methods public by default?
@@ -25,12 +25,28 @@ class CollectionTest() : TestSupport() {
       data.all{it.length == 3}
     }
     assertNot {
-      data.all{s => s.startsWith("b")}
+      data.all{s -> s.startsWith("b")}
     }
+  }
+
+  fun testCount() {
+    assertEquals(1, data.count{it.startsWith("b")})
+    // TODO size should implement size property to be polymorphic with collections
+    assertEquals(2, data.count{it.length == 3})
   }
 
   fun testFilter() {
     val foo = data.filter{it.startsWith("f")}
+
+    assert {
+      foo.all{it.startsWith("f")}
+    }
+    assertEquals(1, foo.size)
+    assertEquals(arrayList("foo"), foo)
+  }
+
+  fun testFilterNot() {
+    val foo = data.filterNot{it.startsWith("b")}
 
     assert {
       foo.all{it.startsWith("f")}
@@ -82,17 +98,11 @@ class CollectionTest() : TestSupport() {
   }
 
   fun testFlatMap() {
-    /**
-      TODO compiler bug
-      we should be able to remove the explicit type on the function
-      http://youtrack.jetbrains.net/issue/KT-849
-    */
-    // TODO there should be a neater way to do this :)
-
     val characters = arrayList('f', 'o', 'o', 'b', 'a', 'r')
+    // TODO figure out how to get a line like this to compile :)
     /*
     val characters = data.flatMap<String,Character>{
-      Arrays.asList((it as java.lang.String).toCharArray()) as Collection<Character>
+      it.toCharArray().toList() as Collection<Character>
     }
     */
     todo {
@@ -108,6 +118,24 @@ class CollectionTest() : TestSupport() {
     assertEquals(6, count)
   }
 
+  fun testGroupBy() {
+    val words = arrayList("a", "ab", "abc", "def", "abcd")
+    /*
+     TODO inference engine should not need this type info?
+     */
+    val byLength = words.groupBy<String,Int>{it.length}
+    assertEquals(4, byLength.size())
+
+    println("Grouped by length is: $byLength")
+    /*
+     TODO compiler bug...
+
+    val l3 = byLength.getOrElse(3, {ArrayList<String>()})
+    assertEquals(2, l3.size)
+    */
+
+  }
+
   fun testJoin() {
     val text = data.join("-", "<", ">")
     assertEquals("<foo-bar>", text)
@@ -119,7 +147,7 @@ class CollectionTest() : TestSupport() {
       we should be able to remove the explicit type on the function
       http://youtrack.jetbrains.net/issue/KT-849
     */
-    val lengths = data.map<String,Int>{s => s.length}
+    val lengths = data.map<String,Int>{s -> s.length}
     assert {
       lengths.all{it == 3}
     }
@@ -149,5 +177,4 @@ class CollectionTest() : TestSupport() {
       }
     }
   }
-
 }

@@ -1,5 +1,5 @@
 // "Add primary constructor to A" "true"
-namespace a
+package a
 
 class A<caret> {
     var i : Int = 1

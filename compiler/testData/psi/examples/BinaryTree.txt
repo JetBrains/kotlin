@@ -439,7 +439,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     BOOLEAN_CONSTANT
                       PsiElement(true)('true')
@@ -450,7 +450,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -477,7 +477,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -714,7 +714,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     BOOLEAN_CONSTANT
                       PsiElement(false)('false')
@@ -725,7 +725,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -754,7 +754,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -892,7 +892,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     RETURN
                       PsiElement(return)('return')
@@ -906,7 +906,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace('\n          ')
                     IF
                       PsiElement(if)('if')
@@ -992,7 +992,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace('\n          ')
                     IF
                       PsiElement(if)('if')
@@ -1263,7 +1263,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('node')
@@ -1274,7 +1274,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -1296,7 +1296,7 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
-                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiElement(ARROW)('->')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -1358,10 +1358,9 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
-                    PsiWhiteSpace(' ')
-                    PsiElement(AT)('@')
-                    PsiWhiteSpace(' ')
+                    PsiWhiteSpace('  ')
                     DECOMPOSER_ARGUMENT_LIST
+                      PsiElement(HASH)('#')
                       PsiElement(LPAR)('(')
                       TUPLE_PATTERN_ENTRY
                         EXPRESSION_PATTERN
@@ -1375,7 +1374,7 @@ JetFile: BinaryTree.jet
                             PsiElement(null)('null')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(DOUBLE_ARROW)('=>')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
@@ -1399,10 +1398,9 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
-                    PsiWhiteSpace(' ')
-                    PsiElement(AT)('@')
-                    PsiWhiteSpace(' ')
+                    PsiWhiteSpace('  ')
                     DECOMPOSER_ARGUMENT_LIST
+                      PsiElement(HASH)('#')
                       PsiElement(LPAR)('(')
                       TUPLE_PATTERN_ENTRY
                         EXPRESSION_PATTERN
@@ -1418,7 +1416,7 @@ JetFile: BinaryTree.jet
                                 PsiElement(IDENTIFIER)('right')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(DOUBLE_ARROW)('=>')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
@@ -1442,10 +1440,9 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
-                    PsiWhiteSpace(' ')
-                    PsiElement(AT)('@')
-                    PsiWhiteSpace(' ')
+                    PsiWhiteSpace('  ')
                     DECOMPOSER_ARGUMENT_LIST
+                      PsiElement(HASH)('#')
                       PsiElement(LPAR)('(')
                       TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
@@ -1461,7 +1458,7 @@ JetFile: BinaryTree.jet
                             PsiElement(null)('null')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(DOUBLE_ARROW)('=>')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
@@ -1485,10 +1482,9 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
-                    PsiWhiteSpace(' ')
-                    PsiElement(AT)('@')
-                    PsiWhiteSpace(' ')
+                    PsiWhiteSpace('  ')
                     DECOMPOSER_ARGUMENT_LIST
+                      PsiElement(HASH)('#')
                       PsiElement(LPAR)('(')
                       TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
@@ -1506,7 +1502,7 @@ JetFile: BinaryTree.jet
                                 PsiElement(IDENTIFIER)('right')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(DOUBLE_ARROW)('=>')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 BLOCK
                   PsiElement(LBRACE)('{')

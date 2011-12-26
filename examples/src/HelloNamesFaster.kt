@@ -1,4 +1,4 @@
-namespace HelloNamesFaster
+package HelloNamesFaster
 
 fun main(args : Array<String>) {
     var names = StringBuilder()

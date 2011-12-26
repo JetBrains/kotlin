@@ -6,6 +6,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -754,7 +755,7 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             if(isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + "$$TImpl", getter.getName(), getter.getDescriptor().replace("(","(L" + owner + ";"));
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + JvmAbi.TRAIT_IMPL_SUFFIX, getter.getName(), getter.getDescriptor().replace("(","(L" + owner + ";"));
             }
             else {
             if (getter == null) {
@@ -770,7 +771,7 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             if(isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + "$$TImpl", setter.getName(), setter.getDescriptor().replace("(","(L" + owner + ";"));
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + JvmAbi.TRAIT_IMPL_SUFFIX, setter.getName(), setter.getDescriptor().replace("(","(L" + owner + ";"));
             }
             else {
             if (setter == null) {

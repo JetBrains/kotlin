@@ -1,4 +1,4 @@
-namespace variance
+package variance
 
 abstract class Consumer<in T> {}
 

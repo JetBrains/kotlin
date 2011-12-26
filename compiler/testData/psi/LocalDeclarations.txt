@@ -109,11 +109,9 @@ JetFile: LocalDeclarations.jet
           TYPE_PARAMETER_LIST
             <empty list>
           PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
+          PsiWhiteSpace('  ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -123,10 +121,11 @@ JetFile: LocalDeclarations.jet
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 TUPLE_TYPE
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n')

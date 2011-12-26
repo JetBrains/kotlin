@@ -11,7 +11,7 @@ trait ChannelPipelineFactory{
     fun getPipeline() : ChannelPipeline
 }
 
-class StandardPipelineFactory(val config: fun ChannelPipeline.():Unit) : ChannelPipelineFactory {
+class StandardPipelineFactory(val config:  ChannelPipeline.()->Unit) : ChannelPipelineFactory {
     override fun getPipeline() : ChannelPipeline {
         val pipeline = DefaultChannelPipeline()
         pipeline.config ()

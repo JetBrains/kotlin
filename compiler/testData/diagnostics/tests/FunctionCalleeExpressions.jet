@@ -1,22 +1,22 @@
-namespace foo
+package foo
 
-fun Any.foo() : fun() : Unit {
+fun Any.foo() : () -> Unit {
   return {}
 }
 
-fun Any.foo1() : fun(i : Int) : Unit {
+fun Any.foo1() : (i : Int) -> Unit {
   return {}
 }
 
-fun foo2() : fun(i : fun()) : Unit {
+fun foo2() : (i : () -> Unit) -> Unit {
   return {}
 }
 
-fun fooT1<T>(t : T) : fun() : T {
+fun fooT1<T>(t : T) : () -> T {
   return {t}
 }
 
-fun fooT2<T>() : fun(t : T) : T {
+fun fooT2<T>() : (t : T) -> T {
   return {it}
 }
 
@@ -34,8 +34,8 @@ fun main(args : Array<String>) {
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
-    (foo2())<!TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> => }<!>
-    foo2()(<!TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> => }<!>)
+    (foo2())<!TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }<!>
+    foo2()(<!TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }<!>)
 
     val a = fooT1(1)()
     a : Int
@@ -49,19 +49,19 @@ fun main(args : Array<String>) {
     <!CALLEE_NOT_A_FUNCTION!>1<!>(){}
 }
 
-fun f() : fun Int.() : Unit = {}
+fun f() :  Int.() -> Unit = {}
 
 fun main1() {
-    1.{Int.() => 1}();
+    1.{Int.() -> 1}();
     {1}()
-    {(x : Int) => x}(1)
-    1.{Int.(x : Int) => x}(1)
+    {(x : Int) -> x}(1)
+    1.{Int.(x : Int) -> x}(1)
     @l{1}()
-    1.({Int.() => 1})()
+    1.({Int.() -> 1})()
     1.(f())()
     1.if(true){f()}else{f()}()
-    1.if(true){Int.() => 1}else{f()}()
-    1.if(true){Int.() => 1}else{Int.() => 1}()
+    1.if(true){Int.() -> 1}else{f()}()
+    1.if(true){Int.() -> 1}else{Int.() -> 1}()
 
     1.<!CALLEE_NOT_A_FUNCTION!>"sdf"<!>()
 
@@ -71,12 +71,12 @@ fun main1() {
 }
 
 fun test() {
-    {(x : Int) => 1}<!NO_VALUE_FOR_PARAMETER!>()<!>
-    <!MISSING_RECEIVER!>{Int.() => 1}<!>()
-    <!TYPE_MISMATCH!>"sd"<!>.{Int.() => 1}()
+    {(x : Int) -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!MISSING_RECEIVER!>{Int.() -> 1}<!>()
+    <!TYPE_MISMATCH!>"sd"<!>.{Int.() -> 1}()
     val i : Int? = null
-    i<!UNSAFE_CALL!>.<!>{Int.() => 1}()
+    i<!UNSAFE_CALL!>.<!>{Int.() -> 1}()
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
-    1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() => 1}()
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() -> 1}()
     1.<!NO_RECEIVER_ADMITTED!>{}<!>()
 }

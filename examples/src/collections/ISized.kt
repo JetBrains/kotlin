@@ -1,4 +1,4 @@
-namespace jet.collections.sized
+package jet.collections.sized
 
 trait ISized {
   val size : Int

@@ -1,4 +1,4 @@
-namespace Test
+package Test
 
 class Some() {
     fun methodName() {

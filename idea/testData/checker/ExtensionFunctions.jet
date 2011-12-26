@@ -1,5 +1,5 @@
 fun Int?.optint() : Unit {}
-val Int?.optval : Unit = ()
+val Int?.optval : Unit = #()
 
 fun <T, E> T.foo(<warning>x</warning> : E, y : A) : T   {
   y.plus(1)
@@ -37,7 +37,7 @@ val <T> T.<error>foo</error> : T
 
 fun Int.foo() = this
 
-namespace null_safety {
+package null_safety {
 
         fun parse(<warning>cmd</warning>: String): Command? { return null  }
         class Command() {

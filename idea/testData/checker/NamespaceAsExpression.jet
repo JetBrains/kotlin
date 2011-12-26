@@ -1,8 +1,8 @@
-namespace root
+package root
 
-namespace a {
+package a {
 
 }
 
 val x = <error>a</error>
-val y2 = <error>namespace</error>
+val y2 = <error>package</error>

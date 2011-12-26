@@ -65,7 +65,7 @@ JetFile: LINQ.jet
                   PsiElement(IDENTIFIER)('b')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(DOUBLE_ARROW)('=>')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               BLOCK
                 BINARY_EXPRESSION

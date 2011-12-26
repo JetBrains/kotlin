@@ -36,6 +36,11 @@ public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter 
     }
 
     @Override
+    public void restoreJoiningComplexTokensState() {
+        myBuilder.restoreJoiningComplexTokensState();
+    }
+
+    @Override
     public void enableJoiningComplexTokens() {
         myBuilder.enableJoiningComplexTokens();
     }

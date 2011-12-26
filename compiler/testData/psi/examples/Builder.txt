@@ -398,11 +398,9 @@ JetFile: Builder.jet
               PsiElement(IDENTIFIER)('initializer')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+              PsiWhiteSpace('   ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace('  ')
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
@@ -412,7 +410,7 @@ JetFile: Builder.jet
                     PsiElement(LPAR)('(')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
+                  PsiElement(ARROW)('->')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE

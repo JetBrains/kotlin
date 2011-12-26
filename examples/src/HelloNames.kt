@@ -1,4 +1,4 @@
-namespace HelloNames
+package HelloNames
 
 fun main(args : Array<String>) {
     var names = ""

@@ -11,7 +11,7 @@ fun test() {
     a.`f`f()`:std::Int`
 }
 
-namespace Jet65 {
+package Jet65 {
 
   class Foo(~bar~var bar : Int, ~barr~barr : Int, ~barrr~val barrr : Int) {
     {

@@ -1,17 +1,18 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
+import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,6 +118,23 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
                 typeArguments.add(new TypeProjection(parseVariance(wildcard), jetType));
             }
         };
+    }
+
+    @Override
+    public JetSignatureVisitor visitArrayType(final boolean nullable) {
+        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary) {
+            @Override
+            protected void done(@NotNull JetType jetType) {
+                JetType arrayType = TypeUtils.makeNullableAsSpecified(jetStandardLibrary.getArrayType(jetType), nullable);
+                JetTypeJetSignatureReader.this.done(arrayType);
+            }
+        };
+    }
+
+    @Override
+    public void visitTypeVariable(String name, boolean nullable) {
+        // TODO: need a way to get type TypeParameterDescriptor by name
+        throw new IllegalStateException();
     }
 
     @Override

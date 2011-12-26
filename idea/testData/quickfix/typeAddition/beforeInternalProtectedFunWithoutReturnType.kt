@@ -1,5 +1,5 @@
 // "Add return type declaration" "false"
-namespace a
+package a
 
 class A() {
     internal protected fun <caret>foo() = 1

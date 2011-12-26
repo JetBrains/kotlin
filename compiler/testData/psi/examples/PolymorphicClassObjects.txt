@@ -242,11 +242,9 @@ JetFile: PolymorphicClassObjects.jet
           PsiElement(IDENTIFIER)('f')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
+          PsiWhiteSpace('  ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -256,7 +254,7 @@ JetFile: PolymorphicClassObjects.jet
                         PsiElement(IDENTIFIER)('E')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE

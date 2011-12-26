@@ -1,6 +1,6 @@
 // KT-782 Allow backing field usage for accessors of variables on namespace level
 
-namespace kt782
+package kt782
 
 val z : Int = 34
 

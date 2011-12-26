@@ -1,4 +1,4 @@
-namespace Tests
+package Tests
 
 import java.util.*
 

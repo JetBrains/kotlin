@@ -4,7 +4,7 @@ fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <error>1</error>}
-fun unitUnitReturn() : Unit {return ()}
+fun unitUnitReturn() : Unit {return #()}
 fun test1() : Any = { <error>return</error> }
 fun test2() : Any = @a {return@a 1}
 fun test3() : Any { <error>return</error> }
@@ -16,13 +16,13 @@ fun bbb() {
 fun foo(<warning>expr</warning>: StringBuilder): Int {
   val c = 'a'
   when(c) {
-    0.chr => throw Exception("zero")
-    else => throw Exception("nonzero" + c)
+    0.chr -> throw Exception("zero")
+    else -> throw Exception("nonzero" + c)
   }
 }
 
 
-fun unitShort() : Unit = ()
+fun unitShort() : Unit = #()
 fun unitShortConv() : Unit = <error>1</error>
 fun unitShortNull() : Unit = <error>null</error>
 
@@ -39,7 +39,7 @@ fun intFunctionLiteral(): Int = <error>{ 10 }</error>
 fun blockReturnUnitMismatch() : Int {<error>return</error>}
 fun blockReturnValueTypeMismatch() : Int {return <error>3.4</error>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <error>()</error>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <error>#()</error>}
 
 fun blockAndAndMismatch() : Int {
   <error>true && false</error>

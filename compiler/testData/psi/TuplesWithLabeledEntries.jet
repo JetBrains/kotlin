@@ -1,2 +1,2 @@
-val foo = (a = 3)
-val foo = (a = 3, a)
+val foo = #(a = 3)
+val foo = #(a = 3, a)

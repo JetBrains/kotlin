@@ -1,11 +1,11 @@
-namespace redeclarations {
+package redeclarations {
   object <!REDECLARATION, REDECLARATION!>A<!> {
     val x : Int = 0
 
     val A = 1
   }
 
-  namespace <!REDECLARATION!>A<!> {
+  package <!REDECLARATION!>A<!> {
     class A {}
   }
 

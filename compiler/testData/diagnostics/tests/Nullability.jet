@@ -40,28 +40,28 @@ fun test() {
     out.println();
   }
 
-  if (out == null || out.println(0) == ()) {
+  if (out == null || out.println(0) == #()) {
     out?.println(1)
   }
   else {
     out.println(2)
   }
 
-  if (out != null && out.println() == ()) {
+  if (out != null && out.println() == #()) {
     out.println();
   }
   else {
     out?.println();
   }
 
-  if (out == null || out != null && out.println() == ()) {
+  if (out == null || out != null && out.println() == #()) {
     out?.println();
   }
   else {
     out.println();
   }
 
-  if (1 == 2 || out != null && out.println(1) == ()) {
+  if (1 == 2 || out != null && out.println(1) == #()) {
     out?.println(2);
   }
   else {
@@ -96,28 +96,28 @@ fun test() {
     out.println();
   }
 
-  if (out == null || out.println(0) == ()) {
+  if (out == null || out.println(0) == #()) {
     out?.println(1)
   }
   else {
     out.println(2)
   }
 
-  if (out != null && out.println() == ()) {
+  if (out != null && out.println() == #()) {
     out.println();
   }
   else {
     out?.println();
   }
 
-  if (out == null || out != null && out.println() == ()) {
+  if (out == null || out != null && out.println() == #()) {
     out?.println();
   }
   else {
     out.println();
   }
 
-  if (1 == 2 || out != null && out.println(1) == ()) {
+  if (1 == 2 || out != null && out.println(1) == #()) {
     out?.println(2);
   }
   else {

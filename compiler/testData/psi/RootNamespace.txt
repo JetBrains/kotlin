@@ -1,7 +1,7 @@
 JetFile: RootNamespace.jet
   NAMESPACE
     NAMESPACE_HEADER
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
@@ -18,7 +18,7 @@ JetFile: RootNamespace.jet
         <empty list>
     NAMESPACE
       NAMESPACE_HEADER
-        PsiElement(namespace)('namespace')
+        PsiElement(namespace)('package')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
@@ -43,7 +43,7 @@ JetFile: RootNamespace.jet
               DOT_QUALIFIED_EXPRESSION
                 DOT_QUALIFIED_EXPRESSION
                   ROOT_NAMESPACE
-                    PsiElement(namespace)('namespace')
+                    PsiElement(namespace)('package')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
@@ -58,7 +58,7 @@ JetFile: RootNamespace.jet
               DOT_QUALIFIED_EXPRESSION
                 DOT_QUALIFIED_EXPRESSION
                   ROOT_NAMESPACE
-                    PsiElement(namespace)('namespace')
+                    PsiElement(namespace)('package')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
@@ -92,7 +92,7 @@ JetFile: RootNamespace.jet
                       DOT_QUALIFIED_EXPRESSION
                         DOT_QUALIFIED_EXPRESSION
                           ROOT_NAMESPACE
-                            PsiElement(namespace)('namespace')
+                            PsiElement(namespace)('package')
                           PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('foo')
@@ -102,10 +102,9 @@ JetFile: RootNamespace.jet
                       PsiElement(DOT)('.')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('X')
-                    PsiWhiteSpace(' ')
-                    PsiElement(AT)('@')
-                    PsiWhiteSpace(' ')
+                    PsiWhiteSpace('  ')
                     DECOMPOSER_ARGUMENT_LIST
+                      PsiElement(HASH)('#')
                       PsiElement(LPAR)('(')
                       TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
@@ -115,7 +114,7 @@ JetFile: RootNamespace.jet
                                 PsiElement(IDENTIFIER)('x')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
-                PsiElement(DOUBLE_ARROW)('=>')
+                PsiElement(ARROW)('->')
                 PsiWhiteSpace(' ')
                 BLOCK
                   PsiElement(LBRACE)('{')

@@ -1,14 +1,14 @@
 // KT-306 Ambiguity when different this's have same-looking functions
 
 fun test() {
-    {Foo.() =>
+    {Foo.() ->
         bar()
-        {Barr.() =>
+        {Barr.() ->
             this.bar()
             bar()
         }
     }
-    {Barr.() =>
+    {Barr.() ->
         bar()
     }
 }

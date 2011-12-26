@@ -1,4 +1,4 @@
-namespace std.test
+package std.test
 
 import std.io.*
 import std.util.*
@@ -9,18 +9,73 @@ import org.junit.runner.*
 import org.junit.runner.notification.*
 import junit.framework.*
 
-fun assert(message: String, block: fun() : Boolean) {
+class BuiltTest<T>(name: String, val builder: TestBuilder<T>, val test: BuiltTest<T>.() -> Unit) : TestCase(name) {
+    private var myState: T? = null
+
+    var state : T
+        get() = myState.sure()
+        set(newState: T) { myState = newState }
+
+    override fun countTestCases(): Int = 1
+
+    var name : String
+        get() = super.getName().sure()
+        set(newName: String) = super.setName(newName)
+
+    override fun setUp() = this.(builder.setUp)()
+
+    override fun tearDown() = this.(builder.tearDown)()
+
+    override fun runTest() = this.(test)()
+}
+
+open class TestBuilder<T>(name: String) {
+    val mySuite = TestSuite(name)
+
+    var setUp : BuiltTest<T>.() -> Unit = {}
+
+    var tearDown : BuiltTest<T>.() -> Unit = {}
+
+    fun String.minus(test: BuiltTest<T>.() -> Unit) {
+        mySuite.addTest(BuiltTest<T>(this, this@TestBuilder, test))
+    }
+}
+
+private val currentTestBuilder = ThreadLocal<TestSuite> ()
+
+private fun <T> testSuite(builder: TestBuilder<T>, description: TestBuilder<T>.() -> Unit) : TestSuite? {
+    val currentTestSuite = currentTestBuilder.get()
+    currentTestBuilder.set(builder.mySuite)
+    try {
+        builder.(description)()
+        return if(currentTestSuite != null) {
+            currentTestSuite.addTest(builder.mySuite)
+            null
+        }
+        else {
+            builder.mySuite
+        }
+    }
+    finally {
+        currentTestBuilder.set(currentTestSuite)
+    }
+}
+
+fun <T> testSuite(name: String,  description: TestBuilder<T>.() -> Unit) : TestSuite? =
+    testSuite(TestBuilder<T>(name), description)
+
+fun assert(message: String, block: ()-> Boolean) {
   val actual = block()
   Assert.assertTrue(message, actual)
 }
 
-fun assert(block: fun() : Boolean) = assert(block.toString(), block)
+fun assert(block: ()-> Boolean) = assert(block.toString(), block)
 
-fun assertNot(message: String, block: fun() : Boolean) {
+fun assertNot(message: String, block: ()-> Boolean) {
   assert(message){ !block() }
 }
 
-fun assertNot(block: fun() : Boolean) = assertNot(block.toString(), block)
+fun assertNot(block: ()-> Boolean) = assertNot(block.toString(), block)
 
 fun assert(actual: Boolean, message: String) {
   println("Answer: ${actual} for ${message}")
@@ -34,7 +89,7 @@ fun assertNull(actual: Any?, message: String = "") {
   Assert.assertNull(message, actual)
 }
 
-fun fails(block: fun() : Any) {
+fun fails(block: ()-> Any) {
   try {
     block()
     Assert.fail("Expected an exception to be thrown")
@@ -43,7 +98,7 @@ fun fails(block: fun() : Any) {
   }
 }
 
-fun todo(block: fun(): Any) {
+fun todo(block: ()-> Any) {
   println("TODO at " + Exception().getStackTrace()?.get(1) + " for " + block)
 }
 

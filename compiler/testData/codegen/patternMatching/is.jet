@@ -1,7 +1,7 @@
 fun typeName(a: Any?) : String {
     return when(a) {
-        is java.util.ArrayList<*> => "array list"
-        else => "no idea"
+        is java.util.ArrayList<*> -> "array list"
+        else -> "no idea"
     }
 }
 

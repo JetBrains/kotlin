@@ -33,7 +33,7 @@ JetFile: CallsInWhen.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -52,7 +52,7 @@ JetFile: CallsInWhen.jet
                       PsiElement(LPAR)('(')
                       PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -76,7 +76,7 @@ JetFile: CallsInWhen.jet
                               PsiElement(IDENTIFIER)('T')
                       PsiElement(GT)('>')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -106,7 +106,7 @@ JetFile: CallsInWhen.jet
                           PsiElement(IDENTIFIER)('a')
                       PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -141,7 +141,7 @@ JetFile: CallsInWhen.jet
                           PsiElement(IDENTIFIER)('d')
                       PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -161,7 +161,7 @@ JetFile: CallsInWhen.jet
                           PsiElement(IDENTIFIER)('bar')
                       PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -184,7 +184,7 @@ JetFile: CallsInWhen.jet
                             PsiElement(IDENTIFIER)('bar')
                       PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -203,7 +203,7 @@ JetFile: CallsInWhen.jet
                         PsiElement(LPAR)('(')
                         PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
+                      PsiElement(ARROW)('->')
                       PsiWhiteSpace(' ')
                       BLOCK
                         PREFIX_EXPRESSION
@@ -213,7 +213,7 @@ JetFile: CallsInWhen.jet
                             PsiElement(IDENTIFIER)('bar')
                       PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -221,7 +221,7 @@ JetFile: CallsInWhen.jet
           WHEN_ENTRY
             PsiElement(else)('else')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')

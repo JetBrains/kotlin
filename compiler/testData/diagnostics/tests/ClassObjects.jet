@@ -1,6 +1,6 @@
 // +JDK
 
-namespace Jet86
+package Jet86
 
 class A {
   class object {

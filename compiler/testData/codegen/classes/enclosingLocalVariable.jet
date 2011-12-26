@@ -3,6 +3,6 @@ fun box() : String {
     return if (sum(200, { val m = { val r = { cl };  r() }; m() }) == 239) "OK" else "FAIL"
 }
 
-fun sum(arg:Int, f : fun () : Int) : Int {
+fun sum(arg:Int, f :  () -> Int) : Int {
     return arg + f()
 }

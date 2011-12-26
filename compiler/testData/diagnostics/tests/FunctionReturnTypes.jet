@@ -6,11 +6,11 @@ fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <!TYPE_MISMATCH!>1<!>}
-fun unitUnitReturn() : Unit {return ()}
+fun unitUnitReturn() : Unit {return #()}
 fun test1() : Any = {<!RETURN_TYPE_MISMATCH, RETURN_NOT_ALLOWED!>return<!>}
 fun test2() : Any = @a {return@a 1}
 fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
-fun test4(): fun(): Unit = { <!RETURN_TYPE_MISMATCH, RETURN_NOT_ALLOWED!>return@test4<!> }
+fun test4(): ()-> Unit = { <!RETURN_TYPE_MISMATCH, RETURN_NOT_ALLOWED!>return@test4<!> }
 fun test5(): Any = @{ return@ }
 fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return 1<!>}
 
@@ -21,13 +21,13 @@ fun bbb() {
 fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
   val c = 'a'
   when(c) {
-    0.chr => throw Exception("zero")
-    else => throw Exception("nonzero" + c)
+    0.chr -> throw Exception("zero")
+    else -> throw Exception("nonzero" + c)
   }
 }
 
 
-fun unitShort() : Unit = ()
+fun unitShort() : Unit = #()
 fun unitShortConv() : Unit = <!TYPE_MISMATCH!>1<!>
 fun unitShortNull() : Unit = <!TYPE_MISMATCH!>null<!>
 
@@ -44,7 +44,7 @@ fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
 fun blockReturnValueTypeMismatch() : Int {return <!ERROR_COMPILE_TIME_VALUE!>3.4<!>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>()<!>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>#()<!>}
 
 fun blockAndAndMismatch() : Int {
   <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>true && false<!>
@@ -176,37 +176,37 @@ class B() {
 }
 
 fun testFunctionLiterals() {
-    val <!UNUSED_VARIABLE!>endsWithVarDeclaration<!> : fun() : Boolean = {
+    val <!UNUSED_VARIABLE!>endsWithVarDeclaration<!> : () -> Boolean = {
         <!EXPECTED_TYPE_MISMATCH!>val x = 2<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithAssignment<!> = { () : Int =>
+    val <!UNUSED_VARIABLE!>endsWithAssignment<!> = { () : Int ->
         var x = 1
         <!EXPECTED_TYPE_MISMATCH!>x = 333<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithReAssignment<!> = { () : Int =>
+    val <!UNUSED_VARIABLE!>endsWithReAssignment<!> = { () : Int ->
         var x = 1
         <!ASSIGNMENT_TYPE_MISMATCH!>x += 333<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithFunDeclaration<!> : fun() : String = {
+    val <!UNUSED_VARIABLE!>endsWithFunDeclaration<!> : () -> String = {
         var x = 1
         x = 333
         <!EXPECTED_TYPE_MISMATCH!>fun meow() : Unit {}<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithObjectDeclaration<!> : fun() : Int = {
+    val <!UNUSED_VARIABLE!>endsWithObjectDeclaration<!> : () -> Int = {
         var x = 1
         x = 333
         <!EXPECTED_TYPE_MISMATCH!>object A {}<!>
     }
 
-    val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!> = { () : Unit =>
+    val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!> = { () : Unit ->
         val x = 1
     }
 
-    val <!UNUSED_VARIABLE!>expectedUnitReturnType2<!> = { () : Unit =>
+    val <!UNUSED_VARIABLE!>expectedUnitReturnType2<!> = { () : Unit ->
         fun meow() : Unit {}
         object A {}
     }

@@ -78,15 +78,15 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("\"d\"", library.getStringType());
         assertType("\"\"\"d\"\"\"", library.getStringType());
 
-        assertType("()", JetStandardClasses.getUnitType());
+        assertType("#()", JetStandardClasses.getUnitType());
 
         assertType("null", JetStandardClasses.getNullableNothingType());
     }
 
     public void testTupleConstants() throws Exception {
-        assertType("()", JetStandardClasses.getUnitType());
+        assertType("#()", JetStandardClasses.getUnitType());
 
-        assertType("(1, 'a')", JetStandardClasses.getTupleType(library.getIntType(), library.getCharType()));
+        assertType("#(1, 'a')", JetStandardClasses.getTupleType(library.getIntType(), library.getCharType()));
     }
 
     public void testTypeInfo() throws Exception {
@@ -117,11 +117,11 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testWhen() throws Exception {
-        assertType("when (1) { is 1 => 2; } ", "Int");
-        assertType("when (1) { is 1 => 2; is 1 => '2'} ", "Any");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => null} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; else => null} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(2) {is 1 => null}} ", "Any?");
+        assertType("when (1) { is 1 -> 2; } ", "Int");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'} ", "Any");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> null} ", "Any?");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'; else -> null} ", "Any?");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> when(2) {is 1 -> null}} ", "Any?");
     }
 
     public void testTry() throws Exception {
@@ -213,38 +213,38 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testTuples() throws Exception {
-        assertSubtype("Unit", "()");
-        assertSubtype("()", "Unit");
-        assertSubtype("()", "()");
+        assertSubtype("Unit", "#()");
+        assertSubtype("#()", "Unit");
+        assertSubtype("#()", "#()");
 
-        assertSubtype("(Boolean)", "(Boolean)");
-        assertSubtype("(Byte)", "(Byte)");
-        assertSubtype("(Char)",    "(Char)");
-        assertSubtype("(Short)",   "(Short)");
-        assertSubtype("(Int)", "(Int)");
-        assertSubtype("(Long)",    "(Long)");
-        assertSubtype("(Float)",   "(Float)");
-        assertSubtype("(Double)",  "(Double)");
-        assertSubtype("(Unit)",    "(Unit)");
-        assertSubtype("(Unit, Unit)",    "(Unit, Unit)");
+        assertSubtype("#(Boolean)", "#(Boolean)");
+        assertSubtype("#(Byte)", "#(Byte)");
+        assertSubtype("#(Char)",    "#(Char)");
+        assertSubtype("#(Short)",   "#(Short)");
+        assertSubtype("#(Int)", "#(Int)");
+        assertSubtype("#(Long)",    "#(Long)");
+        assertSubtype("#(Float)",   "#(Float)");
+        assertSubtype("#(Double)",  "#(Double)");
+        assertSubtype("#(Unit)",    "#(Unit)");
+        assertSubtype("#(Unit, Unit)",    "#(Unit, Unit)");
 
-        assertSubtype("(Boolean)", "(Boolean)");
-        assertSubtype("(Byte)",    "(Byte)");
-        assertSubtype("(Char)",    "(Char)");
-        assertSubtype("(Short)",   "(Short)");
-        assertSubtype("(Int)",     "(Int)");
-        assertSubtype("(Long)",    "(Long)");
-        assertSubtype("(Float)", "(Float)");
-        assertSubtype("(Double)", "(Double)");
-        assertSubtype("(Unit)", "(Unit)");
-        assertSubtype("(Unit, Unit)", "(Unit, Unit)");
+        assertSubtype("#(Boolean)", "#(Boolean)");
+        assertSubtype("#(Byte)",    "#(Byte)");
+        assertSubtype("#(Char)",    "#(Char)");
+        assertSubtype("#(Short)",   "#(Short)");
+        assertSubtype("#(Int)",     "#(Int)");
+        assertSubtype("#(Long)",    "#(Long)");
+        assertSubtype("#(Float)", "#(Float)");
+        assertSubtype("#(Double)", "#(Double)");
+        assertSubtype("#(Unit)", "#(Unit)");
+        assertSubtype("#(Unit, Unit)", "#(Unit, Unit)");
 
-        assertNotSubtype("(Unit)", "(Int)");
+        assertNotSubtype("#(Unit)", "#(Int)");
 
-        assertSubtype("(Unit)", "(Any)");
-        assertSubtype("(Unit, Unit)", "(Any, Any)");
-        assertSubtype("(Unit, Unit)", "(Any, Unit)");
-        assertSubtype("(Unit, Unit)", "(Unit, Any)");
+        assertSubtype("#(Unit)", "#(Any)");
+        assertSubtype("#(Unit, Unit)", "#(Any, Any)");
+        assertSubtype("#(Unit, Unit)", "#(Any, Unit)");
+        assertSubtype("#(Unit, Unit)", "#(Unit, Any)");
     }
 
     public void testProjections() throws Exception {
@@ -326,38 +326,38 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testLoops() throws Exception {
-        assertType("{ while (1) {1} }", "fun(): Unit");
-        assertType("{ do {1} while(1) }", "fun(): Unit");
-        assertType("{ for (i in 1) {1} }", "fun(): Unit");
+        assertType("{ while (1) {1} }", "() -> Unit");
+        assertType("{ do {1} while(1) }", "() -> Unit");
+        assertType("{ for (i in 1) {1} }", "() -> Unit");
     }
 
     public void testFunctionLiterals() throws Exception {
-        assertType("{() => }", "fun () : Unit");
-        assertType("{() : Int => }", "fun () : Int");
-        assertType("{() => 1}", "fun () : Int");
+        assertType("{() -> }", "() -> Unit");
+        assertType("{() : Int -> }", "() -> Int");
+        assertType("{() -> 1}", "() -> Int");
 
-        assertType("{(a : Int) => 1}", "fun (a : Int) : Int");
-        assertType("{(a : Int, b : String) => 1}", "fun (a : Int, b : String) : Int");
+        assertType("{(a : Int) -> 1}", "(a : Int) -> Int");
+        assertType("{(a : Int, b : String) -> 1}", "(a : Int, b : String) -> Int");
 
-        assertType("{(a : Int) => 1}", "fun (Int) : Int");
-        assertType("{(a : Int, b : String) => 1}", "fun (Int, String) : Int");
+        assertType("{(a : Int) -> 1}", "(Int) -> Int");
+        assertType("{(a : Int, b : String) -> 1}", "(Int, String) -> Int");
 
-        assertType("{Any.() => 1}", "fun Any.() : Int");
+        assertType("{Any.() -> 1}", "Any.() -> Int");
 
-        assertType("{Any.(a : Int) => 1}", "fun Any.(a : Int) : Int");
-        assertType("{Any.(a : Int, b : String) => 1}", "fun Any.(a : Int, b : String) : Int");
+        assertType("{Any.(a : Int) -> 1}", "Any.(a : Int) -> Int");
+        assertType("{Any.(a : Int, b : String) -> 1}", "Any.(a : Int, b : String) -> Int");
 
-        assertType("{Any.(a : Int) => 1}", "fun Any.(Int) : Int");
-        assertType("{Any.(a : Int, b : String) => 1}", "fun Any.(Int, String) : Int");
+        assertType("{Any.(a : Int) -> 1}", "Any.(Int) -> Int");
+        assertType("{Any.(a : Int, b : String) -> 1}", "Any.(Int, String) -> Int");
 
-        assertType("{Any.(a : Int, b : String) => b}", "fun Any.(Int, String) : String");
+        assertType("{Any.(a : Int, b : String) -> b}", "Any.(Int, String) -> String");
     }
 
     public void testBlocks() throws Exception {
         assertType("if (1) {val a = 1; a} else {null}", "Int?");
-        assertType("if (1) {() => val a = 1; a} else {() => null}", "Function0<Int?>");
-        assertType("if (1) {() => val a = 1; a; var b : Boolean; b} else null", "Function0<Boolean>?");
-        assertType("if (1) {() => val a = 1; a; var b = a; b} else null", "Function0<Int>?");
+        assertType("if (1) {() -> val a = 1; a} else {() -> null}", "Function0<Int?>");
+        assertType("if (1) {() -> val a = 1; a; var b : Boolean; b} else null", "Function0<Boolean>?");
+        assertType("if (1) {() -> val a = 1; a; var b = a; b} else null", "Function0<Int>?");
     }
 
     public void testNew() throws Exception {
@@ -376,7 +376,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     public void testOverloads() throws Exception {
         assertType("Functions<String>().f()", "Unit");
         assertType("Functions<String>().f(1)", "Int");
-        assertType("Functions<Double>().f((1, 1))", "Double");
+        assertType("Functions<Double>().f(#(1, 1))", "Double");
         assertType("Functions<Double>().f(1.0)", "Any");
         assertType("Functions<Byte>().f<String>(\"\")", "Byte");
 
@@ -577,7 +577,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     "fun f() : Unit {} " +
                     "fun f(a : Int) : Int {} " +
                     "fun f(a : T) : Any {} " +
-                    "fun f(a : (Int, Int)) : T {} " +
+                    "fun f(a : #(Int, Int)) : T {} " +
                     "fun f<E>(a : E) : T {} " +
                     "}",
             "class WithPredicate() { " +

@@ -1,4 +1,4 @@
-namespace foo.bar.goo
+package foo.bar.goo
 
 type foo = bar
 type foo<T> = bar

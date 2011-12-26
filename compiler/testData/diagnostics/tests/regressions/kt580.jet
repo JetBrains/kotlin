@@ -1,7 +1,7 @@
 //KT-580 Type inference failed
 // +JDK
 
-namespace whats.the.difference
+package whats.the.difference
 
 import java.util.*
 

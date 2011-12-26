@@ -1,4 +1,4 @@
-namespace mask
+package mask
 
 import std.io.*
 import java.io.*
@@ -46,7 +46,7 @@ class Luhny() {
     private fun check() {
         val size = digits.size()
         if (size < 14) return
-        val sum = digits.sum {i, d =>
+        val sum = digits.sum {i, d ->
             if (i % 2 == size % 2) double(d) else d
         }
 //        var sum = 0
@@ -89,7 +89,7 @@ class Luhny() {
 
 fun Char.isDigit() = Character.isDigit(this)
 
-fun java.lang.Iterable<Int>.sum(f : fun(index : Int, value : Int) : Int) : Int {
+fun java.lang.Iterable<Int>.sum(f : (index : Int, value : Int) -> Int) : Int {
     var sum = 0
     var i = 0
     for (d in this) {
@@ -99,7 +99,7 @@ fun java.lang.Iterable<Int>.sum(f : fun(index : Int, value : Int) : Int) : Int {
     return sum
 }
 
-fun Reader.forEachChar(body : fun(Char) : Unit) {
+fun Reader.forEachChar(body : (Char) -> Unit) {
     do {
         var i = read();
         if (i == -1) break

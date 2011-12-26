@@ -1,6 +1,6 @@
-foo bar(1) buzz<T>(1) zoo namespace aa
+foo bar(1) buzz<T>(1) zoo package aa
 
-foo bar(1) buzz<T>(1) zoo namespace a {}
+foo bar(1) buzz<T>(1) zoo package a {}
 foo bar(1) buzz<T>(1) zoo class A
 foo bar(1) buzz<T>(1) zoo object B
 foo bar(1) buzz<T>(1) zoo fun a() {}
@@ -24,6 +24,6 @@ class Foo {
 
 fun test() {
   when (foo bar(1) buzz<T>(1) zoo val a = 1) {
-    1 => 1
+    1 -> 1
   }
 }

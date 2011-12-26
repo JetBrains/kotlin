@@ -19,7 +19,7 @@ fun f9(a : A?) {
     a?.<error descr="Unresolved reference: bar">bar</error>()
     a?.foo()
   }
-  if (!(a is B) || <info descr="Automatically cast to B">a</info>.bar() == ()) {
+  if (!(a is B) || <info descr="Automatically cast to B">a</info>.bar() == #()) {
       a?.<error descr="Unresolved reference: bar">bar</error>()
   }
   if (!(a is B)) {
@@ -52,24 +52,24 @@ fun f101(a : A?) {
 
 fun f11(a : A?) {
   when (a) {
-    is B => <info descr="Automatically cast to B">a</info>.bar()
-    is A => <info descr="Automatically cast to A">a</info>.foo()
-    is Any => <info descr="Automatically cast to A">a</info>.foo()
-    is Any? => a.<error descr="Unresolved reference: bar">bar</error>()
-    else => a?.foo()
+    is B -> <info descr="Automatically cast to B">a</info>.bar()
+    is A -> <info descr="Automatically cast to A">a</info>.foo()
+    is Any -> <info descr="Automatically cast to A">a</info>.foo()
+    is Any? -> a.<error descr="Unresolved reference: bar">bar</error>()
+    else -> a?.foo()
   }
 }
 
 fun f12(a : A?) {
   when (a) {
-    is B => <info descr="Automatically cast to B">a</info>.bar()
-    is A => <info descr="Automatically cast to A">a</info>.foo()
-    is Any => <info descr="Automatically cast to A">a</info>.foo();
-    is Any? => a.<error descr="Unresolved reference: bar">bar</error>()
-    is val c : <error descr="[TYPE_MISMATCH_IN_BINDING_PATTERN] B must be a supertype of A?. Use is to match against B">B</error> => c.foo()
-    is val c is C => <info descr="Automatically cast to C">c</info>.bar()
-    is val c is C => <info descr="Automatically cast to C">a</info>.bar()
-    else => a?.foo()
+    is B -> <info descr="Automatically cast to B">a</info>.bar()
+    is A -> <info descr="Automatically cast to A">a</info>.foo()
+    is Any -> <info descr="Automatically cast to A">a</info>.foo();
+    is Any? -> a.<error descr="Unresolved reference: bar">bar</error>()
+    is val c : <error descr="[TYPE_MISMATCH_IN_BINDING_PATTERN] B must be a supertype of A?. Use is to match against B">B</error> -> c.foo()
+    is val c is C -> <info descr="Automatically cast to C">c</info>.bar()
+    is val c is C -> <info descr="Automatically cast to C">a</info>.bar()
+    else -> a?.foo()
   }
 
   if (a is val b) {
@@ -104,7 +104,7 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  if (a is val c is B && <info descr="Automatically cast to A">a</info>.foo() == () && <info descr="Automatically cast to B">c</info>.bar() == ()) {
+  if (a is val c is B && <info descr="Automatically cast to A">a</info>.foo() == #() && <info descr="Automatically cast to B">c</info>.bar() == #()) {
     <info descr="Automatically cast to A">c</info>.foo()
     <info descr="Automatically cast to B">c</info>.bar()
   }
@@ -152,18 +152,18 @@ fun getStringLength(obj : Any) : Char? {
 
 fun toInt(i: Int?): Int = if (i != null) <info descr="Automatically cast to Int">i</info> else 0
 fun illegalWhenBody(a: Any): Int = when(a) {
-    is Int => <info descr="Automatically cast to Int">a</info>
-    is String => <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
+    is Int -> <info descr="Automatically cast to Int">a</info>
+    is String -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
-        is Int => return <info descr="Automatically cast to Int">a</info>
-        is String => return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
+        is Int -> return <info descr="Automatically cast to Int">a</info>
+        is String -> return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
     }
 }
 fun declarations(a: Any?) {
     if (a is String) {
-       val <warning>p4</warning>: (Int, String) = (2, <info descr="Automatically cast to String">a</info>)
+       val <warning>p4</warning>: #(Int, String) = #(2, <info descr="Automatically cast to String">a</info>)
     }
     if (a is String?) {
         if (a != null) {
@@ -184,21 +184,21 @@ fun vars(a: Any?) {
 }
 fun tuples(a: Any?) {
     if (a != null) {
-        val <warning>s</warning>: (Any, String) = (<info descr="Automatically cast to Any">a</info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
+        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to Any">a</info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
     }
     if (a is String) {
-        val <warning>s</warning>: (Any, String) = (<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
+        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
     }
-    fun illegalTupleReturnType(): (Any, String) = (<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Any was expected">a</error>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
+    fun illegalTupleReturnType(): #(Any, String) = #(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Any was expected">a</error>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
     if (a is String) {
-        fun legalTupleReturnType(): (Any, String) = (<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
+        fun legalTupleReturnType(): #(Any, String) = #(<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
     }
     val <warning>illegalFunctionLiteral</warning>: Function0<Int> = <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Function0<Any?> but Function0<Int> was expected">{ <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }</error>
-    val <warning>illegalReturnValueInFunctionLiteral</warning>: Function0<Int> = { (): Int => <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }
+    val <warning>illegalReturnValueInFunctionLiteral</warning>: Function0<Int> = { (): Int -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }
 
     if (a is Int) {
         val <warning>legalFunctionLiteral</warning>: Function0<Int> = { <info descr="Automatically cast to Int">a</info> }
-        val <warning>alsoLegalFunctionLiteral</warning>: Function0<Int> = { (): Int => <info descr="Automatically cast to Int">a</info> }
+        val <warning>alsoLegalFunctionLiteral</warning>: Function0<Int> = { (): Int -> <info descr="Automatically cast to Int">a</info> }
     }
 }
 fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
@@ -206,12 +206,12 @@ fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
     else return { 1 }
 }
 fun returnFunctionLiteral(a: Any?): Function0<Int> =
-    if (a is Int) { (): Int => <info descr="Automatically cast to Int">a</info> }
-    else { () => 1 }
+    if (a is Int) { (): Int -> <info descr="Automatically cast to Int">a</info> }
+    else { () -> 1 }
 
-fun illegalTupleReturnType(a: Any): (Any, String) = (a, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but String was expected">a</error>)
+fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but String was expected">a</error>)
 
-fun declarationInsidePattern(x: (Any, Any)): String = when(x) { is (val a is String, *) => <info descr="Automatically cast to String">a</info>; else => "something" }
+fun declarationInsidePattern(x: #(Any, Any)): String = when(x) { is #(val a is String, *) -> <info descr="Automatically cast to String">a</info>; else -> "something" }
 
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {
@@ -222,7 +222,7 @@ fun mergeAutocasts(a: Any?) {
     a.<error descr="Unresolved reference: compareTo">compareTo</error>("")
   }
   when (a) {
-    is String, is Any => a.<error descr="Unresolved reference: compareTo">compareTo</error>("")
+    is String, is Any -> a.<error descr="Unresolved reference: compareTo">compareTo</error>("")
   }
   if (a is String && a is Any) {
     val <warning>i</warning>: Int = <info descr="Automatically cast to String">a</info>.compareTo("")

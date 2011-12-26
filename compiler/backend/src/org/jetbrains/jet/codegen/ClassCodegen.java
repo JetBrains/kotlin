@@ -26,6 +26,12 @@ public class ClassCodegen {
         }
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state.getTypeMapper());
+
+        if (!classBuilder.generateCode()) {
+            // Outer class implementation must happen prior inner classes so we get proper scoping tree in JetLightClass's delegate
+            generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
+        }
+        
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {
                 generate(contextForInners, (JetClass) declaration);
@@ -35,7 +41,11 @@ public class ClassCodegen {
             }
         }
 
-        generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
+        if (classBuilder.generateCode()) {
+            generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
+        }
+        
+        classBuilder.done();
     }
 
     private void generateImplementation(CodegenContext context, JetClassOrObject aClass, OwnerKind kind, HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors, ClassBuilder classBuilder) {
@@ -46,6 +56,7 @@ public class ClassCodegen {
         if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
             ClassBuilder traitBuilder = state.forTraitImplementation(descriptor);
             new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state.getTypeMapper()), traitBuilder, state).generate(null);
+            traitBuilder.done();
         }
     }
 }

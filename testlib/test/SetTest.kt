@@ -1,4 +1,4 @@
-namespace test.collections
+package test.collections
 
 import std.*
 import std.io.*
@@ -23,24 +23,21 @@ class SetTest() : TestSupport() {
       data.all{it.length == 3}
     }
     assertNot {
-      data.all{s => s.startsWith("b")}
+      data.all{(s: String) -> s.startsWith("b")}
     }
   }
 
   fun testFilter() {
-    val foo = data.filter{it.startsWith("f")}
+    val foo = data.filter{it.startsWith("f")}.toSet()
 
     assert {
       foo.all{it.startsWith("f")}
     }
     assertEquals(1, foo.size)
-    assertEquals(arrayList("foo"), foo)
+    assertEquals(hashSet("foo"), foo)
 
-    // TODO ideally foo would now be a set
-    todo {
-      assert("Filter on a Set should return a Set") {
-        foo is Set<String>
-      }
+    assert("Filter on a Set should return a Set") {
+      foo is Set<String>
     }
   }
 
@@ -62,7 +59,7 @@ class SetTest() : TestSupport() {
       we should be able to remove the explicit type on the function
       http://youtrack.jetbrains.net/issue/KT-849
     */
-    val lengths = data.map<String,Int>{s => s.length}
+    val lengths = data.map<String,Int>{(s: String) -> s.length}
     assert {
       lengths.all{it == 3}
     }

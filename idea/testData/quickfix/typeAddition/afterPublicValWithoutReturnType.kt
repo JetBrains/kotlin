@@ -1,5 +1,5 @@
 // "Add return type declaration" "true"
-namespace a
+package a
 
 import java.util.List
 

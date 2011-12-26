@@ -20,7 +20,7 @@ fun f9(init : A?) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
     a?.foo()
   }
-  if (!(a is B) || a.bar() == ()) {
+  if (!(a is B) || a.bar() == #()) {
       a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   }
   if (!(a is B)) {
@@ -54,24 +54,24 @@ fun f101(a : A?) {
 
 fun f11(a : A?) {
   when (a) {
-    is B => a.bar()
-    is A => a.foo()
-    is Any => a.foo()
-    is Any? => a.<!UNRESOLVED_REFERENCE!>bar<!>()
-    else => a?.foo()
+    is B -> a.bar()
+    is A -> a.foo()
+    is Any -> a.foo()
+    is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    else -> a?.foo()
   }
 }
 
 fun f12(a : A?) {
   when (a) {
-    is B => a.bar()
-    is A => a.foo()
-    is Any => a.foo();
-    is Any? => a.<!UNRESOLVED_REFERENCE!>bar<!>()
-    is val c : <!TYPE_MISMATCH_IN_BINDING_PATTERN!>B<!> => c.foo()
-    is val c is C => c.bar()
-    is val c is C => a.bar()
-    else => a?.foo()
+    is B -> a.bar()
+    is A -> a.foo()
+    is Any -> a.foo();
+    is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    is val c : <!TYPE_MISMATCH_IN_BINDING_PATTERN!>B<!> -> c.foo()
+    is val c is C -> c.bar()
+    is val c is C -> a.bar()
+    else -> a?.foo()
   }
 
   if (a is val b) {
@@ -106,7 +106,7 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  if (a is val c is B && a.foo() == () && c.bar() == ()) {
+  if (a is val c is B && a.foo() == #() && c.bar() == #()) {
     c.foo()
     c.bar()
   }
@@ -154,18 +154,18 @@ fun getStringLength(obj : Any) : Char? {
 
 fun toInt(i: Int?): Int = if (i != null) i else 0
 fun illegalWhenBody(a: Any): Int = when(a) {
-    is Int => a
-    is String => <!TYPE_MISMATCH!>a<!>
+    is Int -> a
+    is String -> <!TYPE_MISMATCH!>a<!>
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
-        is Int => return a
-        is String => return <!TYPE_MISMATCH!>a<!>
+        is Int -> return a
+        is String -> return <!TYPE_MISMATCH!>a<!>
     }
 }
 fun declarations(a: Any?) {
     if (a is String) {
-       val <!UNUSED_VARIABLE!>p4<!>: (Int, String) = (2, a)
+       val <!UNUSED_VARIABLE!>p4<!>: #(Int, String) = #(2, a)
     }
     if (a is String?) {
         if (a != null) {
@@ -186,21 +186,21 @@ fun vars(a: Any?) {
 }
 fun tuples(a: Any?) {
     if (a != null) {
-        val <!UNUSED_VARIABLE!>s<!>: (Any, String) = (a, <!TYPE_MISMATCH!>a<!>)
+        val <!UNUSED_VARIABLE!>s<!>: #(Any, String) = #(a, <!TYPE_MISMATCH!>a<!>)
     }
     if (a is String) {
-        val <!UNUSED_VARIABLE!>s<!>: (Any, String) = (a, a)
+        val <!UNUSED_VARIABLE!>s<!>: #(Any, String) = #(a, a)
     }
-    fun illegalTupleReturnType(): (Any, String) = (<!TYPE_MISMATCH!>a<!>, <!TYPE_MISMATCH!>a<!>)
+    fun illegalTupleReturnType(): #(Any, String) = #(<!TYPE_MISMATCH!>a<!>, <!TYPE_MISMATCH!>a<!>)
     if (a is String) {
-        fun legalTupleReturnType(): (Any, String) = (a, a)
+        fun legalTupleReturnType(): #(Any, String) = #(a, a)
     }
     val <!UNUSED_VARIABLE!>illegalFunctionLiteral<!>: Function0<Int> = <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>a<!> }<!>
-    val <!UNUSED_VARIABLE!>illegalReturnValueInFunctionLiteral<!>: Function0<Int> = { (): Int => <!TYPE_MISMATCH!>a<!> }
+    val <!UNUSED_VARIABLE!>illegalReturnValueInFunctionLiteral<!>: Function0<Int> = { (): Int -> <!TYPE_MISMATCH!>a<!> }
 
     if (a is Int) {
         val <!UNUSED_VARIABLE!>legalFunctionLiteral<!>: Function0<Int> = { a }
-        val <!UNUSED_VARIABLE!>alsoLegalFunctionLiteral<!>: Function0<Int> = { (): Int => a }
+        val <!UNUSED_VARIABLE!>alsoLegalFunctionLiteral<!>: Function0<Int> = { (): Int -> a }
     }
 }
 fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
@@ -208,12 +208,12 @@ fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
     else return { 1 }
 }
 fun returnFunctionLiteral(a: Any?): Function0<Int> =
-    if (a is Int) { (): Int => a }
-    else { () => 1 }
+    if (a is Int) { (): Int -> a }
+    else { () -> 1 }
 
-fun illegalTupleReturnType(a: Any): (Any, String) = (a, <!TYPE_MISMATCH!>a<!>)
+fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <!TYPE_MISMATCH!>a<!>)
 
-fun declarationInsidePattern(x: (Any, Any)): String = when(x) { is (val a is String, *) => a; else => "something" }
+fun declarationInsidePattern(x: #(Any, Any)): String = when(x) { is #(val a is String, *) -> a; else -> "something" }
 
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {
@@ -224,7 +224,7 @@ fun mergeAutocasts(a: Any?) {
     a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
   when (a) {
-    is String, is Any => a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
+    is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
   if (a is String && a is Any) {
     val <!UNUSED_VARIABLE!>i<!>: Int = a.compareTo("")

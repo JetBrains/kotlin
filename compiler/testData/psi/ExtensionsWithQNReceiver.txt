@@ -1,0 +1,77 @@
+JetFile: ExtensionsWithQNReceiver.jet
+  NAMESPACE
+    NAMESPACE_HEADER
+      <empty list>
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('java')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('util')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Map')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              PsiElement(MUL)('*')
+            PsiElement(COMMA)(',')
+            TYPE_PROJECTION
+              PsiElement(MUL)('*')
+            PsiElement(GT)('>')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('size')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace('\n\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('java')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('util')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Map')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              PsiElement(MUL)('*')
+            PsiElement(COMMA)(',')
+            TYPE_PROJECTION
+              PsiElement(MUL)('*')
+            PsiElement(GT)('>')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('size')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')

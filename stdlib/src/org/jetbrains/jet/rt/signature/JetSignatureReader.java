@@ -107,6 +107,10 @@ public class JetSignatureReader {
             int pos,
             final JetSignatureVisitor v)
     {
+        if (signature.length() == 0) {
+            throw new IllegalStateException();
+        }
+        
         char c;
         int start, end;
         boolean visited, inner;

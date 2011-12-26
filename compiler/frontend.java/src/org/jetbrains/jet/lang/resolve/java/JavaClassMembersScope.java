@@ -104,7 +104,10 @@ public class JavaClassMembersScope implements JetScope {
         for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
-                return semanticServices.getDescriptorResolver().resolveClass(innerClass);
+                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(innerClass);
+                if (classDescriptor != null) {
+                    return classDescriptor;
+                }
             }
         }
         return null;

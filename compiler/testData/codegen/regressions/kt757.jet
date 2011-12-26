@@ -1,4 +1,4 @@
-namespace demo_long
+package demo_long
 
 fun Long?.inv() : Long = this.sure().inv()
 

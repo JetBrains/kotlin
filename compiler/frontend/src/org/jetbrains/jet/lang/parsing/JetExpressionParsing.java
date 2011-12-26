@@ -18,7 +18,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  */
 public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
-    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW, DOT);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
 
     private static final ImmutableMap<String, JetToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
@@ -38,8 +38,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
-            EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
-            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH,
+            EQEQEQ, ARROW, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
+            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, //HASH,
             COLON
     );
 
@@ -49,6 +49,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             // Atomic
 
             LPAR, // parenthesized
+            HASH, // Tuple
 
             // literal constant
             TRUE_KEYWORD, FALSE_KEYWORD,
@@ -100,13 +101,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
     );
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            SEMICOLON, DOUBLE_ARROW, COMMA, RBRACE, RPAR, RBRACKET
+            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS,
-                HASH, DOT, SAFE_ACCESS, QUEST), // typeArguments? valueArguments : typeArguments : arrayAccess
+//                HASH,
+                DOT, SAFE_ACCESS, QUEST), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes
 
@@ -150,7 +152,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
-        ARROW(JetTokens.ARROW),
+//        ARROW(JetTokens.ARROW),
         ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ;
 
@@ -374,13 +376,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 expression.done(PREDICATE_EXPRESSION);
             }
-            else if (at(HASH)) {
-                advance(); // HASH
-
-                expect(IDENTIFIER, "Expecting property or function name");
-
-                expression.done(HASH_QUALIFIED_EXPRESSION);
-            }
+//            else if (at(HASH)) {
+//                advance(); // HASH
+//
+//                expect(IDENTIFIER, "Expecting property or function name");
+//
+//                expression.done(HASH_QUALIFIED_EXPRESSION);
+//            }
             else if (atSet(Precedence.POSTFIX.getOperations())) {
                 parseOperationReference();
                 expression.done(POSTFIX_EXPRESSION);
@@ -502,7 +504,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
 //        System.out.println("atom at "  + myBuilder.getTokenText());
 
         if (at(LPAR)) {
-            parseParenthesizedExpressionOrTuple();
+            parseParenthesizedExpression();
+        }
+        else if (at(HASH)) {
+            parseTupleExpression();
         }
         else if (at(NAMESPACE_KEYWORD)) {
             parseOneTokenExpression(ROOT_NAMESPACE);
@@ -756,13 +761,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
 
-            if (!at(DOUBLE_ARROW)) {
-                errorUntil("Expecting '=>'", TokenSet.create(DOUBLE_ARROW,
+            if (!at(ARROW)) {
+                errorUntil("Expecting '=>'", TokenSet.create(ARROW,
                         RBRACE, EOL_OR_SEMICOLON));
             }
 
-            if (at(DOUBLE_ARROW)) {
-                advance(); // DOUBLE_ARROW
+            if (at(ARROW)) {
+                advance(); // ARROW
 
                 if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
                     error("Expecting an element");
@@ -790,7 +795,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             if (!at(COMMA)) break;
             advance(); // COMMA
         }
-        expect(DOUBLE_ARROW, "Expecting '=>' or 'when'", WHEN_CONDITION_RECOVERY_SET);
+        expect(ARROW, "Expecting '->' or 'when'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element");
         } else {
@@ -815,7 +820,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             mark.done(OPERATION_REFERENCE);
 
 
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an element");
             } else {
                 parseExpression();
@@ -824,7 +829,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         } else if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
 
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting a type or a decomposer pattern");
             } else {
                 parsePattern();
@@ -832,7 +837,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             condition.done(WHEN_CONDITION_IS_PATTERN);
         } else {
             PsiBuilder.Marker expressionPattern = mark();
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an expression, is-condition or in-condition");
             } else {
                 parseExpression();
@@ -863,9 +868,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER) || at(FUN_KEYWORD) || at(THIS_KEYWORD)) {
             PsiBuilder.Marker rollbackMarker = mark();
             parseBinaryExpression(Precedence.ELVIS);
-            if (at(AT)) {
+            if (at(HASH)) {
                 rollbackMarker.drop();
-                advance(); // AT
                 PsiBuilder.Marker list = mark();
                 parseTuplePattern(DECOMPOSER_ARGUMENT);
                 list.done(DECOMPOSER_ARGUMENT_LIST);
@@ -877,9 +881,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 rollbackMarker = mark();
 
                 myJetParsing.parseTypeRef();
-                if (at(AT)) {
-                    errorAndAdvance("'@' is allowed only after a decomposer element, not after a type");
-                }
+//                if (at(AT)) {
+//                    errorAndAdvance("'@' is allowed only after a decomposer element, not after a type");
+//                }
                 if (myBuilder.getCurrentOffset() < expressionEndOffset) {
                     rollbackMarker.rollbackTo();
                     parseBinaryExpression(Precedence.ELVIS);
@@ -889,7 +893,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     pattern.done(TYPE_PATTERN);
                 }
             }
-        } else if (at(LPAR)) {
+        } else if (at(HASH)) {
             parseTuplePattern(TUPLE_PATTERN_ENTRY);
             pattern.done(TUPLE_PATTERN);
         }
@@ -905,20 +909,21 @@ public class JetExpressionParsing extends AbstractJetParsing {
         } else if (parseLiteralConstant()) {
             pattern.done(EXPRESSION_PATTERN);
         } else {
-            errorUntil("Pattern expected", TokenSet.create(RBRACE, DOUBLE_ARROW));
+            errorUntil("Pattern expected", TokenSet.create(RBRACE, ARROW));
             pattern.drop();
         }
     }
 
     /*
      * tuplePattern
-     *  : "(" ((SimpleName "=")? pattern){","}? ")"
+     *  : "#" "(" ((SimpleName "=")? pattern){","}? ")"
      *  ;
      */
     private void parseTuplePattern(JetNodeType entryType) {
 
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting '('", getDecomposerExpressionFollow());
+        expect(HASH, "Expecting a tuple pattern of the form '#(...)'", getDecomposerExpressionFollow());
+        expect(LPAR, "Expecting a tuple pattern of the form '#(...)'", getDecomposerExpressionFollow());
 
         if (!at(RPAR)) {
             while (true) {
@@ -1059,8 +1064,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * functionLiteral  // one can use "it" as a parameter name
      *   : "{" expressions "}"
-     *   : "{" (modifiers SimpleName){","} "=>" statements "}"
-     *   : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" expressions "}"
+     *   : "{" (modifiers SimpleName){","} "->" statements "}"
+     *   : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "->" expressions "}"
      *   ;
      */
     private void parseFunctionLiteral() {
@@ -1077,83 +1082,112 @@ public class JetExpressionParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         advance(); // LBRACE
 
-        int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(DOUBLE_ARROW), new At(RBRACE)) {
-            @Override
-            public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-                return openBraces == 0;
+        boolean paramsFound = false;
+
+        if (at(ARROW)) {
+            //   { -> ...}
+            advance(); // ARROW
+            mark().done(VALUE_PARAMETER_LIST);
+            paramsFound = true;
+        }
+        else if (at(LPAR)) {
+            // Look for ARROW after matching RPAR
+            //   {(a, b) -> ...}
+
+            {
+                PsiBuilder.Marker rollbackMarker = mark();
+
+                parseFunctionLiteralParametersAndType();
+
+                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
             }
-        });
 
-        boolean doubleArrowPresent = doubleArrowPos >= 0;
-        if (doubleArrowPresent) {
-            boolean dontExpectParameters = false;
-
-            int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
-            if (lastDot >= 0) { // There is a receiver type
-                createTruncatedBuilder(lastDot).parseTypeRef();
-
-                expect(DOT, "Expecting '.'");
-
-                if (!at(LPAR)) {
-                    int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));
-
-                    if (firstLParPos >= 0) {
-                        errorUntilOffset("Expecting '('", firstLParPos);
-                    } else {
-                        errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}",
-                            doubleArrowPos);
-                        dontExpectParameters = true;
+            if (!paramsFound) {
+                // If not found, try a typeRef DOT and then LPAR .. RPAR ARROW
+                //   {((A) -> B).(x) -> ... }
+                PsiBuilder.Marker rollbackMarker = mark();
+                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RPAR)));
+                if (lastDot >= 0) {
+                    createTruncatedBuilder(lastDot).parseTypeRef();
+                    if (at(DOT)) {
+                        advance(); // DOT
+                        parseFunctionLiteralParametersAndType();
                     }
                 }
 
+                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
             }
-
-            if (at(LPAR)) {
-                parseFunctionLiteralParameterList();
-
-                if (at(COLON)) {
-                    advance(); // COLON
-                    if (at(DOUBLE_ARROW)) {
-                        error("Expecting a type");
-                    }
-                    else {
-                        myJetParsing.parseTypeRef();
-                    }
-                }
-            }
-            else if (!dontExpectParameters) {
-                PsiBuilder.Marker parameterList = mark();
-
-                while (!eof()) {
-                    PsiBuilder.Marker parameter = mark();
-
-                    int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
-                    createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
-
-                    expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(DOUBLE_ARROW));
-
-                    parameter.done(VALUE_PARAMETER);
-
-                    if (at(COLON)) {
-                        errorUntilOffset("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}", doubleArrowPos);
-                    }
-                    else if (at(DOUBLE_ARROW)) {
-                        break;
-                    }
-                    else if (!at(COMMA)) {
-                        errorUntilOffset("Expecting '=>' or ','", doubleArrowPos);
-                    }
-                    else {
-                        advance(); // COMMA
-                    }
-                }
-
-                parameterList.done(VALUE_PARAMETER_LIST);
-            }
-
-            expectNoAdvance(DOUBLE_ARROW, "Expecting '=>'");
         }
         else {
+            if (at(IDENTIFIER)) {
+                // Try to parse a simple name list followed by an ARROW
+                //   {a -> ...}
+                //   {a, b -> ...}
+                PsiBuilder.Marker rollbackMarker = mark();
+                parseFunctionLiteralShorthandParameterList();
+                parseOptionalFunctionLiteralType();
+                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+            }
+            if (!paramsFound && atSet(JetParsing.TYPE_REF_FIRST)) {
+                // Try to parse a type DOT valueParameterList ARROW
+                //   {A.(b) -> ...}
+                PsiBuilder.Marker rollbackMarker = mark();
+                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RBRACE)));
+                if (lastDot >= 0) { // There is a receiver type
+                    createTruncatedBuilder(lastDot).parseTypeRef();
+                }
+
+                if (at(DOT)) {
+                    advance(); // DOT
+                    parseFunctionLiteralParametersAndType();
+                    paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+                }
+                else {
+                    rollbackMarker.rollbackTo();
+                }
+            }
+//            int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(ARROW), new At(RBRACE)) {
+//                @Override
+//                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
+//                    return openBraces == 0;
+//                }
+//            });
+//
+//            boolean doubleArrowPresent = doubleArrowPos >= 0;
+//            if (doubleArrowPresent) {
+//                boolean dontExpectParameters = false;
+//
+//                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
+//                if (lastDot >= 0) { // There is a receiver type
+//                    createTruncatedBuilder(lastDot).parseTypeRef();
+//
+//                    expect(DOT, "Expecting '.'");
+//
+//                    if (!at(LPAR)) {
+//                        int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));
+//
+//                        if (firstLParPos >= 0) {
+//                            errorUntilOffset("Expecting '('", firstLParPos);
+//                        } else {
+//                            errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}",
+//                                doubleArrowPos);
+//                            dontExpectParameters = true;
+//                        }
+//                    }
+//
+//                }
+//
+//                if (at(LPAR)) {
+//                    parseFunctionLiteralParametersAndType();
+//                }
+//                else if (!dontExpectParameters) {
+//                    parseFunctionLiteralShorthandParameterList();
+//                }
+//
+//                expectNoAdvance(ARROW, "Expecting '=>'");
+//            }
+        }
+        if (!paramsFound) {
             if (preferBlock) {
                 literal.drop();
                 parseStatements();
@@ -1175,12 +1209,80 @@ public class JetExpressionParsing extends AbstractJetParsing {
         literalExpression.done(FUNCTION_LITERAL_EXPRESSION);
     }
 
+    private boolean rollbackOrDropAt(PsiBuilder.Marker rollbackMarker, IElementType dropAt) {
+        if (at(dropAt)) {
+            advance(); // dropAt
+            rollbackMarker.drop();
+            return true;
+        }
+        rollbackMarker.rollbackTo();
+        return false;
+    }
+
+    /*
+     * SimpleName{,}
+     */
+    private void parseFunctionLiteralShorthandParameterList() {
+        PsiBuilder.Marker parameterList = mark();
+
+        while (!eof()) {
+            PsiBuilder.Marker parameter = mark();
+
+//            int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
+//            createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
+
+            expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
+
+            parameter.done(VALUE_PARAMETER);
+
+            if (at(COLON)) {
+                PsiBuilder.Marker errorMarker = mark();
+                advance(); // COLON
+                myJetParsing.parseTypeRef();
+                errorMarker.error("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}");
+            }
+            else if (at(ARROW)) {
+                break;
+            }
+            else if (at(COMMA)) {
+                advance(); // COMMA
+            }
+            else {
+                error("Expecting '->' or ','");
+                break;
+            }
+        }
+
+        parameterList.done(VALUE_PARAMETER_LIST);
+    }
+
+    private void parseFunctionLiteralParametersAndType() {
+        parseFunctionLiteralParameterList();
+
+        parseOptionalFunctionLiteralType();
+    }
+
+    /*
+     * (":" type)?
+     */
+    private void parseOptionalFunctionLiteralType() {
+        if (at(COLON)) {
+            advance(); // COLON
+            if (at(ARROW)) {
+                error("Expecting a type");
+            }
+            else {
+                myJetParsing.parseTypeRef();
+            }
+        }
+    }
+
     /*
      * "(" (modifiers SimpleName (":" type)?){","} ")"
      */
     private void parseFunctionLiteralParameterList() {
         PsiBuilder.Marker list = mark();
-        expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(DOUBLE_ARROW, COLON));
+        expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(ARROW, COLON));
 
         myBuilder.disableNewlines();
 
@@ -1189,7 +1291,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
 
                 PsiBuilder.Marker parameter = mark();
-                int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, DOUBLE_ARROW)));
+                int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, ARROW)));
                 createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST, false);
 
                 expect(IDENTIFIER, "Expecting parameter declaration");
@@ -1211,7 +1313,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myBuilder.restoreNewlinesState();
 
-        expect(RPAR, "Expecting ')", TokenSet.create(DOUBLE_ARROW, COLON));
+        expect(RPAR, "Expecting ')", TokenSet.create(ARROW, COLON));
         list.done(VALUE_PARAMETER_LIST);
     }
 
@@ -1567,29 +1669,43 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an element in parentheses
-     *              // to put a tuple, write write ((e))
-     *   : "(" ((SimpleName "=")? element){","} ")"
-     *   ;
-     *
-     * element
-     *   : "(" element ")"
-     *   ;
-     *
-     * TODO: duplication with valueArguments (but for the error messages)
+     * "(" expression ")"
      */
-    private void parseParenthesizedExpressionOrTuple() {
+    private void parseParenthesizedExpression() {
         assert _at(LPAR);
 
         PsiBuilder.Marker mark = mark();
 
         myBuilder.disableNewlines();
         advance(); // LPAR
-        boolean tuple = false;
+        if (at(RPAR)) {
+            error("Expecting an expression");
+        }
+        else {
+            parseExpression();
+        }
+
+        expect(RPAR, "Expecting ')'");
+        myBuilder.restoreNewlinesState();
+
+        mark.done(PARENTHESIZED);
+    }
+
+    /*
+     * tupleLiteral
+     *   : "#" "(" (((SimpleName "=")? expression){","})? ")"
+     *   ;
+     */
+    private void parseTupleExpression() {
+        assert _at(HASH);
+        PsiBuilder.Marker mark = mark();
+
+        advance(); // HASH
+        advance(); // LPAR
+        myBuilder.disableNewlines();
         if (!at(RPAR)) {
             while (true) {
                 while (at(COMMA)) {
-                    tuple = true;
                     errorAndAdvance("Expecting a tuple entry (element)");
                 }
 
@@ -1597,7 +1713,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     PsiBuilder.Marker entry = mark();
                     advance(); // IDENTIFIER
                     advance(); // EQ
-                    tuple = true;
                     parseExpression();
                     entry.done(LABELED_TUPLE_ENTRY);
                 } else {
@@ -1606,21 +1721,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
-                tuple = true;
 
                 if (at(RPAR)) {
                     error("Expecting a tuple entry (element)");
                     break;
                 }
             }
-        } else {
-            tuple = true;
-        }
 
+        }
         expect(RPAR, "Expecting ')'");
         myBuilder.restoreNewlinesState();
 
-        mark.done(tuple ? TUPLE : PARENTHESIZED);
+        mark.done(TUPLE);
     }
 
     /*

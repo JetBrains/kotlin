@@ -1,4 +1,4 @@
-namespace Foo {
+package Foo {
   fun bar() = 610
 }
 

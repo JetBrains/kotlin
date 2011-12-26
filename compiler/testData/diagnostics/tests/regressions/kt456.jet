@@ -1,6 +1,6 @@
 //KT-456 No check for obligatory return in getters
 
-namespace kt456
+package kt456
 
 class A() {
     val i: Int

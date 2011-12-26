@@ -1,4 +1,4 @@
-namespace std
+package std
 
 import java.io.StringReader
 
@@ -6,7 +6,7 @@ inline fun <T> T?.plus(str: String?) : String { return toString() + str }
 
 inline fun String.lastIndexOf(s: String)  = (this as java.lang.String).lastIndexOf(s)
 
-inline fun String.lastIndexOf(s: Char) = (this as java.lang.String).lastIndexOf(s.toString()) }
+inline fun String.lastIndexOf(s: Char) = (this as java.lang.String).lastIndexOf(s.toString())
 
 inline fun String.indexOf(s : String) = (this as java.lang.String).indexOf(s)
 

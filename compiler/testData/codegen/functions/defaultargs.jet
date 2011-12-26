@@ -5,7 +5,7 @@ fun reformat(
   divideByCamelHumps : Boolean = true,
   wordSeparator : String = " "
 ) =
-  (normalizeCase, uppercaseFirstLetter, divideByCamelHumps, wordSeparator)
+  #(normalizeCase, uppercaseFirstLetter, divideByCamelHumps, wordSeparator)
 
 trait A {
     fun bar2(arg: Int = 239) : Int
@@ -38,7 +38,7 @@ class C() : B() {
 fun <T> T.toPrefixedString(prefix: String = "", suffix: String="") = prefix + (this as java.lang.Object).toString() + suffix
 
 fun box() : String {
-    val expected = (true, true, true, " ")
+    val expected = #(true, true, true, " ")
 
     if("mama".toPrefixedString(suffix="321", prefix="papa") != "papamama321") return "fail"
     if("mama".toPrefixedString(prefix="papa") != "papamama") return "fail"

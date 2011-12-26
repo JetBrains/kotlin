@@ -16,7 +16,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus.*
 import netty.*
 import jlstring.*
 
-namespace jlstring {
+package jlstring {
     fun String.replace(c: Char, by: Char) : String = (this as java.lang.String).replace(c, by) as String
 
     fun String.contains(s: String) : Boolean = (this as java.lang.String).contains(s as java.lang.CharSequence)
@@ -24,7 +24,7 @@ namespace jlstring {
     fun java.lang.String.plus(s: Any?) : String = (this as String) + s.toString()
 }
 
-namespace netty {
+package netty {
     fun ChannelPipeline.with(op: fun ChannelPipeline.() ) : ChannelPipeline {
         this.op()
         return this

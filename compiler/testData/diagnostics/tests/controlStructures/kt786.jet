@@ -1,13 +1,13 @@
-namespace kt786
+package kt786
 
 //KT-786 Exception on incomplete code with 'when'
 fun foo() : Int {
     val d = 2
     var z = 0
     when(d) {
-        is 5, is 3 => <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, UNUSED_CHANGED_VALUE!>z++<!>
-        <!ELSE_MISPLACED_IN_WHEN!>else => { <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>z = <!UNUSED_VALUE!>-1000<!><!> }<!>
-        return z => <!UNREACHABLE_CODE!>34<!>
+        is 5, is 3 -> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, UNUSED_CHANGED_VALUE!>z++<!>
+        <!ELSE_MISPLACED_IN_WHEN!>else -> { <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>z = <!UNUSED_VALUE!>-1000<!><!> }<!>
+        return z -> <!UNREACHABLE_CODE!>34<!>
     }
 }
 
@@ -15,10 +15,10 @@ fun foo() : Int {
 fun fff(): Int {
     var d = 3
     when(d) {
-        is 4 => 21
-        return 2 => <!UNREACHABLE_CODE!>return 47<!>
-        <!UNREACHABLE_CODE!>bar()<!> => <!UNREACHABLE_CODE!>45<!>
-        <!UNREACHABLE_CODE!>444<!> => <!UNREACHABLE_CODE!>true<!>
+        is 4 -> 21
+        return 2 -> <!UNREACHABLE_CODE!>return 47<!>
+        <!UNREACHABLE_CODE!>bar()<!> -> <!UNREACHABLE_CODE!>45<!>
+        <!UNREACHABLE_CODE!>444<!> -> <!UNREACHABLE_CODE!>true<!>
     }
     return 34
 }

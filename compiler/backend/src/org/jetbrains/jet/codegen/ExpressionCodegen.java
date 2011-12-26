@@ -2410,13 +2410,19 @@ If finally block is present, its last expression is the value of try expression.
             return generateTuplePatternMatch((JetTuplePattern) pattern, negated, expressionToMatch, nextEntry);
         }
         else if (pattern instanceof JetExpressionPattern) {
-            final Type subjectType = expressionToMatch.type;
-            expressionToMatch.dupReceiver(v);
-            expressionToMatch.put(subjectType, v);
-            JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
-            Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : TYPE_OBJECT;
-            gen(condExpression, condType);
-            return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, false, false);
+            if(expressionToMatch != null) {
+                final Type subjectType = expressionToMatch.type;
+                expressionToMatch.dupReceiver(v);
+                expressionToMatch.put(subjectType, v);
+                JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
+                Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : TYPE_OBJECT;
+                gen(condExpression, condType);
+                return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, false, false);
+            }
+            else {
+                JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
+                return gen(condExpression);
+            }
         }
         else if (pattern instanceof JetWildcardPattern) {
             return StackValue.constant(!negated, Type.BOOLEAN_TYPE);
@@ -2665,9 +2671,11 @@ If finally block is present, its last expression is the value of try expression.
         JetExpression expr = expression.getSubjectExpression();
         final Type subjectType = expressionType(expr);
         final Type resultType = expressionType(expression);
-        final int subjectLocal = myFrameMap.enterTemp(subjectType.getSize());
-        gen(expr, subjectType);
-        v.store(subjectLocal, subjectType);
+        final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType.getSize()) : -1;
+        if(subjectLocal != -1) {
+            gen(expr, subjectType);
+            v.store(subjectLocal, subjectType);
+        }
 
         Label end = new Label();
         boolean hasElse = false;
@@ -2736,7 +2744,7 @@ If finally block is present, its last expression is the value of try expression.
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
             JetPattern pattern = patternCondition.getPattern();
             conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
-                                                  StackValue.local(subjectLocal, subjectType), nextEntry);
+                                                  subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType), nextEntry);
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");

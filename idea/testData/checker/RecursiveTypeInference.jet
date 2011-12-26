@@ -1,16 +1,16 @@
-namespace a {
+package a {
     val foo = bar()
 
     fun bar() = <error descr="[TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM] Type checking has run into a recursive problem">foo</error>
 }
 
-namespace b {
+package b {
     fun foo() = bar()
 
     fun bar() = <error descr="[TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM] Type checking has run into a recursive problem">foo()</error>
 }
 
-namespace c {
+package c {
     fun bazz() = bar()
 
     fun foo() = <error descr="[TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM] Type checking has run into a recursive problem">bazz()</error>
@@ -18,21 +18,21 @@ namespace c {
     fun bar() = foo()
 }
 
-namespace ok {
+package ok {
 
-    namespace a {
+    package a {
         val foo = bar()
 
         fun bar() : Int = foo
     }
 
-    namespace b {
+    package b {
         fun foo() : Int = bar()
 
         fun bar() = foo()
     }
 
-    namespace c {
+    package c {
         fun bazz() = bar()
 
         fun foo() : Int = bazz()

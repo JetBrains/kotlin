@@ -1,4 +1,4 @@
-namespace demo_range
+package demo_range
 
 fun Int?.plus() : Int = this.sure().plus()
 fun Int?.dec() : Int = this.sure().dec()

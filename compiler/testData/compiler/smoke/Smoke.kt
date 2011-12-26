@@ -1,4 +1,4 @@
-namespace Smoke
+package Smoke
 
 import std.io.*
 

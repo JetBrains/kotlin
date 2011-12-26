@@ -1,6 +1,6 @@
 // +JDK
 
-namespace foo
+package foo
 
 class X {}
 

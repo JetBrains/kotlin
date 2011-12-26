@@ -1,7 +1,7 @@
 JetFile: Attributes_ERR.jet
   NAMESPACE
     NAMESPACE_HEADER
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')

@@ -6,7 +6,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.StdlibNames;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
@@ -68,6 +69,10 @@ public class FunctionCodegen {
         {
             flags |= ACC_VARARGS;
         }
+        
+        if (functionDescriptor.getModality() == Modality.FINAL) {
+            flags |= ACC_FINAL;
+        }
 
         OwnerKind kind = context.getContextKind();
 
@@ -88,48 +93,48 @@ public class FunctionCodegen {
                 if(kind != OwnerKind.TRAIT_IMPL) {
                     AnnotationVisitor av = mv.visitAnnotation(JetTypeMapper.JET_METHOD_TYPE.getDescriptor(), true);
                     if(functionDescriptor.getReturnType().isNullable()) {
-                        av.visit(StdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
+                        av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
                     }
                     if (jvmSignature.getKotlinReturnType() != null) {
-                        av.visit(StdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
+                        av.visit(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
                     }
                     if (jvmSignature.getKotlinTypeParameter() != null) {
-                        av.visit(StdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
+                        av.visit(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
                     }
                     av.visitEnd();
                 }
 
                 if(kind == OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
-                    av.visit(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$self");
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
+                    av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$self");
                     av.visitEnd();
                 }
                 if(receiverParameter.exists()) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
-                    av.visit(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$receiver");
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
+                    av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$receiver");
                     if(receiverParameter.getType().isNullable()) {
-                        av.visit(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
-                    av.visit(StdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, true);
+                    av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, true);
                     av.visitEnd();
                 }
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, StdlibNames.JET_TYPE_PARAMETER.getDescriptor(), true);
-                    av.visit(StdlibNames.JET_TYPE_PARAMETER_NAME_FIELD, typeParameterDescriptor.getName());
+                    AnnotationVisitor av = mv.visitParameterAnnotation(start++, JvmStdlibNames.JET_TYPE_PARAMETER.getDescriptor(), true);
+                    av.visit(JvmStdlibNames.JET_TYPE_PARAMETER_NAME_FIELD, typeParameterDescriptor.getName());
                     av.visitEnd();
                 }
                 for(int i = 0; i != paramDescrs.size(); ++i) {
-                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, StdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
+                    AnnotationVisitor av = mv.visitParameterAnnotation(i + start, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
                     ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                    av.visit(StdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
+                    av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
                     if(parameterDescriptor.hasDefaultValue()) {
-                        av.visit(StdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
                     }
                     if(parameterDescriptor.getOutType().isNullable()) {
-                        av.visit(StdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
                     if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
-                        av.visit(StdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i));
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start));
                     }
                     av.visitEnd();
                 }
@@ -300,7 +305,7 @@ public class FunctionCodegen {
             boolean isConstructor = "<init>".equals(jvmSignature.getName());
             if(!isStatic && !isConstructor)
                 descriptor = descriptor.replace("(","(L" + ownerInternalName + ";");
-            final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC), isConstructor ? "<init>" : jvmSignature.getName() + "$default", descriptor, null, null);
+            final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC), isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor, null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
             if (v.generateCode()) {
                 mv.visitCode();

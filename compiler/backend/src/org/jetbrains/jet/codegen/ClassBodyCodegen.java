@@ -48,8 +48,6 @@ public abstract class ClassBodyCodegen {
         generateSyntheticParts(accessors);
 
         generateStaticInitializer();
-
-        v.done();
     }
 
     protected abstract void generateDeclaration();

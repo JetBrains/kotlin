@@ -1,4 +1,4 @@
-namespace demo
+package demo
 
 fun box() : String {
     var res : Boolean = true

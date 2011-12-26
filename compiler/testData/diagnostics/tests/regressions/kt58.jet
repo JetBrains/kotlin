@@ -1,11 +1,11 @@
 //KT-58 Allow finally around definite returns
 // +JDK
 
-namespace kt58
+package kt58
 
 import java.util.concurrent.locks.Lock
 
-fun lock<T>(lock : Lock, body : fun () : T) : T {
+fun lock<T>(lock : Lock, body :  () -> T) : T {
     lock.lock()
     try {
         return body()

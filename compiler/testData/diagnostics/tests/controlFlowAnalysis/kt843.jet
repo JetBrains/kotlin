@@ -1,6 +1,6 @@
 //KT-843 Don't highlight incomplete variables as unused
 
-namespace kt843
+package kt843
 
 fun main(args : Array<String>) {
     // Integer type

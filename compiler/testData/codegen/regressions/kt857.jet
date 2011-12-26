@@ -1,0 +1,7 @@
+package container_test
+
+class Container<T>(var t : T) {
+    fun getT() : T = t
+}
+
+fun box() = Container<String>("OK").getT()

@@ -1,5 +1,5 @@
 // "Add function body" "true"
-namespace a {
+package a {
 fun <caret>foo() {
 }
 }

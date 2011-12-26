@@ -1,6 +1,6 @@
 //KT-610 Distinguish errors 'unused variable' and 'variable is assigned but never accessed'
 
-namespace kt610
+package kt610
 
 fun foo() {
     var <!UNUSED_VARIABLE!>j<!> = 9  //'unused variable' error

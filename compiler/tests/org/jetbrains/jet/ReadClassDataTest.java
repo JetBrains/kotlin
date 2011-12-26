@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -106,6 +107,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
+        jetCoreEnvironment.addToClasspath(new File("out/production/stdlib"));
 
         JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(jetCoreEnvironment.getProject());
         JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), jetSemanticServices, new BindingTraceContext());
@@ -123,6 +125,8 @@ public class ReadClassDataTest extends UsefulTestCase {
             if (ad instanceof ClassifierDescriptor) {
                 ClassifierDescriptor bd = nsb.getMemberScope().getClassifier(ad.getName());
                 compareClassifiers((ClassifierDescriptor) ad, bd);
+                
+                Assert.assertNull(nsb.getMemberScope().getClassifier(ad.getName() + JvmAbi.TRAIT_IMPL_SUFFIX));
             } else if (ad instanceof FunctionDescriptor) {
                 Set<FunctionDescriptor> functions = nsb.getMemberScope().getFunctions(ad.getName());
                 Assert.assertTrue(functions.size() >= 1);
@@ -136,251 +140,290 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
 
     private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b) {
-        String as = serializeContent((ClassDescriptor) a);
-        String bs = serializeContent((ClassDescriptor) b);
+        StringBuilder sba = new StringBuilder();
+        StringBuilder sbb = new StringBuilder();
+        
+        new Serializer(sba).serializeContent((ClassDescriptor) a);
+        new Serializer(sbb).serializeContent((ClassDescriptor) b);
+        
+        String as = sba.toString();
+        String bs = sbb.toString();
 
         Assert.assertEquals(as, bs);
         System.out.println(as);
     }
     
-    private String serializeContent(ClassDescriptor klass) {
-
-        StringBuilder sb = new StringBuilder();
-        serialize(klass.getKind(), sb);
-        sb.append(" ");
-        
-        serialize(klass, sb);
-
-        if (!klass.getTypeConstructor().getParameters().isEmpty()) {
-            sb.append("<");
-            serializeCommaSeparated(klass.getTypeConstructor().getParameters(), sb);
-            sb.append(">");
-        }
-
-        // TODO: supers
-        // TODO: constructors
-
-        sb.append(" {\n");
-
-        List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
-        for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
-            typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
-        }
-
-        JetScope memberScope = klass.getMemberScope(typeArguments);
-        for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-            // TODO
-            if (member.getName().equals("equals") || member.getName().equals("hashCode")
-                    || member.getName().equals("wait") || member.getName().equals("notify") || member.getName().equals("notifyAll")
-                    || member.getName().equals("toString") || member.getName().equals("getClass")
-                    || member.getName().equals("clone") || member.getName().equals("finalize")
-                    || member.getName().equals("getTypeInfo") || member.getName().equals("$setTypeInfo") || member.getName().equals("$typeInfo")
-                )
-            {
-                continue;
-            }
-            sb.append("    ");
-            serialize(member, sb);
-            sb.append("\n");
-        }
-
-        sb.append("}\n");
-        return sb.toString();
-    }
-    
-    private void serialize(ClassKind kind, StringBuilder sb) {
-        switch (kind) {
-            case CLASS:
-                sb.append("class");
-                break;
-            case TRAIT:
-                sb.append("trait");
-                break;
-            default:
-                throw new IllegalStateException();
-        }
-    }
-
-
     private void compareFunctions(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
-        String as = serialize(a);
-        String bs = serialize(b);
+        StringBuilder sba = new StringBuilder();
+        StringBuilder sbb = new StringBuilder();
+        new Serializer(sba).serialize(a);
+        new Serializer(sbb).serialize(b);
         
+        String as = sba.toString();
+        String bs = sbb.toString();
+
         Assert.assertEquals(as, bs);
         System.out.println(as);
     }
-    
 
-    private static Object invoke(Method method, Object thiz, Object... args) {
-        try {
-            return method.invoke(thiz, args);
-        } catch (Exception e) {
-            throw new RuntimeException("failed to invoke " + method + ": " + e, e);
-        }
-    }
-    
-    
-    private void serialize(FunctionDescriptor fun, StringBuilder sb) {
-        sb.append("fun ");
-        if (!fun.getTypeParameters().isEmpty()) {
-            sb.append("<");
-            serializeCommaSeparated(fun.getTypeParameters(), sb);
-            sb.append(">");
+
+
+
+    private static class Serializer {
+
+        protected final StringBuilder sb;
+
+        public Serializer(StringBuilder sb) {
+            this.sb = sb;
         }
 
-        if (fun.getReceiverParameter().exists()) {
-            serialize(fun.getReceiverParameter(), sb);
-            sb.append(".");
-        }
+        private String serializeContent(ClassDescriptor klass) {
 
-        sb.append(fun.getName());
-        sb.append("(");
-        serializeCommaSeparated(fun.getValueParameters(), sb);
-        sb.append("): ");
-        serialize(fun.getReturnType(), sb);
-    }
-    
-    private void serialize(ExtensionReceiver extensionReceiver, StringBuilder sb) {
-        serialize(extensionReceiver.getType(), sb);
-    }
-    
-    private void serialize(PropertyDescriptor prop, StringBuilder sb) {
-        if (prop.isVar()) {
-            sb.append("var ");
-        } else {
-            sb.append("val ");
-        }
-        sb.append(prop.getName());
-        sb.append(": ");
-        serialize(prop.getOutType(), sb);
-    }
-    
-    private void serialize(ValueParameterDescriptor valueParameter, StringBuilder sb) {
-        sb.append(valueParameter.getName());
-        sb.append(": ");
-        if (valueParameter.getVarargElementType() != null) {
-            sb.append("vararg ");
-            serialize(valueParameter.getVarargElementType());
-        } else {
-            serialize(valueParameter.getOutType(), sb);
-        }
-        if (valueParameter.hasDefaultValue()) {
-            sb.append(" = ?");
-        }
-    }
-    
-    private void serialize(Variance variance, StringBuilder sb) {
-        if (variance == Variance.INVARIANT) {
+            serialize(klass.getModality());
+            sb.append(" ");
 
-        } else {
-            sb.append(variance);
-            sb.append(' ');
-        }
-    } 
-    
-    private void serialize(JetType type, StringBuilder sb) {
-        serialize(type.getConstructor().getDeclarationDescriptor(), sb);
-        if (!type.getArguments().isEmpty()) {
-            sb.append("<");
-            boolean first = true;
-            for (TypeProjection proj : type.getArguments()) {
-                serialize(proj.getProjectionKind(), sb);
-                serialize(proj.getType(), sb);
-                if (!first) {
-                    sb.append(", ");
+            serialize(klass.getKind());
+            sb.append(" ");
+
+            serialize(klass);
+
+            if (!klass.getTypeConstructor().getParameters().isEmpty()) {
+                sb.append("<");
+                serializeCommaSeparated(klass.getTypeConstructor().getParameters());
+                sb.append(">");
+            }
+
+            // TODO: supers
+            // TODO: constructors
+
+            sb.append(" {\n");
+
+            List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
+            for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
+                typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
+            }
+
+            JetScope memberScope = klass.getMemberScope(typeArguments);
+            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                // TODO
+                if (member.getName().equals("equals") || member.getName().equals("hashCode")
+                        || member.getName().equals("wait") || member.getName().equals("notify") || member.getName().equals("notifyAll")
+                        || member.getName().equals("toString") || member.getName().equals("getClass")
+                        || member.getName().equals("clone") || member.getName().equals("finalize")
+                        || member.getName().equals("getTypeInfo") || member.getName().equals("$setTypeInfo") || member.getName().equals("$typeInfo")
+                        )
+                {
+                    continue;
                 }
+                sb.append("    ");
+                new Serializer(sb).serialize(member);
+                sb.append("\n");
+            }
+
+            sb.append("}\n");
+            return sb.toString();
+        }
+
+        public void serialize(ClassKind kind) {
+            switch (kind) {
+                case CLASS:
+                    sb.append("class");
+                    break;
+                case TRAIT:
+                    sb.append("trait");
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+        }
+
+
+        private static Object invoke(Method method, Object thiz, Object... args) {
+            try {
+                return method.invoke(thiz, args);
+            } catch (Exception e) {
+                throw new RuntimeException("failed to invoke " + method + ": " + e, e);
+            }
+        }
+
+
+        public void serialize(FunctionDescriptor fun) {
+            serialize(fun.getModality());
+            sb.append(" ");
+
+            sb.append("fun ");
+            if (!fun.getTypeParameters().isEmpty()) {
+                sb.append("<");
+                serializeCommaSeparated(fun.getTypeParameters());
+                sb.append(">");
+            }
+
+            if (fun.getReceiverParameter().exists()) {
+                serialize(fun.getReceiverParameter());
+                sb.append(".");
+            }
+
+            sb.append(fun.getName());
+            sb.append("(");
+            new ValueParameterSerializer(sb).serializeCommaSeparated(fun.getValueParameters());
+            sb.append("): ");
+            serialize(fun.getReturnType());
+        }
+
+        public void serialize(ExtensionReceiver extensionReceiver) {
+            serialize(extensionReceiver.getType());
+        }
+
+        public void serialize(PropertyDescriptor prop) {
+            if (prop.isVar()) {
+                sb.append("var ");
+            } else {
+                sb.append("val ");
+            }
+            sb.append(prop.getName());
+            sb.append(": ");
+            serialize(prop.getOutType());
+        }
+
+        public void serialize(ValueParameterDescriptor valueParameter) {
+            if (valueParameter.getVarargElementType() != null) {
+                sb.append("vararg ");
+            }
+            sb.append(valueParameter.getName());
+            sb.append(": ");
+            if (valueParameter.getVarargElementType() != null) {
+                serialize(valueParameter.getVarargElementType());
+            } else {
+                serialize(valueParameter.getOutType());
+            }
+            if (valueParameter.hasDefaultValue()) {
+                sb.append(" = ?");
+            }
+        }
+
+        public void serialize(Variance variance) {
+            if (variance == Variance.INVARIANT) {
+
+            } else {
+                sb.append(variance);
+                sb.append(' ');
+            }
+        }
+
+        public void serialize(Modality modality) {
+            sb.append(modality.name().toLowerCase());
+        }
+
+        public void serialize(JetType type) {
+            serialize(type.getConstructor().getDeclarationDescriptor());
+            if (!type.getArguments().isEmpty()) {
+                sb.append("<");
+                boolean first = true;
+                for (TypeProjection proj : type.getArguments()) {
+                    serialize(proj.getProjectionKind());
+                    serialize(proj.getType());
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    first = false;
+                }
+                sb.append(">");
+            }
+        }
+
+        public void serializeCommaSeparated(List<?> list) {
+            serializeSeparated(list, ", ");
+        }
+
+        public void serializeSeparated(List<?> list, String sep) {
+            boolean first = true;
+            for (Object o : list) {
+                if (!first) {
+                    sb.append(sep);
+                }
+                serialize(o);
                 first = false;
             }
-            sb.append(">");
         }
-    }
-    
-    private String serialize(Object o) {
-        StringBuilder sb = new StringBuilder();
-        serialize(o, sb);
-        return sb.toString();
-    }
-    
-    private void serializeCommaSeparated(List<?> list, StringBuilder sb) {
-        serializeSeparated(list, sb, ", ");
-    }
 
-    private void serializeSeparated(List<?> list, StringBuilder sb, String sep) {
-        boolean first = true;
-        for (Object o : list) {
-            if (!first) {
-                sb.append(sep);
+        private Method getMethodToSerialize(Object o) {
+            // TODO: cache
+            for (Method method : this.getClass().getMethods()) {
+                if (!method.getName().equals("serialize")) {
+                    continue;
+                }
+                if (method.getParameterTypes().length != 1) {
+                    continue;
+                }
+                if (method.getParameterTypes()[0].equals(Object.class)) {
+                    continue;
+                }
+                if (method.getParameterTypes()[0].isInstance(o)) {
+                    method.setAccessible(true);
+                    return method;
+                }
             }
-            serialize(o, sb);
-            first = false;
+            throw new IllegalStateException("don't know how to serialize " + o + " (of " + o.getClass() + ")");
         }
-    }
 
-    private Method getMethodToSerialize(Object o) {
-        // TODO: cache
-        for (Method method : ReadClassDataTest.class.getDeclaredMethods()) {
-            if (!method.getName().equals("serialize")) {
-                continue;
-            }
-            if (method.getParameterTypes().length != 2) {
-                continue;
-            }
-            if (!method.getParameterTypes()[1].equals(StringBuilder.class)) {
-                continue;
-            }
-            if (method.getParameterTypes()[0].equals(Object.class)) {
-                continue;
-            }
-            if (method.getParameterTypes()[0].isInstance(o)) {
-                method.setAccessible(true);
-                return method;
-            }
+        public void serialize(Object o) {
+            Method method = getMethodToSerialize(o);
+            invoke(method, this, o);
         }
-        throw new IllegalStateException("don't know how to serialize " + o + " (of " + o.getClass() + ")");
-    }
-    
-    private void serialize(Object o, StringBuilder sb) {
-        Method method = getMethodToSerialize(o);
-        invoke(method, this, o, sb);
-    }
-    
-    private void serialize(String s, StringBuilder sb) {
-        sb.append(s);
-    }
 
-    private void serialize(ModuleDescriptor module, StringBuilder sb) {
-        // nop
-    }
-    
-    private void serialize(ClassDescriptor clazz, StringBuilder sb) {
-        serialize(clazz.getContainingDeclaration(), sb);
-        sb.append(".");
-        sb.append(clazz.getName());
-    }
-    
-    private void serialize(NamespaceDescriptor ns, StringBuilder sb) {
-        if (ns.getContainingDeclaration() == null) {
-            // root ns
-            return;
+        public void serialize(String s) {
+            sb.append(s);
         }
-        serialize(ns.getContainingDeclaration(), sb);
-        sb.append(".");
-        sb.append(ns.getName());
-    }
 
-    private void serialize(TypeParameterDescriptor param, StringBuilder sb) {
-        serialize(param.getVariance(), sb);
-        sb.append(param.getName());
-        if (!param.getUpperBounds().isEmpty()) {
-            sb.append(" : ");
-            List<String> list = new ArrayList<String>();
-            for (JetType upper : param.getUpperBounds()) {
-                list.add(serialize(upper));
-            }
-            Collections.sort(list);
-            serializeSeparated(list, sb, " & "); // TODO: use where
+        public void serialize(ModuleDescriptor module) {
+            // nop
         }
-        // TODO: lower bounds
+
+        public void serialize(ClassDescriptor clazz) {
+            serialize(clazz.getContainingDeclaration());
+            sb.append(".");
+            sb.append(clazz.getName());
+        }
+
+        public void serialize(NamespaceDescriptor ns) {
+            if (ns.getContainingDeclaration() == null) {
+                // root ns
+                return;
+            }
+            serialize(ns.getContainingDeclaration());
+            sb.append(".");
+            sb.append(ns.getName());
+        }
+
+        public void serialize(TypeParameterDescriptor param) {
+            serialize(param.getVariance());
+            sb.append(param.getName());
+            if (!param.getUpperBounds().isEmpty()) {
+                sb.append(" : ");
+                List<String> list = new ArrayList<String>();
+                for (JetType upper : param.getUpperBounds()) {
+                    StringBuilder sb = new StringBuilder();
+                    new Serializer(sb).serialize(upper);
+                    list.add(sb.toString());
+                }
+                Collections.sort(list);
+                serializeSeparated(list, " & "); // TODO: use where
+            }
+            // TODO: lower bounds
+        }
+
+    }
+    
+    private static class ValueParameterSerializer extends Serializer {
+
+        public ValueParameterSerializer(StringBuilder sb) {
+            super(sb);
+        }
+
+        @Override
+        public void serialize(TypeParameterDescriptor param) {
+            sb.append(param.getName());
+        }
     }
     
 

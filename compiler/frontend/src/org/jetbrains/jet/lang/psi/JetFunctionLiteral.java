@@ -30,7 +30,7 @@ public class JetFunctionLiteral extends JetFunction {
     }
 
     public boolean hasParameterSpecification() {
-        return findChildByType(JetTokens.DOUBLE_ARROW) != null;
+        return findChildByType(JetTokens.ARROW) != null;
     }
 
     @Override
@@ -51,6 +51,6 @@ public class JetFunctionLiteral extends JetFunction {
 
     @Nullable
     public ASTNode getArrowNode() {
-        return getNode().findChildByType(JetTokens.DOUBLE_ARROW);
+        return getNode().findChildByType(JetTokens.ARROW);
     }
 }

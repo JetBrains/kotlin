@@ -1,7 +1,7 @@
 JetFile: Imports_ERR.jet
   NAMESPACE
     NAMESPACE_HEADER
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
@@ -14,7 +14,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiErrorElement:Expecting '.'
         <empty list>
       PsiWhiteSpace(' ')
@@ -26,7 +26,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiErrorElement:Expecting qualified name
@@ -37,7 +37,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('namespace')
+      PsiElement(namespace)('package')
       PsiElement(DOT)('.')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
@@ -94,7 +94,7 @@ JetFile: Imports_ERR.jet
               PsiElement(DOT)('.')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
-                PsiErrorElement:Type name expected
+                PsiErrorElement:Expecting type name
                   PsiElement(as)('as')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
@@ -124,7 +124,7 @@ JetFile: Imports_ERR.jet
                   PsiElement(IDENTIFIER)('bar')
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiErrorElement:Type name expected
+                PsiErrorElement:Expecting type name
                   PsiElement(MUL)('*')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
@@ -158,7 +158,7 @@ JetFile: Imports_ERR.jet
                   PsiElement(IDENTIFIER)('bar')
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiErrorElement:Type name expected
+                PsiErrorElement:Expecting type name
                   PsiElement(MUL)('*')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration

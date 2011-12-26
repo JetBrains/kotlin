@@ -1,8 +1,8 @@
-namespace kt402
+package kt402
 
-fun getTypeChecker() : fun(Any):Boolean {
-  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{ (a : Any) => a is <!UNRESOLVED_REFERENCE!>T<!> }<!> // reports unsupported
+fun getTypeChecker() : (Any)->Boolean {
+  <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{ (a : Any) -> a is <!UNRESOLVED_REFERENCE!>T<!> }<!> // reports unsupported
 }
-fun f() : fun(Any) : Boolean {
-  return { (a : Any) => a is String }
+fun f() : (Any) -> Boolean {
+  return { (a : Any) -> a is String }
 }

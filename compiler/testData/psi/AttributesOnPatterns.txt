@@ -43,7 +43,7 @@ JetFile: AttributesOnPatterns.jet
                   PsiWhiteSpace(' ')
                   PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
@@ -77,7 +77,7 @@ JetFile: AttributesOnPatterns.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
@@ -99,7 +99,7 @@ JetFile: AttributesOnPatterns.jet
                 PsiWhiteSpace(' ')
                 PsiElement(MUL)('*')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
@@ -122,7 +122,7 @@ JetFile: AttributesOnPatterns.jet
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('2')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
@@ -147,7 +147,7 @@ JetFile: AttributesOnPatterns.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
@@ -169,14 +169,13 @@ JetFile: AttributesOnPatterns.jet
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace(' ')
-                PsiElement(AT)('@')
-                PsiWhiteSpace(' ')
+                PsiWhiteSpace('  ')
                 DECOMPOSER_ARGUMENT_LIST
+                  PsiElement(HASH)('#')
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
