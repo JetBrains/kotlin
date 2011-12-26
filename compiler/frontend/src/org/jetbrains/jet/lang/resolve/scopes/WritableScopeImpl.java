@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
@@ -32,6 +33,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Nullable
     private Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors;
+    
+    @Nullable
+    private SetMultimap<String, VariableDescriptor> propertyGroups;
 
     @Nullable
     private Map<String, NamespaceDescriptor> namespaceAliases;
@@ -85,10 +89,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
+    public void importVariableAlias(@NotNull String aliasName, @NotNull PropertyDescriptor variableDescriptor) {
         checkMayWrite();
 
-        addVariableDescriptor(variableDescriptor);
+        addPropertyDescriptor(variableDescriptor);
         super.importVariableAlias(aliasName, variableDescriptor);
     }
 
@@ -165,35 +169,69 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor) {
+        addVariableDescriptor(variableDescriptor, false);
+    }
+    
+    @Override
+    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+        addVariableDescriptor(propertyDescriptor, true);
+    }
+    
+    private void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor, boolean isProperty) {
         checkMayWrite();
 
-        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
-        DeclarationDescriptor existingDescriptor = variableClassOrNamespaceDescriptors.get(variableDescriptor.getName());
-        if (existingDescriptor != null) {
-            redeclarationHandler.handleRedeclaration(existingDescriptor, variableDescriptor);
+        String name = variableDescriptor.getName();
+        if (isProperty) {
+            checkForPropertyRedeclaration(name, variableDescriptor);
+            getPropertyGroups().put(name, variableDescriptor);
         }
-        // TODO : Should this always happen?
-        variableClassOrNamespaceDescriptors.put(variableDescriptor.getName(), variableDescriptor);
+        if (!variableDescriptor.getReceiverParameter().exists()) {
+            checkForRedeclaration(name, variableDescriptor);
+            // TODO : Should this always happen?
+            getVariableClassOrNamespaceDescriptors().put(name, variableDescriptor);
+        }
         allDescriptors.add(variableDescriptor);
     }
 
+    @NotNull
     @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        checkMayRead();
+
+        Set<VariableDescriptor> result = Sets.newLinkedHashSet(getPropertyGroups().get(name));
+
+        result.addAll(getWorkerScope().getProperties(name));
+
+        result.addAll(super.getProperties(name));
+        
+        return result;
+    }
+
+    @Override
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
         checkMayRead();
 
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
-        if (descriptor instanceof VariableDescriptor) {
+        if (descriptor instanceof VariableDescriptor && !getPropertyGroups().get(name).contains(descriptor)) {
             return (VariableDescriptor) descriptor;
         }
 
-        VariableDescriptor variableDescriptor = getWorkerScope().getVariable(name);
+        VariableDescriptor variableDescriptor = getWorkerScope().getLocalVariable(name);
         if (variableDescriptor != null) {
             return variableDescriptor;
         }
-        return super.getVariable(name);
+        return super.getLocalVariable(name);
     }
 
+    @NotNull
+    private SetMultimap<String, VariableDescriptor> getPropertyGroups() {
+        if (propertyGroups == null) {
+            propertyGroups = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+        }
+        return propertyGroups;
+    }
+    
     @NotNull
     private SetMultimap<String, FunctionDescriptor> getFunctionGroups() {
         if (functionGroups == null) {
@@ -273,6 +311,18 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkForRedeclaration(name, variableDescriptor);
         getVariableClassOrNamespaceDescriptors().put(name, variableDescriptor);
         allDescriptors.add(variableDescriptor);
+    }
+    
+    private void checkForPropertyRedeclaration(String name, VariableDescriptor variableDescriptor) {
+        Set<VariableDescriptor> properties = getPropertyGroups().get(name);
+        ReceiverDescriptor receiverParameter = variableDescriptor.getReceiverParameter();
+        for (VariableDescriptor oldProperty : properties) {
+            ReceiverDescriptor receiverParameterForOldVariable = oldProperty.getReceiverParameter();
+            if (((receiverParameter.exists() && receiverParameterForOldVariable.exists()) &&
+                 (JetTypeChecker.INSTANCE.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
+                redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor);
+            }
+        }
     }
 
     private void checkForRedeclaration(String name, DeclarationDescriptor classifierDescriptor) {
@@ -364,7 +414,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         super.getImplicitReceiversHierarchy(result);
     }
 
-    @SuppressWarnings({"NullableProblems"})
+//    @SuppressWarnings({"NullableProblems"})
     @NotNull
     private Map<String, PropertyDescriptor> getPropertyDescriptorsByFieldNames() {
         if (propertyDescriptorsByFieldNames == null) {

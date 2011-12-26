@@ -43,10 +43,20 @@ public class ChainedScope implements JetScope {
         return null;
     }
 
+    @NotNull
     @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
         for (JetScope jetScope : scopeChain) {
-            VariableDescriptor variable = jetScope.getVariable(name);
+            properties.addAll(jetScope.getProperties(name));
+        }
+        return properties;
+    }
+
+    @Override
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
+        for (JetScope jetScope : scopeChain) {
+            VariableDescriptor variable = jetScope.getLocalVariable(name);
             if (variable != null) {
                 return variable;
             }

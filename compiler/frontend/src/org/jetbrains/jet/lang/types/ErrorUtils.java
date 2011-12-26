@@ -22,8 +22,14 @@ public class ErrorUtils {
             return ERROR_CLASS;
         }
 
+        @NotNull
         @Override
-        public VariableDescriptor getVariable(@NotNull String name) {
+        public Set<VariableDescriptor> getProperties(@NotNull String name) {
+            return ERROR_PROPERTY_GROUP;
+        }
+
+        @Override
+        public VariableDescriptor getLocalVariable(@NotNull String name) {
             return ERROR_PROPERTY;
         }
 
@@ -111,6 +117,7 @@ public class ErrorUtils {
             ReceiverDescriptor.NO_RECEIVER,
             "<ERROR PROPERTY>",
             ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
+    private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");

@@ -585,10 +585,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) selectorExpression;
 
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-            OverloadResolutionResults<VariableDescriptor> variableDescriptor = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
-            if (variableDescriptor.isSuccess()) {
+            OverloadResolutionResults<VariableDescriptor> resolutionResult = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
+            if (resolutionResult.isSuccess()) {
                 temporaryTrace.commit();
-                return variableDescriptor.getResultingDescriptor().getOutType();
+                return resolutionResult.getResultingDescriptor().getOutType();
+            }
+            if (resolutionResult.isAmbiguity()) {
+                temporaryTrace.commit();
+                return null;
             }
             ExpressionTypingContext newContext = receiver.exists() ? context.replaceScope(receiver.getType().getMemberScope()) : context;
             JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedName(), newContext);

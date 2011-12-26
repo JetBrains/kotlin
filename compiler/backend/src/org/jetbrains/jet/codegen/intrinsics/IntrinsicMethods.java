@@ -203,8 +203,10 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicProperty(String className, String methodName, IntrinsicMethod implementation) {
         final JetScope numberScope = getClassMemberScope(className);
-        final VariableDescriptor variable = numberScope.getVariable(methodName);
-        myMethods.put(variable.getOriginal(), implementation);
+        Set<VariableDescriptor> properties = numberScope.getProperties(methodName);
+        assert properties.size() == 1;
+        final VariableDescriptor property = properties.iterator().next();
+        myMethods.put(property.getOriginal(), implementation);
     }
 
     private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation) {

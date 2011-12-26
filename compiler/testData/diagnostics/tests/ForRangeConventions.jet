@@ -67,7 +67,17 @@ abstract class Range1() {
   abstract fun iterator() : Iterator<Int>
 }
 
-fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRange4: NotRange4, notRange5: NotRange5, notRange6: NotRange6, notRange7: NotRange7, range0: Range0, range1: Range1) {
+abstract class ImproperIterator5 {
+    abstract val String.hasNext : Boolean
+    abstract fun next() : Int
+}
+
+abstract class NotRange8() {
+    abstract fun iterator() : ImproperIterator5
+}
+
+
+fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRange4: NotRange4, notRange5: NotRange5, notRange6: NotRange6, notRange7: NotRange7, notRange8: NotRange8, range0: Range0, range1: Range1) {
   for (i in <!ITERATOR_MISSING!>notRange1<!>);
   for (i in <!HAS_NEXT_MISSING, NEXT_MISSING!>notRange2<!>);
   for (i in <!NEXT_MISSING!>notRange3<!>);
@@ -75,6 +85,7 @@ fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRa
   for (i in <!HAS_NEXT_FUNCTION_TYPE_MISMATCH!>notRange5<!>);
   for (i in <!HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY!>notRange6<!>);
   for (i in <!HAS_NEXT_FUNCTION_TYPE_MISMATCH!>notRange7<!>);
+  for (i in <!HAS_NEXT_MISSING!>notRange8<!>);
   for (i in range0);
   for (i in range1);
 

@@ -63,7 +63,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
             PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
-            scope.addVariableDescriptor(propertyDescriptor);
+            scope.addPropertyDescriptor(propertyDescriptor);
         }
         return DataFlowUtils.checkStatementType(declaration, context);
     }
@@ -93,7 +93,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         
         {
-            VariableDescriptor olderVariable = scope.getVariable(propertyDescriptor.getName());
+            VariableDescriptor olderVariable = scope.getLocalVariable(propertyDescriptor.getName());
             if (olderVariable != null && DescriptorUtils.isLocal(propertyDescriptor.getContainingDeclaration(), olderVariable)) {
                 context.trace.report(Errors.NAME_SHADOWING.on(propertyDescriptor, context.trace.getBindingContext()));
             }

@@ -1,9 +1,13 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -68,8 +72,11 @@ public class TaskPrioritizers {
         }
 
         private void addVariableAsFunction(JetScope scope, String name, Set<FunctionDescriptor> functions, boolean receiverNeeded) {
-            VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && !variable.getReceiverParameter().exists()) {
+            VariableDescriptor variable = scope.getLocalVariable(name);
+            if (variable == null) {
+                variable = DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
+            }
+            if (variable != null) {
                 JetType outType = variable.getOutType();
                 if (outType != null && JetStandardClasses.isFunctionType(outType)) {
                     VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
@@ -86,36 +93,34 @@ public class TaskPrioritizers {
         @NotNull
         @Override
         protected Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
-            VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && !variable.getReceiverParameter().exists()) {
-                return Collections.singleton(variable);
+            VariableDescriptor descriptor = scope.getLocalVariable(name);
+            if (descriptor == null) {
+                descriptor = DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
             }
-            return Collections.emptyList();
+            if (descriptor == null) return Collections.emptyList();
+            return Collections.singleton(descriptor);
         }
 
         @NotNull
         @Override
         protected Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
-            VariableDescriptor variable = receiverType.getMemberScope().getVariable(name);
-            if (variable != null) {
-                return Collections.singleton(variable);
-            }
-            return Collections.emptyList();
+            return receiverType.getMemberScope().getProperties(name);
         }
 
         @NotNull
         @Override
         protected Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
-            VariableDescriptor variable = scope.getVariable(name);
-            if (variable != null && variable.getReceiverParameter().exists()) {
-                return Collections.singleton(variable);
-            }
-            return Collections.emptyList();
+            return Collections2.filter(scope.getProperties(name), new Predicate<VariableDescriptor>() {
+                @Override
+                public boolean apply(@Nullable VariableDescriptor variableDescriptor) {
+                    return (variableDescriptor != null) && variableDescriptor.getReceiverParameter().exists();
+                }
+            });
         }
     };
     
     /*package*/ static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
-        private Collection<VariableDescriptor> filterProperties(Collection<VariableDescriptor> variableDescriptors) {
+        private Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
             ArrayList<VariableDescriptor> properties = Lists.newArrayList();
             for (VariableDescriptor descriptor : variableDescriptors) {
                 if (descriptor instanceof PropertyDescriptor) {

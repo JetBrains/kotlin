@@ -60,9 +60,15 @@ public class SubstitutingScope implements JetScope {
         return result;
     }
 
+    @NotNull
     @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
-        return substitute(workerScope.getVariable(name));
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        return substitute(workerScope.getProperties(name));
+    }
+
+    @Override
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
+        return substitute(workerScope.getLocalVariable(name));
     }
 
     @Override

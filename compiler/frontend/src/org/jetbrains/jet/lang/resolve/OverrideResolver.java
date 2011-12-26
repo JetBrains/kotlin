@@ -77,12 +77,12 @@ public class OverrideResolver {
 
     @Nullable
     private PropertyDescriptor findPropertyOverridableBy(@NotNull PropertyDescriptor declaredProperty, @NotNull JetType supertype) {
-        PropertyDescriptor property = (PropertyDescriptor) supertype.getMemberScope().getVariable(declaredProperty.getName());
-        if (property == null) {
-            return null;
-        }
-        if (OverridingUtil.isOverridableBy(property, declaredProperty).isSuccess()) {
-            return property;
+        Set<VariableDescriptor> properties = supertype.getMemberScope().getProperties(declaredProperty.getName());
+        for (VariableDescriptor property : properties) {
+            assert property instanceof PropertyDescriptor;
+            if (OverridingUtil.isOverridableBy(property, declaredProperty).isSuccess()) {
+                return (PropertyDescriptor) property;
+            }
         }
         return null;
     }

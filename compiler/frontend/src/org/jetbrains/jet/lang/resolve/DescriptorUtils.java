@@ -1,15 +1,19 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
@@ -77,6 +81,7 @@ public class DescriptorUtils {
                 return substituted;
             }
 
+            @Nullable
             @Override
             public JetType substitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
                 TypeParameterDescriptor typeParameterDescriptor = typeConstructors.get(type.getConstructor());
@@ -195,5 +200,15 @@ public class DescriptorUtils {
             descriptor = descriptor.getContainingDeclaration();
         }
         return false;
+    }
+
+    @Nullable
+    public static VariableDescriptor filterNonExtensionProperty(Set<VariableDescriptor> variables) {
+        for (VariableDescriptor variable : variables) {
+            if (!variable.getReceiverParameter().exists()) {
+                return variable;
+            }
+        }
+        return null;
     }
 }

@@ -4,15 +4,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -112,16 +110,25 @@ public class JavaClassMembersScope implements JetScope {
         return null;
     }
 
+    @NotNull
     @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
         VariableDescriptor variableDescriptor = variables.get(name);
         if (variableDescriptor == null) {
             variableDescriptor = doGetVariable(name);
-            variables.put(name, variableDescriptor);
+            if (variableDescriptor != null) {
+                variables.put(name, variableDescriptor);
+            }
         }
-        return variableDescriptor;
+        return variableDescriptor != null ? Collections.singleton(variableDescriptor) : Collections.<VariableDescriptor>emptySet();
     }
 
+    @Override
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
+        return null;
+    }
+
+    @Nullable
     private VariableDescriptor doGetVariable(String name) {
         PsiField field = psiClass.findFieldByName(name, true);
         if (field == null) return null;

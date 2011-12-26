@@ -21,6 +21,8 @@ public interface WritableScope extends JetScope {
 
     void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor);
 
+    void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor);
+
     void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor);
 
     void addTypeParameterDescriptor(@NotNull TypeParameterDescriptor typeParameterDescriptor);
@@ -50,5 +52,5 @@ public interface WritableScope extends JetScope {
     
     void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor);
     
-    void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor);
+    void importVariableAlias(@NotNull String aliasName, @NotNull PropertyDescriptor variableDescriptor);
 }
