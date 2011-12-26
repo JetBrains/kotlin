@@ -1,9 +1,11 @@
+// FILE: f.kt
 class A {
 }
 
-package n {
+// FILE: f.kt
+package n
   class B
-}
+// FILE: f.kt
 abstract class XXX() {
     abstract val a : Int
     abstract val a1 : package.<!UNRESOLVED_REFERENCE!>Int<!>

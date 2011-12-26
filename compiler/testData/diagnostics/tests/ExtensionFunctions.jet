@@ -1,4 +1,6 @@
+// FILE: b.kt
 // +JDK
+package outer
 
 fun Int?.optint() : Unit {}
 val Int?.optval : Unit = #()
@@ -39,7 +41,10 @@ val <T> T.<!MUST_BE_INITIALIZED!>foo<!> : T
 
 fun Int.foo() = this
 
-package null_safety {
+// FILE: b.kt
+package null_safety
+
+import outer.*
 
         fun parse(<!UNUSED_PARAMETER!>cmd<!>: String): Command? { return null  }
         class Command() {
@@ -69,5 +74,3 @@ package null_safety {
 
             if (command == null) 1
         }
-
-}

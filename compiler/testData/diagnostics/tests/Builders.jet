@@ -1,8 +1,8 @@
+// FILE: a.kt
 // +JDK
 
+package html
 import java.util.*
-
-package html {
 
   abstract class Factory<T> {
     abstract fun create() : T
@@ -85,9 +85,9 @@ package html {
     return html
   }
 
-}
+// FILE: b.kt
 
-package foo {
+package foo
 
 import html.*
 
@@ -120,4 +120,3 @@ fun result(args : Array<String>) =
       }
     }
   }
-}

@@ -1,14 +1,12 @@
 package jet
 
-//package typeinfo {
-    class TypeInfo<out T> {
-      fun isSubtypeOf(other : TypeInfo<*>) : Boolean
-      fun isInstance(obj : Any?) : Boolean
-    }
+class TypeInfo<out T> {
+  fun isSubtypeOf(other : TypeInfo<*>) : Boolean
+  fun isInstance(obj : Any?) : Boolean
+}
 
-    fun typeinfo<T>() : TypeInfo<T>
-    fun typeinfo<T>(expression : T) : TypeInfo<T>
-//}
+fun typeinfo<T>() : TypeInfo<T>
+fun typeinfo<T>(expression : T) : TypeInfo<T>
 
 fun <R> Any.synchronized(block : () -> R) : R
 

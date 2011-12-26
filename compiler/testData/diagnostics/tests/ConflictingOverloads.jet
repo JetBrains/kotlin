@@ -1,3 +1,4 @@
+// FILE: b.kt
 // http://youtrack.jetbrains.net/issue/KT-424
 
 class A {
@@ -13,7 +14,8 @@ class A {
     }
 }
 
-package deepSpace {
+// FILE: b.kt
+package deepSpace
     <!CONFLICTING_OVERLOADS!>fun c(<!UNUSED_PARAMETER!>s<!>: String)<!> {
     }
 
@@ -27,28 +29,25 @@ package deepSpace {
         <!CONFLICTING_OVERLOADS!>fun d(<!UNUSED_PARAMETER!>s<!>: String)<!> {
         }
     }
-}
 
-
+// FILE: b.kt
 // check no error in overload in different namespaces
 
-package ns1 {
+package ns1
     fun e() = 1
-}
 
-package ns2 {
+// FILE: b.kt
+package ns2
     fun e() = 1
-}
 
-package ns3 {
-    package ns1 {
+// FILE: b.kt
+package ns3.ns1
         fun e() = 1
-    }
-}
 
+// FILE: b.kt
 // check same rules apply for ext functions
 
-package extensionFunctions {
+package extensionFunctions
     <!CONFLICTING_OVERLOADS!>fun Int.qwe(<!UNUSED_PARAMETER!>a<!>: Float)<!> = 1
     
     <!CONFLICTING_OVERLOADS!>fun Int.qwe(<!UNUSED_PARAMETER!>a<!>: Float)<!> = 2
@@ -56,19 +55,19 @@ package extensionFunctions {
     fun Int.rty() = 3
     
     fun String.rty() = 4
-}
 
+// FILE: b.kt
 // check no error when regular function and extension function have same name
 
-package extensionAndRegular {
+package extensionAndRegular
     fun who() = 1
     
     fun Int.who() = 1
-}
 
+// FILE: b.kt
 // constructor vs. fun overload
 
-package constructorVsFun {
+package constructorVsFun
     class <!CONFLICTING_OVERLOADS!>a()<!> { }
 
     <!CONFLICTING_OVERLOADS!>fun a()<!> = 1
@@ -94,4 +93,3 @@ package constructorVsFun {
             class ololo() { }
         }
     }
-}

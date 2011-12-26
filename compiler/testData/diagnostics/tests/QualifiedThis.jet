@@ -1,3 +1,4 @@
+// FILE: f.kt
 class Dup {
   fun Dup() : Unit {
     this<!AMBIGUOUS_LABEL!>@Dup<!>
@@ -21,7 +22,8 @@ fun foo1() : Unit {
   this<!UNRESOLVED_REFERENCE!>@a<!>
 }
 
-package closures {
+// FILE: f.kt
+package closures
     class A(val a:Int) {
 
       class B() {
@@ -38,4 +40,3 @@ package closures {
         }
       }
     }
-}

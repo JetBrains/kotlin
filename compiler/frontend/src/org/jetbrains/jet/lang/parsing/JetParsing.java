@@ -235,10 +235,11 @@ public class JetParsing extends AbstractJetParsing {
 
         IElementType keywordToken = tt();
         JetNodeType declType = null;
-        if (keywordToken == NAMESPACE_KEYWORD) {
-            declType = parseNamespaceBlock();
-        }
-        else if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
+//        if (keywordToken == NAMESPACE_KEYWORD) {
+//            declType = parseNamespaceBlock();
+//        }
+//        else
+        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
             declType = parseClass(detector.isDetected());
         }
         else if (keywordToken == FUN_KEYWORD) {
