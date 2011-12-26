@@ -1,4 +1,4 @@
-namespace demo
+package demo
 import java.util.Iterator
 open class Test() : java.lang.Iterable<String?> {
 override public fun iterator() : java.util.Iterator<String?>? {

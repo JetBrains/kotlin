@@ -1,4 +1,4 @@
-namespace switch_demo
+package switch_demo
 public open class SwitchDemo() {
 class object {
 open public fun main(args : Array<String?>?) : Unit {

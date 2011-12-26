@@ -1,4 +1,4 @@
-namespace demo
+package demo
 enum class MyEnum(_color : Int) {
 {
 color = _color

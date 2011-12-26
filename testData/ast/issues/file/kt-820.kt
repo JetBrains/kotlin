@@ -1,4 +1,4 @@
-namespace demo
+package demo
 open class Container() {
 var myInt : Int = 1
 }

@@ -1,4 +1,4 @@
-namespace demo
+package demo
 open class Map() {
 open fun put<K, V>(k : K?, v : V?) : Unit {
 }

@@ -1,3 +1,3 @@
-namespace test
+package test
 open class C() {
 }

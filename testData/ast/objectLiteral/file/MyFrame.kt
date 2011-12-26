@@ -1,4 +1,4 @@
-namespace demo
+package demo
 open class WindowAdapter() {
 open public fun windowClosing() : Unit {
 }

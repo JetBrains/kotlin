@@ -1,4 +1,4 @@
-namespace org.test
+package org.test
 open class Library() {
 }
 open class User() {

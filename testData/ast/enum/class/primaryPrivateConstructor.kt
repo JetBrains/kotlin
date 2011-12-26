@@ -1,4 +1,4 @@
-namespace demo
+package demo
 enum class Color(c : Int) {
 {
 code = c

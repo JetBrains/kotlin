@@ -1,4 +1,4 @@
-namespace demo
+package demo
 class Final() {
 fun test() : Unit {
 }

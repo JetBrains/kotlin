@@ -1,4 +1,4 @@
-namespace org.test.customer
+package org.test.customer
 open class Customer(first : String?, last : String?) {
 {
 doSmthBefore()

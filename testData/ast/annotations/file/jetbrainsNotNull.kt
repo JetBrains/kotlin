@@ -1,4 +1,4 @@
-namespace test
+package test
 public open class Test(str : String) {
 {
 myStr = str

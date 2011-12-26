@@ -1,4 +1,4 @@
-namespace demo
+package demo
 public open class SwitchDemo() {
 class object {
 open public fun print(o : Any?) : Unit {

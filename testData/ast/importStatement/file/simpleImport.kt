@@ -1,3 +1,3 @@
-namespace org.jetbrains.jet.j2k
+package org.jetbrains.jet.j2k
 public open class Converter() {
 }

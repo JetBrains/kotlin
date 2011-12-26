@@ -25,7 +25,7 @@ public class File extends Node {
     final String common = AstUtil.joinNodes(myImports, N) + N2 + AstUtil.joinNodes(myClasses, N) + N;
     if (myPackageName.isEmpty())
       return common;
-    return "namespace" + SPACE + myPackageName + N +
+    return "package" + SPACE + myPackageName + N +
       common;
   }
 }

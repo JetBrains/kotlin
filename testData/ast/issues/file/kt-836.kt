@@ -1,4 +1,4 @@
-namespace com.voltvoodoo.saplo4j.model
+package com.voltvoodoo.saplo4j.model
 import java.io.Serializable
 public open class Language(code : String?) : Serializable {
 {

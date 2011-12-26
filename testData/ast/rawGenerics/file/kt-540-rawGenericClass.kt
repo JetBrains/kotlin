@@ -1,4 +1,4 @@
-namespace demo
+package demo
 open class Collection<E>(e : E?) {
 {
 System.out?.println(e)

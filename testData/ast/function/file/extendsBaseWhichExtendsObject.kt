@@ -1,4 +1,4 @@
-namespace test
+package test
 open class Test() : Base() {
 override public fun hashCode() : Int {
 return super.hashCode()

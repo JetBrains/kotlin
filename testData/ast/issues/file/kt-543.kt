@@ -1,4 +1,4 @@
-namespace demo
+package demo
 open class Test() {
 open fun putInt(i : Int) : Unit {
 }

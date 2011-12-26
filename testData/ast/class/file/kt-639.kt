@@ -1,4 +1,4 @@
-namespace demo
+package demo
 import java.util.HashMap
 open class Test() {
 class object {

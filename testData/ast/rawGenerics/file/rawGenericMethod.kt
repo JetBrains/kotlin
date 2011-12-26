@@ -1,4 +1,4 @@
-namespace demo
+package demo
 open class TestT() {
 open fun getT<T>() : Unit {
 }

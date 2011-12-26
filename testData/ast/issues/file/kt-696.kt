@@ -1,4 +1,4 @@
-namespace test
+package test
 open class Base() {
 open public fun hashCode() : Int {
 return System.identityHashCode(this)
