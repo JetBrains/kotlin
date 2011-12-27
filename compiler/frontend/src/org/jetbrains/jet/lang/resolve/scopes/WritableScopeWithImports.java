@@ -193,7 +193,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public void importVariableAlias(@NotNull String aliasName, @NotNull PropertyDescriptor variableDescriptor) {
+    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addVariableAlias(aliasName, variableDescriptor);
