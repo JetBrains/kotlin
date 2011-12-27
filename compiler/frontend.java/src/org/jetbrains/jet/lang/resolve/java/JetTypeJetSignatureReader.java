@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -25,10 +26,12 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JetStandardLibrary jetStandardLibrary;
+    private final TypeVariableResolver typeVariableResolver;
 
-    public JetTypeJetSignatureReader(JavaDescriptorResolver javaDescriptorResolver, JetStandardLibrary jetStandardLibrary) {
+    public JetTypeJetSignatureReader(JavaDescriptorResolver javaDescriptorResolver, JetStandardLibrary jetStandardLibrary, TypeVariableResolver typeVariableResolver) {
         this.javaDescriptorResolver = javaDescriptorResolver;
         this.jetStandardLibrary = jetStandardLibrary;
+        this.typeVariableResolver = typeVariableResolver;
     }
     
     
@@ -111,7 +114,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitTypeArgument(final char wildcard) {
-        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary) {
+        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary, typeVariableResolver) {
 
             @Override
             protected void done(@NotNull JetType jetType) {
@@ -122,7 +125,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitArrayType(final boolean nullable) {
-        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary) {
+        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary, typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 JetType arrayType = TypeUtils.makeNullableAsSpecified(jetStandardLibrary.getArrayType(jetType), nullable);
@@ -133,8 +136,8 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public void visitTypeVariable(String name, boolean nullable) {
-        // TODO: need a way to get type TypeParameterDescriptor by name
-        throw new IllegalStateException();
+        JetType r = TypeUtils.makeNullableAsSpecified(typeVariableResolver.getTypeVariable(name).getDefaultType(), nullable);
+        done(r);
     }
 
     @Override

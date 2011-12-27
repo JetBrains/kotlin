@@ -280,7 +280,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> UNSAFE_CALL = ParameterizedDiagnosticFactory1.create(ERROR, "Only safe calls (?.) are allowed on a nullable receiver of type {0}");
     SimpleDiagnosticFactory AMBIGUOUS_LABEL = SimpleDiagnosticFactory.create(ERROR, "Ambiguous label");
     ParameterizedDiagnosticFactory1<String> UNSUPPORTED = ParameterizedDiagnosticFactory1.create(ERROR, "Unsupported [{0}]");
-    PsiElementOnlyDiagnosticFactory1<JetElement, JetType> UNNECESSARY_SAFE_CALL = PsiElementOnlyDiagnosticFactory1.create(WARNING, "Unnecessary safe call on a non-null receiver of type {0}");
+    ParameterizedDiagnosticFactory1<JetType> UNNECESSARY_SAFE_CALL = ParameterizedDiagnosticFactory1.create(WARNING, "Unnecessary safe call on a non-null receiver of type {0}");
     ParameterizedDiagnosticFactory2<JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER = new ParameterizedDiagnosticFactory2<JetTypeConstraint, JetTypeParameterListOwner>(ERROR, "{0} does not refer to a type parameter of {1}") {
         @Override
         protected String makeMessageForA(@NotNull JetTypeConstraint jetTypeConstraint) {

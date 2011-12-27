@@ -63,7 +63,11 @@ public class JetSignatureReader {
                 if (end < 0) {
                     throw new IllegalStateException();
                 }
-                JetSignatureVisitor parameterVisitor = v.visitFormalTypeParameter(signature.substring(pos, end), variance);
+                String typeParameterName = signature.substring(pos, end);
+                if (typeParameterName.isEmpty()) {
+                    throw new IllegalStateException("incorrect signature: " + signature);
+                }
+                JetSignatureVisitor parameterVisitor = v.visitFormalTypeParameter(typeParameterName, variance);
                 pos = end + 1;
 
                 c = signature.charAt(pos);
@@ -71,12 +75,14 @@ public class JetSignatureReader {
                     pos = parseType(signature, pos, parameterVisitor.visitClassBound());
                 }
 
-                while ((c = signature.charAt(pos++)) == ':') {
+                while ((c = signature.charAt(pos)) == ':') {
+                    ++pos;
                     pos = parseType(signature, pos, parameterVisitor.visitInterfaceBound());
                 }
                 
                 parameterVisitor.visitFormalTypeParameterEnd();
             } while (c != '>');
+            ++pos;
         } else {
             pos = 0;
         }
