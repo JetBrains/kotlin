@@ -59,9 +59,9 @@ public class JavaTypeTransformer {
     }
 
     @NotNull
-    public JetType transformToType(@NotNull String kotlinSignature) {
+    public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, standardLibrary) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, standardLibrary, typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;

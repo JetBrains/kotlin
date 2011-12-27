@@ -2,14 +2,14 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -29,12 +29,12 @@ public class TopDownAnalyzer {
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull NamespaceLike owner,
-            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull Configuration configuration
             ) {
-        process(semanticServices, trace, outerScope, owner, declarations, analyzeCompletely, flowDataTraceFactory, configuration, false);
+        process(semanticServices, trace, outerScope, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
     }
 
     private static void process(
@@ -42,7 +42,7 @@ public class TopDownAnalyzer {
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull NamespaceLike owner,
-            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Collection<? extends PsiElement> declarations,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull Configuration configuration,
@@ -55,7 +55,7 @@ public class TopDownAnalyzer {
     private static void doProcess(
             TopDownAnalysisContext context, JetScope outerScope,
             NamespaceLike owner,
-            Collection<? extends JetDeclaration> declarations,
+            Collection<? extends PsiElement> declarations,
             JetControlFlowDataTraceFactory flowDataTraceFactory) {
 //        context.enableDebugOutput();
         context.debug("Enter");
@@ -93,14 +93,14 @@ public class TopDownAnalyzer {
             @NotNull BindingTrace trace,
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
-            @NotNull JetNamespace namespace) {
+            @NotNull JetFile file) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
-        context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
-        context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
-        context.getDeclaringScopes().put(namespace, outerScope);
+        context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
+        context.getNamespaceScopes().put(file, standardLibraryNamespace.getMemberScope());
+//        context.getDeclaringScopes().put(file, outerScope);
         context.setAnalyzingBootstrapLibrary(true);
 
-        doProcess(context, outerScope, standardLibraryNamespace, namespace.getDeclarations(), JetControlFlowDataTraceFactory.EMPTY);
+        doProcess(context, outerScope, standardLibraryNamespace, file.getDeclarations(), JetControlFlowDataTraceFactory.EMPTY);
     }
 
     public static void processObject(
@@ -140,7 +140,7 @@ public class TopDownAnalyzer {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                 return ClassObjectStatus.NOT_ALLOWED;
             }
-        }, Collections.<JetDeclaration>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, Configuration.EMPTY, true);
+        }, Collections.<PsiElement>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, Configuration.EMPTY, true);
     }
 
 }

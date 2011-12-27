@@ -1,98 +1,123 @@
 JetFile: NewlinesInParentheses.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(PLUS)('+')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(PLUS)('+')
-            PsiWhiteSpace('\n    ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
-        PREFIX_EXPRESSION
+          PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace('\n    ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          PARENTHESIZED
-            PsiElement(LPAR)('(')
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-              PsiWhiteSpace('\n  ')
-              OPERATION_REFERENCE
-                PsiElement(PLUS)('+')
-              PsiWhiteSpace(' ')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          PARENTHESIZED
-            PsiElement(LPAR)('(')
+      PsiWhiteSpace('\n  ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace('\n  ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace('\n  ')
+                PREFIX_EXPRESSION
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+              PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          BINARY_EXPRESSION
             FUNCTION_LITERAL_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
@@ -107,75 +132,78 @@ JetFile: NewlinesInParentheses.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('b')
                 PsiElement(RBRACE)('}')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          PARENTHESIZED
-            PsiElement(LPAR)('(')
+            PsiWhiteSpace('\n  ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        ARRAY_ACCESS_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+          INDICES
+            PsiElement(LBRACKET)('[')
             BINARY_EXPRESSION
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-                    PsiWhiteSpace('\n  ')
-                    PREFIX_EXPRESSION
-                      OPERATION_REFERENCE
-                        PsiElement(PLUS)('+')
-                      PsiWhiteSpace(' ')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('b')
-                  PsiElement(RBRACE)('}')
-              PsiWhiteSpace('\n  ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('c')
+              PsiWhiteSpace('\n    ')
               OPERATION_REFERENCE
                 PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          ARRAY_ACCESS_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            INDICES
-              PsiElement(LBRACKET)('[')
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('c')
-                PsiWhiteSpace('\n    ')
-                OPERATION_REFERENCE
-                  PsiElement(PLUS)('+')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('d')
-              PsiElement(RBRACKET)(']')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          ARRAY_ACCESS_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            INDICES
-              PsiElement(LBRACKET)('[')
+                PsiElement(IDENTIFIER)('d')
+            PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        ARRAY_ACCESS_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+          INDICES
+            PsiElement(LBRACKET)('[')
+            FUNCTION_LITERAL_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BLOCK
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
+                  PsiWhiteSpace('\n    ')
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('d')
+                PsiElement(RBRACE)('}')
+            PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        ARRAY_ACCESS_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+          INDICES
+            PsiElement(LBRACKET)('[')
+            BINARY_EXPRESSION
               FUNCTION_LITERAL_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
@@ -190,164 +218,135 @@ JetFile: NewlinesInParentheses.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('d')
                   PsiElement(RBRACE)('}')
-              PsiElement(RBRACKET)(']')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          ARRAY_ACCESS_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            INDICES
-              PsiElement(LBRACKET)('[')
-              BINARY_EXPRESSION
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BLOCK
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('c')
-                      PsiWhiteSpace('\n    ')
-                      PREFIX_EXPRESSION
-                        OPERATION_REFERENCE
-                          PsiElement(PLUS)('+')
-                        PsiWhiteSpace(' ')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('d')
-                    PsiElement(RBRACE)('}')
-                PsiWhiteSpace('\n    ')
-                OPERATION_REFERENCE
-                  PsiElement(PLUS)('+')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('d')
-              PsiElement(RBRACKET)(']')
-        PsiWhiteSpace('\n\n  ')
-        WHEN
-          PsiElement(when)('when')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('e')
-          PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION_IS_PATTERN
-              PsiElement(is)('is')
-              PsiWhiteSpace(' ')
-              DECOMPOSER_PATTERN
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace(' \n    ')
-                DECOMPOSER_ARGUMENT_LIST
-                  PsiElement(HASH)('#')
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION_IN_RANGE
+              PsiWhiteSpace('\n    ')
               OPERATION_REFERENCE
-                PsiElement(in)('in')
+                PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('f')
-                PsiWhiteSpace('\n    ')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION_IS_PATTERN
-              PsiElement(NOT_IS)('!is')
-              PsiWhiteSpace(' ')
-              DECOMPOSER_PATTERN
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-                PsiWhiteSpace('\n     ')
-                DECOMPOSER_ARGUMENT_LIST
-                  PsiElement(HASH)('#')
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION_IN_RANGE
-              OPERATION_REFERENCE
-                PsiElement(NOT_IN)('!in')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('f')
-                PsiWhiteSpace('\n    ')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION_IS_PATTERN
-              EXPRESSION_PATTERN
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('f')
-                  PsiWhiteSpace('\n    ')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace('\n  ')
-          PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('f')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BINARY_WITH_PATTERN
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(is)('is')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('d')
+            PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n\n  ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('e')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
             PsiWhiteSpace(' ')
             DECOMPOSER_PATTERN
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
-              PsiWhiteSpace('\n  ')
+              PsiWhiteSpace(' \n    ')
               DECOMPOSER_ARGUMENT_LIST
                 PsiElement(HASH)('#')
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IN_RANGE
+            OPERATION_REFERENCE
+              PsiElement(in)('in')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('f')
+              PsiWhiteSpace('\n    ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(NOT_IS)('!is')
+            PsiWhiteSpace(' ')
+            DECOMPOSER_PATTERN
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
+              PsiWhiteSpace('\n     ')
+              DECOMPOSER_ARGUMENT_LIST
+                PsiElement(HASH)('#')
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IN_RANGE
+            OPERATION_REFERENCE
+              PsiElement(NOT_IN)('!in')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('f')
+              PsiWhiteSpace('\n    ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            EXPRESSION_PATTERN
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('f')
+                PsiWhiteSpace('\n    ')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace('\n  ')
         PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_WITH_PATTERN
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(is)('is')
+          PsiWhiteSpace(' ')
+          DECOMPOSER_PATTERN
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace('\n  ')
+            DECOMPOSER_ARGUMENT_LIST
+              PsiElement(HASH)('#')
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

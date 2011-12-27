@@ -39,7 +39,7 @@ public class TypeHierarchyResolver {
         this.context = context;
     }
 
-    public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends JetDeclaration> declarations) {
+    public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends PsiElement> declarations) {
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
         context.getImportsResolver().processTypeImports();
@@ -67,22 +67,21 @@ public class TypeHierarchyResolver {
             @NotNull final JetScope outerScope,
             @NotNull final JetScope outerScopeForStatic,
             @NotNull final NamespaceLike owner,
-            @NotNull Collection<? extends JetDeclaration> declarations) {
-        for (JetDeclaration declaration : declarations) {
+            @NotNull Collection<? extends PsiElement> declarations) {
+        for (PsiElement declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
-                public void visitNamespace(JetNamespace namespace) {
-                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(namespace, owner);
-                    context.getNamespaceDescriptors().put(namespace, namespaceDescriptor);
+                public void visitJetFile(JetFile file) {
+                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(file, owner);
+                    context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-                    context.getNamespaceScopes().put(namespace, namespaceScope);
-                    context.getDeclaringScopes().put(namespace, outerScope);
+                    context.getNamespaceScopes().put(file, namespaceScope);
 
 //                    processImports(namespace, namespaceScope, outerScope);
 
-                    collectNamespacesAndClassifiers(namespaceScope, namespaceScope, namespaceDescriptor, namespace.getDeclarations());
+                    collectNamespacesAndClassifiers(namespaceScope, namespaceScope, namespaceDescriptor, file.getDeclarations());
                 }
 
                 @Override
@@ -195,19 +194,19 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetNamespace namespace, NamespaceLike owner) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLike owner) {
         NamespaceLike currentOwner = owner;
-        for (JetSimpleNameExpression nameExpression : namespace.getHeader().getParentNamespaceNames()) {
+        for (JetSimpleNameExpression nameExpression : file.getNamespaceHeader().getParentNamespaceNames()) {
             currentOwner = createNamespaceDescriptorIfNeeded(null, currentOwner, JetPsiUtil.safeName(nameExpression.getReferencedName()));
             context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
         }
 
-        String name = JetPsiUtil.safeName(namespace.getName());
-        return createNamespaceDescriptorIfNeeded(namespace, currentOwner, name);
+        String name = JetPsiUtil.safeName(file.getNamespaceHeader().getName());
+        return createNamespaceDescriptorIfNeeded(file, currentOwner, name);
     }
 
     @NotNull
-    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetNamespace namespace, @NotNull NamespaceLike owner, @NotNull String name) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLike owner, @NotNull String name) {
         NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
         if (namespaceDescriptor == null) {
             namespaceDescriptor = new NamespaceDescriptorImpl(
@@ -221,8 +220,8 @@ public class TypeHierarchyResolver {
             namespaceDescriptor.initialize(scope);
             context.getConfiguration().extendNamespaceScope(context.getTrace(), namespaceDescriptor, scope);
             owner.addNamespace(namespaceDescriptor);
-            if (namespace != null) {
-                context.getTrace().record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);
+            if (file != null) {
+                context.getTrace().record(BindingContext.NAMESPACE, file, namespaceDescriptor);
             }
         }
         return namespaceDescriptor;

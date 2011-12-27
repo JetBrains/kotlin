@@ -1,44 +1,43 @@
 JetFile: NamespaceBlockFirst.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(namespace)('package')
+  NAMESPACE_HEADER
+    <empty list>
+  PsiErrorElement:Expecting namespace or top level declaration
+    PsiElement(namespace)('package')
+  PsiWhiteSpace(' ')
+  MODIFIER_LIST
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foobar')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting namespace or top level declaration
+    PsiElement(LBRACE)('{')
+  PsiWhiteSpace('\n  ')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foobar')
+    PsiElement(IDENTIFIER)('a')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(LBRACE)('{')
-    PsiWhiteSpace('\n  ')
-    PROPERTY
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('a')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('1')
-    PsiWhiteSpace('\n  ')
-    PROPERTY
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('b')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foobar')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
-    PsiWhiteSpace('\n')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RBRACE)('}')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n  ')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('b')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foobar')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting namespace or top level declaration
+    PsiElement(RBRACE)('}')

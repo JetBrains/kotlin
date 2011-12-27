@@ -1,41 +1,25 @@
 JetFile: LINQ.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
         BINARY_EXPRESSION
           BINARY_EXPRESSION
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('l')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(IDENTIFIER)('filter')
-              PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('it')
-                      PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                  PsiElement(RBRACE)('}')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('l')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
-              PsiElement(IDENTIFIER)('map')
+              PsiElement(IDENTIFIER)('filter')
             PsiWhiteSpace(' ')
             FUNCTION_LITERAL_EXPRESSION
               FUNCTION_LITERAL
@@ -46,37 +30,52 @@ JetFile: LINQ.jet
                       PsiElement(IDENTIFIER)('it')
                     PsiElement(DOT)('.')
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('foo')
+                      PsiElement(IDENTIFIER)('x')
                 PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
-            PsiElement(IDENTIFIER)('aggregate')
+            PsiElement(IDENTIFIER)('map')
           PsiWhiteSpace(' ')
           FUNCTION_LITERAL_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                VALUE_PARAMETER
-                  PsiElement(IDENTIFIER)('a')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                VALUE_PARAMETER
-                  PsiElement(IDENTIFIER)('b')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(ARROW)('->')
-              PsiWhiteSpace(' ')
               BLOCK
-                BINARY_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(PLUS)('+')
-                  PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('it')
+                  PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
+                    PsiElement(IDENTIFIER)('foo')
               PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('aggregate')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('b')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            BLOCK
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -7,10 +7,13 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
+
+import java.util.List;
 
 public class JetFile extends PsiFileBase {
     public JetFile(FileViewProvider viewProvider) {
@@ -27,9 +30,23 @@ public class JetFile extends PsiFileBase {
         return "JetFile: " + getName();
     }
 
+    public List<JetDeclaration> getDeclarations() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
+    }
+
+    public List<JetImportDirective> getImportDirectives() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
+    }
+
     @NotNull
-    public JetNamespace getRootNamespace() {
-        return (JetNamespace) getNode().findChildByType(JetNodeTypes.NAMESPACE).getPsi();
+    public JetNamespaceHeader getNamespaceHeader() {
+        return (JetNamespaceHeader) getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER).getPsi();
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+        return super.getName(); // TODO
     }
 
     @Override

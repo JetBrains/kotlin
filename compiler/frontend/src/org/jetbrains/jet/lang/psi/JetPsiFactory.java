@@ -60,8 +60,7 @@ public class JetPsiFactory {
 
     private static <T> T createDeclaration(Project project, String text, Class<T> clazz) {
         JetFile file = createFile(project, text);
-        JetNamespace rootNamespace = file.getRootNamespace();
-        List<JetDeclaration> dcls = rootNamespace.getDeclarations();
+        List<JetDeclaration> dcls = file.getDeclarations();
         assert dcls.size() == 1 : dcls.size();
         @SuppressWarnings("unchecked")
         T result = (T) dcls.get(0);
@@ -92,13 +91,13 @@ public class JetPsiFactory {
         return function.getValueParameters().get(0);
     }
 
-    public static JetNamespace createNamespace(Project project, String text) {
-        JetFile file = createFile(project, text);
-        return file.getRootNamespace();
-    }
+//    public static JetNamespace createNamespace(Project project, String text) {
+//        JetFile file = createFile(project, text);
+//        return file.getRootNamespace();
+//    }
 
     public static JetImportDirective createImportDirective(Project project, String classPath) {
-        JetNamespace namespace = createNamespace(project, "import " + classPath);
+        JetFile namespace = createFile(project, "import " + classPath);
         return namespace.getImportDirectives().iterator().next();
     }
 

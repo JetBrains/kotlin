@@ -13,7 +13,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
@@ -42,9 +41,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
-        JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
-
+        JetFile file = (JetFile) element.getContainingFile();
         if (file == null) return null;
+
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 
         if (element instanceof JetClass) {
@@ -132,11 +131,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             );
         }
 
-        if (element instanceof JetNamespace) {
-            JetNamespace namespace = (JetNamespace) element;
-            if (namespace.getNameIdentifier() != null) {
-                return createLineMarkerInfo(namespace,
-                        DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, element)));
+        if (element instanceof JetNamespaceHeader) {
+            JetNamespaceHeader header = (JetNamespaceHeader) element;
+            if (header.getNameIdentifier() != null) {
+                return createLineMarkerInfo(header,
+                        DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, file)));
             }
         }
 

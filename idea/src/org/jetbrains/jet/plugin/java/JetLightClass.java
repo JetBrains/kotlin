@@ -26,7 +26,6 @@ import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
@@ -111,7 +110,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
     
     private PsiJavaFileStub calcStub() {
-        final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file.getRootNamespace()), true);
+        final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file), true);
         final Project project = getProject();
         
         final Stack<StubElement> stubStack = new Stack<StubElement>();
@@ -135,7 +134,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
         final GenerationState state = new GenerationState(project, builderFactory) {
             @Override
-            protected void generateNamespace(JetNamespace namespace) {
+            protected void generateNamespace(JetFile namespace) {
                 PsiManager manager = PsiManager.getInstance(project);
                 stubStack.push(answer);
 
@@ -164,9 +163,9 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         };
 
 
-        List<PsiFile> files = Collections.<PsiFile>singletonList(file);
+        List<JetFile> files = Collections.singletonList(file);
         final BindingContext context = AnalyzerFacade.shallowAnalyzeFiles(files);
-        state.compileCorrectNamespaces(context, AnalyzerFacade.collectRootNamespaces(files));
+        state.compileCorrectFiles(context, files);
         state.getFactory().files();
 
         return answer;

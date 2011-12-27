@@ -497,7 +497,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : functionLiteral
      *   : declaration
      *   : SimpleName
-     *   : "namespace" // foo the root namespace
+     *   : "package" // foo the root namespace
      *   ;
      */
     private void parseAtomicExpression() {

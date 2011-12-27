@@ -10,7 +10,6 @@ import org.jetbrains.jet.lang.psi.*;
 public interface JetNodeTypes {
     IFileElementType JET_FILE = new IFileElementType(JetLanguage.INSTANCE);
 
-    JetNodeType NAMESPACE  = new JetNodeType("NAMESPACE", JetNamespace.class);
     JetNodeType CLASS      = new JetNodeType("CLASS", JetClass.class);
     JetNodeType PROPERTY   = new JetNodeType("PROPERTY", JetProperty.class);
     JetNodeType FUN        = new JetNodeType("FUN", JetNamedFunction.class);
@@ -35,7 +34,6 @@ public interface JetNodeTypes {
 
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
-    JetNodeType NAMESPACE_BODY                      = new JetNodeType("NAMESPACE_BODY", JetNamespaceBody.class);
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_MODIFIER_LIST   = new JetNodeType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST", JetModifierList.class);
     JetNodeType ANNOTATION = new JetNodeType("ANNOTATION", JetAnnotation.class);

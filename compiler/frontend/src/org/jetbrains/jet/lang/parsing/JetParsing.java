@@ -80,13 +80,11 @@ public class JetParsing extends AbstractJetParsing {
      */
     public void parseFile() {
         PsiBuilder.Marker fileMarker = mark();
-        PsiBuilder.Marker namespaceMarker = mark();
 
         parsePreamble();
 
         parseToplevelDeclarations(false);
 
-        namespaceMarker.done(NAMESPACE);
         fileMarker.done(JET_FILE);
     }
 
@@ -375,45 +373,6 @@ public class JetParsing extends AbstractJetParsing {
             myExpressionParsing.parseValueArgumentList();
         }
         attribute.done(ANNOTATION_ENTRY);
-    }
-
-    /*
-     * namespace
-     *   : "namespace" SimpleName{"."} "{"
-     *        import*
-     *        toplevelObject[| import]*
-     *     "}"
-     *   ;
-     */
-    private JetNodeType parseNamespaceBlock() {
-        assert _at(NAMESPACE_KEYWORD);
-        PsiBuilder.Marker namespaceHeader = mark();
-        advance(); // NAMESPACE_KEYWORD
-
-        if (at(LBRACE)) {
-            error("Expecting namespace name");
-        }
-        else {
-            parseNamespaceName();
-        }
-        namespaceHeader.done(NAMESPACE_HEADER);
-
-        if (!at(LBRACE)) {
-            error("A namespace block in '{...}' expected");
-            return NAMESPACE;
-        }
-
-        myBuilder.enableNewlines();
-        advance(); // LBRACE
-        PsiBuilder.Marker namespaceBody = mark();
-
-        parseToplevelDeclarations(true);
-
-        namespaceBody.done(NAMESPACE_BODY);
-        expect(RBRACE, "Expecting '}'");
-        myBuilder.restoreNewlinesState();
-
-        return NAMESPACE;
     }
 
     /*

@@ -1,19 +1,20 @@
 package org.jetbrains.jet.compiler;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.ExtensionFunction0;
 import jet.modules.IModuleBuilder;
 import jet.modules.IModuleSetBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
@@ -26,13 +27,74 @@ import java.util.List;
 import java.util.jar.*;
 
 /**
- * @author alex.tkachman
+ * The environment for compiling a bunch of source files or
+ *
+ * @author yole
  */
-public abstract class AbstractCompileEnvironment {
-    protected Project project;
+public class CompileEnvironment {
+    private JetCoreEnvironment myEnvironment;
+    private final Disposable myRootDisposable;
+    private PrintStream myErrorStream = System.out;
 
-    protected abstract void addToClasspath(File file);
+    public CompileEnvironment() {
+        myRootDisposable = new Disposable() {
+            @Override
+            public void dispose() {
+            }
+        };
+        myEnvironment = new JetCoreEnvironment(myRootDisposable);
+    }
 
+    public void setErrorStream(PrintStream errorStream) {
+        myErrorStream = errorStream;
+    }
+
+    public void dispose() {
+        Disposer.dispose(myRootDisposable);
+    }
+
+    public boolean initializeKotlinRuntime() {
+        return initializeKotlinRuntime(myEnvironment);
+    }
+
+    public static boolean initializeKotlinRuntime(JetCoreEnvironment environment) {
+        final File unpackedRuntimePath = getUnpackedRuntimePath();
+        if (unpackedRuntimePath != null) {
+            environment.addToClasspath(unpackedRuntimePath);
+        }
+        else {
+            final File runtimeJarPath = getRuntimeJarPath();
+            if (runtimeJarPath != null && runtimeJarPath.exists()) {
+                environment.addToClasspath(runtimeJarPath);
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static File getUnpackedRuntimePath() {
+        URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
+        if (url != null && url.getProtocol().equals("file")) {
+            return new File(url.getPath()).getParentFile().getParentFile();
+        }
+        return null;
+    }
+
+    public static File getRuntimeJarPath() {
+        URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
+        if (url != null && url.getProtocol().equals("jar")) {
+            String path = url.getPath();
+            return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
+        }
+        return null;
+    }
+
+    public void setJavaRuntime(File rtJarPath) {
+        myEnvironment.addToClasspath(rtJarPath);
+    }
+    
     public static File findRtJar(boolean failOnError) {
         String javaHome = System.getenv("JAVA_HOME");
         File rtJar;
@@ -99,52 +161,6 @@ public abstract class AbstractCompileEnvironment {
         return null;
     }
 
-    public abstract VirtualFileSystem getLocalFileSystem();
-
-    public abstract VirtualFileSystem getJarFileSystem();
-
-    public Project getProject() {
-        return project;
-    }
-
-    public static File getUnpackedRuntimePath() {
-        URL url = CoreCompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url != null && url.getProtocol().equals("file")) {
-            return new File(url.getPath()).getParentFile().getParentFile();
-        }
-        return null;
-    }
-
-    public static File getRuntimeJarPath() {
-        URL url = CoreCompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url != null && url.getProtocol().equals("jar")) {
-            String path = url.getPath();
-            return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
-        }
-        return null;
-    }
-
-    public static boolean initializeKotlinRuntime(AbstractCompileEnvironment environment) {
-        final File unpackedRuntimePath = getUnpackedRuntimePath();
-        if (unpackedRuntimePath != null) {
-            environment.addToClasspath(unpackedRuntimePath);
-        }
-        else {
-            final File runtimeJarPath = getRuntimeJarPath();
-            if (runtimeJarPath != null && runtimeJarPath.exists()) {
-                environment.addToClasspath(runtimeJarPath);
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void setJavaRuntime(File rtJarPath) {
-        addToClasspath(rtJarPath);
-    }
-
     public void compileModuleScript(String moduleFile, String jarPath, boolean jarRuntime) {
         final IModuleSetBuilder moduleSetBuilder = loadModuleScript(moduleFile);
         if (moduleSetBuilder == null) {
@@ -164,11 +180,11 @@ public abstract class AbstractCompileEnvironment {
     }
 
     public IModuleSetBuilder loadModuleScript(String moduleFile) {
-        CompileSession scriptCompileSession = new CompileSession(this);
+        CompileSession scriptCompileSession = new CompileSession(myEnvironment);
         scriptCompileSession.addSources(moduleFile);
         scriptCompileSession.addStdLibSources();
 
-        if (!scriptCompileSession.analyze(System.out)) {
+        if (!scriptCompileSession.analyze(myErrorStream)) {
             return null;
         }
         final ClassFileFactory factory = scriptCompileSession.generate();
@@ -204,22 +220,22 @@ public abstract class AbstractCompileEnvironment {
     }
 
     public ClassFileFactory compileModule(IModuleBuilder moduleBuilder, String directory) {
-        CompileSession moduleCompileSession = new CompileSession(this);
+        CompileSession moduleCompileSession = new CompileSession(myEnvironment);
         moduleCompileSession.addStdLibSources();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             moduleCompileSession.addSources(new File(directory, sourceFile).getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
-            addToClasspath(new File(classpathRoot));
+            myEnvironment.addToClasspath(new File(classpathRoot));
         }
-        if (!moduleCompileSession.analyze(System.out)) {
+        if (!moduleCompileSession.analyze(myErrorStream)) {
             return null;
         }
         return moduleCompileSession.generate();
     }
 
     private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(CoreCompileEnvironment.class, "/org/jetbrains/jet/compiler/CoreCompileEnvironment.class")).getParentFile().getParentFile().getParent();
+       return new File(PathManager.getResourceRoot(CompileEnvironment.class, "/org/jetbrains/jet/compiler/CompileEnvironment.class")).getParentFile().getParentFile().getParent();
     }
 
     private static final List<String> sanitized = Arrays.asList("kotlin/", "std/");
@@ -312,20 +328,19 @@ public abstract class AbstractCompileEnvironment {
         }
     }
 
-    public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime, boolean stdlib) {
-        CompileSession session = new CompileSession(this);
+    public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
+        CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
-        if(!stdlib)
-            session.addStdLibSources();
+        session.addStdLibSources();
 
         String mainClass = null;
-        for (JetNamespace namespace : session.getSourceFileNamespaces()) {
-            if (JetMainDetector.hasMain(namespace.getDeclarations())) {
-                mainClass = JetPsiUtil.getFQName(namespace) + ".namespace";
+        for (JetFile file : session.getSourceFileNamespaces()) {
+            if (JetMainDetector.hasMain(file.getDeclarations())) {
+                mainClass = JetPsiUtil.getFQName(file) + ".namespace";
                 break;
             }
         }
-        if (!session.analyze(System.out)) {
+        if (!session.analyze(myErrorStream)) {
             return;
         }
 
@@ -357,9 +372,5 @@ public abstract class AbstractCompileEnvironment {
                 }
 //            }
         }
-    }
-
-    public boolean initializeKotlinRuntime() {
-        return initializeKotlinRuntime(this);
     }
 }

@@ -21,13 +21,9 @@ class ModuleSetBuilder(): IModuleSetBuilder {
     override fun getModules(): List<IModuleBuilder?>? = modules
 }
 
-class SourcesBuilder() {
-    protected val sourceFiles: ArrayList<String?> = ArrayList<String?>()
-
-    fun files(vararg pattern: String) {
-        for(p in pattern) {
-            sourceFiles.add(p)
-        }
+class SourcesBuilder(val parent: ModuleBuilder) {
+    fun files(pattern: String) {
+        parent.addSourceFiles(pattern)
     }
 }
 
@@ -44,17 +40,22 @@ class JarBuilder(val parent: ModuleBuilder) {
 }
 
 open class ModuleBuilder(val name: String): IModuleBuilder {
-    val source     = SourcesBuilder()
-    val testSource = SourcesBuilder()
-
+    val sourceFiles: ArrayList<String?> = ArrayList<String?>()
     val classpathRoots: ArrayList<String?> = ArrayList<String?>()
     var _jarName: String? = null
+
+    val source: SourcesBuilder
+      get() = SourcesBuilder(this)
 
     val classpath: ClasspathBuilder
       get() = ClasspathBuilder(this)
 
     val jar: JarBuilder
       get() = JarBuilder(this)
+
+    fun addSourceFiles(pattern: String) {
+        sourceFiles.add(pattern)
+    }
 
     fun addClasspathEntry(name: String) {
         classpathRoots.add(name)
@@ -64,8 +65,7 @@ open class ModuleBuilder(val name: String): IModuleBuilder {
         _jarName = name
     }
 
-    override fun getSourceFiles(): List<String?>? = source.sourceFiles
-    override fun getTestSourceFiles(): List<String?>? = testSource.sourceFiles
+    override fun getSourceFiles(): List<String?>? = sourceFiles
     override fun getClasspathRoots(): List<String?>? = classpathRoots
     override fun getModuleName(): String? = name
     override fun getJarName(): String? = _jarName

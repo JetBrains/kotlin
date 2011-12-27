@@ -1,219 +1,218 @@
 JetFile: TypeDef_ERR.jet
-  NAMESPACE
-    NAMESPACE_HEADER
+  NAMESPACE_HEADER
+    <empty list>
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiErrorElement:Type name expected
       <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiErrorElement:Type name expected
-        <empty list>
-      PsiWhiteSpace('\n')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiErrorElement:Expecting '='
-        <empty list>
-      TYPE_REFERENCE
-        <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace('\n')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiErrorElement:Expecting '='
-        <empty list>
-      TYPE_REFERENCE
-        <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace('\n')
-      TYPE_REFERENCE
-        PsiErrorElement:Type expected
-          <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiErrorElement:Type name expected
-        <empty list>
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiErrorElement:Expecting '='
-        <empty list>
-      TYPE_REFERENCE
-        <empty list>
-      PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiErrorElement:Expecting '='
-        <empty list>
-      TYPE_REFERENCE
-        <empty list>
-      PsiElement(SEMICOLON)(';')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiErrorElement:Expecting '='
+      <empty list>
+    TYPE_REFERENCE
+      <empty list>
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        PsiErrorElement:Type expected
-          <empty list>
-      PsiElement(SEMICOLON)(';')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiErrorElement:Expecting '='
+      <empty list>
+    TYPE_REFERENCE
+      <empty list>
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
     PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiErrorElement:Type name expected
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
         <empty list>
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiErrorElement:Expecting '='
+      <empty list>
+    TYPE_REFERENCE
+      <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiErrorElement:Expecting '='
+      <empty list>
+    TYPE_REFERENCE
+      <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
         <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
     PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiErrorElement:Type name expected
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiErrorElement:Type name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      PsiErrorElement:Type parameter declaration expected
+        <empty list>
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
+      PsiErrorElement:Type parameter declaration expected
         <empty list>
       PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace('\n')
-      TYPE_REFERENCE
-        PsiErrorElement:Type expected
-          <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiErrorElement:Type name expected
-        <empty list>
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiErrorElement:Type name expected
-        <empty list>
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        PsiErrorElement:Type expected
-          <empty list>
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        PsiErrorElement:Type parameter declaration expected
-          <empty list>
-        PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(COMMA)(',')
-        PsiErrorElement:Type parameter declaration expected
-          <empty list>
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('A')
         PsiWhiteSpace(' ')
-        PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('A')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            PsiErrorElement:Type expected
-              <empty list>
-        PsiElement(COMMA)(',')
+        PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('B')
-        PsiElement(GT)('>')
+        TYPE_REFERENCE
+          PsiErrorElement:Type expected
+            <empty list>
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiErrorElement:Class name expected
-        <empty list>
-      PsiWhiteSpace('\n')
-      TYPE_PARAMETER_LIST
-        <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('B')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiErrorElement:Class name expected
+      <empty list>
+    PsiWhiteSpace('\n')
+    TYPE_PARAMETER_LIST
+      <empty list>
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')

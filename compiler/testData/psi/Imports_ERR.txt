@@ -1,271 +1,270 @@
 JetFile: Imports_ERR.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      PsiElement(namespace)('package')
+  NAMESPACE_HEADER
+    PsiElement(namespace)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('foo')
+    PsiElement(DOT)('.')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('bar')
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('goo')
+  PsiWhiteSpace('\n\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    PsiElement(namespace)('package')
+    PsiErrorElement:Expecting '.'
+      <empty list>
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiErrorElement:Expecting qualified name
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    PsiElement(namespace)('package')
+    PsiElement(DOT)('.')
+    REFERENCE_EXPRESSION
+      PsiErrorElement:Expecting qualified name
+        <empty list>
+  PsiErrorElement:Expecting namespace or top level declaration
+    PsiElement(MUL)('*')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    PsiElement(namespace)('package')
+    PsiElement(DOT)('.')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiErrorElement:Expecting qualified name
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(as)('as')
+    PsiWhiteSpace('\n')
+    PsiElement(IDENTIFIER)('import')
+  PsiWhiteSpace(' ')
+  MODIFIER_LIST
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiWhiteSpace('\n')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
+    PsiWhiteSpace(' ')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+            PsiElement(DOT)('.')
+            PsiWhiteSpace('\n')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
+    PsiWhiteSpace(' ')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiErrorElement:Expecting type name
+                PsiElement(as)('as')
+    PsiWhiteSpace(' ')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
+    PsiWhiteSpace(' ')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiErrorElement:Expecting type name
+                PsiElement(MUL)('*')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting namespace or top level declaration
+    PsiElement(as)('as')
+  PsiWhiteSpace(' ')
+  MODIFIER_LIST
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
+    PsiWhiteSpace(' ')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiErrorElement:Expecting type name
+                PsiElement(MUL)('*')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting namespace or top level declaration
+    PsiElement(as)('as')
+  PsiWhiteSpace('\n\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(as)('as')
+    PsiErrorElement:Expecting identifier
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
       PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiErrorElement:Qualified name must be a '.'-separated identifier list
+          <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiErrorElement:Qualified name must be a '.'-separated identifier list
+          <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiErrorElement:Qualified name must be a '.'-separated identifier list
+          <empty list>
+    PsiElement(as)('as')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('bar')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('goo')
-    PsiWhiteSpace('\n\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      PsiElement(namespace)('package')
-      PsiErrorElement:Expecting '.'
-        <empty list>
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiErrorElement:Expecting qualified name
-          <empty list>
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      PsiElement(namespace)('package')
-      PsiElement(DOT)('.')
-      REFERENCE_EXPRESSION
-        PsiErrorElement:Expecting qualified name
-          <empty list>
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(MUL)('*')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      PsiElement(namespace)('package')
-      PsiElement(DOT)('.')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiErrorElement:Expecting qualified name
-          <empty list>
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiWhiteSpace('\n')
-      PsiElement(IDENTIFIER)('import')
+    PsiElement(DOT)('.')
+    PsiElement(MUL)('*')
     PsiWhiteSpace(' ')
-    MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              PsiWhiteSpace('\n')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('import')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
-              PsiElement(DOT)('.')
-              PsiWhiteSpace('\n')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('import')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              PsiWhiteSpace(' ')
-              REFERENCE_EXPRESSION
-                PsiErrorElement:Expecting type name
-                  PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-      PsiWhiteSpace('\n')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('import')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiErrorElement:Expecting type name
-                  PsiElement(MUL)('*')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(as)('as')
-    PsiWhiteSpace(' ')
-    MODIFIER_LIST
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-      PsiWhiteSpace('\n')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('import')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiErrorElement:Expecting type name
-                  PsiElement(MUL)('*')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(as)('as')
-    PsiWhiteSpace('\n\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiElement(as)('as')
-      PsiErrorElement:Expecting identifier
-        <empty list>
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiErrorElement:Qualified name must be a '.'-separated identifier list
-            <empty list>
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiErrorElement:Qualified name must be a '.'-separated identifier list
-            <empty list>
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiErrorElement:Qualified name must be a '.'-separated identifier list
-            <empty list>
+    PsiErrorElement:Cannot rename a all imported items to one identifier
       PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('bar')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      PsiElement(MUL)('*')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Cannot rename a all imported items to one identifier
-        PsiElement(as)('as')
-        PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('bar')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
-      PsiElement(DOT)('.')
-      PsiElement(MUL)('*')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Cannot rename a all imported items to one identifier
-        PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Foo')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+    PsiElement(DOT)('.')
+    PsiElement(MUL)('*')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Cannot rename a all imported items to one identifier
+      PsiElement(as)('as')
+    PsiWhiteSpace(' ')
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Foo')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

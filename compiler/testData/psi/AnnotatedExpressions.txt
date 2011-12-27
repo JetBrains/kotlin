@@ -1,48 +1,47 @@
 JetFile: AnnotatedExpressions.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
-        ANNOTATED_EXPRESSION
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ANNOTATED_EXPRESSION
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n    ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      ANNOTATED_EXPRESSION
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        THIS_EXPRESSION
           REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace('\n    ')
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('1')
-        PsiWhiteSpace('\n    ')
-        ANNOTATED_EXPRESSION
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
-          THIS_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(this)('this')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+            PsiElement(this)('this')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -1,43 +1,42 @@
 JetFile: ModifierAsSelector.jet
   PsiComment(EOL_COMMENT)('// JET-1')
   PsiWhiteSpace('\n\n')
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    PROPERTY
-      PsiElement(val)('val')
+  NAMESPACE_HEADER
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('z')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('System')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('out')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('z')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('System')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('out')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
+      THROW
+        PsiElement(throw)('throw')
         PsiWhiteSpace(' ')
-        THROW
-          PsiElement(throw)('throw')
-          PsiWhiteSpace(' ')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Exception')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace(' ')
-        PsiElement(RBRACE)('}')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Exception')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      PsiElement(RBRACE)('}')

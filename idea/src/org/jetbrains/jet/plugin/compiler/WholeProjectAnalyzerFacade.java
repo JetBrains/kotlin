@@ -11,8 +11,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CompileSession;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
@@ -32,19 +30,13 @@ public final class WholeProjectAnalyzerFacade {
     /**
      * Will collect all root-namespaces in all kotlin files in the project.
      */
-    public static final Function<JetFile, Collection<JetDeclaration>> WHOLE_PROJECT_DECLARATION_PROVIDER =
-            new Function<JetFile, Collection<JetDeclaration>>() {
+    public static final Function<JetFile, Collection<JetFile>> WHOLE_PROJECT_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
 
         @Override
-        public Collection<JetDeclaration> fun(final JetFile rootFile) {
+        public Collection<JetFile> fun(final JetFile rootFile) {
             final Project project = rootFile.getProject();
-            final Set<JetDeclaration> namespaces = Sets.newLinkedHashSet();
+            final Set<JetFile> files = Sets.newLinkedHashSet();
             final ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-
-            PluginCompilerEnvironment environment = new PluginCompilerEnvironment(project);
-            CompileSession session = new CompileSession(environment);
-            session.addStdLibSources(true);
-            namespaces.addAll(session.getLibrarySourceFileNamespaces());
 
             if (rootManager != null /* && !ApplicationManager.getApplication().isUnitTestMode() */) {
                 VirtualFile[] contentRoots = rootManager.getContentRoots();
@@ -57,15 +49,15 @@ public final class WholeProjectAnalyzerFacade {
                         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                         if (psiFile instanceof JetFile) {
                             if (rootFile.getOriginalFile() != psiFile) {
-                                namespaces.add(((JetFile) psiFile).getRootNamespace());
+                                files.add((JetFile) psiFile);
                             }
                         }
                     }
                 });
             }
 
-            namespaces.add(rootFile.getRootNamespace());
-            return namespaces;
+            files.add(rootFile);
+            return files;
         }
     };
 

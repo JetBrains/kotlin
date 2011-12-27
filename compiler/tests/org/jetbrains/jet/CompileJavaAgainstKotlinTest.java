@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.compiler.CoreCompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -36,7 +36,7 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
 
     private final File ktFile;
     private final File javaFile;
-    private CoreCompileEnvironment jetCoreEnvironment;
+    private JetCoreEnvironment jetCoreEnvironment;
     private File tmpdir;
 
     public CompileJavaAgainstKotlinTest(File ktFile) {
@@ -80,7 +80,7 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
 
         ClassFileFactory classFileFactory = state.getFactory();
 
-        CoreCompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
+        CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
 
         Disposer.dispose(myTestRootDisposable);
 

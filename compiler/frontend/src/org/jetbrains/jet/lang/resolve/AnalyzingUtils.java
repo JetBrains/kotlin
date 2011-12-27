@@ -16,7 +16,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -69,21 +69,21 @@ public class AnalyzingUtils {
 
     // --------------------------------------------------------------------------------------------------------------------------
 
-    public static BindingContext analyzeNamespaces(
+    public static BindingContext analyzeFiles(
             @NotNull Project project,
             @NotNull Configuration configuration,
-            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
-        return analyzeNamespacesWithGivenTrace(project, configuration, declarations, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext, semanticServices);
+        return analyzeFilesWithGivenTrace(project, configuration, files, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext, semanticServices);
     }
 
-    public static BindingContext analyzeNamespacesWithGivenTrace(
+    public static BindingContext analyzeFilesWithGivenTrace(
             @NotNull Project project,
             @NotNull Configuration configuration,
-            @NotNull Collection<? extends JetDeclaration> declarations,
+            @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull BindingTraceContext bindingTraceContext,
@@ -130,7 +130,7 @@ public class AnalyzingUtils {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
-        }, declarations, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
+        }, files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
         return bindingTraceContext.getBindingContext();
     }
 

@@ -1,59 +1,58 @@
 JetFile: Expressions_ERR.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    PROPERTY
-      PsiElement(val)('val')
+  NAMESPACE_HEADER
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    IF
+      PsiElement(if)('if')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
+      PsiElement(LPAR)('(')
+      CONDITION
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
+      THEN
+        RETURN
+          PsiElement(return)('return')
       PsiWhiteSpace(' ')
-      IF
-        PsiElement(if)('if')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        CONDITION
-          BOOLEAN_CONSTANT
-            PsiElement(true)('true')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        THEN
-          RETURN
-            PsiElement(return)('return')
-        PsiWhiteSpace(' ')
-        PsiElement(else)('else')
-        PsiWhiteSpace(' ')
-        ELSE
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n  ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('dfsd')
-            PsiWhiteSpace('\n  ')
-            PsiErrorElement:Expecting an element
-              PsiElement(RPAR)(')')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiErrorElement:Expecting an element
-              PsiElement(RPAR)(')')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiErrorElement:Expecting an element
-              PsiElement(BAD_CHARACTER)('~')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiWhiteSpace('\n  ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('srgsdfg')
-            PsiWhiteSpace('\n\n  ')
-            PsiErrorElement:Expecting an element
-              PsiElement(BAD_CHARACTER)('~')
-            PsiWhiteSpace('\n\n  ')
-            PsiErrorElement:Expecting an element
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace('\n')
-            PsiElement(RBRACE)('}')
+      PsiElement(else)('else')
+      PsiWhiteSpace(' ')
+      ELSE
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n  ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('dfsd')
+          PsiWhiteSpace('\n  ')
+          PsiErrorElement:Expecting an element
+            PsiElement(RPAR)(')')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(SEMICOLON)(';')
+          PsiErrorElement:Expecting an element
+            PsiElement(RPAR)(')')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(SEMICOLON)(';')
+          PsiErrorElement:Expecting an element
+            PsiElement(BAD_CHARACTER)('~')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(SEMICOLON)(';')
+          PsiWhiteSpace('\n  ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('srgsdfg')
+          PsiWhiteSpace('\n\n  ')
+          PsiErrorElement:Expecting an element
+            PsiElement(BAD_CHARACTER)('~')
+          PsiWhiteSpace('\n\n  ')
+          PsiErrorElement:Expecting an element
+            PsiElement(RBRACKET)(']')
+          PsiWhiteSpace('\n')
+          PsiElement(RBRACE)('}')

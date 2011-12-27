@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.compiler.CoreCompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -49,7 +49,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         }
     };
 
-    private CoreCompileEnvironment jetCoreEnvironment;
+    private JetCoreEnvironment jetCoreEnvironment;
     private File tmpdir;
     
     private final File testFile;
@@ -72,7 +72,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
 
     private void createMockCoreEnvironment() {
-        jetCoreEnvironment = new CoreCompileEnvironment(new JetCoreEnvironment(myTestRootDisposable));
+        jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable);
 
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         jetCoreEnvironment.addToClasspath(rtJar);
@@ -95,9 +95,9 @@ public class ReadClassDataTest extends UsefulTestCase {
 
         ClassFileFactory classFileFactory = state.getFactory();
 
-        CoreCompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
+        CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
         
-        NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile.getRootNamespace());
+        NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile);
 
         Assert.assertEquals("test", namespaceFromSource.getName());
 
@@ -403,7 +403,7 @@ public class ReadClassDataTest extends UsefulTestCase {
                 List<String> list = new ArrayList<String>();
                 for (JetType upper : param.getUpperBounds()) {
                     StringBuilder sb = new StringBuilder();
-                    new Serializer(sb).serialize(upper);
+                    new ValueParameterSerializer(sb).serialize(upper);
                     list.add(sb.toString());
                 }
                 Collections.sort(list);

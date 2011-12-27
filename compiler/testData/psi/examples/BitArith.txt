@@ -1,72 +1,173 @@
 JetFile: BitArith.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('oneBit')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('index')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('oneBit')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('index')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('shl')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('index')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('setBit')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('index')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('or')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('oneBit')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('index')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('unsetBit')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('index')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('and')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('not')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
+                PsiElement(IDENTIFIER)('oneBit')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
+                PsiElement(RPAR)(')')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('getBit')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('index')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
       BINARY_EXPRESSION
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('1')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
         OPERATION_REFERENCE
-          PsiElement(IDENTIFIER)('shl')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('index')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('setBit')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('index')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      BINARY_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-        PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(IDENTIFIER)('or')
+          PsiElement(IDENTIFIER)('and')
         PsiWhiteSpace(' ')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
@@ -77,350 +178,102 @@ JetFile: BitArith.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('index')
             PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    FUN
-      PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('unsetBit')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(COMMA)(',')
+      OPERATION_REFERENCE
+        PsiElement(EXCLEQ)('!=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('getBit')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('index')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      BINARY_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-        PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(IDENTIFIER)('and')
-        PsiWhiteSpace(' ')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('not')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('oneBit')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('index')
-                  PsiElement(RPAR)(')')
-            PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('getBit')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('index')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      BINARY_EXPRESSION
-        BINARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(IDENTIFIER)('and')
-          PsiWhiteSpace(' ')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('oneBit')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('index')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(EXCLEQ)('!=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('0')
-    PsiWhiteSpace('\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('getBit')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('index')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      BINARY_EXPRESSION
-        BINARY_EXPRESSION
-          PARENTHESIZED
-            PsiElement(LPAR)('(')
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('x')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(IDENTIFIER)('shr')
-              PsiWhiteSpace(' ')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('index')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(IDENTIFIER)('shl')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('31')
-        PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(EXCLEQ)('!=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('0')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('countOnes')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('INumber')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('result')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('0')
-        PsiWhiteSpace('\n  ')
-        WHILE
-          PsiElement(while)('while')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          CONDITION
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('x')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(EXCLEQ)('!=')
-              PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('0')
-          PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BODY
-            BLOCK
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n    ')
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('result')
-                PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(PLUSEQ)('+=')
-                PsiWhiteSpace(' ')
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(IDENTIFIER)('and')
-                  PsiWhiteSpace(' ')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-              PsiWhiteSpace('\n    ')
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('x')
-                PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(EQ)('=')
-                PsiWhiteSpace(' ')
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(IDENTIFIER)('ushr')
-                  PsiWhiteSpace(' ')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-              PsiWhiteSpace('\n  ')
-              PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n  ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('result')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('mostSignificantBit')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('INumber')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      BINARY_WITH_TYPE
-        PARENTHESIZED
-          PsiElement(LPAR)('(')
-          BINARY_EXPRESSION
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('x')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(IDENTIFIER)('and')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('oneBit')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    BINARY_EXPRESSION
-                      DOT_QUALIFIED_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('x')
-                        PsiElement(DOT)('.')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('bits')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(MINUS)('-')
-                      PsiWhiteSpace(' ')
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(EXCLEQ)('!=')
-            PsiWhiteSpace(' ')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('0')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(as)('as')
+        PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('countOnes')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('INumber')
-        PsiElement(RPAR)(')')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('index')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      BINARY_EXPRESSION
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('shr')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('index')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('shl')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('31')
       PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
+      OPERATION_REFERENCE
+        PsiElement(EXCLEQ)('!=')
       PsiWhiteSpace(' ')
-      IF
-        PsiElement(if)('if')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('countOnes')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('INumber')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('result')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('0')
+      PsiWhiteSpace('\n  ')
+      WHILE
+        PsiElement(while)('while')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
         CONDITION
@@ -429,200 +282,346 @@ JetFile: BitArith.jet
               PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
-              PsiElement(EQEQ)('==')
+              PsiElement(EXCLEQ)('!=')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('0')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        THEN
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('0')
-        PsiWhiteSpace(' ')
-        PsiElement(else)('else')
-        PsiWhiteSpace(' ')
-        ELSE
-          BINARY_EXPRESSION
-            CALL_EXPRESSION
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('mostSignificantBit')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-                PsiElement(RPAR)(')')
+                PsiElement(IDENTIFIER)('result')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUSEQ)('+=')
+              PsiWhiteSpace(' ')
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(IDENTIFIER)('and')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace('\n    ')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(IDENTIFIER)('ushr')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace('\n  ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('result')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('mostSignificantBit')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('INumber')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_WITH_TYPE
+      PARENTHESIZED
+        PsiElement(LPAR)('(')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
-              PsiElement(PLUS)('+')
+              PsiElement(IDENTIFIER)('and')
             PsiWhiteSpace(' ')
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('countOnes')
+                PsiElement(IDENTIFIER)('oneBit')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bits')
                     PsiWhiteSpace(' ')
                     OPERATION_REFERENCE
-                      PsiElement(IDENTIFIER)('shl')
+                      PsiElement(MINUS)('-')
                     PsiWhiteSpace(' ')
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEQ)('!=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(as)('as')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('Int')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('matchMask')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('mask')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      BINARY_EXPRESSION
-        BINARY_EXPRESSION
-          THIS_EXPRESSION
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('countOnes')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(this)('this')
+              PsiElement(IDENTIFIER)('INumber')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    IF
+      PsiElement(if)('if')
+      PsiWhiteSpace(' ')
+      PsiElement(LPAR)('(')
+      CONDITION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
-            PsiElement(IDENTIFIER)('and')
+            PsiElement(EQEQ)('==')
           PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      THEN
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('0')
+      PsiWhiteSpace(' ')
+      PsiElement(else)('else')
+      PsiWhiteSpace(' ')
+      ELSE
+        BINARY_EXPRESSION
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('mostSignificantBit')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('countOnes')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(IDENTIFIER)('shl')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+              PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('matchMask')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('mask')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      BINARY_EXPRESSION
+        THIS_EXPRESSION
           REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('mask')
+            PsiElement(this)('this')
         PsiWhiteSpace(' ')
         OPERATION_REFERENCE
-          PsiElement(EQEQ)('==')
+          PsiElement(IDENTIFIER)('and')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('mask')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      MODIFIER_LIST
-        PsiElement(open)('open')
       PsiWhiteSpace(' ')
-      PsiElement(class)('class')
+      OPERATION_REFERENCE
+        PsiElement(EQEQ)('==')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('INumber')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      DELEGATION_SPECIFIER_LIST
-        DELEGATOR_SUPER_CLASS
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('IComparable')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    SELF_TYPE
-                      PsiElement(This)('This')
-                PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('bits')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiWhiteSpace('\n  ')
-        FUN
-          MODIFIER_LIST
-            ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('operator')
-              PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('plus')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('other')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                SELF_TYPE
-                  PsiElement(This)('This')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            SELF_TYPE
-              PsiElement(This)('This')
-        PsiWhiteSpace('\n  ')
-        FUN
-          MODIFIER_LIST
-            ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('operator')
-              PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('shl')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('bits')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Int')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            SELF_TYPE
-              PsiElement(This)('This')
-        PsiWhiteSpace('\n  ')
-        PsiComment(EOL_COMMENT)('// ...')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('mask')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(open)('open')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('INumber')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IComparable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  SELF_TYPE
+                    PsiElement(This)('This')
+              PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bits')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiWhiteSpace('\n  ')
+      FUN
+        MODIFIER_LIST
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('operator')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('plus')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('other')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              SELF_TYPE
+                PsiElement(This)('This')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          SELF_TYPE
+            PsiElement(This)('This')
+      PsiWhiteSpace('\n  ')
+      FUN
+        MODIFIER_LIST
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('operator')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('shl')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('bits')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          SELF_TYPE
+            PsiElement(This)('This')
+      PsiWhiteSpace('\n  ')
+      PsiComment(EOL_COMMENT)('// ...')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

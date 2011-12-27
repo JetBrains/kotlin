@@ -1,62 +1,61 @@
 JetFile: QuotedIdentifiers.jet
-  NAMESPACE
-    NAMESPACE_HEADER
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    MODIFIER_LIST
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`return`')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`namespace`')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`class`')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`$`')
+    PsiWhiteSpace('\n')
+    TYPE_PARAMETER_LIST
       <empty list>
-    FUN
-      MODIFIER_LIST
-        ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('`return`')
-          PsiElement(RBRACKET)(']')
-      PsiWhiteSpace(' ')
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('`namespace`')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('`class`')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('`$`')
-      PsiWhiteSpace('\n')
-      TYPE_PARAMETER_LIST
-        <empty list>
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('`$$`')
-      PsiWhiteSpace('\n')
-      TYPE_PARAMETER_LIST
-        <empty list>
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('` `')
-      PsiWhiteSpace('\n')
-      TYPE_PARAMETER_LIST
-        <empty list>
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('`1`')
-      TYPE_PARAMETER_LIST
-        <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`$$`')
+    PsiWhiteSpace('\n')
+    TYPE_PARAMETER_LIST
+      <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('` `')
+    PsiWhiteSpace('\n')
+    TYPE_PARAMETER_LIST
+      <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`1`')
+    TYPE_PARAMETER_LIST
+      <empty list>

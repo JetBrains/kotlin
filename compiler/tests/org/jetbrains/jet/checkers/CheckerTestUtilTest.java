@@ -81,8 +81,8 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         }
 
         public void test(final @NotNull PsiFile psiFile) {
-            BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(
-                    ((JetFile) psiFile).getRootNamespace(),
+            BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(
+                    (JetFile) psiFile,
                     JetControlFlowDataTraceFactory.EMPTY);
 
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile)).toString();

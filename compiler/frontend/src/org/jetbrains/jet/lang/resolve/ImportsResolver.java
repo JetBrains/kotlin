@@ -39,15 +39,15 @@ public class ImportsResolver {
 
     private void processImports(boolean firstPhase) {
         ImportResolver importResolver = new ImportResolver(context.getTrace(), firstPhase);
-        for (JetNamespace jetNamespace : context.getNamespaceDescriptors().keySet()) {
-            WritableScope namespaceScope = context.getNamespaceScopes().get(jetNamespace);
+        for (JetFile file : context.getNamespaceDescriptors().keySet()) {
+            WritableScope namespaceScope = context.getNamespaceScopes().get(file);
             if (firstPhase) {
                 context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope);
             }
 
-            List<JetImportDirective> importDirectives = jetNamespace.getImportDirectives();
+            List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
-                importResolver.processImportReference(importDirective, namespaceScope, context.getDeclaringScopes().get(jetNamespace));
+                importResolver.processImportReference(importDirective, namespaceScope, JetScope.EMPTY);
             }
         }
     }

@@ -19,11 +19,11 @@ import java.util.jar.JarInputStream;
  * @author alex.tkachman
  */
 public class CompileEnvironmentTest extends TestCase {
-    private CoreCompileEnvironment environment;
+    private CompileEnvironment environment;
 
     protected void setUp() throws Exception {
         super.setUp();
-        environment = new CoreCompileEnvironment();
+        environment = new CompileEnvironment();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CompileEnvironmentTest extends TestCase {
     }
 
     public void testSmoke() throws IOException {
-        final File activeRtJar = AbstractCompileEnvironment.findRtJar(true);
+        final File activeRtJar = CompileEnvironment.findRtJar(true);
         environment.setJavaRuntime(activeRtJar);
         environment.initializeKotlinRuntime();
         final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";
@@ -45,7 +45,7 @@ public class CompileEnvironmentTest extends TestCase {
         assertNotNull(factory.asBytes("Smoke/namespace.class"));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        CoreCompileEnvironment.writeToJar(factory, baos, null, false);
+        CompileEnvironment.writeToJar(factory, baos, null, false);
         JarInputStream is = new JarInputStream(new ByteArrayInputStream(baos.toByteArray()));
         final List<String> entries = listEntries(is);
         assertTrue(entries.contains("Smoke/namespace.class"));
@@ -93,7 +93,7 @@ public class CompileEnvironmentTest extends TestCase {
         tempFile = new File(tempFile.getAbsolutePath());
         tempFile.mkdir();
         try {
-            KotlinCompiler.main(Arrays.asList("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/src/Smoke.kt", "-output", tempFile.getAbsolutePath()).toArray(new String[0]));
+            KotlinCompiler.main(Arrays.asList("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output", tempFile.getAbsolutePath()).toArray(new String[0]));
             assertEquals(1, tempFile.listFiles().length);
             assertEquals(1, tempFile.listFiles()[0].listFiles().length);
         }

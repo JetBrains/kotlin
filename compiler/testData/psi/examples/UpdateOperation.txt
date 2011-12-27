@@ -1,238 +1,237 @@
 JetFile: UpdateOperation.jet
-  NAMESPACE
-    NAMESPACE_HEADER
+  NAMESPACE_HEADER
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Pair')
+    TYPE_PARAMETER_LIST
       <empty list>
-    CLASS
-      PsiElement(class)('class')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Pair')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      VALUE_PARAMETER_LIST
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('y')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      CLASS_OBJECT
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION
+          PsiElement(object)('object')
+          PsiWhiteSpace(' ')
+          CLASS_BODY
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('copy')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('from')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Pair')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('x')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('from')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('y')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('from')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('y')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Pair')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('y')
+                  PsiElement(RPAR)(')')
+            PsiWhiteSpace('\n  ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// One can say:')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('Point')
+      VALUE_ARGUMENT_LIST
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('y')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        CLASS_OBJECT
-          PsiElement(class)('class')
-          PsiWhiteSpace(' ')
-          OBJECT_DECLARATION
-            PsiElement(object)('object')
-            PsiWhiteSpace(' ')
-            CLASS_BODY
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n    ')
-              FUN
-                PsiElement(fun)('fun')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('copy')
-                VALUE_PARAMETER_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_PARAMETER
-                    PsiElement(IDENTIFIER)('from')
-                    PsiWhiteSpace(' ')
-                    PsiElement(COLON)(':')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Pair')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  VALUE_PARAMETER
-                    PsiElement(IDENTIFIER)('x')
-                    PsiWhiteSpace(' ')
-                    PsiElement(COLON)(':')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Int')
-                    PsiWhiteSpace(' ')
-                    PsiElement(EQ)('=')
-                    PsiWhiteSpace(' ')
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('from')
-                      PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  VALUE_PARAMETER
-                    PsiElement(IDENTIFIER)('y')
-                    PsiWhiteSpace(' ')
-                    PsiElement(COLON)(':')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Int')
-                    PsiWhiteSpace(' ')
-                    PsiElement(EQ)('=')
-                    PsiWhiteSpace(' ')
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('from')
-                      PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('y')
-                  PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                PsiElement(EQ)('=')
-                PsiWhiteSpace(' ')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Pair')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    VALUE_ARGUMENT
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                    PsiElement(COMMA)(',')
-                    PsiWhiteSpace(' ')
-                    VALUE_ARGUMENT
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('y')
-                    PsiElement(RPAR)(')')
-              PsiWhiteSpace('\n  ')
-              PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    PsiComment(EOL_COMMENT)('// One can say:')
-    PsiWhiteSpace('\n')
-    PROPERTY
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('p')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p1')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('Point')
+      PsiElement(DOT)('.')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Point')
+          PsiElement(IDENTIFIER)('Copy')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('p')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('2')
           PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    PROPERTY
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('p1')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p2')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('Point')
+      PsiElement(DOT)('.')
+      CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Point')
-        PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Copy')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
+          PsiElement(IDENTIFIER)('Copy')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('p1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('p')
-            PsiElement(COMMA)(',')
+                PsiElement(IDENTIFIER)('y')
             PsiWhiteSpace(' ')
-            VALUE_ARGUMENT
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('x')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
               INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('2')
-            PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    PROPERTY
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('p2')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
+                PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p3')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('Point')
+      PsiElement(DOT)('.')
+      CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Point')
-        PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Copy')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('p1')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_ARGUMENT
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('y')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              PREFIX_EXPRESSION
-                OPERATION_REFERENCE
-                  PsiElement(MINUS)('-')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-            PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    PROPERTY
-      PsiElement(val)('val')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('p3')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Point')
-        PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Copy')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('p')
-            PsiElement(RPAR)(')')
+          PsiElement(IDENTIFIER)('Copy')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('p')
+          PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   PsiComment(EOL_COMMENT)('// Such copy(...) methods can be automatically generated by the compiler')
   PsiWhiteSpace('\n')

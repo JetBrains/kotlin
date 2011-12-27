@@ -1,368 +1,447 @@
 JetFile: IOSamples.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    CLASS
-      MODIFIER_LIST
-        PsiElement(open)('open')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('IAdder')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('add')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('item')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Boolean')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      MODIFIER_LIST
-        PsiElement(open)('open')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('ICloseable')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('close')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      MODIFIER_LIST
-        PsiElement(abstract)('abstract')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('closeable')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('java')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('io')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Closeable')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      DELEGATION_SPECIFIER_LIST
-        DELEGATOR_SUPER_CALL
-          CONSTRUCTOR_CALLEE
+  NAMESPACE_HEADER
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(open)('open')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('IAdder')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('add')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('item')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('ICloseable')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('closeable')
-            PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('streamCopy')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(GT)('>')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('from')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('IIterable')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('to')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('IAdder')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        FOR
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          LOOP_PARAMETER
-            PsiElement(IDENTIFIER)('item')
-          PsiWhiteSpace(' ')
-          PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          LOOP_RANGE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('from')
+                  PsiElement(IDENTIFIER)('T')
           PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BODY
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('t')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('add')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('item')
-                  PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('FileInput')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      DELEGATION_SPECIFIER_LIST
-        DELEGATOR_SUPER_CLASS
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('IIterator')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Byte')
-                PsiElement(GT)('>')
-        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        DELEGATOR_SUPER_CLASS
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Boolean')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(open)('open')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ICloseable')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('close')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(abstract)('abstract')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('closeable')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('java')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('io')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Closeable')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CALL
+        CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('stream')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('InputStream')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('next')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('nextUsed')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BOOLEAN_CONSTANT
-            PsiElement(false)('false')
-        PsiWhiteSpace('\n\n  ')
-        CONSTRUCTOR
-          PsiElement(this)('this')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('file')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('File')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
+                PsiElement(IDENTIFIER)('ICloseable')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('closeable')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('streamCopy')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('from')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IIterable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+                      PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('to')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IAdder')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        LOOP_PARAMETER
+          PsiElement(IDENTIFIER)('item')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('from')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('add')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('stream')
+                    PsiElement(IDENTIFIER)('item')
                 PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('FileInput')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IIterator')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Byte')
+              PsiElement(GT)('>')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('stream')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('InputStream')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('next')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('nextUsed')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+      PsiWhiteSpace('\n\n  ')
+      CONSTRUCTOR
+        PsiElement(this)('this')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('file')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('File')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('stream')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// implicitly throws IOException')
+          PsiWhiteSpace('\n    ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('stream')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('FileInputStream')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('file')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// throws IOException')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      FUN
+        MODIFIER_LIST
+          PsiElement(override)('override')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('next')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          IF
+            PsiElement(if)('if')
+            PsiWhiteSpace(' ')
+            PsiElement(LPAR)('(')
+            CONDITION
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE
+                  PsiElement(EXCL)('!')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('nextUsed')
+            PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            THEN
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n      ')
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('nextUsed')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+                PsiWhiteSpace('\n      ')
+                RETURN
+                  PsiElement(return)('return')
+                  PsiWhiteSpace(' ')
+                  BINARY_WITH_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('next')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(as)('as')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Byte')
+                PsiWhiteSpace('\n    ')
+                PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          RETURN
+            PsiElement(return)('return')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n  \n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(override)('override')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('hasNext')
+        PsiWhiteSpace('\n    ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace(' ')
             PsiComment(EOL_COMMENT)('// implicitly throws IOException')
-            PsiWhiteSpace('\n    ')
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('stream')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('FileInputStream')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('file')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiComment(EOL_COMMENT)('// throws IOException')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n  ')
-        FUN
-          MODIFIER_LIST
-            PsiElement(override)('override')
-          PsiWhiteSpace(' ')
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('next')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
+            PsiWhiteSpace('\n      ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PREFIX_EXPRESSION
-                  OPERATION_REFERENCE
-                    PsiElement(EXCL)('!')
+                BINARY_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('nextUsed')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(ANDAND)('&&')
+                  PsiWhiteSpace(' ')
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('next')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(EXCLEQ)('!=')
+                    PsiWhiteSpace(' ')
+                    PREFIX_EXPRESSION
+                      OPERATION_REFERENCE
+                        PsiElement(MINUS)('-')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
                 BLOCK
                   PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n      ')
+                  PsiWhiteSpace('\n        ')
                   BINARY_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('nextUsed')
@@ -371,336 +450,256 @@ JetFile: IOSamples.jet
                       PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
                     BOOLEAN_CONSTANT
-                      PsiElement(true)('true')
-                  PsiWhiteSpace('\n      ')
-                  RETURN
-                    PsiElement(return)('return')
-                    PsiWhiteSpace(' ')
-                    BINARY_WITH_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('next')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(as)('as')
-                      PsiWhiteSpace(' ')
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Byte')
-                  PsiWhiteSpace('\n    ')
-                  PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n    ')
-            RETURN
-              PsiElement(return)('return')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n  \n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(override)('override')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('hasNext')
-          PsiWhiteSpace('\n    ')
-          PROPERTY_ACCESSOR
-            PsiElement(get)('get')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            BLOCK
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace(' ')
-              PsiComment(EOL_COMMENT)('// implicitly throws IOException')
-              PsiWhiteSpace('\n      ')
-              IF
-                PsiElement(if)('if')
-                PsiWhiteSpace(' ')
-                PsiElement(LPAR)('(')
-                CONDITION
+                      PsiElement(false)('false')
+                  PsiWhiteSpace('\n        ')
                   BINARY_EXPRESSION
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('nextUsed')
+                      PsiElement(IDENTIFIER)('next')
                     PsiWhiteSpace(' ')
                     OPERATION_REFERENCE
-                      PsiElement(ANDAND)('&&')
+                      PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    BINARY_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('next')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(EXCLEQ)('!=')
-                      PsiWhiteSpace(' ')
-                      PREFIX_EXPRESSION
-                        OPERATION_REFERENCE
-                          PsiElement(MINUS)('-')
-                        INTEGER_CONSTANT
-                          PsiElement(INTEGER_LITERAL)('1')
-                PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                THEN
-                  BLOCK
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n        ')
-                    BINARY_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('nextUsed')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(EQ)('=')
-                      PsiWhiteSpace(' ')
-                      BOOLEAN_CONSTANT
-                        PsiElement(false)('false')
-                    PsiWhiteSpace('\n        ')
-                    BINARY_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('next')
-                      PsiWhiteSpace(' ')
-                      OPERATION_REFERENCE
-                        PsiElement(EQ)('=')
-                      PsiWhiteSpace(' ')
-                      DOT_QUALIFIED_EXPRESSION
+                        PsiElement(IDENTIFIER)('stream')
+                      PsiElement(DOT)('.')
+                      CALL_EXPRESSION
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('stream')
-                        PsiElement(DOT)('.')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('read')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    PsiComment(EOL_COMMENT)('// throws IOException')
-                    PsiWhiteSpace('\n      ')
-                    PsiElement(RBRACE)('}')
-              PsiWhiteSpace('\n      ')
-              RETURN
-                PsiElement(return)('return')
+                          PsiElement(IDENTIFIER)('read')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiComment(EOL_COMMENT)('// throws IOException')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement(RBRACE)('}')
+            PsiWhiteSpace('\n      ')
+            RETURN
+              PsiElement(return)('return')
+              PsiWhiteSpace(' ')
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('next')
                 PsiWhiteSpace(' ')
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('next')
-                  PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(EXCLEQ)('!=')
+                PsiWhiteSpace(' ')
+                PREFIX_EXPRESSION
                   OPERATION_REFERENCE
-                    PsiElement(EXCLEQ)('!=')
-                  PsiWhiteSpace(' ')
-                  PREFIX_EXPRESSION
-                    OPERATION_REFERENCE
-                      PsiElement(MINUS)('-')
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('1')
-              PsiWhiteSpace('        \n    ')
-              PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('FileOutput')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      DELEGATION_SPECIFIER_LIST
-        DELEGATOR_SUPER_CLASS
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('IAdder')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Byte')
-                PsiElement(GT)('>')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        DELEGATOR_SUPER_CLASS
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('stream')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('OutputStream')
-        PsiWhiteSpace('\n\n  ')
-        CONSTRUCTOR
-          PsiElement(this)('this')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('file')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('File')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
+                    PsiElement(MINUS)('-')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace('        \n    ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('FileOutput')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IAdder')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+                      PsiElement(IDENTIFIER)('Byte')
+              PsiElement(GT)('>')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('stream')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('OutputStream')
+      PsiWhiteSpace('\n\n  ')
+      CONSTRUCTOR
+        PsiElement(this)('this')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('file')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('File')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('stream')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('stream')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('FileOutputStream')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('stream')
+                    PsiElement(IDENTIFIER)('file')
                 PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('stream')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('FileOutputStream')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('file')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n  ')
-        FUN
-          MODIFIER_LIST
-            PsiElement(override)('override')
-          PsiWhiteSpace(' ')
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('add')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('item')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Byte')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('stream')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('write')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('item')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('example')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      FUN
+        MODIFIER_LIST
+          PsiElement(override)('override')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('// this does not rethrow, no appropriate parameters given')
-        PsiWhiteSpace('\n\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('f1')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('File')
+        PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('//= ...')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('f2')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('File')
-        PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('//= ...')
-        PsiWhiteSpace('\n\n  ')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('streamCopy')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('FileInput')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('f1')
-                  PsiElement(RPAR)(')')
-            PsiElement(COMMA)(',')
+        PsiElement(IDENTIFIER)('add')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('item')
             PsiWhiteSpace(' ')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('f2')
-            PsiElement(RPAR)(')')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Byte')
+          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('// throws IOException, you must catch or rethrow explicitly')
-        PsiWhiteSpace('\n\n')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('stream')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('write')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('item')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('example')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// this does not rethrow, no appropriate parameters given')
+      PsiWhiteSpace('\n\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f1')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('File')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('//= ...')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f2')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('File')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('//= ...')
+      PsiWhiteSpace('\n\n  ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('streamCopy')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('FileInput')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('f1')
+                PsiElement(RPAR)(')')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('f2')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// throws IOException, you must catch or rethrow explicitly')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')

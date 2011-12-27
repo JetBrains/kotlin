@@ -6,6 +6,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -78,15 +79,14 @@ public class GenerationState {
         return Pair.create(className, factory.forAnonymousSubclass(className));
     }
 
-    public NamespaceCodegen forNamespace(JetNamespace namespace) {
+    public NamespaceCodegen forNamespace(JetFile namespace) {
         return factory.forNamespace(namespace);
     }
 
-    public BindingContext compile(JetFile psiFile) {
-        final JetNamespace namespace = psiFile.getRootNamespace();
-        final BindingContext bindingContext = AnalyzerFacade.analyzeOneNamespaceWithJavaIntegration(namespace, JetControlFlowDataTraceFactory.EMPTY);
+    public BindingContext compile(JetFile file) {
+        final BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
+        compileCorrectFiles(bindingContext, Collections.singletonList(file));
         return bindingContext;
 //        NamespaceCodegen codegen = forNamespace(namespace);
 //        bindingContexts.push(bindingContext);
@@ -102,15 +102,15 @@ public class GenerationState {
 //        }
     }
 
-    public void compileCorrectNamespaces(BindingContext bindingContext, List<JetNamespace> namespaces) {
-        compileCorrectNamespaces(bindingContext, namespaces, CompilationErrorHandler.THROW_EXCEPTION);
+    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files) {
+        compileCorrectFiles(bindingContext, files, CompilationErrorHandler.THROW_EXCEPTION);
     }
 
-    public void compileCorrectNamespaces(BindingContext bindingContext, List<JetNamespace> namespaces, CompilationErrorHandler errorHandler) {
+    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, CompilationErrorHandler errorHandler) {
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         bindingContexts.push(bindingContext);
         try {
-            for (JetNamespace namespace : namespaces) {
+            for (JetFile namespace : files) {
                 try {
                     generateNamespace(namespace);
                 }
@@ -129,7 +129,7 @@ public class GenerationState {
         }
     }
 
-    protected void generateNamespace(JetNamespace namespace) {
+    protected void generateNamespace(JetFile namespace) {
         NamespaceCodegen codegen = forNamespace(namespace);
         codegen.generate(namespace);
     }
@@ -149,8 +149,8 @@ public class GenerationState {
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
     }
 
-    public static void prepareAnonymousClasses(JetElement aClass, final JetTypeMapper typeMapper) {
-        aClass.acceptChildren(new JetVisitorVoid() {
+    public static void prepareAnonymousClasses(PsiElement element, final JetTypeMapper typeMapper) {
+        element.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement element) {
                 super.visitJetElement(element);

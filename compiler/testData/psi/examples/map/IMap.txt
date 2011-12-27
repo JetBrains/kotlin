@@ -1,31 +1,30 @@
 JetFile: IMap.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    CLASS
-      MODIFIER_LIST
-        PsiElement(open)('open')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('IMap')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('K')
-        PsiElement(COMMA)(',')
+  NAMESPACE_HEADER
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(open)('open')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('IMap')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(in)('in')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(out)('out')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('V')
-        PsiElement(GT)('>')
+        PsiElement(IDENTIFIER)('K')
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  \n\n')
-        PsiElement(RBRACE)('}')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(out)('out')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('V')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  \n\n')
+      PsiElement(RBRACE)('}')

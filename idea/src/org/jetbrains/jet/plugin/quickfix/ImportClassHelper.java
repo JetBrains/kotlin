@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -25,7 +25,7 @@ public class ImportClassHelper {
         perform(JetPluginUtil.computeTypeFullName(type), elementToReplace, newElement);
     }
     
-    public static void perform(@NotNull String typeFullName, @NotNull JetNamespace namespace) {
+    public static void perform(@NotNull String typeFullName, @NotNull JetFile namespace) {
         perform(typeFullName, namespace, null, null);
     }
 
@@ -35,14 +35,14 @@ public class ImportClassHelper {
      * @param element Some element in the tree.
      * @return A namespace element in the tree.
      */
-    public static JetNamespace findOuterNamespace(@NotNull PsiElement element) {
+    public static JetFile findOuterNamespace(@NotNull PsiElement element) {
         PsiElement parent = element;
-        while (!(parent instanceof JetNamespace)) {
+        while (!(parent instanceof JetFile)) {
             parent = parent.getParent();
             assert parent != null;
         }
 
-        return (JetNamespace) parent;
+        return (JetFile) parent;
     }
 
     public static void perform(@NotNull String typeFullName, @NotNull PsiElement elementToReplace, @NotNull PsiElement newElement) {
@@ -55,7 +55,7 @@ public class ImportClassHelper {
      * @param importString full name of the import. Can contain .* if necessary.
      * @param namespace Namespace where directive should be added.
      */
-    public static void addImportDirective(@NotNull String importString, @NotNull JetNamespace namespace) {
+    public static void addImportDirective(@NotNull String importString, @NotNull JetFile namespace) {
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(namespace.getProject(), importString);
@@ -83,7 +83,7 @@ public class ImportClassHelper {
         }
     }
 
-    public static void perform(@NotNull String typeFullName, @NotNull JetNamespace namespace, @Nullable PsiElement elementToReplace, @Nullable PsiElement newElement) {
+    public static void perform(@NotNull String typeFullName, @NotNull JetFile namespace, @Nullable PsiElement elementToReplace, @Nullable PsiElement newElement) {
         addImportDirective(typeFullName, namespace);
 
         if (elementToReplace != null && newElement != null && elementToReplace != newElement) {

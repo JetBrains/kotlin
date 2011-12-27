@@ -17,18 +17,15 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
@@ -67,12 +64,19 @@ public class JetCompiler implements TranslatingCompiler {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                PluginCompilerEnvironment compilerEnvironment = new PluginCompilerEnvironment(compileContext.getProject());
-                CompileSession compileSession = new CompileSession(compilerEnvironment);
-                compileSession.addSources(compileContext.getCompileScope().getFiles(null, true));
-                compileSession.addStdLibSources();
+                VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
 
-                BindingContext bindingContext = compileSession.analyze();
+                GenerationState generationState = new GenerationState(compileContext.getProject(), ClassBuilderFactory.BINARIES);
+                List<JetFile> files = Lists.newArrayList();
+                for (VirtualFile virtualFile : allFiles) {
+                    PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);
+                    if (psiFile instanceof JetFile) {
+                        files.add(((JetFile) psiFile));
+                    }
+                }
+
+                BindingContext bindingContext =
+                    AnalyzerFacade.analyzeFilesWithJavaIntegration(compileContext.getProject(), files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
                 boolean errors = false;
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
@@ -91,10 +95,10 @@ public class JetCompiler implements TranslatingCompiler {
                 }
                 
                 if (!errors) {
-                    final ClassFileFactory factory = compileSession.generate(new CompilationErrorHandler() {
+                    generationState.compileCorrectFiles(bindingContext, files, new CompilationErrorHandler() {
                         @Override
                         public void reportException(Throwable exception, String fileUrl) {
-                            if(exception instanceof CompilationException) {
+                            if (exception instanceof CompilationException) {
                                 report((CompilationException) exception, compileContext);
                             }
                             else {
@@ -102,9 +106,24 @@ public class JetCompiler implements TranslatingCompiler {
                             }
                         }
                     });
+///////////
+//                    GenerationState generationState2 = new GenerationState(compileContext.getProject(), ClassBuilderFactory.TEXT);
+//                    generationState2.compileCorrectFiles(bindingContext, namespaces);
+//                    StringBuilder answer = new StringBuilder();
+//
+//                    final ClassFileFactory factory2 = generationState2.getFactory();
+//                    List<String> files2 = factory2.files();
+//                    for (String file : files2) {
+//                        answer.append("@").append(file).append('\n');
+//                        answer.append(factory2.asText(file));
+//                    }
+//                    System.out.println(answer.toString());
+///////////
 
-                    List<String> files = factory.files();
-                    for (String file : files) {
+
+                    final ClassFileFactory factory = generationState.getFactory();
+                    List<String> filesNames = factory.files();
+                    for (String file : filesNames) {
                         File target = new File(outputDir.getPath(), file);
                         try {
                             FileUtil.writeToFile(target, factory.asBytes(file));
@@ -115,6 +134,23 @@ public class JetCompiler implements TranslatingCompiler {
                 }
             }
         });
+        
+//        Map<Module, ModuleCompileState> moduleMap = new HashMap<Module, ModuleCompileState>();
+//
+//        for (VirtualFile virtualFile : virtualFiles) {
+//            Module module = compileContext.getModuleByFile(virtualFile);
+//            ModuleCompileState state = moduleMap.get(module);
+//            if (state == null) {
+//                state = new ModuleCompileState(compileContext, module, outputSink);
+//                moduleMap.put(module, state);
+//            }
+//            state.compile(virtualFile);
+//        }
+//
+//        for (ModuleCompileState state : moduleMap.values()) {
+//            state.done();
+//        }
+
     }
 
     private void report(Diagnostic diagnostic, CompilerMessageCategory severity, CompileContext compileContext) {

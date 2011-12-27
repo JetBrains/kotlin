@@ -4,6 +4,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -41,6 +42,13 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
         PsiElement redeclaration = ((RedeclarationDiagnostic) diagnostic).getPsiElement();
         if (redeclaration instanceof JetNamedDeclaration) {
             PsiElement nameIdentifier = ((JetNamedDeclaration) redeclaration).getNameIdentifier();
+            if (nameIdentifier != null) {
+                return nameIdentifier.getTextRange();
+            }
+        }
+        else if (redeclaration instanceof JetFile) {
+            JetFile file = (JetFile) redeclaration;
+            PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
             if (nameIdentifier != null) {
                 return nameIdentifier.getTextRange();
             }

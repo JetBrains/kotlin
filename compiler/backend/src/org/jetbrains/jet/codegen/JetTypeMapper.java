@@ -619,6 +619,11 @@ public class JetTypeMapper {
                     signatureVisitor.writeInterfaceBoundEnd();
                 }
             }
+            if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+                signatureVisitor.writeInterfaceBound();
+                mapType(jetType, signatureVisitor);
+                signatureVisitor.writeInterfaceBoundEnd();
+            }
         }
         
         signatureVisitor.writeFormalTypeParameterEnd();
@@ -753,11 +758,12 @@ public class JetTypeMapper {
             return name;
         }
 
-        @SuppressWarnings("unchecked") JetNamedDeclaration container = PsiTreeUtil.getParentOfType(expression, JetNamespace.class, JetClass.class, JetObjectDeclaration.class);
+        @SuppressWarnings("unchecked")
+        PsiElement container = PsiTreeUtil.getParentOfType(expression, JetFile.class, JetClass.class, JetObjectDeclaration.class);
 
         String baseName;
-        if (container instanceof JetNamespace) {
-            baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetNamespace) container)));
+        if (container instanceof JetFile) {
+            baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetFile) container)));
         }
         else {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);

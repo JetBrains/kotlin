@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
@@ -38,10 +37,10 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         }
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
-            JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
-            if (JetMainDetector.hasMain(namespace.getDeclarations())) {
-                mySourceElement = namespace;
-                String fqName = JetPsiUtil.getFQName(namespace);
+            JetFile jetFile = (JetFile) psiFile;
+            if (JetMainDetector.hasMain(jetFile.getDeclarations())) {
+                mySourceElement = jetFile;
+                String fqName = JetPsiUtil.getFQName(jetFile);
                 String className = fqName.length() == 0 ? "namespace" : fqName + ".namespace";
                 return createConfigurationByQName(location.getModule(), configurationContext, className);
             }

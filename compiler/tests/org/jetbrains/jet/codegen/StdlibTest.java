@@ -1,6 +1,6 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.compiler.CoreCompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 
 /**
@@ -33,7 +33,7 @@ public class StdlibTest extends CodegenTestCase {
     protected ClassFileFactory generateClassesInFile() {
         try {
             CompileSession session = new CompileSession(myEnvironment);
-            CoreCompileEnvironment.initializeKotlinRuntime(myEnvironment);
+            CompileEnvironment.initializeKotlinRuntime(myEnvironment);
             session.addSources(myFile.getVirtualFile());
             session.addStdLibSources();
 

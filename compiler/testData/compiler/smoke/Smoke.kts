@@ -1,7 +1,6 @@
 import kotlin.modules.*
 
 val modules = module("smoke") {
-    source files "src/Smoke.kt"
-    testSource files "test/SmokeTest.kt"
+    source files "Smoke.kt"
     jar name System.getProperty("java.io.tmpdir") + "/smoke.jar"
 }

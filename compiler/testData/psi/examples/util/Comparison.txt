@@ -1,60 +1,166 @@
 JetFile: Comparison.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    TYPEDEF
-      PsiElement(type)('type')
+  NAMESPACE_HEADER
+    <empty list>
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Comparison')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace('  ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('naturalOrder')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('T')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Comparable')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Comparison')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(GT)('>')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(DOT)('.')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('compareTo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('castingNaturalOrder')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Object')
+      PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace('  ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(RPAR)(')')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Object')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      PARENTHESIZED
+        PsiElement(LPAR)('(')
+        BINARY_WITH_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('naturalOrder')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('T')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          OPERATION_REFERENCE
+            PsiElement(as)('as')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -66,366 +172,259 @@ JetFile: Comparison.jet
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
+                        PsiElement(IDENTIFIER)('Object')
                 PsiElement(GT)('>')
-        PsiElement(GT)('>')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('b')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Int')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
+      PsiElement(DOT)('.')
+      CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
-        PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('compareTo')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
+          PsiElement(IDENTIFIER)('compareTo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            BINARY_WITH_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(as)('as')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Comparable')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Object')
+                    PsiElement(GT)('>')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ComparisonResult')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('LS')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('castingNaturalOrder')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Object')
-        PsiElement(COMMA)(',')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('EQ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('GR')
+        PsiWhiteSpace('\n')
+        TYPE_PARAMETER_LIST
+          <empty list>
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('MatchableComparison')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(in)('in')
         PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('b')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Object')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Int')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        PARENTHESIZED
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace('  ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          BINARY_WITH_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(as)('as')
-            PsiWhiteSpace(' ')
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Comparable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Object')
-                  PsiElement(GT)('>')
-          PsiElement(RPAR)(')')
-        PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('compareTo')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              BINARY_WITH_TYPE
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-                PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(as)('as')
-                PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('ComparisonResult')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('asMatchableComparison')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('cmp')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Comparison')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Comparable')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('Object')
-                      PsiElement(GT)('>')
-            PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      MODIFIER_LIST
-        PsiElement(enum)('enum')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('ComparisonResult')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      CLASS_BODY
+                      PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('MatchableComparison')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    FUNCTION_LITERAL_EXPRESSION
+      FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
         PsiWhiteSpace('\n  ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('LS')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace(' ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('EQ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace(' ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('GR')
-          PsiWhiteSpace('\n')
-          TYPE_PARAMETER_LIST
-            <empty list>
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('MatchableComparison')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace('  ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(COMMA)(',')
+        BLOCK
+          PROPERTY
+            PsiElement(val)('val')
             PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              TYPE_REFERENCE
-                USER_TYPE
+            PsiElement(IDENTIFIER)('res')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('cmp')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
+                    PsiElement(IDENTIFIER)('a')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n  ')
+          IF
+            PsiElement(if)('if')
+            PsiWhiteSpace(' ')
+            PsiElement(LPAR)('(')
+            CONDITION
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('res')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(EQEQ)('==')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('0')
             PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
+            PsiWhiteSpace(' ')
+            THEN
+              RETURN
+                PsiElement(return)('return')
+                PsiWhiteSpace(' ')
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ComparisonResult')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('EQ')
+          PsiWhiteSpace('\n  ')
+          IF
+            PsiElement(if)('if')
+            PsiWhiteSpace(' ')
+            PsiElement(LPAR)('(')
+            CONDITION
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('res')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('0')
+            PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            THEN
+              RETURN
+                PsiElement(return)('return')
+                PsiWhiteSpace(' ')
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ComparisonResult')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('LS')
+          PsiWhiteSpace('\n  ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('ComparisonResult')
-    PsiWhiteSpace('\n\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('asMatchableComparison')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(GT)('>')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('cmp')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
+              PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Comparison')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('MatchableComparison')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_PROJECTION
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace('\n  ')
-          BLOCK
-            PROPERTY
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('res')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('cmp')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  VALUE_ARGUMENT
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('b')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n  ')
-            IF
-              PsiElement(if)('if')
-              PsiWhiteSpace(' ')
-              PsiElement(LPAR)('(')
-              CONDITION
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('res')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(EQEQ)('==')
-                  PsiWhiteSpace(' ')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('0')
-              PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              THEN
-                RETURN
-                  PsiElement(return)('return')
-                  PsiWhiteSpace(' ')
-                  DOT_QUALIFIED_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('ComparisonResult')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('EQ')
-            PsiWhiteSpace('\n  ')
-            IF
-              PsiElement(if)('if')
-              PsiWhiteSpace(' ')
-              PsiElement(LPAR)('(')
-              CONDITION
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('res')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(LT)('<')
-                  PsiWhiteSpace(' ')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('0')
-              PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              THEN
-                RETURN
-                  PsiElement(return)('return')
-                  PsiWhiteSpace(' ')
-                  DOT_QUALIFIED_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('ComparisonResult')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('LS')
-            PsiWhiteSpace('\n  ')
-            RETURN
-              PsiElement(return)('return')
-              PsiWhiteSpace(' ')
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('ComparisonResult')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('GR')
-          PsiWhiteSpace('\n')
-          PsiElement(RBRACE)('}')
+                PsiElement(IDENTIFIER)('GR')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

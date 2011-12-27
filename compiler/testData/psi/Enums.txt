@@ -1,195 +1,213 @@
 JetFile: Enums.jet
-  NAMESPACE
-    NAMESPACE_HEADER
+  NAMESPACE_HEADER
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Color')
+    TYPE_PARAMETER_LIST
       <empty list>
-    CLASS
-      MODIFIER_LIST
-        PsiElement(enum)('enum')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Color')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('rgb')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('RED')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Color')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('0xFF000')
-                PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n    ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('GREEN')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Color')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('0x00FF00')
-                PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n    ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('BLUE')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Color')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('0x0000FF')
-                PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      MODIFIER_LIST
-        PsiElement(enum)('enum')
-      PsiWhiteSpace(' ')
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('List')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          MODIFIER_LIST
-            PsiElement(out)('out')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('T')
-        PsiElement(GT)('>')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('size')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Int')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('Nil')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('List')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('Nothing')
-                      PsiElement(GT)('>')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('0')
-                PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n    ')
-        ENUM_ENTRY
-          OBJECT_DECLARATION_NAME
-            PsiElement(IDENTIFIER)('Cons')
-          TYPE_PARAMETER_LIST
-            PsiElement(LT)('<')
-            TYPE_PARAMETER
-              PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('value')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('rgb')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('RED')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(COMMA)(',')
+                    PsiElement(IDENTIFIER)('Color')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('0xFF000')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('GREEN')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Color')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('0x00FF00')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('BLUE')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Color')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('0x0000FF')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('List')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        MODIFIER_LIST
+          PsiElement(out)('out')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('size')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('Nil')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('List')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('Nothing')
+                    PsiElement(GT)('>')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('0')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('Cons')
+        TYPE_PARAMETER_LIST
+          PsiElement(LT)('<')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(val)('val')
             PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('tail')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('value')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('tail')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('List')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        INITIALIZER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -202,55 +220,36 @@ JetFile: Enums.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          INITIALIZER_LIST
-            DELEGATOR_SUPER_CALL
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('List')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('T')
-                      PsiElement(GT)('>')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiComment(BLOCK_COMMENT)('/*tail.size + 1*/')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n    ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('isEmpty')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Bool')
-          PsiWhiteSpace('\n      ')
-          PROPERTY_ACCESSOR
-            PsiElement(get)('get')
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('size')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiComment(BLOCK_COMMENT)('/*tail.size + 1*/')
+              VALUE_ARGUMENT
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('//> 0')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+        PsiElement(IDENTIFIER)('isEmpty')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Bool')
+        PsiWhiteSpace('\n      ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('size')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('//> 0')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

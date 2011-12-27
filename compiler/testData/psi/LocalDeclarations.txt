@@ -1,132 +1,131 @@
 JetFile: LocalDeclarations.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('out')
-        PsiWhiteSpace('\n    ')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('out')
+      PsiWhiteSpace('\n    ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        MODIFIER_LIST
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          PsiElement(abstract)('abstract')
+        PsiWhiteSpace(' ')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foof')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        MODIFIER_LIST
+          PsiElement(abstract)('abstract')
+          PsiWhiteSpace(' ')
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foof')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(out)('out')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
         INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('1')
-        PsiWhiteSpace('\n    ')
-        CLASS
-          MODIFIER_LIST
-            ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
+          PsiElement(INTEGER_LITERAL)('5')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('4')
+      PsiWhiteSpace('\n    ')
+      TYPEDEF
+        PsiElement(type)('type')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER_LIST
+          <empty list>
+        PsiElement(EQ)('=')
+        PsiWhiteSpace('  ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+            PsiElement(DOT)('.')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(abstract)('abstract')
-          PsiWhiteSpace(' ')
-          PsiElement(class)('class')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foof')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n    ')
-        CLASS
-          MODIFIER_LIST
-            PsiElement(abstract)('abstract')
+            PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
-            ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
-          PsiElement(class)('class')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foof')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n    ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(out)('out')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('5')
-        PsiWhiteSpace('\n    ')
-        PROPERTY
-          MODIFIER_LIST
-            ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('4')
-        PsiWhiteSpace('\n    ')
-        TYPEDEF
-          PsiElement(type)('type')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('f')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(EQ)('=')
-          PsiWhiteSpace('  ')
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              TUPLE_TYPE
+                PsiElement(HASH)('#')
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(ARROW)('->')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(HASH)('#')
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n')
-        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')
