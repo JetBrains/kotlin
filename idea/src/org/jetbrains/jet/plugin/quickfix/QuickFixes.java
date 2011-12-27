@@ -126,5 +126,7 @@ public class QuickFixes {
         ChangeVariableMutabilityFix changeVariableMutabilityFix = new ChangeVariableMutabilityFix();
         actionMap.put(Errors.VAL_WITH_SETTER, changeVariableMutabilityFix);
         actionMap.put(Errors.VAL_REASSIGNMENT, changeVariableMutabilityFix);
+
+        actionMap.put(Errors.UNSAFE_CALL, new ReplaceDotCallWithSafeCall());
     }
 }
