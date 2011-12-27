@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.ScopeBoundToReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -77,11 +78,20 @@ public class ImportsResolver {
                 descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, scope);
             }
             if (importDirective.isAllUnder()) {
-                if (firstPhase) {
-                    for (DeclarationDescriptor descriptor : descriptors) {
+                for (DeclarationDescriptor descriptor : descriptors) {
+                    if (firstPhase) {
                         if (descriptor instanceof NamespaceDescriptor) {
                             namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
                         }
+                    }
+                    else if (descriptor instanceof VariableDescriptor) {
+                        JetType type = ((VariableDescriptor) descriptor).getOutType();
+                        if (type != null) {
+                            namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, type.getMemberScope()));
+                        }
+                    }
+                    else if (descriptor instanceof ClassDescriptor) {
+                        namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, ((ClassDescriptor) descriptor).getDefaultType().getMemberScope()));
                     }
                 }
                 return;
@@ -167,7 +177,7 @@ public class ImportsResolver {
                 trace.report(NO_CLASS_OBJECT.on(classReference, classDescriptor));
                 return Collections.emptyList();
             }
-            return addImplicitReceiver(lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope()), classDescriptor);
+            return addBoundToReceiver(lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope()), classDescriptor);
         }
 
         @NotNull
@@ -176,19 +186,19 @@ public class ImportsResolver {
 
             JetType variableType = variableDescriptor.getReturnType();
             if (variableType == null) return Collections.emptyList();
-            return addImplicitReceiver(lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope()), variableDescriptor);
+            return addBoundToReceiver(lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope()), variableDescriptor);
         }
 
         @NotNull
-        private static Collection<DeclarationDescriptor> addImplicitReceiver(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor implicitReceiver) {
+        private static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor implicitReceiver) {
             return Collections2.transform(descriptors, new Function<DeclarationDescriptor, DeclarationDescriptor>() {
                 @Override
                 public DeclarationDescriptor apply(@Nullable DeclarationDescriptor descriptor) {
                     if (descriptor instanceof FunctionDescriptor) {
-                        return new FunctionDescriptorWithImplicitReceiver((FunctionDescriptor) descriptor, implicitReceiver);
+                        return new FunctionDescriptorBoundToReceiver((FunctionDescriptor) descriptor, implicitReceiver);
                     }
                     if (descriptor instanceof VariableDescriptor) {
-                        return new VariableDescriptorWithImplicitReceiver((VariableDescriptor) descriptor, implicitReceiver);
+                        return new VariableDescriptorBoundToReceiver((VariableDescriptor) descriptor, implicitReceiver);
                     }
                     return descriptor;
                 }

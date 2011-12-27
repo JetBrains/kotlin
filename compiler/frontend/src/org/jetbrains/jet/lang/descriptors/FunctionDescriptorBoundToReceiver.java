@@ -12,22 +12,22 @@ import java.util.Set;
 /**
  * @author svtk
  */
-public class FunctionDescriptorWithImplicitReceiver implements FunctionDescriptor {
+public class FunctionDescriptorBoundToReceiver implements FunctionDescriptor {
 
     private FunctionDescriptor functionDescriptor;
-    private DeclarationDescriptor implicitReceiver;
+    private DeclarationDescriptor receiver;
 
-    public FunctionDescriptorWithImplicitReceiver(@NotNull FunctionDescriptor functionDescriptor, @NotNull DeclarationDescriptor implicitReceiver) {
+    public FunctionDescriptorBoundToReceiver(@NotNull FunctionDescriptor functionDescriptor, @NotNull DeclarationDescriptor receiver) {
         this.functionDescriptor = functionDescriptor;
-        this.implicitReceiver = implicitReceiver;
+        this.receiver = receiver;
     }
 
     public FunctionDescriptor getFunctionDescriptor() {
         return functionDescriptor;
     }
 
-    public DeclarationDescriptor getImplicitReceiver() {
-        return implicitReceiver;
+    public DeclarationDescriptor getReceiver() {
+        return receiver;
     }
 
     @NotNull

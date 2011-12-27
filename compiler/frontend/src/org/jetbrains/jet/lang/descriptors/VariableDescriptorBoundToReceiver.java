@@ -12,21 +12,21 @@ import java.util.Set;
 /**
  * @author svtk
  */
-public class VariableDescriptorWithImplicitReceiver implements VariableDescriptor {
+public class VariableDescriptorBoundToReceiver implements VariableDescriptor {
     private VariableDescriptor variableDescriptor;
-    private DeclarationDescriptor implicitReceiver;
+    private DeclarationDescriptor receiver;
 
-    public VariableDescriptorWithImplicitReceiver(VariableDescriptor variableDescriptor, DeclarationDescriptor implicitReceiver) {
+    public VariableDescriptorBoundToReceiver(VariableDescriptor variableDescriptor, DeclarationDescriptor receiver) {
         this.variableDescriptor = variableDescriptor;
-        this.implicitReceiver = implicitReceiver;
+        this.receiver = receiver;
     }
 
     public VariableDescriptor getVariableDescriptor() {
         return variableDescriptor;
     }
 
-    public DeclarationDescriptor getImplicitReceiver() {
-        return implicitReceiver;
+    public DeclarationDescriptor getReceiver() {
+        return receiver;
     }
 
     @Override

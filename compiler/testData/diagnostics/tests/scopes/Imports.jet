@@ -57,3 +57,18 @@ class E() {
 class F() {
     fun f() {}
 }
+
+//FILE:c.kt
+package c
+
+import C.*
+
+object C {
+    fun a() {
+    }
+    val b = 3
+}
+
+fun foo() {
+    if (b == 3) a()
+}
