@@ -38,12 +38,16 @@ import static org.jetbrains.k2js.utils.JetTestUtils.analyzeNamespace;
 public final class K2JSTranslator {
 
     @NotNull
-    private final JetCoreEnvironment environment = new JetCoreEnvironment(new Disposable() {
+    private JetCoreEnvironment environment = new JetCoreEnvironment(new Disposable() {
 
         @Override
         public void dispose() {
         }
     });
+
+    public void setEnvironment(JetCoreEnvironment env) {
+        environment = env;
+    }
 
     @Nullable
     private BindingContext bindingContext = null;

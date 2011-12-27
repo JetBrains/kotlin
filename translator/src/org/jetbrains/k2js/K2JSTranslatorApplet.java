@@ -24,13 +24,13 @@ public final class K2JSTranslatorApplet extends Applet {
             return generateJSCode(code, arguments);
         } catch (AssertionError e) {
             reportException(e);
-            return EXCEPTION + " Translation error.";
+            return EXCEPTION + "Translation error.";
         } catch (UnsupportedOperationException e) {
             reportException(e);
-            return EXCEPTION + " Unsupported feature.";
+            return EXCEPTION + "Unsupported feature.";
         } catch (Throwable e) {
             reportException(e);
-            return EXCEPTION + " Unexpected exception.";
+            return EXCEPTION + "Unexpected exception.";
         }
     }
 
