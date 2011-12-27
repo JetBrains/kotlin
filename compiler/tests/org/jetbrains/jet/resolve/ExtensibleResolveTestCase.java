@@ -2,9 +2,10 @@ package org.jetbrains.jet.resolve;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-import java.io.File;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -22,8 +23,12 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
 
     protected void doTest(@NonNls String filePath) throws Exception {
         String text = loadFile(filePath);
-        text = expectedResolveData.extractData(text);
-        JetFile jetFile = createPsiFile(new File(filePath).getName(), text);
-        expectedResolveData.checkResult(jetFile);
+        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
+            @Override
+            public JetFile create(String fileName, String text) {
+                return expectedResolveData.createFileFromMarkedUpText(fileName, text);
+            }
+        });
+        expectedResolveData.checkResult(files);
     }
 }

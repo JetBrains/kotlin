@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -20,15 +21,12 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 
 import java.io.File;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author abreslav
  */
 public class JetDiagnosticsTest extends JetLiteFixture {
     private String name;
-    public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
 
     public JetDiagnosticsTest(@NonNls String dataPath, String name) {
         super(dataPath);
@@ -88,7 +86,12 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 
         String expectedText = loadFile(testFileName);
 
-        List<TestFile> testFileFiles = createTestFiles(testFileName, expectedText);
+        List<TestFile> testFileFiles = JetTestUtils.createTestFiles(testFileName, expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
+            @Override
+            public TestFile create(String fileName, String text) {
+                return new TestFile(fileName, text);
+            }
+        });
 
         boolean importJdk = expectedText.contains("+JDK");
 //        Configuration configuration = importJdk ? JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject()) : Configuration.EMPTY;
@@ -112,41 +115,6 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         }
 
         assertEquals(expectedText, actualText.toString());
-    }
-
-    private List<TestFile> createTestFiles(String testFileName, String expectedText) {
-        List<TestFile> testFileFiles = Lists.newArrayList();
-        Matcher matcher = FILE_PATTERN.matcher(expectedText);
-        if (!matcher.find()) {
-            // One file
-            testFileFiles.add(new TestFile(testFileName, expectedText));
-        }
-        else {
-            int processedChars = 0;
-            // Many files
-            while (true) {
-                String fileName = matcher.group(1);
-                int start = matcher.start();
-                assertTrue("Characters skipped from " + processedChars + " to " + matcher.start(), start == processedChars);
-
-                boolean nextFileExists = matcher.find();
-                int end;
-                if (nextFileExists) {
-                    end = matcher.start();
-                }
-                else {
-                    end = expectedText.length();
-                }
-                String fileText = expectedText.substring(start, end);
-                processedChars = end;
-
-                testFileFiles.add(new TestFile(fileName, fileText));
-
-                if (!nextFileExists) break;
-            }
-            assertTrue("Characters skipped from " + processedChars + " to " + (expectedText.length() - 1), processedChars == expectedText.length());
-        }
-        return testFileFiles;
     }
 
     //    private void convert(File src, File dest) throws IOException {

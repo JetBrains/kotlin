@@ -1,5 +1,6 @@
 package org.jetbrains.jet;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -18,6 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author abreslav
@@ -168,5 +172,43 @@ public class JetTestUtils {
         mkdirs(file);
     }
 
+    public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+    public interface TestFileFactory<F> {
+        F create(String fileName, String text);
+    }
 
+    public static <F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<F> factory) {
+        List<F> testFileFiles = Lists.newArrayList();
+        Matcher matcher = FILE_PATTERN.matcher(expectedText);
+        if (!matcher.find()) {
+            // One file
+            testFileFiles.add(factory.create(testFileName, expectedText));
+        }
+        else {
+            int processedChars = 0;
+            // Many files
+            while (true) {
+                String fileName = matcher.group(1);
+                int start = matcher.start();
+                assert start == processedChars : "Characters skipped from " + processedChars + " to " + matcher.start();
+
+                boolean nextFileExists = matcher.find();
+                int end;
+                if (nextFileExists) {
+                    end = matcher.start();
+                }
+                else {
+                    end = expectedText.length();
+                }
+                String fileText = expectedText.substring(start, end);
+                processedChars = end;
+
+                testFileFiles.add(factory.create(fileName, fileText));
+
+                if (!nextFileExists) break;
+            }
+            assert processedChars == expectedText.length() : "Characters skipped from " + processedChars + " to " + (expectedText.length() - 1);
+        }
+        return testFileFiles;
+    }
 }

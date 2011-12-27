@@ -1,4 +1,4 @@
-~ns~package nestedObjects {
+~ns~package nestedObjects
   object ~A~A {
     val b = `A.B`B
     val d = `A`A.`A.B`B.`A.B.A`A
@@ -25,4 +25,3 @@
   val c = `A`A.`A.B`B
   val d = A.B.`A.B.A`A
   val e = B.`!`A.B
-}

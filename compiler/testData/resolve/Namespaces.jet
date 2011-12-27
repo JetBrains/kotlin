@@ -1,22 +1,21 @@
-package root
-
-~a~package a {
+// FILE: f.kt
+~a~package a
     import java.*
 
     ~a.a~val a : util.List<Int>? = null
 
     val y : Any? = `a.b`b
 
-}
-
-package a {
+// FILE: f.kt
+package a
     import java.util.*
 
     ~a.b~val b : List<Int>? = null
 
     val x = `a.a`a
-}
 
+// FILE: f.kt
+package root
 val x = `a`a.`a.a`a
 
 val y = `a`a.`a.b`b
