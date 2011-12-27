@@ -43,10 +43,6 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
   c : java.lang.Comparable<Int>?
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
-  xxx.<error>Class</error>()
 }
 
 
-package xxx {
-  import java.lang.Class;
-}

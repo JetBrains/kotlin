@@ -118,7 +118,7 @@ enum class MyEnum() {
 
 abstract enum class MyAbstractEnum() {}
 
-package MyNamespace {
+//package MyNamespace {
     //properties
     val <error>a</error>: Int
     val a1: Int = 1
@@ -145,7 +145,7 @@ package MyNamespace {
     fun g() {}
     <error>abstract</error> fun h()
     <error>abstract</error> fun j() {}
-}
+//}
 
 //creating an instance
 abstract class B1(

@@ -21,21 +21,3 @@ fun foo1() : Unit {
   this<error>@a</error>
 }
 
-package closures {
-    class A(val a:Int) {
-
-      class B() {
-        val x = this@B : B
-        val y = this@A : A
-        val z = this : B
-        val Int.xx = this : Int
-        fun Char.xx() : Any {
-          this : Char
-          val <warning>a</warning> = {Double.() -> this : Double + this@xx : Char}
-          val <warning>b</warning> = @a{Double.() -> this@a : Double + this@xx : Char}
-          val <warning>c</warning> = @a{() -> <error>this@a</error> + this@xx : Char}
-          return (@a{Double.() -> this@a : Double + this@xx : Char})
-        }
-      }
-    }
-}

@@ -1,4 +1,4 @@
-package jet121 {
+package jet121
   fun box() : String {
     val answer = apply("OK") { String.() : Int ->
       get(0)
@@ -11,4 +11,3 @@ package jet121 {
   fun apply(arg:String, f :  String.() -> Int) : Int {
       return arg.f()
   }
-}
