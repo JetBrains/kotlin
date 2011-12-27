@@ -20,10 +20,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -238,7 +235,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             {
                 // http://youtrack.jetbrains.net/issue/KT-527
 
-                VariableDescriptor olderVariable = context.scope.getVariable(variableDescriptor.getName());
+                VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
                 if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
                     context.trace.report(Errors.NAME_SHADOWING.on(variableDescriptor, context.trace.getBindingContext()));
                 }
@@ -326,8 +323,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Nullable
     private VariableDescriptor checkHasNextPropertySupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        VariableDescriptor hasNextProperty = iteratorType.getMemberScope().getVariable("hasNext");
-        // TODO :extension properties
+        VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties("hasNext"));
         if (hasNextProperty == null) {
             return null;
         } else {

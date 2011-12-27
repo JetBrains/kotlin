@@ -18,8 +18,14 @@ public abstract class JetScopeImpl implements JetScope {
         return null;
     }
 
+    @NotNull
     @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
         return null;
     }
 

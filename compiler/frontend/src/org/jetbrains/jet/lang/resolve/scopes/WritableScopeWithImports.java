@@ -6,10 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -96,13 +93,25 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         }
     }
 
+    @NotNull
     @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        checkMayRead();
+
+        Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
+        for (JetScope imported : getImports()) {
+            properties.addAll(imported.getProperties(name));
+        }
+        return properties;
+    }
+
+    @Override
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
         checkMayRead();
 
         // Meaningful lookup goes here
         for (JetScope imported : getImports()) {
-            VariableDescriptor importedDescriptor = imported.getVariable(name);
+            VariableDescriptor importedDescriptor = imported.getLocalVariable(name);
             if (importedDescriptor != null) {
                 return importedDescriptor;
             }
@@ -184,7 +193,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
+    public void importVariableAlias(@NotNull String aliasName, @NotNull PropertyDescriptor variableDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addVariableAlias(aliasName, variableDescriptor);

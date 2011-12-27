@@ -49,8 +49,8 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     }
 
     @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor variableDescriptor) {
-        memberScope.addVariableDescriptor(variableDescriptor);
+    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+        memberScope.addPropertyDescriptor(propertyDescriptor);
     }
 
     @Override

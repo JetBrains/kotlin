@@ -145,8 +145,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         properties.add(propertyDescriptor);
         callableMembers.add(propertyDescriptor);
-        scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
-        scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
+        scopeForMemberLookup.addPropertyDescriptor(propertyDescriptor);
+        scopeForMemberResolution.addPropertyDescriptor(propertyDescriptor);
     }
 
     @Override

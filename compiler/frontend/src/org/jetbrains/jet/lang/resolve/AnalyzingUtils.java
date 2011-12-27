@@ -123,7 +123,7 @@ public class AnalyzingUtils {
 
             @Override
             public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                scope.addVariableDescriptor(propertyDescriptor);
+                scope.addPropertyDescriptor(propertyDescriptor);
             }
 
             @Override

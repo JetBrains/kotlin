@@ -71,17 +71,29 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    @Nullable
-    public VariableDescriptor getVariable(@NotNull String name) {
+    @NotNull
+    public Set<VariableDescriptor> getProperties(@NotNull String name) {
         checkMayRead();
 
-        VariableDescriptor variable = writableWorker.getVariable(name);
+        Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
+        properties.addAll(writableWorker.getProperties(name));
+        properties.addAll(getWorkerScope().getProperties(name));
+        properties.addAll(super.getProperties(name)); //imports
+        return properties;
+    }
+
+    @Override
+    @Nullable
+    public VariableDescriptor getLocalVariable(@NotNull String name) {
+        checkMayRead();
+
+        VariableDescriptor variable = writableWorker.getLocalVariable(name);
         if (variable != null) return variable;
 
-        variable = getWorkerScope().getVariable(name);
+        variable = getWorkerScope().getLocalVariable(name);
         if (variable != null) return variable;
 
-        return super.getVariable(name); // Imports
+        return super.getLocalVariable(name); // Imports
     }
 
     @Override
@@ -124,6 +136,13 @@ public class WriteThroughScope extends WritableScopeWithImports {
         checkMayWrite();
 
         writableWorker.addVariableDescriptor(variableDescriptor);
+    }
+
+    @Override
+    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+        checkMayWrite();
+
+        writableWorker.addPropertyDescriptor(propertyDescriptor);
     }
 
     @Override

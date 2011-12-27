@@ -32,8 +32,11 @@ public interface JetScope {
     @Nullable
     NamespaceDescriptor getNamespace(@NotNull String name);
 
+    @NotNull
+    Set<VariableDescriptor> getProperties(@NotNull String name);
+
     @Nullable
-    VariableDescriptor getVariable(@NotNull String name);
+    VariableDescriptor getLocalVariable(@NotNull String name);
 
     @NotNull
     Set<FunctionDescriptor> getFunctions(@NotNull String name);

@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
@@ -113,8 +112,8 @@ public class ImportsResolver {
                 namespaceScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
                 return;
             }
-            if (descriptor instanceof VariableDescriptor) {
-                namespaceScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
+            if (descriptor instanceof PropertyDescriptor) {
+                namespaceScope.importVariableAlias(aliasName, (PropertyDescriptor) descriptor);
             }
         }
 
@@ -191,11 +190,9 @@ public class ImportsResolver {
                 ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
                 if (classifierDescriptor != null) descriptors.add(classifierDescriptor);
 
-                Set<FunctionDescriptor> functionDescriptors = outerScope.getFunctions(referencedName);
-                descriptors.addAll(functionDescriptors);
+                descriptors.addAll(outerScope.getFunctions(referencedName));
 
-                VariableDescriptor variableDescriptor = outerScope.getVariable(referencedName);
-                if (variableDescriptor != null) descriptors.add(variableDescriptor);
+                descriptors.addAll(outerScope.getProperties(referencedName));
 
             }
             if (!firstPhase) {

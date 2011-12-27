@@ -670,7 +670,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     @Override
                     public void visitProperty(JetProperty property) {
                         if (property.getPropertyTypeRef() != null) {
-                            memberDeclarations.addVariableDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property));
+                            memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property));
                         } else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
