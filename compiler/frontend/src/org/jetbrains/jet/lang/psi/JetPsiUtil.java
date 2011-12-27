@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -72,7 +71,7 @@ public class JetPsiUtil {
     public static JetNamedFunction getSurroundingFunction(@Nullable PsiElement element) {
         while (element != null) {
             if (element instanceof JetNamedFunction) return (JetNamedFunction) element;
-            if (element instanceof JetClassOrObject || element instanceof JetNamespace) return null;
+            if (element instanceof JetClassOrObject || element instanceof JetFile) return null;
             element = element.getParent();
         }
         return null;
@@ -104,16 +103,16 @@ public class JetPsiUtil {
         }
     }
 
-    public static String getFQName(JetNamespace jetNamespace) {
-        JetNamespace parent = PsiTreeUtil.getParentOfType(jetNamespace, JetNamespace.class);
-        if (parent != null) {
-            String parentFQName = getFQName(parent);
-            if (parentFQName.length() > 0) {
-                return parentFQName + "." + getFQName(jetNamespace.getHeader());
-            }
-        }
-        return getFQName(jetNamespace.getHeader()); // TODO: Must include module root namespace
-    }
+//    public static String getFQName(JetNamespace jetNamespace) {
+//        JetNamespace parent = PsiTreeUtil.getParentOfType(jetNamespace, JetNamespace.class);
+//        if (parent != null) {
+//            String parentFQName = getFQName(parent);
+//            if (parentFQName.length() > 0) {
+//                return parentFQName + "." + getFQName(jetNamespace.getNamespaceHeader());
+//            }
+//        }
+//        return getFQName(jetNamespace.getNamespaceHeader()); // TODO: Must include module root namespace
+//    }
 
     private static String getFQName(JetNamespaceHeader header) {
         StringBuilder builder = new StringBuilder();
@@ -121,15 +120,18 @@ public class JetPsiUtil {
             builder.append(nameExpression.getReferencedName());
             builder.append(".");
         }
-//        PsiElement nameIdentifier = header.getNameIdentifier();
         builder.append(header.getName());
         return builder.toString();
     }
 
+    public static String getFQName(JetFile file) {
+        return getFQName(file.getNamespaceHeader());
+    }
+
     public static String getFQName(JetClass jetClass) {
-        JetNamedDeclaration parent = PsiTreeUtil.getParentOfType(jetClass, JetNamespace.class, JetClass.class);
-        if (parent instanceof JetNamespace) {
-            return makeFQName(getFQName(((JetNamespace) parent)), jetClass);
+        PsiElement parent = jetClass.getParent();
+        if (parent instanceof JetFile) {
+            return makeFQName(getFQName((JetFile) parent), jetClass);
         }
         if (parent instanceof JetClass) {
             return makeFQName(getFQName(((JetClass) parent)), jetClass);

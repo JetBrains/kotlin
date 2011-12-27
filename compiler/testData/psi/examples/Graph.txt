@@ -1,115 +1,189 @@
 JetFile: Graph.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Vertex')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('V')
-        PsiElement(GT)('>')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('data')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('V')
-        PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Edge')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('V')
-        PsiElement(COMMA)(',')
+  NAMESPACE_HEADER
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Vertex')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('V')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('E')
-        PsiElement(GT)('>')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('from')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('V')
-        PsiElement(COMMA)(',')
+        PsiElement(IDENTIFIER)('data')
         PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('data')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('E')
-        PsiElement(COMMA)(',')
+        PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('to')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('V')
-        PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('Graph')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('V')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('E')
-        PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n\n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('mutableEdges')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          CALL_EXPRESSION
+        TYPE_REFERENCE
+          USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('ArrayList')
+              PsiElement(IDENTIFIER)('V')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Edge')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('V')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('E')
+      PsiElement(GT)('>')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('from')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('V')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('data')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('E')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('to')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('V')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Graph')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('V')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('E')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n\n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('mutableEdges')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('ArrayList')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Edge')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('V')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('E')
+                    PsiElement(GT)('>')
+            PsiElement(GT)('>')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// type is ArrayList, but I want IMutableList')
+      PsiWhiteSpace('\n')
+      PsiComment(BLOCK_COMMENT)('/* options:\n    private val edges : IMutableList<Edge<V, E>> = ArrayList<Edge<V, E>>()\n    private val edges : IMutableList<Edge<V, E>> = ArrayList() // not an erasure, but a request to infer parameters\n*/')
+      PsiWhiteSpace('\n\n  ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('mutableVertices')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('HashSet')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Vertex')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('V')
+                    PsiElement(GT)('>')
+            PsiElement(GT)('>')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('edges')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IList')
             TYPE_ARGUMENT_LIST
               PsiElement(LT)('<')
               TYPE_PROJECTION
@@ -133,30 +207,363 @@ JetFile: Graph.jet
                               PsiElement(IDENTIFIER)('E')
                       PsiElement(GT)('>')
               PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('// type is ArrayList, but I want IMutableList')
-        PsiWhiteSpace('\n')
-        PsiComment(BLOCK_COMMENT)('/* options:\n    private val edges : IMutableList<Edge<V, E>> = ArrayList<Edge<V, E>>()\n    private val edges : IMutableList<Edge<V, E>> = ArrayList() // not an erasure, but a request to infer parameters\n*/')
-        PsiWhiteSpace('\n\n  ')
-        PROPERTY
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('mutableVertices')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          CALL_EXPRESSION
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('mutableEdges')
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('vertices')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('HashSet')
+              PsiElement(IDENTIFIER)('ISet')
             TYPE_ARGUMENT_LIST
               PsiElement(LT)('<')
               TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Edge')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('V')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('E')
+                      PsiElement(GT)('>')
+              PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('mutableVertices')
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n\n  ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('addEdge')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('from')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('V')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('data')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('E')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('to')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('V')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('mutableEdges')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('add')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Edge')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('from')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      VALUE_ARGUMENT
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('data')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      VALUE_ARGUMENT
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('to')
+                      PsiElement(RPAR)(')')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// constructor parameters are inferred')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n  ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('addVertex')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('v')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('V')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('mutableEdges')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('add')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Edge')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('from')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      VALUE_ARGUMENT
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('data')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      VALUE_ARGUMENT
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('to')
+                      PsiElement(RPAR)(')')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// constructor parameters are inferred')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('neighbours')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('v')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Vertex')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                  PsiElement(GT)('>')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('edges')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('filter')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    BINARY_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('it')
+                        PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('from')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
+                      PsiWhiteSpace(' ')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('v')
+                  PsiElement(RBRACE)('}')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('map')
+            FUNCTION_LITERAL_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BLOCK
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('it')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('to')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// type is IIterable<Vertex<V>>')
+      PsiWhiteSpace('\n\n  ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('dfs')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('handler')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace('  ')
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_PARAMETER
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Unit')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          PROPERTY
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('visited')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('HashSet')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Vertex')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_PROJECTION
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('V')
+                        PsiElement(GT)('>')
+                PsiElement(GT)('>')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('vertices')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foreach')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('dfs')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('it')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('visited')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('handler')
+                        PsiElement(RPAR)(')')
+                  PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n\n    ')
+          FUN
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('dfs')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('current')
+                PsiWhiteSpace(' ')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -169,339 +576,160 @@ JetFile: Graph.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('V')
                       PsiElement(GT)('>')
-              PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('edges')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('IList')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Edge')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('V')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('E')
-                        PsiElement(GT)('>')
-                PsiElement(GT)('>')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('mutableEdges')
-          PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace('\n  ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('vertices')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('ISet')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Edge')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('V')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('E')
-                        PsiElement(GT)('>')
-                PsiElement(GT)('>')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('mutableVertices')
-          PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace('\n\n  ')
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('addEdge')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('from')
+              PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('visited')
+                PsiWhiteSpace(' ')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('ISet')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Vertex')
+                            TYPE_ARGUMENT_LIST
+                              PsiElement(LT)('<')
+                              TYPE_PROJECTION
+                                TYPE_REFERENCE
+                                  USER_TYPE
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('V')
+                              PsiElement(GT)('>')
+                      PsiElement(GT)('>')
+              PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('V')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('data')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('E')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('to')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('V')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('mutableEdges')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('add')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Edge')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('from')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('data')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('to')
-                        PsiElement(RPAR)(')')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiComment(EOL_COMMENT)('// constructor parameters are inferred')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n  ')
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('addVertex')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('v')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('V')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('mutableEdges')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('add')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Edge')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('from')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('data')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('to')
-                        PsiElement(RPAR)(')')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiComment(EOL_COMMENT)('// constructor parameters are inferred')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n  ')
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('neighbours')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('v')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Vertex')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('V')
-                    PsiElement(GT)('>')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          DOT_QUALIFIED_EXPRESSION
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('edges')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('filter')
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BLOCK
-                      BINARY_EXPRESSION
-                        DOT_QUALIFIED_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('it')
-                          PsiElement(DOT)('.')
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('from')
-                        PsiWhiteSpace(' ')
-                        OPERATION_REFERENCE
-                          PsiElement(EQEQ)('==')
-                        PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('handler')
+                PsiWhiteSpace(' ')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace('  ')
+                TYPE_REFERENCE
+                  FUNCTION_TYPE
+                    VALUE_PARAMETER_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_PARAMETER
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('V')
+                      PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiElement(ARROW)('->')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('v')
-                    PsiElement(RBRACE)('}')
-            PsiElement(DOT)('.')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('map')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BLOCK
+                          PsiElement(IDENTIFIER)('Unit')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              IF
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(LPAR)('(')
+                CONDITION
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE
+                      PsiElement(EXCL)('!')
                     DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('it')
+                        PsiElement(IDENTIFIER)('visited')
                       PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('to')
-                  PsiElement(RBRACE)('}')
-        PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('// type is IIterable<Vertex<V>>')
-        PsiWhiteSpace('\n\n  ')
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('dfs')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('handler')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace('  ')
-              TYPE_REFERENCE
-                FUNCTION_TYPE
-                  VALUE_PARAMETER_LIST
-                    PsiElement(LPAR)('(')
-                    VALUE_PARAMETER
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('V')
-                    PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Unit')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            PROPERTY
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('visited')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('add')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('current')
+                          PsiElement(RPAR)(')')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace('\n        ')
+                THEN
+                  RETURN
+                    PsiElement(return)('return')
+              PsiWhiteSpace('\n      ')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('HashSet')
+                  PsiElement(IDENTIFIER)('handler')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('current')
+                  PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n      ')
+              DOT_QUALIFIED_EXPRESSION
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('neighbours')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('current')
+                    PsiElement(RPAR)(')')
+                PsiElement(DOT)('.')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foreach')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      BLOCK
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('dfs')
+                          VALUE_ARGUMENT_LIST
+                            PsiElement(LPAR)('(')
+                            VALUE_ARGUMENT
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('it')
+                            PsiElement(COMMA)(',')
+                            PsiWhiteSpace(' ')
+                            VALUE_ARGUMENT
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('visited')
+                            PsiElement(COMMA)(',')
+                            PsiWhiteSpace(' ')
+                            VALUE_ARGUMENT
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('handler')
+                            PsiElement(RPAR)(')')
+                      PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      FUN
+        MODIFIER_LIST
+          PsiElement(public)('public')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('traverse')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('pending')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('IPushPop')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
                   TYPE_PROJECTION
@@ -518,468 +746,239 @@ JetFile: Graph.jet
                                   PsiElement(IDENTIFIER)('V')
                           PsiElement(GT)('>')
                   PsiElement(GT)('>')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n    ')
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('vertices')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('visited')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foreach')
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BLOCK
+                  PsiElement(IDENTIFIER)('ISet')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Vertex')
+                        TYPE_ARGUMENT_LIST
+                          PsiElement(LT)('<')
+                          TYPE_PROJECTION
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('V')
+                          PsiElement(GT)('>')
+                  PsiElement(GT)('>')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('handler')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace('  ')
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_PARAMETER
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Unit')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('vertices')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foreach')
+              PsiWhiteSpace(' ')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        PREFIX_EXPRESSION
+                          OPERATION_REFERENCE
+                            PsiElement(EXCL)('!')
+                          DOT_QUALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('visited')
+                            PsiElement(DOT)('.')
+                            CALL_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('add')
+                              VALUE_ARGUMENT_LIST
+                                PsiElement(LPAR)('(')
+                                VALUE_ARGUMENT
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('it')
+                                PsiElement(RPAR)(')')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace('\n        ')
+                      THEN
+                        CONTINUE
+                          PsiElement(continue)('continue')
+                    PsiWhiteSpace('\n      ')
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('pending')
+                      PsiElement(DOT)('.')
                       CALL_EXPRESSION
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('dfs')
+                          PsiElement(IDENTIFIER)('push')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('it')
-                          PsiElement(COMMA)(',')
-                          PsiWhiteSpace(' ')
-                          VALUE_ARGUMENT
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('visited')
-                          PsiElement(COMMA)(',')
-                          PsiWhiteSpace(' ')
-                          VALUE_ARGUMENT
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('handler')
                           PsiElement(RPAR)(')')
-                    PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n\n    ')
-            FUN
-              PsiElement(fun)('fun')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('dfs')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                VALUE_PARAMETER
-                  PsiElement(IDENTIFIER)('current')
-                  PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Vertex')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('V')
-                        PsiElement(GT)('>')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                VALUE_PARAMETER
-                  PsiElement(IDENTIFIER)('visited')
-                  PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('ISet')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('Vertex')
-                              TYPE_ARGUMENT_LIST
-                                PsiElement(LT)('<')
-                                TYPE_PROJECTION
-                                  TYPE_REFERENCE
-                                    USER_TYPE
-                                      REFERENCE_EXPRESSION
-                                        PsiElement(IDENTIFIER)('V')
-                                PsiElement(GT)('>')
-                        PsiElement(GT)('>')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                VALUE_PARAMETER
-                  PsiElement(IDENTIFIER)('handler')
-                  PsiWhiteSpace(' ')
-                  PsiElement(COLON)(':')
-                  PsiWhiteSpace('  ')
-                  TYPE_REFERENCE
-                    FUNCTION_TYPE
-                      VALUE_PARAMETER_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_PARAMETER
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('V')
-                        PsiElement(RPAR)(')')
-                      PsiWhiteSpace(' ')
-                      PsiElement(ARROW)('->')
-                      PsiWhiteSpace(' ')
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Unit')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              BLOCK
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                IF
-                  PsiElement(if)('if')
-                  PsiWhiteSpace(' ')
-                  PsiElement(LPAR)('(')
-                  CONDITION
-                    PREFIX_EXPRESSION
-                      OPERATION_REFERENCE
-                        PsiElement(EXCL)('!')
-                      DOT_QUALIFIED_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('visited')
-                        PsiElement(DOT)('.')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('add')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('current')
-                            PsiElement(RPAR)(')')
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace('\n        ')
-                  THEN
-                    RETURN
-                      PsiElement(return)('return')
-                PsiWhiteSpace('\n      ')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('handler')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    VALUE_ARGUMENT
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('current')
-                    PsiElement(RPAR)(')')
-                PsiWhiteSpace('\n      ')
-                DOT_QUALIFIED_EXPRESSION
-                  CALL_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('neighbours')
-                    VALUE_ARGUMENT_LIST
-                      PsiElement(LPAR)('(')
-                      VALUE_ARGUMENT
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('current')
-                      PsiElement(RPAR)(')')
-                  PsiElement(DOT)('.')
-                  CALL_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('foreach')
-                    FUNCTION_LITERAL_EXPRESSION
-                      FUNCTION_LITERAL
-                        PsiElement(LBRACE)('{')
-                        BLOCK
-                          CALL_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('dfs')
-                            VALUE_ARGUMENT_LIST
-                              PsiElement(LPAR)('(')
-                              VALUE_ARGUMENT
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('it')
-                              PsiElement(COMMA)(',')
-                              PsiWhiteSpace(' ')
-                              VALUE_ARGUMENT
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('visited')
-                              PsiElement(COMMA)(',')
-                              PsiWhiteSpace(' ')
-                              VALUE_ARGUMENT
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('handler')
-                              PsiElement(RPAR)(')')
-                        PsiElement(RBRACE)('}')
-                PsiWhiteSpace('\n    ')
-                PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n  ')
-        FUN
-          MODIFIER_LIST
-            PsiElement(public)('public')
-          PsiWhiteSpace(' ')
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('traverse')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('pending')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('IPushPop')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Vertex')
-                          TYPE_ARGUMENT_LIST
-                            PsiElement(LT)('<')
-                            TYPE_PROJECTION
-                              TYPE_REFERENCE
-                                USER_TYPE
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('V')
-                            PsiElement(GT)('>')
-                    PsiElement(GT)('>')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('visited')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('ISet')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Vertex')
-                          TYPE_ARGUMENT_LIST
-                            PsiElement(LT)('<')
-                            TYPE_PROJECTION
-                              TYPE_REFERENCE
-                                USER_TYPE
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('V')
-                            PsiElement(GT)('>')
-                    PsiElement(GT)('>')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('handler')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace('  ')
-              TYPE_REFERENCE
-                FUNCTION_TYPE
-                  VALUE_PARAMETER_LIST
-                    PsiElement(LPAR)('(')
-                    VALUE_PARAMETER
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('V')
-                    PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Unit')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            DOT_QUALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('vertices')
-              PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foreach')
-                PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n      ')
-                    BLOCK
-                      IF
-                        PsiElement(if)('if')
-                        PsiWhiteSpace(' ')
-                        PsiElement(LPAR)('(')
-                        CONDITION
-                          PREFIX_EXPRESSION
-                            OPERATION_REFERENCE
-                              PsiElement(EXCL)('!')
-                            DOT_QUALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('visited')
-                              PsiElement(DOT)('.')
-                              CALL_EXPRESSION
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('add')
-                                VALUE_ARGUMENT_LIST
-                                  PsiElement(LPAR)('(')
-                                  VALUE_ARGUMENT
-                                    REFERENCE_EXPRESSION
-                                      PsiElement(IDENTIFIER)('it')
-                                  PsiElement(RPAR)(')')
-                        PsiElement(RPAR)(')')
-                        PsiWhiteSpace('\n        ')
-                        THEN
-                          CONTINUE
-                            PsiElement(continue)('continue')
-                      PsiWhiteSpace('\n      ')
-                      DOT_QUALIFIED_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('pending')
-                        PsiElement(DOT)('.')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('push')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('it')
-                            PsiElement(RPAR)(')')
-                      PsiWhiteSpace('\n      ')
-                      WHILE
-                        PsiElement(while)('while')
-                        PsiWhiteSpace(' ')
-                        PsiElement(LPAR)('(')
-                        CONDITION
-                          PREFIX_EXPRESSION
-                            OPERATION_REFERENCE
-                              PsiElement(EXCL)('!')
+                    WHILE
+                      PsiElement(while)('while')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        PREFIX_EXPRESSION
+                          OPERATION_REFERENCE
+                            PsiElement(EXCL)('!')
+                          DOT_QUALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('pending')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('isEmpty')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      BODY
+                        BLOCK
+                          PsiElement(LBRACE)('{')
+                          PsiWhiteSpace('\n        ')
+                          PROPERTY
+                            PsiElement(val)('val')
+                            PsiWhiteSpace(' ')
+                            PsiElement(IDENTIFIER)('current')
+                            PsiWhiteSpace(' ')
+                            PsiElement(EQ)('=')
+                            PsiWhiteSpace(' ')
                             DOT_QUALIFIED_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('pending')
                               PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('isEmpty')
-                        PsiElement(RPAR)(')')
-                        PsiWhiteSpace(' ')
-                        BODY
-                          BLOCK
-                            PsiElement(LBRACE)('{')
-                            PsiWhiteSpace('\n        ')
-                            PROPERTY
-                              PsiElement(val)('val')
-                              PsiWhiteSpace(' ')
-                              PsiElement(IDENTIFIER)('current')
-                              PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
-                              PsiWhiteSpace(' ')
-                              DOT_QUALIFIED_EXPRESSION
+                              CALL_EXPRESSION
                                 REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('pending')
-                                PsiElement(DOT)('.')
-                                CALL_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('pop')
-                                  VALUE_ARGUMENT_LIST
-                                    PsiElement(LPAR)('(')
-                                    PsiElement(RPAR)(')')
-                            PsiWhiteSpace('\n        ')
+                                  PsiElement(IDENTIFIER)('pop')
+                                VALUE_ARGUMENT_LIST
+                                  PsiElement(LPAR)('(')
+                                  PsiElement(RPAR)(')')
+                          PsiWhiteSpace('\n        ')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('handler')
+                            VALUE_ARGUMENT_LIST
+                              PsiElement(LPAR)('(')
+                              VALUE_ARGUMENT
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('current')
+                              PsiElement(RPAR)(')')
+                          PsiElement(SEMICOLON)(';')
+                          PsiWhiteSpace('\n        ')
+                          DOT_QUALIFIED_EXPRESSION
                             CALL_EXPRESSION
                               REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('handler')
+                                PsiElement(IDENTIFIER)('neighbours')
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('current')
                                 PsiElement(RPAR)(')')
-                            PsiElement(SEMICOLON)(';')
-                            PsiWhiteSpace('\n        ')
-                            DOT_QUALIFIED_EXPRESSION
-                              CALL_EXPRESSION
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('neighbours')
-                                VALUE_ARGUMENT_LIST
-                                  PsiElement(LPAR)('(')
-                                  VALUE_ARGUMENT
-                                    REFERENCE_EXPRESSION
-                                      PsiElement(IDENTIFIER)('current')
-                                  PsiElement(RPAR)(')')
-                              PsiElement(DOT)('.')
-                              CALL_EXPRESSION
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('foreach')
-                                PsiWhiteSpace(' ')
-                                FUNCTION_LITERAL_EXPRESSION
-                                  FUNCTION_LITERAL
-                                    PsiElement(LBRACE)('{')
-                                    PsiWhiteSpace(' ')
-                                    VALUE_PARAMETER_LIST
-                                      VALUE_PARAMETER
-                                        PsiElement(IDENTIFIER)('n')
-                                    PsiWhiteSpace(' ')
-                                    PsiElement(ARROW)('->')
-                                    PsiWhiteSpace('\n          ')
-                                    BLOCK
-                                      IF
-                                        PsiElement(if)('if')
-                                        PsiWhiteSpace(' ')
-                                        PsiElement(LPAR)('(')
-                                        CONDITION
+                            PsiElement(DOT)('.')
+                            CALL_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('foreach')
+                              PsiWhiteSpace(' ')
+                              FUNCTION_LITERAL_EXPRESSION
+                                FUNCTION_LITERAL
+                                  PsiElement(LBRACE)('{')
+                                  PsiWhiteSpace(' ')
+                                  VALUE_PARAMETER_LIST
+                                    VALUE_PARAMETER
+                                      PsiElement(IDENTIFIER)('n')
+                                  PsiWhiteSpace(' ')
+                                  PsiElement(ARROW)('->')
+                                  PsiWhiteSpace('\n          ')
+                                  BLOCK
+                                    IF
+                                      PsiElement(if)('if')
+                                      PsiWhiteSpace(' ')
+                                      PsiElement(LPAR)('(')
+                                      CONDITION
+                                        DOT_QUALIFIED_EXPRESSION
+                                          REFERENCE_EXPRESSION
+                                            PsiElement(IDENTIFIER)('visited')
+                                          PsiElement(DOT)('.')
+                                          CALL_EXPRESSION
+                                            REFERENCE_EXPRESSION
+                                              PsiElement(IDENTIFIER)('add')
+                                            VALUE_ARGUMENT_LIST
+                                              PsiElement(LPAR)('(')
+                                              VALUE_ARGUMENT
+                                                REFERENCE_EXPRESSION
+                                                  PsiElement(IDENTIFIER)('n')
+                                              PsiElement(RPAR)(')')
+                                      PsiElement(RPAR)(')')
+                                      PsiWhiteSpace(' ')
+                                      THEN
+                                        BLOCK
+                                          PsiElement(LBRACE)('{')
+                                          PsiWhiteSpace('\n            ')
                                           DOT_QUALIFIED_EXPRESSION
                                             REFERENCE_EXPRESSION
-                                              PsiElement(IDENTIFIER)('visited')
+                                              PsiElement(IDENTIFIER)('pending')
                                             PsiElement(DOT)('.')
                                             CALL_EXPRESSION
                                               REFERENCE_EXPRESSION
-                                                PsiElement(IDENTIFIER)('add')
+                                                PsiElement(IDENTIFIER)('push')
                                               VALUE_ARGUMENT_LIST
                                                 PsiElement(LPAR)('(')
                                                 VALUE_ARGUMENT
                                                   REFERENCE_EXPRESSION
                                                     PsiElement(IDENTIFIER)('n')
                                                 PsiElement(RPAR)(')')
-                                        PsiElement(RPAR)(')')
-                                        PsiWhiteSpace(' ')
-                                        THEN
-                                          BLOCK
-                                            PsiElement(LBRACE)('{')
-                                            PsiWhiteSpace('\n            ')
-                                            DOT_QUALIFIED_EXPRESSION
-                                              REFERENCE_EXPRESSION
-                                                PsiElement(IDENTIFIER)('pending')
-                                              PsiElement(DOT)('.')
-                                              CALL_EXPRESSION
-                                                REFERENCE_EXPRESSION
-                                                  PsiElement(IDENTIFIER)('push')
-                                                VALUE_ARGUMENT_LIST
-                                                  PsiElement(LPAR)('(')
-                                                  VALUE_ARGUMENT
-                                                    REFERENCE_EXPRESSION
-                                                      PsiElement(IDENTIFIER)('n')
-                                                  PsiElement(RPAR)(')')
-                                            PsiWhiteSpace('\n          ')
-                                            PsiElement(RBRACE)('}')
-                                    PsiWhiteSpace('\n        ')
-                                    PsiElement(RBRACE)('}')
-                            PsiWhiteSpace('\n    ')
-                            PsiComment(BLOCK_COMMENT)('/* alternative\n        pending->push(neighbours(current).filter{n => !visited[n])})\n        // -> means that if push(x : T) and actual parameter y is IIterable<T>, this compiles into\n          y.foreach{ n => push(n) }\n     */')
-                            PsiWhiteSpace('\n      ')
-                            PsiElement(RBRACE)('}')
-                    PsiWhiteSpace('\n    ')
-                    PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+                                          PsiWhiteSpace('\n          ')
+                                          PsiElement(RBRACE)('}')
+                                  PsiWhiteSpace('\n        ')
+                                  PsiElement(RBRACE)('}')
+                          PsiWhiteSpace('\n    ')
+                          PsiComment(BLOCK_COMMENT)('/* alternative\n        pending->push(neighbours(current).filter{n => !visited[n])})\n        // -> means that if push(x : T) and actual parameter y is IIterable<T>, this compiles into\n          y.foreach{ n => push(n) }\n     */')
+                          PsiWhiteSpace('\n      ')
+                          PsiElement(RBRACE)('}')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -1,90 +1,89 @@
 JetFile: Super.jet
   PsiComment(EOL_COMMENT)('// KT-156 Fix the this<Super> syntax')
   PsiWhiteSpace('\n')
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
-        DOT_QUALIFIED_EXPRESSION
-          SUPER_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(super)('super')
-          PsiElement(DOT)('.')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace('\n    ')
-        DOT_QUALIFIED_EXPRESSION
-          SUPER_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(super)('super')
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-            PsiElement(GT)('>')
-          PsiElement(DOT)('.')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace('\n    ')
-        DOT_QUALIFIED_EXPRESSION
-          SUPER_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(super)('super')
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              PsiErrorElement:Type expected
-                <empty list>
-            PsiElement(GT)('>')
-          PsiElement(DOT)('.')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace('\n    ')
-        DOT_QUALIFIED_EXPRESSION
-          SUPER_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(super)('super')
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
-            PsiElement(GT)('>')
-            LABEL_QUALIFIER
-              LABEL_REFERENCE
-                PsiElement(LABEL_IDENTIFIER)('@label')
-          PsiElement(DOT)('.')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiElement(SEMICOLON)(';')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiElement(GT)('>')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            PsiErrorElement:Type expected
+              <empty list>
+          PsiElement(GT)('>')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        SUPER_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(super)('super')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiElement(GT)('>')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@label')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

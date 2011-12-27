@@ -43,8 +43,8 @@ public class NamespaceCodegen {
         v.visitSource(sourceFile.getName(), null);
     }
 
-    public void generate(JetNamespace namespace) {
-        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.NAMESPACE, namespace);
+    public void generate(JetFile file) {
+        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.NAMESPACE, file);
         final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
@@ -52,10 +52,10 @@ public class NamespaceCodegen {
         final ClassCodegen classCodegen = state.forClass();
 
         if (v.generateCode()) {
-            GenerationState.prepareAnonymousClasses(namespace, state.getTypeMapper());
+            GenerationState.prepareAnonymousClasses(file, state.getTypeMapper());
         }
 
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
+        for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 propertyCodegen.gen((JetProperty) declaration);
             }
@@ -72,20 +72,20 @@ public class NamespaceCodegen {
             else if (declaration instanceof JetClassOrObject) {
                 classCodegen.generate(context, (JetClassOrObject) declaration);
             }
-            else if (declaration instanceof JetNamespace) {
-                JetNamespace childNamespace = (JetNamespace) declaration;
-                state.forNamespace(childNamespace).generate(childNamespace);
-            }
+//            else if (declaration instanceof JetFile) {
+//                JetFile childNamespace = (JetFile) declaration;
+//                state.forNamespace(childNamespace).generate(childNamespace);
+//            }
         }
 
-        if (hasNonConstantPropertyInitializers(namespace)) {
-            generateStaticInitializers(namespace);
+        if (hasNonConstantPropertyInitializers(file)) {
+            generateStaticInitializers(file);
         }
 
-        generateTypeInfoFields(namespace, context);
+        generateTypeInfoFields(file, context);
     }
 
-    private void generateStaticInitializers(JetNamespace namespace) {
+    private void generateStaticInitializers(JetFile namespace) {
         MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC,
                                        "<clinit>", "()V", null, null);
         if (v.generateCode()) {
@@ -115,9 +115,9 @@ public class NamespaceCodegen {
         }
     }
 
-    private void generateTypeInfoFields(JetNamespace namespace, CodegenContext context) {
+    private void generateTypeInfoFields(JetFile file, CodegenContext context) {
         if(context.typeInfoConstants != null) {
-            String jvmClassName = getJVMClassName(namespace.getName());
+            String jvmClassName = getJVMClassName(file.getNamespaceHeader().getName());
             for(int index = 0; index != context.typeInfoConstantsCount; index++) {
                 JetType type = context.reverseTypeInfoConstants.get(index);
                 String fieldName = "$typeInfoCache$" + index;
@@ -137,7 +137,7 @@ public class NamespaceCodegen {
                 v.visitFieldInsn(PUTSTATIC, jvmClassName, fieldName, "Ljet/TypeInfo;");
                 v.visitLabel(end);
                 v.visitInsn(ARETURN);
-                FunctionCodegen.endVisit(v, "type info method", namespace);
+                FunctionCodegen.endVisit(v, "type info method", file);
             }
         }
     }
@@ -187,7 +187,7 @@ public class NamespaceCodegen {
         }
     }
 
-    private static boolean hasNonConstantPropertyInitializers(JetNamespace namespace) {
+    private static boolean hasNonConstantPropertyInitializers(JetFile namespace) {
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final JetExpression initializer = ((JetProperty) declaration).getInitializer();

@@ -1,108 +1,107 @@
 JetFile: EOLsInComments.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n  ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n  ')
+      PsiComment(DOC_COMMENT)('/** */')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n  ')
+      PsiComment(BLOCK_COMMENT)('/* */')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      BINARY_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
-        PREFIX_EXPRESSION
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
-        PsiComment(DOC_COMMENT)('/** */')
-        PREFIX_EXPRESSION
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
-        PsiComment(BLOCK_COMMENT)('/* */')
-        PREFIX_EXPRESSION
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        BINARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiComment(BLOCK_COMMENT)('/*\n  */')
-          PsiWhiteSpace('  ')
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
+        PsiWhiteSpace(' ')
         PsiComment(BLOCK_COMMENT)('/*\n  */')
         PsiWhiteSpace('  ')
-        PREFIX_EXPRESSION
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        BINARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiComment(DOC_COMMENT)('/**\n  */')
-          PsiWhiteSpace('  ')
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n  ')
+      PsiComment(BLOCK_COMMENT)('/*\n  */')
+      PsiWhiteSpace('  ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      BINARY_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('//')
-        PsiWhiteSpace('\n  ')
-        PREFIX_EXPRESSION
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n  ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
+        PsiComment(DOC_COMMENT)('/**\n  */')
+        PsiWhiteSpace('  ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
         PsiWhiteSpace(' ')
-        PsiComment(EOL_COMMENT)('//')
-        PsiWhiteSpace('\n')
-        PREFIX_EXPRESSION
-          OPERATION_REFERENCE
-            PsiElement(PLUS)('+')
-          PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('//')
+      PsiWhiteSpace('\n  ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n  ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('//')
+      PsiWhiteSpace('\n')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

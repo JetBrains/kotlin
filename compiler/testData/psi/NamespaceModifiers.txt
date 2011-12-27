@@ -1,19 +1,18 @@
 JetFile: NamespaceModifiers.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      MODIFIER_LIST
-        PsiElement(public)('public')
-        PsiWhiteSpace(' ')
-        ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
+  NAMESPACE_HEADER
+    MODIFIER_LIST
+      PsiElement(public)('public')
       PsiWhiteSpace(' ')
-      PsiElement(namespace)('package')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('name')
+      ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(namespace)('package')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('name')

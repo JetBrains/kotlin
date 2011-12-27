@@ -97,7 +97,7 @@ public class ReadClassDataTest extends UsefulTestCase {
 
         CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
         
-        NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile.getRootNamespace());
+        NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile);
 
         Assert.assertEquals("test", namespaceFromSource.getName());
 

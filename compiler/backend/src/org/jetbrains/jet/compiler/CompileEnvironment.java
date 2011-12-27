@@ -8,21 +8,18 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.ExtensionFunction0;
-import jet.ExtensionFunction10;
-import jet.Function1;
 import jet.modules.IModuleBuilder;
 import jet.modules.IModuleSetBuilder;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -337,9 +334,9 @@ public class CompileEnvironment {
         session.addStdLibSources();
 
         String mainClass = null;
-        for (JetNamespace namespace : session.getSourceFileNamespaces()) {
-            if (JetMainDetector.hasMain(namespace.getDeclarations())) {
-                mainClass = JetPsiUtil.getFQName(namespace) + ".namespace";
+        for (JetFile file : session.getSourceFileNamespaces()) {
+            if (JetMainDetector.hasMain(file.getDeclarations())) {
+                mainClass = JetPsiUtil.getFQName(file) + ".namespace";
                 break;
             }
         }

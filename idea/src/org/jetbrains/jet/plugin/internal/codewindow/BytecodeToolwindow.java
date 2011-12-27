@@ -182,7 +182,7 @@ public class BytecodeToolwindow extends JPanel {
         try {
             BindingContext binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
             AnalyzingUtils.throwExceptionOnErrors(binding);
-            state.compileCorrectNamespaces(binding, Collections.singletonList(file.getRootNamespace()));
+            state.compileCorrectFiles(binding, Collections.singletonList(file));
         } catch (Exception e) {
             StringWriter out = new StringWriter(1024);
             e.printStackTrace(new PrintWriter(out));

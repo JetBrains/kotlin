@@ -10,7 +10,6 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -27,8 +26,8 @@ import java.util.List;
  */
 public class CompileSession {
     private final JetCoreEnvironment myEnvironment;
-    private final List<JetNamespace> mySourceFileNamespaces = new ArrayList<JetNamespace>();
-    private final List<JetNamespace> myLibrarySourceFileNamespaces = new ArrayList<JetNamespace>();
+    private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
+    private final List<JetFile> myLibrarySourceFiles = new ArrayList<JetFile>();
     private List<String> myErrors = new ArrayList<String>();
     private BindingContext myBindingContext;
 
@@ -63,7 +62,7 @@ public class CompileSession {
             VirtualFile fileByPath = myEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(fileByPath);
             if(psiFile instanceof JetFile) {
-                mySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
+                mySourceFiles.add((JetFile) psiFile);
             }
         }
     }
@@ -78,14 +77,14 @@ public class CompileSession {
             if (vFile.getFileType() == JetFileType.INSTANCE) {
                 PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
                 if (psiFile instanceof JetFile) {
-                    mySourceFileNamespaces.add(((JetFile) psiFile).getRootNamespace());
+                    mySourceFiles.add((JetFile) psiFile);
                 }
             }
         }
     }
 
-    public List<JetNamespace> getSourceFileNamespaces() {
-        return mySourceFileNamespaces;
+    public List<JetFile> getSourceFileNamespaces() {
+        return mySourceFiles;
     }
 
     public boolean analyze(final PrintStream out) {
@@ -95,9 +94,9 @@ public class CompileSession {
             }
             return false;
         }
-        List<JetNamespace> allNamespaces = new ArrayList<JetNamespace>(mySourceFileNamespaces);
-        allNamespaces.addAll(myLibrarySourceFileNamespaces);
-        myBindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(
+        List<JetFile> allNamespaces = new ArrayList<JetFile>(mySourceFiles);
+        allNamespaces.addAll(myLibrarySourceFiles);
+        myBindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(
                 myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         ErrorCollector errorCollector = new ErrorCollector(myBindingContext);
         errorCollector.report(out);
@@ -106,13 +105,13 @@ public class CompileSession {
 
     public ClassFileFactory generate() {
         GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES);
-        generationState.compileCorrectNamespaces(myBindingContext, mySourceFileNamespaces);
+        generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
         return generationState.getFactory();
     }
 
     public String generateText() {
         GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.TEXT);
-        generationState.compileCorrectNamespaces(myBindingContext, mySourceFileNamespaces);
+        generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
         return generationState.createText();
     }
 

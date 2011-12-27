@@ -1,43 +1,42 @@
 JetFile: NewLinesValidOperations.jet
-  NAMESPACE
-    NAMESPACE_HEADER
-      <empty list>
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('test')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n    ')
-        PROPERTY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('str')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('str')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          STRING_TEMPLATE
-            PsiElement(OPEN_QUOTE)('"')
-            PsiElement(CLOSING_QUOTE)('"')
-        PsiWhiteSpace('\n\n    ')
-        DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('str')
-          PsiWhiteSpace('\n\n        ')
-          PsiElement(DOT)('.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('length')
-        PsiWhiteSpace('\n\n    ')
-        SAFE_ACCESS_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('str')
-          PsiWhiteSpace('\n\n        ')
-          PsiElement(SAFE_ACCESS)('?.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('length')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n        ')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('length')
+      PsiWhiteSpace('\n\n    ')
+      SAFE_ACCESS_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('str')
+        PsiWhiteSpace('\n\n        ')
+        PsiElement(SAFE_ACCESS)('?.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('length')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

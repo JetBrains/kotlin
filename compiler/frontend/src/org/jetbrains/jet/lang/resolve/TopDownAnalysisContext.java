@@ -30,8 +30,8 @@ import java.util.Set;
     private final ImportsResolver importsResolver;
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    protected final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
-    protected final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
+    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
+    protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
@@ -114,11 +114,11 @@ import java.util.Set;
         return objects;
     }
 
-    public Map<JetNamespace, WritableScope> getNamespaceScopes() {
+    public Map<JetFile, WritableScope> getNamespaceScopes() {
         return namespaceScopes;
     }
 
-    public Map<JetNamespace, NamespaceDescriptorImpl> getNamespaceDescriptors() {
+    public Map<JetFile, NamespaceDescriptorImpl> getNamespaceDescriptors() {
         return namespaceDescriptors;
     }
 

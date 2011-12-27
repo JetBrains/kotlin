@@ -3,7 +3,6 @@ package org.jetbrains.jet.plugin.structureView;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.NavigatablePsiElement;
@@ -75,11 +74,10 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     @Override
     public TreeElement[] getChildren() {
         if (myElement instanceof JetFile) {
-            JetNamespace rootNamespace = ((JetFile) myElement).getRootNamespace();
-            return new TreeElement[] { new JetStructureViewElement((rootNamespace)) };
+            return new TreeElement[] { new JetStructureViewElement(myElement) };
         }
-        else if (myElement instanceof JetNamespace) {
-            return wrapDeclarations(((JetNamespace) myElement).getDeclarations());
+        else if (myElement instanceof JetFile) {
+            return wrapDeclarations(((JetFile) myElement).getDeclarations());
         }
         else if (myElement instanceof JetClass) {
             JetClass jetClass = (JetClass) myElement;

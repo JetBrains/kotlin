@@ -42,7 +42,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
         private JetScope createScope(JetScope libraryScope) {
             JetFile file = JetPsiFactory.createFile(getProject(), "abstract class C { abstract fun foo(); abstract val a: Int }");
-            List<JetDeclaration> declarations = file.getRootNamespace().getDeclarations();
+            List<JetDeclaration> declarations = file.getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
             BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);

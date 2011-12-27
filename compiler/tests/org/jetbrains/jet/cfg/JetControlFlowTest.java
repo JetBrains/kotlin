@@ -72,7 +72,7 @@ public class JetControlFlowTest extends JetLiteFixture {
 
         };
 
-        JetTestUtils.analyzeNamespace(file.getRootNamespace(), new JetControlFlowDataTraceFactory() {
+        JetTestUtils.analyzeFile(file, new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
             public JetPseudocodeTrace createTrace(JetElement element) {

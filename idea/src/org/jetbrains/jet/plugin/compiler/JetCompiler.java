@@ -20,7 +20,6 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -68,16 +67,16 @@ public class JetCompiler implements TranslatingCompiler {
                 VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
 
                 GenerationState generationState = new GenerationState(compileContext.getProject(), ClassBuilderFactory.BINARIES);
-                List<JetNamespace> namespaces = Lists.newArrayList();
+                List<JetFile> files = Lists.newArrayList();
                 for (VirtualFile virtualFile : allFiles) {
                     PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);
                     if (psiFile instanceof JetFile) {
-                        namespaces.add(((JetFile) psiFile).getRootNamespace());
+                        files.add(((JetFile) psiFile));
                     }
                 }
 
                 BindingContext bindingContext =
-                    AnalyzerFacade.analyzeNamespacesWithJavaIntegration(compileContext.getProject(), namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+                    AnalyzerFacade.analyzeFilesWithJavaIntegration(compileContext.getProject(), files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
                 boolean errors = false;
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
@@ -96,10 +95,10 @@ public class JetCompiler implements TranslatingCompiler {
                 }
                 
                 if (!errors) {
-                    generationState.compileCorrectNamespaces(bindingContext, namespaces, new CompilationErrorHandler() {
+                    generationState.compileCorrectFiles(bindingContext, files, new CompilationErrorHandler() {
                         @Override
                         public void reportException(Throwable exception, String fileUrl) {
-                            if(exception instanceof CompilationException) {
+                            if (exception instanceof CompilationException) {
                                 report((CompilationException) exception, compileContext);
                             }
                             else {
@@ -109,7 +108,7 @@ public class JetCompiler implements TranslatingCompiler {
                     });
 ///////////
 //                    GenerationState generationState2 = new GenerationState(compileContext.getProject(), ClassBuilderFactory.TEXT);
-//                    generationState2.compileCorrectNamespaces(bindingContext, namespaces);
+//                    generationState2.compileCorrectFiles(bindingContext, namespaces);
 //                    StringBuilder answer = new StringBuilder();
 //
 //                    final ClassFileFactory factory2 = generationState2.getFactory();
@@ -123,8 +122,8 @@ public class JetCompiler implements TranslatingCompiler {
 
 
                     final ClassFileFactory factory = generationState.getFactory();
-                    List<String> files = factory.files();
-                    for (String file : files) {
+                    List<String> filesNames = factory.files();
+                    for (String file : filesNames) {
                         File target = new File(outputDir.getPath(), file);
                         try {
                             FileUtil.writeToFile(target, factory.asBytes(file));

@@ -1,7 +1,6 @@
 package org.jetbrains.jet.resolve;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
@@ -23,7 +22,6 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -122,12 +120,7 @@ public abstract class ExpectedResolveData {
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        List<JetDeclaration> declarations = Lists.newArrayList();
-        for (JetFile file : files) {
-            declarations.add(file.getRootNamespace());
-        }
-
-        BindingContext bindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(project, declarations, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
                 UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
@@ -135,15 +128,20 @@ public abstract class ExpectedResolveData {
             }
         }
 
-        Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
+        Map<String, PsiElement> nameToDeclaration = Maps.newHashMap();
 
-        Map<JetDeclaration, String> declarationToName = new HashMap<JetDeclaration, String>();
+        Map<PsiElement, String> declarationToName = Maps.newHashMap();
         for (Map.Entry<String, Position> entry : declarationToPosition.entrySet()) {
             String name = entry.getKey();
             Position position = entry.getValue();
             PsiElement element = position.getElement();
 
-            JetDeclaration ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
+            PsiElement ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
+            if (ancestorOfType == null) {
+                JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
+                assert header != null : "Not a declaration: " + name;
+                ancestorOfType = header.getContainingFile();
+            }
             nameToDeclaration.put(name, ancestorOfType);
             declarationToName.put(ancestorOfType, name);
         }

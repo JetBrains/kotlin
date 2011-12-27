@@ -13,7 +13,6 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -96,17 +95,17 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         boolean importJdk = expectedText.contains("+JDK");
 //        Configuration configuration = importJdk ? JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject()) : Configuration.EMPTY;
 
-        List<JetDeclaration> namespaces = Lists.newArrayList();
+        List<JetFile> jetFiles = Lists.newArrayList();
         for (TestFile testFileFile : testFileFiles) {
-            namespaces.add(testFileFile.jetFile.getRootNamespace());
+            jetFiles.add(testFileFile.jetFile);
         }
 
         BindingContext bindingContext;
         if (importJdk) {
-            bindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(getProject(), namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+            bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
         else {
-            bindingContext = AnalyzingUtils.analyzeNamespaces(getProject(), Configuration.EMPTY, namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+            bindingContext = AnalyzingUtils.analyzeFiles(getProject(), Configuration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
 
         StringBuilder actualText = new StringBuilder();

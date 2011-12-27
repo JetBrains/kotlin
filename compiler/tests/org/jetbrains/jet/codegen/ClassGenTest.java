@@ -1,7 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.psi.JetNamespace;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

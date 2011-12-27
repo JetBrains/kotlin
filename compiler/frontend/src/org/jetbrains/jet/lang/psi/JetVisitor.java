@@ -15,10 +15,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(dcl, data);
     }
 
-    public R visitNamespace(JetNamespace namespace, D data) {
-        return visitDeclaration(namespace, data);
-    }
-
     public R visitClass(JetClass klass, D data) {
         return visitNamedDeclaration(klass, data);
     }

@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
-
 /**
  * @author abreslav
  */
@@ -37,7 +35,7 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
             if (element == null) {
                 element = contextToResolveToDeclaration.get(BindingContext.DESCRIPTOR_TO_DECLARATION, duplicatingDescriptor);
                 assert element != null : "No element for descriptor: " + duplicatingDescriptor;
-                }
+            }
             return element;
         }
         

@@ -63,8 +63,8 @@ public class DeclarationResolver {
     }
 
     private void resolveFunctionAndPropertyHeaders() {
-        for (Map.Entry<JetNamespace, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
-            JetNamespace namespace = entry.getKey();
+        for (Map.Entry<JetFile, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
+            JetFile namespace = entry.getKey();
             WritableScope namespaceScope = entry.getValue();
             NamespaceLike namespaceDescriptor = context.getNamespaceDescriptors().get(namespace);
 
