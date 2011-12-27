@@ -619,6 +619,11 @@ public class JetTypeMapper {
                     signatureVisitor.writeInterfaceBoundEnd();
                 }
             }
+            if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+                signatureVisitor.writeInterfaceBound();
+                mapType(jetType, signatureVisitor);
+                signatureVisitor.writeInterfaceBoundEnd();
+            }
         }
         
         signatureVisitor.writeFormalTypeParameterEnd();

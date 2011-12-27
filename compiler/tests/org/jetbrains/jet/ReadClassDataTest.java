@@ -403,7 +403,7 @@ public class ReadClassDataTest extends UsefulTestCase {
                 List<String> list = new ArrayList<String>();
                 for (JetType upper : param.getUpperBounds()) {
                     StringBuilder sb = new StringBuilder();
-                    new Serializer(sb).serialize(upper);
+                    new ValueParameterSerializer(sb).serialize(upper);
                     list.add(sb.toString());
                 }
                 Collections.sort(list);
