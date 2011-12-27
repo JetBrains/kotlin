@@ -3,7 +3,6 @@ package org.jetbrains.jet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CoreCompileEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -138,12 +137,12 @@ public class JetTestUtils {
     }
 
 
-    public static CoreCompileEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
+    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
         JetCoreEnvironment environment = new JetCoreEnvironment(disposable);
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         environment.addToClasspath(rtJar);
         environment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
-        return new CoreCompileEnvironment(environment);
+        return environment;
     }
 
 

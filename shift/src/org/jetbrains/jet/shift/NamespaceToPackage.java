@@ -7,8 +7,7 @@ import com.intellij.openapi.progress.impl.ProgressManagerImpl;
 import com.intellij.pom.PomModel;
 import com.intellij.pom.core.impl.PomModelImpl;
 import org.jetbrains.jet.JetCoreEnvironment;
-import org.jetbrains.jet.compiler.AbstractCompileEnvironment;
-import org.jetbrains.jet.compiler.CoreCompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -62,9 +61,9 @@ public class NamespaceToPackage {
             }
         });
 
-        CoreCompileEnvironment compileEnvironment = new CoreCompileEnvironment();
+        CompileEnvironment compileEnvironment = new CompileEnvironment();
 
-        compileEnvironment.setJavaRuntime(AbstractCompileEnvironment.findRtJar(true));
+        compileEnvironment.setJavaRuntime(CompileEnvironment.findRtJar(true));
             if (!compileEnvironment.initializeKotlinRuntime()) {
                 System.out.println("foo");
             }

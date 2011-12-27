@@ -17,7 +17,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="KotlinStdLib" level="project" />
+    <orderEntry type="module" module-name="stdlib" exported="" />
   </component>
 </module>
 

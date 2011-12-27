@@ -11,7 +11,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -40,11 +39,6 @@ public final class WholeProjectAnalyzerFacade {
             final Project project = rootFile.getProject();
             final Set<JetDeclaration> namespaces = Sets.newLinkedHashSet();
             final ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
-
-            PluginCompilerEnvironment environment = new PluginCompilerEnvironment(project);
-            CompileSession session = new CompileSession(environment);
-            session.addStdLibSources(true);
-            namespaces.addAll(session.getLibrarySourceFileNamespaces());
 
             if (rootManager != null /* && !ApplicationManager.getApplication().isUnitTestMode() */) {
                 VirtualFile[] contentRoots = rootManager.getContentRoots();
