@@ -4,19 +4,33 @@ JetFile: FileStart_ERR.jet
       <empty list>
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(DIV)('/')
-    NAMESPACE
-      NAMESPACE_HEADER
-        PsiElement(namespace)('package')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
-      PsiErrorElement:A namespace block in '{...}' expected
-        <empty list>
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(namespace)('package')
+    PsiWhiteSpace(' ')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foo')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+    PsiErrorElement:Expecting namespace or top level declaration
+      <empty list>
