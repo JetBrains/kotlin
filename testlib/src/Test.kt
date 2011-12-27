@@ -81,6 +81,14 @@ fun assert(actual: Boolean, message: String) {
   println("Answer: ${actual} for ${message}")
 }
 
+fun assertTrue(actual: Boolean, message: String = "") {
+  return assertEquals(true, actual, message)
+}
+
+fun assertFalse(actual: Boolean, message: String = "") {
+    return assertEquals(false, actual, message)
+}
+
 fun assertEquals(expected: Any, actual: Any?, message: String = "") {
   Assert.assertEquals(message, expected, actual)
 }

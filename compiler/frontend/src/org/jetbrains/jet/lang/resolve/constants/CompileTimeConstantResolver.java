@@ -181,7 +181,7 @@ public class CompileTimeConstantResolver {
             if (text.length() == 1) {
                 return new CharValue(text.charAt(0));
             }
-            return new ErrorValue("Too many characters in a character literal" + text);
+            return new ErrorValue("Too many characters in a character literal '" + text + "'");
         }
         return escapedStringToCharValue(text);
     }

@@ -9,6 +9,16 @@ import std.test.*
 import java.util.*
 
 class CollectionTest() : TestSupport() {
+
+  class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
+    private val collection = collection
+
+    override fun iterator(): java.util.Iterator<T> {
+      return collection.iterator().sure()
+    }
+  }
+
+
   val data = arrayList("foo", "bar")
 
   fun testAny() {
@@ -176,5 +186,40 @@ class CollectionTest() : TestSupport() {
         arr is Array<String>
       }
     }
+  }
+
+  fun testSimpleCount() {
+    assertEquals(2, data.count())
+    assertEquals(3, hashSet(12, 14, 15).count())
+    assertEquals(0, ArrayList<Double>().count())
+  }
+
+  fun testLast() {
+    assertEquals("bar", data.last())
+    assertEquals(25, arrayList(15, 19, 20, 25).last())
+    // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
+    assertEquals('a', linkedList('a').last())
+  }
+
+  fun testLastException() {
+    fails { arrayList<Int>().last() }
+    fails { linkedList<String>().last() }
+    fails { hashSet<Char>().last() }
+  }
+
+  fun testContains() {
+    assertTrue(data.contains("foo"))
+    assertTrue(data.contains("bar"))
+    assertFalse(data.contains("some"))
+
+    // TODO: Problems with generation
+//    assertTrue(IterableWrapper(data).contains("bar"))
+//    assertFalse(IterableWrapper(data).contains("some"))
+
+    assertFalse(hashSet<Int>().contains(12))
+    assertTrue(linkedList(15, 19, 20).contains(15))
+
+//    assertTrue(IterableWrapper(hashSet(45, 14, 13)).contains(14))
+//    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
   }
 }
