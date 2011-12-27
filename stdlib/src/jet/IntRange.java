@@ -1,7 +1,5 @@
 package jet;
 
-import jet.typeinfo.TypeInfo;
-
 public final class IntRange implements Range<Integer>, IntIterable, JetObject {
     private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
 

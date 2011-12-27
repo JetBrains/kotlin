@@ -1,4 +1,4 @@
-//FILE:a.kt
+// FILE:a.kt
 package a
 
 import b.B        //class
@@ -23,7 +23,7 @@ fun test(arg: B) {
     f.f()
 }
 
-//FILE:b.kt
+// FILE:b.kt
 package b
 
 class B() {}

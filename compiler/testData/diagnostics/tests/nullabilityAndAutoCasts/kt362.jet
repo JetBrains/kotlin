@@ -1,20 +1,7 @@
+// FILE: this.kt
+
 // KT-362 Don't allow autocasts on vals that are not internal
 package example;
-
-package test {
-    public class Public() {
-        public val public : Int? = 1;
-        protected val protected : Int? = 1;
-        internal protected val i_protected : Int? = 1;
-        val internal : Int? = 1
-    }
-    internal class Internal() {
-        public val public : Int? = 1;
-        protected val protected : Int? = 1;
-        internal protected val i_protected : Int? = 1;
-        val internal : Int? = 1
-    }
-}
 
 fun test() {
   val p = test.Public()
@@ -28,3 +15,20 @@ fun test() {
   if (i.i_protected is Int) i.i_protected + 1
   if (i.internal is Int) i.internal + 1
 }
+
+// FILE: other.kt
+package test
+
+public class Public() {
+    public val public : Int? = 1;
+    protected val protected : Int? = 1;
+    internal protected val i_protected : Int? = 1;
+    val internal : Int? = 1
+}
+internal class Internal() {
+    public val public : Int? = 1;
+    protected val protected : Int? = 1;
+    internal protected val i_protected : Int? = 1;
+    val internal : Int? = 1
+}
+

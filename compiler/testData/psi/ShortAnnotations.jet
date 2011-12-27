@@ -1,6 +1,5 @@
 foo bar(1) buzz<T>(1) zoo package aa
 
-foo bar(1) buzz<T>(1) zoo package a {}
 foo bar(1) buzz<T>(1) zoo class A
 foo bar(1) buzz<T>(1) zoo object B
 foo bar(1) buzz<T>(1) zoo fun a() {}

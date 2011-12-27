@@ -1,16 +1,15 @@
-package redeclarations {
+// FILE: f.kt
+package redeclarations
   object <!REDECLARATION, REDECLARATION!>A<!> {
     val x : Int = 0
 
     val A = 1
   }
 
-  package <!REDECLARATION!>A<!> {
-    class A {}
-  }
-
-  class <!REDECLARATION, REDECLARATION!>A<!> {}
+  class <!REDECLARATION!>A<!> {}
 
   val <!REDECLARATION!>A<!> = 1
 
-}
+// FILE: f.kt
+  package redeclarations.<!REDECLARATION, REDECLARATION!>A<!>
+    class A {}

@@ -1,3 +1,4 @@
+// FILE: f.kt
 // +JDK
 
 import java.*
@@ -49,6 +50,6 @@ fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
 }
 
 
-package xxx {
+// FILE: f.kt
+package xxx
   import java.lang.Class;
-}

@@ -1,26 +1,29 @@
+// FILE: b.kt
 // +JDK
 
-package foobar
 
-package a {
+package foobar.a
     import java.*
 
     val a : util.List<Int>? = null
     val a1 : <!UNRESOLVED_REFERENCE!>List<!><Int>? = null
 
-}
+// FILE: b.kt
+package foobar
 
 abstract class Foo<T>() {
     abstract val x : T<Int>
 }
 
-package a {
+// FILE: b.kt
+package foobar.a
     import java.util.*
 
     val b : List<Int>? = a
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.List<Int>? = a
-}
 
+// FILE: b.kt
+package foobar
 val x1 = a.a
 
 val y1 = a.b

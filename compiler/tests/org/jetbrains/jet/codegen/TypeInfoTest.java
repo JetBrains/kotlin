@@ -2,7 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
 import jet.TypeCastException;
-import jet.typeinfo.TypeInfo;
+import jet.TypeInfo;
 
 import java.lang.reflect.Method;
 
@@ -31,7 +31,7 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testNoArgTypeinfo() throws Exception {
-        loadText("fun foo() = typeinfo.typeinfo<Int>()");
+        loadText("fun foo() = typeinfo<Int>()");
         Method foo = generateFunction();
         TypeInfo typeInfo = (TypeInfo) foo.invoke(null);
         assertSame(TypeInfo.INT_TYPE_INFO, typeInfo);

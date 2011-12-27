@@ -1,6 +1,5 @@
-package override
-
-package normal {
+// FILE: f.kt
+package override.normal
     trait MyTrait {
         fun foo()
         val pr : Unit
@@ -49,9 +48,10 @@ package normal {
         override fun bar() {}
         override val prr : Unit = #()
     }
-}
 
-package generics {
+// FILE: f.kt
+
+package override.generics
     trait MyTrait<T> {
         fun foo(t: T) : T
     }
@@ -110,4 +110,3 @@ package generics {
         fun bar(t: T) = t
         val <R> pr : T = t
     }
-}

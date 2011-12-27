@@ -1,3 +1,4 @@
+// FILE: a.kt
 // +JDK
 
 package abstract
@@ -180,7 +181,8 @@ enum class MyEnum() {
 
 abstract enum class MyAbstractEnum() {}
 
-package MyNamespace {
+// FILE: b.kt
+package MyNamespace
     //properties
     val <!MUST_BE_INITIALIZED!>a<!>: Int
     val a1: Int = 1
@@ -222,8 +224,8 @@ package MyNamespace {
     var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
 
     var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
-}
 
+// FILE: c.kt
 //creating an instance
 abstract class B1(
     val i: Int,

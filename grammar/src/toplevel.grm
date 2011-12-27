@@ -16,15 +16,15 @@ script
   ;
 
 preamble
-  : namespaceHeader? import*
+  : packageHeader? import*
   ;
 
-namespaceHeader
-  : modifiers "namespace" SimpleName{"."} SEMI?
+packageHeader
+  : modifiers "package" SimpleName{"."} SEMI?
   ;
 
 import
-  : "import" ("namespace" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
+  : "import" ("package" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
   ;
 
 /**
@@ -32,7 +32,7 @@ bq. See [Imports|Namespaces#Imports]
 */
 
 toplevelObject
-  : namespace
+  : package
   : class
   : object
   : function
@@ -40,8 +40,8 @@ toplevelObject
   : typedef
   ;
 
-namespace
-  : "namespace" SimpleName{"."} "{"
+package
+  : "package" SimpleName{"."} "{"
        import*
        toplevelObject*
     "}"

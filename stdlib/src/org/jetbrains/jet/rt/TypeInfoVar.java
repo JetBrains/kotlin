@@ -1,7 +1,7 @@
 package org.jetbrains.jet.rt;
 
 import jet.JetObject;
-import jet.typeinfo.TypeInfo;
+import jet.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 
 import java.util.List;

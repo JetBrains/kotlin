@@ -1,28 +1,7 @@
-package foobar
+package a
 
-package a {
     import java.*
-
-    val a : util.List<Int>? = null
-    val a1 : <error>List</error><Int>? = null
-
-}
-
-abstract class Foo<T>() {
-    abstract val x : T<Int>
-}
-
-package a {
     import java.util.*
-
-    val b : List<Int>? = a
-    val b1 : <error>util</error>.List<Int>? = a
-}
-
-val x1 = a.a
-
-val y1 = a.b
-
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +23,7 @@ class StrangeIterateeImpl<in I, out O>(val obj: O) : Iteratee<I, O> {
 
 abstract class Sum() : Iteratee<Int, Int> {
   override fun process(item : Int) : Iteratee<Int, Int> {
-    return foobar.done<Int>(item);
+    return a.done<Int>(item);
   }
   abstract override val isDone : Boolean
   abstract override val result : Int

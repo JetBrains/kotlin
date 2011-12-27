@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
@@ -54,7 +55,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         FunctionDescriptor descriptorForSet = standardFunction(lib.getArray(), Collections.singletonList(new TypeProjection(lib.getIntType())), "set", lib.getIntType(), lib.getIntType());
         nameToDescriptor.put("std::Array.set(Int, Int)", descriptorForSet.getOriginal());
 
-        Map<String,PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
+        Map<String, PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
         PsiClass java_util_Collections = findClass("java.util.Collections");
         nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(java_util_Collections, "emptyList"));
         nameToDeclaration.put("java::java.util.Collections", java_util_Collections);
@@ -78,7 +79,12 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
         nameToDeclaration.put("java::java.lang.Number.intValue()", java_lang_Number.findMethodsByName("intValue", true)[0]);
 
-        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration);
+        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration) {
+            @Override
+            protected JetFile createJetFile(String fileName, String text) {
+                return createCheckAndReturnPsiFile(fileName, text);
+            }
+        };
     }
 
     @NotNull
@@ -154,6 +160,9 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     public static Test suite() {
+//        TestSuite suite = new TestSuite();
+//        suite.addTest(new JetResolveTest("/resolve/Basic.jet", "basic"));
+//        return suite;
         return JetTestCaseBuilder.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override

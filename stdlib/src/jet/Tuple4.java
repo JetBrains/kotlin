@@ -1,7 +1,5 @@
 package jet;
 
-import jet.typeinfo.TypeInfo;
-
 public class Tuple4<T1, T2, T3, T4> extends DefaultJetObject {
     public final T1 _1;
     public final T2 _2;

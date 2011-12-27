@@ -1,7 +1,7 @@
 package org.jetbrains.jet.rt;
 
+import jet.TypeInfo;
 import jet.typeinfo.JetClass;
-import jet.typeinfo.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;

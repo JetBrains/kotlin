@@ -500,7 +500,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
             iv.load(0, JetTypeMapper.TYPE_OBJECT);
             iv.load(frameMap.getTypeInfoIndex(), JetTypeMapper.TYPE_OBJECT);
-            iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V");
+            iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$setTypeInfo", "(Ljet/TypeInfo;)V");
         }
 
         if(closure != null) {
@@ -836,27 +836,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetType defaultType = descriptor.getDefaultType();
         if(CodegenUtil.requireTypeInfoConstructorArg(defaultType)) {
             if(!CodegenUtil.hasDerivedTypeInfoField(defaultType)) {
-                v.newField(myClass, Opcodes.ACC_PROTECTED, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+                v.newField(myClass, Opcodes.ACC_PROTECTED, "$typeInfo", "Ljet/TypeInfo;", null, null);
 
-                MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
+                MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/TypeInfo;", null, null);
                 if (v.generateCode()) {
                     mv.visitCode();
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    iv.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                    iv.getfield(owner, "$typeInfo", "Ljet/TypeInfo;");
                     iv.areturn(JetTypeMapper.TYPE_TYPEINFO);
                     FunctionCodegen.endVisit(iv, "getTypeInfo", myClass);
                 }
 
-                mv = v.newMethod(myClass, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL, "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V", null, null);
+                mv = v.newMethod(myClass, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL, "$setTypeInfo", "(Ljet/TypeInfo;)V", null, null);
                 if (v.generateCode()) {
                     mv.visitCode();
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.load(1, JetTypeMapper.TYPE_OBJECT);
-                    iv.putfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                    iv.putfield(owner, "$typeInfo", "Ljet/TypeInfo;");
                     mv.visitInsn(Opcodes.RETURN);
                     FunctionCodegen.endVisit(iv, "$setTypeInfo", myClass);
                 }
@@ -869,26 +869,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void genGetStaticGetTypeInfoMethod() {
-        final MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
+        final MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/TypeInfo;", null, null);
         if (v.generateCode()) {
             mv.visitCode();
             InstructionAdapter v = new InstructionAdapter(mv);
             String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
-            v.getstatic(owner, "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
+            v.getstatic(owner, "$staticTypeInfo", "Ljet/TypeInfo;");
             v.areturn(JetTypeMapper.TYPE_TYPEINFO);
             FunctionCodegen.endVisit(v, "getTypeInfo", myClass);
         }
     }
 
     private void staticTypeInfoField() {
-        v.newField(myClass, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_STATIC, "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+        v.newField(myClass, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_STATIC, "$staticTypeInfo", "Ljet/TypeInfo;", null, null);
         staticInitializerChunks.add(new CodeChunk() {
             @Override
             public void generate(InstructionAdapter v) {
                 v.aconst(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION));
                 v.iconst(0);
-                v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
-                v.putstatic(typeMapper.mapType(descriptor.getDefaultType(), kind).getInternalName(), "$staticTypeInfo", "Ljet/typeinfo/TypeInfo;");
+                v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
+                v.putstatic(typeMapper.mapType(descriptor.getDefaultType(), kind).getInternalName(), "$staticTypeInfo", "Ljet/TypeInfo;");
             }
         });
     }

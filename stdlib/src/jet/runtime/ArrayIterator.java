@@ -1,7 +1,7 @@
 package jet.runtime;
 
 import jet.*;
-import jet.typeinfo.TypeInfo;
+import jet.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 
 /**

@@ -1,16 +1,12 @@
-package redeclarations {
+//package redeclarations {
   object <error>A</error> {
     val x : Int = 0
 
     val A = 1
   }
 
-  package <error>A</error> {
-    class A {}
-  }
-
   class <error>A</error> {}
 
   val <error>A</error> = 1
 
-}
+//}

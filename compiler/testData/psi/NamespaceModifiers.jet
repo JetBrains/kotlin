@@ -1,9 +1,1 @@
-public [a] package name;
-
-[a] package a {
-  val foo
-
-  private package b {
-
-  }
-}
+public [a] package name

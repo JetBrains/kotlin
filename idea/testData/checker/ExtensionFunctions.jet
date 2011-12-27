@@ -37,7 +37,8 @@ val <T> T.<error>foo</error> : T
 
 fun Int.foo() = this
 
-package null_safety {
+// FILE: b.kt
+//package null_safety
 
         fun parse(<warning>cmd</warning>: String): Command? { return null  }
         class Command() {
@@ -67,5 +68,3 @@ package null_safety {
 
             if (command == null) 1
         }
-
-}

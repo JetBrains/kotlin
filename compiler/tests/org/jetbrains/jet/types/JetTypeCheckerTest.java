@@ -90,8 +90,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testTypeInfo() throws Exception {
-        assertType("typeinfo.typeinfo<Int>", "typeinfo.TypeInfo<Int>");
-        assertType("typeinfo.typeinfo<typeinfo.TypeInfo<Int>>", "typeinfo.TypeInfo<typeinfo.TypeInfo<Int>>");
+        assertType("typeinfo<Int>", "TypeInfo<Int>");
+        assertType("typeinfo<TypeInfo<Int>>", "TypeInfo<TypeInfo<Int>>");
     }
 
     public void testJumps() throws Exception {

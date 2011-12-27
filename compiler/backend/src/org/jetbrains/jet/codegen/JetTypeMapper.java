@@ -3,7 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.JetObject;
-import jet.typeinfo.TypeInfo;
+import jet.TypeInfo;
 import jet.typeinfo.TypeInfoProjection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

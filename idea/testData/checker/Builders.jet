@@ -1,6 +1,6 @@
-import java.util.*
+package html
 
-package html {
+import java.util.*
 
   abstract class Factory<T> {
     abstract fun create() : T
@@ -83,12 +83,6 @@ package html {
     return html
   }
 
-}
-
-package foo {
-
-import html.*
-
 fun result(args : Array<String>) =
   html {
     head {
@@ -118,4 +112,3 @@ fun result(args : Array<String>) =
       }
     }
   }
-}

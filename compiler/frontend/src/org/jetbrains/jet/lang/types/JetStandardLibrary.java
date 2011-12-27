@@ -7,10 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -120,7 +121,6 @@ public class JetStandardLibrary {
     private JetType tuple0Type;
     private JetType nullableStringType;
 
-    private NamespaceDescriptor typeInfoNamespace;
     private Set<FunctionDescriptor> typeInfoFunction;
 
     private JetStandardLibrary(@NotNull Project project) {
@@ -168,9 +168,9 @@ public class JetStandardLibrary {
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
-            typeInfoNamespace = libraryScope.getNamespace("typeinfo");
-            this.typeInfoClass = (ClassDescriptor) typeInfoNamespace.getMemberScope().getClassifier("TypeInfo");
-            typeInfoFunction = typeInfoNamespace.getMemberScope().getFunctions("typeinfo");
+//            typeInfoNamespace = libraryScope.getNamespace("typeinfo");
+            this.typeInfoClass = (ClassDescriptor) libraryScope.getClassifier("TypeInfo");
+            this.typeInfoFunction = libraryScope.getFunctions("typeinfo");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());
@@ -297,11 +297,11 @@ public class JetStandardLibrary {
         return iterableClass;
     }
 
-    public NamespaceDescriptor getTypeInfoNamespace() {
-        initStdClasses();
-        return typeInfoNamespace;
-    }
-
+//    public NamespaceDescriptor getTypeInfoNamespace() {
+//        initStdClasses();
+//        return typeInfoNamespace;
+//    }
+//
     public ClassDescriptor getTypeInfo() {
         initStdClasses();
         return typeInfoClass;

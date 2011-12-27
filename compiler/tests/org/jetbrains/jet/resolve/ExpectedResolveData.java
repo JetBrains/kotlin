@@ -1,8 +1,13 @@
 package org.jetbrains.jet.resolve;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -12,13 +17,14 @@ import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -31,22 +37,37 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 /**
  * @author abreslav
  */
-public class ExpectedResolveData {
+public abstract class ExpectedResolveData {
 
-    private final Map<String, Integer> declarationToPosition = new HashMap<String, Integer>();
-    private final Map<Integer, String> positionToReference = new HashMap<Integer, String>();
-    private final Map<Integer, String> positionToType = new HashMap<Integer, String>();
-    private final Map<String, DeclarationDescriptor> nameToDescriptor;
-    private final Map<String, PsiElement> nameToPsiElement;
-//    private final Map<String, JetType> nameToType;
+    private static class Position {
+        private final PsiElement element;
 
-    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement/*, Map<String, JetType> nameToType*/) {
-        this.nameToDescriptor = nameToDescriptor;
-        this.nameToPsiElement = nameToPsiElement;
-//        this.nameToType = nameToType;
+        private Position(JetFile file, int offset) {
+            this.element = file.findElementAt(offset);
+        }
+
+        public PsiElement getElement() {
+            return element;
+        }
     }
 
-    public String extractData(String text) {
+    private final Map<String, Position> declarationToPosition = Maps.newHashMap();
+    private final Map<Position, String> positionToReference = Maps.newHashMap();
+    private final Map<Position, String> positionToType = Maps.newHashMap();
+
+    private final Map<String, DeclarationDescriptor> nameToDescriptor;
+    private final Map<String, PsiElement> nameToPsiElement;
+
+    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement) {
+        this.nameToDescriptor = nameToDescriptor;
+        this.nameToPsiElement = nameToPsiElement;
+    }
+
+    public final JetFile createFileFromMarkedUpText(String fileName, String text) {
+        Map<String, Integer> declarationToIntPosition = Maps.newHashMap();
+        Map<Integer, String> intPositionToReference = Maps.newHashMap();
+        Map<Integer, String> intPositionToType = Maps.newHashMap();
+
         Pattern pattern = Pattern.compile("(~[^~]+~)|(`[^`]+`)");
         while (true) {
             Matcher matcher = pattern.matcher(text);
@@ -56,16 +77,16 @@ public class ExpectedResolveData {
             String name = group.substring(1, group.length() - 1);
             int start = matcher.start();
             if (group.startsWith("~")) {
-                if (declarationToPosition.put(name, start) != null) {
+                if (declarationToIntPosition.put(name, start) != null) {
                     throw new IllegalArgumentException("Redeclaration: " + name);
                 }
             }
             else if (group.startsWith("`")) {
                 if (name.startsWith(":")) {
-                    positionToType.put(start - 1, name.substring(1));
+                    intPositionToType.put(start - 1, name.substring(1));
                 }
                 else {
-                    positionToReference.put(start, name);
+                    intPositionToReference.put(start, name);
                 }
             }
             else {
@@ -75,16 +96,38 @@ public class ExpectedResolveData {
             text = text.substring(0, start) + text.substring(matcher.end());
         }
 
-        System.out.println(text);
-        return text;
+        JetFile jetFile = createJetFile(fileName, text);
+
+        for (Map.Entry<Integer, String> entry : intPositionToType.entrySet()) {
+            positionToType.put(new Position(jetFile, entry.getKey()), entry.getValue());
+        }
+        for (Map.Entry<String, Integer> entry : declarationToIntPosition.entrySet()) {
+            declarationToPosition.put(entry.getKey(), new Position(jetFile, entry.getValue()));
+        }
+        for (Map.Entry<Integer, String> entry : intPositionToReference.entrySet()) {
+            positionToReference.put(new Position(jetFile, entry.getKey()), entry.getValue());
+        }
+        return jetFile;
     }
 
-    public void checkResult(JetFile file) {
-        final Set<PsiElement> unresolvedReferences = new HashSet<PsiElement>();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject());
+    protected abstract JetFile createJetFile(String fileName, String text);
+
+    public final void checkResult(List<JetFile> files) {
+        if (files.isEmpty()) {
+            System.err.println("Suspicious: no files");
+            return;
+        }
+        final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
+        Project project = files.iterator().next().getProject();
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        BindingContext bindingContext = JetTestUtils.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
+        List<JetDeclaration> declarations = Lists.newArrayList();
+        for (JetFile file : files) {
+            declarations.add(file.getRootNamespace());
+        }
+
+        BindingContext bindingContext = AnalyzerFacade.analyzeNamespacesWithJavaIntegration(project, declarations, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
                 UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
@@ -95,20 +138,20 @@ public class ExpectedResolveData {
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 
         Map<JetDeclaration, String> declarationToName = new HashMap<JetDeclaration, String>();
-        for (Map.Entry<String, Integer> entry : declarationToPosition.entrySet()) {
+        for (Map.Entry<String, Position> entry : declarationToPosition.entrySet()) {
             String name = entry.getKey();
-            Integer position = entry.getValue();
-            PsiElement element = file.findElementAt(position);
+            Position position = entry.getValue();
+            PsiElement element = position.getElement();
 
             JetDeclaration ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
             nameToDeclaration.put(name, ancestorOfType);
             declarationToName.put(ancestorOfType, name);
         }
 
-        for (Map.Entry<Integer, String> entry : positionToReference.entrySet()) {
-            Integer position = entry.getKey();
+        for (Map.Entry<Position, String> entry : positionToReference.entrySet()) {
+            Position position = entry.getKey();
             String name = entry.getValue();
-            PsiElement element = file.findElementAt(position);
+            PsiElement element = position.getElement();
 
             JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
             if ("!".equals(name)) {
@@ -216,11 +259,11 @@ public class ExpectedResolveData {
             }
         }
 
-        for (Map.Entry<Integer, String> entry : positionToType.entrySet()) {
-            Integer position = entry.getKey();
+        for (Map.Entry<Position, String> entry : positionToType.entrySet()) {
+            Position position = entry.getKey();
             String typeName = entry.getValue();
 
-            PsiElement element = file.findElementAt(position);
+            PsiElement element = position.getElement();
             JetExpression expression = getAncestorOfType(JetExpression.class, element);
 
             JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
@@ -230,15 +273,16 @@ public class ExpectedResolveData {
 
                 assertNotNull("Expected class not found: " + typeName, expectedClass);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();
-            } else {
-                Integer declarationPosition = declarationToPosition.get(typeName);
+            }
+            else {
+                Position declarationPosition = declarationToPosition.get(typeName);
                 assertNotNull("Undeclared: " + typeName, declarationPosition);
-                PsiElement declElement = file.findElementAt(declarationPosition);
+                PsiElement declElement = declarationPosition.getElement();
                 assertNotNull(declarationPosition);
                 JetDeclaration declaration = getAncestorOfType(JetDeclaration.class, declElement);
                 assertNotNull(declaration);
                 if (declaration instanceof JetClass) {
-                    ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, (JetClass) declaration);
+                    ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
                     expectedTypeConstructor = classDescriptor.getTypeConstructor();
                 }
                 else if (declaration instanceof JetTypeParameter) {

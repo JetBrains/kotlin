@@ -16,112 +16,119 @@ JetFile: RootNamespace.jet
       PsiWhiteSpace('\n\n')
       TYPE_PARAMETER_LIST
         <empty list>
-    NAMESPACE
-      NAMESPACE_HEADER
-        PsiElement(namespace)('package')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
-      PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(namespace)('package')
+    PsiWhiteSpace(' ')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n  ')
-      NAMESPACE_BODY
-        FUN
-          PsiElement(fun)('fun')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
+    PsiWhiteSpace('\n  ')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                DOT_QUALIFIED_EXPRESSION
-                  ROOT_NAMESPACE
-                    PsiElement(namespace)('package')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
+              ROOT_NAMESPACE
+                PsiElement(namespace)('package')
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('X')
-            PsiWhiteSpace('\n    ')
+                PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('X')
+        PsiWhiteSpace('\n    ')
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                DOT_QUALIFIED_EXPRESSION
-                  ROOT_NAMESPACE
-                    PsiElement(namespace)('package')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
+              ROOT_NAMESPACE
+                PsiElement(namespace)('package')
               PsiElement(DOT)('.')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n    ')
-            WHEN
-              PsiElement(when)('when')
-              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('X')
+            VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('e')
               PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        WHEN
+          PsiElement(when)('when')
+          PsiWhiteSpace(' ')
+          PsiElement(LPAR)('(')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION_IS_PATTERN
+              PsiElement(is)('is')
               PsiWhiteSpace(' ')
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n      ')
-              WHEN_ENTRY
-                WHEN_CONDITION_IS_PATTERN
-                  PsiElement(is)('is')
-                  PsiWhiteSpace(' ')
-                  DECOMPOSER_PATTERN
+              DECOMPOSER_PATTERN
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     DOT_QUALIFIED_EXPRESSION
-                      DOT_QUALIFIED_EXPRESSION
-                        DOT_QUALIFIED_EXPRESSION
-                          ROOT_NAMESPACE
-                            PsiElement(namespace)('package')
-                          PsiElement(DOT)('.')
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('foo')
-                        PsiElement(DOT)('.')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('bar')
+                      ROOT_NAMESPACE
+                        PsiElement(namespace)('package')
                       PsiElement(DOT)('.')
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('X')
-                    PsiWhiteSpace('  ')
-                    DECOMPOSER_ARGUMENT_LIST
-                      PsiElement(HASH)('#')
-                      PsiElement(LPAR)('(')
-                      TUPLE_PATTERN_ENTRY
-                        TYPE_PATTERN
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('x')
-                      PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                PsiElement(ARROW)('->')
-                PsiWhiteSpace(' ')
-                BLOCK
-                  PsiElement(LBRACE)('{')
-                  PsiElement(RBRACE)('}')
-              PsiWhiteSpace('\n    ')
+                        PsiElement(IDENTIFIER)('foo')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('bar')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('X')
+                PsiWhiteSpace('  ')
+                DECOMPOSER_ARGUMENT_LIST
+                  PsiElement(HASH)('#')
+                  PsiElement(LPAR)('(')
+                  TUPLE_PATTERN_ENTRY
+                    TYPE_PATTERN
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('x')
+                  PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            BLOCK
+              PsiElement(LBRACE)('{')
               PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n  ')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(RBRACE)('}')
