@@ -139,7 +139,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+    public void addPropertyDescriptor(@NotNull VariableDescriptor propertyDescriptor) {
         checkMayWrite();
 
         writableWorker.addPropertyDescriptor(propertyDescriptor);

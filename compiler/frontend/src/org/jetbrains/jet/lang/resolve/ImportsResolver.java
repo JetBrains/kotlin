@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,19 +103,17 @@ public class ImportsResolver {
             if (firstPhase) {
                 if (descriptor instanceof ClassifierDescriptor) {
                     namespaceScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
-                    return;
                 }
                 if (descriptor instanceof NamespaceDescriptor) {
                     namespaceScope.importNamespaceAlias(aliasName, (NamespaceDescriptor) descriptor);
-                    return;
                 }
+                return;
             }
             if (descriptor instanceof FunctionDescriptor) {
                 namespaceScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
-                return;
             }
-            if (descriptor instanceof PropertyDescriptor) {
-                namespaceScope.importVariableAlias(aliasName, (PropertyDescriptor) descriptor);
+            if (descriptor instanceof VariableDescriptor) {
+                namespaceScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
             }
         }
 
@@ -167,7 +167,7 @@ public class ImportsResolver {
                 trace.report(NO_CLASS_OBJECT.on(classReference, classDescriptor));
                 return Collections.emptyList();
             }
-            return lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope());
+            return addImplicitReceiver(lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope()), classDescriptor);
         }
 
         @NotNull
@@ -176,9 +176,25 @@ public class ImportsResolver {
 
             JetType variableType = variableDescriptor.getReturnType();
             if (variableType == null) return Collections.emptyList();
-            return lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope());
+            return addImplicitReceiver(lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope()), variableDescriptor);
         }
 
+        @NotNull
+        private static Collection<DeclarationDescriptor> addImplicitReceiver(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor implicitReceiver) {
+            return Collections2.transform(descriptors, new Function<DeclarationDescriptor, DeclarationDescriptor>() {
+                @Override
+                public DeclarationDescriptor apply(@Nullable DeclarationDescriptor descriptor) {
+                    if (descriptor instanceof FunctionDescriptor) {
+                        return new FunctionDescriptorWithImplicitReceiver((FunctionDescriptor) descriptor, implicitReceiver);
+                    }
+                    if (descriptor instanceof VariableDescriptor) {
+                        return new VariableDescriptorWithImplicitReceiver((VariableDescriptor) descriptor, implicitReceiver);
+                    }
+                    return descriptor;
+                }
+            });
+        }
+        
         @NotNull
         private Collection<DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope outerScope) {
             List<DeclarationDescriptor> descriptors = Lists.newArrayList();
