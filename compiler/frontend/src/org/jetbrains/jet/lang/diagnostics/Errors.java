@@ -77,7 +77,7 @@ public interface Errors {
     DiagnosticWithParameterFactory<JetModifierList, JetKeywordToken> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticWithParameterFactory.create(WARNING, "Visibility modifiers are redundant in getter", DiagnosticParameters.MODIFIER);
     SimplePsiElementOnlyDiagnosticFactory<JetClass> TRAIT_CAN_NOT_BE_FINAL = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Trait can not be final");
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
-    SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message
+    SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
     SimpleDiagnosticFactory RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "'return' is not allowed here");
     SimpleDiagnosticFactory PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed for immediate arguments of a supertype");
     SimpleDiagnosticFactory LABEL_NAME_CLASH = SimpleDiagnosticFactory.create(WARNING, "There is more than one label with such a name in this scope");
