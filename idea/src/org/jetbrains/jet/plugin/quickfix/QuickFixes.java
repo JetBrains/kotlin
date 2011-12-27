@@ -87,7 +87,6 @@ public class QuickFixes {
 
         add(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
 
-        add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallWithDotCall.createFactory());
 
         JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory(true);
         add(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);
@@ -109,7 +108,7 @@ public class QuickFixes {
         add(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
         add(Errors.REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         add(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
-        
+
         add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
 
         JetIntentionActionFactory<JetSimpleNameExpression> changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
@@ -127,6 +126,7 @@ public class QuickFixes {
         actionMap.put(Errors.VAL_WITH_SETTER, changeVariableMutabilityFix);
         actionMap.put(Errors.VAL_REASSIGNMENT, changeVariableMutabilityFix);
 
-        actionMap.put(Errors.UNSAFE_CALL, new ReplaceDotCallWithSafeCall());
+        actionMap.put(Errors.UNNECESSARY_SAFE_CALL, new ReplaceCallFix(false));
+        actionMap.put(Errors.UNSAFE_CALL, new ReplaceCallFix(true));
     }
 }
