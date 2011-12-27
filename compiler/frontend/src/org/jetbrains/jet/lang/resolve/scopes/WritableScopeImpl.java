@@ -89,7 +89,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void importVariableAlias(@NotNull String aliasName, @NotNull PropertyDescriptor variableDescriptor) {
+    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
         checkMayWrite();
 
         addPropertyDescriptor(variableDescriptor);
@@ -173,7 +173,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
     
     @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+    public void addPropertyDescriptor(@NotNull VariableDescriptor propertyDescriptor) {
         addVariableDescriptor(propertyDescriptor, true);
     }
     

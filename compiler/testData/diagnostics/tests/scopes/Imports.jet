@@ -7,10 +7,20 @@ import b.ext      //extension function
 import b.value    //property
 import b.C.bar    //function from class object
 import b.C.cValue //property from class object
+import b.constant.fff     //function from val
+import b.constant.dValue  //property from val
+import b.E.f      //val from class object
 
 fun test(arg: B) {
     foo(value)
     arg.ext()
+
+    bar()
+    foo(cValue)
+
+    fff(dValue)
+
+    f.f()
 }
 
 // FILE:b.kt
@@ -18,7 +28,7 @@ package b
 
 class B() {}
 
-fun foo(<!UNUSED_PARAMETER!>i<!>: Int) {}
+fun foo(i: Int) = i
 
 fun B.ext() {}
 
@@ -29,4 +39,21 @@ class C() {
         fun bar() {}
         val cValue = 1
     }
+}
+
+class D() {
+    fun fff(s: String) = s
+    val dValue = "w"
+}
+
+val constant = D()
+
+class E() {
+    class object {
+        val f = F()
+    }
+}
+
+class F() {
+    fun f() {}
 }
