@@ -348,14 +348,14 @@ public abstract class AbstractCompileEnvironment {
     public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
         List<String> files = factory.files();
         for (String file : files) {
-            if(!skipFile(file)) {
+//            if(!skipFile(file)) {
                 File target = new File(outputDir, file);
                 try {
                     FileUtil.writeToFile(target, factory.asBytes(file));
                 } catch (IOException e) {
                     throw new CompileEnvironmentException(e);
                 }
-            }
+//            }
         }
     }
 
