@@ -8,7 +8,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -118,8 +117,7 @@ public class JetPsiUtil {
 
     private static String getFQName(JetNamespaceHeader header) {
         StringBuilder builder = new StringBuilder();
-        for (Iterator<JetSimpleNameExpression> iterator = header.getParentNamespaceNames().iterator(); iterator.hasNext(); ) {
-            JetSimpleNameExpression nameExpression = iterator.next();
+        for (JetSimpleNameExpression nameExpression : header.getParentNamespaceNames()) {
             builder.append(nameExpression.getReferencedName());
             builder.append(".");
         }

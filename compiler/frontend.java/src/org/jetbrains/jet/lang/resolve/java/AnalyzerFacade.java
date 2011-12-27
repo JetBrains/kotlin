@@ -45,13 +45,15 @@ public class AnalyzerFacade {
     private static final Object lock = new Object();
 
     public static BindingContext analyzeFileWithCache(@NotNull final JetFile file, @NotNull final Function<JetFile, Collection<JetDeclaration>> declarationProvider) {
-        // TODO : Synchronization?
-        CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
-        if (bindingContextCachedValue == null) {
-            bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
-                @Override
-                public Result<BindingContext> compute() {
-                    synchronized (lock) {
+
+        // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
+        synchronized (lock) {
+
+            CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
+            if (bindingContextCachedValue == null) {
+                bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
+                    @Override
+                    public Result<BindingContext> compute() {
                         try {
                             BindingContext bindingContext = analyzeNamespacesWithJavaIntegration(file.getProject(), declarationProvider.fun(file), Predicates.<PsiFile>equalTo(file), JetControlFlowDataTraceFactory.EMPTY);
                             return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
@@ -68,12 +70,12 @@ public class AnalyzerFacade {
                             return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
                         }
                     }
-                }
+                }, false);
+                file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
+            }
 
-            }, false);
-            file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
+            return bindingContextCachedValue.getValue();
         }
-        return bindingContextCachedValue.getValue();
     }
 
     public static BindingContext analyzeOneNamespaceWithJavaIntegration(JetNamespace namespace, JetControlFlowDataTraceFactory flowDataTraceFactory) {
