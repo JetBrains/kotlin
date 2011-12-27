@@ -13,6 +13,12 @@
       </component>
   </project-components>
 
+    <module-components>
+        <component>
+            <implementation-class>org.jetbrains.jet.plugin.compiler.JetLibraryManager</implementation-class>
+        </component>
+    </module-components>
+
   <actions>
      <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
              text="Show Expression Type">

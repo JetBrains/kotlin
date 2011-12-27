@@ -17,6 +17,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
@@ -65,19 +67,12 @@ public class JetCompiler implements TranslatingCompiler {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
+                PluginCompilerEnvironment compilerEnvironment = new PluginCompilerEnvironment(compileContext.getProject());
+                CompileSession compileSession = new CompileSession(compilerEnvironment);
+                compileSession.addSources(compileContext.getCompileScope().getFiles(null, true));
+                compileSession.addStdLibSources();
 
-                GenerationState generationState = new GenerationState(compileContext.getProject(), ClassBuilderFactory.BINARIES);
-                List<JetNamespace> namespaces = Lists.newArrayList();
-                for (VirtualFile virtualFile : allFiles) {
-                    PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);
-                    if (psiFile instanceof JetFile) {
-                        namespaces.add(((JetFile) psiFile).getRootNamespace());
-                    }
-                }
-
-                BindingContext bindingContext =
-                    AnalyzerFacade.analyzeNamespacesWithJavaIntegration(compileContext.getProject(), namespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+                BindingContext bindingContext = compileSession.analyze();
 
                 boolean errors = false;
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
@@ -96,7 +91,7 @@ public class JetCompiler implements TranslatingCompiler {
                 }
                 
                 if (!errors) {
-                    generationState.compileCorrectNamespaces(bindingContext, namespaces, new CompilationErrorHandler() {
+                    final ClassFileFactory factory = compileSession.generate(new CompilationErrorHandler() {
                         @Override
                         public void reportException(Throwable exception, String fileUrl) {
                             if(exception instanceof CompilationException) {
@@ -107,22 +102,7 @@ public class JetCompiler implements TranslatingCompiler {
                             }
                         }
                     });
-///////////
-//                    GenerationState generationState2 = new GenerationState(compileContext.getProject(), ClassBuilderFactory.TEXT);
-//                    generationState2.compileCorrectNamespaces(bindingContext, namespaces);
-//                    StringBuilder answer = new StringBuilder();
-//
-//                    final ClassFileFactory factory2 = generationState2.getFactory();
-//                    List<String> files2 = factory2.files();
-//                    for (String file : files2) {
-//                        answer.append("@").append(file).append('\n');
-//                        answer.append(factory2.asText(file));
-//                    }
-//                    System.out.println(answer.toString());
-///////////
 
-
-                    final ClassFileFactory factory = generationState.getFactory();
                     List<String> files = factory.files();
                     for (String file : files) {
                         File target = new File(outputDir.getPath(), file);
@@ -135,23 +115,6 @@ public class JetCompiler implements TranslatingCompiler {
                 }
             }
         });
-        
-//        Map<Module, ModuleCompileState> moduleMap = new HashMap<Module, ModuleCompileState>();
-//
-//        for (VirtualFile virtualFile : virtualFiles) {
-//            Module module = compileContext.getModuleByFile(virtualFile);
-//            ModuleCompileState state = moduleMap.get(module);
-//            if (state == null) {
-//                state = new ModuleCompileState(compileContext, module, outputSink);
-//                moduleMap.put(module, state);
-//            }
-//            state.compile(virtualFile);
-//        }
-//
-//        for (ModuleCompileState state : moduleMap.values()) {
-//            state.done();
-//        }
-
     }
 
     private void report(Diagnostic diagnostic, CompilerMessageCategory severity, CompileContext compileContext) {

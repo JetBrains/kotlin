@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.CoreCompileEnvironment;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -49,7 +49,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         }
     };
 
-    private JetCoreEnvironment jetCoreEnvironment;
+    private CoreCompileEnvironment jetCoreEnvironment;
     private File tmpdir;
     
     private final File testFile;
@@ -72,7 +72,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     }
 
     private void createMockCoreEnvironment() {
-        jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable);
+        jetCoreEnvironment = new CoreCompileEnvironment(new JetCoreEnvironment(myTestRootDisposable));
 
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         jetCoreEnvironment.addToClasspath(rtJar);
@@ -95,7 +95,7 @@ public class ReadClassDataTest extends UsefulTestCase {
 
         ClassFileFactory classFileFactory = state.getFactory();
 
-        CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
+        CoreCompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
         
         NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile.getRootNamespace());
 

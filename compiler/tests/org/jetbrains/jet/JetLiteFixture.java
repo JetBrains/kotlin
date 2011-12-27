@@ -14,7 +14,8 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.AbstractCompileEnvironment;
+import org.jetbrains.jet.compiler.CoreCompileEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -28,7 +29,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     @NonNls
     protected final String myFullDataPath;
     protected JetFile myFile;
-    protected JetCoreEnvironment myEnvironment;
+    protected CoreCompileEnvironment myEnvironment;
 
     public JetLiteFixture(@NonNls String dataPath) {
         myFullDataPath = getTestDataPath() + "/" + dataPath;
@@ -57,8 +58,8 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected void createEnvironmentWithFullJdk() {
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
-        final File rtJar = CompileEnvironment.findRtJar(true);
+        myEnvironment = new CoreCompileEnvironment(new JetCoreEnvironment(getTestRootDisposable()));
+        final File rtJar = AbstractCompileEnvironment.findRtJar(true);
         myEnvironment.addToClasspath(rtJar);
     }
 

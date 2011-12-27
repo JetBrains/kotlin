@@ -2,7 +2,8 @@ package org.jetbrains.jet.cli;
 
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
-import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.AbstractCompileEnvironment;
+import org.jetbrains.jet.compiler.CoreCompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 
 /**
@@ -25,6 +26,8 @@ public class KotlinCompiler {
         public String module;
         @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
         public boolean includeRuntime;
+        @Argument(value = "stdlib", description = "means that we compile stdlib itself")
+        public boolean stdlib;
     }
 
     public static void main(String[] args) {
@@ -39,10 +42,10 @@ public class KotlinCompiler {
             return;
         }
 
-        CompileEnvironment environment = new CompileEnvironment();
+        CoreCompileEnvironment environment = new CoreCompileEnvironment();
 
         try {
-            environment.setJavaRuntime(CompileEnvironment.findRtJar(true));
+            environment.setJavaRuntime(AbstractCompileEnvironment.findRtJar(true));
             if (!environment.initializeKotlinRuntime()) {
                 System.out.println("No runtime library found");
                 return;
@@ -53,7 +56,7 @@ public class KotlinCompiler {
                 return;
             }
             else {
-                environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime, arguments.stdlib);
             }
         } catch (CompileEnvironmentException e) {
             System.out.println(e.getMessage());

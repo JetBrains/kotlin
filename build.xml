@@ -3,9 +3,13 @@
     <property name="build.number" value="snapshot"/>
     <property name="output.name" value="kotlin-${build.number}"/>
 
-    <path id="classpath">
+    <path id="libs">
         <fileset dir="${basedir}/ideaSDK" includes="*.jar"/>
         <fileset dir="${basedir}/lib" includes="*.jar"/>
+    </path>
+
+    <path id="classpath">
+        <path refid="libs"/>
         <pathelement path="${output}/classes/runtime"/>
     </path>
 
@@ -39,13 +43,22 @@
             <arg value="${basedir}/stdlib/ktSrc"/>
             <arg value="-output"/>
             <arg value="${basedir}/classes/stdlib"/>
+            <arg value="-stdlib"/>
         </java>
     </target>
 
-    <target name="jarRT" depends="compile">
+    <target name="compileTests" depends="compile">
+        <mkdir dir="${output}/classes/tests"/>
+        <javac destdir="${output}/classes/tests" debug="true" debuglevel="lines,vars,source">
+            <src path="${basedir}/compiler/tests"/>
+            <classpath refid="classpath.kotlin"/>
+        </javac>
+    </target>
+
+    <target name="jarRT" depends="compileStdlib">
         <jar destfile="${output}/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
-            <!--<fileset dir="${output}/classes/stdlib"/>-->
+            <fileset dir="${output}/classes/stdlib"/>
             <fileset dir="${basedir}" includes="stdlib/ktSrc/**/*"/>
         </jar>
     </target>
@@ -57,6 +70,7 @@
             <src refid="sourcepath"/>
             <classpath refid="classpath"/>
         </javac>
+        <copy file="${basedir}/compiler/frontend/src/jet/Library.jet" tofile="${output}/classes/compiler/jet/Library.jet"/>
     </target>
 
     <target name="jar" depends="compile">
@@ -68,6 +82,32 @@
 
     <target name="clean">
         <delete dir="${output}"/>
+    </target>
+
+    <target name="test" depends="compileTests,jar,jarRT">
+        <mkdir dir="${output}/reports"/>
+        <junit printsummary="yes" haltonerror="false" haltonfailure="false">
+          <classpath>
+              <pathelement location="${output}/kotlin-compiler.jar"/>
+              <pathelement location="${output}/kotlin-runtime.jar"/>
+              <pathelement location="${output}/classes/tests"/>
+              <path refid="classpath"/>
+          </classpath>
+            
+          <formatter type="brief"/>
+          <formatter type="xml"/>
+
+          <batchtest todir="${output}/reports">
+            <fileset dir="${basedir}/compiler/tests">
+              <include name="**/*Test.java"/>
+            </fileset>
+          </batchtest>
+        </junit>
+
+        <junitreport>
+            <fileset dir="${output}/reports" includes="TEST-*.xml"/>
+            <report format="frames" todir="${output}/reports/html"/>
+        </junitreport>
     </target>
 
     <target name="dist" depends="clean,jarRT,jar">
