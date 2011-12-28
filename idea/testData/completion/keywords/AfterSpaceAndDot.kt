@@ -3,4 +3,4 @@ fun foo() {
     str.     <caret>
 }
 
-// ABSENT: public, val, in
+// ABSENT: public, val, in, if, when, this

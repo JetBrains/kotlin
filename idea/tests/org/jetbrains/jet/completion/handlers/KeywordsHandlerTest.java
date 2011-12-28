@@ -12,15 +12,15 @@ import java.io.IOException;
 public class KeywordsHandlerTest extends LightCompletionTestCase {
 
     public void testSpaceAfter() throws IOException {
-        configureFromFileText("Test.kt", "protecte<caret>");
+        configureFromFileText("Test.kt", "impor<caret>");
         complete();
-        checkResultByText("protected <caret>");
+        checkResultByText("import <caret>");
     }
 
     public void testNoSpaceAfter() throws IOException {
-        configureFromFileText("Test.kt", "nul<caret>");
+        configureFromFileText("Test.kt", "fun test() { nul<caret> }");
         complete();
-        checkResultByText("null<caret>");
+        checkResultByText("fun test() { null<caret> }");
     }
 
     @Override
