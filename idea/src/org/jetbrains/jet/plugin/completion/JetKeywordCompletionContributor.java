@@ -1,65 +1,162 @@
 package org.jetbrains.jet.plugin.completion;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.filters.AndFilter;
+import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.NotFilter;
 import com.intellij.psi.filters.TextFilter;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.LeftNeighbour;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A keyword contributor for Kotlin
- * TODO: add different context for different keywords
  *
  * @author Nikolay Krasko
  */
 public class JetKeywordCompletionContributor extends CompletionContributor {
 
-    private static class JetTopKeywordCompletionProvider extends CompletionProvider<CompletionParameters> {
+    private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
+    private final static InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
+    
+    private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList("get", "set");
 
-        private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
-
-        private final static String[] COMPLETE_KEYWORD = new String[] {
-                "namespace", "as", "type", "class", "this", "super", "val", "var", "fun", "for", "null", "true",
-                "false", "is", "in", "throw", "return", "break", "continue", "object", "if", "try", "else", "while",
-                "do", "when", "trait", "This"
-        };
-        
-        private final static String[] COMPLETE_SOFT_KEYWORDS = new String[] {
-                "import", "where", "by", "get", "set", "abstract", "enum", "open", "annotation", "override", "private",
-                "public", "internal", "protected", "catch", "out", "vararg", "inline", "finally", "final", "ref"
-        };
-        
+    private static class InTopFilter implements ElementFilter {
         @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters,
-                                      ProcessingContext context,
-                                      @NotNull CompletionResultSet result) {
+        public boolean isAcceptable(Object element, PsiElement context) {
+            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClass.class, JetFunction.class) != null;
+        }
 
-            for (String keyword : COMPLETE_KEYWORD) {
-
-                result.addElement(LookupElementBuilder.create(keyword).setInsertHandler(KEYWORDS_INSERT_HANDLER).setBold());
-            }
-
-            for (String softKeyword : COMPLETE_SOFT_KEYWORDS) {
-                result.addElement(LookupElementBuilder.create(softKeyword).setInsertHandler(KEYWORDS_INSERT_HANDLER));
-            }
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
         }
     }
 
+    private static class InNonClassBlockFilter implements ElementFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            return PsiTreeUtil.getParentOfType(context, JetFunction.class, true, JetClass.class) != null &&
+                   PsiTreeUtil.getParentOfType(context, JetBlockExpression.class, true, JetFunction.class) != null;
+        }
+
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
+        }
+    }
+
+    private static class InParametersFilter implements ElementFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            return PsiTreeUtil.getParentOfType(context, JetParameterList.class, false) != null;
+        }
+
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
+        }
+    }
+
+    private static class InClassBodyFilter implements ElementFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true, JetFunction.class) != null;
+        }
+
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
+        }
+    }
+
+    private static class InPropertyFilter implements ElementFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            return PsiTreeUtil.getParentOfType(context, JetProperty.class, false) != null;
+        }
+
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
+        }
+    }
+
+    public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
+
+        private final Collection<LookupElement> elements;
+
+        public KeywordsCompletionProvider(String ...keywords) {
+            List<String> elementsList = Lists.newArrayList(keywords);
+            elements = Collections2.transform(elementsList, new Function<String, LookupElement>() {
+                @Override
+                public LookupElement apply(String keyword) {
+                    final LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(keyword).setBold();
+
+                    if (!FUNCTION_KEYWORDS.contains(keyword)) {
+                        return lookupElementBuilder.setInsertHandler(KEYWORDS_INSERT_HANDLER);
+                    }
+
+                    return lookupElementBuilder.setInsertHandler(FUNCTION_INSERT_HANDLER);
+                }
+            });
+        }
+
+        @Override
+        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
+                                      @NotNull CompletionResultSet result) {
+            result.addAllElements(elements);
+        }
+    }
+
+
+
     public JetKeywordCompletionContributor() {
+        registerScopeKeywordsCompletion(new InTopFilter(),
+                                        "abstract", "class", "enum", "final", "fun", "get", "import", "inline",
+                                        "internal", "open", "package", "private", "protected", "public", "set",
+                                        "trait", "type", "val", "var");
 
-        PsiElementPattern.Capture<PsiElement> notDotPlace =
-                PlatformPatterns.psiElement().and(new FilterPattern(new NotFilter(new LeftNeighbour(new TextFilter(".")))));
+        registerScopeKeywordsCompletion(new InClassBodyFilter(),
+                                        "abstract", "class", "enum", "final", "fun", "inline", "internal", "get",
+                                        "open", "override", "private", "protected", "public", "set", "trait",
+                                        "type", "val", "var");
 
-        extend(CompletionType.BASIC,
-               notDotPlace,
-               new JetTopKeywordCompletionProvider());
+        registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
+                                        "as", "break", "by", "catch", "class", "continue", "default", "do", "else",
+                                        "enum", "false", "finally", "for", "fun", "get", "if", "in", "inline",
+                                        "internal", "is", "null", "object", "private", "protected", "public", "ref",
+                                        "return", "set", "super", "This", "this", "throw", "trait", "true", "try",
+                                        "type", "val", "var", "vararg", "when", "where", "while");
+
+        registerScopeKeywordsCompletion(new InPropertyFilter(), "else", "false", "if", "null", "this", "true");
+
+        registerScopeKeywordsCompletion(new InParametersFilter(), "ref", "out");
+    }
+
+    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter), new KeywordsCompletionProvider(keywords));
+    }
+
+    private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter) {
+        return PlatformPatterns.psiElement().and(
+                new FilterPattern(new AndFilter(new NotFilter(new LeftNeighbour(new TextFilter("."))), placeFilter)));
     }
 }

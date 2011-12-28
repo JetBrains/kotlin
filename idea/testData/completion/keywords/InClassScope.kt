@@ -1,4 +1,6 @@
-<caret>
+class TestClass {
+    <caret>
+}
 
 // EXIST:  abstract
 // ABSENT: annotation
@@ -19,7 +21,7 @@
 // EXIST:  fun
 // EXIST:  get
 // ABSENT: if
-// EXIST:  import
+// ABSENT: import
 // ABSENT: in
 // EXIST:  inline
 // EXIST:  internal
@@ -28,8 +30,8 @@
 // ABSENT: object
 // EXIST:  open
 // ABSENT: out
-// ABSENT: override
-// EXIST:  package
+// EXIST:  override
+// ABSENT: package
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public

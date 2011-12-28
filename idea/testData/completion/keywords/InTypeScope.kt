@@ -2,5 +2,53 @@ fun foo() {
     val test : <caret>
 }
 
-// TODO: Move all keywords to absent
-// EXIST: fun, val, var, namespace
+// ABSENT: abstract
+// ??ABSENT: annotation // java annotation namespace
+// EXIST: as
+// EXIST: break
+// EXIST: by
+// EXIST: catch
+// EXIST: class
+// EXIST: continue
+// EXIST: default
+// EXIST: do
+// EXIST: else
+// EXIST: enum
+// EXIST: false
+// ABSENT: final
+// EXIST: finally
+// EXIST: for
+// EXIST: fun
+// EXIST: get
+// EXIST: if
+// ABSENT: import
+// EXIST: in
+// EXIST: inline
+// EXIST: internal
+// EXIST: is
+// EXIST: null
+// EXIST: object
+// ABSENT: open
+// ABSENT: out
+// ABSENT: override
+// ABSENT: package
+// EXIST: private
+// EXIST: protected
+// EXIST: public
+// EXIST: ref
+// EXIST: return
+// EXIST: set
+// EXIST: super
+// EXIST: This
+// EXIST: this
+// EXIST: throw
+// EXIST: trait
+// EXIST: true
+// EXIST: try
+// EXIST: type
+// EXIST: val
+// EXIST: var
+// EXIST: vararg
+// EXIST: when
+// EXIST: where
+// EXIST: while
