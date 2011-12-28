@@ -2,12 +2,15 @@ package org.jetbrains.jet.j2k;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.jetbrains.jet.j2k.Converter.NOT_NULL_ANNOTATIONS;
 
 /**
  * @author ignatov
@@ -67,5 +70,47 @@ public class ConverterUtil {
     if (!(type instanceof PsiArrayType)) return false;
     final PsiType componentType = ((PsiArrayType) type).getComponentType();
     return componentType.equalsToText("java.lang.String");
+  }
+
+  public static int countWritingAccesses(@Nullable PsiElement element, @Nullable PsiElement container) {
+    int counter = 0;
+    if (container != null) {
+      ReferenceCollector visitor = new ReferenceCollector();
+      container.accept(visitor);
+      for (PsiReferenceExpression e : visitor.getCollectedReferences())
+        if (e.isReferenceTo(element) && PsiUtil.isAccessedForWriting(e))
+          counter++;
+    }
+    return counter;
+  }
+
+  static boolean isReadOnly(PsiElement element, PsiElement container) {
+    return countWritingAccesses(element, container) == 0;
+  }
+
+  public static boolean isAnnotatedAsNotNull(@Nullable PsiModifierList modifierList) {
+    if (modifierList != null) {
+      PsiAnnotation[] annotations = modifierList.getAnnotations();
+      for (PsiAnnotation a : annotations) {
+        String qualifiedName = a.getQualifiedName();
+        if (qualifiedName != null && NOT_NULL_ANNOTATIONS.contains(qualifiedName))
+          return true;
+      }
+    }
+    return false;
+  }
+
+  static class ReferenceCollector extends JavaRecursiveElementVisitor {
+    public List<PsiReferenceExpression> getCollectedReferences() {
+      return myCollectedReferences;
+    }
+
+    private List<PsiReferenceExpression> myCollectedReferences = new LinkedList<PsiReferenceExpression>();
+
+    @Override
+    public void visitReferenceExpression(PsiReferenceExpression expression) {
+      super.visitReferenceExpression(expression);
+      myCollectedReferences.add(expression);
+    }
   }
 }

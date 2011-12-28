@@ -1,8 +1,6 @@
 package org.jetbrains.jet.j2k;
 
 import com.intellij.psi.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
@@ -22,7 +20,7 @@ import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
  */
 public class Converter {
   @NotNull
-  private final static Set<String> NOT_NULL_ANNOTATIONS = new HashSet<String>() {
+  final static Set<String> NOT_NULL_ANNOTATIONS = new HashSet<String>() {
     {
       add("org.jetbrains.annotations.NotNull");
       add("com.sun.istack.internal.NotNull");
@@ -326,9 +324,9 @@ public class Converter {
     ourMethodReturnType = method.getReturnType();
 
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
-    final Type returnType = typeToType(method.getReturnType(), isNotNull(method.getModifierList()));
+    final Type returnType = typeToType(method.getReturnType(), ConverterUtil.isAnnotatedAsNotNull(method.getModifierList()));
     final Block body = blockToBlock(method.getBody(), notEmpty);
-    final Element params = elementToElement(method.getParameterList());
+    final Element params = createFunctionParameters(method);
     final List<Element> typeParameters = elementsToElementList(method.getTypeParameters());
 
     final Set<String> modifiers = modifiersListToModifiersSet(method.getModifierList());
@@ -359,6 +357,19 @@ public class Converter {
       params,
       body
     );
+  }
+
+  @NotNull
+  private static ParameterList createFunctionParameters(@NotNull PsiMethod method) {
+    List<Parameter> result = new LinkedList<Parameter>();
+    for (PsiParameter parameter : method.getParameterList().getParameters()) {
+      result.add(new Parameter(
+        new IdentifierImpl(parameter.getName()),
+        typeToType(parameter.getType(), ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList())),
+        ConverterUtil.isReadOnly(parameter, method.getBody())
+      ));
+    }
+    return new ParameterList(result);
   }
 
   private static boolean isNotOpenMethod(@NotNull final PsiMethod method) {
@@ -549,33 +560,8 @@ public class Converter {
   public static Parameter parameterToParameter(@NotNull PsiParameter parameter) {
     return new Parameter(
       new IdentifierImpl(parameter.getName()),
-      typeToType(parameter.getType(), isNotNull(parameter.getModifierList())),
-      isReadOnly(parameter)
+      typeToType(parameter.getType(), ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList()))
     );
-  }
-
-  public static boolean isNotNull(@Nullable PsiModifierList modifierList) {
-    if (modifierList != null) {
-      PsiAnnotation[] annotations = modifierList.getAnnotations();
-      for (PsiAnnotation a : annotations) {
-        String qualifiedName = a.getQualifiedName();
-        if (qualifiedName != null && NOT_NULL_ANNOTATIONS.contains(qualifiedName))
-          return true;
-      }
-    }
-    return false;
-  }
-
-  private static boolean isReadOnly(@NotNull PsiParameter parameter) {
-    try {
-      for (PsiReference r : (ReferencesSearch.search(parameter))) {
-        if (r instanceof PsiExpression && PsiUtil.isAccessedForWriting((PsiExpression) r)) {
-          return false;
-        }
-      }
-    } catch (IllegalArgumentException ignored) {
-    }
-    return true;
   }
 
   @NotNull
@@ -722,4 +708,5 @@ public class Converter {
       createConversionForExpression(expression, type) : "";
     return new SureCallChainExpression(expressionToExpression(expression), conversion);
   }
+
 }

@@ -1,9 +1,7 @@
 package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
@@ -15,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
+import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 
 /**
  * @author ignatov
@@ -110,8 +109,15 @@ public class StatementVisitor extends ElementVisitor {
     final PsiStatement initialization = statement.getInitialization();
     final PsiStatement update = statement.getUpdate();
     final PsiExpression condition = statement.getCondition();
+    final PsiStatement body = statement.getBody();
+
     final PsiLocalVariable firstChild = initialization != null && initialization.getFirstChild() instanceof PsiLocalVariable ?
       (PsiLocalVariable) initialization.getFirstChild() : null;
+
+    int bodyWriteCount = countWritingAccesses(firstChild, body);
+    int conditionWriteCount = countWritingAccesses(firstChild, condition);
+    int updateWriteCount = countWritingAccesses(firstChild, update);
+    boolean onceWritableIterator = updateWriteCount == 1 && bodyWriteCount + conditionWriteCount == 0;
 
     final IElementType operationTokenType = condition != null && condition instanceof PsiBinaryExpression ?
       ((PsiBinaryExpression) condition).getOperationTokenType() : null;
@@ -130,7 +136,7 @@ public class StatementVisitor extends ElementVisitor {
         && initialization.getFirstChild() instanceof PsiLocalVariable
         && firstChild != null
         && firstChild.getNameIdentifier() != null
-        && isOnceWritableIterator(firstChild)
+        && onceWritableIterator
       ) {
       final Expression end = expressionToExpression(((PsiBinaryExpression) condition).getROperand());
       final Expression endExpression = operationTokenType == JavaTokenType.LT ?
@@ -140,7 +146,7 @@ public class StatementVisitor extends ElementVisitor {
         new IdentifierImpl(firstChild.getName()),
         expressionToExpression(firstChild.getInitializer()),
         endExpression,
-        statementToStatement(statement.getBody())
+        statementToStatement(body)
       );
     } else { // common case: while loop instead of for loop
       List<Statement> forStatements = new LinkedList<Statement>();
@@ -148,23 +154,12 @@ public class StatementVisitor extends ElementVisitor {
       forStatements.add(new WhileStatement(
         expressionToExpression(condition),
         new Block(
-          Arrays.asList(statementToStatement(statement.getBody()),
+          Arrays.asList(statementToStatement(body),
             new Block(Arrays.asList(statementToStatement(update)))))));
       myResult = new Block(forStatements);
     }
   }
 
-  private static boolean isOnceWritableIterator(@Nullable PsiLocalVariable firstChild) {
-    int counter = 0;
-    if (firstChild != null)
-      for (PsiReference r : (ReferencesSearch.search(firstChild))) {
-        if (r instanceof PsiExpression) {
-          if (PsiUtil.isAccessedForWriting((PsiExpression) r))
-            counter++;
-        }
-      }
-    return counter == 1; // only increment usage
-  }
 
   @Override
   public void visitForeachStatement(@NotNull PsiForeachStatement statement) {

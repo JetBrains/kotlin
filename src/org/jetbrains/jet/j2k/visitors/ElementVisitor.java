@@ -2,22 +2,21 @@ package org.jetbrains.jet.j2k.visitors;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.*;
+import static org.jetbrains.jet.j2k.ConverterUtil.*;
 
 /**
  * @author ignatov
  */
 public class ElementVisitor extends JavaElementVisitor {
-  @Nullable
+  @NotNull
   private Element myResult = Element.EMPTY_ELEMENT;
 
-  @Nullable
+  @NotNull
   public Element getResult() {
     return myResult;
   }
@@ -29,7 +28,7 @@ public class ElementVisitor extends JavaElementVisitor {
     myResult = new LocalVariable(
       new IdentifierImpl(variable.getName()), // TODO
       modifiersListToModifiersSet(variable.getModifierList()),
-      typeToType(variable.getType(), Converter.isNotNull(variable.getModifierList())),
+      typeToType(variable.getType(), isAnnotatedAsNotNull(variable.getModifierList())),
       createSureCallOnlyForChain(variable.getInitializer(), variable.getType())
     );
   }
