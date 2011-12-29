@@ -78,25 +78,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         setType(inType, outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
     }
 
-    private PropertyDescriptor(
-            @NotNull PropertyDescriptor original,
-            @Nullable JetType receiverType,
-            @NotNull ReceiverDescriptor expectedThisObject,
-            @Nullable JetType inType,
-            @NotNull JetType outType
-        ) {
-        this(
-                original,
-                original.getContainingDeclaration(),
-                original.getAnnotations(), // TODO : substitute?
-                original.getModality(),
-                original.getVisibility(),
-                original.isVar,
-                original.getName()
-        );
-        setType(inType, outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
-    }
-
     public void setType(@Nullable JetType inType, @NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @Nullable JetType receiverType) {
         ReceiverDescriptor receiver = receiverType == null
                 ? NO_RECEIVER
