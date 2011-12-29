@@ -147,7 +147,7 @@ public class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
             }
         });
 
-        final ArrayList<File> fileResult = new ArrayList<File>(allTestFiles);
+        final ArrayList<File> fileResult = new ArrayList<File>(mainFiles);
         fileResult.addAll(dataFiles);
 
         return fileResult;
