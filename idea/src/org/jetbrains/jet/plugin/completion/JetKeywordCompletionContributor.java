@@ -173,7 +173,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                                         "abstract", "class", "enum", "final", "fun", "get", "inline", "internal",
-                                        "open", "override", "private", "protected", "public", "set", "trait",
+                                        "object", "open", "override", "private", "protected", "public", "set", "trait",
                                         "type", "val", "var");
 
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),

@@ -27,7 +27,7 @@ class TestClass {
 // EXIST:  internal
 // ABSENT: is
 // ABSENT: null
-// ABSENT: object
+// EXIST:  object
 // EXIST:  open
 // ABSENT: out
 // EXIST:  override
