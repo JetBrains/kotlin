@@ -5,6 +5,7 @@ import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
@@ -101,23 +102,32 @@ public class JetPositionManager implements PositionManager {
         return result;
     }
 
-    private Collection<String> classNamesForPosition(SourcePosition sourcePosition) {
-        final JetFile file = (JetFile) sourcePosition.getFile();
-        JetTypeMapper typeMapper = prepareTypeMapper(file);
+    private Collection<String> classNamesForPosition(final SourcePosition sourcePosition) {
+
         final Collection<String> names = new ArrayList<String>();
-        JetClassOrObject jetClass = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class);
-        if (jetClass != null) {
-            names.addAll(typeMapper.allJvmNames(jetClass));
-        }
-        else {
-            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-            if (namespace != null) {
-                names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace)));
+
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                final JetFile file = (JetFile) sourcePosition.getFile();
+                JetTypeMapper typeMapper = prepareTypeMapper(file);
+
+                JetClassOrObject jetClass = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class);
+                if (jetClass != null) {
+                    names.addAll(typeMapper.allJvmNames(jetClass));
+                }
+                else {
+                    JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
+                    if (namespace != null) {
+                        names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace)));
+                    }
+                    else {
+                        names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(file)));
+                    }
+                }
             }
-            else {
-                names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(file)));
-            }
-        }
+        });
+
         return names;
     }
 
