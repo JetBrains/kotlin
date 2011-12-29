@@ -11,6 +11,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -38,7 +40,13 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
     }
 
     @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        return super.isAvailable(project, editor, file) && !ErrorUtils.isErrorType(type);
+    }
+
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        if (!(file instanceof JetFile)) return;
         PsiElement newElement;
         if (element instanceof JetProperty) {
             newElement = addPropertyType(project, (JetProperty) element, type);
@@ -47,7 +55,8 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
             assert element instanceof JetFunction;
             newElement = addFunctionType(project, (JetFunction) element, type);
         }
-        ImportClassHelper.perform(type, element, newElement);
+        ImportClassHelper.addImportDirectiveIfNeeded(type, (JetFile)file);
+        element.replace(newElement);
     }
 
     @Override

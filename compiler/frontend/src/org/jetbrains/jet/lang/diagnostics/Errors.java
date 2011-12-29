@@ -83,6 +83,9 @@ public interface Errors {
     SimpleDiagnosticFactory LABEL_NAME_CLASH = SimpleDiagnosticFactory.create(WARNING, "There is more than one label with such a name in this scope");
     SimpleDiagnosticFactory EXPRESSION_EXPECTED_NAMESPACE_FOUND = SimpleDiagnosticFactory.create(ERROR, "Expression expected, but a namespace name found");
 
+    SimpleDiagnosticFactory CANNOT_IMPORT_OBJECT_MEMBERS = SimpleDiagnosticFactory.create(ERROR, "Cannot import members of object separately, use full paths or try to move members to namespace level");
+    SimpleDiagnosticFactory CANNOT_IMPORT_VARIABLE_MEMBERS = SimpleDiagnosticFactory.create(ERROR, "Cannot import members of variable separately, use full paths");
+
     SimpleDiagnosticFactory CANNOT_INFER_PARAMETER_TYPE = SimpleDiagnosticFactory.create(ERROR, "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
 
     SimpleDiagnosticFactory NO_BACKING_FIELD_ABSTRACT_PROPERTY = SimpleDiagnosticFactory.create(ERROR, "This property doesn't have a backing field, because it's abstract");

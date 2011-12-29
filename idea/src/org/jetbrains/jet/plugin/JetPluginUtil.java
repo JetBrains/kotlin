@@ -4,14 +4,12 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.*;
 
 import java.util.LinkedList;
 
@@ -41,7 +39,7 @@ public class JetPluginUtil {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
 
         LinkedList<String> fullName = Lists.newLinkedList();
-        while (declarationDescriptor != null) {
+        while (declarationDescriptor != null && !(declarationDescriptor instanceof ModuleDescriptor)) {
             fullName.addFirst(declarationDescriptor.getName());
             declarationDescriptor = declarationDescriptor.getContainingDeclaration();
         }
@@ -53,6 +51,11 @@ public class JetPluginUtil {
     }
 
     public static boolean checkTypeIsStandard(JetType type, Project project) {
+        if (JetStandardClasses.isAny(type) || JetStandardClasses.isNothingOrNullableNothing(type) || JetStandardClasses.isUnit(type) ||
+            JetStandardClasses.isTupleType(type) || JetStandardClasses.isFunctionType(type)) {
+            return true;
+        }
+
         LinkedList<String> fullName = computeTypeFullNameList(type);
         if (fullName.size() == 3 && fullName.getFirst().equals("java") && fullName.get(1).equals("lang")) {
             return true;

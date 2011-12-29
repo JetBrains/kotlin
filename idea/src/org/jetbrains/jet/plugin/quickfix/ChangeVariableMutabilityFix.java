@@ -80,21 +80,9 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
         assert property != null && !property.isVar();
-        JetProperty newElement = (JetProperty) property.copy();
-        if (newElement.isVar()) {
-            PsiElement varElement = newElement.getNode().findChildByType(JetTokens.VAR_KEYWORD).getPsi();
 
-            JetProperty valProperty = JetPsiFactory.createProperty(project, "x", "Any", false);
-            PsiElement valElement = valProperty.getNode().findChildByType(JetTokens.VAL_KEYWORD).getPsi();
-            CodeEditUtil.replaceChild(newElement.getNode(), varElement.getNode(), valElement.getNode());
-        }
-        else {
-            PsiElement valElement = newElement.getNode().findChildByType(JetTokens.VAL_KEYWORD).getPsi();
-
-            JetProperty varProperty = JetPsiFactory.createProperty(project, "x", "Any", true);
-            PsiElement varElement = varProperty.getNode().findChildByType(JetTokens.VAR_KEYWORD).getPsi();
-            CodeEditUtil.replaceChild(newElement.getNode(), valElement.getNode(), varElement.getNode());
-        }
+        JetProperty newElement = JetPsiFactory.createProperty(project, property.getText().replaceFirst(
+                property.isVar() ? "var" : "val", property.isVar() ? "val" : "var"));
         property.replace(newElement);
     }
 

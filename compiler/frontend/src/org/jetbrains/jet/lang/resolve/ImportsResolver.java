@@ -53,12 +53,15 @@ public class ImportsResolver {
     }
 
     public static class ImportResolver {
-        private BindingTrace trace;
-        private boolean firstPhase;
+        private final BindingTrace trace;
+        private final boolean firstPhase;
+        // flag is used not to invoke code that resolves members from objects and variables; functionality is under discuss so far, see KT-876
+        private final boolean importMembersFromObjectsAndVars;
 
         public ImportResolver(BindingTrace trace, boolean firstPhase) {
             this.trace = trace;
             this.firstPhase = firstPhase;
+            this.importMembersFromObjectsAndVars = false;
         }
 
         public void processImportReference(JetImportDirective importDirective, WritableScope namespaceScope, JetScope outerScope) {
@@ -77,6 +80,7 @@ public class ImportsResolver {
                 JetScope scope = importDirective.isAllUnder() ? namespaceScope : outerScope;
                 descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, scope);
             }
+            JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
             if (importDirective.isAllUnder()) {
                 for (DeclarationDescriptor descriptor : descriptors) {
                     if (firstPhase) {
@@ -85,18 +89,25 @@ public class ImportsResolver {
                         }
                     }
                     else if (descriptor instanceof VariableDescriptor) {
+                        if (!importMembersFromObjectsAndVars) {
+                            trace.report(CANNOT_IMPORT_OBJECT_MEMBERS.on(referenceExpression != null ? referenceExpression : importedReference));
+                            continue;
+                        }
                         JetType type = ((VariableDescriptor) descriptor).getOutType();
                         if (type != null) {
                             namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, type.getMemberScope()));
                         }
                     }
                     else if (descriptor instanceof ClassDescriptor) {
+                        if (!importMembersFromObjectsAndVars) {
+                            trace.report(CANNOT_IMPORT_VARIABLE_MEMBERS.on(referenceExpression != null ? referenceExpression : importedReference));
+                            continue;
+                        }
                         namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, ((ClassDescriptor) descriptor).getDefaultType().getMemberScope()));
                     }
                 }
                 return;
             }
-            JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
 
             String aliasName = importDirective.getAliasName();
             if (aliasName == null) {
@@ -149,10 +160,10 @@ public class ImportsResolver {
                 assert receiverExpression instanceof JetSimpleNameExpression;
                 declarationDescriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) receiverExpression, outerScope);
             }
+            JetExpression selectorExpression = importedReference.getSelectorExpression();
+            assert selectorExpression instanceof JetSimpleNameExpression;
+            JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
-                JetExpression selectorExpression = importedReference.getSelectorExpression();
-                assert selectorExpression instanceof JetSimpleNameExpression;
-                JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
                 if (declarationDescriptor instanceof NamespaceDescriptor) {
                     return lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope());
                 }
@@ -177,7 +188,12 @@ public class ImportsResolver {
                 trace.report(NO_CLASS_OBJECT.on(classReference, classDescriptor));
                 return Collections.emptyList();
             }
-            return addBoundToReceiver(lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope()), classDescriptor);
+            Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope());
+            if (!importMembersFromObjectsAndVars) {
+                trace.report(CANNOT_IMPORT_OBJECT_MEMBERS.on(memberReference));
+                return Collections.emptyList();
+            }
+            return addBoundToReceiver(members, classDescriptor);
         }
 
         @NotNull
@@ -186,7 +202,12 @@ public class ImportsResolver {
 
             JetType variableType = variableDescriptor.getReturnType();
             if (variableType == null) return Collections.emptyList();
-            return addBoundToReceiver(lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope()), variableDescriptor);
+            Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope());
+            if (!importMembersFromObjectsAndVars) {
+                trace.report(CANNOT_IMPORT_VARIABLE_MEMBERS.on(memberReference));
+                return Collections.emptyList();
+            }
+            return addBoundToReceiver(members, variableDescriptor);
         }
 
         @NotNull

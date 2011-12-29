@@ -13,8 +13,10 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
 
 import javax.swing.*;
@@ -138,9 +140,11 @@ public class JetAddImportAction implements QuestionAction {
                     public void run() {
                         // TODO: See {@link com.intellij.codeInsight.daemon.impl.actions.AddImportAction#_addImport} for more ideas.
                         // TODO: Optimize imports
+                        PsiFile file = element.getContainingFile();
+                        if (!(file instanceof JetFile)) return;
                         ImportClassHelper.addImportDirective(
                                 selectedImport,
-                                ImportClassHelper.findOuterNamespace(element)
+                                (JetFile)file
                         );
                     }
                 });

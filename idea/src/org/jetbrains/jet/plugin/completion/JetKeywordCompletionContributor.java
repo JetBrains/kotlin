@@ -3,18 +3,17 @@ package org.jetbrains.jet.plugin.completion;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.codeInsight.CommentUtil;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.filters.AndFilter;
-import com.intellij.psi.filters.ElementFilter;
-import com.intellij.psi.filters.NotFilter;
-import com.intellij.psi.filters.TextFilter;
+import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.LeftNeighbour;
+import com.intellij.psi.filters.position.PositionElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -35,12 +34,51 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
     private final static InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new JetFunctionInsertHandler(
             JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
-    
+
+    private final static ElementFilter GENERAL_FILTER = new NotFilter(new OrFilter(
+            new CommentFilter(), // or
+            new ParentFilter(new ClassFilter(JetLiteralStringTemplateEntry.class)), // or
+            new ParentFilter(new ClassFilter(JetConstantExpression.class)), // or
+            new LeftNeighbour(new TextFilter("."))
+    ));
+
     private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList("get", "set");
+
+    private static class CommentFilter implements ElementFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            if (!(element instanceof PsiElement)) {
+                return false;
+            }
+
+            return CommentUtil.isComment((PsiElement) element);
+        }
+
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
+        }
+    }
+
+    private static class ParentFilter extends PositionElementFilter {
+        public ParentFilter(ElementFilter filter) {
+            setFilter(filter);
+        }
+
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            if (!(element instanceof PsiElement)) {
+                return false;
+            }
+            PsiElement parent = ((PsiElement) element).getParent();
+            return parent != null && getFilter().isAcceptable(parent, context);
+        }
+    }
 
     private static class InTopFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
+            //noinspection unchecked
             return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClass.class, JetFunction.class) != null;
         }
 
@@ -53,8 +91,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static class InNonClassBlockFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
-            return PsiTreeUtil.getParentOfType(context, JetFunction.class, true, JetClass.class) != null &&
-                   PsiTreeUtil.getParentOfType(context, JetBlockExpression.class, true, JetFunction.class) != null;
+            //noinspection unchecked
+            return PsiTreeUtil.getParentOfType(context, JetBlockExpression.class, true, JetClassBody.class) != null;
         }
 
         @Override
@@ -78,7 +116,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static class InClassBodyFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
-            return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true, JetFunction.class) != null;
+            //noinspection unchecked
+            return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true, JetBlockExpression.class) != null;
         }
 
         @Override
@@ -126,8 +165,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-
-
     public JetKeywordCompletionContributor() {
         registerScopeKeywordsCompletion(new InTopFilter(),
                                         "abstract", "class", "enum", "final", "fun", "get", "import", "inline",
@@ -135,8 +172,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         "trait", "type", "val", "var");
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
-                                        "abstract", "class", "enum", "final", "fun", "inline", "internal", "get",
-                                        "open", "override", "private", "protected", "public", "set", "trait",
+                                        "abstract", "class", "enum", "final", "fun", "get", "inline", "internal",
+                                        "object", "open", "override", "private", "protected", "public", "set", "trait",
                                         "type", "val", "var");
 
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
@@ -157,6 +194,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter) {
         return PlatformPatterns.psiElement().and(
-                new FilterPattern(new AndFilter(new NotFilter(new LeftNeighbour(new TextFilter("."))), placeFilter)));
+                new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
     }
 }

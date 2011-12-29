@@ -1,4 +1,4 @@
-<project name="Jet CI Bootstrap" default="unzipIdeaSDK">
+<project name="Jet CI Bootstrap" default="unzipDependencies">
     <macrodef name="echoprop">
         <attribute name="prop"/>
         <sequential>
@@ -16,9 +16,12 @@
     <echoprop prop="user.home"/>
     <echoprop prop="user.dir"/>
 
-    <target name="unzipIdeaSDK">
+    <target name="unzipDependencies">
         <unzip dest="ideaSDK">
             <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
+        </unzip>
+        <unzip dest="bootstrap.compiler">
+            <fileset dir="bootstrap.compiler" includes="kotlin*.zip"/>
         </unzip>
     </target>
 </project>

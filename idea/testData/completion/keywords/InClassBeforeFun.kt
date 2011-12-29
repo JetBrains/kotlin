@@ -1,9 +1,14 @@
-class TestClass {
+public class Test {
+
     <caret>
+
+    fun test() {
+
+    }
 }
 
 // EXIST:  abstract
-// ABSENT: annotation
+// ?ABSENT: annotation
 // ABSENT: as
 // ABSENT: break
 // ABSENT: by
