@@ -62,7 +62,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        tmpdir = new File("tmp/" + this.getClass().getSimpleName() + "." + this.getName());
+        tmpdir = JetTestUtils.tmpDirForTest(this);
         JetTestUtils.recreateDirectory(tmpdir);
     }
 
