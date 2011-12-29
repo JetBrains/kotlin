@@ -17,7 +17,7 @@ public class CaseContainer extends Statement {
     myCaseStatement = caseStatement;
     List<Statement> newStatements = new LinkedList<Statement>();
     for (Statement s : statements)
-      if (s.getKind() != Kind.BREAK && s.getKind() != Kind.CONTINUE )
+      if (s.getKind() != Kind.BREAK && s.getKind() != Kind.CONTINUE)
         newStatements.add(s);
     myBlock = new Block(newStatements);
   }

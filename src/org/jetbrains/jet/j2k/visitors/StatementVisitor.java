@@ -261,7 +261,7 @@ public class StatementVisitor extends ElementVisitor {
     List<PsiStatement> result = new LinkedList<PsiStatement>();
     for (int i = start; i < allStatements.size(); i++) {
       PsiStatement s = allStatements.get(i);
-      if (s instanceof PsiBreakStatement)
+      if (s instanceof PsiBreakStatement || s instanceof PsiReturnStatement)
         return result;
       if (!(s instanceof PsiSwitchLabelStatement))
         result.add(s);
