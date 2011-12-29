@@ -230,7 +230,12 @@ public class CompileEnvironment {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
         moduleCompileSession.addStdLibSources();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
-            moduleCompileSession.addSources(new File(directory, sourceFile).getPath());
+            File source = new File(sourceFile);
+            if (!source.exists()) {
+                source = new File(directory, sourceFile);
+            }
+
+            moduleCompileSession.addSources(source.getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
             myEnvironment.addToClasspath(new File(classpathRoot));
