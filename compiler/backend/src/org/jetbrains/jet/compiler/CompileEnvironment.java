@@ -97,6 +97,13 @@ public class CompileEnvironment {
     
     public static File findRtJar(boolean failOnError) {
         String javaHome = System.getenv("JAVA_HOME");
+        if (javaHome == null) {
+            javaHome = System.getProperty("java.home");
+            if ("jre".equals(new File(javaHome).getName())) {
+                javaHome = new File(javaHome).getParent();
+            }
+        }
+
         File rtJar;
         if (javaHome == null) {
             rtJar = findActiveRtJar(failOnError);
