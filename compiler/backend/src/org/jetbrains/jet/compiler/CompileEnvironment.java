@@ -231,7 +231,7 @@ public class CompileEnvironment {
         moduleCompileSession.addStdLibSources();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
-            if (!source.exists()) {
+            if (!source.isAbsolute()) {
                 source = new File(directory, sourceFile);
             }
 
