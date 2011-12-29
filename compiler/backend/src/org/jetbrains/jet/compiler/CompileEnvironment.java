@@ -97,6 +97,13 @@ public class CompileEnvironment {
     
     public static File findRtJar(boolean failOnError) {
         String javaHome = System.getenv("JAVA_HOME");
+        if (javaHome == null) {
+            javaHome = System.getProperty("java.home");
+            if ("jre".equals(new File(javaHome).getName())) {
+                javaHome = new File(javaHome).getParent();
+            }
+        }
+
         File rtJar;
         if (javaHome == null) {
             rtJar = findActiveRtJar(failOnError);
@@ -223,7 +230,12 @@ public class CompileEnvironment {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
         moduleCompileSession.addStdLibSources();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
-            moduleCompileSession.addSources(new File(directory, sourceFile).getPath());
+            File source = new File(sourceFile);
+            if (!source.isAbsolute()) {
+                source = new File(directory, sourceFile);
+            }
+
+            moduleCompileSession.addSources(source.getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
             myEnvironment.addToClasspath(new File(classpathRoot));
