@@ -50,8 +50,10 @@ public class JavaToKotlinTranslator {
     });
 
     javaCoreEnvironment.addToClasspath(findRtJar(true));
-    javaCoreEnvironment.addToClasspath(new File("jre/lib/annotations.jar"));
-
+    File annotations = findAnnotations();
+    if (annotations != null && annotations.exists()) {
+      javaCoreEnvironment.addToClasspath(annotations);
+    }
     return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
       name, JavaLanguage.INSTANCE, text
     );
@@ -104,6 +106,18 @@ public class JavaToKotlinTranslator {
     File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
     if (classesJar.exists()) {
       return classesJar;
+    }
+    return null;
+  }
+
+  @Nullable
+  private static File findAnnotations() {
+    ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+    if (systemClassLoader instanceof URLClassLoader) {
+      URLClassLoader loader = (URLClassLoader) systemClassLoader;
+      for (URL url : loader.getURLs())
+        if ("file".equals(url.getProtocol()) && url.getFile().endsWith("/annotations.jar"))
+          return new File(url.getFile());
     }
     return null;
   }
