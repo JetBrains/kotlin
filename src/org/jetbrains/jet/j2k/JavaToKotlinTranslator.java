@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.util.Function;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.visitors.ClassVisitor;
@@ -43,21 +42,34 @@ public class JavaToKotlinTranslator {
   }
 
   @Nullable
-  protected static PsiFile createFile(@NonNls String name, String text) {
+  private static PsiFile createFile(@NotNull String text) {
+    JavaCoreEnvironment javaCoreEnvironment = setUpJavaCoreEnvironment();
+    return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
+      "test.java", JavaLanguage.INSTANCE, text
+    );
+  }
+
+  @Nullable
+  static PsiFile createFile(@NotNull JavaCoreEnvironment javaCoreEnvironment, @NotNull String text) {
+    return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
+      "test.java", JavaLanguage.INSTANCE, text
+    );
+  }
+
+  @NotNull
+  static JavaCoreEnvironment setUpJavaCoreEnvironment() {
     JavaCoreEnvironment javaCoreEnvironment = new JavaCoreEnvironment(new Disposable() {
       @Override
       public void dispose() {
       }
     });
 
-    javaCoreEnvironment.addToClasspath(findRtJar(true));
+    javaCoreEnvironment.addToClasspath(findRtJar());
     File annotations = findAnnotations();
     if (annotations != null && annotations.exists()) {
       javaCoreEnvironment.addToClasspath(annotations);
     }
-    return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
-      name, JavaLanguage.INSTANCE, text
-    );
+    return javaCoreEnvironment;
   }
 
   @NotNull
@@ -75,21 +87,22 @@ public class JavaToKotlinTranslator {
       ;
   }
 
-  public static File findRtJar(boolean failOnError) {
+  @Nullable
+  private static File findRtJar() {
     String javaHome = System.getenv("JAVA_HOME");
     File rtJar;
     if (javaHome == null) {
-      rtJar = findActiveRtJar(failOnError);
+      rtJar = findActiveRtJar(true);
 
-      if (rtJar == null && failOnError) {
+      if (rtJar == null) {
         throw new SetupJavaCoreEnvironmentException("JAVA_HOME environment variable needs to be defined");
       }
     } else {
       rtJar = findRtJar(javaHome);
     }
 
-    if ((rtJar == null || !rtJar.exists()) && failOnError) {
-      rtJar = findActiveRtJar(failOnError);
+    if (rtJar == null || !rtJar.exists()) {
+      rtJar = findActiveRtJar(true);
 
       if ((rtJar == null || !rtJar.exists())) {
         throw new SetupJavaCoreEnvironmentException("No rt.jar found under JAVA_HOME=" + javaHome);
@@ -98,6 +111,7 @@ public class JavaToKotlinTranslator {
     return rtJar;
   }
 
+  @Nullable
   private static File findRtJar(String javaHome) {
     File rtJar = new File(javaHome, "jre/lib/rt.jar");
     if (rtJar.exists()) {
@@ -123,7 +137,8 @@ public class JavaToKotlinTranslator {
     return null;
   }
 
-  public static File findActiveRtJar(boolean failOnError) {
+  @Nullable
+  private static File findActiveRtJar(boolean failOnError) {
     ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
     if (systemClassLoader instanceof URLClassLoader) {
       URLClassLoader loader = (URLClassLoader) systemClassLoader;
@@ -139,8 +154,9 @@ public class JavaToKotlinTranslator {
       }
       if (failOnError) {
         throw new SetupJavaCoreEnvironmentException("Could not find rt.jar in system class loader: " + StringUtil.join(loader.getURLs(), new Function<URL, String>() {
+          @NotNull
           @Override
-          public String fun(URL url) {
+          public String fun(@NotNull URL url) {
             return url.toString() + "\n";
           }
         }, ", "));
@@ -151,15 +167,16 @@ public class JavaToKotlinTranslator {
     return null;
   }
 
-  private static void setClassIdentifiers(PsiElement psiFile) {
+  static void setClassIdentifiers(@NotNull PsiElement psiFile) {
     ClassVisitor c = new ClassVisitor();
     psiFile.accept(c);
     Converter.clearClassIdentifiers();
     Converter.setClassIdentifiers(c.getClassIdentifiers());
   }
 
-  static String generateKotlinCode(String arg) {
-    PsiFile file = createFile("test.java", arg);
+  @NotNull
+  static String generateKotlinCode(@NotNull String arg) {
+    PsiFile file = createFile(arg);
     if (file != null && file instanceof PsiJavaFile) {
       setClassIdentifiers(file);
       return prettify(Converter.fileToFile((PsiJavaFile) file).toKotlin());
@@ -167,7 +184,17 @@ public class JavaToKotlinTranslator {
     return "";
   }
 
-  public static void main(String[] args) throws IOException {
+  @NotNull
+  static String generateKotlinCodeWithCompatibilityImport(@NotNull String arg) {
+    PsiFile file = createFile(arg);
+    if (file != null && file instanceof PsiJavaFile) {
+      setClassIdentifiers(file);
+      return prettify(Converter.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
+    }
+    return "";
+  }
+
+  public static void main(@NotNull String[] args) throws IOException {
     //noinspection UseOfSystemOutOrSystemErr
     final PrintStream out = System.out;
     if (args.length == 1) {
