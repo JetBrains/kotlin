@@ -72,12 +72,11 @@
 
     <target name="dist" depends="clean,jarRT,jar">
         <zip destfile="${output}/${output.name}.zip">
-            <zipfileset prefix="${output.name}/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="${output.name}/lib" dir="${basedir}/ideaSDK"/>
-            <zipfileset prefix="${output.name}/lib" dir="${basedir}/lib"/>
-            <zipfileset prefix="${output.name}/lib" dir="${output}" includes="*.jar"/>
-            <zipfileset prefix="${output.name}/examples" dir="${basedir}/examples/src"/>
+            <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
+            <zipfileset prefix="kotlinc/lib" dir="${basedir}/ideaSDK"/>
+            <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
+            <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
+            <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>
         </zip>
     </target>
 </project>
-        
