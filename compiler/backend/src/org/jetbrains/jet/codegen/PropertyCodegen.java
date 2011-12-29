@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -65,13 +66,16 @@ public class PropertyCodegen {
                     value = compileTimeValue != null ? compileTimeValue.getValue() : null;
                 }
             }
-            final int modifiers;
+            int modifiers;
             if (kind == OwnerKind.NAMESPACE) {
                 int access = isExternallyAccessible(p) ? Opcodes.ACC_PUBLIC : Opcodes.ACC_PRIVATE;
                 modifiers = access | Opcodes.ACC_STATIC;
             }
             else {
                 modifiers = Opcodes.ACC_PRIVATE;
+            }
+            if (!propertyDescriptor.isVar()) {
+                modifiers |= Opcodes.ACC_FINAL;
             }
             v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
         }
@@ -212,10 +216,10 @@ public class PropertyCodegen {
     }
 
     public static String getterName(String propertyName) {
-        return "get" + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
+        return JvmAbi.GETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
     }
 
     public static String setterName(String propertyName) {
-        return "set" + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
+        return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
     }
 }

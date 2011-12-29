@@ -58,7 +58,7 @@ public class PropertyGenTest extends CodegenTestCase {
         final Field field = fields[0];
         field.setAccessible(true);
         assertEquals("x", field.getName());
-        assertEquals(Modifier.PRIVATE | Modifier.STATIC, field.getModifiers());
+        assertEquals(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
         assertEquals(239, field.get(null));
     }
 
