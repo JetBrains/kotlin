@@ -31,6 +31,7 @@ import org.jetbrains.jet.j2k.visitors.ClassVisitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -167,9 +168,21 @@ public class JavaToKotlinTranslator {
   }
 
   public static void main(String[] args) throws IOException {
-    if (args.length > 0) {
-      //noinspection UseOfSystemOutOrSystemErr
-      System.out.println(generateKotlinCode(args[0]));
+    //noinspection UseOfSystemOutOrSystemErr
+    final PrintStream out = System.out;
+    if (args.length == 1) {
+      String kotlinCode = "";
+      try {
+        kotlinCode = generateKotlinCode(args[0]);
+      } catch (Exception e) {
+        out.println("EXCEPTION: " + e.getMessage());
+      }
+      if (kotlinCode.isEmpty())
+        out.println("EXCEPTION: generated code is empty.");
+      else
+        out.println(kotlinCode);
+    } else {
+      out.println("EXCEPTION: wrong number of arguments (should be 1).");
     }
   }
 }
