@@ -20,8 +20,8 @@
         <unzip dest="ideaSDK">
             <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
         </unzip>
-        <unzip dest="compiler">
-            <fileset dir="compiler" includes="kotlin*.zip"/>
+        <unzip dest="bootstrap.compiler">
+            <fileset dir="bootstrap.compiler" includes="kotlin*.zip"/>
         </unzip>
     </target>
 </project>
