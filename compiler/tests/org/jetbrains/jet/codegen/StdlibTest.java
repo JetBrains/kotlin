@@ -50,11 +50,6 @@ public class StdlibTest extends CodegenTestCase {
         }
     }
 
-    public void testInputStreamIterator () {
-        blackBoxFile("inputStreamIterator.jet");
-//        System.out.println(generateToText());
-    }
-
     public void testKt533 () {
         blackBoxFile("regressions/kt533.kt");
     }
@@ -73,17 +68,5 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testKt828 () {
         blackBoxFile("regressions/kt828.kt");
-    }
-
-    public void testCollectionSize () throws Exception {
-        loadText("import std.util.*; fun box() = if(java.util.Arrays.asList(0, 1, 2)?.size == 3) \"OK\" else \"fail\"");
-//        System.out.println(generateToText());
-        blackBox();
-    }
-
-    public void testCollectionEmpty () throws Exception {
-        loadText("import std.util.*; fun box() = if(java.util.Arrays.asList(0, 1, 2)?.empty ?: false) \"OK\" else \"fail\"");
-//        System.out.println(generateToText());
-        blackBox();
     }
 }
