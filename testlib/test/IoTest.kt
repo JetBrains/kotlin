@@ -8,10 +8,8 @@ import java.io.*
 import java.util.*
 
 class IoTest() : TestSupport() {
-  val file = File("test/HelloWorld.txt")
-
   fun testLineIteratorWithManualClose() {
-    val reader = FileReader(file).buffered()
+    val reader = sample().buffered()
     try {
       val list = reader.lineIterator().toArrayList()
       assertEquals(arrayList("Hello", "World"), list)
@@ -19,14 +17,17 @@ class IoTest() : TestSupport() {
       reader.close()
     }
   }
-
+  
+  fun sample() : Reader {
+    return InputStreamReader((this as java.lang.Object).getClass()?.getClassLoader()?.getResourceAsStream("test/HelloWorld.txt"))
+  }
 
   fun testLineIterator() {
     /*
     // TODO compiler error
     // both these expressions causes java.lang.NoClassDefFoundError: collections/namespace
-    val list = FileReader(file).useLines{it.toArrayList()}
-    val list = FileReader(file).useLines<ArrayList<String>>{it.toArrayList()}
+    val list = sample().useLines{it.toArrayList()}
+    val list = sample().useLines<ArrayList<String>>{it.toArrayList()}
 
     assertEquals(arrayList("Hello", "World"), list)
     */
@@ -35,7 +36,7 @@ class IoTest() : TestSupport() {
   fun testUse() {
     /**
     val list = ArrayList<String>()
-    val reader = FileReader(file).buffered()
+    val reader = sample().buffered()
 
     TODO compiler error?
     reader.use{
