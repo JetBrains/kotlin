@@ -19,7 +19,8 @@ class IoTest() : TestSupport() {
   }
   
   fun sample() : Reader {
-    return InputStreamReader((this as java.lang.Object).getClass()?.getClassLoader()?.getResourceAsStream("test/HelloWorld.txt"))
+    return StringReader("""Hello
+World""");
   }
 
   fun testLineIterator() {
