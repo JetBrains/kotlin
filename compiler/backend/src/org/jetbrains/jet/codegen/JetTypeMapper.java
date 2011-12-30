@@ -672,9 +672,11 @@ public class JetTypeMapper {
 
     @Nullable
     public JvmMethodSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
-        JetType inType = descriptor.getInType();
-        if(inType == null)
+        if (!descriptor.isVar()) {
             return null;
+        }
+
+        JetType outType = descriptor.getOutType();
 
         String name = PropertyCodegen.setterName(descriptor.getName());
         ArrayList<Type> params = new ArrayList<Type>();
@@ -694,7 +696,7 @@ public class JetTypeMapper {
             }
         }
 
-        params.add(mapType(inType));
+        params.add(mapType(outType));
 
         // TODO: proper generic signature
         return new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null, null);

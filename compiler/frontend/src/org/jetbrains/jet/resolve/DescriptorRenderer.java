@@ -136,7 +136,7 @@ public class DescriptorRenderer implements Renderer {
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
-            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER, descriptor.getOutType(), descriptor.getInType());
+            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER, descriptor.getOutType());
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return super.visitVariableDescriptor(descriptor, builder);
@@ -146,25 +146,15 @@ public class DescriptorRenderer implements Renderer {
                 @NotNull StringBuilder builder,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull ReceiverDescriptor receiver,
-                @Nullable JetType outType,
-                @Nullable JetType inType) {
+                @Nullable JetType outType) {
             String typeString = lt() + "no type>";
-            if (inType != null && outType != null) {
+            if (outType != null) {
                 builder.append(renderKeyword("var")).append(" ");
-                if (inType.equals(outType)) {
-                    typeString = renderType(outType);
-                }
-                else {
-                    typeString = "<" + renderKeyword("in") + ": " + renderType(inType) + " " + renderKeyword("out") + ": " + renderType(outType) + ">";
-                }
+                typeString = renderType(outType);
             }
             else if (outType != null) {
                 builder.append(renderKeyword("val")).append(" ");
                 typeString = renderType(outType);
-            }
-            else if (inType != null) {
-                builder.append(lt()).append("write-only> ");
-                typeString = renderType(inType);
             }
 
             renderTypeParameters(typeParameters, builder);
@@ -182,8 +172,7 @@ public class DescriptorRenderer implements Renderer {
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder, descriptor.getTypeParameters(),
                     descriptor.getReceiverParameter(),
-                    descriptor.getOutType(),
-                    descriptor.getInType());
+                    descriptor.getOutType());
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return null;

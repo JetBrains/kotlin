@@ -264,7 +264,7 @@ public class DescriptorResolver {
             index,
             annotationResolver.createAnnotationStubs(valueParameter.getModifierList()),
             JetPsiUtil.safeName(valueParameter.getName()),
-            valueParameter.isMutable() ? variableType : null,
+            valueParameter.isMutable(),
             variableType,
             valueParameter.getDefaultValue() != null,
             varargElementType
@@ -479,7 +479,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(objectDeclaration.getName())
         );
 
-        propertyDescriptor.setType(null, classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
+        propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(null, null);
 
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
@@ -553,8 +553,7 @@ public class DescriptorResolver {
 
         JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true);
 
-        JetType inType = isVar ? type : null;
-        propertyDescriptor.setType(inType, type, typeParameterDescriptors, DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), receiverDescriptor);
+        propertyDescriptor.setType(type, typeParameterDescriptors, DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), receiverDescriptor);
 
         PropertyGetterDescriptor getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor);
         PropertySetterDescriptor setter = resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor);
@@ -686,11 +685,11 @@ public class DescriptorResolver {
                 JetType type;
                 JetTypeReference typeReference = parameter.getTypeReference();
                 if (typeReference == null) {
-                    type = propertyDescriptor.getInType(); // TODO : this maybe unknown at this point
+                    type = propertyDescriptor.getOutType(); // TODO : this maybe unknown at this point
                 }
                 else {
                     type = typeResolver.resolveType(scope, typeReference);
-                    JetType inType = propertyDescriptor.getInType();
+                    JetType inType = propertyDescriptor.getOutType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
 //                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
@@ -842,8 +841,7 @@ public class DescriptorResolver {
                 isMutable,
                 name == null ? "<no name>" : name
         );
-        JetType inType = isMutable ? type : null;
-        propertyDescriptor.setType(inType, type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
+        propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
 
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = createDefaultSetter(propertyDescriptor);

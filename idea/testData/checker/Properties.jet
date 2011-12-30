@@ -7,7 +7,7 @@
 
  val xx : Int = <error>1 + x</error>
    get() : Int = 1
-   <error>set(value : Long) {}</error>
+   <error>set(value : <error>Long</error>) {}</error>
 
   val p : Int = <error>1</error>
     get() = 1

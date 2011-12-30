@@ -743,7 +743,7 @@ public class JavaDescriptorResolver {
                     i,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO
                     name,
-                    null, // TODO : review
+                    false,
                     changeNullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
                     hasDefaultValue,
                     varargElementType
@@ -767,7 +767,6 @@ public class JavaDescriptorResolver {
                 null,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
                 field.getName(),
-                isFinal ? null : type,
                 type);
         semanticServices.getTrace().record(BindingContext.VARIABLE, field, propertyDescriptor);
         fieldDescriptorCache.put(field, propertyDescriptor);
