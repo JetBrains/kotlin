@@ -233,7 +233,10 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(IModuleBuilder moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
-        moduleCompileSession.addStdLibSources(false);
+        if (!"stdlib".equals(moduleBuilder.getModuleName())) {
+            moduleCompileSession.addStdLibSources(false);
+        }
+
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
