@@ -186,7 +186,7 @@ public class BytecodeToolwindow extends JPanel {
         } catch (Exception e) {
             StringWriter out = new StringWriter(1024);
             e.printStackTrace(new PrintWriter(out));
-            return out.toString();
+            return out.toString().replaceAll("\r", "");
         }
 
 
