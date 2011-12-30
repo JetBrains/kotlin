@@ -15,9 +15,6 @@ fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::jav
 }
 
 class B : `java::java.lang.Object`Object {
-  fun bar(~o~o : `java::java.lang.Object`Object) {
-     `java::java.lang.System`System.`java::java.lang.System.out`out.`java::java.io.PrintStream.print(Object)`print(`o`o)`:std::Unit`
-  }
 
   fun f(a : `java::java.util`util.`java::java.util.List`List) {}
   fun f(a : `java::java.util.List`List) {}
@@ -35,19 +32,3 @@ class B : `java::java.lang.Object`Object {
   }
 }
 
-~c~fun c(~x~x : java.lang.`java::java.lang.Number`Number) {
-  `x`x.`java::java.lang.Number.intValue()`intValue()
-}
-
-fun <T> t(t : T) : T {
-  `c`c(java.lang.Integer(1))
-  System.out.`java::java.io.PrintStream.print(Object)`print(t)
-  System.out.`java::java.io.PrintStream.print(char[])`print(null : CharArray?)
-  System.out.`java::java.io.PrintStream.print(Object)`print(null : Object?)
-  System.out.`java::java.io.PrintStream.print(Int)`print(1)
-  System.out.`java::java.io.PrintStream.print(Double)`print(1.0)
-}
-
-fun typeTransform() {
-    Integer.getInteger("", 239)`:std::Int`
-}

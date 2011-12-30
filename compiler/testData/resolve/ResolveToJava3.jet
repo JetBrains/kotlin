@@ -1,0 +1,8 @@
+import `java::java`java.*
+import `java::java.util`util.*
+
+class B : `java::java.lang.Object`Object {
+  fun bar(~o~o : `java::java.lang.Object`Object) {
+     `java::java.lang.System`System.`java::java.lang.System.out`out.`java::java.io.PrintStream.print(Object)`print(`o`o)`:std::Unit`
+  }
+}
