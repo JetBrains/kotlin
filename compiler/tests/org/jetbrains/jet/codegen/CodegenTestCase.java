@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -109,13 +110,13 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         return loadRootNamespaceClass(state);
     }
 
-    protected Class loadRootNamespaceClass(ClassFileFactory state) {
+    protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
         String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile)).replace("/", ".");
         Map<String, Class> classMap = loadAllClasses(state);
         return classMap.get(fqName);
     }
 
-    protected Class loadClass(String fqName, ClassFileFactory state) {
+    protected Class loadClass(String fqName, @NotNull ClassFileFactory state) {
         List<String> files = state.files();
         for (String file : files) {
             if (file.equals(fqName.replace('.', '/') + ".class")) {
@@ -128,7 +129,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         return null;
     }
 
-    protected Map<String, Class> loadAllClasses(ClassFileFactory state) {
+    protected Map<String, Class> loadAllClasses(@NotNull ClassFileFactory state) {
         Map<String, Class> result = new HashMap<String, Class>();
         for (String fileName : state.files()) {
             String className = StringUtil.trimEnd(fileName, ".class").replace('/', '.');
@@ -139,6 +140,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         return result;
     }
 
+    @NotNull
     protected ClassFileFactory generateClassesInFile() {
         try {
             GenerationState state = new GenerationState(getProject(), ClassBuilderFactory.BINARIES);
@@ -200,7 +202,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         assertTrue(Math.abs(returnValue - currentTime) <= 1L);
     }
 
-    protected Class loadImplementationClass(ClassFileFactory codegens, final String name) {
+    protected Class loadImplementationClass(@NotNull ClassFileFactory codegens, final String name) {
         return loadClass(name, codegens);
     }
 

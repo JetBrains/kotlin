@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GenerationState {
+    @NotNull
     private final ClassFileFactory factory;
     private final Project project;
 
@@ -38,6 +40,7 @@ public class GenerationState {
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
     }
 
+    @NotNull
     public ClassFileFactory getFactory() {
         return factory;
     }

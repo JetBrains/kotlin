@@ -1,5 +1,7 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 
@@ -30,6 +32,7 @@ public class StdlibTest extends CodegenTestCase {
         return session.generateText();
     }
 
+    @NotNull
     protected ClassFileFactory generateClassesInFile() {
         try {
             CompileSession session = new CompileSession(myEnvironment);
@@ -38,7 +41,7 @@ public class StdlibTest extends CodegenTestCase {
             session.addStdLibSources(true);
 
             if (!session.analyze(System.out)) {
-                return null;
+                throw new RuntimeException();
             }
 
             return session.generate();
