@@ -48,7 +48,7 @@ public class JavaPackageScope extends JetScopeImpl {
         }
 
         // TODO: what is GlobalSearchScope
-        PsiClass psiClass = semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName("namespace"));
+        PsiClass psiClass = semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName(JvmAbi.PACKAGE_CLASS));
         if (psiClass == null) {
             return null;
         }
@@ -116,7 +116,7 @@ public class JavaPackageScope extends JetScopeImpl {
                 }
 
                 for (PsiClass psiClass : javaPackage.getClasses()) {
-                    if (isKotlinNamespace && "namespace".equals(psiClass.getName())) continue;
+                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) continue;
 
                     // If this is a Kotlin class, we have already taken it through a containing namespace descriptor
                     ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(psiClass.getQualifiedName());

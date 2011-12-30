@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassBuilder;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -52,7 +53,7 @@ public class StubClassBuilder extends ClassBuilder {
         v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access);
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
-        if (name.equals("namespace") || name.endsWith("/namespace")) {
+        if (name.equals(JvmAbi.PACKAGE_CLASS) || name.endsWith("/" + JvmAbi.PACKAGE_CLASS)) {
             isNamespace = true;
         }
         else {

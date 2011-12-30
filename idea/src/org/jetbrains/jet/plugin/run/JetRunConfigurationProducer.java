@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 /**
@@ -44,7 +45,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             if (JetMainDetector.hasMain(jetFile.getDeclarations())) {
                 mySourceElement = jetFile;
                 String fqName = JetPsiUtil.getFQName(jetFile);
-                String className = fqName.length() == 0 ? "namespace" : fqName + ".namespace";
+                String className = fqName.length() == 0 ? JvmAbi.PACKAGE_CLASS : fqName + "." + JvmAbi.PACKAGE_CLASS;
                 return createConfigurationByQName(module, configurationContext, className);
             }
         }
@@ -59,7 +60,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(module.getProject(), context);
         JetRunConfiguration configuration = (JetRunConfiguration) settings.getConfiguration();
         configuration.setModule(module);
-        configuration.setName(StringUtil.trimEnd(fqName, ".namespace"));
+        configuration.setName(StringUtil.trimEnd(fqName, "." + JvmAbi.PACKAGE_CLASS));
         configuration.MAIN_CLASS_NAME = fqName;
         return settings;
     }

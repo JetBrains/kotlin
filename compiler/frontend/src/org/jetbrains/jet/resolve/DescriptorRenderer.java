@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.diagnostics.Renderer;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -268,7 +269,7 @@ public class DescriptorRenderer implements Renderer {
 
         @Override
         public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
-            builder.append(renderKeyword("namespace")).append(" ");
+            builder.append(renderKeyword(JetTokens.NAMESPACE_KEYWORD.getValue())).append(" ");
             renderName(namespaceDescriptor, builder);
             return super.visitNamespaceDescriptor(namespaceDescriptor, builder);
         }

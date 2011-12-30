@@ -8,4 +8,5 @@ public class JvmAbi {
     public static final String DEFAULT_PARAMS_IMPL_SUFFIX = "$default";
     public static final String GETTER_PREFIX = "get";
     public static final String SETTER_PREFIX = "set";
+    public static final String PACKAGE_CLASS = "namespace";
 }
