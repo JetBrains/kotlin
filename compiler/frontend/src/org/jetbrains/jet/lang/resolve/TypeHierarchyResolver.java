@@ -101,9 +101,8 @@ public class TypeHierarchyResolver {
                     visitClassOrObject(
                             klass,
                             (Map) context.getClasses(),
-                            owner,
-                            outerScope,
-                            mutableClassDescriptor);
+                            mutableClassDescriptor
+                    );
                     owner.addClassifierDescriptor(mutableClassDescriptor);
                 }
 
@@ -126,9 +125,8 @@ public class TypeHierarchyResolver {
                         visitClassOrObject(
                                 enumEntry,
                                 (Map) context.getClasses(),
-                                classObjectDescriptor,
-                                outerScope,
-                                mutableClassDescriptor);
+                                mutableClassDescriptor
+                        );
                         classObjectDescriptor.addClassifierDescriptor(mutableClassDescriptor);
                     }
                 }
@@ -140,7 +138,7 @@ public class TypeHierarchyResolver {
                             return ClassObjectStatus.NOT_ALLOWED;
                         }
                     };
-                    visitClassOrObject(declaration, (Map) context.getObjects(), owner, scope, mutableClassDescriptor);
+                    visitClassOrObject(declaration, (Map) context.getObjects(), mutableClassDescriptor);
                     createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
                     context.getTrace().record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
@@ -157,19 +155,18 @@ public class TypeHierarchyResolver {
                     }
                 }
 
-                private void visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope, MutableClassDescriptor mutableClassDescriptor) {
+                private void visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, MutableClassDescriptor mutableClassDescriptor) {
                     mutableClassDescriptor.setName(JetPsiUtil.safeName(declaration.getName()));
 
                     map.put(declaration, mutableClassDescriptor);
-//                    declaringScopes.put((JetDeclaration) declaration, outerScope);
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-                    collectNamespacesAndClassifiers(classScope, outerScopeForStatic, mutableClassDescriptor, declaration.getDeclarations());
+                    JetScope scopeForStatic = declaration instanceof JetObjectDeclaration ? classScope : outerScopeForStatic;
+                    collectNamespacesAndClassifiers(classScope, scopeForStatic, mutableClassDescriptor, declaration.getDeclarations());
                 }
 
                 @Override
                 public void visitTypedef(JetTypedef typedef) {
-//                    context.getTrace().getErrorHandler().genericError(typedef.getNode(), "Unsupported [TopDownAnalyzer]");
                     context.getTrace().report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
                 }
 
@@ -180,11 +177,9 @@ public class TypeHierarchyResolver {
                         NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic));
                         switch (status) {
                             case DUPLICATE:
-//                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "Only one class object is allowed per class");
                                 context.getTrace().report(MANY_CLASS_OBJECTS.on(classObject));
                                 break;
                             case NOT_ALLOWED:
-//                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "A class object is not allowed here");
                                 context.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
                                 break;
                         }
@@ -366,7 +361,6 @@ public class TypeHierarchyResolver {
                 }
             }
             if (node != null) {
-//                context.getTrace().getErrorHandler().genericError(node, "There's a cycle in the inheritance hierarchy for this type");
                 context.getTrace().report(CYCLIC_INHERITANCE_HIERARCHY.on(node));
             }
         }
