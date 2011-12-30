@@ -49,35 +49,39 @@ public class CompileSession {
             return;
         }
 
-        addSources(new File(path));
+        addSources(new File(path), false);
     }
 
-    private void addSources(File file) {
+    private void addSources(File file, boolean library) {
         if(file.isDirectory()) {
             for (File child : file.listFiles()) {
-                addSources(child);
+                addSources(child, library);
             }
         }
         else {
             VirtualFile fileByPath = myEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(fileByPath);
             if(psiFile instanceof JetFile) {
-                mySourceFiles.add((JetFile) psiFile);
+                (library ? myLibrarySourceFiles : mySourceFiles).add((JetFile) psiFile);
             }
         }
     }
 
     public void addSources(VirtualFile vFile) {
+        addSources(vFile, false);
+    }
+
+    private void addSources(VirtualFile vFile, boolean library) {
         if  (vFile.isDirectory())  {
             for (VirtualFile virtualFile : vFile.getChildren()) {
-                addSources(virtualFile);
+                addSources(virtualFile, library);
             }
         }
         else {
             if (vFile.getFileType() == JetFileType.INSTANCE) {
                 PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
                 if (psiFile instanceof JetFile) {
-                    mySourceFiles.add((JetFile) psiFile);
+                    (library ? myLibrarySourceFiles : mySourceFiles).add((JetFile) psiFile);
                 }
             }
         }
@@ -115,17 +119,17 @@ public class CompileSession {
         return generationState.createText();
     }
 
-    public boolean addStdLibSources() {
+    public boolean addStdLibSources(boolean toModuleSources) {
         final File unpackedRuntimePath = CompileEnvironment.getUnpackedRuntimePath();
         if (unpackedRuntimePath != null) {
-            addSources(new File(unpackedRuntimePath, "../../../stdlib/ktSrc").getAbsoluteFile());
+            addSources(new File(unpackedRuntimePath, "../../../stdlib/ktSrc").getAbsoluteFile(), !toModuleSources);
         }
         else {
             final File runtimeJarPath = CompileEnvironment.getRuntimeJarPath();
             if (runtimeJarPath != null && runtimeJarPath.exists()) {
                 VirtualFile runtimeJar = myEnvironment.getLocalFileSystem().findFileByPath(runtimeJarPath.getAbsolutePath());
                 VirtualFile jarRoot = myEnvironment.getJarFileSystem().findFileByPath(runtimeJar.getPath() + "!/stdlib/ktSrc");
-                addSources(jarRoot);
+                addSources(jarRoot, !toModuleSources);
             }
             else {
                 return false;
