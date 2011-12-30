@@ -34,11 +34,6 @@ public class VariableDescriptorBoundToReceiver implements VariableDescriptor {
         return variableDescriptor.getOutType();
     }
 
-    @Override
-    public JetType getInType() {
-        return variableDescriptor.getInType();
-    }
-
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {

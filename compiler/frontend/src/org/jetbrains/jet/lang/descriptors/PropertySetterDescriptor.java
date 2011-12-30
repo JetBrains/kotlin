@@ -35,7 +35,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     public void initializeDefault() {
         assert parameter == null;
-        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), "<>", null, getCorrespondingProperty().getReturnType(), false, null);
+        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), "<>", false, getCorrespondingProperty().getReturnType(), false, null);
     }
 
     @NotNull

@@ -71,23 +71,20 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull String name,
-            @Nullable JetType inType,
             @NotNull JetType outType
         ) {
         this(containingDeclaration, annotations, modality, visibility, isVar, name);
-        setType(inType, outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
+        setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
     }
 
-    public void setType(@Nullable JetType inType, @NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @Nullable JetType receiverType) {
+    public void setType(@NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @Nullable JetType receiverType) {
         ReceiverDescriptor receiver = receiverType == null
                 ? NO_RECEIVER
                 : new ExtensionReceiver(this, receiverType);
-        setType(inType, outType, typeParameters, expectedThisObject, receiver);
+        setType(outType, typeParameters, expectedThisObject, receiver);
     }
 
-    public void setType(@Nullable JetType inType, @NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @NotNull ReceiverDescriptor receiver) {
-        assert !isVar || inType != null;
-        setInType(inType);
+    public void setType(@NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @NotNull ReceiverDescriptor receiver) {
         setOutType(outType);
 
         this.typeParemeters = typeParameters;
@@ -121,17 +118,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @Override
     public JetType getReturnType() {
         return getOutType();
-    }
-
-    @Override
-    public JetType getInType() {
-        return super.getInType();
-    }
-
-    @Override
-    @NotNull
-    public JetType getOutType() {
-        return super.getOutType();
     }
 
     public boolean isVar() {
@@ -170,11 +156,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
-        JetType originalInType = getInType();
-        JetType inType = originalInType == null ? null : substitutor.substitute(originalInType, Variance.IN_VARIANCE);
         JetType originalOutType = getOutType();
         JetType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
-        if (inType == null && outType == null) {
+        if (outType == null) {
             return null; // TODO : tell the user that the property was projected out
         }
 
@@ -196,7 +180,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             substitutedReceiverType = null;
         }
 
-        substitutedDescriptor.setType(inType, outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
+        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
 
         return substitutedDescriptor;
     }
@@ -231,7 +215,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
                 DescriptorUtils.convertModality(modality, makeNonAbstract), visibility, isVar,
                 getName());
 
-        propertyDescriptor.setType(getInType(), getOutType(), DescriptorUtils.copyTypeParameters(propertyDescriptor, getTypeParameters()), expectedThisObject, receiver.exists() ? receiver.getType() : null);
+        propertyDescriptor.setType(getOutType(), DescriptorUtils.copyTypeParameters(propertyDescriptor, getTypeParameters()), expectedThisObject, receiver.exists() ? receiver.getType() : null);
 
         PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
                 propertyDescriptor, Lists.newArrayList(getter.getAnnotations()),

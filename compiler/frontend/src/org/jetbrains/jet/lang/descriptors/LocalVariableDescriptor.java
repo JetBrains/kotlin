@@ -19,7 +19,7 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
             @NotNull String name,
             @Nullable JetType type,
             boolean mutable) {
-        super(containingDeclaration, annotations, name, mutable ? type : null, type);
+        super(containingDeclaration, annotations, name, type);
         isVar = mutable;
     }
 

@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -206,12 +207,12 @@ public class NamespaceCodegen {
 
     public static String getJVMClassName(String fqName) {
         if (fqName.length() == 0) {
-            return "namespace";
+            return JvmAbi.PACKAGE_CLASS;
         }
 
-        String name = fqName.replace('.', '/') + "/namespace";
+        String name = fqName.replace('.', '/') + "/" + JvmAbi.PACKAGE_CLASS;
         if(name.startsWith("<java_root>")) {
-            name = name.substring("<java_root>".length() + 1, name.length() - ".namespace".length());
+            name = name.substring("<java_root>".length() + 1, name.length() - 1 - JvmAbi.PACKAGE_CLASS.length());
         }
         return name;
     }

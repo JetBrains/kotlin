@@ -17,6 +17,7 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.*;
@@ -72,7 +73,7 @@ public class JavaElementFinder extends PsiElementFinder {
         for (JetFile file : filesInScope) {
             final String packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.startsWith(packageName)) {
-                if (qualifiedName.equals(fqn(packageName, "namespace"))) {
+                if (qualifiedName.equals(fqn(packageName, JvmAbi.PACKAGE_CLASS))) {
                     answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
                 else {
@@ -122,7 +123,7 @@ public class JavaElementFinder extends PsiElementFinder {
         String packageFQN = psiPackage.getQualifiedName();
         for (JetFile psiFile : collectProjectJetFiles(project, GlobalSearchScope.allScope(project))) {
             if (packageFQN.equals(JetPsiUtil.getFQName(psiFile))) {
-                answer.add("namespace");
+                answer.add(JvmAbi.PACKAGE_CLASS);
                 for (JetDeclaration declaration : psiFile.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
                         answer.add(getLocalName(declaration));
@@ -160,7 +161,7 @@ public class JavaElementFinder extends PsiElementFinder {
         String packageFQN = psiPackage.getQualifiedName();
         for (JetFile file : filesInScope) {
             if (packageFQN.equals(JetPsiUtil.getFQName(file))) {
-                answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, "namespace")));
+                answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, JvmAbi.PACKAGE_CLASS)));
                 for (JetDeclaration declaration : file.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
                         answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, getLocalName(declaration))));

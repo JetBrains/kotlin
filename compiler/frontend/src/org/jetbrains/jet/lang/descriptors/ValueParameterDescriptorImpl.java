@@ -24,42 +24,37 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             int index,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
-            @Nullable JetType inType,
+            boolean isVar,
             @NotNull JetType outType,
             boolean hasDefaultValue,
             @Nullable JetType varargElementType) {
-        super(containingDeclaration, annotations, name, inType, outType);
+        super(containingDeclaration, annotations, name, outType);
         this.original = this;
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.varargElementType = varargElementType;
-        this.isVar = inType != null;
+        this.isVar = isVar;
     }
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ValueParameterDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            @Nullable JetType inType,
+            boolean isVar,
             @NotNull JetType outType,
             @Nullable JetType varargElementType
             ) {
-        super(containingDeclaration, annotations, original.getName(), inType, outType);
+        super(containingDeclaration, annotations, original.getName(), outType);
         this.original = original;
         this.index = original.getIndex();
         this.hasDefaultValue = original.hasDefaultValue();
         this.varargElementType = varargElementType;
-        this.isVar = inType != null;
+        this.isVar = isVar;
     }
 
     @Override
     public void setType(@NotNull JetType type) {
-        assert getOutType() == null;
         setOutType(type);
-        if (isVar) {
-            assert getInType() == null;
-            setInType(type);
-        }
     }
 
     @Override
@@ -107,6 +102,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), getInType(), getOutType(), hasDefaultValue, varargElementType);
+        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), isVar, getOutType(), hasDefaultValue, varargElementType);
     }
 }

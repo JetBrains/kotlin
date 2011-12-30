@@ -16,6 +16,7 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.*;
@@ -210,7 +211,7 @@ public class CompileEnvironment {
             Class moduleSetBuilderClass = loader.loadClass("kotlin.modules.ModuleSetBuilder");
             final IModuleSetBuilder moduleSetBuilder = (IModuleSetBuilder) moduleSetBuilderClass.newInstance();
 
-            Class namespaceClass = loader.loadClass("namespace");
+            Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
             final Field[] fields = namespaceClass.getDeclaredFields();
             boolean modulesDefined = false;
             for (Field field : fields) {
@@ -343,7 +344,7 @@ public class CompileEnvironment {
         String mainClass = null;
         for (JetFile file : session.getSourceFileNamespaces()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {
-                mainClass = JetPsiUtil.getFQName(file) + ".namespace";
+                mainClass = JetPsiUtil.getFQName(file) + "." + JvmAbi.PACKAGE_CLASS;
                 break;
             }
         }
