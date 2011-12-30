@@ -40,8 +40,9 @@ class JarBuilder(val parent: ModuleBuilder) {
 }
 
 open class ModuleBuilder(val name: String): IModuleBuilder {
-    val sourceFiles: ArrayList<String?> = ArrayList<String?>()
-    val classpathRoots: ArrayList<String?> = ArrayList<String?>()
+    // http://youtrack.jetbrains.net/issue/KT-904
+    private val sourceFiles0: ArrayList<String?> = ArrayList<String?>()
+    private val classpathRoots0: ArrayList<String?> = ArrayList<String?>()
     var _jarName: String? = null
 
     val source: SourcesBuilder
@@ -54,19 +55,19 @@ open class ModuleBuilder(val name: String): IModuleBuilder {
       get() = JarBuilder(this)
 
     fun addSourceFiles(pattern: String) {
-        sourceFiles.add(pattern)
+        sourceFiles0.add(pattern)
     }
 
     fun addClasspathEntry(name: String) {
-        classpathRoots.add(name)
+        classpathRoots0.add(name)
     }
 
     fun setJarName(name: String) {
         _jarName = name
     }
 
-    override fun getSourceFiles(): List<String?>? = sourceFiles
-    override fun getClasspathRoots(): List<String?>? = classpathRoots
+    override fun getSourceFiles(): List<String?>? = sourceFiles0
+    override fun getClasspathRoots(): List<String?>? = classpathRoots0
     override fun getModuleName(): String? = name
     override fun getJarName(): String? = _jarName
 

@@ -4,6 +4,7 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -107,6 +108,7 @@ public class CompileSession {
         return !errorCollector.hasErrors;
     }
 
+    @NotNull
     public ClassFileFactory generate() {
         GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles);

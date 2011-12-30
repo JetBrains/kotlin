@@ -32,7 +32,7 @@ public class CompileEnvironmentTest extends TestCase {
         super.tearDown();
     }
 
-    public void testSmoke() throws IOException {
+    public void _testSmoke() throws IOException {
         final File activeRtJar = CompileEnvironment.findRtJar(true);
         environment.setJavaRuntime(activeRtJar);
         environment.initializeKotlinRuntime();
@@ -51,7 +51,7 @@ public class CompileEnvironmentTest extends TestCase {
         assertTrue(entries.contains("Smoke/namespace.class"));
     }
 
-    public void testSmokeWithCompilerJar() throws IOException {
+    public void _testSmokeWithCompilerJar() throws IOException {
         File tempFile = File.createTempFile("compilerTest", "compilerTest");
         try {
             KotlinCompiler.main(Arrays.asList("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts", "-jar", tempFile.getAbsolutePath()).toArray(new String[0]));

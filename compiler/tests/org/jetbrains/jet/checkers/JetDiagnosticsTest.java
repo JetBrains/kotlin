@@ -53,7 +53,8 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             }
         }
 
-        public void getActualText(BindingContext bindingContext, StringBuilder actualText) {
+        public boolean getActualText(BindingContext bindingContext, StringBuilder actualText) {
+            final boolean ok[] = { true };
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile), new CheckerTestUtil.DiagnosticDiffCallbacks() {
                 @NotNull
                 @Override
@@ -65,16 +66,19 @@ public class JetDiagnosticsTest extends JetLiteFixture {
                 public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
                     String message = "Missing " + type + DiagnosticUtils.atLocation(jetFile, new TextRange(expectedStart, expectedEnd));
                     System.err.println(message);
+                    ok[0] = false;
                 }
 
                 @Override
                 public void unexpectedDiagnostic(String type, int actualStart, int actualEnd) {
                     String message = "Unexpected " + type + DiagnosticUtils.atLocation(jetFile, new TextRange(actualStart, actualEnd));
                     System.err.println(message);
+                    ok[0] = false;
                 }
             });
 
             actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, bindingContext, AnalyzingUtils.getSyntaxErrorRanges(jetFile)));
+            return ok[0];
         }
 
     }
@@ -108,12 +112,16 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             bindingContext = AnalyzingUtils.analyzeFiles(getProject(), Configuration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
 
+        boolean ok = true;
+
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFileFile : testFileFiles) {
-            testFileFile.getActualText(bindingContext, actualText);
+            ok &= testFileFile.getActualText(bindingContext, actualText);
         }
 
         assertEquals(expectedText, actualText.toString());
+
+        assertTrue("something is wrong is this test", ok);
     }
 
     //    private void convert(File src, File dest) throws IOException {

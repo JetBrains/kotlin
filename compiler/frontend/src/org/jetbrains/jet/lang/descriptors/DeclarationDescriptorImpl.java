@@ -51,7 +51,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
         } catch (Throwable e) {
             // DescriptionRenderer may throw if this is not yet completely initialized
             // It is very inconvenient while debugging
-            return super.toString();
+            return this.getClass().getName() + "@" + System.identityHashCode(this);
         }
     }
 }

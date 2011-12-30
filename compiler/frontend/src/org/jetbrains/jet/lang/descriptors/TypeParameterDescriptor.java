@@ -165,7 +165,11 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @Override
     public String toString() {
-        return DescriptorRenderer.TEXT.render(this);
+        try {
+            return DescriptorRenderer.TEXT.render(this);
+        } catch (Exception e) {
+            return this.getClass().getName() + "@" + System.identityHashCode(this);
+        }
     }
 
     @NotNull
