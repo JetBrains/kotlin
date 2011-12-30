@@ -128,8 +128,7 @@ public class StatementVisitor extends ElementVisitor {
         && condition != null
         && update != null
         && update.getChildren().length == 1
-        && update.getChildren()[0] instanceof PsiPostfixExpression
-        && ((PsiPostfixExpression) update.getChildren()[0]).getOperationTokenType() == JavaTokenType.PLUSPLUS
+        && isPlusPlusExpression(update.getChildren()[0])
         && operationTokenType != null
         && (operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE)
         && initialization.getFirstChild() != null
@@ -160,6 +159,10 @@ public class StatementVisitor extends ElementVisitor {
     }
   }
 
+  private static boolean isPlusPlusExpression(@NotNull PsiElement psiElement) {
+    return (psiElement instanceof PsiPostfixExpression && ((PsiPostfixExpression) psiElement).getOperationTokenType() == JavaTokenType.PLUSPLUS)
+      || (psiElement instanceof PsiPrefixExpression && ((PsiPrefixExpression) psiElement).getOperationTokenType() == JavaTokenType.PLUSPLUS);
+  }
 
   @Override
   public void visitForeachStatement(@NotNull PsiForeachStatement statement) {
