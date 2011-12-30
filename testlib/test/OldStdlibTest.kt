@@ -9,7 +9,7 @@ import java.io.*
 
 class OldStdlibTest() : TestSupport() {
     fun testCollectionEmpty() {
-        assert {
+        assertNot {
             Arrays.asList(0, 1, 2)?.empty ?: false
         }
     }
