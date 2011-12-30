@@ -2,6 +2,7 @@ package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -165,6 +166,10 @@ public class JetTestUtils {
             }
             file.delete();
         }
+    }
+    
+    public static File tmpDirForTest(TestCase test) {
+        return new File("tmp/" + test.getClass().getSimpleName() + "/" + test.getName());
     }
 
     public static void recreateDirectory(File file) throws IOException {

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -62,7 +63,7 @@ public class ReadClassDataTest extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        tmpdir = new File("tmp/" + this.getClass().getSimpleName() + "." + this.getName());
+        tmpdir = JetTestUtils.tmpDirForTest(this);
         JetTestUtils.recreateDirectory(tmpdir);
     }
 
@@ -132,7 +133,16 @@ public class ReadClassDataTest extends UsefulTestCase {
                 Assert.assertTrue(functions.size() >= 1);
                 Assert.assertTrue("not implemented", functions.size() == 1);
                 FunctionDescriptor bd = functions.iterator().next();
-                compareFunctions((FunctionDescriptor) ad, bd);
+                compareDescriptors(ad, bd);
+            } else if (ad instanceof PropertyDescriptor) {
+                Set<VariableDescriptor> properties = nsb.getMemberScope().getProperties(ad.getName());
+                Assert.assertTrue(properties.size() >= 1);
+                Assert.assertTrue("not implemented", properties.size() == 1);
+                PropertyDescriptor bd = (PropertyDescriptor) properties.iterator().next();
+                compareDescriptors(ad, bd);
+
+                Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.getterName(ad.getName())).isEmpty());
+                Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(ad.getName())).isEmpty());
             } else {
                 throw new AssertionError("Unknown member: " + ad);
             }
@@ -153,7 +163,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         System.out.println(as);
     }
     
-    private void compareFunctions(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
+    private void compareDescriptors(@NotNull DeclarationDescriptor a, @NotNull DeclarationDescriptor b) {
         StringBuilder sba = new StringBuilder();
         StringBuilder sbb = new StringBuilder();
         new Serializer(sba).serialize(a);

@@ -13,9 +13,12 @@ import java.util.List;
  */
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
-
-    public JavaNamespaceDescriptor(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
+    private final String qualifiedName;
+    
+    public JavaNamespaceDescriptor(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations,
+            @NotNull String name, @NotNull String qualifiedName) {
         super(containingDeclaration, annotations, name);
+        this.qualifiedName = qualifiedName;
     }
 
     public void setMemberScope(@NotNull JetScope memberScope) {
@@ -26,5 +29,9 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     @Override
     public JetScope getMemberScope() {
         return memberScope;
+    }
+
+    public String getQualifiedName() {
+        return qualifiedName;
     }
 }
