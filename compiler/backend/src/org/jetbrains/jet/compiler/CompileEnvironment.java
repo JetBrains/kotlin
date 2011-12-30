@@ -22,7 +22,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.*;
 
@@ -189,7 +188,7 @@ public class CompileEnvironment {
     public IModuleSetBuilder loadModuleScript(String moduleFile) {
         CompileSession scriptCompileSession = new CompileSession(myEnvironment);
         scriptCompileSession.addSources(moduleFile);
-        scriptCompileSession.addStdLibSources();
+        scriptCompileSession.addStdLibSources(true);
 
         if (!scriptCompileSession.analyze(myErrorStream)) {
             return null;
@@ -228,7 +227,7 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(IModuleBuilder moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
-        moduleCompileSession.addStdLibSources();
+        moduleCompileSession.addStdLibSources(false);
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
@@ -250,17 +249,6 @@ public class CompileEnvironment {
        return new File(PathManager.getResourceRoot(CompileEnvironment.class, "/org/jetbrains/jet/compiler/CompileEnvironment.class")).getParentFile().getParentFile().getParent();
     }
 
-    private static final List<String> sanitized = Arrays.asList("kotlin/", "std/");
-    public static boolean skipFile(String name) {
-        boolean skip = false;
-        for (String prefix : sanitized) {
-            if(name.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable String mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
@@ -273,10 +261,8 @@ public class CompileEnvironment {
             JarOutputStream stream = new JarOutputStream(fos, manifest);
             try {
                 for (String file : factory.files()) {
-                    if(!skipFile(file)) {
-                        stream.putNextEntry(new JarEntry(file));
-                        stream.write(factory.asBytes(file));
-                    }
+                    stream.putNextEntry(new JarEntry(file));
+                    stream.write(factory.asBytes(file));
                 }
                 if (includeRuntime) {
                     writeRuntimeToJar(stream);
@@ -343,7 +329,7 @@ public class CompileEnvironment {
     public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
-        session.addStdLibSources();
+        session.addStdLibSources(false);
 
         String mainClass = null;
         for (JetFile file : session.getSourceFileNamespaces()) {
@@ -375,14 +361,12 @@ public class CompileEnvironment {
     public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
         List<String> files = factory.files();
         for (String file : files) {
-//            if(!skipFile(file)) {
-                File target = new File(outputDir, file);
-                try {
-                    FileUtil.writeToFile(target, factory.asBytes(file));
-                } catch (IOException e) {
-                    throw new CompileEnvironmentException(e);
-                }
-//            }
+            File target = new File(outputDir, file);
+            try {
+                FileUtil.writeToFile(target, factory.asBytes(file));
+            } catch (IOException e) {
+                throw new CompileEnvironmentException(e);
+            }
         }
     }
 }

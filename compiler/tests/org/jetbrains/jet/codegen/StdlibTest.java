@@ -18,7 +18,7 @@ public class StdlibTest extends CodegenTestCase {
 
         session.addSources(myFile.getVirtualFile());
         try {
-            session.addStdLibSources();
+            session.addStdLibSources(true);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -35,7 +35,7 @@ public class StdlibTest extends CodegenTestCase {
             CompileSession session = new CompileSession(myEnvironment);
             CompileEnvironment.initializeKotlinRuntime(myEnvironment);
             session.addSources(myFile.getVirtualFile());
-            session.addStdLibSources();
+            session.addStdLibSources(true);
 
             if (!session.analyze(System.out)) {
                 return null;
