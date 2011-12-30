@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
@@ -55,13 +54,10 @@ public class ImportsResolver {
     public static class ImportResolver {
         private final BindingTrace trace;
         private final boolean firstPhase;
-        // flag is used not to invoke code that resolves members from objects and variables; functionality is under discuss so far, see KT-876
-        private final boolean importMembersFromObjectsAndVars;
 
         public ImportResolver(BindingTrace trace, boolean firstPhase) {
             this.trace = trace;
             this.firstPhase = firstPhase;
-            this.importMembersFromObjectsAndVars = false;
         }
 
         public void processImportReference(JetImportDirective importDirective, WritableScope namespaceScope, JetScope outerScope) {
@@ -82,27 +78,21 @@ public class ImportsResolver {
             }
             JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
             if (importDirective.isAllUnder()) {
+                if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression)) return;
                 for (DeclarationDescriptor descriptor : descriptors) {
                     if (firstPhase) {
                         if (descriptor instanceof NamespaceDescriptor) {
                             namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
                         }
+                        continue;
                     }
-                    else if (descriptor instanceof VariableDescriptor) {
-                        if (!importMembersFromObjectsAndVars) {
-                            trace.report(CANNOT_IMPORT_OBJECT_MEMBERS.on(referenceExpression != null ? referenceExpression : importedReference));
-                            continue;
-                        }
+                    if (descriptor instanceof VariableDescriptor) {
                         JetType type = ((VariableDescriptor) descriptor).getOutType();
                         if (type != null) {
                             namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, type.getMemberScope()));
                         }
                     }
                     else if (descriptor instanceof ClassDescriptor) {
-                        if (!importMembersFromObjectsAndVars) {
-                            trace.report(CANNOT_IMPORT_VARIABLE_MEMBERS.on(referenceExpression != null ? referenceExpression : importedReference));
-                            continue;
-                        }
                         namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, ((ClassDescriptor) descriptor).getDefaultType().getMemberScope()));
                     }
                 }
@@ -120,20 +110,17 @@ public class ImportsResolver {
             }
         }
 
-        private void importDeclarationAlias(WritableScope namespaceScope, String aliasName, DeclarationDescriptor descriptor) {
-            if (firstPhase) {
-                if (descriptor instanceof ClassifierDescriptor) {
-                    namespaceScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
-                }
-                if (descriptor instanceof NamespaceDescriptor) {
-                    namespaceScope.importNamespaceAlias(aliasName, (NamespaceDescriptor) descriptor);
-                }
-                return;
+        private static void importDeclarationAlias(WritableScope namespaceScope, String aliasName, DeclarationDescriptor descriptor) {
+            if (descriptor instanceof ClassifierDescriptor) {
+                namespaceScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
             }
-            if (descriptor instanceof FunctionDescriptor) {
+            else if (descriptor instanceof NamespaceDescriptor) {
+                namespaceScope.importNamespaceAlias(aliasName, (NamespaceDescriptor) descriptor);
+            }
+            else if (descriptor instanceof FunctionDescriptor) {
                 namespaceScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
             }
-            if (descriptor instanceof VariableDescriptor) {
+            else if (descriptor instanceof VariableDescriptor) {
                 namespaceScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
             }
         }
@@ -163,15 +150,16 @@ public class ImportsResolver {
             JetExpression selectorExpression = importedReference.getSelectorExpression();
             assert selectorExpression instanceof JetSimpleNameExpression;
             JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
+            JetSimpleNameExpression lastReference = getLastReference(receiverExpression);
+            if (lastReference == null || !canImportMembersFrom(declarationDescriptors, lastReference)) {
+                return Collections.emptyList();
+            }
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                 if (declarationDescriptor instanceof NamespaceDescriptor) {
                     return lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope());
                 }
                 if (declarationDescriptor instanceof ClassDescriptor) {
-                    JetSimpleNameExpression classReference = getLastReference(receiverExpression);
-                    if (classReference != null) {
-                        return lookupObjectMembers(selector, classReference, (ClassDescriptor) declarationDescriptor);
-                    }
+                    return lookupObjectMembers(selector, lastReference, (ClassDescriptor) declarationDescriptor);
                 }
                 if (declarationDescriptor instanceof VariableDescriptor) {
                     return lookupVariableMembers(selector, (VariableDescriptor) declarationDescriptor);
@@ -180,52 +168,66 @@ public class ImportsResolver {
             return Collections.emptyList();
         }
 
+        private boolean canImportMembersFrom(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull JetSimpleNameExpression reference) {
+            if (firstPhase) return true;
+            if (descriptors.size() == 1) {
+                return canImportMembersFrom(descriptors.iterator().next(), reference, trace);
+            }
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
+            boolean canImport = false;
+            for (DeclarationDescriptor descriptor : descriptors) {
+                canImport |= canImportMembersFrom(descriptor, reference, temporaryTrace);
+            }
+            if (!canImport) {
+                temporaryTrace.commit();
+            }
+            return canImport;
+        }
+        
+        private boolean canImportMembersFrom(@NotNull DeclarationDescriptor descriptor, @NotNull JetSimpleNameExpression reference, @NotNull BindingTrace trace) {
+            assert !firstPhase;
+            if (descriptor instanceof NamespaceDescriptor) {
+                return true;
+            }
+            if (descriptor instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                JetType classObjectType = classDescriptor.getClassObjectType();
+                if (classObjectType == null) {
+                    trace.report(NO_CLASS_OBJECT.on(reference, classDescriptor));
+                    return false;
+                }
+                return true;
+            }
+            if (descriptor instanceof VariableDescriptor && DescriptorUtils.isObjectDescriptor((VariableDescriptor) descriptor, trace)) {
+                return true;
+            }
+            trace.report(CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor));
+            return false;
+        }
+
         @NotNull
         private Collection<DeclarationDescriptor> lookupObjectMembers(@NotNull JetSimpleNameExpression memberReference, @NotNull JetSimpleNameExpression classReference, @NotNull ClassDescriptor classDescriptor) {
             if (firstPhase) return Collections.emptyList();
             JetType classObjectType = classDescriptor.getClassObjectType();
-            if (classObjectType == null || !classDescriptor.isClassObjectAValue()) {
-                trace.report(NO_CLASS_OBJECT.on(classReference, classDescriptor));
-                return Collections.emptyList();
-            }
+            assert classObjectType != null;
             Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope());
-            if (!importMembersFromObjectsAndVars) {
-                trace.report(CANNOT_IMPORT_OBJECT_MEMBERS.on(memberReference));
-                return Collections.emptyList();
-            }
             return addBoundToReceiver(members, classDescriptor);
         }
 
-        @NotNull
         private Collection<DeclarationDescriptor> lookupVariableMembers(@NotNull JetSimpleNameExpression memberReference, @NotNull VariableDescriptor variableDescriptor) {
             if (firstPhase) return Collections.emptyList();
 
             JetType variableType = variableDescriptor.getReturnType();
             if (variableType == null) return Collections.emptyList();
             Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope());
-            if (!importMembersFromObjectsAndVars) {
-                trace.report(CANNOT_IMPORT_VARIABLE_MEMBERS.on(memberReference));
-                return Collections.emptyList();
-            }
             return addBoundToReceiver(members, variableDescriptor);
         }
 
         @NotNull
-        private static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor implicitReceiver) {
-            return Collections2.transform(descriptors, new Function<DeclarationDescriptor, DeclarationDescriptor>() {
-                @Override
-                public DeclarationDescriptor apply(@Nullable DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof FunctionDescriptor) {
-                        return new FunctionDescriptorBoundToReceiver((FunctionDescriptor) descriptor, implicitReceiver);
-                    }
-                    if (descriptor instanceof VariableDescriptor) {
-                        return new VariableDescriptorBoundToReceiver((VariableDescriptor) descriptor, implicitReceiver);
-                    }
-                    return descriptor;
-                }
-            });
+        public static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor receiver) {
+            return Collections2.transform(descriptors, DescriptorUtils.getAddBoundToReceiverFunction(receiver));
         }
-        
+
         @NotNull
         private Collection<DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope outerScope) {
             List<DeclarationDescriptor> descriptors = Lists.newArrayList();
