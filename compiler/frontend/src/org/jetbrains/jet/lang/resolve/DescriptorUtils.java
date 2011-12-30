@@ -1,13 +1,17 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -210,5 +214,30 @@ public class DescriptorUtils {
             }
         }
         return null;
+    }
+
+    @NotNull
+    public static Function<DeclarationDescriptor, DeclarationDescriptor> getAddBoundToReceiverFunction(@NotNull final DeclarationDescriptor receiver) {
+        return new Function<DeclarationDescriptor, DeclarationDescriptor>() {
+            @Override
+            public DeclarationDescriptor apply(@Nullable DeclarationDescriptor descriptor) {
+                if (descriptor instanceof FunctionDescriptor) {
+                    return new FunctionDescriptorBoundToReceiver((FunctionDescriptor) descriptor, receiver);
+                }
+                if (descriptor instanceof VariableDescriptor) {
+                    return new VariableDescriptorBoundToReceiver((VariableDescriptor) descriptor, receiver);
+                }
+                if (descriptor instanceof ClassDescriptor) {
+                    return new ClassDescriptorBoundToReceiver((ClassDescriptor) descriptor, receiver);
+                }
+                return descriptor;
+            }
+        };
+    }
+    
+    //todo
+    public static boolean isObjectDescriptor(@NotNull VariableDescriptor descriptor, BindingTrace bindingTrace) {
+        PsiElement element = bindingTrace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        return element instanceof JetObjectDeclarationName;
     }
 }

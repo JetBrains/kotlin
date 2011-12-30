@@ -83,10 +83,10 @@ public class JavaPackageScope extends JetScopeImpl {
         
         PsiField field = psiClassForPackage.findFieldByName(name, true);
         if (field == null) {
-            return null;
+            return Collections.emptySet();
         }
         if (!field.hasModifierProperty(PsiModifier.STATIC)) {
-            return null;
+            return Collections.emptySet();
         }
 
         // TODO: cache

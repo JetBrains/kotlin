@@ -7,6 +7,7 @@ import com.google.common.collect.SetMultimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -22,6 +23,7 @@ public class ScopeBoundToReceiver implements JetScope {
     private SetMultimap<String, VariableDescriptor> propertiesMap;
     private SetMultimap<String, FunctionDescriptor> functionsMap;
     private Map<DeclarationDescriptor, DeclarationDescriptor> descriptorsBoundToReceiver;
+    private Function<DeclarationDescriptor, DeclarationDescriptor> addBoundToReceiverFunction;
 
     public static ScopeBoundToReceiver create(DeclarationDescriptor implicitReceiver, JetScope memberScope) {
         return new ScopeBoundToReceiver(implicitReceiver, memberScope);
@@ -35,7 +37,14 @@ public class ScopeBoundToReceiver implements JetScope {
     public DeclarationDescriptor getReceiver() {
         return receiver;
     }
-    
+
+    public Function<DeclarationDescriptor, DeclarationDescriptor> getAddBoundToReceiverFunction() {
+        if (addBoundToReceiverFunction == null) {
+            addBoundToReceiverFunction = DescriptorUtils.getAddBoundToReceiverFunction(receiver);
+        }
+        return addBoundToReceiverFunction;
+    }
+
     private SetMultimap<String, VariableDescriptor> getPropertiesMap() {
         if (propertiesMap == null) {
             propertiesMap = CommonSuppliers.newLinkedHashSetHashSetMultimap();
@@ -60,7 +69,7 @@ public class ScopeBoundToReceiver implements JetScope {
     @Nullable
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        return scope.getClassifier(name);
+        return getMemberBoundToReceiver(scope.getClassifier(name));
     }
 
     @Nullable
@@ -75,12 +84,7 @@ public class ScopeBoundToReceiver implements JetScope {
         if (getPropertiesMap().containsKey(name)) {
             return getPropertiesMap().get(name);
         }
-        return getMembersBoundToReceiver(name, getPropertiesMap(), scope.getProperties(name), new Function<VariableDescriptor, VariableDescriptor>() {
-            @Override
-            public VariableDescriptor apply(VariableDescriptor property) {
-                return new VariableDescriptorBoundToReceiver(property, receiver);
-            }
-        });
+        return getMembersBoundToReceiver(name, getPropertiesMap(), scope.getProperties(name));
     }
 
     @Nullable
@@ -89,12 +93,17 @@ public class ScopeBoundToReceiver implements JetScope {
         return scope.getLocalVariable(name);
     }
     
-    private <D extends DeclarationDescriptor> Set<D> getMembersBoundToReceiver(String name, SetMultimap<String, D> cache, Set<D> oldMembers, Function<D, D> transformation) {
+    private <D extends DeclarationDescriptor> Set<D> getMembersBoundToReceiver(String name, SetMultimap<String, D> cache, Set<D> oldMembers) {
         for (D oldMember : oldMembers) {
-            cache.put(name, transformation.apply(oldMember));
+            cache.put(name, getMemberBoundToReceiver(oldMember));
         }
         return cache.get(name);
     }
+
+    private <D extends DeclarationDescriptor> D getMemberBoundToReceiver(D oldMember) {
+        return (D)getAddBoundToReceiverFunction().apply(oldMember);
+    }
+
 
     @NotNull
     @Override
@@ -102,12 +111,7 @@ public class ScopeBoundToReceiver implements JetScope {
         if (getFunctionsMap().containsKey(name)) {
             return getFunctionsMap().get(name);
         }
-        return getMembersBoundToReceiver(name, getFunctionsMap(), scope.getFunctions(name), new Function<FunctionDescriptor, FunctionDescriptor>() {
-            @Override
-            public FunctionDescriptor apply(FunctionDescriptor function) {
-                return new FunctionDescriptorBoundToReceiver(function, receiver);
-            }
-        });
+        return getMembersBoundToReceiver(name, getFunctionsMap(), scope.getFunctions(name));
     }
 
     @NotNull

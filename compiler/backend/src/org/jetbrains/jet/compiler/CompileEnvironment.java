@@ -173,6 +173,12 @@ public class CompileEnvironment {
             return;
         }
 
+        try {
+            System.out.println("module file text: " + FileUtil.loadFile(new File(moduleFile)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         final String directory = new File(moduleFile).getParent();
         for (IModuleBuilder moduleBuilder : moduleSetBuilder.getModules()) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
