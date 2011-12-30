@@ -247,6 +247,7 @@ public class CompileEnvironment {
             moduleCompileSession.addSources(source.getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
+            if (classpathRoot.contains("/stdlib/") || classpathRoot.contains("\\stdlib\\")) continue; // TODO: We have source-level dependency on stdlib for now
             myEnvironment.addToClasspath(new File(classpathRoot));
         }
         if (!moduleCompileSession.analyze(myErrorStream)) {
