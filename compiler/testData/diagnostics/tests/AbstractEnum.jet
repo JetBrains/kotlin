@@ -1,0 +1,6 @@
+// FILE: a.kt
+// +JDK
+
+package abstract
+
+abstract enum class MyAbstractEnum() {}
