@@ -168,15 +168,15 @@ public class CompileEnvironment {
     }
 
     public void compileModuleScript(String moduleFile, String jarPath, boolean jarRuntime) {
-        final IModuleSetBuilder moduleSetBuilder = loadModuleScript(moduleFile);
-        if (moduleSetBuilder == null) {
-            return;
-        }
-
         try {
             System.out.println("module file text: " + FileUtil.loadFile(new File(moduleFile)));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        final IModuleSetBuilder moduleSetBuilder = loadModuleScript(moduleFile);
+        if (moduleSetBuilder == null) {
+            return;
         }
 
         final String directory = new File(moduleFile).getParent();
