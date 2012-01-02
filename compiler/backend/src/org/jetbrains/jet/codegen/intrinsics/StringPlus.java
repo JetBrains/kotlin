@@ -20,8 +20,14 @@ import java.util.List;
 public class StringPlus implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        codegen.gen(arguments.get(0)).put(JetTypeMapper.JL_STRING_TYPE, v);
-        codegen.gen(arguments.get(1)).put(JetTypeMapper.TYPE_OBJECT, v);
+        if(receiver == null || receiver == StackValue.none()) {
+            codegen.gen(arguments.get(0)).put(JetTypeMapper.JL_STRING_TYPE, v);
+            codegen.gen(arguments.get(1)).put(JetTypeMapper.TYPE_OBJECT, v);
+        }
+        else {
+            receiver.put(JetTypeMapper.JL_STRING_TYPE, v);
+            codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
+        }
         v.invokestatic("jet/runtime/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;");
         return StackValue.onStack(JetTypeMapper.JL_STRING_TYPE);
     }

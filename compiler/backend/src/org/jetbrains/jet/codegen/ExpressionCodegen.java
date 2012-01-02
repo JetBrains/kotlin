@@ -1853,7 +1853,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 value.put(lhsType, v);                                          // receiver lhs
                 final IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
                 //noinspection NullableProblems
-                intrinsic.generate(this, v, lhsType, expression, Arrays.asList(expression.getRight()), null);
+                intrinsic.generate(this, v, lhsType, expression, Arrays.asList(expression.getRight()), StackValue.onStack(lhsType));
                 value.store(v);
             }
             else {
