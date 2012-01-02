@@ -1894,9 +1894,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (expr instanceof JetBinaryExpression) {
             final JetBinaryExpression binaryExpression = (JetBinaryExpression) expr;
             if (binaryExpression.getOperationToken() == JetTokens.PLUS) {
-                invokeAppend(binaryExpression.getLeft());
-                invokeAppend(binaryExpression.getRight());
-                return;
+                JetExpression left = binaryExpression.getLeft();
+                JetExpression right = binaryExpression.getRight();
+                Type leftType = expressionType(left);
+                Type rightType = expressionType(right);
+
+                if(leftType.equals(JetTypeMapper.JL_STRING_TYPE) && rightType.equals(JL_STRING_TYPE)) {
+                    invokeAppend(left);
+                    invokeAppend(right);
+                    return;
+                }
             }
         }
         Type exprType = expressionType(expr);
