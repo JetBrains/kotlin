@@ -21,7 +21,12 @@ public class UnaryPlus implements IntrinsicMethod {
         if(nullable) {
             expectedType = JetTypeMapper.unboxType(expectedType);
         }
-        receiver.put(expectedType, v);
+        if(receiver != null && receiver != StackValue.none())
+            receiver.put(expectedType, v);
+        else {
+            assert arguments != null;
+            codegen.gen(arguments.get(0), expectedType);
+        }
         return StackValue.onStack(expectedType);
     }
 }
