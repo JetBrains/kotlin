@@ -1,0 +1,26 @@
+import java.util.ArrayList
+import java.util.List
+
+fun Int.plus(a: Int?) = this + a.sure()
+
+public open class PerfectNumberFinder() {
+        open public fun isPerfect(number : Int) : Boolean {
+            var factors : List<Int?>? = ArrayList<Int?>()
+            factors?.add(1)
+            factors?.add(number)
+            for (i in 2..(Math.sqrt((number).dbl) - 1).int)
+                if (((number % i) == 0)) {
+                    factors?.add(i)
+                    if (((number / i) != i))
+                        factors?.add((number / i))
+
+                }
+
+            var sum : Int = 0
+            for (i : Int? in factors)
+                sum += i
+            return ((sum - number) == number)
+        }
+}
+
+fun box () = if (PerfectNumberFinder().isPerfect(28)) "OK" else "fail"
