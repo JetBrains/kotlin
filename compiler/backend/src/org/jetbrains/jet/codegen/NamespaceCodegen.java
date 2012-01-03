@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -181,10 +182,10 @@ public class NamespaceCodegen {
                 ExpressionCodegen.genTypeInfoToProjection(v, argument.getProjectionKind());
                 v.astore(JetTypeMapper.TYPE_OBJECT);
             }
-            v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/TypeInfo;");
+            v.invokestatic("jet/TypeInfo", JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/TypeInfo;");
         }
         else {
-            v.invokestatic("jet/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
+            v.invokestatic("jet/TypeInfo", JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
         }
     }
 

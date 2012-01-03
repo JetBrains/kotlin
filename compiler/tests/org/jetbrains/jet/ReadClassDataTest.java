@@ -125,6 +125,7 @@ public class ReadClassDataTest extends UsefulTestCase {
         for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
                 ClassifierDescriptor bd = nsb.getMemberScope().getClassifier(ad.getName());
+                Assert.assertTrue("classifier not found: " + ad.getName(), bd != null);
                 compareClassifiers((ClassifierDescriptor) ad, bd);
                 
                 Assert.assertNull(nsb.getMemberScope().getClassifier(ad.getName() + JvmAbi.TRAIT_IMPL_SUFFIX));
@@ -136,7 +137,7 @@ public class ReadClassDataTest extends UsefulTestCase {
                 compareDescriptors(ad, bd);
             } else if (ad instanceof PropertyDescriptor) {
                 Set<VariableDescriptor> properties = nsb.getMemberScope().getProperties(ad.getName());
-                Assert.assertTrue(properties.size() >= 1);
+                Assert.assertTrue("property not found by name: " + ad.getName(), properties.size() >= 1);
                 Assert.assertTrue("not implemented", properties.size() == 1);
                 PropertyDescriptor bd = (PropertyDescriptor) properties.iterator().next();
                 compareDescriptors(ad, bd);

@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -140,6 +141,7 @@ public class PropertyCodegen {
         final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind).getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, signature, null, null);
+        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -184,6 +186,7 @@ public class PropertyCodegen {
 
         final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind).getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), signature, null, null);
+        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);

@@ -21,7 +21,7 @@ public class JavaClassMembersScope implements JetScope {
     private final boolean staticMembers;
     private final DeclarationDescriptor containingDeclaration;
     private final Map<String, Set<FunctionDescriptor>> functionGroups = Maps.newHashMap();
-    private final Map<String, VariableDescriptor> variables = Maps.newHashMap();
+    private final Map<String, Set<VariableDescriptor>> variables = Maps.newHashMap();
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
     private Collection<DeclarationDescriptor> allDescriptors;
 
@@ -77,13 +77,7 @@ public class JavaClassMembersScope implements JetScope {
                 }
             }
 
-            for (PsiField field : psiClass.getAllFields()) {
-                if (field.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
-                    continue;
-                }
-                VariableDescriptor variableDescriptor = semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor(containingDeclaration, field);
-                allDescriptors.add(variableDescriptor);
-            }
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(containingDeclaration, psiClass, staticMembers));
         }
         return allDescriptors;
     }
@@ -116,14 +110,14 @@ public class JavaClassMembersScope implements JetScope {
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        VariableDescriptor variableDescriptor = variables.get(name);
+        Set<VariableDescriptor> variableDescriptor = variables.get(name);
         if (variableDescriptor == null) {
             variableDescriptor = doGetVariable(name);
             if (variableDescriptor != null) {
                 variables.put(name, variableDescriptor);
             }
         }
-        return variableDescriptor != null ? Collections.singleton(variableDescriptor) : Collections.<VariableDescriptor>emptySet();
+        return variableDescriptor != null ? variableDescriptor : Collections.<VariableDescriptor>emptySet();
     }
 
     @Override
@@ -132,14 +126,15 @@ public class JavaClassMembersScope implements JetScope {
     }
 
     @Nullable
-    private VariableDescriptor doGetVariable(String name) {
+    private Set<VariableDescriptor> doGetVariable(String name) {
         PsiField field = psiClass.findFieldByName(name, true);
         if (field == null) return null;
         if (field.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
             return null;
         }
 
-        return semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor(containingDeclaration, field);
+        //return semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor(containingDeclaration, field);
+        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(containingDeclaration, psiClass, name, staticMembers);
     }
 
     @NotNull

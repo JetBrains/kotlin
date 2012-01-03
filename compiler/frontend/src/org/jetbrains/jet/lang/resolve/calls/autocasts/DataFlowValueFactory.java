@@ -118,7 +118,9 @@ public class DataFlowValueFactory {
             if (classDescriptor.getModality().isOverridable() && propertyDescriptor.getModality().isOverridable()) return false;
         }
         else {
-            assert !propertyDescriptor.getModality().isOverridable() : "Property outside a class must not be overridable";
+            if (propertyDescriptor.getModality().isOverridable()) {
+                throw new IllegalStateException("Property outside a class must not be overridable: " + propertyDescriptor.getName());
+            }
         }
         return true;
     }

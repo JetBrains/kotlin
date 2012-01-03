@@ -26,6 +26,8 @@ public class JvmStdlibNames {
     public static final String JET_METHOD_NULLABLE_RETURN_TYPE_FIELD = "nullableReturnType";
     public static final String JET_METHOD_RETURN_TYPE_FIELD = "returnType";
     public static final String JET_METHOD_TYPE_PARAMETERS_FIELD = "typeParameters";
+
+    public static final JvmClassName JET_PROPERTY = new JvmClassName("jet.typeinfo.JetProperty");
     
 
     public static final JvmClassName JET_CLASS = new JvmClassName("jet.typeinfo.JetClass");
@@ -34,6 +36,8 @@ public class JvmStdlibNames {
     
 
     public static final JvmClassName JET_OBJECT = new JvmClassName("jet.JetObject");
+    
+    public static final String JET_OBJECT_GET_TYPEINFO_METHOD = "getTypeInfo";
 
 
     private JvmStdlibNames() {

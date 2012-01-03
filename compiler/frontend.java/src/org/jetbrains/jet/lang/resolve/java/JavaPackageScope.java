@@ -90,7 +90,7 @@ public class JavaPackageScope extends JetScopeImpl {
         }
 
         // TODO: cache
-        return Collections.singleton(semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor(containingDescriptor, field));
+        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(containingDescriptor, psiClassForPackage, name, true);
     }
 
     @NotNull
