@@ -61,6 +61,8 @@ public class BothSignatureWriter {
     private final Mode mode;
     private State state = State.START;
 
+    private boolean generic = false;
+
     public BothSignatureWriter(Mode mode) {
         this.mode = mode;
         if (DEBUG_SIGNATURE_WRITER) {
@@ -174,6 +176,7 @@ public class BothSignatureWriter {
     public void writeTypeArgument(char c) {
         push(signatureVisitor().visitTypeArgument(c));
         jetSignatureWriter.visitTypeArgument(c);
+        generic = true;
     }
     
     public void writeTypeArgumentEnd() {
@@ -183,6 +186,7 @@ public class BothSignatureWriter {
     public void writeTypeVariable(final String name, boolean nullable) {
         signatureVisitor().visitTypeVariable(name);
         jetSignatureWriter.visitTypeVariable(name, nullable);
+        generic = true;
     }
 
     public void writeFormalTypeParameter(final String name, Variance variance) {
@@ -190,6 +194,8 @@ public class BothSignatureWriter {
 
         signatureVisitor().visitFormalTypeParameter(name);
         jetSignatureWriter.visitFormalTypeParameter(name, JetSignatureUtils.translateVariance(variance));
+
+        generic = true;
     }
     
     public void writeFormalTypeParameterEnd() {
@@ -334,8 +340,7 @@ public class BothSignatureWriter {
             throw new IllegalStateException();
         }
         checkTopLevel();
-        // TODO: return null if not generic
-        return signatureWriter.toString();
+        return generic ? signatureWriter.toString() : null;
     }
     
     @NotNull
