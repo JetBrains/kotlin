@@ -1,13 +1,11 @@
 package org.jetbrains.jet;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
@@ -42,42 +40,15 @@ import java.util.Set;
 /**
  * @author Stepan Koltsov
  */
-public class ReadClassDataTest extends UsefulTestCase {
-
-    protected final Disposable myTestRootDisposable = new Disposable() {
-        @Override
-        public void dispose() {
-        }
-    };
+public class ReadClassDataTest extends TestCaseWithTmpdir {
 
     private JetCoreEnvironment jetCoreEnvironment;
-    private File tmpdir;
-    
+
     private final File testFile;
 
     public ReadClassDataTest(@NotNull File testFile) {
         this.testFile = testFile;
         setName(testFile.getName());
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        tmpdir = JetTestUtils.tmpDirForTest(this);
-        JetTestUtils.recreateDirectory(tmpdir);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        Disposer.dispose(myTestRootDisposable);
-    }
-
-    private void createMockCoreEnvironment() {
-        jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable);
-
-        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
-        jetCoreEnvironment.addToClasspath(rtJar);
-        jetCoreEnvironment.addToClasspath(new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar"));
     }
 
     @Override

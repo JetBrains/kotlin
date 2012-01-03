@@ -8,7 +8,6 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,11 +41,10 @@ import java.util.regex.Pattern;
  *
  * @see CompileJavaAgainstKotlinTest
  */
-public class WriteSignatureTest extends UsefulTestCase {
+public class WriteSignatureTest extends TestCaseWithTmpdir {
 
     private final File ktFile;
     private JetCoreEnvironment jetCoreEnvironment;
-    private File tmpdir;
 
     public WriteSignatureTest(File ktFile) {
         this.ktFile = ktFile;
@@ -56,19 +54,6 @@ public class WriteSignatureTest extends UsefulTestCase {
     public String getName() {
         return ktFile.getName();
     }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        tmpdir = JetTestUtils.tmpDirForTest(this);
-        JetTestUtils.recreateDirectory(tmpdir);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        Disposer.dispose(myTestRootDisposable);
-    }
-
 
     @Override
     protected void runTest() throws Throwable {

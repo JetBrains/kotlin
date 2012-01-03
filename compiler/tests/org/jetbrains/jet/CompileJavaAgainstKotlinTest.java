@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
@@ -34,12 +33,11 @@ import java.util.Locale;
  *
  * @see WriteSignatureTest
  */
-public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
+public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
 
     private final File ktFile;
     private final File javaFile;
     private JetCoreEnvironment jetCoreEnvironment;
-    private File tmpdir;
 
     public CompileJavaAgainstKotlinTest(File ktFile) {
         this.ktFile = ktFile;
@@ -51,19 +49,6 @@ public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
     public String getName() {
         return ktFile.getName();
     }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        tmpdir = JetTestUtils.tmpDirForTest(this);
-        JetTestUtils.recreateDirectory(tmpdir);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        Disposer.dispose(myTestRootDisposable);
-    }
-
 
     @Override
     protected void runTest() throws Throwable {
