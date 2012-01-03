@@ -195,6 +195,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                         || member.getName().equals("toString") || member.getName().equals("getClass")
                         || member.getName().equals("clone") || member.getName().equals("finalize")
                         || member.getName().equals("getTypeInfo") || member.getName().equals("$setTypeInfo") || member.getName().equals("$typeInfo")
+                        || member.getName().equals("getOuterObject")
                         )
                 {
                     continue;
