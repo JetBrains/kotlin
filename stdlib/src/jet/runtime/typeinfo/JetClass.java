@@ -1,4 +1,4 @@
-package jet.typeinfo;
+package jet.runtime.typeinfo;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

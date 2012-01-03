@@ -1,4 +1,6 @@
-package jet.typeinfo;
+package jet.runtime.typeinfo;
+
+import jet.typeinfo.TypeInfoVariance;
 
 /**
  * @author alex.tkachman
