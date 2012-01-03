@@ -298,15 +298,6 @@ public class JetTypeMapper {
             throw new IllegalStateException("should not compile an error type");
         }
 
-        if (standardLibrary.getComparable().equals(descriptor)) {
-            if (jetType.getArguments().size() != 1) {
-                throw new UnsupportedOperationException("Comparable must have one type argument");
-            }
-
-            // todo signature
-            return JL_COMPARABLE_TYPE;
-        }
-
         if (standardLibrary.getArray().equals(descriptor)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
@@ -334,9 +325,19 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            
-            String name = getFQName(descriptor);
-            Type asmType = Type.getObjectType(name + (kind == OwnerKind.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+
+            Type asmType;
+
+            if (standardLibrary.getComparable().equals(descriptor)) {
+                if (jetType.getArguments().size() != 1) {
+                    throw new UnsupportedOperationException("Comparable must have one type argument");
+                }
+
+                asmType = JL_COMPARABLE_TYPE;
+            } else {
+                String name = getFQName(descriptor);
+                asmType = Type.getObjectType(name + (kind == OwnerKind.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+            }
 
             if (signatureVisitor != null) {
                 signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable());
