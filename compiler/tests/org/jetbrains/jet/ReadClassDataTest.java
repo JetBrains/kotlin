@@ -213,6 +213,8 @@ public class ReadClassDataTest extends UsefulTestCase {
             for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
                 typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
             }
+            
+            List<String> memberStrings = new ArrayList<String>();
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
@@ -226,8 +228,16 @@ public class ReadClassDataTest extends UsefulTestCase {
                 {
                     continue;
                 }
+                StringBuilder memberSb = new StringBuilder();
+                new Serializer(memberSb).serialize(member);
+                memberStrings.add(memberSb.toString());
+            }
+            
+            Collections.sort(memberStrings);
+            
+            for (String memberString : memberStrings) {
                 sb.append("    ");
-                new Serializer(sb).serialize(member);
+                sb.append(memberString);
                 sb.append("\n");
             }
 
