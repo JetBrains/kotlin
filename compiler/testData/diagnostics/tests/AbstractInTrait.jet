@@ -1,6 +1,3 @@
-// FILE: a.kt
-// +JDK
-
 package abstract
 
 trait MyTrait {
