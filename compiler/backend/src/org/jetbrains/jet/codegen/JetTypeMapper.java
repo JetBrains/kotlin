@@ -46,6 +46,7 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
+    private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
 
     public static final Type ARRAY_INT_TYPE = Type.getType(int[].class);
     public static final Type ARRAY_LONG_TYPE = Type.getType(long[].class);
@@ -295,6 +296,15 @@ public class JetTypeMapper {
 
         if (ErrorUtils.isError(descriptor)) {
             throw new IllegalStateException("should not compile an error type");
+        }
+
+        if (standardLibrary.getComparable().equals(descriptor)) {
+            if (jetType.getArguments().size() != 1) {
+                throw new UnsupportedOperationException("Comparable must have one type argument");
+            }
+
+            // todo signature
+            return JL_COMPARABLE_TYPE;
         }
 
         if (standardLibrary.getArray().equals(descriptor)) {
