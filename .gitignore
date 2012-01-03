@@ -9,3 +9,4 @@ out
 .idea/workspace.xml
 tmp
 *TestMy.java
+.*.swp
