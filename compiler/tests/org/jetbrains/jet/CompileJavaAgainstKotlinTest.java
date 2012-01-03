@@ -31,6 +31,8 @@ import java.util.Locale;
 
 /**
  * @author Stepan Koltsov
+ *
+ * @see WriteSignatureTest
  */
 public class CompileJavaAgainstKotlinTest extends UsefulTestCase {
 
