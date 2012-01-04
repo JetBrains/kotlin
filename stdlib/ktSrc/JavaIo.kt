@@ -67,7 +67,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
 inline fun readLine() : String? = stdin.readLine()
 
 /** Uses the given resource then closes it to ensure its closed again */
-inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
+inline fun <T: Closeable, R> T.foreach(block: (T)-> R) : R {
   var closed = false
   try {
     return block(this)
@@ -118,7 +118,17 @@ inline fun Reader.buffered(): BufferedReader = if(this is BufferedReader) this e
 
 inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 
-inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffered().use<BufferedReader, T>{block(it.lineIterator())}
+inline fun Reader.foreachLine(block: (String) -> Unit): Unit {
+  this.foreach{
+    val iter = buffered().lineIterator()
+    while (iter.hasNext) {
+      val elem = iter.next()
+      block(elem)
+    }
+  }
+}
+
+inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffered().foreach<BufferedReader, T>{block(it.lineIterator())}
 /**
  * Returns an iterator over each line.
  * <b>Note</b> the caller must close the underlying <code>BufferedReader</code>
