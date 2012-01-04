@@ -42,4 +42,9 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     public void testKt475() throws Exception {
         blackBoxFile("regressions/kt475.jet");
     }
+
+    public void testKt865() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("regressions/kt865.jet");
+    }
 }

@@ -1545,14 +1545,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                           Arrays.asList(expression.getLeft(), expression.getRight()), receiver);
             }
             else {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
-                assert resolvedCall != null;
-                CallableMethod callableMethod = (CallableMethod) callable;
-                genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callableMethod);
-                pushTypeArguments(resolvedCall);
-                pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
-                callableMethod.invoke(v);
-                return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getAsmMethod().getReturnType());
+                return invokeOperation(expression, (FunctionDescriptor)op, (CallableMethod) callable);
             }
         }
     }
@@ -1928,11 +1921,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                       Arrays.asList(expression.getBaseExpression()), receiver);
         }
         else {
-            CallableMethod callableMethod = (CallableMethod) callable;
-            genToJVMStack(expression.getBaseExpression());
-            callableMethod.invoke(v);
-            return returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getAsmMethod().getReturnType());
+            return invokeOperation(expression, (FunctionDescriptor) op, (CallableMethod) callable);
         }
+    }
+
+    private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+        assert resolvedCall != null;
+        CallableMethod callableMethod = (CallableMethod) callable;
+        genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callableMethod);
+        pushTypeArguments(resolvedCall);
+        pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
+        callableMethod.invoke(v);
+        return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getAsmMethod().getReturnType());
     }
 
     @Override
