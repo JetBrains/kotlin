@@ -13,16 +13,11 @@ class EmailTemplate(var name: String = "James", var time: Date = Date()) : TextT
   }
 }
 
-/**
- TODO compile error
- http://youtrack.jetbrains.net/issue/KT-865
-
 class MoreDryTemplate(var name: String = "James", var time: Date = Date()) : TextTemplate() {
   override fun render() {
     +"Hey there $name and how are you? Today is $time. Kotlin rocks"
   }
 }
-*/
 
 class TemplateCoreTest() : TestSupport() {
   fun testDefaultValues() {
@@ -41,9 +36,6 @@ class TemplateCoreTest() : TestSupport() {
     }
   }
 
-  /*
-   TODO compile error
-
   fun testMoreDryTemplate() {
     val text = MoreDryTemplate("Alex").renderToText()
     assert {
@@ -51,5 +43,4 @@ class TemplateCoreTest() : TestSupport() {
       text.startsWith("Hey there Alex")
     }
   }
-  */
 }
