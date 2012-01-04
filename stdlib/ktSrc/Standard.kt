@@ -8,6 +8,26 @@ import java.util.LinkedHashSet
 import java.util.TreeSet
 
 /*
+Helper to make jet.Iterator usable in for
+*/
+inline fun <T> jet.Iterator<T>.iterator() = this
+
+/*
+Helper to make java.util.Iterator usable in for
+*/
+inline fun <T> java.util.Iterator<T>.iterator() = this
+
+/*
+Helper to make java.util.Enumeration usable in for
+*/
+inline fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
+  override val hasNext: Boolean
+    get() = hasMoreElements()
+
+  override fun next() = nextElement()
+}
+
+/*
  * Extension functions on the standard Kotlin types to behave like the java.lang.* and java.util.* collections
  */
 

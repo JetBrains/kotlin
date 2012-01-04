@@ -80,4 +80,8 @@ public class StdlibTest extends CodegenTestCase {
     public void testKt864 () {
         blackBoxFile("regressions/kt864.jet");
     }
+
+    public void testKt274 () {
+//        blackBoxFile("regressions/kt274.kt");
+    }
 }
