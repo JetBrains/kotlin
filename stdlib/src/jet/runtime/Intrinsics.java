@@ -1,6 +1,7 @@
 package jet.runtime;
 
 import jet.Function0;
+import jet.TypeInfo;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,10 @@ public class Intrinsics {
 
     public static void throwNpe() {
         throw new JetNullPointerException();
+    }
+    
+    public static <T> Class<T> getJavaClass(T self) {
+        return (Class<T>) self.getClass();
     }
 
     public static int compare(long thisVal, long anotherVal) {
