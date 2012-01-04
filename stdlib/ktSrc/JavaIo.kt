@@ -72,11 +72,17 @@ inline fun <T: Closeable, R> T.foreach(block: (T)-> R) : R {
   try {
     return block(this)
   } catch (e: Exception) {
+    closed = true
     try {
       this.close()
     } catch (closeException: Exception) {
       // eat the closeException as we are already throwing the original cause
       // and we don't want to mask the real exception
+
+      // TODO on Java 7 we should call
+      // e.addSuppressed(closeException)
+      // to work like try-with-resources
+      // http://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html#suppressed-exceptions
     }
     throw e
   } finally {
