@@ -18,9 +18,7 @@ class MapTest() : TestSupport() {
 
     val b = data.getOrElse("foo"){3}
     assertEquals(3, b)
-
-    // TODO should be able to miss the () off of size
-    assertEquals(0, data.size())
+    assertEquals(0, data.size)
   }
 
   fun testGetOrElseUpdate() {
@@ -33,11 +31,9 @@ class MapTest() : TestSupport() {
     assertEquals(1, data.size())
   }
 
-  /** TODO can't seem to define size/empty properties for Map
   fun testSizeAndEmpty() {
     assert{ data.empty }
 
     assertEquals(data.size, 0)
   }
-  */
 }
