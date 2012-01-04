@@ -102,6 +102,17 @@ fun fails(block: ()-> Any) {
     block()
     Assert.fail("Expected an exception to be thrown")
   } catch (e: Exception) {
+    println("Caught excepted exception: $e")
+    // OK
+  }
+}
+
+fun <T: Exception> failsWith(block: ()-> Any) {
+  try {
+    block()
+    Assert.fail("Expected an exception to be thrown")
+  } catch (e: T) {
+    println("Caught excepted exception: $e")
     // OK
   }
 }

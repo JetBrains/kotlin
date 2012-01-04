@@ -12,9 +12,16 @@ trait Factory<T> {
   fun create() : T
 }
 
-abstract class Element
+abstract class Element {
+  abstract fun appendTo(builder: StringBuilder): Unit
 
-class TextElement(val text : String) : Element
+}
+
+class TextElement(val text : String) : Element {
+  override fun appendTo(builder: StringBuilder) {
+    builder.append(text)
+  }
+}
 
 abstract class Tag(val name : String) : Element {
   val children = ArrayList<Element>()
@@ -22,10 +29,45 @@ abstract class Tag(val name : String) : Element {
 
   protected fun initTag<T : Element>(init : T.()-> Unit) : T
   where class object T : Factory<T> {
-    val tag = T.create()
+    val tag = try {
+      T.create()
+    } catch (e: NullPointerException) {
+      val typeName = javaClass.getName()
+      throw UnsupportedOperationException("No class object create() method for $typeName")
+    }
     tag.init()
     children.add(tag)
     return tag
+  }
+
+  override fun appendTo(builder: StringBuilder): Unit {
+    builder.append("<")
+    builder.append(name)
+    if (!attributes.isEmpty()) {
+      for (e in attributes.entrySet()) {
+        if (e != null) {
+          builder.append(" ${e.key}=\"${e.value}\"")
+        }
+      }
+    }
+    if (children.isEmpty()) {
+      builder.append("/>")
+    } else {
+      builder.append(">")
+      for (c in children) {
+        c.appendTo(builder)
+      }
+      builder.append("<")
+      builder.append(name)
+      builder.append(">")
+    }
+
+  }
+
+  fun toString(): String {
+    val builder = StringBuilder()
+    appendTo(builder)
+    return builder.toString().sure()
   }
 }
 
@@ -53,7 +95,11 @@ class Head() : TagWithText("head") {
   fun title(init : Title.()-> Unit) = initTag(init)
 }
 
-class Title() : TagWithText("title")
+class Title() : TagWithText("title") {
+  class object : Factory<Title> {
+    override fun create() = Title()
+  }
+}
 
 abstract class BodyTag(name : String) : TagWithText(name) {
 }
@@ -68,20 +114,38 @@ class Body() : BodyTag("body") {
   fun h1(init : H1.()-> Unit) = initTag(init)
 
   fun a(href : String) {
-    a(href) {}
+    a(href, {})
   }
 
   fun a(href : String, init : A.()-> Unit) {
     val a = initTag(init)
     a.href = href
+    a.attributes.put("href", href)
   }
 }
 
-class B() : BodyTag("b")
-class P() : BodyTag("p")
-class H1() : BodyTag("h1")
+class B() : BodyTag("b") {
+  class object : Factory<B> {
+    override fun create() = B()
+  }
+}
+
+class P() : BodyTag("p") {
+  class object : Factory<P> {
+    override fun create() = P()
+  }
+}
+class H1() : BodyTag("h1")   {
+  class object : Factory<H1> {
+    override fun create() = H1()
+  }
+}
 
 class A() : BodyTag("a") {
+  class object : Factory<A> {
+    override fun create() = A()
+  }
+
   var href: String? = null
   /*
     TODO this doesn't compile
