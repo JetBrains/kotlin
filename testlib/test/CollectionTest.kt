@@ -41,8 +41,7 @@ class CollectionTest() : TestSupport() {
 
   fun testCount() {
     assertEquals(1, data.count{it.startsWith("b")})
-    // TODO size should implement size property to be polymorphic with collections
-    assertEquals(2, data.count{it.length == 3})
+    assertEquals(2, data.count{it.size == 3})
   }
 
   fun testFilter() {
