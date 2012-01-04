@@ -83,9 +83,9 @@ public final class DescriptorUtils {
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
-        VariableDescriptor variable = scope.getLocalVariable(name);
+        VariableDescriptor variable = scope.getVariable(name);
         if (variable == null) {
-            variable = org.jetbrains.jet.lang.resolve.DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
+            variable = scope.getPropertyByFieldReference(name);
         }
         PropertyDescriptor descriptor = (PropertyDescriptor) variable;
         assert descriptor != null : "Must have a descriptor.";
