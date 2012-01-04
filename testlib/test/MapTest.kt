@@ -10,7 +10,7 @@ import std.util.*
 import java.util.*
 
 class MapTest() : TestSupport() {
-  val data: Map<String,Int> = HashMap<String, Int>()
+  val data: java.util.Map<String,Int> = java.util.HashMap<String, Int>()
 
   fun testGetOrElse() {
     val a = data.getOrElse("foo"){2}
@@ -33,20 +33,20 @@ class MapTest() : TestSupport() {
 
   fun testSizeAndEmpty() {
     assert{ data.empty }
-
     assertEquals(data.size, 0)
   }
 
   fun testSetViaIndexOperators() {
-    // TODO cant just create a HashMap due to KT-834
-    val map: Map<String,String> = HashMap<String, String>()
+    val map = java.util.HashMap<String, String>()
     assert{ map.empty }
-    assertEquals(map.size, 0)
+    // TODO cannot use map.size due to compiler bug
+    assertEquals(map.size(), 0)
 
     map["name"] = "James"
 
     assert{ !map.empty }
-    assertEquals(map.size, 1)
+    // TODO cannot use map.size due to compiler bug
+    assertEquals(map.size(), 1)
     assertEquals("James", map["name"])
   }
 }
