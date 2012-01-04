@@ -41,6 +41,10 @@ public class FunctionGenTest extends CodegenTestCase {
 //        blackBoxFile("regressions/kt785.jet");
     }
 
+    public void testKt873 () {
+        blackBoxFile("regressions/kt873.kt");
+    }
+
     public void testFunction () throws InvocationTargetException, IllegalAccessException {
         blackBoxFile("functions/functionExpression.jet");
     }
