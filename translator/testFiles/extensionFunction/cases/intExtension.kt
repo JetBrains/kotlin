@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 fun Int.quadruple() : Int {
     return this * 4;

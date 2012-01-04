@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 fun f(): Int {
   var x: Int = 1

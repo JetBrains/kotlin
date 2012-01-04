@@ -5,9 +5,9 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -20,13 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+
 /**
  * @author Pavel Talanov
  */
+//TODO: declaration translator receives NamespaceDescriptor while actually should receive all declarations in namespace
 public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     @NotNull
-    private final JetNamespace namespace;
+    private final List<JetDeclaration> namespaceDeclarations;
     @NotNull
     private final Map<JsName, JsName> localToGlobalClassName;
     @NotNull
@@ -36,9 +39,9 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @Nullable
     private JsStatement declarationsStatement = null;
 
-    public ClassDeclarationTranslator(@NotNull TranslationContext context, @NotNull JetNamespace namespace) {
+    public ClassDeclarationTranslator(@NotNull TranslationContext context, @NotNull NamespaceDescriptor namespace) {
         super(context);
-        this.namespace = namespace;
+        this.namespaceDeclarations = getDeclarationsForNamespace(context.bindingContext(), namespace);
         this.localToGlobalClassName = new HashMap<JsName, JsName>();
         this.dummyFunctionScope = new JsScope(context().jsScope(), "class declaration function");
     }
@@ -105,7 +108,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private List<JetClass> getClassDeclarations() {
         List<JetClass> classes = new ArrayList<JetClass>();
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
+        for (JetDeclaration declaration : namespaceDeclarations) {
             if (declaration instanceof JetClass) {
                 classes.add((JetClass) declaration);
             }

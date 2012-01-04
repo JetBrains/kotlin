@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 class A() {
   val x = 4

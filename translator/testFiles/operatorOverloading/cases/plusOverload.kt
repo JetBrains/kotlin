@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
   class myInt(a : Int) {
     val value = a;

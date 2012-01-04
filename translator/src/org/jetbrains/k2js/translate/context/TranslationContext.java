@@ -3,8 +3,12 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -46,8 +50,8 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext newNamespace(@NotNull JetNamespace declaration) {
-        return newDeclaration(BindingUtils.getNamespaceDescriptor(staticContext.getBindingContext(), declaration));
+    public TranslationContext newNamespace(@NotNull NamespaceDescriptor namespace) {
+        return newDeclaration(namespace);
     }
 
     @NotNull

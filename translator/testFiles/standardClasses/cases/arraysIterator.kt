@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 val a1 = Array<Int>(3, {(i : Int) => i})
 

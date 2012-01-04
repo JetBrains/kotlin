@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 val f = {(i : Int) => i + 1}
 

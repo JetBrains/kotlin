@@ -47,7 +47,7 @@ public final class BindingUtils {
 
     @NotNull
     public static NamespaceDescriptor getNamespaceDescriptor(@NotNull BindingContext context,
-                                                             @NotNull JetNamespace declaration) {
+                                                             @NotNull JetFile declaration) {
         return getDescriptorForExpression(context, declaration, NamespaceDescriptor.class);
     }
 
@@ -75,6 +75,30 @@ public final class BindingUtils {
         PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         assert result instanceof JetClass : "ClassDescriptor should have declaration of type JetClass";
         return (JetClass) result;
+    }
+
+    @NotNull
+    public static List<JetDeclaration> getDeclarationsForNamespace(@NotNull BindingContext bindingContext,
+                                                                   @NotNull NamespaceDescriptor namespace) {
+        List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
+        for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
+            JetDeclaration declaration = BindingUtils.getDeclarationForDescriptor(bindingContext, descriptor);
+            if (declaration != null) {
+                declarations.add(declaration);
+            }
+        }
+        return declarations;
+    }
+
+    @Nullable
+    private static JetDeclaration getDeclarationForDescriptor(@NotNull BindingContext context,
+                                                              @NotNull DeclarationDescriptor descriptor) {
+        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        if (result == null) {
+            return null;
+        }
+        assert result instanceof JetDeclaration : "Descriptor should correspond to an element.";
+        return (JetDeclaration) result;
     }
 
     @NotNull

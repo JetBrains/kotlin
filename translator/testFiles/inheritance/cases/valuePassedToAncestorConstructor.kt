@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 open class C(a : Int) {
     val b = a

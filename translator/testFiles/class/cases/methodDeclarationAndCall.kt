@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 class Test() {
     fun method() : Boolean {

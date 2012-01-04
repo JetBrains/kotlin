@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 trait AL {
     fun get(index: Int) : Any? = null

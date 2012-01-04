@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 class Test(a : Int) {
     val b = a

@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 val a = Array<Int>(3)
 

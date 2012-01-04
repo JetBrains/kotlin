@@ -4,7 +4,8 @@ import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.NamingScope;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -40,7 +41,13 @@ public abstract class AbstractInitializerTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    protected List<JsStatement> translatePropertyAndAnonymousInitializers(@NotNull JetDeclaration declaration) {
-        return visitor.traverse(declaration, context());
+    protected List<JsStatement> translateClassInitializers(@NotNull JetClass declaration) {
+        return visitor.traverseClass(declaration, context());
+    }
+
+    @NotNull
+    protected List<JsStatement> translateNamespaceInitializers(@NotNull NamespaceDescriptor namespace) {
+        return visitor.traverseNamespace(namespace, context());
+
     }
 }

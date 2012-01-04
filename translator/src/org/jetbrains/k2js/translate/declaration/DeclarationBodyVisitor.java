@@ -2,6 +2,7 @@ package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -14,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+
 /**
  * @author Pavel Talanov
  */
@@ -21,20 +24,20 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
 
 
     @NotNull
-    public List<JsPropertyInitializer> traverseClass(@NotNull JetClass expression,
+    public List<JsPropertyInitializer> traverseClass(@NotNull JetClass jetClass,
                                                      @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
-        for (JetDeclaration declaration : expression.getDeclarations()) {
+        for (JetDeclaration declaration : jetClass.getDeclarations()) {
             properties.addAll(declaration.accept(this, context));
         }
         return properties;
     }
 
     @NotNull
-    public List<JsPropertyInitializer> traverseNamespace(@NotNull JetNamespace expression,
+    public List<JsPropertyInitializer> traverseNamespace(@NotNull NamespaceDescriptor namespace,
                                                          @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
-        for (JetDeclaration declaration : expression.getDeclarations()) {
+        for (JetDeclaration declaration : getDeclarationsForNamespace(context.bindingContext(), namespace)) {
             properties.addAll(declaration.accept(this, context));
         }
         return properties;

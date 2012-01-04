@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 open class Base() {
     fun n(n : Int) : Int = n + 1

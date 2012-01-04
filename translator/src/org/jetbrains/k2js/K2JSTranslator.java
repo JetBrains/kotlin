@@ -15,7 +15,7 @@ import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.k2js.generate.CodeGenerator;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getNamespaceDescriptor;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.nameForNamespace;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNamespace;
 import static org.jetbrains.k2js.utils.JetTestUtils.analyzeNamespace;
 
 /**
@@ -83,13 +83,13 @@ public final class K2JSTranslator {
     @NotNull
     private JsProgram generateProgram(@NotNull JetFile psiFile) {
 
-        JetNamespace namespace = psiFile.getRootNamespace();
-
-        bindingContext = analyzeNamespace(namespace,
+        bindingContext = analyzeNamespace(psiFile,
                 JetControlFlowDataTraceFactory.EMPTY);
         assert bindingContext != null;
+        AnalyzingUtils.checkForSyntacticErrors(psiFile);
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
 
-        return Translation.generateAst(bindingContext, namespace, environment.getProject());
+        return Translation.generateAst(bindingContext, psiFile, environment.getProject());
     }
 
     private void includeRtJar() {
@@ -150,12 +150,10 @@ public final class K2JSTranslator {
         return result;
     }
 
-    //TODO: make "anonymous" a constant
     @NotNull
     private String getRootNamespaceName(@NotNull JetFile psiFile) {
-        JetNamespace namespace = psiFile.getRootNamespace();
         assert bindingContext != null;
-        return nameForNamespace(getNamespaceDescriptor(bindingContext, namespace));
+        return getNameForNamespace(getNamespaceDescriptor(bindingContext, psiFile));
     }
 
 }

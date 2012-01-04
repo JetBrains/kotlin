@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 var a = MyInt()
 

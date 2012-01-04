@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 trait Test {
     fun addFoo(s:String) : String {

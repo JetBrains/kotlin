@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 fun box() : Boolean {
   var sum = 0

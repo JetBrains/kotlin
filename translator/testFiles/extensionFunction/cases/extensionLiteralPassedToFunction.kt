@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 fun apply(i : Int, f : fun Int.(Int) : Int) = i.f(1);
 

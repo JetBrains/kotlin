@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 class A(var a : Int) {
     fun eval() = f();

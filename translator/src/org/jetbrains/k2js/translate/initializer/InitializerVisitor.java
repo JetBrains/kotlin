@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -13,6 +14,8 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
 
 /**
  * @author Pavel Talanov
@@ -72,9 +75,9 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
     }
 
     @NotNull
-    public List<JsStatement> traverseNamespace(@NotNull JetNamespace expression, @NotNull TranslationContext context) {
+    public List<JsStatement> traverseNamespace(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
         List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
-        for (JetDeclaration declaration : expression.getDeclarations()) {
+        for (JetDeclaration declaration : getDeclarationsForNamespace(context.bindingContext(), namespace)) {
             initializerStatements.addAll(declaration.accept(this, context));
         }
         return initializerStatements;
@@ -82,9 +85,6 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
 
     @NotNull
     public List<JsStatement> traverse(@NotNull JetDeclaration declaration, @NotNull TranslationContext context) {
-        if (declaration instanceof JetNamespace) {
-            return traverseNamespace((JetNamespace) declaration, context);
-        }
         if (declaration instanceof JetClass) {
             return traverseClass((JetClass) declaration, context);
         }

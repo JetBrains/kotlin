@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNamespace;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getOwnDeclarations;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.nameForNamespace;
 
 /**
  * @author Pavel Talanov
@@ -121,7 +121,7 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     @NotNull
     private DeclarationContext extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
                                                            @NotNull DeclarationContext context) {
-        JsName namespaceName = declareName(descriptor, context, nameForNamespace(descriptor));
+        JsName namespaceName = declareName(descriptor, context, getNameForNamespace(descriptor));
         NamingScope namespaceScope = declareScope(descriptor, context, "namespace " + namespaceName.getIdent());
         return context.innerDeclaration(namespaceScope, namespaceName);
     }

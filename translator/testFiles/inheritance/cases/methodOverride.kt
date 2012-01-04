@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 open class C() {
     open fun f(): Any = "C f"

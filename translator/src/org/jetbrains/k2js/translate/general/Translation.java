@@ -37,7 +37,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsStatement translateNamespace(@NotNull JetNamespace namespace,
+    public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace,
                                                  @NotNull TranslationContext context) {
         return NamespaceTranslator.translateNamespace(namespace, context);
     }
@@ -76,6 +76,7 @@ public final class Translation {
         return WhenTranslator.translateWhenExpression(expression, context);
     }
 
+    //TODO: see if generate*Initializer methods fit somewhere else
     @NotNull
     public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClass classDeclaration,
                                                                        @NotNull TranslationContext context) {
@@ -83,13 +84,13 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull JetNamespace namespace,
+    public static JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
                                                                            @NotNull TranslationContext context) {
         return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
     }
 
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
-                                        @NotNull JetNamespace namespace, @NotNull Project project) {
+                                        @NotNull JetFile namespace, @NotNull Project project) {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         NamespaceDescriptor descriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
@@ -99,7 +100,7 @@ public final class Translation {
         staticContext.getDeclarations().extractDeclarations(descriptor);
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        block.addStatement(Translation.translateNamespace(namespace, context));
+        block.addStatement(Translation.translateNamespace(descriptor, context));
 
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());

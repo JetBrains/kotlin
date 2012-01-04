@@ -3,7 +3,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -15,24 +15,25 @@ import java.util.List;
 /**
  * @author Pavel.Talanov
  */
+//TODO: rework translator to translate everything in the namespace not only in one file
 public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
-    private final JetNamespace namespace;
+    private final NamespaceDescriptor namespace;
     @NotNull
     private final JsName namespaceName;
     @NotNull
     private final ClassDeclarationTranslator classDeclarationTranslator;
 
     @NotNull
-    public static JsStatement translateNamespace(@NotNull JetNamespace namespace, @NotNull TranslationContext context) {
+    public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
         return (new NamespaceTranslator(namespace, context)).translateNamespace();
     }
 
-    private NamespaceTranslator(@NotNull JetNamespace namespace, @NotNull TranslationContext context) {
+    private NamespaceTranslator(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
         super(context.newNamespace(namespace));
         this.namespace = namespace;
-        this.namespaceName = context.getNameForElement(namespace);
+        this.namespaceName = context.getNameForDescriptor(namespace);
         this.classDeclarationTranslator = new ClassDeclarationTranslator(context(), namespace);
     }
 
@@ -66,7 +67,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
         addMemberDeclarations(namespaceDeclaration);
         addClassesDeclarations(namespaceDeclaration);
         return AstUtil.newAssignmentStatement
-                (context().getNameForElement(namespace).makeRef(), namespaceDeclaration);
+                (namespaceName.makeRef(), namespaceDeclaration);
     }
 
     private void addClassesDeclarations(@NotNull JsInvocation namespaceDeclaration) {

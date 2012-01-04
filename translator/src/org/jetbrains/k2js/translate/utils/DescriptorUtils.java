@@ -83,9 +83,9 @@ public final class DescriptorUtils {
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
-        VariableDescriptor variable = scope.getVariable(name);
+        VariableDescriptor variable = scope.getLocalVariable(name);
         if (variable == null) {
-            variable = scope.getPropertyByFieldReference(name);
+            variable = scope.getPropertyByFieldReference("$" + name);
         }
         PropertyDescriptor descriptor = (PropertyDescriptor) variable;
         assert descriptor != null : "Must have a descriptor.";
@@ -126,8 +126,9 @@ public final class DescriptorUtils {
         return (functionDescriptor.getReceiverParameter().exists());
     }
 
+    //TODO: make "anonymous" a constant
     @NotNull
-    public static String nameForNamespace(@NotNull NamespaceDescriptor descriptor) {
+    public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
         String name = descriptor.getName();
         if (name.equals("")) {
             return "Anonymous";

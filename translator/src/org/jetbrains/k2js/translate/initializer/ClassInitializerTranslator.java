@@ -50,7 +50,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
 
     @NotNull
     private JsBlock generateInitializerMethodBody() {
-        initializerStatements.addAll(translatePropertyAndAnonymousInitializers(classDeclaration));
+        initializerStatements.addAll(translateClassInitializers(classDeclaration));
         return AstUtil.newBlock(initializerStatements);
     }
 

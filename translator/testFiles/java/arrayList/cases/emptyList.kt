@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 import java.util.ArrayList;
 

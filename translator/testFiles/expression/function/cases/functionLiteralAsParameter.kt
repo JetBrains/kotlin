@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 fun apply(f : fun(Int) : Int, t : Int) : Int {
     return f(t)

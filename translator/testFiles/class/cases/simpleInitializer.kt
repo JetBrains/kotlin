@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 class Test() {
 var a : Int

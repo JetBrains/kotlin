@@ -1,4 +1,4 @@
-namespace foo
+package foo
 
 fun box() : String {
     var number = 3
