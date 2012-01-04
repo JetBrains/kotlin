@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -86,10 +87,11 @@ public abstract class CodegenContext {
     }
 
     public String getNamespaceClassName() {
-        if(parentContext != STATIC)
-            return parentContext.getNamespaceClassName();
-
-        return NamespaceCodegen.getJVMClassName(contextType.getName());
+        DeclarationDescriptor descriptor = contextType;
+        while(!(descriptor instanceof NamespaceDescriptor)) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(descriptor));
     }
 
     public OwnerKind getContextKind() {

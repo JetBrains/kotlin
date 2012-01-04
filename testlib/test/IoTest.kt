@@ -24,14 +24,11 @@ World""");
   }
 
   fun testLineIterator() {
-    /*
-    // TODO compiler error
-    // both these expressions causes java.lang.NoClassDefFoundError: collections/namespace
-    val list = sample().useLines{it.toArrayList()}
-    val list = sample().useLines<ArrayList<String>>{it.toArrayList()}
+    val list1 = sample().useLines{it.toArrayList()}
+    val list2 = sample().useLines<ArrayList<String>>{it.toArrayList()}
 
-    assertEquals(arrayList("Hello", "World"), list)
-    */
+    assertEquals(arrayList("Hello", "World"), list1)
+    assertEquals(arrayList("Hello", "World"), list2)
   }
 
   fun testUse() {

@@ -119,7 +119,7 @@ public class NamespaceCodegen {
 
     private void generateTypeInfoFields(JetFile file, CodegenContext context) {
         if(context.typeInfoConstants != null) {
-            String jvmClassName = getJVMClassName(file.getNamespaceHeader().getName());
+            String jvmClassName = getJVMClassName(JetPsiUtil.getFQName(file));
             for(int index = 0; index != context.typeInfoConstantsCount; index++) {
                 JetType type = context.reverseTypeInfoConstants.get(index);
                 String fieldName = "$typeInfoCache$" + index;
