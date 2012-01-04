@@ -13,6 +13,9 @@ val JMap<*,*>.size : Int
 val JMap<*,*>.empty : Boolean
     get() = isEmpty()
 
+/** Provides [] access to maps */
+fun <K, V> JMap<K, V>.set(key : K, value : V) = this.put(key, value)
+
 /** Returns the key of the entry */
 val <K,V> JEntry<K,V>.key : K
     get() = getKey()

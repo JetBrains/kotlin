@@ -36,4 +36,17 @@ class MapTest() : TestSupport() {
 
     assertEquals(data.size, 0)
   }
+
+  fun testSetViaIndexOperators() {
+    // TODO cant just create a HashMap due to KT-834
+    val map: Map<String,String> = HashMap<String, String>()
+    assert{ map.empty }
+    assertEquals(map.size, 0)
+
+    map["name"] = "James"
+
+    assert{ !map.empty }
+    assertEquals(map.size, 1)
+    assertEquals("James", map["name"])
+  }
 }

@@ -120,7 +120,6 @@ class Body() : BodyTag("body") {
   fun a(href : String, init : A.()-> Unit) {
     val a = initTag(init)
     a.href = href
-    a.attributes.put("href", href)
   }
 }
 
@@ -146,15 +145,11 @@ class A() : BodyTag("a") {
     override fun create() = A()
   }
 
-  var href: String? = null
-  /*
-    TODO this doesn't compile
-    see http://youtrack.jetbrains.net/issue/KT-866
-
-    var href : String
-      get() = attributes["href"]
-      set(value) { attributes["href"] = value }
-  */
+  var href : String
+    get() = attributes["href"]
+    set(value) {
+      attributes["href"] = value
+    }
 }
 
 fun body(init: Body.()-> Unit): Body {
