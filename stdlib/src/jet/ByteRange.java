@@ -1,26 +1,26 @@
 package jet;
 
-public final class LongRange implements Range<Long>, LongIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
+public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
+    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(ByteRange.class, false);
 
-    private final long start;
-    private final long count;
+    private final byte start;
+    private final int count;
 
-    public LongRange(long startValue, long count) {
+    public ByteRange(byte startValue, int count) {
         this.start = startValue;
         this.count = count;
     }
 
-    public LongRange(long startValue, long count, boolean reversed) {
+    public ByteRange(byte startValue, int count, boolean reversed) {
         this(startValue, reversed ? -count : count);
     }
 
-    public LongRange(int startValue, int count, boolean reversed, int defaultMask) {
+    public ByteRange(byte startValue, int count, boolean reversed, int defaultMask) {
         this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
     }
 
     @Override
-    public boolean contains(Long item) {
+    public boolean contains(Byte item) {
         if (item == null) return false;
         if (count >= 0) {
             return item >= start && item < start + count;
@@ -32,24 +32,24 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return count < 0;
     }
 
-    public long getStart() {
+    public byte getStart() {
         return start;
     }
 
-    public long getEnd() {
-        return start+count-1;
+    public byte getEnd() {
+        return (byte) (count < 0 ? start + count + 1: start+count-1);
     }
 
-    public long getSize() {
+    public int getSize() {
         return count < 0 ? -count : count;
     }
 
-    public LongRange minus() {
-        return new LongRange(getEnd(), -count);
+    public ByteRange minus() {
+        return new ByteRange(getEnd(), -count);
     }
 
     @Override
-    public LongIterator iterator() {
+    public ByteIterator iterator() {
         return new MyIterator(start, count);
     }
 
@@ -63,28 +63,28 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return null;
     }
 
-    public static IntRange count(int length) {
-        return new IntRange(0, length);
+    public static ByteRange count(int length) {
+        return new ByteRange((byte) 0, length);
     }
 
-    public static IntRange rangeTo(int from, int to) {
+    public static ByteRange rangeTo(byte from, byte to) {
         if(from > to) {
-            return new IntRange(to, from-to+1, true);
+            return new ByteRange(to, from-to+1, true);
         }
         else {
-            return new IntRange(from, to-from+1);
+            return new ByteRange(from, to-from+1);
         }
     }
 
-    private static class MyIterator extends LongIterator {
+    private static class MyIterator extends ByteIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
-        private long cur;
-        private long count;
+        private byte cur;
+        private int count;
 
         private final boolean reversed;
 
-        public MyIterator(long startValue, long count) {
+        public MyIterator(byte startValue, int count) {
             cur = startValue;
             reversed = count < 0;
             this.count = reversed ? -count : count;
@@ -96,7 +96,7 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         }
 
         @Override
-        public long nextLong() {
+        public byte nextByte() {
             count--;
             if(reversed) {
                 return cur--;

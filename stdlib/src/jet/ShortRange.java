@@ -1,26 +1,26 @@
 package jet;
 
-public final class LongRange implements Range<Long>, LongIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
+public final class ShortRange implements Range<Short>, ShortIterable, JetObject {
+    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(ShortRange.class, false);
 
-    private final long start;
-    private final long count;
+    private final short start;
+    private final int count;
 
-    public LongRange(long startValue, long count) {
+    public ShortRange(short startValue, int count) {
         this.start = startValue;
         this.count = count;
     }
 
-    public LongRange(long startValue, long count, boolean reversed) {
+    public ShortRange(short startValue, int count, boolean reversed) {
         this(startValue, reversed ? -count : count);
     }
 
-    public LongRange(int startValue, int count, boolean reversed, int defaultMask) {
+    public ShortRange(short startValue, int count, boolean reversed, int defaultMask) {
         this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
     }
 
     @Override
-    public boolean contains(Long item) {
+    public boolean contains(Short item) {
         if (item == null) return false;
         if (count >= 0) {
             return item >= start && item < start + count;
@@ -32,24 +32,24 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return count < 0;
     }
 
-    public long getStart() {
+    public short getStart() {
         return start;
     }
 
-    public long getEnd() {
-        return start+count-1;
+    public short getEnd() {
+        return (short) (count < 0 ? start + count + 1: start+count-1);
     }
 
-    public long getSize() {
+    public int getSize() {
         return count < 0 ? -count : count;
     }
 
-    public LongRange minus() {
-        return new LongRange(getEnd(), -count);
+    public ShortRange minus() {
+        return new ShortRange(getEnd(), -count);
     }
 
     @Override
-    public LongIterator iterator() {
+    public ShortIterator iterator() {
         return new MyIterator(start, count);
     }
 
@@ -63,28 +63,28 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return null;
     }
 
-    public static IntRange count(int length) {
-        return new IntRange(0, length);
+    public static ShortRange count(int length) {
+        return new ShortRange((byte) 0, length);
     }
 
-    public static IntRange rangeTo(int from, int to) {
+    public static ShortRange rangeTo(short from, short to) {
         if(from > to) {
-            return new IntRange(to, from-to+1, true);
+            return new ShortRange(to, from-to+1, true);
         }
         else {
-            return new IntRange(from, to-from+1);
+            return new ShortRange(from, to-from+1);
         }
     }
 
-    private static class MyIterator extends LongIterator {
+    private static class MyIterator extends ShortIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
-        private long cur;
-        private long count;
+        private short cur;
+        private int count;
 
         private final boolean reversed;
 
-        public MyIterator(long startValue, long count) {
+        public MyIterator(short startValue, int count) {
             cur = startValue;
             reversed = count < 0;
             this.count = reversed ? -count : count;
@@ -96,7 +96,7 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         }
 
         @Override
-        public long nextLong() {
+        public short nextShort() {
             count--;
             if(reversed) {
                 return cur--;

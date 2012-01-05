@@ -15,6 +15,10 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         this(startValue, reversed ? -count : count);
     }
 
+    public IntRange(int startValue, int count, boolean reversed, int defaultMask) {
+        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
+    }
+
     @Override
     public boolean contains(Integer item) {
         if (item == null) return false;
@@ -24,16 +28,24 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         return item <= start && item > start + count;
     }
 
+    public boolean getIsReversed() {
+        return count < 0;
+    }
+
     public int getStart() {
         return start;
     }
 
     public int getEnd() {
-        return start+count-1;
+        return count < 0 ? start + count + 1: start+count-1;
     }
 
     public int getSize() {
         return count < 0 ? -count : count;
+    }
+
+    public IntRange minus() {
+        return new IntRange(getEnd(), -count);
     }
 
     @Override

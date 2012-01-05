@@ -1,26 +1,26 @@
 package jet;
 
-public final class LongRange implements Range<Long>, LongIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
+public final class CharRange implements Range<Character>, CharIterable, JetObject {
+    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(CharRange.class, false);
 
-    private final long start;
-    private final long count;
+    private final char start;
+    private final int count;
 
-    public LongRange(long startValue, long count) {
+    public CharRange(char startValue, int count) {
         this.start = startValue;
         this.count = count;
     }
 
-    public LongRange(long startValue, long count, boolean reversed) {
+    public CharRange(char startValue, int count, boolean reversed) {
         this(startValue, reversed ? -count : count);
     }
 
-    public LongRange(int startValue, int count, boolean reversed, int defaultMask) {
+    public CharRange(char startValue, int count, boolean reversed, int defaultMask) {
         this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
     }
 
     @Override
-    public boolean contains(Long item) {
+    public boolean contains(Character item) {
         if (item == null) return false;
         if (count >= 0) {
             return item >= start && item < start + count;
@@ -32,24 +32,24 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return count < 0;
     }
 
-    public long getStart() {
+    public char getStart() {
         return start;
     }
 
-    public long getEnd() {
-        return start+count-1;
+    public char getEnd() {
+        return (char) (count < 0 ? start + count + 1: start+count-1);
     }
 
-    public long getSize() {
+    public int getSize() {
         return count < 0 ? -count : count;
     }
 
-    public LongRange minus() {
-        return new LongRange(getEnd(), -count);
+    public CharRange minus() {
+        return new CharRange(getEnd(), -count);
     }
 
     @Override
-    public LongIterator iterator() {
+    public CharIterator iterator() {
         return new MyIterator(start, count);
     }
 
@@ -63,28 +63,28 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return null;
     }
 
-    public static IntRange count(int length) {
-        return new IntRange(0, length);
+    public static CharRange count(int length) {
+        return new CharRange((char) 0, length);
     }
 
-    public static IntRange rangeTo(int from, int to) {
+    public static CharRange rangeTo(char from, char to) {
         if(from > to) {
-            return new IntRange(to, from-to+1, true);
+            return new CharRange(to, from-to+1, true);
         }
         else {
-            return new IntRange(from, to-from+1);
+            return new CharRange(from, to-from+1);
         }
     }
 
-    private static class MyIterator extends LongIterator {
+    private static class MyIterator extends CharIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
-        private long cur;
-        private long count;
+        private char cur;
+        private int count;
 
         private final boolean reversed;
 
-        public MyIterator(long startValue, long count) {
+        public MyIterator(char startValue, int count) {
             cur = startValue;
             reversed = count < 0;
             this.count = reversed ? -count : count;
@@ -96,7 +96,7 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         }
 
         @Override
-        public long nextLong() {
+        public char nextChar() {
             count--;
             if(reversed) {
                 return cur--;

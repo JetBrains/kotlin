@@ -30,7 +30,7 @@ public class RangeTo implements IntrinsicMethod {
             if (JetTypeMapper.isIntPrimitive(leftType)) {
                 codegen.gen(expression.getLeft(), Type.INT_TYPE);
                 codegen.gen(expression.getRight(), Type.INT_TYPE);
-                v.invokestatic("jet/IntRange", "rangeTo", "(II)Ljet/IntRange;");
+                v.invokestatic(expectedType.getInternalName(), "rangeTo", "(" + leftType.getDescriptor() + leftType.getDescriptor() + ")" + expectedType.getDescriptor());
                 return StackValue.onStack(JetTypeMapper.TYPE_INT_RANGE);
             }
             else {
