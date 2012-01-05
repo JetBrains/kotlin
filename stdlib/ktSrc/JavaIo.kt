@@ -2,6 +2,7 @@ package std.io
 
 import java.io.*
 import java.nio.charset.*
+import java.util.NoSuchElementException
 
 inline fun print(message : Any?) { System.out?.print(message) }
 inline fun print(message : Int) { System.out?.print(message) }
@@ -146,14 +147,25 @@ inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffere
 inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
 
 protected class LineIterator(val reader: BufferedReader) : Iterator<String> {
-  private var nextLine: String? = null
+  private var nextValue: String? = null
+  private var done = false
 
   override val hasNext: Boolean
     get() {
-      nextLine = reader.readLine()
-      return nextLine != null
+      if (nextValue == null && !done) {
+        nextValue = reader.readLine()
+        if (nextValue == null) done = true
+      }
+      return nextValue != null
     }
 
-  override fun next(): String = nextLine.sure()
+  override fun next(): String {
+    if (!hasNext) {
+      throw NoSuchElementException()
+    }
+    val answer = nextValue
+    nextValue = null
+    return answer.sure()
+  }
 }
 
