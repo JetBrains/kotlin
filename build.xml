@@ -2,9 +2,10 @@
     <property name="output" value="${basedir}/dist"/>
     <property name="build.number" value="snapshot"/>
     <property name="output.name" value="kotlin-${build.number}"/>
+    <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 
     <path id="classpath">
-        <fileset dir="${basedir}/ideaSDK" includes="*.jar"/>
+        <fileset dir="${idea.sdk}" includes="*.jar"/>
         <fileset dir="${basedir}/lib" includes="*.jar"/>
         <pathelement path="${output}/classes/runtime"/>
     </path>
@@ -74,7 +75,7 @@
     <target name="dist" depends="clean,jarRT,jar">
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="kotlinc/lib" dir="${basedir}/ideaSDK"/>
+            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}"/>
             <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
             <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
             <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>
