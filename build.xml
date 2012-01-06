@@ -35,6 +35,7 @@
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">
             <classpath refid="classpath.kotlin"/>
+            <arg value="-excludeStdlib"/>
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>
             <arg value="-output"/>

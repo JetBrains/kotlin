@@ -337,10 +337,12 @@ public class CompileEnvironment {
         }
     }
 
-    public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
+    public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime, boolean includeSources) {
         CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
-        session.addStdLibSources(false);
+        if (includeSources) {
+            session.addStdLibSources(false);
+        }
 
         String mainClass = null;
         for (JetFile file : session.getSourceFileNamespaces()) {

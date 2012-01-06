@@ -25,6 +25,8 @@ public class KotlinCompiler {
         public String module;
         @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
         public boolean includeRuntime;
+        @Argument(value = "excludeStdlib", description = "do not load stdlib (to compile stdlib itself)")
+        public boolean excludeStdlib;
     }
 
     public static void main(String[] args) {
@@ -59,7 +61,7 @@ public class KotlinCompiler {
                 return;
             }
             else {
-                if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime)) {
+                if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime, !arguments.excludeStdlib)) {
                     System.exit(1);
                     return;
                 }
