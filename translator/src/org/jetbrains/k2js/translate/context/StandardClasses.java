@@ -90,9 +90,9 @@ public final class StandardClasses {
         standardClasses.declareTopLevel(arrayClass, "Array");
         FunctionDescriptor nullConstructorFunction = getFunctionByName(standardLibrary.getLibraryScope(), "Array");
         standardClasses.declareTopLevel(nullConstructorFunction, "array");
-//        PropertyDescriptor sizeProperty =
-//                getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "size");
-//        standardClasses.declareInner(sizeProperty, "size");
+        PropertyDescriptor sizeProperty =
+                getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "size");
+        standardClasses.declareInner(sizeProperty, "size");
         PropertyDescriptor indices = getPropertyByName(arrayClass.getDefaultType().getMemberScope(), "indices");
         standardClasses.declareInner(indices, "indices");
     }

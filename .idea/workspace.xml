@@ -15,50 +15,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/closureWithParameter.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/closureWithParameter.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/closureWithParameterAndBoxing.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/closureWithParameterAndBoxing.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/diamondInheritance.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/diamondInheritance.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/doubleEnclosedLocalVariable.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/doubleEnclosedLocalVariable.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/enclosingLocalVariable.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/enclosingLocalVariable.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/enclosingThis.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/enclosingThis.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/funDelegation.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/funDelegation.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/generic.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/generic.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/inheritedMethod.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/inheritedMethod.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/initializerBlock.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/initializerBlock.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/kt242.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/kt242.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/newInstanceDefaultConstructor.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/newInstanceDefaultConstructor.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadBinaryOperator.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadBinaryOperator.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadPlusAssignReturn.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadPlusAssignReturn.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadPlusToPlusAssign.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadPlusToPlusAssign.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadUnaryOperator.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/overloadUnaryOperator.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/propertyDelegation.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/propertyDelegation.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/rightHandOverride.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/rightHandOverride.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/simplestClosure.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/simplestClosure.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/cases/simplestClosureAndBoxing.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/simplestClosureAndBoxing.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/examples/sortedTests/unsupported/extensionClosure.jet" afterPath="$PROJECT_DIR$/translator/testFiles/examples/sortedTests/unsupported/extensionClosure.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/adderClosure.kt" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/adderClosure.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/closureWithParameter.jet" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/closureWithParameter.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/closureWithParameterAndBoxing.jet" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/closureWithParameterAndBoxing.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/enclosingThis.jet" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/enclosingThis.jet" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/functionLiteral.kt" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/functionLiteral.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/functionLiteralAsParameter.kt" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/functionLiteralAsParameter.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/loopClosure.kt" afterPath="$PROJECT_DIR$/translator/testFiles/expression/function/cases/loopClosure.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/extensionFunction/cases/extensionInsideFunctionLiteral.kt" afterPath="$PROJECT_DIR$/translator/testFiles/extensionFunction/cases/extensionInsideFunctionLiteral.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/extensionFunction/cases/extensionLiteralPassedToFunction.kt" afterPath="$PROJECT_DIR$/translator/testFiles/extensionFunction/cases/extensionLiteralPassedToFunction.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/java/arrayList/cases/access.kt" afterPath="$PROJECT_DIR$/translator/testFiles/java/arrayList/cases/access.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/matchNullableType.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/matchNullableType.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/multipleCases.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/multipleCases.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenAsExpression.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenAsExpression.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenExecutesOnlyOnce.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenExecutesOnlyOnce.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenNotType.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenNotType.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenNotValue.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenNotValue.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenType.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenType.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenValue.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenValue.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenValueOrType.kt" afterPath="$PROJECT_DIR$/translator/testFiles/patternMatching/cases/whenValueOrType.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayFunctionConstructor.kt" afterPath="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arrayFunctionConstructor.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arraysIterator.kt" afterPath="$PROJECT_DIR$/translator/testFiles/standardClasses/cases/arraysIterator.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/webDemoExamples/cases/multiLanguageHello.kt" afterPath="$PROJECT_DIR$/translator/testFiles/webDemoExamples/cases/multiLanguageHello.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/testFiles/webDemoExamples/cases/patternMatching.kt" afterPath="$PROJECT_DIR$/translator/testFiles/webDemoExamples/cases/patternMatching.kt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -235,15 +192,6 @@
     <splitter split-orientation="horizontal" split-proportion="0.4739369">
       <split-first>
         <leaf>
-          <file leaf-file-name="TranslationContext.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="52" column="81" selection-start="2110" selection-end="2110" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="DeclarationBodyVisitor.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/DeclarationBodyVisitor.java">
               <provider selected="true" editor-type-id="text-editor">
@@ -289,10 +237,19 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="access.kt" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="access.kt" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/testFiles/java/arrayList/cases/access.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="9" column="35" selection-start="192" selection-end="192" vertical-scroll-proportion="0.27370304">
+                <state line="9" column="57" selection-start="192" selection-end="192" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="StandardClasses.java" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="103" column="16" selection-start="5303" selection-end="5303" vertical-scroll-proportion="0.7161172">
                   <folding />
                 </state>
               </provider>
@@ -443,7 +400,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/BindingUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/initializer/InitializerVisitor.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/general/Translation.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/declaration/ClassDeclarationTranslator.java" />
@@ -459,6 +415,7 @@
         <option value="$PROJECT_DIR$/translator/testFiles/expression/function/cases/functionLiteralAsParameter.kt" />
         <option value="$PROJECT_DIR$/translator/testFiles/examples/cases/generic.jet" />
         <option value="$PROJECT_DIR$/translator/testFiles/java/arrayList/cases/access.kt" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
       </list>
     </option>
   </component>
@@ -1202,7 +1159,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.7002882" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22073758" sideWeight="0.6051873" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39481267" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39481267" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.0908605" sideWeight="0.7146974" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1246,7 +1203,7 @@
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="migrated from JetNamespace to NamespaceDescriptor and JetFile /* Lots of tests fail due to: missing array methods and unconverted tests*/" />
+    <option name="LAST_COMMIT_MESSAGE" value="migrated tests to new syntax /*tests fail due to migrated size problem*/" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1259,7 +1216,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="virtual extension functions support and tests." />
     <MESSAGE value="extension literal support and tests." />
     <MESSAGE value="temporary commit." />
     <MESSAGE value="rewrite K2JSTranslator class" />
@@ -1284,6 +1240,7 @@
     <MESSAGE value="quick fix that solves method overloading problem." />
     <MESSAGE value="fix some code after update" />
     <MESSAGE value="migrated from JetNamespace to NamespaceDescriptor and JetFile /* Lots of tests fail due to: missing array methods and unconverted tests*/" />
+    <MESSAGE value="migrated tests to new syntax /*tests fail due to migrated size problem*/" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1293,20 +1250,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/examples/cases/closureWithParameter.jet">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="0" selection-end="156" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/src/jet/Library.jet">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="113" column="21" selection-start="2448" selection-end="2452" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/testFiles/expression/function/cases/functionLiteral.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -1400,7 +1343,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/testFiles/java/arrayList/cases/access.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="35" selection-start="192" selection-end="192" vertical-scroll-proportion="0.27370304">
+        <state line="9" column="57" selection-start="192" selection-end="192" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/TranslationContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="81" selection-start="2110" selection-end="2110" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="103" column="16" selection-start="5303" selection-end="5303" vertical-scroll-proportion="0.7161172">
           <folding />
         </state>
       </provider>
