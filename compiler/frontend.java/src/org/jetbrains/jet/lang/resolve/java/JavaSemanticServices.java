@@ -21,7 +21,7 @@ public class JavaSemanticServices {
     public JavaSemanticServices(Project project, JetSemanticServices jetSemanticServices, BindingTrace trace) {
         this.trace = trace;
         this.descriptorResolver = new JavaDescriptorResolver(project, this);
-        this.typeTransformer = new JavaTypeTransformer(jetSemanticServices.getStandardLibrary(), descriptorResolver);
+        this.typeTransformer = new JavaTypeTransformer(this, jetSemanticServices.getStandardLibrary(), descriptorResolver);
         this.jetSemanticServices = jetSemanticServices;
     }
 

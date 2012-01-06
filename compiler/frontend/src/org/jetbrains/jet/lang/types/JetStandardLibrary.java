@@ -504,6 +504,14 @@ public class JetStandardLibrary {
         initStdClasses();
         return doubleArrayType;
     }
+    
+    public JetType getPrimitiveArrayType(JetType jetType) {
+        if (jetType.equals(getIntType())) {
+            return getIntArrayType();
+        } else {
+            throw new IllegalStateException("not implemented");
+        }
+    }
 
     public ClassDescriptor getByteArrayClass() {
         initStdClasses();

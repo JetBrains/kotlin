@@ -19,12 +19,14 @@ import java.util.Map;
  */
 public class JavaTypeTransformer {
 
+    private final JavaSemanticServices javaSemanticServices;
     private final JavaDescriptorResolver resolver;
     private final JetStandardLibrary standardLibrary;
     private Map<String, JetType> primitiveTypesMap;
     private Map<String, JetType> classTypesMap;
 
-    public JavaTypeTransformer(JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
+    public JavaTypeTransformer(JavaSemanticServices javaSemanticServices, JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
+        this.javaSemanticServices = javaSemanticServices;
         this.resolver = resolver;
         this.standardLibrary = standardLibrary;
     }
@@ -61,7 +63,7 @@ public class JavaTypeTransformer {
     @NotNull
     public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, standardLibrary, typeVariableResolver) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, standardLibrary, typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;
