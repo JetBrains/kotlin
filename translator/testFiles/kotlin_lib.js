@@ -331,6 +331,10 @@ Kotlin.ArrayList = Class.create({
         }
         this.$size--;
     },
+    clear:function () {
+        this.array = [];
+        this.$size = 0;
+    },
     contains:function (obj) {
         for (var i = 0; i < this.$size; ++i) {
             if (Kotlin.equals(this.array[i], obj)) {

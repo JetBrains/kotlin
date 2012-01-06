@@ -59,5 +59,15 @@ public class FunctionTest extends AbstractExpressionTest {
         testFunctionOutput("enclosingThis.jet", "Anonymous", "box", "OK");
     }
 
+    @Test
+    public void implicitItParameter() throws Exception {
+        testFooBoxIsTrue("implicitItParameter.kt");
+    }
+
+    @Test
+    public void kt921() throws Exception {
+        checkOutput("KT-921.kt", "");
+    }
+
 
 }

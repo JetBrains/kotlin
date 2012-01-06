@@ -3,8 +3,8 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -15,7 +15,6 @@ import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
@@ -40,6 +39,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     private final JsFunction functionObject;
     @NotNull
     private final TranslationContext functionBodyContext;
+    @NotNull
+    private final FunctionDescriptor descriptor;
 
 
     private FunctionTranslator(@NotNull JetDeclarationWithBody functionDeclaration,
@@ -48,6 +49,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.functionDeclaration = functionDeclaration;
         this.functionObject = createFunctionObject();
         this.functionBodyContext = functionBodyContext();
+        this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
     }
 
     @NotNull
@@ -68,8 +70,8 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction generateFunctionObject() {
-        functionObject.setParameters(translateParameters(functionDeclaration.getValueParameters(), functionBodyContext));
-        functionObject.setBody(translateBody(functionBodyContext));
+        functionObject.setParameters(translateParameters());
+        functionObject.setBody(translateBody());
         restoreContext();
         return functionObject;
     }
@@ -103,7 +105,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsBlock translateBody(@NotNull TranslationContext functionBodyContext) {
+    private JsBlock translateBody() {
         JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
         //TODO decide if there are cases where this assert is illegal
         assert jetBodyExpression != null : "Function without body not supported";
@@ -150,23 +152,19 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private List<JsParameter> translateParameters(@NotNull List<JetParameter> jetParameters,
-                                                  @NotNull TranslationContext functionBodyContext) {
+    private List<JsParameter> translateParameters() {
         List<JsParameter> jsParameters = new ArrayList<JsParameter>();
         mayBeAddThisParameterForExtensionFunction(jsParameters);
-        for (JetParameter jetParameter : jetParameters) {
-            JsName parameterName = declareParameter(jetParameter, functionBodyContext);
+        for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
+            JsName parameterName = declareParameter(valueParameter);
             jsParameters.add(new JsParameter(parameterName));
         }
         return jsParameters;
     }
 
     @NotNull
-    private JsName declareParameter(@NotNull JetParameter jetParameter,
-                                    @NotNull TranslationContext functionBodyContext) {
-        DeclarationDescriptor parameterDescriptor =
-                getDescriptorForElement(functionBodyContext.bindingContext(), jetParameter);
-        return context().declareLocalVariable(parameterDescriptor);
+    private JsName declareParameter(@NotNull ValueParameterDescriptor valueParameter) {
+        return context().declareLocalVariable(valueParameter);
     }
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {

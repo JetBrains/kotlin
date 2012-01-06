@@ -72,7 +72,7 @@ public final class StandardClasses {
         standardClasses.declareStandardTopLevelObject(arrayListFQName, "ArrayList");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "<init>", "ArrayList");
         declareMethods(standardClasses, arrayListFQName, "size", "add", "get",
-                "isEmpty", "set", "remove", "addAll", "contains");
+                "isEmpty", "set", "remove", "addAll", "contains", "clear");
     }
 
     private static void declareIterator(@NotNull StandardClasses standardClasses,
