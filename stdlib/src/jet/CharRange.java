@@ -41,7 +41,10 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
     }
 
     public CharIterator step(int step) {
-        return new MyIterator(start, count, step);
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     @Override

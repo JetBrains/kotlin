@@ -12,7 +12,10 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
     }
 
     public ShortIterator step(int step) {
-        return new MyIterator(start, count, step);
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     @Override

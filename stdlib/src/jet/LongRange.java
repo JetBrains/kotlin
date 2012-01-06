@@ -12,7 +12,10 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
     }
 
     public LongIterator step(long step) {
-        return new MyIterator(start, count, step);
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     @Override

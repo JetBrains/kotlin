@@ -21,7 +21,10 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
     }
 
     public IntIterator step(int step) {
-        return new MyIterator(start, count, step);
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     public boolean getIsReversed() {
