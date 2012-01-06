@@ -210,8 +210,8 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
             new ClassReader(classInputStream).accept(visitor,
                     ClassReader.SKIP_CODE|ClassReader.SKIP_DEBUG|ClassReader.SKIP_FRAMES);
             
-            Assert.assertNotNull(visitor.readSignature);
-            
+            Assert.assertNotNull("method not found: " + className + "::" + methodName, visitor.readSignature);
+
             return visitor.readSignature;
         } finally {
             Closeables.closeQuietly(classInputStream);

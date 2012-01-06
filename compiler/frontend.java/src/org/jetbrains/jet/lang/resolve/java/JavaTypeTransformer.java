@@ -24,6 +24,7 @@ public class JavaTypeTransformer {
     private final JetStandardLibrary standardLibrary;
     private Map<String, JetType> primitiveTypesMap;
     private Map<String, JetType> classTypesMap;
+    private Map<String, ClassDescriptor> classDescriptorMap;
 
     public JavaTypeTransformer(JavaSemanticServices javaSemanticServices, JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
         this.javaSemanticServices = javaSemanticServices;
@@ -198,5 +199,22 @@ public class JavaTypeTransformer {
             classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
         }
         return classTypesMap;
+    }
+    
+    public Map<String, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
+        if (classDescriptorMap == null) {
+            classDescriptorMap = new HashMap<String, ClassDescriptor>();
+            classDescriptorMap.put("java.lang.Byte", standardLibrary.getByte());
+            classDescriptorMap.put("java.lang.Short", standardLibrary.getShort());
+            classDescriptorMap.put("java.lang.Character", standardLibrary.getChar());
+            classDescriptorMap.put("java.lang.Integer", standardLibrary.getInt());
+            classDescriptorMap.put("java.lang.Long", standardLibrary.getLong());
+            classDescriptorMap.put("java.lang.Float", standardLibrary.getFloat());
+            classDescriptorMap.put("java.lang.Double", standardLibrary.getDouble());
+            classDescriptorMap.put("java.lang.Boolean", standardLibrary.getBoolean());
+            //classDescriptorMap.put("java.lang.Object", standardLibrary.get
+            classDescriptorMap.put("java.lang.String", standardLibrary.getString());
+        }
+        return classDescriptorMap;
     }
 }

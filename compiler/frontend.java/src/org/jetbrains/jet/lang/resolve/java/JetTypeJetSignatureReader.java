@@ -96,7 +96,13 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     @Override
     public void visitClassType(String name, boolean nullable) {
         String ourName = name.replace('/', '.');
-        this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
+        
+        this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
+
+        if (this.classDescriptor == null) {
+            this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
+        }
+
         if (this.classDescriptor == null) {
             throw new IllegalStateException("class not found by name: " + ourName); // TODO: wrong exception
         }
