@@ -4,8 +4,11 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -83,5 +86,13 @@ public final class PsiUtils {
         JetParameter loopParameter = expression.getLoopParameter();
         assert loopParameter != null;
         return loopParameter;
+    }
+
+    @NotNull
+    public static JetExpression getExpressionArgument(@NotNull ResolvedValueArgument actualArgument) {
+        List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
+        assert !argumentExpressions.isEmpty() : "Actual arguments must be supplied.";
+        assert argumentExpressions.size() == 1 : "Varargs not supported.";
+        return argumentExpressions.get(0);
     }
 }

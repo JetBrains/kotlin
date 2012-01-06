@@ -24,8 +24,7 @@ import static com.google.dart.compiler.util.AstUtil.not;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.isInOrNotInOperation;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.isNotInOperation;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
@@ -54,6 +53,7 @@ public final class CallTranslator extends AbstractTranslator {
             return new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context);
         }
 
+        //TODO: method too long
         @NotNull
         private CallTranslator buildFromBinary(@NotNull JetBinaryExpression binaryExpression,
                                                boolean swapReceiverAndArgument) {
@@ -119,16 +119,10 @@ public final class CallTranslator extends AbstractTranslator {
                 @NotNull ValueParameterDescriptor parameterDescriptor, @NotNull TranslationContext context) {
             ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
             if (actualArgument instanceof DefaultValueArgument) {
-                assert parameterDescriptor.hasDefaultValue() : "Unsupplied parameter must have default value.";
-                JetParameter psiParameter = getParameterForDescriptor(context.bindingContext(), parameterDescriptor);
-                JetExpression defaultValue = psiParameter.getDefaultValue();
-                assert defaultValue != null : "No default value found in PSI.";
-                return defaultValue;
+                return getDefaultArgument(context.bindingContext(), parameterDescriptor);
+            } else {
+                return getExpressionArgument(actualArgument);
             }
-            List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
-            assert !argumentExpressions.isEmpty() : "Actual arguments must be supplied.";
-            assert argumentExpressions.size() == 1 : "Varargs not supported.";
-            return argumentExpressions.get(0);
         }
     }
 

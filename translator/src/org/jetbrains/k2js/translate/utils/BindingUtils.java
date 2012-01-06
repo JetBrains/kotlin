@@ -288,4 +288,14 @@ public final class BindingUtils {
         return null;
     }
 
+    @NotNull
+    public static JetExpression getDefaultArgument(@NotNull BindingContext context,
+                                                   @NotNull ValueParameterDescriptor parameterDescriptor) {
+        assert parameterDescriptor.hasDefaultValue() : "Unsupplied parameter must have default value.";
+        JetParameter psiParameter = getParameterForDescriptor(context, parameterDescriptor);
+        JetExpression defaultValue = psiParameter.getDefaultValue();
+        assert defaultValue != null : "No default value found in PSI.";
+        return defaultValue;
+    }
+
 }
