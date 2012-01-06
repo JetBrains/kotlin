@@ -44,13 +44,17 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         return count < 0 ? -count : count;
     }
 
+    public ByteIterator step(int step) {
+        return new MyIterator(start, count, step);
+    }
+
     public ByteRange minus() {
         return new ByteRange(getEnd(), -count);
     }
 
     @Override
     public ByteIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -80,12 +84,14 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private byte cur;
+        private int step;
         private int count;
 
         private final boolean reversed;
 
-        public MyIterator(byte startValue, int count) {
+        public MyIterator(byte startValue, int count, int step) {
             cur = startValue;
+            this.step = step;
             reversed = count < 0;
             this.count = reversed ? -count : count;
         }
@@ -97,12 +103,14 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
 
         @Override
         public byte nextByte() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return (byte) (cur + step);
             }
             else {
-                return cur++;
+                cur += step;
+                return (byte) (cur - step);
             }
         }
 

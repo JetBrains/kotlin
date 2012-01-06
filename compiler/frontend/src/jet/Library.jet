@@ -22,10 +22,14 @@ fun <T : Any> T?.sure() : T
 
 fun String?.plus(other: Any?) : String
 
+fun <T> Iterator<T>.iterator() : Iterator<T>
+
 trait Iterator<out T> {
   fun next()  : T
   val hasNext : Boolean
 }
+
+fun ByteIterator.iterator() : ByteIterator
 
 abstract open class ByteIterator() : Iterator<Byte> {
   abstract open fun nextByte() : Byte
@@ -33,11 +37,15 @@ abstract open class ByteIterator() : Iterator<Byte> {
   override fun next() : Byte
 }
 
+fun ShortIterator.iterator() : ShortIterator
+
 abstract open class ShortIterator() : Iterator<Short> {
   abstract open fun nextShort() : Short
 
   override fun next() : Short
 }
+
+fun CharIterator.iterator() : CharIterator
 
 abstract open class CharIterator() : Iterator<Char> {
   abstract open fun nextChar()  : Char
@@ -45,11 +53,15 @@ abstract open class CharIterator() : Iterator<Char> {
   override fun next() : Char
 }
 
+fun IntIterator.iterator() : IntIterator
+
 abstract open class IntIterator() : Iterator<Int> {
   abstract open fun nextInt()  : Int
 
   override fun next() : Int
 }
+
+fun LongIterator.iterator() : LongIterator
 
 abstract open class LongIterator() : Iterator<Long> {
   abstract open fun nextLong()  : Long
@@ -57,17 +69,23 @@ abstract open class LongIterator() : Iterator<Long> {
   override fun next() : Long
 }
 
+fun FloatIterator.iterator() : FloatIterator
+
 abstract open class FloatIterator() : Iterator<Float> {
   abstract open fun nextFloat()  : Float
 
   override fun next() : Float
 }
 
+fun DoubleIterator.iterator() : DoubleIterator
+
 abstract open class DoubleIterator() : Iterator<Double> {
   abstract open fun nextDouble()  : Double
 
   override fun next() : Double
 }
+
+fun BooleanIterator.iterator() : BooleanIterator
 
 abstract open class BooleanIterator() : Iterator<Boolean> {
   abstract open fun nextBoolean()  : Boolean
@@ -247,7 +265,7 @@ class IntRange(val start : Int, val size : Int, val isReversed : Boolean = false
 
     fun minus() : IntRange
 
-    fun step(step: Int) : IntIterable
+    fun step(step: Int) : IntIterator
 }
 
 class LongRange(val start : Long, val size : Long, val isReversed : Boolean = false) : Range<Long>, LongIterable {
@@ -259,7 +277,7 @@ class LongRange(val start : Long, val size : Long, val isReversed : Boolean = fa
 
     fun minus() : LongRange
 
-    fun step(step: Long) : LongIterable
+    fun step(step: Long) : LongIterator
 }
 
 class ByteRange(val start : Byte, val size : Int, val isReversed : Boolean = false) : Range<Byte>, ByteIterable {
@@ -271,7 +289,7 @@ class ByteRange(val start : Byte, val size : Int, val isReversed : Boolean = fal
 
     fun minus() : ByteRange
 
-    fun step(step: Int) : ByteIterable
+    fun step(step: Int) : ByteIterator
 }
 
 class ShortRange(val start : Short, val size : Int, val isReversed : Boolean = false) : Range<Short>, ShortIterable {
@@ -283,7 +301,7 @@ class ShortRange(val start : Short, val size : Int, val isReversed : Boolean = f
 
     fun minus() : ShortRange
 
-    fun step(step: Int) : ShortIterable
+    fun step(step: Int) : ShortIterator
 }
 
 class CharRange(val start : Char, val size : Int, val isReversed : Boolean = false) : Range<Char>, CharIterable {
@@ -295,7 +313,7 @@ class CharRange(val start : Char, val size : Int, val isReversed : Boolean = fal
 
     fun minus() : CharRange
 
-    fun step(step: Int) : CharIterable
+    fun step(step: Int) : CharIterator
 }
 
 abstract class Number : Hashable {
@@ -635,8 +653,8 @@ class Char : Number, Comparable<Char> {
   fun rangeTo(other : Float)  : Range<Float>
   fun rangeTo(other : Long)   : LongRange
   fun rangeTo(other : Int)    : IntRange
-  fun rangeTo(other : Short)  : IntRange
-  fun rangeTo(other : Byte)   : IntRange
+  fun rangeTo(other : Short)  : ShortRange
+  fun rangeTo(other : Byte)   : CharRange
   fun rangeTo(other : Char)   : CharRange
 
   fun inc() : Char

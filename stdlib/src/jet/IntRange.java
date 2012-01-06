@@ -28,6 +28,10 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         return item <= start && item > start + count;
     }
 
+    public IntIterator step(int step) {
+        return new MyIterator(start, count, step);
+    }
+
     public boolean getIsReversed() {
         return count < 0;
     }
@@ -50,7 +54,7 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
 
     @Override
     public IntIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -80,12 +84,14 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private int cur;
+        private int step;
         private int count;
 
         private final boolean reversed;
 
-        public MyIterator(int startValue, int count) {
+        public MyIterator(int startValue, int count, int step) {
             cur = startValue;
+            this.step = step;
             reversed = count < 0;
             this.count = reversed ? -count : count;
         }
@@ -97,12 +103,14 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
 
         @Override
         public int nextInt() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return cur + step;
             }
             else {
-                return cur++;
+                cur += step;
+                return cur - step;
             }
         }
 

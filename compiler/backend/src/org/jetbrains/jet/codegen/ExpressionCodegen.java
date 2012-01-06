@@ -1046,11 +1046,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 isInterface = CodegenUtil.isInterface(containingDeclaration);
             }
             else {
-                if(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT)
-                    isInterface = false;
+                if(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT)
+                    isInterface = true;
                 else {
-                    JetClass jetClass = (JetClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, containingDeclaration);
-                    isInterface = jetClass == null || jetClass.isTrait();
+                    isInterface = false;
                 }
             }
         }
@@ -2768,7 +2767,11 @@ If finally block is present, its last expression is the value of try expression.
                 JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, rangeExpression);
                 assert jetType != null;
                 final DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-                if (isClass(descriptor, "IntRange")) {
+                if (isClass(descriptor, "IntRange") ||
+                    isClass(descriptor, "CharRange") ||
+                    isClass(descriptor, "ByteRange") ||
+                    isClass(descriptor, "LongRange") ||
+                    isClass(descriptor, "ShortRange")) {
                     return true;
                 }
             }
