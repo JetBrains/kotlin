@@ -31,6 +31,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     //TODO: implement more generic and safe way
+    @NotNull
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
 
     @NotNull

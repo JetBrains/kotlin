@@ -102,6 +102,14 @@ public final class BindingUtils {
     }
 
     @NotNull
+    public static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
+                                                         @NotNull ValueParameterDescriptor descriptor) {
+        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        assert result instanceof JetParameter : "ValueParameterDescriptor should have corresponding JetParameter.";
+        return (JetParameter) result;
+    }
+
+    @NotNull
     public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull BindingContext context,
                                                                  @NotNull JetClass classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
@@ -224,12 +232,18 @@ public final class BindingUtils {
     @NotNull
     public static FunctionDescriptor getFunctionDescriptorForCallExpression(@NotNull BindingContext context,
                                                                             @NotNull JetCallExpression expression) {
-        JetExpression calleeExpression = PsiUtils.getCallee(expression);
-        ResolvedCall<?> resolvedCall = getResolvedCall(context, calleeExpression);
+        ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context, expression);
         CallableDescriptor descriptor = getDescriptorForResolvedCall(resolvedCall);
         assert descriptor instanceof FunctionDescriptor :
                 "Callee expression must have resolved call with descriptor of type FunctionDescriptor";
         return (FunctionDescriptor) descriptor;
+    }
+
+    @NotNull
+    public static ResolvedCall<?> getResolvedCallForCallExpression(@NotNull BindingContext context,
+                                                                   @NotNull JetCallExpression expression) {
+        JetExpression calleeExpression = PsiUtils.getCallee(expression);
+        return getResolvedCall(context, calleeExpression);
     }
 
     @NotNull

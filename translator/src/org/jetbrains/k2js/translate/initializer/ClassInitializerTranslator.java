@@ -72,6 +72,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
 
     @NotNull
     private List<JsExpression> translateArguments(@NotNull JetDelegatorToSuperCall superCall) {
+        //TODO: use the same mechanism as in call translator
         return TranslationUtils.translateArgumentList(context(), superCall.getValueArguments());
     }
 

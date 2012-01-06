@@ -8,20 +8,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.DefaultValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.google.dart.compiler.util.AstUtil.not;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForCallExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isInOrNotInOperation;
@@ -35,6 +35,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
 
+    @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression unaryExpression,
                                          @NotNull TranslationContext context) {
         JsExpression receiver = TranslationUtils.translateBaseExpression(context, unaryExpression);
@@ -46,6 +47,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     //TODO: method too long
+    @NotNull
     public static JsExpression translate(@NotNull JetDotQualifiedExpression dotExpression,
                                          @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(context, dotExpression);
@@ -53,23 +55,55 @@ public final class CallTranslator extends AbstractTranslator {
         JetExpression selectorExpression = dotExpression.getSelectorExpression();
         assert selectorExpression instanceof JetCallExpression;
         JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-        List<JsExpression> arguments =
-                translateArgumentList(context, callExpression.getValueArguments());
         FunctionDescriptor descriptor =
                 getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
+        List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
         return translate(context, receiver, arguments, descriptor);
     }
 
+    @NotNull
+    private static List<JsExpression> translateArgumentsForCallExpression(@NotNull JetCallExpression callExpression,
+                                                                          @NotNull TranslationContext context) {
+        List<JsExpression> result = new ArrayList<JsExpression>();
+        ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
+        Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments = resolvedCall.getValueArguments();
+        for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
+            JetExpression argument = getActualArgument(formalToActualArguments, parameterDescriptor, context);
+            result.add(Translation.translateAsExpression(argument, context));
+        }
+        return result;
+    }
+
+    @NotNull
+    private static JetExpression getActualArgument(
+            @NotNull Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments,
+            @NotNull ValueParameterDescriptor parameterDescriptor, @NotNull TranslationContext context) {
+        ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
+        if (actualArgument instanceof DefaultValueArgument) {
+            assert parameterDescriptor.hasDefaultValue() : "Unsupplied parameter must have default value.";
+            JetParameter psiParameter = getParameterForDescriptor(context.bindingContext(), parameterDescriptor);
+            JetExpression defaultValue = psiParameter.getDefaultValue();
+            assert defaultValue != null : "No default value found in PSI.";
+            return defaultValue;
+        }
+        List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
+        assert !argumentExpressions.isEmpty() : "Actual arguments must be supplied.";
+        assert argumentExpressions.size() == 1 : "Varargs not supported.";
+        return argumentExpressions.get(0);
+    }
+
+    @NotNull
     public static JsExpression translate(@NotNull JetCallExpression callExpression,
                                          @NotNull TranslationContext context) {
-        DeclarationDescriptor descriptor =
-                getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
+        FunctionDescriptor descriptor =
+                (FunctionDescriptor) getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
         JsExpression receiver = getImplicitReceiver(context, descriptor);
-        List<JsExpression> arguments = translateArgumentList(context, callExpression.getValueArguments());
-        return translate(context, receiver, arguments, (FunctionDescriptor) descriptor);
+        List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
+        return translate(context, receiver, arguments, descriptor);
     }
 
     //TODO: refactor
+    @NotNull
     public static JsExpression translate(@NotNull JetBinaryExpression binaryExpression,
                                          @NotNull TranslationContext context) {
         JsExpression receiver = translateLeftExpression(context, binaryExpression);
@@ -94,6 +128,7 @@ public final class CallTranslator extends AbstractTranslator {
         }
     }
 
+    @NotNull
     private static JsExpression translateAsInOperation(@NotNull TranslationContext context,
                                                        @NotNull JsExpression receiver,
                                                        @NotNull List<JsExpression> arguments,
