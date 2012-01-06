@@ -11,14 +11,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
         this.count = count;
     }
 
-    public CharRange(char startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public CharRange(char startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     @Override
     public boolean contains(Character item) {
         if (item == null) return false;
@@ -69,15 +61,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
 
     public static CharRange count(int length) {
         return new CharRange((char) 0, length);
-    }
-
-    public static CharRange rangeTo(char from, char to) {
-        if(from > to) {
-            return new CharRange(to, from-to+1, true);
-        }
-        else {
-            return new CharRange(from, to-from+1);
-        }
     }
 
     private static class MyIterator extends CharIterator {

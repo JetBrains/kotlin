@@ -11,14 +11,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
         this.count = count;
     }
 
-    public ShortRange(short startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public ShortRange(short startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     public ShortIterator step(int step) {
         return new MyIterator(start, count, step);
     }
@@ -69,15 +61,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
 
     public static ShortRange count(int length) {
         return new ShortRange((byte) 0, length);
-    }
-
-    public static ShortRange rangeTo(short from, short to) {
-        if(from > to) {
-            return new ShortRange(to, from-to+1, true);
-        }
-        else {
-            return new ShortRange(from, to-from+1);
-        }
     }
 
     private static class MyIterator extends ShortIterator {

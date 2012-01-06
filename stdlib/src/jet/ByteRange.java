@@ -11,14 +11,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         this.count = count;
     }
 
-    public ByteRange(byte startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public ByteRange(byte startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     @Override
     public boolean contains(Byte item) {
         if (item == null) return false;
@@ -69,15 +61,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
 
     public static ByteRange count(int length) {
         return new ByteRange((byte) 0, length);
-    }
-
-    public static ByteRange rangeTo(byte from, byte to) {
-        if(from > to) {
-            return new ByteRange(to, from-to+1, true);
-        }
-        else {
-            return new ByteRange(from, to-from+1);
-        }
     }
 
     private static class MyIterator extends ByteIterator {

@@ -11,14 +11,6 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         this.count = count;
     }
 
-    public IntRange(int startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public IntRange(int startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     @Override
     public boolean contains(Integer item) {
         if (item == null) return false;
@@ -71,15 +63,6 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         return new IntRange(0, length);
     }
 
-    public static IntRange rangeTo(int from, int to) {
-        if(from > to) {
-            return new IntRange(to, from-to+1, true);
-        }
-        else {
-            return new IntRange(from, to-from+1);
-        }
-    }
-
     private static class MyIterator extends IntIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
@@ -92,8 +75,15 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         public MyIterator(int startValue, int count, int step) {
             cur = startValue;
             this.step = step;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            if(count < 0) {
+                reversed = count < 0;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override

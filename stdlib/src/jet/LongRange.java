@@ -11,14 +11,6 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         this.count = count;
     }
 
-    public LongRange(long startValue, long count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public LongRange(int startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     public LongIterator step(long step) {
         return new MyIterator(start, count, step);
     }
