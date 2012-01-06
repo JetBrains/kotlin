@@ -5,7 +5,7 @@ class M() {
 
     fun eval() {
         var d = {
-            var c = {Int.() => this + 3}
+            var c = {Int.() -> this + 3}
             m += 3.c()
         }
         d();

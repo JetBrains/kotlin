@@ -4,7 +4,7 @@ var b = 0
 
 fun loop(var times : Int) {
    while(times > 0) {
-        val u : fun(value : Int) : Unit = {
+        val u = {(value : Int) ->
             b = b + 1
         }
         u(times--)
