@@ -35,88 +35,132 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
 
+    private static final class Builder {
+
+        @NotNull
+        private final TranslationContext context;
+
+        private Builder(@NotNull TranslationContext context) {
+            this.context = context;
+        }
+
+        @NotNull
+        private CallTranslator buildFromUnary(@NotNull JetUnaryExpression unaryExpression) {
+            JsExpression receiver = TranslationUtils.translateBaseExpression(context, unaryExpression);
+            List<JsExpression> arguments = Collections.emptyList();
+            DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
+                    (context.bindingContext(), unaryExpression.getOperationReference());
+            assert descriptor instanceof FunctionDescriptor;
+            return new CallTranslator(receiver, arguments, (FunctionDescriptor) descriptor, context);
+        }
+
+        @NotNull
+        private CallTranslator buildFromBinary(@NotNull JetBinaryExpression binaryExpression,
+                                               boolean swapReceiverAndArgument) {
+
+            JsExpression leftExpression = translateLeftExpression(context, binaryExpression);
+            JsExpression rightExpression = translateRightExpression(context, binaryExpression);
+
+            JsExpression receiver;
+            List<JsExpression> arguments;
+            if (swapReceiverAndArgument) {
+                receiver = rightExpression;
+                arguments = Arrays.asList(leftExpression);
+            } else {
+                receiver = leftExpression;
+                arguments = Arrays.asList(rightExpression);
+            }
+
+            DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
+                    (context.bindingContext(), binaryExpression.getOperationReference());
+            assert descriptor instanceof FunctionDescriptor;
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+            return new CallTranslator(receiver, arguments, functionDescriptor, context);
+        }
+
+        @NotNull
+        private CallTranslator buildFromDotQualified(@NotNull JetDotQualifiedExpression dotExpression) {
+            JsExpression receiver = translateReceiver(context, dotExpression);
+            //TODO: util?
+            JetExpression selectorExpression = dotExpression.getSelectorExpression();
+            assert selectorExpression instanceof JetCallExpression;
+            JetCallExpression callExpression = (JetCallExpression) selectorExpression;
+            FunctionDescriptor descriptor =
+                    getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
+            List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
+            return new CallTranslator(receiver, arguments, descriptor, context);
+        }
+
+        @NotNull
+        private CallTranslator buildFromCallExpression(@NotNull JetCallExpression callExpression) {
+            FunctionDescriptor descriptor =
+                    getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
+            JsExpression receiver = getImplicitReceiver(context, descriptor);
+            List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
+            return new CallTranslator(receiver, arguments, descriptor, context);
+        }
+
+        @NotNull
+        private static List<JsExpression> translateArgumentsForCallExpression(@NotNull JetCallExpression callExpression,
+                                                                              @NotNull TranslationContext context) {
+            List<JsExpression> result = new ArrayList<JsExpression>();
+            ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
+            Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments = resolvedCall.getValueArguments();
+            for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
+                JetExpression argument = getActualArgument(formalToActualArguments, parameterDescriptor, context);
+                result.add(Translation.translateAsExpression(argument, context));
+            }
+            return result;
+        }
+
+        @NotNull
+        private static JetExpression getActualArgument(
+                @NotNull Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments,
+                @NotNull ValueParameterDescriptor parameterDescriptor, @NotNull TranslationContext context) {
+            ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
+            if (actualArgument instanceof DefaultValueArgument) {
+                assert parameterDescriptor.hasDefaultValue() : "Unsupplied parameter must have default value.";
+                JetParameter psiParameter = getParameterForDescriptor(context.bindingContext(), parameterDescriptor);
+                JetExpression defaultValue = psiParameter.getDefaultValue();
+                assert defaultValue != null : "No default value found in PSI.";
+                return defaultValue;
+            }
+            List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
+            assert !argumentExpressions.isEmpty() : "Actual arguments must be supplied.";
+            assert argumentExpressions.size() == 1 : "Varargs not supported.";
+            return argumentExpressions.get(0);
+        }
+    }
+
     @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression unaryExpression,
                                          @NotNull TranslationContext context) {
-        JsExpression receiver = TranslationUtils.translateBaseExpression(context, unaryExpression);
-        List<JsExpression> arguments = Collections.emptyList();
-        DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
-                (context.bindingContext(), unaryExpression.getOperationReference());
-        assert descriptor instanceof FunctionDescriptor;
-        return translate(context, receiver, arguments, (FunctionDescriptor) descriptor);
+        return (new Builder(context).buildFromUnary(unaryExpression)).translate();
     }
 
-    //TODO: method too long
     @NotNull
     public static JsExpression translate(@NotNull JetDotQualifiedExpression dotExpression,
                                          @NotNull TranslationContext context) {
-        JsExpression receiver = translateReceiver(context, dotExpression);
-        //TODO: util?
-        JetExpression selectorExpression = dotExpression.getSelectorExpression();
-        assert selectorExpression instanceof JetCallExpression;
-        JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-        FunctionDescriptor descriptor =
-                getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
-        List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
-        return translate(context, receiver, arguments, descriptor);
+        return (new Builder(context).buildFromDotQualified(dotExpression)).translate();
     }
 
-    @NotNull
-    private static List<JsExpression> translateArgumentsForCallExpression(@NotNull JetCallExpression callExpression,
-                                                                          @NotNull TranslationContext context) {
-        List<JsExpression> result = new ArrayList<JsExpression>();
-        ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
-        Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments = resolvedCall.getValueArguments();
-        for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
-            JetExpression argument = getActualArgument(formalToActualArguments, parameterDescriptor, context);
-            result.add(Translation.translateAsExpression(argument, context));
-        }
-        return result;
-    }
-
-    @NotNull
-    private static JetExpression getActualArgument(
-            @NotNull Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments,
-            @NotNull ValueParameterDescriptor parameterDescriptor, @NotNull TranslationContext context) {
-        ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
-        if (actualArgument instanceof DefaultValueArgument) {
-            assert parameterDescriptor.hasDefaultValue() : "Unsupplied parameter must have default value.";
-            JetParameter psiParameter = getParameterForDescriptor(context.bindingContext(), parameterDescriptor);
-            JetExpression defaultValue = psiParameter.getDefaultValue();
-            assert defaultValue != null : "No default value found in PSI.";
-            return defaultValue;
-        }
-        List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
-        assert !argumentExpressions.isEmpty() : "Actual arguments must be supplied.";
-        assert argumentExpressions.size() == 1 : "Varargs not supported.";
-        return argumentExpressions.get(0);
-    }
 
     @NotNull
     public static JsExpression translate(@NotNull JetCallExpression callExpression,
                                          @NotNull TranslationContext context) {
-        FunctionDescriptor descriptor =
-                (FunctionDescriptor) getFunctionDescriptorForCallExpression(context.bindingContext(), callExpression);
-        JsExpression receiver = getImplicitReceiver(context, descriptor);
-        List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
-        return translate(context, receiver, arguments, descriptor);
+        return (new Builder(context).buildFromCallExpression(callExpression)).translate();
     }
 
-    //TODO: refactor
     @NotNull
     public static JsExpression translate(@NotNull JetBinaryExpression binaryExpression,
                                          @NotNull TranslationContext context) {
-        JsExpression receiver = translateLeftExpression(context, binaryExpression);
-        List<JsExpression> arguments = Arrays.asList(translateRightExpression(context, binaryExpression));
-        DeclarationDescriptor descriptor = getDescriptorForReferenceExpression
-                (context.bindingContext(), binaryExpression.getOperationReference());
-        assert descriptor instanceof FunctionDescriptor;
-        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+        boolean shouldSwapReceiverAndArgument = isInOrNotInOperation(binaryExpression);
+        JsExpression result = (new Builder(context))
+                .buildFromBinary(binaryExpression, shouldSwapReceiverAndArgument).translate();
         if (isInOrNotInOperation(binaryExpression)) {
-            JsExpression inRangeCheck = translateAsInOperation(context, receiver, arguments, functionDescriptor);
-            return mayBeWrapWithNegation(inRangeCheck, isNotInOperation(binaryExpression));
+            return mayBeWrapWithNegation(result, isNotInOperation(binaryExpression));
         }
-        return translate(context, receiver, arguments, functionDescriptor);
+        return result;
     }
 
     @NotNull
@@ -126,31 +170,6 @@ public final class CallTranslator extends AbstractTranslator {
         } else {
             return expression;
         }
-    }
-
-    @NotNull
-    private static JsExpression translateAsInOperation(@NotNull TranslationContext context,
-                                                       @NotNull JsExpression receiver,
-                                                       @NotNull List<JsExpression> arguments,
-                                                       @NotNull FunctionDescriptor functionDescriptor) {
-        return translateWithReceiverAndArgumentSwapped(context, receiver, arguments, functionDescriptor);
-    }
-
-    @NotNull
-    private static JsExpression translateWithReceiverAndArgumentSwapped(@NotNull TranslationContext context,
-                                                                        @NotNull JsExpression receiver,
-                                                                        @NotNull List<JsExpression> arguments,
-                                                                        @NotNull FunctionDescriptor functionDescriptor) {
-        assert arguments.size() == 1 : "Must have one argument.";
-        return translate(context, arguments.get(0), Arrays.asList(receiver), functionDescriptor);
-    }
-
-    @NotNull
-    private static JsExpression translate(@NotNull TranslationContext context,
-                                          @Nullable JsExpression receiver,
-                                          @NotNull List<JsExpression> arguments,
-                                          @NotNull FunctionDescriptor functionDescriptor) {
-        return (new CallTranslator(receiver, arguments, functionDescriptor, context)).translate();
     }
 
     @Nullable
