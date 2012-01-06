@@ -48,6 +48,14 @@ public class Ranges {
       }
     }
 
+    public static FloatRange rangeTo(byte from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(byte from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
     public static CharRange rangeTo(byte from, char to) {
       if(from > to) {
         return new CharRange((char) from, to-from-1);
@@ -91,6 +99,14 @@ public class Ranges {
       else {
         return new LongRange(from, to-from+1);
       }
+    }
+
+    public static FloatRange rangeTo(short from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(short from, double to) {
+        return new DoubleRange(from, to-from);
     }
 
     public static ShortRange rangeTo(short from, char to) {
@@ -138,6 +154,14 @@ public class Ranges {
       }
     }
 
+    public static FloatRange rangeTo(int from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(int from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
     public static IntRange rangeTo(int from, char to) {
       if(from > to) {
         return new IntRange(from, to-from-1);
@@ -183,6 +207,14 @@ public class Ranges {
       }
     }
 
+    public static FloatRange rangeTo(long from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(long from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
     public static LongRange rangeTo(long from, char to) {
       if(from > to) {
         return new LongRange(from, to-from-1);
@@ -190,6 +222,62 @@ public class Ranges {
       else {
         return new LongRange(from, to-from+1);
       }
+    }
+
+    public static FloatRange rangeTo(float from, byte to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange rangeTo(float from, short to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange rangeTo(float from, int to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange rangeTo(float from, long to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange rangeTo(float from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(float from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static FloatRange rangeTo(float from, char to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, byte to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, short to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, int to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, long to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, float to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(double from, char to) {
+        return new DoubleRange(from, to-from);
     }
 
     public static CharRange rangeTo(char from, byte to) {
@@ -228,6 +316,14 @@ public class Ranges {
       }
     }
 
+    public static FloatRange rangeTo(char from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange rangeTo(char from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
     public static CharRange rangeTo(char from, char to) {
       if(from > to) {
         return new CharRange(from, to-from-1);
@@ -238,7 +334,7 @@ public class Ranges {
     }
 
     public static void main(String[] args) {
-        List<String> strings = Arrays.asList("byte", "short", "int", "long", /*"float", "double",*/ "char");
+        List<String> strings = Arrays.asList("byte", "short", "int", "long", "float", "double", "char");
         for(String t1 : strings)
             for(String t2 : strings) {
                 String resType;
@@ -264,14 +360,21 @@ public class Ranges {
                     resType = "ByteRange";
                 }
 
-                System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {" +
-                                   "\n  if(from > to) {\n" +
-                                   "    return new " + resType + "(from, to-from-1);\n" +
-                                   "  }\n" +
-                                   "  else {\n" +
-                                   "    return new " + resType + "(from, to-from+1);\n" +
-                                   "  }\n" +
-                                   "}");
+                if(resType.equals("FloatRange") || resType.equals("DoubleRange")) {
+                    System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {\n" +
+                                       "    return new " + resType + "(from, to-from);\n" +
+                                       "}");
+                }
+                else {
+                    System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {" +
+                                       "\n  if(from > to) {\n" +
+                                       "    return new " + resType + "(from, to-from-1);\n" +
+                                       "  }\n" +
+                                       "  else {\n" +
+                                       "    return new " + resType + "(from, to-from+1);\n" +
+                                       "  }\n" +
+                                       "}");
+                }
             }
     }
 }

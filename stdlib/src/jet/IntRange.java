@@ -79,7 +79,7 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
             cur = startValue;
             this.step = step;
             if(count < 0) {
-                reversed = count < 0;
+                reversed = true;
                 count = -count;
                 startValue += count;
             }

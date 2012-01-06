@@ -30,15 +30,15 @@ public class RangeTo implements IntrinsicMethod {
             JetBinaryExpression expression = (JetBinaryExpression) element;
             final Type leftType = codegen.expressionType(expression.getLeft());
             final Type rightType = codegen.expressionType(expression.getRight());
-            if (JetTypeMapper.isIntPrimitive(leftType)) {
+//            if (JetTypeMapper.isIntPrimitive(leftType)) {
                 codegen.gen(expression.getLeft(), leftType);
                 codegen.gen(expression.getRight(), rightType);
                 v.invokestatic("jet/runtime/Ranges", "rangeTo", "(" + leftType.getDescriptor() + rightType.getDescriptor() + ")" + expectedType.getDescriptor());
                 return StackValue.onStack(expectedType);
-            }
-            else {
-                throw new UnsupportedOperationException("ranges are only supported for int objects");
-            }
+//            }
+//            else {
+//                throw new UnsupportedOperationException("ranges are only supported for int objects");
+//            }
         }
     }
 }

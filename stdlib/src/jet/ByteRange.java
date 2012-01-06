@@ -78,8 +78,15 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         public MyIterator(byte startValue, int count, int step) {
             cur = startValue;
             this.step = step;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override

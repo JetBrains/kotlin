@@ -78,8 +78,15 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         public MyIterator(long startValue, long count, long step) {
             cur = startValue;
             this.step = step;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override
