@@ -7,5 +7,5 @@ fun box() : Boolean {
     a.add(1)
     a.add(2)
     a[1] = 100
-    return (a.size == 2) && (a[1] == 100) && (a[0] == 1);
+    return (a.size() == 2) && (a[1] == 100) && (a[0] == 1);
 }
