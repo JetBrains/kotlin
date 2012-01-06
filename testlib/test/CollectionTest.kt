@@ -127,6 +127,21 @@ class CollectionTest() : TestSupport() {
     assertEquals(6, count)
   }
 
+  fun testFold() {
+    expect(10) {
+      val numbers = arrayList(1, 2, 3, 4)
+
+      // TODO would be nice to be able to write this as this
+      //numbers.fold(0){it + it2}
+      numbers.fold(0){(it, it2) -> it + it2}
+    }
+
+    expect(0) {
+      val numbers = arrayList<Int>()
+      numbers.fold(0){(it, it2) -> it + it2}
+    }
+  }
+
   fun testGroupBy() {
     val words = arrayList("a", "ab", "abc", "def", "abcd")
     /*

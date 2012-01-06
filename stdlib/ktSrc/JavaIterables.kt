@@ -82,6 +82,20 @@ inline fun <T> java.lang.Iterable<T>.foreach(operation: (element: T) -> Unit) {
 }
 
 /**
+ * Folds all the values from from left to right using the initial value to perform the operation on sequential pairs of values
+ *
+ * For example to sum together all numeric values in a collection of numbers it would be
+ * {code}numbers.fold(0){(a, b) -> a + b}{code}
+ */
+inline fun <T> java.lang.Iterable<T>.fold(initial: T, operation: (it: T, it2: T) -> T): T {
+  var answer = initial
+  for (elem in this) {
+    answer = operation(answer, elem)
+  }
+  return answer
+}
+
+/**
  * Iterates through the collection performing the transformation on each element and using the result
  * as the key in a map to group elements by the result
  */

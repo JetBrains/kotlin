@@ -97,6 +97,15 @@ fun assertNull(actual: Any?, message: String = "") {
   Assert.assertNull(message, actual)
 }
 
+fun <T> expect(expected: T, block: ()-> T) {
+  expect(expected, block.toString(), block)
+}
+
+fun <T> expect(expected: T, message: String, block: ()-> T) {
+  val actual = block()
+  assertEquals(expected, actual, message)
+}
+
 fun fails(block: ()-> Any) {
   try {
     block()
