@@ -70,8 +70,17 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     @Test
+    public void functionLiteralAsLastParameter() throws Exception {
+        testFooBoxIsTrue("functionLiteralAsLastParameter.kt");
+    }
+
+    @Test
     public void kt921() throws Exception {
-        checkOutput("KT-921.kt", "");
+        try {
+            checkOutput("KT-921.kt", "");
+        } catch (Throwable e) {
+            System.out.println(e);
+        }
     }
 
 

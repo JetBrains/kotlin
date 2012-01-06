@@ -62,10 +62,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitBlockExpression(@NotNull JetBlockExpression jetBlock, @NotNull TranslationContext context) {
         List<JetElement> statements = jetBlock.getStatements();
         JsBlock jsBlock = new JsBlock();
+        TranslationContext blockContext = context.innerBlock(jsBlock);
         for (JetElement statement : statements) {
             assert statement instanceof JetExpression : "Elements in JetBlockExpression " +
                     "should be of type JetExpression";
-            JsNode jsNode = statement.accept(this, context);
+            JsNode jsNode = statement.accept(this, blockContext);
             jsBlock.addStatement(AstUtil.convertToStatement(jsNode));
         }
         return jsBlock;

@@ -42,14 +42,17 @@ public final class FunctionTranslator extends AbstractTranslator {
     private final TranslationContext functionBodyContext;
     @NotNull
     private final FunctionDescriptor descriptor;
-
+    // function body needs to be explicitly created here to include it in the context
+    @NotNull
+    private final JsBlock functionBody;
 
     private FunctionTranslator(@NotNull JetDeclarationWithBody functionDeclaration,
                                @NotNull TranslationContext context) {
         super(context);
+        this.functionBody = new JsBlock();
         this.functionDeclaration = functionDeclaration;
         this.functionObject = createFunctionObject();
-        this.functionBodyContext = functionBodyContext();
+        this.functionBodyContext = functionBodyContext().innerBlock(functionBody);
         this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
     }
 
@@ -72,7 +75,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction generateFunctionObject() {
         functionObject.setParameters(translateParameters());
-        functionObject.setBody(translateBody());
+        translateBody();
+        functionObject.setBody(functionBody);
         restoreContext();
         return functionObject;
     }
@@ -105,13 +109,12 @@ public final class FunctionTranslator extends AbstractTranslator {
                 (functionDeclaration instanceof JetPropertyAccessor);
     }
 
-    @NotNull
-    private JsBlock translateBody() {
+    private void translateBody() {
         JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
         //TODO decide if there are cases where this assert is illegal
         assert jetBodyExpression != null : "Function without body not supported";
-        JsNode body = Translation.translateExpression(jetBodyExpression, functionBodyContext);
-        return wrapWithReturnIfNeeded(body, !functionDeclaration.hasBlockBody());
+        JsNode realBody = Translation.translateExpression(jetBodyExpression, functionBodyContext);
+        functionBody.addStatement(wrapWithReturnIfNeeded(realBody, !functionDeclaration.hasBlockBody()));
     }
 
     @NotNull

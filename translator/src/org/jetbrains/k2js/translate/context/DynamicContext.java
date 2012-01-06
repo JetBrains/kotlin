@@ -1,9 +1,7 @@
 package org.jetbrains.k2js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsScope;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
@@ -53,7 +51,11 @@ public class DynamicContext {
 
     @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
-        return new TemporaryVariable(namingScope.declareTemporary(), initExpression);
+
+        JsName temporaryName = namingScope.declareTemporary();
+        JsVars temporaryDeclaration = AstUtil.newVar(temporaryName, null);
+        jsBlock().addVarDeclaration(temporaryDeclaration);
+        return new TemporaryVariable(temporaryName, initExpression);
     }
 
     @NotNull

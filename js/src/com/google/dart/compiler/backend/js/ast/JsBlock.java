@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class JsBlock extends JsStatement {
 
-    private final List<JsStatement> stmts = new ArrayList<JsStatement>();
+    private final LinkedList<JsStatement> stmts = new LinkedList<JsStatement>();
 
     public JsBlock() {
     }
@@ -45,6 +45,11 @@ public class JsBlock extends JsStatement {
     @Override
     public NodeKind getKind() {
         return NodeKind.BLOCK;
+    }
+
+    /*Pavel Talanov*/
+    public void addVarDeclaration(JsVars vars) {
+        stmts.offerFirst(vars);
     }
 
     public void setStatements(List<JsStatement> statements) {

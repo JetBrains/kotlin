@@ -50,6 +50,11 @@ public final class TranslationContext {
     }
 
     @NotNull
+    public TranslationContext innerBlock(@NotNull JsBlock block) {
+        return new TranslationContext(staticContext, dynamicContext.innerBlock(block));
+    }
+
+    @NotNull
     public TranslationContext newNamespace(@NotNull NamespaceDescriptor namespace) {
         return newDeclaration(namespace);
     }
