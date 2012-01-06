@@ -120,7 +120,7 @@ public class CompileEnvironment {
             rtJar = findActiveRtJar(failOnError);
 
             if ((rtJar == null || !rtJar.exists())) {
-                throw new CompileEnvironmentException("No rt.jar found under JAVA_HOME=" + javaHome);
+                throw new CompileEnvironmentException("No JDK rt.jar found under JAVA_HOME=" + javaHome);
             }
         }
         return rtJar;
@@ -337,7 +337,7 @@ public class CompileEnvironment {
         }
     }
 
-    public void compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
+    public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
         session.addStdLibSources(false);
@@ -350,7 +350,7 @@ public class CompileEnvironment {
             }
         }
         if (!session.analyze(myErrorStream)) {
-            return;
+            return false;
         }
 
         ClassFileFactory factory = session.generate();
@@ -367,6 +367,7 @@ public class CompileEnvironment {
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
         }
+        return true;
     }
 
     public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
