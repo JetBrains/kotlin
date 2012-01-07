@@ -21,9 +21,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -126,11 +124,24 @@ public class JetStandardLibrary {
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
-        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/Library.jet");
+        List<String> libraryFiles = Arrays.asList(
+                "Library.jet",
+                "Numbers.jet",
+                "Ranges.jet",
+                "Iterables.jet",
+                "Iterators.jet",
+                "Arrays.jet"
+        );
         try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
-                    JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
+            List<JetFile> files = new LinkedList<JetFile>();
+            for(String fileName : libraryFiles) {
+                InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/" + fileName);
+
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName,
+                        JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
+                files.add(file);
+            }
 
             JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this);
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
@@ -138,7 +149,7 @@ public class JetStandardLibrary {
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 //            this.libraryScope = bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
 //            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
-            TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file);
+            TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);
 //            this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
             AnalyzingUtils.throwExceptionOnErrors(bindingTraceContext.getBindingContext());

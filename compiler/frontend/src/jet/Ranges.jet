@@ -1,0 +1,99 @@
+package jet
+
+trait Range<in T : Comparable<T>> {
+  fun contains(item : T) : Boolean
+}
+
+class IntRange(val start : Int, val size : Int) : Range<Int>, IntIterable {
+    fun iterator () : IntIterator
+
+    fun contains (elem: Int) : Boolean
+
+    val end : Int
+
+    fun minus() : IntRange
+
+    fun step(step: Int) : IntIterator
+
+    val isReversed : Boolean
+}
+
+class LongRange(val start : Long, val size : Long) : Range<Long>, LongIterable {
+    fun iterator () : LongIterator
+
+    fun contains (elem: Long) : Boolean
+
+    val end : Long
+
+    fun minus() : LongRange
+
+    fun step(step: Long) : LongIterator
+
+    val isReversed : Boolean
+}
+
+class ByteRange(val start : Byte, val size : Int) : Range<Byte>, ByteIterable {
+    fun iterator () : ByteIterator
+
+    fun contains (elem: Byte) : Boolean
+
+    val end : Byte
+
+    fun minus() : ByteRange
+
+    fun step(step: Int) : ByteIterator
+
+    val isReversed : Boolean
+}
+
+class ShortRange(val start : Short, val size : Int) : Range<Short>, ShortIterable {
+    fun iterator () : ShortIterator
+
+    fun contains (elem: Byte) : Boolean
+
+    val end : Short
+
+    fun minus() : ShortRange
+
+    fun step(step: Int) : ShortIterator
+
+    val isReversed : Boolean
+}
+
+class CharRange(val start : Char, val size : Int) : Range<Char>, CharIterable {
+    fun iterator () : CharIterator
+
+    fun contains (elem: Char) : Boolean
+
+    val end : Char
+
+    fun minus() : CharRange
+
+    fun step(step: Int) : CharIterator
+
+    val isReversed : Boolean
+}
+
+class FloatRange(val start : Float, val size : Float) : Range<Float> {
+    fun contains (elem: Float) : Boolean
+
+    val end : Float
+
+    fun minus() : FloatRange
+
+    fun step(step: Float) : FloatIterator
+
+    val isReversed : Boolean
+}
+
+class DoubleRange(val start : Double, val size : Double) : Range<Double> {
+    fun contains (elem: Double) : Boolean
+
+    val end : Double
+
+    fun minus() : DoubleRange
+
+    fun step(step: Double) : DoubleIterator
+
+    val isReversed : Boolean
+}

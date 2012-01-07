@@ -9,13 +9,16 @@ import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -93,14 +96,18 @@ public class TopDownAnalyzer {
             @NotNull BindingTrace trace,
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
-            @NotNull JetFile file) {
+            @NotNull List<JetFile> files) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
-        context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
-        context.getNamespaceScopes().put(file, standardLibraryNamespace.getMemberScope());
+        ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
+        for(JetFile file : files) {
+            context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
+            context.getNamespaceScopes().put(file, standardLibraryNamespace.getMemberScope());
+            toAnalyze.addAll(file.getDeclarations());
+        }
 //        context.getDeclaringScopes().put(file, outerScope);
         context.setAnalyzingBootstrapLibrary(true);
 
-        doProcess(context, outerScope, standardLibraryNamespace, file.getDeclarations(), JetControlFlowDataTraceFactory.EMPTY);
+        doProcess(context, outerScope, standardLibraryNamespace, toAnalyze, JetControlFlowDataTraceFactory.EMPTY);
     }
 
     public static void processObject(
