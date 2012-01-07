@@ -1,3 +1,4 @@
+import std.*
 
 val test = "lala".javaClass
 
