@@ -140,7 +140,26 @@ class CollectionTest() : TestSupport() {
       val numbers = arrayList<Int>()
       numbers.fold(0){(it, it2) -> it + it2}
     }
+
+    expect("1234") {
+      val numbers = arrayList(1, 2, 3, 4)
+
+      // TODO would be nice to be able to write this as this
+      // numbers.map{it.toString()}.fold(""){it + it2}
+      numbers.map<Int,String>{it.toString()}.fold(""){(it, it2) -> it + it2}
+    }
   }
+
+  fun testFoldRight() {
+    expect("4321") {
+      val numbers = arrayList(1, 2, 3, 4)
+
+      // TODO would be nice to be able to write this as this
+      // numbers.map{it.toString()}.foldRight(""){it + it2}
+      numbers.map<Int,String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
+    }
+  }
+
 
   fun testGroupBy() {
     val words = arrayList("a", "ab", "abc", "def", "abcd")
@@ -177,6 +196,11 @@ class CollectionTest() : TestSupport() {
     }
     assertEquals(2, lengths.size)
     assertEquals(arrayList(3, 3), lengths)
+  }
+
+  fun testReverse() {
+    val rev = data.reverse()
+    assertEquals(arrayList("bar", "foo"), rev)
   }
 
   fun testSort() {

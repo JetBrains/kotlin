@@ -82,7 +82,7 @@ inline fun <T> java.lang.Iterable<T>.foreach(operation: (element: T) -> Unit) {
 }
 
 /**
- * Folds all the values from from left to right using the initial value to perform the operation on sequential pairs of values
+ * Folds all the values from from left to right with the initial value to perform the operation on sequential pairs of values
  *
  * For example to sum together all numeric values in a collection of numbers it would be
  * {code}val total = numbers.fold(0){(a, b) -> a + b}{code}
@@ -93,6 +93,14 @@ inline fun <T> java.lang.Iterable<T>.fold(initial: T, operation: (it: T, it2: T)
     answer = operation(answer, elem)
   }
   return answer
+}
+
+/**
+ * Folds all the values from right to left with the initial value to perform the operation on sequential pairs of values
+ */
+inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (it: T, it2: T) -> T): T {
+  val reversed = this.reverse()
+  return reversed.fold(initial, operation)
 }
 
 /**
@@ -122,6 +130,15 @@ inline fun <T> java.lang.Iterable<T>.join(separator: String, prefix: String = ""
   }
   buffer.append(postfix)
   return buffer.toString().sure()
+}
+
+/** Returns a reversed List of this collection */
+inline fun <T> java.lang.Iterable<T>.reverse() : List<T> {
+  val answer = LinkedList<T>()
+  for (elem in this) {
+    answer.addFirst(elem)
+  }
+  return answer
 }
 
 inline fun <T, C: Collection<T>> java.lang.Iterable<T>.to(result: C) : C {
