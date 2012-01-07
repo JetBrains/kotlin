@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -24,12 +23,14 @@ import java.util.List;
  */
 public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAdapter {
     
+    private final JavaSemanticServices javaSemanticServices;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JetStandardLibrary jetStandardLibrary;
     private final TypeVariableResolver typeVariableResolver;
 
-    public JetTypeJetSignatureReader(JavaDescriptorResolver javaDescriptorResolver, JetStandardLibrary jetStandardLibrary, TypeVariableResolver typeVariableResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public JetTypeJetSignatureReader(JavaSemanticServices javaSemanticServices, JetStandardLibrary jetStandardLibrary, TypeVariableResolver typeVariableResolver) {
+        this.javaSemanticServices = javaSemanticServices;
+        this.javaDescriptorResolver = javaSemanticServices.getDescriptorResolver();
         this.jetStandardLibrary = jetStandardLibrary;
         this.typeVariableResolver = typeVariableResolver;
     }
@@ -95,7 +96,13 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     @Override
     public void visitClassType(String name, boolean nullable) {
         String ourName = name.replace('/', '.');
-        this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
+        
+        this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
+
+        if (this.classDescriptor == null) {
+            this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
+        }
+
         if (this.classDescriptor == null) {
             throw new IllegalStateException("class not found by name: " + ourName); // TODO: wrong exception
         }
@@ -114,7 +121,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitTypeArgument(final char wildcard) {
-        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary, typeVariableResolver) {
+        return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableResolver) {
 
             @Override
             protected void done(@NotNull JetType jetType) {
@@ -125,7 +132,19 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitArrayType(final boolean nullable) {
-        return new JetTypeJetSignatureReader(javaDescriptorResolver, jetStandardLibrary, typeVariableResolver) {
+        return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableResolver) {
+            @Override
+            public void visitBaseType(char descriptor, boolean nullable) {
+                JetType primitiveType = getPrimitiveType(descriptor, nullable);
+                JetType arrayType;
+                if (!nullable) {
+                    arrayType = jetStandardLibrary.getPrimitiveArrayType(primitiveType);
+                } else {
+                    arrayType = TypeUtils.makeNullableAsSpecified(jetStandardLibrary.getArrayType(primitiveType), nullable);
+                }
+                JetTypeJetSignatureReader.this.done(arrayType);
+            }
+
             @Override
             protected void done(@NotNull JetType jetType) {
                 JetType arrayType = TypeUtils.makeNullableAsSpecified(jetStandardLibrary.getArrayType(jetType), nullable);

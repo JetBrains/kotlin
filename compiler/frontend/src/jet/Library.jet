@@ -22,10 +22,14 @@ fun <T : Any> T?.sure() : T
 
 fun String?.plus(other: Any?) : String
 
+fun <T> Iterator<T>.iterator() : Iterator<T>
+
 trait Iterator<out T> {
   fun next()  : T
   val hasNext : Boolean
 }
+
+fun ByteIterator.iterator() : ByteIterator
 
 abstract open class ByteIterator() : Iterator<Byte> {
   abstract open fun nextByte() : Byte
@@ -33,11 +37,15 @@ abstract open class ByteIterator() : Iterator<Byte> {
   override fun next() : Byte
 }
 
+fun ShortIterator.iterator() : ShortIterator
+
 abstract open class ShortIterator() : Iterator<Short> {
   abstract open fun nextShort() : Short
 
   override fun next() : Short
 }
+
+fun CharIterator.iterator() : CharIterator
 
 abstract open class CharIterator() : Iterator<Char> {
   abstract open fun nextChar()  : Char
@@ -45,11 +53,15 @@ abstract open class CharIterator() : Iterator<Char> {
   override fun next() : Char
 }
 
+fun IntIterator.iterator() : IntIterator
+
 abstract open class IntIterator() : Iterator<Int> {
   abstract open fun nextInt()  : Int
 
   override fun next() : Int
 }
+
+fun LongIterator.iterator() : LongIterator
 
 abstract open class LongIterator() : Iterator<Long> {
   abstract open fun nextLong()  : Long
@@ -57,17 +69,23 @@ abstract open class LongIterator() : Iterator<Long> {
   override fun next() : Long
 }
 
+fun FloatIterator.iterator() : FloatIterator
+
 abstract open class FloatIterator() : Iterator<Float> {
   abstract open fun nextFloat()  : Float
 
   override fun next() : Float
 }
 
+fun DoubleIterator.iterator() : DoubleIterator
+
 abstract open class DoubleIterator() : Iterator<Double> {
   abstract open fun nextDouble()  : Double
 
   override fun next() : Double
 }
+
+fun BooleanIterator.iterator() : BooleanIterator
 
 abstract open class BooleanIterator() : Iterator<Boolean> {
   abstract open fun nextBoolean()  : Boolean
@@ -238,7 +256,7 @@ trait Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
-class IntRange(val start : Int, val size : Int, val isReversed : Boolean = false) : Range<Int>, IntIterable {
+class IntRange(val start : Int, val size : Int) : Range<Int>, IntIterable {
     fun iterator () : IntIterator
 
     fun contains (elem: Int) : Boolean
@@ -247,10 +265,12 @@ class IntRange(val start : Int, val size : Int, val isReversed : Boolean = false
 
     fun minus() : IntRange
 
-    fun step(step: Int) : IntIterable
+    fun step(step: Int) : IntIterator
+
+    val isReversed : Boolean
 }
 
-class LongRange(val start : Long, val size : Long, val isReversed : Boolean = false) : Range<Long>, LongIterable {
+class LongRange(val start : Long, val size : Long) : Range<Long>, LongIterable {
     fun iterator () : LongIterator
 
     fun contains (elem: Long) : Boolean
@@ -259,10 +279,12 @@ class LongRange(val start : Long, val size : Long, val isReversed : Boolean = fa
 
     fun minus() : LongRange
 
-    fun step(step: Long) : LongIterable
+    fun step(step: Long) : LongIterator
+
+    val isReversed : Boolean
 }
 
-class ByteRange(val start : Byte, val size : Int, val isReversed : Boolean = false) : Range<Byte>, ByteIterable {
+class ByteRange(val start : Byte, val size : Int) : Range<Byte>, ByteIterable {
     fun iterator () : ByteIterator
 
     fun contains (elem: Byte) : Boolean
@@ -271,10 +293,12 @@ class ByteRange(val start : Byte, val size : Int, val isReversed : Boolean = fal
 
     fun minus() : ByteRange
 
-    fun step(step: Int) : ByteIterable
+    fun step(step: Int) : ByteIterator
+
+    val isReversed : Boolean
 }
 
-class ShortRange(val start : Short, val size : Int, val isReversed : Boolean = false) : Range<Short>, ShortIterable {
+class ShortRange(val start : Short, val size : Int) : Range<Short>, ShortIterable {
     fun iterator () : ShortIterator
 
     fun contains (elem: Byte) : Boolean
@@ -283,10 +307,12 @@ class ShortRange(val start : Short, val size : Int, val isReversed : Boolean = f
 
     fun minus() : ShortRange
 
-    fun step(step: Int) : ShortIterable
+    fun step(step: Int) : ShortIterator
+
+    val isReversed : Boolean
 }
 
-class CharRange(val start : Char, val size : Int, val isReversed : Boolean = false) : Range<Char>, CharIterable {
+class CharRange(val start : Char, val size : Int) : Range<Char>, CharIterable {
     fun iterator () : CharIterator
 
     fun contains (elem: Char) : Boolean
@@ -295,7 +321,33 @@ class CharRange(val start : Char, val size : Int, val isReversed : Boolean = fal
 
     fun minus() : CharRange
 
-    fun step(step: Int) : CharIterable
+    fun step(step: Int) : CharIterator
+
+    val isReversed : Boolean
+}
+
+class FloatRange(val start : Float, val size : Float) : Range<Float> {
+    fun contains (elem: Float) : Boolean
+
+    val end : Float
+
+    fun minus() : FloatRange
+
+    fun step(step: Float) : FloatIterator
+
+    val isReversed : Boolean
+}
+
+class DoubleRange(val start : Double, val size : Double) : Range<Double> {
+    fun contains (elem: Double) : Boolean
+
+    val end : Double
+
+    fun minus() : DoubleRange
+
+    fun step(step: Double) : DoubleIterator
+
+    val isReversed : Boolean
 }
 
 abstract class Number : Hashable {
@@ -363,13 +415,13 @@ class Double : Number, Comparable<Double>  {
   fun mod(other : Short)  : Double
   fun mod(other : Byte)   : Double
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Double>
-  fun rangeTo(other : Long)   : Range<Double>
-  fun rangeTo(other : Int)    : Range<Double>
-  fun rangeTo(other : Short)  : Range<Double>
-  fun rangeTo(other : Byte)   : Range<Double>
-  fun rangeTo(other : Char)   : Range<Double>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : DoubleRange
+  fun rangeTo(other : Long)   : DoubleRange
+  fun rangeTo(other : Int)    : DoubleRange
+  fun rangeTo(other : Short)  : DoubleRange
+  fun rangeTo(other : Byte)   : DoubleRange
+  fun rangeTo(other : Char)   : DoubleRange
 
   fun inc() : Double
   fun dec() : Double
@@ -426,13 +478,13 @@ class Float : Number, Comparable<Float>  {
   fun mod(other : Byte)   : Float
   fun mod(other : Char)   : Float
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Float>
-  fun rangeTo(other : Long)   : Range<Double>
-  fun rangeTo(other : Int)    : Range<Double>
-  fun rangeTo(other : Short)  : Range<Float>
-  fun rangeTo(other : Byte)   : Range<Float>
-  fun rangeTo(other : Char)   : Range<Float>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : FloatRange
+  fun rangeTo(other : Long)   : DoubleRange
+  fun rangeTo(other : Int)    : DoubleRange
+  fun rangeTo(other : Short)  : FloatRange
+  fun rangeTo(other : Byte)   : FloatRange
+  fun rangeTo(other : Char)   : FloatRange
 
   fun inc() : Float
   fun dec() : Float
@@ -489,8 +541,8 @@ class Long : Number, Comparable<Long> {
   fun mod(other : Byte)   : Long
   fun mod(other : Char)   : Long
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Double>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : FloatRange
   fun rangeTo(other : Long)   : LongRange
   fun rangeTo(other : Int)    : LongRange
   fun rangeTo(other : Short)  : LongRange
@@ -560,8 +612,8 @@ class Int : Number, Comparable<Int> {
   fun mod(other : Byte)   : Int
   fun mod(other : Char)   : Int
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Double>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : FloatRange
   fun rangeTo(other : Long)   : LongRange
   fun rangeTo(other : Int)    : IntRange
   fun rangeTo(other : Short)  : IntRange
@@ -631,12 +683,12 @@ class Char : Number, Comparable<Char> {
   fun mod(other : Byte)   : Int
 //  fun mod(other : Char)   : Int
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : FloatRange
   fun rangeTo(other : Long)   : LongRange
   fun rangeTo(other : Int)    : IntRange
-  fun rangeTo(other : Short)  : IntRange
-  fun rangeTo(other : Byte)   : IntRange
+  fun rangeTo(other : Short)  : ShortRange
+  fun rangeTo(other : Byte)   : CharRange
   fun rangeTo(other : Char)   : CharRange
 
   fun inc() : Char
@@ -694,8 +746,8 @@ class Short : Number, Comparable<Short> {
   fun mod(other : Byte)   : Int
   fun mod(other : Char)   : Int
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : FloatRange
   fun rangeTo(other : Long)   : LongRange
   fun rangeTo(other : Int)    : IntRange
   fun rangeTo(other : Short)  : ShortRange
@@ -757,8 +809,8 @@ class Byte : Number, Comparable<Byte> {
   fun mod(other : Byte)   : Int
   fun mod(other : Char)   : Int
 
-  fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Double) : DoubleRange
+  fun rangeTo(other : Float)  : FloatRange
   fun rangeTo(other : Long)   : LongRange
   fun rangeTo(other : Int)    : IntRange
   fun rangeTo(other : Short)  : ShortRange

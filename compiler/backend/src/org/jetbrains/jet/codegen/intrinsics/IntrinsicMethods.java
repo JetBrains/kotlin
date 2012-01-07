@@ -92,6 +92,7 @@ public class IntrinsicMethods {
         declareOverload(myStdLib.getLibraryScope().getFunctions("Array"), 1, new NewArray());
         declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
         declareOverload(myStdLib.getLibraryScope().getFunctions("synchronized"), 1, new StupidSync());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("iterator"), 0, new IteratorIterator());
 
         declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT);
         declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT);

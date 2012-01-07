@@ -11,14 +11,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         this.count = count;
     }
 
-    public ByteRange(byte startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public ByteRange(byte startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     @Override
     public boolean contains(Byte item) {
         if (item == null) return false;
@@ -44,13 +36,20 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         return count < 0 ? -count : count;
     }
 
+    public ByteIterator step(int step) {
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
+    }
+
     public ByteRange minus() {
         return new ByteRange(getEnd(), -count);
     }
 
     @Override
     public ByteIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -67,27 +66,27 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         return new ByteRange((byte) 0, length);
     }
 
-    public static ByteRange rangeTo(byte from, byte to) {
-        if(from > to) {
-            return new ByteRange(to, from-to+1, true);
-        }
-        else {
-            return new ByteRange(from, to-from+1);
-        }
-    }
-
     private static class MyIterator extends ByteIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private byte cur;
+        private int step;
         private int count;
 
         private final boolean reversed;
 
-        public MyIterator(byte startValue, int count) {
+        public MyIterator(byte startValue, int count, int step) {
             cur = startValue;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            this.step = step;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override
@@ -97,12 +96,14 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
 
         @Override
         public byte nextByte() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return (byte) (cur + step);
             }
             else {
-                return cur++;
+                cur += step;
+                return (byte) (cur - step);
             }
         }
 

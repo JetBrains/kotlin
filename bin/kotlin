@@ -1,0 +1,30 @@
+#!/bin/sh -e
+
+die() {
+    echo "$@" >&2
+    exit 1
+}
+
+root=`cd $(dirname $0)/..; pwd`
+
+ideaRoot=
+for d in /Applications/Nika-*.app; do
+    if [ -d "$d/lib" ]; then
+        ideaRoot="$d"
+        break
+    fi
+done
+
+test -n "$ideaRoot" || die "Idea root not found"
+
+classpath="$root/out/production/cli"
+classpath="$classpath:$root/out/production/backend:$root/out/production/frontend:$root/out/production/frontend.java"
+classpath="$classpath:$root/out/production/stdlib"
+classpath="$classpath:$root/lib/*:$ideaRoot/lib/*:$ideaRoot/lib/rt/*"
+
+exec java \
+    -classpath "$classpath" \
+    org.jetbrains.jet.cli.KotlinCompiler \
+    "$@"
+
+# vim: set ts=4 sw=4 et:

@@ -11,14 +11,6 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         this.count = count;
     }
 
-    public IntRange(int startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public IntRange(int startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     @Override
     public boolean contains(Integer item) {
         if (item == null) return false;
@@ -26,6 +18,13 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
             return item >= start && item < start + count;
         }
         return item <= start && item > start + count;
+    }
+
+    public IntIterator step(int step) {
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     public boolean getIsReversed() {
@@ -50,7 +49,7 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
 
     @Override
     public IntIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -67,27 +66,27 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         return new IntRange(0, length);
     }
 
-    public static IntRange rangeTo(int from, int to) {
-        if(from > to) {
-            return new IntRange(to, from-to+1, true);
-        }
-        else {
-            return new IntRange(from, to-from+1);
-        }
-    }
-
     private static class MyIterator extends IntIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private int cur;
+        private int step;
         private int count;
 
         private final boolean reversed;
 
-        public MyIterator(int startValue, int count) {
+        public MyIterator(int startValue, int count, int step) {
             cur = startValue;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            this.step = step;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override
@@ -97,12 +96,14 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
 
         @Override
         public int nextInt() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return cur + step;
             }
             else {
-                return cur++;
+                cur += step;
+                return cur - step;
             }
         }
 

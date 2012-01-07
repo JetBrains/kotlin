@@ -11,14 +11,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
         this.count = count;
     }
 
-    public CharRange(char startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public CharRange(char startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
-    }
-
     @Override
     public boolean contains(Character item) {
         if (item == null) return false;
@@ -48,9 +40,16 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
         return new CharRange(getEnd(), -count);
     }
 
+    public CharIterator step(int step) {
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
+    }
+
     @Override
     public CharIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -67,27 +66,27 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
         return new CharRange((char) 0, length);
     }
 
-    public static CharRange rangeTo(char from, char to) {
-        if(from > to) {
-            return new CharRange(to, from-to+1, true);
-        }
-        else {
-            return new CharRange(from, to-from+1);
-        }
-    }
-
     private static class MyIterator extends CharIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private char cur;
+        private int step;
         private int count;
 
         private final boolean reversed;
 
-        public MyIterator(char startValue, int count) {
+        public MyIterator(char startValue, int count, int step) {
             cur = startValue;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            this.step = step;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override
@@ -97,12 +96,14 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
 
         @Override
         public char nextChar() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return (char) (cur + step);
             }
             else {
-                return cur++;
+                cur += step;
+                return (char) (cur - step);
             }
         }
 

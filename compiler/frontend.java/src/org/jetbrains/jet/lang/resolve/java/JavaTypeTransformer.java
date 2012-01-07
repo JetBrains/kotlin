@@ -19,12 +19,15 @@ import java.util.Map;
  */
 public class JavaTypeTransformer {
 
+    private final JavaSemanticServices javaSemanticServices;
     private final JavaDescriptorResolver resolver;
     private final JetStandardLibrary standardLibrary;
     private Map<String, JetType> primitiveTypesMap;
     private Map<String, JetType> classTypesMap;
+    private Map<String, ClassDescriptor> classDescriptorMap;
 
-    public JavaTypeTransformer(JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
+    public JavaTypeTransformer(JavaSemanticServices javaSemanticServices, JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
+        this.javaSemanticServices = javaSemanticServices;
         this.resolver = resolver;
         this.standardLibrary = standardLibrary;
     }
@@ -61,7 +64,7 @@ public class JavaTypeTransformer {
     @NotNull
     public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(resolver, standardLibrary, typeVariableResolver) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, standardLibrary, typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;
@@ -196,5 +199,22 @@ public class JavaTypeTransformer {
             classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
         }
         return classTypesMap;
+    }
+    
+    public Map<String, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
+        if (classDescriptorMap == null) {
+            classDescriptorMap = new HashMap<String, ClassDescriptor>();
+            classDescriptorMap.put("java.lang.Byte", standardLibrary.getByte());
+            classDescriptorMap.put("java.lang.Short", standardLibrary.getShort());
+            classDescriptorMap.put("java.lang.Character", standardLibrary.getChar());
+            classDescriptorMap.put("java.lang.Integer", standardLibrary.getInt());
+            classDescriptorMap.put("java.lang.Long", standardLibrary.getLong());
+            classDescriptorMap.put("java.lang.Float", standardLibrary.getFloat());
+            classDescriptorMap.put("java.lang.Double", standardLibrary.getDouble());
+            classDescriptorMap.put("java.lang.Boolean", standardLibrary.getBoolean());
+            //classDescriptorMap.put("java.lang.Object", standardLibrary.get
+            classDescriptorMap.put("java.lang.String", standardLibrary.getString());
+        }
+        return classDescriptorMap;
     }
 }

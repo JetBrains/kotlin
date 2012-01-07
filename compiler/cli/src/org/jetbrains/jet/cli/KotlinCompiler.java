@@ -25,6 +25,8 @@ public class KotlinCompiler {
         public String module;
         @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
         public boolean includeRuntime;
+        @Argument(value = "excludeStdlib", description = "do not load stdlib (to compile stdlib itself)")
+        public boolean excludeStdlib;
     }
 
     public static void main(String[] args) {
@@ -33,9 +35,14 @@ public class KotlinCompiler {
         try {
             Args.parse(arguments, args);
         }
-        catch (Throwable t) {
+        catch (IllegalArgumentException e) {
             System.out.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+            System.exit(1);
+            return;
+        }
+        catch (Throwable t) {
             t.printStackTrace();
+            System.exit(1);
             return;
         }
 
@@ -44,7 +51,8 @@ public class KotlinCompiler {
         try {
             environment.setJavaRuntime(CompileEnvironment.findRtJar(true));
             if (!environment.initializeKotlinRuntime()) {
-                System.out.println("No runtime library found");
+                System.err.println("No Kotlin runtime library found");
+                System.exit(1);
                 return;
             }
 
@@ -53,10 +61,15 @@ public class KotlinCompiler {
                 return;
             }
             else {
-                environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime, !arguments.excludeStdlib)) {
+                    System.exit(1);
+                    return;
+                }
             }
         } catch (CompileEnvironmentException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
+            System.exit(1);
+            return;
         }
     }
 

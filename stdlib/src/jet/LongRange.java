@@ -11,12 +11,11 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         this.count = count;
     }
 
-    public LongRange(long startValue, long count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public LongRange(int startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
+    public LongIterator step(long step) {
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     @Override
@@ -50,7 +49,7 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
 
     @Override
     public LongIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -63,31 +62,31 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return null;
     }
 
-    public static IntRange count(int length) {
-        return new IntRange(0, length);
-    }
-
-    public static IntRange rangeTo(int from, int to) {
-        if(from > to) {
-            return new IntRange(to, from-to+1, true);
-        }
-        else {
-            return new IntRange(from, to-from+1);
-        }
+    public static LongRange count(int length) {
+        return new LongRange(0, length);
     }
 
     private static class MyIterator extends LongIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private long cur;
+        private long step;
         private long count;
 
         private final boolean reversed;
 
-        public MyIterator(long startValue, long count) {
+        public MyIterator(long startValue, long count, long step) {
             cur = startValue;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            this.step = step;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override
@@ -97,12 +96,14 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
 
         @Override
         public long nextLong() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return (cur + step);
             }
             else {
-                return cur++;
+                cur += step;
+                return (cur - step);
             }
         }
 

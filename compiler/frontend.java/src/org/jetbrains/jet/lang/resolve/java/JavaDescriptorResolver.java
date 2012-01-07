@@ -138,7 +138,7 @@ public class JavaDescriptorResolver {
     @Nullable
     public ClassDescriptor resolveClass(@NotNull PsiClass psiClass) {
         String qualifiedName = psiClass.getQualifiedName();
-        
+
         if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
             // TODO: only if -$$TImpl class is created by Kotlin
             return null;
@@ -161,7 +161,7 @@ public class JavaDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull String qualifiedName) {
-        
+
         if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
             // TODO: only if -$$TImpl class is created by Kotlin
             return null;
@@ -356,7 +356,7 @@ public class JavaDescriptorResolver {
         
         @Override
         public JetSignatureVisitor visitClassBound() {
-            return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
                     if (isJavaLangObject(jetType)) {
@@ -369,7 +369,7 @@ public class JavaDescriptorResolver {
 
         @Override
         public JetSignatureVisitor visitInterfaceBound() {
-            return new JetTypeJetSignatureReader(JavaDescriptorResolver.this, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
                     upperBounds.add(jetType);

@@ -11,12 +11,11 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
         this.count = count;
     }
 
-    public ShortRange(short startValue, int count, boolean reversed) {
-        this(startValue, reversed ? -count : count);
-    }
-
-    public ShortRange(short startValue, int count, boolean reversed, int defaultMask) {
-        this(startValue, reversed ? -count : count, (defaultMask & 4) == 0);
+    public ShortIterator step(int step) {
+        if(step < 0)
+            return new MyIterator(getEnd(), -count, -step);
+        else
+            return new MyIterator(start, count, step);
     }
 
     @Override
@@ -50,7 +49,7 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
 
     @Override
     public ShortIterator iterator() {
-        return new MyIterator(start, count);
+        return new MyIterator(start, count, 1);
     }
 
     @Override
@@ -67,27 +66,27 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
         return new ShortRange((byte) 0, length);
     }
 
-    public static ShortRange rangeTo(short from, short to) {
-        if(from > to) {
-            return new ShortRange(to, from-to+1, true);
-        }
-        else {
-            return new ShortRange(from, to-from+1);
-        }
-    }
-
     private static class MyIterator extends ShortIterator {
         private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
 
         private short cur;
+        private int step;
         private int count;
 
         private final boolean reversed;
 
-        public MyIterator(short startValue, int count) {
+        public MyIterator(short startValue, int count, int step) {
             cur = startValue;
-            reversed = count < 0;
-            this.count = reversed ? -count : count;
+            this.step = step;
+            if(count < 0) {
+                reversed = true;
+                count = -count;
+                startValue += count;
+            }
+            else {
+                reversed = false;
+            }
+            this.count = count;
         }
 
         @Override
@@ -97,12 +96,14 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
 
         @Override
         public short nextShort() {
-            count--;
+            count -= step;
             if(reversed) {
-                return cur--;
+                cur -= step;
+                return (short) (cur + step);
             }
             else {
-                return cur++;
+                cur += step;
+                return (short) (cur - step);
             }
         }
 
