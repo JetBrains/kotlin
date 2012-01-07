@@ -14,8 +14,15 @@ import java.util.List;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
-public class RangeTo implements IntrinsicMethod {
+public class UpTo implements IntrinsicMethod {
+    private boolean forward;
+
+    public UpTo(boolean forward) {
+        this.forward = forward;
+    }
+
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         if(arguments.size()==1) {
@@ -23,7 +30,7 @@ public class RangeTo implements IntrinsicMethod {
             final Type rightType = codegen.expressionType(arguments.get(0));
             receiver.put(Type.INT_TYPE, v);
             codegen.gen(arguments.get(0), rightType);
-            v.invokestatic("jet/runtime/Ranges", "rangeTo", "(" + receiver.type.getDescriptor() + leftType.getDescriptor() + ")" + expectedType.getDescriptor());
+            v.invokestatic("jet/runtime/Ranges", forward ? "upTo" : "downTo", "(" + receiver.type.getDescriptor() + leftType.getDescriptor() + ")" + expectedType.getDescriptor());
             return StackValue.onStack(expectedType);
         }
         else {
@@ -33,7 +40,7 @@ public class RangeTo implements IntrinsicMethod {
 //            if (JetTypeMapper.isIntPrimitive(leftType)) {
                 codegen.gen(expression.getLeft(), leftType);
                 codegen.gen(expression.getRight(), rightType);
-                v.invokestatic("jet/runtime/Ranges", "rangeTo", "(" + leftType.getDescriptor() + rightType.getDescriptor() + ")" + expectedType.getDescriptor());
+                v.invokestatic("jet/runtime/Ranges", forward ? "upTo" : "downTo", "(" + leftType.getDescriptor() + rightType.getDescriptor() + ")" + expectedType.getDescriptor());
                 return StackValue.onStack(expectedType);
 //            }
 //            else {

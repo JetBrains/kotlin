@@ -12,327 +12,647 @@ public class Ranges {
     private Ranges() {
     }
 
-    public static ByteRange rangeTo(byte from, byte to) {
+    public static ByteRange upTo(byte from, byte to) {
       if(from > to) {
-        return new ByteRange(from, to-from-1);
+        return ByteRange.empty;
       }
       else {
         return new ByteRange(from, to-from+1);
       }
     }
 
-    public static ShortRange rangeTo(byte from, short to) {
+    public static ByteRange downTo(byte from, byte to) {
       if(from > to) {
-        return new ShortRange(from, to-from-1);
+        return new ByteRange(from, to-from-1);
+      }
+      else {
+        return ByteRange.empty;
+      }
+    }
+
+    public static ShortRange upTo(byte from, short to) {
+      if(from > to) {
+        return ShortRange.empty;
       }
       else {
         return new ShortRange(from, to-from+1);
       }
     }
 
-    public static IntRange rangeTo(byte from, int to) {
+    public static ShortRange downTo(byte from, short to) {
       if(from > to) {
-        return new IntRange(from, to-from-1);
+        return new ShortRange(from, to-from-1);
+      }
+      else {
+        return ShortRange.empty;
+      }
+    }
+
+    public static IntRange upTo(byte from, int to) {
+      if(from > to) {
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(byte from, long to) {
+    public static IntRange downTo(byte from, int to) {
       if(from > to) {
-        return new LongRange(from, to-from-1);
+        return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static LongRange upTo(byte from, long to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static FloatRange rangeTo(byte from, float to) {
+    public static LongRange downTo(byte from, long to) {
+      if(from > to) {
+        return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static FloatRange upTo(byte from, float to) {
         return new FloatRange(from, to-from);
     }
 
-    public static DoubleRange rangeTo(byte from, double to) {
+    public static FloatRange downTo(byte from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(byte from, double to) {
         return new DoubleRange(from, to-from);
     }
 
-    public static CharRange rangeTo(byte from, char to) {
+    public static DoubleRange downTo(byte from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static CharRange upTo(byte from, char to) {
       if(from > to) {
-        return new CharRange((char) from, to-from-1);
+        return CharRange.empty;
       }
       else {
         return new CharRange((char) from, to-from+1);
       }
     }
 
-    public static ShortRange rangeTo(short from, byte to) {
+    public static CharRange downTo(byte from, char to) {
       if(from > to) {
-        return new ShortRange(from, to-from-1);
+        return new CharRange((char) from, to-from-1);
+      }
+      else {
+        return CharRange.empty;
+      }
+    }
+
+    public static ShortRange upTo(short from, byte to) {
+      if(from > to) {
+        return ShortRange.empty;
       }
       else {
         return new ShortRange(from, to-from+1);
       }
     }
 
-    public static ShortRange rangeTo(short from, short to) {
+    public static ShortRange downTo(short from, byte to) {
       if(from > to) {
         return new ShortRange(from, to-from-1);
+      }
+      else {
+        return ShortRange.empty;
+      }
+    }
+
+    public static ShortRange upTo(short from, short to) {
+      if(from > to) {
+        return ShortRange.empty;
       }
       else {
         return new ShortRange(from, to-from+1);
       }
     }
 
-    public static IntRange rangeTo(short from, int to) {
+    public static ShortRange downTo(short from, short to) {
       if(from > to) {
-        return new IntRange(from, to-from-1);
+        return new ShortRange(from, to-from-1);
+      }
+      else {
+        return ShortRange.empty;
+      }
+    }
+
+    public static IntRange upTo(short from, int to) {
+      if(from > to) {
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(short from, long to) {
+    public static IntRange downTo(short from, int to) {
       if(from > to) {
-        return new LongRange(from, to-from-1);
+        return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static LongRange upTo(short from, long to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static FloatRange rangeTo(short from, float to) {
+    public static LongRange downTo(short from, long to) {
+      if(from > to) {
+        return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static FloatRange upTo(short from, float to) {
         return new FloatRange(from, to-from);
     }
 
-    public static DoubleRange rangeTo(short from, double to) {
+    public static FloatRange downTo(short from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(short from, double to) {
         return new DoubleRange(from, to-from);
     }
 
-    public static ShortRange rangeTo(short from, char to) {
+    public static DoubleRange downTo(short from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static ShortRange upTo(short from, char to) {
       if(from > to) {
-        return new ShortRange(from, to-from-1);
+        return ShortRange.empty;
       }
       else {
         return new ShortRange(from, to-from+1);
       }
     }
 
-    public static IntRange rangeTo(int from, byte to) {
+    public static ShortRange downTo(short from, char to) {
       if(from > to) {
-        return new IntRange(from, to-from-1);
+        return new ShortRange(from, to-from-1);
+      }
+      else {
+        return ShortRange.empty;
+      }
+    }
+
+    public static IntRange upTo(int from, byte to) {
+      if(from > to) {
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static IntRange rangeTo(int from, short to) {
+    public static IntRange downTo(int from, byte to) {
       if(from > to) {
         return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static IntRange upTo(int from, short to) {
+      if(from > to) {
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static IntRange rangeTo(int from, int to) {
+    public static IntRange downTo(int from, short to) {
       if(from > to) {
         return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static IntRange upTo(int from, int to) {
+      if(from > to) {
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(int from, long to) {
+    public static IntRange downTo(int from, int to) {
       if(from > to) {
-        return new LongRange(from, to-from-1);
+        return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static LongRange upTo(int from, long to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static FloatRange rangeTo(int from, float to) {
+    public static LongRange downTo(int from, long to) {
+      if(from > to) {
+        return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static FloatRange upTo(int from, float to) {
         return new FloatRange(from, to-from);
     }
 
-    public static DoubleRange rangeTo(int from, double to) {
+    public static FloatRange downTo(int from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(int from, double to) {
         return new DoubleRange(from, to-from);
     }
 
-    public static IntRange rangeTo(int from, char to) {
+    public static DoubleRange downTo(int from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static IntRange upTo(int from, char to) {
       if(from > to) {
-        return new IntRange(from, to-from-1);
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(long from, byte to) {
+    public static IntRange downTo(int from, char to) {
       if(from > to) {
-        return new LongRange(from, to-from-1);
+        return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static LongRange upTo(long from, byte to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(long from, short to) {
+    public static LongRange downTo(long from, byte to) {
       if(from > to) {
         return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static LongRange upTo(long from, short to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(long from, int to) {
+    public static LongRange downTo(long from, short to) {
       if(from > to) {
         return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static LongRange upTo(long from, int to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(long from, long to) {
+    public static LongRange downTo(long from, int to) {
       if(from > to) {
         return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static LongRange upTo(long from, long to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static FloatRange rangeTo(long from, float to) {
+    public static LongRange downTo(long from, long to) {
+      if(from > to) {
+        return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static FloatRange upTo(long from, float to) {
         return new FloatRange(from, to-from);
     }
 
-    public static DoubleRange rangeTo(long from, double to) {
+    public static FloatRange downTo(long from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(long from, double to) {
         return new DoubleRange(from, to-from);
     }
 
-    public static LongRange rangeTo(long from, char to) {
+    public static DoubleRange downTo(long from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static LongRange upTo(long from, char to) {
       if(from > to) {
-        return new LongRange(from, to-from-1);
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static FloatRange rangeTo(float from, byte to) {
-        return new FloatRange(from, to-from);
-    }
-
-    public static FloatRange rangeTo(float from, short to) {
-        return new FloatRange(from, to-from);
-    }
-
-    public static FloatRange rangeTo(float from, int to) {
-        return new FloatRange(from, to-from);
-    }
-
-    public static FloatRange rangeTo(float from, long to) {
-        return new FloatRange(from, to-from);
-    }
-
-    public static FloatRange rangeTo(float from, float to) {
-        return new FloatRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(float from, double to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static FloatRange rangeTo(float from, char to) {
-        return new FloatRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, byte to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, short to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, int to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, long to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, float to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, double to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static DoubleRange rangeTo(double from, char to) {
-        return new DoubleRange(from, to-from);
-    }
-
-    public static CharRange rangeTo(char from, byte to) {
+    public static LongRange downTo(long from, char to) {
       if(from > to) {
-        return new CharRange(from, to-from-1);
+        return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static FloatRange upTo(float from, byte to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange downTo(float from, byte to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange upTo(float from, short to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange downTo(float from, short to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange upTo(float from, int to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange downTo(float from, int to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange upTo(float from, long to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange downTo(float from, long to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange upTo(float from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange downTo(float from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(float from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(float from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static FloatRange upTo(float from, char to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static FloatRange downTo(float from, char to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, byte to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, byte to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, short to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, short to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, int to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, int to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, long to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, long to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, float to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, float to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(double from, char to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static DoubleRange downTo(double from, char to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static CharRange upTo(char from, byte to) {
+      if(from > to) {
+        return CharRange.empty;
       }
       else {
         return new CharRange(from, to-from+1);
       }
     }
 
-    public static ShortRange rangeTo(char from, short to) {
+    public static CharRange downTo(char from, byte to) {
       if(from > to) {
-        return new ShortRange((short) from, to-from-1);
+        return new CharRange(from, to-from-1);
+      }
+      else {
+        return CharRange.empty;
+      }
+    }
+
+    public static ShortRange upTo(char from, short to) {
+      if(from > to) {
+        return ShortRange.empty;
       }
       else {
         return new ShortRange((short) from, to-from+1);
       }
     }
 
-    public static IntRange rangeTo(char from, int to) {
+    public static ShortRange downTo(char from, short to) {
       if(from > to) {
-        return new IntRange(from, to-from-1);
+        return new ShortRange((short) from, to-from-1);
+      }
+      else {
+        return ShortRange.empty;
+      }
+    }
+
+    public static IntRange upTo(char from, int to) {
+      if(from > to) {
+        return IntRange.empty;
       }
       else {
         return new IntRange(from, to-from+1);
       }
     }
 
-    public static LongRange rangeTo(char from, long to) {
+    public static IntRange downTo(char from, int to) {
       if(from > to) {
-        return new LongRange(from, to-from-1);
+        return new IntRange(from, to-from-1);
+      }
+      else {
+        return IntRange.empty;
+      }
+    }
+
+    public static LongRange upTo(char from, long to) {
+      if(from > to) {
+        return LongRange.empty;
       }
       else {
         return new LongRange(from, to-from+1);
       }
     }
 
-    public static FloatRange rangeTo(char from, float to) {
+    public static LongRange downTo(char from, long to) {
+      if(from > to) {
+        return new LongRange(from, to-from-1);
+      }
+      else {
+        return LongRange.empty;
+      }
+    }
+
+    public static FloatRange upTo(char from, float to) {
         return new FloatRange(from, to-from);
     }
 
-    public static DoubleRange rangeTo(char from, double to) {
+    public static FloatRange downTo(char from, float to) {
+        return new FloatRange(from, to-from);
+    }
+
+    public static DoubleRange upTo(char from, double to) {
         return new DoubleRange(from, to-from);
     }
 
-    public static CharRange rangeTo(char from, char to) {
+    public static DoubleRange downTo(char from, double to) {
+        return new DoubleRange(from, to-from);
+    }
+
+    public static CharRange upTo(char from, char to) {
       if(from > to) {
-        return new CharRange(from, to-from-1);
+        return CharRange.empty;
       }
       else {
         return new CharRange(from, to-from+1);
       }
     }
 
+    public static CharRange downTo(char from, char to) {
+      if(from > to) {
+        return new CharRange(from, to-from-1);
+      }
+      else {
+        return CharRange.empty;
+      }
+    }
     public static void main(String[] args) {
         List<String> strings = Arrays.asList("byte", "short", "int", "long", "float", "double", "char");
         for(String t1 : strings)
@@ -361,17 +681,28 @@ public class Ranges {
                 }
 
                 if(resType.equals("FloatRange") || resType.equals("DoubleRange")) {
-                    System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {\n" +
+                    System.out.println("\npublic static " + resType + " upTo(" + t1 + " from, " + t2 + " to) {\n" +
+                                       "    return new " + resType + "(from, to-from);\n" +
+                                       "}");
+                    System.out.println("\npublic static " + resType + " downTo(" + t1 + " from, " + t2 + " to) {\n" +
                                        "    return new " + resType + "(from, to-from);\n" +
                                        "}");
                 }
                 else {
-                    System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {" +
+                    System.out.println("\npublic static " + resType + " upTo(" + t1 + " from, " + t2 + " to) {" +
+                                       "\n  if(from > to) {\n" +
+                                       "    return " + resType + ".empty;\n" +
+                                       "  }\n" +
+                                       "  else {\n" +
+                                       "    return new " + resType + "(from, to-from+1);\n" +
+                                       "  }\n" +
+                                       "}");
+                    System.out.println("\npublic static " + resType + " downTo(" + t1 + " from, " + t2 + " to) {" +
                                        "\n  if(from > to) {\n" +
                                        "    return new " + resType + "(from, to-from-1);\n" +
                                        "  }\n" +
                                        "  else {\n" +
-                                       "    return new " + resType + "(from, to-from+1);\n" +
+                                       "    return " + resType + ".empty;\n" +
                                        "  }\n" +
                                        "}");
                 }

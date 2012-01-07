@@ -6,6 +6,8 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
     private final char start;
     private final int count;
 
+    public static final CharRange empty = new CharRange((char) 0,0);
+
     public CharRange(char startValue, int count) {
         this.start = startValue;
         this.count = count;
@@ -29,7 +31,7 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
     }
 
     public char getEnd() {
-        return (char) (count < 0 ? start + count + 1: start+count-1);
+        return (char) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
     }
 
     public int getSize() {

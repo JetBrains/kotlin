@@ -6,6 +6,8 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
     private final int start;
     private final int count;
 
+    public static final IntRange empty = new IntRange(0,0);
+
     public IntRange(int startValue, int count) {
         this.start = startValue;
         this.count = count;
@@ -36,7 +38,7 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
     }
 
     public int getEnd() {
-        return count < 0 ? start + count + 1: start+count-1;
+        return count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1;
     }
 
     public int getSize() {

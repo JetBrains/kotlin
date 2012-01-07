@@ -29,7 +29,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod INV = new Inv();
     private static final IntrinsicMethod TYPEINFO = new TypeInfo();
     private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
-    private static final IntrinsicMethod RANGE_TO = new RangeTo();
+    private static final IntrinsicMethod UP_TO = new UpTo(true);
+    private static final IntrinsicMethod DOWN_TO = new UpTo(false);
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
 
@@ -59,7 +60,9 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(type, "plus", 0, UNARY_PLUS);
             declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS);
             declareIntrinsicFunction(type, "inv", 0, INV);
-            declareIntrinsicFunction(type, "rangeTo", 1, RANGE_TO);
+            declareIntrinsicFunction(type, "rangeTo", 1, UP_TO);
+            declareIntrinsicFunction(type, "upto", 1, UP_TO);
+            declareIntrinsicFunction(type, "downto", 1, DOWN_TO);
             declareIntrinsicFunction(type, "inc", 0, INC);
             declareIntrinsicFunction(type, "dec", 0, DEC);
         }

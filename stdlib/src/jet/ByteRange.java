@@ -6,6 +6,8 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
     private final byte start;
     private final int count;
 
+    public static final ByteRange empty = new ByteRange((byte) 0,0);
+
     public ByteRange(byte startValue, int count) {
         this.start = startValue;
         this.count = count;
@@ -29,7 +31,7 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
     }
 
     public byte getEnd() {
-        return (byte) (count < 0 ? start + count + 1: start+count-1);
+        return (byte) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
     }
 
     public int getSize() {

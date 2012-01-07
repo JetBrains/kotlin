@@ -73,6 +73,22 @@ class Double : Number, Comparable<Double>  {
   fun rangeTo(other : Byte)   : DoubleRange
   fun rangeTo(other : Char)   : DoubleRange
 
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : DoubleRange
+  fun upto(other : Long)   : DoubleRange
+  fun upto(other : Int)    : DoubleRange
+  fun upto(other : Short)  : DoubleRange
+  fun upto(other : Byte)   : DoubleRange
+  fun upto(other : Char)   : DoubleRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : DoubleRange
+  fun downto(other : Long)   : DoubleRange
+  fun downto(other : Int)    : DoubleRange
+  fun downto(other : Short)  : DoubleRange
+  fun downto(other : Byte)   : DoubleRange
+  fun downto(other : Char)   : DoubleRange
+
   fun inc() : Double
   fun dec() : Double
   fun plus() : Double
@@ -131,10 +147,26 @@ class Float : Number, Comparable<Float>  {
   fun rangeTo(other : Double) : DoubleRange
   fun rangeTo(other : Float)  : FloatRange
   fun rangeTo(other : Long)   : DoubleRange
-  fun rangeTo(other : Int)    : DoubleRange
+  fun rangeTo(other : Int)    : FloatRange
   fun rangeTo(other : Short)  : FloatRange
   fun rangeTo(other : Byte)   : FloatRange
   fun rangeTo(other : Char)   : FloatRange
+
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : FloatRange
+  fun upto(other : Long)   : DoubleRange
+  fun upto(other : Int)    : FloatRange
+  fun upto(other : Short)  : FloatRange
+  fun upto(other : Byte)   : FloatRange
+  fun upto(other : Char)   : FloatRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : FloatRange
+  fun downto(other : Long)   : DoubleRange
+  fun downto(other : Int)    : FloatRange
+  fun downto(other : Short)  : FloatRange
+  fun downto(other : Byte)   : FloatRange
+  fun downto(other : Char)   : FloatRange
 
   fun inc() : Float
   fun dec() : Float
@@ -198,6 +230,22 @@ class Long : Number, Comparable<Long> {
   fun rangeTo(other : Short)  : LongRange
   fun rangeTo(other : Byte)   : LongRange
   fun rangeTo(other : Char)   : LongRange
+
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : FloatRange
+  fun upto(other : Long)   : LongRange
+  fun upto(other : Int)    : LongRange
+  fun upto(other : Short)  : LongRange
+  fun upto(other : Byte)   : LongRange
+  fun upto(other : Char)   : LongRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : FloatRange
+  fun downto(other : Long)   : LongRange
+  fun downto(other : Int)    : LongRange
+  fun downto(other : Short)  : LongRange
+  fun downto(other : Byte)   : LongRange
+  fun downto(other : Char)   : LongRange
 
   fun inc() : Long
   fun dec() : Long
@@ -270,6 +318,22 @@ class Int : Number, Comparable<Int> {
   fun rangeTo(other : Byte)   : IntRange
   fun rangeTo(other : Char)   : IntRange
 
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : FloatRange
+  fun upto(other : Long)   : LongRange
+  fun upto(other : Int)    : IntRange
+  fun upto(other : Short)  : IntRange
+  fun upto(other : Byte)   : IntRange
+  fun upto(other : Char)   : IntRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : FloatRange
+  fun downto(other : Long)   : LongRange
+  fun downto(other : Int)    : IntRange
+  fun downto(other : Short)  : IntRange
+  fun downto(other : Byte)   : IntRange
+  fun downto(other : Char)   : IntRange
+
   fun inc() : Int
   fun dec() : Int
   fun plus() : Int
@@ -341,6 +405,22 @@ class Char : Number, Comparable<Char> {
   fun rangeTo(other : Byte)   : CharRange
   fun rangeTo(other : Char)   : CharRange
 
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : FloatRange
+  fun upto(other : Long)   : LongRange
+  fun upto(other : Int)    : IntRange
+  fun upto(other : Short)  : ShortRange
+  fun upto(other : Byte)   : CharRange
+  fun upto(other : Char)   : CharRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : FloatRange
+  fun downto(other : Long)   : LongRange
+  fun downto(other : Int)    : IntRange
+  fun downto(other : Short)  : ShortRange
+  fun downto(other : Byte)   : CharRange
+  fun downto(other : Char)   : CharRange
+
   fun inc() : Char
   fun dec() : Char
   fun plus() : Int
@@ -402,7 +482,23 @@ class Short : Number, Comparable<Short> {
   fun rangeTo(other : Int)    : IntRange
   fun rangeTo(other : Short)  : ShortRange
   fun rangeTo(other : Byte)   : ShortRange
-  fun rangeTo(other : Char)   : IntRange
+  fun rangeTo(other : Char)   : ShortRange
+
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : FloatRange
+  fun upto(other : Long)   : LongRange
+  fun upto(other : Int)    : IntRange
+  fun upto(other : Short)  : ShortRange
+  fun upto(other : Byte)   : ShortRange
+  fun upto(other : Char)   : ShortRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : FloatRange
+  fun downto(other : Long)   : LongRange
+  fun downto(other : Int)    : IntRange
+  fun downto(other : Short)  : ShortRange
+  fun downto(other : Byte)   : ShortRange
+  fun downto(other : Char)   : ShortRange
 
   fun inc() : Short
   fun dec() : Short
@@ -465,7 +561,23 @@ class Byte : Number, Comparable<Byte> {
   fun rangeTo(other : Int)    : IntRange
   fun rangeTo(other : Short)  : ShortRange
   fun rangeTo(other : Byte)   : ByteRange
-  fun rangeTo(other : Char)   : IntRange
+  fun rangeTo(other : Char)   : CharRange
+
+  fun upto(other : Double) : DoubleRange
+  fun upto(other : Float)  : FloatRange
+  fun upto(other : Long)   : LongRange
+  fun upto(other : Int)    : IntRange
+  fun upto(other : Short)  : ShortRange
+  fun upto(other : Byte)   : ByteRange
+  fun upto(other : Char)   : CharRange
+
+  fun downto(other : Double) : DoubleRange
+  fun downto(other : Float)  : FloatRange
+  fun downto(other : Long)   : LongRange
+  fun downto(other : Int)    : IntRange
+  fun downto(other : Short)  : ShortRange
+  fun downto(other : Byte)   : ByteRange
+  fun downto(other : Char)   : CharRange
 
   fun inc() : Byte
   fun dec() : Byte

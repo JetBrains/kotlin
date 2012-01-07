@@ -6,6 +6,8 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
     private final short start;
     private final int count;
 
+    public static final ShortRange empty = new ShortRange((short) 0,0);
+
     public ShortRange(short startValue, int count) {
         this.start = startValue;
         this.count = count;
@@ -36,7 +38,7 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
     }
 
     public short getEnd() {
-        return (short) (count < 0 ? start + count + 1: start+count-1);
+        return (short) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
     }
 
     public int getSize() {

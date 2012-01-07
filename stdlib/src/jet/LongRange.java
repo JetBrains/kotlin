@@ -6,6 +6,8 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
     private final long start;
     private final long count;
 
+    public static final LongRange empty = new LongRange(0L,0L);
+
     public LongRange(long startValue, long count) {
         this.start = startValue;
         this.count = count;
@@ -36,7 +38,7 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
     }
 
     public long getEnd() {
-        return start+count-1;
+        return count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1;
     }
 
     public long getSize() {
