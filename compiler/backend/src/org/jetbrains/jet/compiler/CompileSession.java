@@ -30,6 +30,11 @@ public class CompileSession {
     private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
     private final List<JetFile> myLibrarySourceFiles = new ArrayList<JetFile>();
     private List<String> myErrors = new ArrayList<String>();
+
+    public BindingContext getMyBindingContext() {
+        return myBindingContext;
+    }
+
     private BindingContext myBindingContext;
 
     public CompileSession(JetCoreEnvironment environment) {

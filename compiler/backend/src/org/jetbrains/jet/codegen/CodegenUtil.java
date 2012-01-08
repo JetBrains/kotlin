@@ -118,7 +118,7 @@ public class CodegenUtil {
         return false;
     }
 
-    private static void addSuperTypes(JetType type, Set<JetType> set) {
+    public static void addSuperTypes(JetType type, Set<JetType> set) {
         set.add(type);
 
         for (JetType jetType : type.getConstructor().getSupertypes()) {

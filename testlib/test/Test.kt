@@ -9,7 +9,7 @@ import org.junit.runner.*
 import org.junit.runner.notification.*
 import junit.framework.*
 
-class BuiltTest<T>(name: String, val builder: TestBuilder<T>, val test: BuiltTest<T>.() -> Unit) : TestCase(name) {
+protected class BuiltTest<T>(name: String, val builder: TestBuilder<T>, val test: BuiltTest<T>.() -> Unit) : TestCase(name) {
     private var myState: T? = null
 
     var state : T
