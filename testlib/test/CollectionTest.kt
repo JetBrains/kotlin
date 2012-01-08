@@ -245,6 +245,14 @@ class CollectionTest() : TestSupport() {
     fails { hashSet<Char>().last() }
   }
 
+  fun testIndices() {
+    val indices = data.indices
+    assertEquals(0, indices.start)
+    assertEquals(1, indices.end)
+    assertEquals(2, indices.size)
+    assertFalse(indices.isReversed)
+  }
+
   fun testContains() {
     assertTrue(data.contains("foo"))
     assertTrue(data.contains("bar"))

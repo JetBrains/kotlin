@@ -19,6 +19,8 @@ inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(LinkedLi
 /** Returns a new HashSet with a variable number of initial elements */
 inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
 
+val Collection<*>.indices : IntRange
+    get() = 0..size-1
 
 inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
   val answer = Array<T>(this.size)
