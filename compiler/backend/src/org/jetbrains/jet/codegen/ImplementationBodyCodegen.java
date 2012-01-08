@@ -393,9 +393,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         int flags = Opcodes.ACC_PUBLIC; // TODO
-        final MethodVisitor mv = v.newMethod(myClass, flags, "<init>", constructorMethod.getDescriptor(), null, null);
+        final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getDescriptor(), null, null);
         if (!v.generateCode()) return;
         
+        AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
+        if (constructorDescriptor == null) {
+            jetConstructorVisitor.visit(JvmStdlibNames.JET_CONSTRUCTOR_HIDDEN_FIELD, true);
+        }
+        jetConstructorVisitor.visitEnd();
+        
+        if (constructorDescriptor != null) {
+            int i = 0;
+
+            if (CodegenUtil.hasThis0(descriptor)) {
+                i++;
+            }
+
+            if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType())) {
+                // TODO
+                i++;
+            }
+
+            for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
+                AnnotationVisitor jetValueParameterAnnotation =
+                        mv.visitParameterAnnotation(i++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
+                jetValueParameterAnnotation.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, valueParameter.getName());
+                jetValueParameterAnnotation.visitEnd();
+            }
+        }
+
         mv.visitCode();
 
         List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null

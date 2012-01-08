@@ -186,6 +186,12 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             }
             
             List<String> memberStrings = new ArrayList<String>();
+            
+            for (ConstructorDescriptor constructor : klass.getConstructors()) {
+                StringBuilder constructorSb = new StringBuilder();
+                new Serializer(constructorSb).serialize(constructor);
+                memberStrings.add(constructorSb.toString());
+            }
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
@@ -244,6 +250,9 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             serialize(fun.getModality());
             sb.append(" ");
 
+            if (fun instanceof ConstructorDescriptor) {
+                sb.append("/*constructor*/ ");
+            }
             sb.append("fun ");
             if (!fun.getTypeParameters().isEmpty()) {
                 sb.append("<");

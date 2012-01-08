@@ -29,6 +29,10 @@ public class JvmStdlibNames {
 
     public static final JvmClassName JET_PROPERTY = new JvmClassName("jet.runtime.typeinfo.JetProperty");
     
+    public static final JvmClassName JET_CONSTRUCTOR = new JvmClassName("jet.runtime.typeinfo.JetConstructor");
+    
+    public static final String JET_CONSTRUCTOR_HIDDEN_FIELD = "hidden";
+    
 
     public static final JvmClassName JET_CLASS = new JvmClassName("jet.runtime.typeinfo.JetClass");
     

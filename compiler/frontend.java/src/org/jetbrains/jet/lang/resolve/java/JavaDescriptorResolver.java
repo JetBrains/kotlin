@@ -260,6 +260,18 @@ public class JavaDescriptorResolver {
         }
         else {
             for (PsiMethod constructor : psiConstructors) {
+                PsiAnnotation jetConstructorAnnotation =
+                        constructor.getModifierList().findAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getFqName());
+                if (jetConstructorAnnotation != null) {
+                    PsiLiteralExpression hiddenExpresson = (PsiLiteralExpression) jetConstructorAnnotation.findAttributeValue(JvmStdlibNames.JET_CONSTRUCTOR_HIDDEN_FIELD);
+                    if (hiddenExpresson != null) {
+                        boolean hidden = (Boolean) hiddenExpresson.getValue();
+                        if (hidden) {
+                            continue;
+                        }
+                    }
+                }
+
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                         classData.classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(), // TODO
