@@ -373,8 +373,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
 
         public void serialize(ClassDescriptor clazz) {
-            serialize(clazz.getContainingDeclaration());
-            sb.append(".");
+            new NamespacePrefixSerializer(sb).serialize(clazz.getContainingDeclaration());
             sb.append(clazz.getName());
         }
 
@@ -383,8 +382,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 // root ns
                 return;
             }
-            serialize(ns.getContainingDeclaration());
-            sb.append(".");
+            new NamespacePrefixSerializer(sb).serialize(ns.getContainingDeclaration());
             sb.append(ns.getName());
         }
 
@@ -405,6 +403,29 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             // TODO: lower bounds
         }
 
+    }
+    
+    private static class NamespacePrefixSerializer extends Serializer {
+
+        public NamespacePrefixSerializer(StringBuilder sb) {
+            super(sb);
+        }
+
+        @Override
+        public void serialize(NamespaceDescriptor ns) {
+            if (ns.getContainingDeclaration() == null) {
+                // root ns
+                return;
+            }
+            super.serialize(ns);
+            sb.append(".");
+        }
+
+        @Override
+        public void serialize(ClassDescriptor clazz) {
+            super.serialize(clazz);
+            sb.append(".");
+        }
     }
     
     private static class ValueParameterSerializer extends Serializer {
