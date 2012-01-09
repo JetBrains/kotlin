@@ -5,6 +5,8 @@ import com.sampullara.cli.Argument;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 
+import java.io.PrintStream;
+
 /**
  * @author yole
  * @author alex.tkachman
@@ -27,6 +29,12 @@ public class KotlinCompiler {
         public boolean includeRuntime;
         @Argument(value = "excludeStdlib", description = "do not load stdlib (to compile stdlib itself)")
         public boolean excludeStdlib;
+        @Argument(value = "help", alias = "h", description = "show help")
+        public boolean help;
+    }
+    
+    private static void usage(PrintStream target) {
+        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-src <filename or dirname>|-module <module file>] [-includeRuntime] [-excludeStdlib]");
     }
 
     public static void main(String[] args) {
@@ -36,7 +44,7 @@ public class KotlinCompiler {
             Args.parse(arguments, args);
         }
         catch (IllegalArgumentException e) {
-            System.out.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+            usage(System.err);
             System.exit(1);
             return;
         }
@@ -44,6 +52,11 @@ public class KotlinCompiler {
             t.printStackTrace();
             System.exit(1);
             return;
+        }
+        
+        if (arguments.help) {
+            usage(System.out);
+            System.exit(0);
         }
 
         CompileEnvironment environment = new CompileEnvironment();
