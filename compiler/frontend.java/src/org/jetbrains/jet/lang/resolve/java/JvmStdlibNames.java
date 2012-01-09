@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import jet.runtime.typeinfo.JetConstructor;
 import org.objectweb.asm.Type;
 
 /**
@@ -30,7 +31,11 @@ public class JvmStdlibNames {
     public static final JvmClassName JET_PROPERTY = new JvmClassName("jet.runtime.typeinfo.JetProperty");
     
     public static final JvmClassName JET_CONSTRUCTOR = new JvmClassName("jet.runtime.typeinfo.JetConstructor");
-    
+
+    /**
+     * @deprecated
+     * @see JetConstructor#hidden()
+     */
     public static final String JET_CONSTRUCTOR_HIDDEN_FIELD = "hidden";
     
 
