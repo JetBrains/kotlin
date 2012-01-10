@@ -1,6 +1,6 @@
 <project name="ConfluenceLexer" default="confluenceLexer">
     <property name="home" value="${basedir}"/>
-    <property file="${home}/../frontend/idea.properties"/>
+    <property file="${home}/../compiler/frontend/idea.properties"/>
 
     <property name="flex.base" value="${idea.home}/tools/lexer/jflex-1.4"/>
     <property name="out.dir" value="${basedir}/tmpout"/>
@@ -38,9 +38,9 @@
     <target name="confluenceLexer">
         <echo message="${flex.base}"/>
         <echo message="${home}"/>
-        <flex flexfile="${home}/../idea/src/org/jetbrains/jet/lexer/Jet.flex"
+        <flex flexfile="${home}/../compiler/frontend/src/org/jetbrains/jet/lexer/Jet.flex"
               destdir="${home}/src/main/java/org/jetbrains/jet/lexer/"/>
-        <copy file="${home}/../idea/src/org/jetbrains/jet/lexer/JetTokens.java"
+        <copy file="${home}/../compiler/frontend/src/org/jetbrains/jet/lexer/JetTokens.java"
                   tofile="${home}/src/main/java/org/jetbrains/jet/lexer/JetTokens.java" overwrite="true"/>
     </target>
 </project>
