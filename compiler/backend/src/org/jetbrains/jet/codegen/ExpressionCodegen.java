@@ -1551,13 +1551,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue generateIn(JetBinaryExpression expression) {
         JetExpression expr = expression.getLeft();
-        StackValue leftValue = gen(expr);
         if(isIntRangeExpr(expression.getRight())) {
+            StackValue leftValue = StackValue.expression(Type.INT_TYPE, expression.getLeft(), this);
             JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getRight();
             boolean inverted = expression.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
             getInIntRange(leftValue, rangeExpression, inverted);
         }
         else {
+            StackValue leftValue = gen(expr);
             FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
             assert op != null;
             leftValue.put(asmType(op.getValueParameters().get(0).getOutType()), v);
