@@ -100,7 +100,10 @@ public class ImportsResolver {
                         namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, type.getMemberScope()));
                     }
                     else if (descriptor instanceof ClassDescriptor) {
-                        namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, ((ClassDescriptor) descriptor).getDefaultType().getMemberScope()));
+                        JetType classObjectType = ((ClassDescriptor) descriptor).getClassObjectType();
+                        if (classObjectType != null) {
+                            namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, classObjectType.getMemberScope()));
+                        }
                     }
                 }
                 return;
