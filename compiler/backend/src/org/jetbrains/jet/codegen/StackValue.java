@@ -531,8 +531,17 @@ public abstract class StackValue {
             if (setter == null) {
                 throw new UnsupportedOperationException("no setter specified");
             }
-            if(setter instanceof CallableMethod)
-                ((CallableMethod)setter).invoke(v);
+            if(setter instanceof CallableMethod) {
+                CallableMethod method = (CallableMethod) setter;
+                method.invoke(v);
+                Type returnType = method.getSignature().getAsmMethod().getReturnType();
+                if(returnType != Type.VOID_TYPE) {
+                    if(returnType.getSize() == 2)
+                        v.pop2();
+                    else
+                        v.pop();
+                }
+            }
             else
                 ((IntrinsicMethod)setter).generate(codegen, v, null, null, null, null);
         }
