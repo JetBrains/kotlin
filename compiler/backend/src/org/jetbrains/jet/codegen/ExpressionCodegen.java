@@ -162,7 +162,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitNamedFunction(JetNamedFunction function, StackValue data) {
-        throw new UnsupportedOperationException("Codegen for named functions is not yet implemented");
+        throw new UnsupportedOperationException("Codegen for local functions is not yet implemented");
     }
 
     @Override
