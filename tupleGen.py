@@ -3,13 +3,17 @@ def generateTupleClass(i):
     f.write("package jet;\n\n")
     f.write("public class Tuple" + str(i) + "<")
     f.write(", ".join(("T" + str(j)) for j in range(1, i+1)))
-    f.write("> {\n")
+    f.write("> extends DefaultJetObject {\n")
     for j in range(1, i+1):
         f.write("    public final T{0} _{0};\n".format(j))
 
     f.write("\n    public Tuple" + str(i) + "(")
+    if i > 0:
+        f.write("TypeInfo typeInfo, ")
     f.write(", ".join("T{0} t{0}".format(j) for j in range(1, i+1)))
     f.write(") {\n")
+    if i > 0:
+        f.write("        super(typeInfo);\n")
     for j in range(1, i+1):
         f.write("        _{0} = t{0};\n".format(j))
     f.write("    }\n\n")
@@ -17,6 +21,9 @@ def generateTupleClass(i):
     f.write("    @Override\n    public String toString() {\n")
     f.write('        return "(" + ' + ' + ", " + '.join("_{0}".format(j) for j in range(1, i+1)) + ' + ")";\n')
     f.write("    }\n")
+
+    for j in range(1, i+1):
+        f.write("    public final T{0} get_{0}() {{\n        return _{0};\n    }}\n".format(j))
 
     f.write("    @Override\n    public boolean equals(Object o) {\n")
     f.write("        if (this == o) return true;\n")

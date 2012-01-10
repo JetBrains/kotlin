@@ -1,6 +1,6 @@
 package jet;
 
-public class Tuple20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> extends DefaultJetObject{
+public class Tuple20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> extends DefaultJetObject {
     public final T1 _1;
     public final T2 _2;
     public final T3 _3;
@@ -49,6 +49,66 @@ public class Tuple20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14
     @Override
     public String toString() {
         return "(" + _1 + ", " + _2 + ", " + _3 + ", " + _4 + ", " + _5 + ", " + _6 + ", " + _7 + ", " + _8 + ", " + _9 + ", " + _10 + ", " + _11 + ", " + _12 + ", " + _13 + ", " + _14 + ", " + _15 + ", " + _16 + ", " + _17 + ", " + _18 + ", " + _19 + ", " + _20 + ")";
+    }
+    public final T1 get_1() {
+        return _1;
+    }
+    public final T2 get_2() {
+        return _2;
+    }
+    public final T3 get_3() {
+        return _3;
+    }
+    public final T4 get_4() {
+        return _4;
+    }
+    public final T5 get_5() {
+        return _5;
+    }
+    public final T6 get_6() {
+        return _6;
+    }
+    public final T7 get_7() {
+        return _7;
+    }
+    public final T8 get_8() {
+        return _8;
+    }
+    public final T9 get_9() {
+        return _9;
+    }
+    public final T10 get_10() {
+        return _10;
+    }
+    public final T11 get_11() {
+        return _11;
+    }
+    public final T12 get_12() {
+        return _12;
+    }
+    public final T13 get_13() {
+        return _13;
+    }
+    public final T14 get_14() {
+        return _14;
+    }
+    public final T15 get_15() {
+        return _15;
+    }
+    public final T16 get_16() {
+        return _16;
+    }
+    public final T17 get_17() {
+        return _17;
+    }
+    public final T18 get_18() {
+        return _18;
+    }
+    public final T19 get_19() {
+        return _19;
+    }
+    public final T20 get_20() {
+        return _20;
     }
     @Override
     public boolean equals(Object o) {

@@ -34,6 +34,42 @@ public class Tuple12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> extends 
     public String toString() {
         return "(" + _1 + ", " + _2 + ", " + _3 + ", " + _4 + ", " + _5 + ", " + _6 + ", " + _7 + ", " + _8 + ", " + _9 + ", " + _10 + ", " + _11 + ", " + _12 + ")";
     }
+    public final T1 get_1() {
+        return _1;
+    }
+    public final T2 get_2() {
+        return _2;
+    }
+    public final T3 get_3() {
+        return _3;
+    }
+    public final T4 get_4() {
+        return _4;
+    }
+    public final T5 get_5() {
+        return _5;
+    }
+    public final T6 get_6() {
+        return _6;
+    }
+    public final T7 get_7() {
+        return _7;
+    }
+    public final T8 get_8() {
+        return _8;
+    }
+    public final T9 get_9() {
+        return _9;
+    }
+    public final T10 get_10() {
+        return _10;
+    }
+    public final T11 get_11() {
+        return _11;
+    }
+    public final T12 get_12() {
+        return _12;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

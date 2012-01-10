@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -112,17 +113,24 @@ public class JetStandardClasses {
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
                     "Tuple" + i);
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.THROW_EXCEPTION);
             for (int j = 0; j < i; j++) {
-                parameters.add(TypeParameterDescriptor.createWithDefaultBound(
+                TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createWithDefaultBound(
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
-                        true, Variance.OUT_VARIANCE, "T" + j, j));
+                        true, Variance.OUT_VARIANCE, "T" + (j + 1), j);
+                parameters.add(typeParameterDescriptor);
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, "_" + (j + 1));
+                propertyDescriptor.setType(typeParameterDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), classDescriptor.getImplicitReceiver(), ReceiverDescriptor.NO_RECEIVER);
+                propertyDescriptor.initialize(new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, true), null);
+                writableScope.addPropertyDescriptor(propertyDescriptor);
             }
+            writableScope.changeLockLevel(WritableScope.LockLevel.READING);
             TUPLE[i] = classDescriptor.initialize(
                     true,
                     parameters,
                     Collections.singleton(getAnyType()),
-                    STUB,
+                    writableScope,
                     Collections.<ConstructorDescriptor>emptySet(), // TODO
                     null); // TODO : constructor
             TUPLE_CONSTRUCTORS.add(TUPLE[i].getTypeConstructor());
@@ -303,7 +311,9 @@ public class JetStandardClasses {
         if (annotations.isEmpty() && arguments.isEmpty()) {
             return getUnitType();
         }
-        return new JetTypeImpl(annotations, getTuple(arguments.size()).getTypeConstructor(), false, toProjections(arguments), STUB);
+        ClassDescriptor tuple = getTuple(arguments.size());
+        List<TypeProjection> typeArguments = toProjections(arguments);
+        return new JetTypeImpl(annotations, tuple.getTypeConstructor(), false, typeArguments, tuple.getMemberScope(typeArguments));
     }
 
     public static JetType getTupleType(List<JetType> arguments) {

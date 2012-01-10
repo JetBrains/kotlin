@@ -1,6 +1,6 @@
 package jet;
 
-public class Tuple5<T1, T2, T3, T4, T5> extends DefaultJetObject{
+public class Tuple5<T1, T2, T3, T4, T5> extends DefaultJetObject {
     public final T1 _1;
     public final T2 _2;
     public final T3 _3;
@@ -19,6 +19,21 @@ public class Tuple5<T1, T2, T3, T4, T5> extends DefaultJetObject{
     @Override
     public String toString() {
         return "(" + _1 + ", " + _2 + ", " + _3 + ", " + _4 + ", " + _5 + ")";
+    }
+    public final T1 get_1() {
+        return _1;
+    }
+    public final T2 get_2() {
+        return _2;
+    }
+    public final T3 get_3() {
+        return _3;
+    }
+    public final T4 get_4() {
+        return _4;
+    }
+    public final T5 get_5() {
+        return _5;
     }
     @Override
     public boolean equals(Object o) {

@@ -1,0 +1,6 @@
+fun box() : String {
+  val a = #(1, "2")
+  if (a._1 != 1) return "Fail 1: ${a._1}"
+  if (a._2 != "2") return "Fail 1: ${a._2}"
+  return "OK"
+}

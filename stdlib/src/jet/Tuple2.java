@@ -14,6 +14,12 @@ public class Tuple2<T1, T2> extends DefaultJetObject {
     public String toString() {
         return "(" + _1 + ", " + _2 + ")";
     }
+    public final T1 get_1() {
+        return _1;
+    }
+    public final T2 get_2() {
+        return _2;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
