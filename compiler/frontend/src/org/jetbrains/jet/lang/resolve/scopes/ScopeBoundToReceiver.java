@@ -22,6 +22,7 @@ public class ScopeBoundToReceiver implements JetScope {
     
     private SetMultimap<String, VariableDescriptor> propertiesMap;
     private SetMultimap<String, FunctionDescriptor> functionsMap;
+    private Map<String, ClassifierDescriptor> classMap;
     private Map<DeclarationDescriptor, DeclarationDescriptor> descriptorsBoundToReceiver;
     private Function<DeclarationDescriptor, DeclarationDescriptor> addBoundToReceiverFunction;
 
@@ -38,7 +39,7 @@ public class ScopeBoundToReceiver implements JetScope {
         return receiver;
     }
 
-    public Function<DeclarationDescriptor, DeclarationDescriptor> getAddBoundToReceiverFunction() {
+    private Function<DeclarationDescriptor, DeclarationDescriptor> getAddBoundToReceiverFunction() {
         if (addBoundToReceiverFunction == null) {
             addBoundToReceiverFunction = DescriptorUtils.getAddBoundToReceiverFunction(receiver);
         }
@@ -59,6 +60,13 @@ public class ScopeBoundToReceiver implements JetScope {
         return functionsMap;
     }
     
+    private Map<String, ClassifierDescriptor> getClassMap() {
+        if (classMap == null) {
+            classMap = Maps.newHashMap();
+        }
+        return classMap;
+    }
+    
     private Map<DeclarationDescriptor, DeclarationDescriptor> getDescriptorsBoundToReceiver() {
         if (descriptorsBoundToReceiver == null) {
             descriptorsBoundToReceiver = Maps.newHashMap();
@@ -69,7 +77,12 @@ public class ScopeBoundToReceiver implements JetScope {
     @Nullable
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        return getMemberBoundToReceiver(scope.getClassifier(name));
+        if (getClassMap().containsKey(name)) {
+            return getClassMap().get(name);
+        }
+        ClassifierDescriptor result = getMemberBoundToReceiver(scope.getClassifier(name));
+        getClassMap().put(name, result);
+        return result;
     }
 
     @Nullable
@@ -95,7 +108,9 @@ public class ScopeBoundToReceiver implements JetScope {
     
     private <D extends DeclarationDescriptor> Set<D> getMembersBoundToReceiver(String name, SetMultimap<String, D> cache, Set<D> oldMembers) {
         for (D oldMember : oldMembers) {
-            cache.put(name, getMemberBoundToReceiver(oldMember));
+            D memberBoundToReceiver = getMemberBoundToReceiver(oldMember);
+            cache.put(name, memberBoundToReceiver);
+            getDescriptorsBoundToReceiver().put(oldMember, memberBoundToReceiver);
         }
         return cache.get(name);
     }
