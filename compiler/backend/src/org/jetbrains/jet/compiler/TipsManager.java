@@ -8,8 +8,10 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -42,12 +44,14 @@ public final class TipsManager {
     @NotNull
     public static Collection<DeclarationDescriptor> getReferenceVariants(JetSimpleNameExpression expression, BindingContext context) {
         PsiElement parent = expression.getParent();
-        if (parent instanceof JetQualifiedExpression) {
+
+        if (parent instanceof JetQualifiedExpression && !(parent.getParent() instanceof JetImportDirective)) {
+            // Process as call expression
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
             JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
 
-            final JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
             final JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
+            final JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
 
             if (expressionType != null && resolutionScope != null) {
                 return includeExternalCallableExtensions(
@@ -58,7 +62,12 @@ public final class TipsManager {
         else {
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
             if (resolutionScope != null) {
-                return excludeNotCallableExtensions(resolutionScope.getAllDescriptors(), resolutionScope);
+                if (parent instanceof JetImportDirective) {
+                    return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
+                }
+                else {
+                    return excludeNotCallableExtensions(resolutionScope.getAllDescriptors(), resolutionScope);
+                }
             }
         }
 
@@ -79,6 +88,16 @@ public final class TipsManager {
                 }));
 
         return Lists.newArrayList(descriptorsSet);
+    }
+    
+    private static Collection<DeclarationDescriptor> excludeNonPackageDescriptors(
+            @NotNull Collection<DeclarationDescriptor> descriptors) {
+        return Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(DeclarationDescriptor declarationDescriptor) {
+                return declarationDescriptor instanceof NamespaceDescriptor;
+            }
+        });
     }
 
     private static Collection<DeclarationDescriptor> includeExternalCallableExtensions(
