@@ -30,6 +30,10 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
         return start;
     }
 
+    public char getIteratorStart () {
+        return count == 0 ? 1 : start;
+    }
+
     public char getEnd() {
         return (char) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
     }

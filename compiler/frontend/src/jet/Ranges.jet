@@ -11,6 +11,8 @@ class IntRange(val start : Int, val size : Int) : Range<Int>, IntIterable {
 
     val end : Int
 
+    val iteratorStart : Int
+
     fun minus() : IntRange
 
     fun step(step: Int) : IntIterator
@@ -22,6 +24,8 @@ class LongRange(val start : Long, val size : Long) : Range<Long>, LongIterable {
     fun iterator () : LongIterator
 
     fun contains (elem: Long) : Boolean
+
+    val iteratorStart : Long
 
     val end : Long
 
@@ -39,6 +43,8 @@ class ByteRange(val start : Byte, val size : Int) : Range<Byte>, ByteIterable {
 
     val end : Byte
 
+    val iteratorStart : Byte
+
     fun minus() : ByteRange
 
     fun step(step: Int) : ByteIterator
@@ -50,6 +56,8 @@ class ShortRange(val start : Short, val size : Int) : Range<Short>, ShortIterabl
     fun iterator () : ShortIterator
 
     fun contains (elem: Byte) : Boolean
+
+    val iteratorStart : Short
 
     val end : Short
 
@@ -64,6 +72,8 @@ class CharRange(val start : Char, val size : Int) : Range<Char>, CharIterable {
     fun iterator () : CharIterator
 
     fun contains (elem: Char) : Boolean
+
+    val iteratorStart : Char
 
     val end : Char
 

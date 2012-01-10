@@ -536,7 +536,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 gen(expression.getLoopRange(), loopRangeType);
                 v.dup();
 
-                v.invokevirtual("jet/IntRange", "getStart", "()I");
+                v.invokevirtual("jet/IntRange", "getIteratorStart", "()I");
                 v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
                 v.invokevirtual("jet/IntRange", "getEnd", "()I");
                 v.store(myEndVar, Type.INT_TYPE);

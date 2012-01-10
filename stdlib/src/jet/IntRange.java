@@ -33,6 +33,10 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         return count < 0;
     }
 
+    public int getIteratorStart () {
+        return count == 0 ? 1 : start;
+    }
+    
     public int getStart() {
         return start;
     }
