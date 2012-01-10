@@ -93,5 +93,29 @@ public class FunctionTest extends AbstractExpressionTest {
         }
     }
 
+    @Test
+    public void implicitItParameter() throws Exception {
+        testFooBoxIsTrue("implicitItParameter.kt");
+    }
+
+    @Test
+    public void defaultParameters() throws Exception {
+        testFooBoxIsTrue("defaultParameters.kt");
+    }
+
+    @Test
+    public void functionLiteralAsLastParameter() throws Exception {
+        testFooBoxIsTrue("functionLiteralAsLastParameter.kt");
+    }
+
+    @Test
+    public void kt921() throws Exception {
+        try {
+            checkOutput("KT-921.kt", "");
+        } catch (Throwable e) {
+            System.out.println(e);
+        }
+    }
+
 
 }
