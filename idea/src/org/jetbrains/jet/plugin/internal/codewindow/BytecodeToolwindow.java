@@ -95,17 +95,19 @@ public class BytecodeToolwindow extends JPanel {
             if (endLine > startLine && location.endOffset > 0 && document.getCharsSequence().charAt(location.endOffset - 1) == '\n') endLine--;
 
             Document byteCodeDocument = myEditor.getDocument();
+            
             Pair<Integer, Integer> linesRange = mapLines(byteCodeDocument.getText(), startLine, endLine);
+            int endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.getLineCount());
 
             int startOffset = byteCodeDocument.getLineStartOffset(linesRange.first);
-            int endOffset = Math.min(byteCodeDocument.getLineStartOffset(linesRange.second + 1), byteCodeDocument.getTextLength());
+            int endOffset = Math.min(byteCodeDocument.getLineStartOffset(endSelectionLineIndex), byteCodeDocument.getTextLength());
+
             myEditor.getCaretModel().moveToOffset(endOffset);
             myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
             myEditor.getCaretModel().moveToOffset(startOffset);
             myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
 
-            myEditor.getSelectionModel().setSelection(startOffset,
-                                                      endOffset);
+            myEditor.getSelectionModel().setSelection(startOffset, endOffset);
         }
     }
 
