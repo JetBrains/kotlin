@@ -1,14 +1,14 @@
 package demo
 
 public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
+    private val myName : T?
+    private var myHasDollar : Boolean
+    private var myNullable : Boolean = true
+
     {
         $myName = myName
         $myHasDollar = myHasDollar
     }
-
-    private val myName : T?
-    private var myHasDollar : Boolean
-    private var myNullable : Boolean = true
 
     open public fun getName() : T? {
         return myName
