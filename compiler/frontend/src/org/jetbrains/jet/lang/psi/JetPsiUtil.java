@@ -128,18 +128,24 @@ public class JetPsiUtil {
         return getFQName(file.getNamespaceHeader());
     }
 
-    public static String getFQName(JetClass jetClass) {
+    public static String getFQName(JetClassOrObject jetClass) {
         PsiElement parent = jetClass.getParent();
         if (parent instanceof JetFile) {
             return makeFQName(getFQName((JetFile) parent), jetClass);
         }
-        if (parent instanceof JetClass) {
-            return makeFQName(getFQName(((JetClass) parent)), jetClass);
+        while (parent instanceof JetClassBody) {
+            parent = parent.getParent();
+            if (parent instanceof JetObjectDeclaration && parent.getParent() instanceof JetClassObject) {
+                parent = parent.getParent().getParent();
+            }
+        }
+        if (parent instanceof JetClassOrObject) {
+            return makeFQName(getFQName(((JetClassOrObject) parent)), jetClass);
         }
         return jetClass.getName();
     }
 
-    private static String makeFQName(String prefix, JetClass jetClass) {
-        return (prefix.length() == 0 ? "" : prefix + ".") + jetClass.getName();
+    private static String makeFQName(String prefix, JetClassOrObject jetClass) {
+        return ((prefix == null || prefix.length() == 0) ? "" : prefix + ".") + jetClass.getName();
     }
 }
