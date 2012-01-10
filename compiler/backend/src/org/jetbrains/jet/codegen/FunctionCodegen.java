@@ -254,7 +254,7 @@ public class FunctionCodegen {
         if(kind != OwnerKind.TRAIT_IMPL) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                 // TODO should we check params here as well?
-                checkOverride(owner, state, v, jvmSignature, functionDescriptor, overriddenFunction);
+                checkOverride(owner, state, v, jvmSignature, functionDescriptor, overriddenFunction.getOriginal());
             }
             checkOverride(owner, state, v, jvmSignature, functionDescriptor, functionDescriptor.getOriginal());
         }
@@ -412,26 +412,39 @@ public class FunctionCodegen {
         }
     }
 
+    private static boolean differentMethods(Method method, Method overriden) {
+        if(!method.getReturnType().equals(overriden.getReturnType()))
+            return true;
+        Type[] methodArgumentTypes = method.getArgumentTypes();
+        Type[] overridenArgumentTypes = overriden.getArgumentTypes();
+        if(methodArgumentTypes.length != overridenArgumentTypes.length)
+            return true;
+        for(int i = 0; i != methodArgumentTypes.length; ++i)
+            if(!methodArgumentTypes[i].equals(overridenArgumentTypes[i]))
+                return true;
+        return false;
+    }
+    
     private static void checkOverride(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
-        Type type1 = state.getTypeMapper().mapType(overriddenFunction.getOriginal().getReturnType());
-        Type type2 = state.getTypeMapper().mapType(functionDescriptor.getReturnType());
-        if(!type1.equals(type2)) {
-            Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
+        Method method = state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
+        Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
+        if(differentMethods(method, overriden)) {
             int flags = ACC_PUBLIC; // TODO.
 
             final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);
             if (v.generateCode()) {
                 mv.visitCode();
 
-                Type[] argTypes = jvmSignature.getArgumentTypes();
+                Type[] argTypes = overriden.getArgumentTypes();
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
                 for (int i = 0, reg = 1; i < argTypes.length; i++) {
                     Type argType = argTypes[i];
                     iv.load(reg, argType);
                     if(argType.getSort() == Type.OBJECT) {
-                        iv.checkcast(argType);
+                        StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(method.getArgumentTypes()[i], iv);
                     }
+
                     //noinspection AssignmentToForLoopParameter
                     reg += argType.getSize();
                 }
