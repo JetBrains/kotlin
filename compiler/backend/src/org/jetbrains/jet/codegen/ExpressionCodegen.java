@@ -2107,7 +2107,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public void generateNewArray(JetCallExpression expression, JetType arrayType) {
-        List<? extends ValueArgument> args = expression.getValueArguments();
+        List<JetExpression> args = new ArrayList<JetExpression>();
+        for(ValueArgument va : expression.getValueArguments())
+            args.add(va.getArgumentExpression());
+        args.addAll(expression.getFunctionLiteralArguments());
 
         boolean isArray = state.getStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor());
         if(isArray) {
@@ -2125,17 +2128,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             JetType elementType = typeMapper.getGenericsElementType(arrayType);
             if(elementType != null) {
                 generateTypeInfo(elementType, null);
-                gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
+                gen(args.get(0), Type.INT_TYPE);
                 v.invokevirtual("jet/TypeInfo", "newArray", "(I)[Ljava/lang/Object;");
             }
             else {
-                gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
+                gen(args.get(0), Type.INT_TYPE);
                 v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
             }
         }
         else {
             Type type = typeMapper.mapType(arrayType, OwnerKind.IMPLEMENTATION);
-            gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
+            gen(args.get(0), Type.INT_TYPE);
             v.newarray(correctElementType(type));
         }
 
@@ -2150,7 +2153,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.iconst(0);
             v.store(indexIndex, Type.INT_TYPE);
 
-            gen(args.get(1).getArgumentExpression(), TYPE_FUNCTION1);
+            gen(args.get(1), TYPE_FUNCTION1);
 
             Label begin = new Label();
             Label end = new Label();
