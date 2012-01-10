@@ -46,7 +46,7 @@ public class ImportsResolver {
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
-                importResolver.processImportReference(importDirective, namespaceScope, JetScope.EMPTY);
+                importResolver.processImportReference(importDirective, namespaceScope);
             }
         }
     }
@@ -60,7 +60,7 @@ public class ImportsResolver {
             this.firstPhase = firstPhase;
         }
 
-        public void processImportReference(JetImportDirective importDirective, WritableScope namespaceScope, JetScope outerScope) {
+        public void processImportReference(JetImportDirective importDirective, WritableScope namespaceScope) {
             if (importDirective.isAbsoluteInRootNamespace()) {
                 trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
                 return;
@@ -73,8 +73,17 @@ public class ImportsResolver {
             }
             else {
                 assert importedReference instanceof JetSimpleNameExpression;
-                JetScope scope = importDirective.isAllUnder() ? namespaceScope : outerScope;
-                descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, scope);
+
+                if (importDirective.isAllUnder()) {
+                    // Example: import java.*
+                    descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, namespaceScope);
+                }
+                else {
+                    // Example: import IDENTIFIER
+                    // Should be unresolved error
+                    descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, JetScope.EMPTY);
+                    trace.record(BindingContext.RESOLUTION_SCOPE, importedReference, namespaceScope);
+                }
             }
             JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
             if (importDirective.isAllUnder()) {
@@ -88,9 +97,7 @@ public class ImportsResolver {
                     }
                     if (descriptor instanceof VariableDescriptor) {
                         JetType type = ((VariableDescriptor) descriptor).getOutType();
-                        if (type != null) {
-                            namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, type.getMemberScope()));
-                        }
+                        namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, type.getMemberScope()));
                     }
                     else if (descriptor instanceof ClassDescriptor) {
                         namespaceScope.importScope(ScopeBoundToReceiver.create(descriptor, ((ClassDescriptor) descriptor).getDefaultType().getMemberScope()));
@@ -159,12 +166,13 @@ public class ImportsResolver {
                     return lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope());
                 }
                 if (declarationDescriptor instanceof ClassDescriptor) {
-                    return lookupObjectMembers(selector, lastReference, (ClassDescriptor) declarationDescriptor);
+                    return lookupObjectMembers(selector, (ClassDescriptor) declarationDescriptor);
                 }
                 if (declarationDescriptor instanceof VariableDescriptor) {
                     return lookupVariableMembers(selector, (VariableDescriptor) declarationDescriptor);
                 }
             }
+
             return Collections.emptyList();
         }
 
@@ -206,7 +214,8 @@ public class ImportsResolver {
         }
 
         @NotNull
-        private Collection<DeclarationDescriptor> lookupObjectMembers(@NotNull JetSimpleNameExpression memberReference, @NotNull JetSimpleNameExpression classReference, @NotNull ClassDescriptor classDescriptor) {
+        private Collection<DeclarationDescriptor> lookupObjectMembers(@NotNull JetSimpleNameExpression memberReference,
+                                                                      @NotNull ClassDescriptor classDescriptor) {
             if (firstPhase) return Collections.emptyList();
             JetType classObjectType = classDescriptor.getClassObjectType();
             assert classObjectType != null;
@@ -230,6 +239,7 @@ public class ImportsResolver {
 
         @NotNull
         private Collection<DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope outerScope) {
+
             List<DeclarationDescriptor> descriptors = Lists.newArrayList();
             String referencedName = referenceExpression.getReferencedName();
             if (referencedName != null) {
@@ -242,17 +252,21 @@ public class ImportsResolver {
                 descriptors.addAll(outerScope.getFunctions(referencedName));
 
                 descriptors.addAll(outerScope.getProperties(referencedName));
-
             }
             if (!firstPhase) {
                 if (descriptors.size() == 1) {
-                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
+                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.get(0));
                 }
                 else if (descriptors.size() > 1) {
                     trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
                 }
                 else {
                     trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
+                }
+
+                // If it's not an ambiguous case - store resolution scope
+                if (descriptors.size() <= 1 && outerScope != JetScope.EMPTY) {
+                    trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, outerScope);
                 }
             }
             return descriptors;
