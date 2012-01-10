@@ -173,6 +173,7 @@ public interface Errors {
     };
 
     PsiElementOnlyDiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Val can not be reassigned", NAME);
+    PsiElementOnlyDiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_BEFORE_DECLARATION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable cannot be initialized before declaration", NAME);
     SimplePsiElementOnlyDiagnosticFactory<JetExpression> VARIABLE_EXPECTED = new SimplePsiElementOnlyDiagnosticFactory<JetExpression>(ERROR, "Variable expected");
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER = PsiElementOnlyDiagnosticFactory1.create(ERROR, "This property has a custom setter, so initialization using backing field required", NAME);
