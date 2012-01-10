@@ -1,6 +1,6 @@
 <idea-plugin version="2">
-  <name>Jet</name>
-  <description>Jet Language support</description>
+  <name>Kotlin</name>
+  <description>Kotlin language support</description>
   <version>1.0</version>
   <vendor>JetBrains</vendor>
 
