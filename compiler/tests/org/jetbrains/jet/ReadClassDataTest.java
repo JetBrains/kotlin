@@ -282,6 +282,10 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             } else {
                 sb.append("val ");
             }
+            if (prop.getReceiverParameter().exists()) {
+                serialize(prop.getReceiverParameter().getType());
+                sb.append(".");
+            }
             sb.append(prop.getName());
             sb.append(": ");
             serialize(prop.getOutType());

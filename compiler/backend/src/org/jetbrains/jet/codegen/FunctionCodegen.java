@@ -91,17 +91,24 @@ public class FunctionCodegen {
             if(v.generateCode()) {
                 int start = 0;
                 if(kind != OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitAnnotation(JvmStdlibNames.JET_METHOD.getDescriptor(), true);
-                    if(functionDescriptor.getReturnType().isNullable()) {
-                        av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
+                    if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+                        AnnotationVisitor av = mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true);
+                        av.visitEnd();
+                    } else if (functionDescriptor instanceof NamedFunctionDescriptor) {
+                        AnnotationVisitor av = mv.visitAnnotation(JvmStdlibNames.JET_METHOD.getDescriptor(), true);
+                        if(functionDescriptor.getReturnType().isNullable()) {
+                            av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
+                        }
+                        if (jvmSignature.getKotlinReturnType() != null) {
+                            av.visit(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
+                        }
+                        if (jvmSignature.getKotlinTypeParameter() != null) {
+                            av.visit(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
+                        }
+                        av.visitEnd();
+                    } else {
+                        throw new IllegalStateException();
                     }
-                    if (jvmSignature.getKotlinReturnType() != null) {
-                        av.visit(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
-                    }
-                    if (jvmSignature.getKotlinTypeParameter() != null) {
-                        av.visit(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
-                    }
-                    av.visitEnd();
                 }
 
                 if(kind == OwnerKind.TRAIT_IMPL) {

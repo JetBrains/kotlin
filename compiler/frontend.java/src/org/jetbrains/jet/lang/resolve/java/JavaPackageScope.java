@@ -86,14 +86,6 @@ public class JavaPackageScope extends JetScopeImpl {
             return Collections.emptySet();
         }
         
-        PsiField field = psiClassForPackage.findFieldByName(name, true);
-        if (field == null) {
-            return Collections.emptySet();
-        }
-        if (!field.hasModifierProperty(PsiModifier.STATIC)) {
-            return Collections.emptySet();
-        }
-
         // TODO: cache
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(containingDescriptor, psiClassForPackage, name, true);
     }
