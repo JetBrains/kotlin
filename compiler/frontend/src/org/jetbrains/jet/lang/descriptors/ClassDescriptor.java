@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -63,4 +64,10 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor 
 
     @NotNull
     ReceiverDescriptor getImplicitReceiver();
+
+    @Nullable
+    ClassDescriptor getInnerClass(String name);
+    
+    @NotNull
+    Collection<ClassDescriptor> getInnerClasses();
 }

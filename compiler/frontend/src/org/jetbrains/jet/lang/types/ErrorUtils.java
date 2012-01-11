@@ -22,6 +22,11 @@ public class ErrorUtils {
             return ERROR_CLASS;
         }
 
+        @Override
+        public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+            return ERROR_CLASS;
+        }
+
         @NotNull
         @Override
         public Set<VariableDescriptor> getProperties(@NotNull String name) {

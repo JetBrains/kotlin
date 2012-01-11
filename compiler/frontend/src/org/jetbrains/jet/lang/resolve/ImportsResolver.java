@@ -93,6 +93,12 @@ public class ImportsResolver {
                         if (descriptor instanceof NamespaceDescriptor) {
                             namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
                         }
+                        if (descriptor instanceof ClassDescriptor && DescriptorUtils.isObjectDescriptor((ClassDescriptor) descriptor, trace)) {
+                            Collection<DeclarationDescriptor> innerClasses = getInnerClasses((ClassDescriptor) descriptor, null);
+                            for (DeclarationDescriptor innerClass : innerClasses) {
+                                namespaceScope.importClassifierAlias(innerClass.getName(), (ClassifierDescriptor) innerClass);
+                            }
+                        }
                         continue;
                     }
                     if (descriptor instanceof VariableDescriptor) {
@@ -164,15 +170,19 @@ public class ImportsResolver {
             if (lastReference == null || !canImportMembersFrom(declarationDescriptors, lastReference)) {
                 return Collections.emptyList();
             }
+            Collection<DeclarationDescriptor> result;
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                 if (declarationDescriptor instanceof NamespaceDescriptor) {
-                    return lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope());
+                    result = lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope());
+                    if (!result.isEmpty()) return result;
                 }
                 if (declarationDescriptor instanceof ClassDescriptor) {
-                    return lookupObjectMembers(selector, (ClassDescriptor) declarationDescriptor);
+                    result = lookupObjectMembers(selector, (ClassDescriptor) declarationDescriptor);
+                    if (!result.isEmpty()) return result;
                 }
                 if (declarationDescriptor instanceof VariableDescriptor) {
-                    return lookupVariableMembers(selector, (VariableDescriptor) declarationDescriptor);
+                    result = lookupVariableMembers(selector, (VariableDescriptor) declarationDescriptor);
+                    if (!result.isEmpty()) return result;
                 }
             }
 
@@ -219,11 +229,30 @@ public class ImportsResolver {
         @NotNull
         private Collection<DeclarationDescriptor> lookupObjectMembers(@NotNull JetSimpleNameExpression memberReference,
                                                                       @NotNull ClassDescriptor classDescriptor) {
+            if (DescriptorUtils.isObjectDescriptor(classDescriptor, trace)) {
+                return getInnerClasses(classDescriptor, memberReference);
+            }
             if (firstPhase) return Collections.emptyList();
             JetType classObjectType = classDescriptor.getClassObjectType();
             assert classObjectType != null;
             Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope());
             return addBoundToReceiver(members, classDescriptor);
+        }
+
+        @NotNull
+        private Collection<DeclarationDescriptor> getInnerClasses(@NotNull ClassDescriptor classDescriptor, @Nullable JetSimpleNameExpression memberReference) {
+            if (!DescriptorUtils.isObjectDescriptor(classDescriptor, trace)) return Collections.emptyList();
+            Collection<? extends DeclarationDescriptor> descriptors;
+            if (memberReference != null) {
+                ClassDescriptor innerClass = classDescriptor.getInnerClass(memberReference.getReferencedName());
+                if (innerClass == null) return Collections.emptyList();
+                descriptors = Collections.<DeclarationDescriptor>singletonList(innerClass);
+                recordReference(descriptors, memberReference, JetScope.EMPTY);
+            }
+            else {
+                descriptors = classDescriptor.getInnerClasses();
+            }
+            return addBoundToReceiver(descriptors, classDescriptor);
         }
 
         private Collection<DeclarationDescriptor> lookupVariableMembers(@NotNull JetSimpleNameExpression memberReference, @NotNull VariableDescriptor variableDescriptor) {
@@ -236,7 +265,7 @@ public class ImportsResolver {
         }
 
         @NotNull
-        public static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor receiver) {
+        public static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor receiver) {
             return Collections2.transform(descriptors, DescriptorUtils.getAddBoundToReceiverFunction(receiver));
         }
 
@@ -252,27 +281,33 @@ public class ImportsResolver {
                 ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
                 if (classifierDescriptor != null) descriptors.add(classifierDescriptor);
 
+                ClassDescriptor objectDescriptor = outerScope.getObjectDescriptor(referencedName);
+                if (objectDescriptor != null) descriptors.add(objectDescriptor);
+
                 descriptors.addAll(outerScope.getFunctions(referencedName));
 
                 descriptors.addAll(outerScope.getProperties(referencedName));
             }
-            if (!firstPhase) {
-                if (descriptors.size() == 1) {
-                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.get(0));
-                }
-                else if (descriptors.size() > 1) {
-                    trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
-                }
-                else {
-                    trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
-                }
-
-                // If it's not an ambiguous case - store resolution scope
-                if (descriptors.size() <= 1 && outerScope != JetScope.EMPTY) {
-                    trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, outerScope);
-                }
-            }
+            recordReference(descriptors, referenceExpression, outerScope);
             return descriptors;
+        }
+
+        private void recordReference(Collection<? extends DeclarationDescriptor> descriptors, JetSimpleNameExpression referenceExpression, JetScope outerScope) {
+            if (firstPhase) return;
+            if (descriptors.size() == 1) {
+                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
+            }
+            else if (descriptors.size() > 1) {
+                trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
+            }
+            else {
+                trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
+            }
+
+            // If it's not an ambiguous case - store resolution scope
+            if (descriptors.size() <= 1 && outerScope != JetScope.EMPTY) {
+                trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, outerScope);
+            }
         }
     }
 }

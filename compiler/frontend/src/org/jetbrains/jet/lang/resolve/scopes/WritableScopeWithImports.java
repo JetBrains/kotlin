@@ -148,6 +148,19 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        checkMayRead();
+
+        for (JetScope imported : getImports()) {
+            ClassDescriptor objectDescriptor = imported.getObjectDescriptor(name);
+            if (objectDescriptor != null) {
+                return objectDescriptor;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         checkMayRead();
 

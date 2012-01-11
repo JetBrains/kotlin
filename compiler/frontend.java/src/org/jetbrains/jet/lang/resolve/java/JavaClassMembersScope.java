@@ -59,6 +59,11 @@ public class JavaClassMembersScope implements JetScope {
         return classifierDescriptor;
     }
 
+    @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        return null;
+    }
+
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

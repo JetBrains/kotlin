@@ -148,4 +148,15 @@ public class ClassDescriptorBoundToReceiver implements ClassDescriptor {
     public String getName() {
         return classDescriptor.getName();
     }
+
+    @Override
+    public ClassDescriptor getInnerClass(String name) {
+        return classDescriptor.getInnerClass(name);
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getInnerClasses() {
+        return classDescriptor.getInnerClasses();
+    }
 }

@@ -240,4 +240,9 @@ public class DescriptorUtils {
         PsiElement element = bindingTrace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         return element instanceof JetObjectDeclarationName;
     }
+
+    public static boolean isObjectDescriptor(@NotNull ClassDescriptor descriptor, BindingTrace bindingTrace) {
+        PsiElement element = bindingTrace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        return element instanceof JetObjectDeclaration;
+    }
 }

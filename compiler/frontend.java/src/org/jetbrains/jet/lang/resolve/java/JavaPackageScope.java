@@ -35,6 +35,11 @@ public class JavaPackageScope extends JetScopeImpl {
     }
 
     @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        return null;
+    }
+
+    @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(name));
     }

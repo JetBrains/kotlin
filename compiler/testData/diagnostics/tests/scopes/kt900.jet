@@ -93,3 +93,38 @@ object M {
     fun foo() {}
     class R() {}
 }
+
+//FILE:d.kt
+package d
+
+//import from objects before properties resolve
+
+import A.*
+import M.R
+import M.R.bar
+import M.T
+import M.Y
+
+var r: T = T()
+val y: T = Y
+
+fun f() {
+    bar()
+    R.bar()
+    B.foo()
+}
+
+object M {
+    object R {
+        fun bar() {}
+    }
+    open class T() {}
+
+    object Y : T() {}
+}
+
+object A {
+    object B {
+        fun foo() {}
+    }
+}

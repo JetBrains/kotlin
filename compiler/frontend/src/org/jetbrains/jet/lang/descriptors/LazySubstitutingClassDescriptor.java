@@ -185,4 +185,15 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
         throw new UnsupportedOperationException(); // TODO
     }
+
+    @Override
+    public ClassDescriptor getInnerClass(String name) {
+        return original.getInnerClass(name);
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getInnerClasses() {
+        return original.getInnerClasses();
+    }
 }

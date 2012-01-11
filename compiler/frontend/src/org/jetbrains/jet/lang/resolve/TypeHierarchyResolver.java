@@ -140,6 +140,7 @@ public class TypeHierarchyResolver {
                     };
                     visitClassOrObject(declaration, (Map) context.getObjects(), mutableClassDescriptor);
                     createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
+                    owner.addObjectDescriptor(mutableClassDescriptor);
                     context.getTrace().record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
                 }

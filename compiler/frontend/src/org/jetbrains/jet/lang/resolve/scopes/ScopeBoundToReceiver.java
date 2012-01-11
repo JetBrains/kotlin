@@ -85,6 +85,11 @@ public class ScopeBoundToReceiver implements JetScope {
         return result;
     }
 
+    @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        return scope.getObjectDescriptor(name);
+    }
+
     @Nullable
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {

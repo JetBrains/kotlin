@@ -44,6 +44,11 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     }
 
     @Override
+    public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+        memberScope.addObjectDescriptor(objectDescriptor);
+    }
+
+    @Override
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
         memberScope.addFunctionDescriptor(functionDescriptor);
     }

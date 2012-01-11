@@ -9,9 +9,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -174,5 +172,16 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
             implicitReceiver = new ClassReceiver(this);
         }
         return implicitReceiver;
+    }
+
+    @Override
+    public ClassDescriptor getInnerClass(String name) {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getInnerClasses() {
+        return Collections.emptyList();
     }
 }

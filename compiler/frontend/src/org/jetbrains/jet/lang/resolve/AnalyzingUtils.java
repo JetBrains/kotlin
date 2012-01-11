@@ -117,6 +117,11 @@ public class AnalyzingUtils {
             }
 
             @Override
+            public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+
+            }
+
+            @Override
             public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
                 scope.addFunctionDescriptor(functionDescriptor);
             }

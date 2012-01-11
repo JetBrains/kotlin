@@ -134,6 +134,11 @@ public class TopDownAnalyzer {
             }
 
             @Override
+            public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+
+            }
+
+            @Override
             public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
                 throw new UnsupportedOperationException();
             }

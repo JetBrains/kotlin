@@ -42,6 +42,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Nullable
     private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
+    
+    @Nullable
+    private Map<String, ClassDescriptor> objectDescriptors;
 
     @Nullable
     private ReceiverDescriptor implicitReceiver;
@@ -117,6 +120,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             labelsToDescriptors = new HashMap<String, List<DeclarationDescriptor>>();
         }
         return labelsToDescriptors;
+    }
+
+    @NotNull
+    public Map<String, ClassDescriptor> getObjectDescriptors() {
+        if (objectDescriptors == null) {
+            objectDescriptors = Maps.newHashMap();
+        }
+        return objectDescriptors;
     }
 
     @NotNull
@@ -278,6 +289,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
+    public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
+        checkMayWrite();
+        
+        getObjectDescriptors().put(objectDescriptor.getName(), objectDescriptor);
+    }
+
+    @Override
     public void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
@@ -344,6 +362,11 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         if (classifierDescriptor != null) return classifierDescriptor;
 
         return super.getClassifier(name);
+    }
+
+    @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        return getObjectDescriptors().get(name);
     }
 
     @Override

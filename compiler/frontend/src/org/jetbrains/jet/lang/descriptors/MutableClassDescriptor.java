@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
     private Collection<JetType> supertypes = Lists.newArrayList();
+    private Map<String, ClassDescriptor> innerClasses = Maps.newHashMap();
 
     private Modality modality;
     private Visibility visibility;
@@ -186,6 +188,22 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
         scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
+        innerClasses.put(classDescriptor.getName(), classDescriptor);
+    }
+
+    @Nullable
+    public ClassDescriptor getInnerClass(String name) {
+        return innerClasses.get(name);
+    }
+    
+    @NotNull
+    public Collection<ClassDescriptor> getInnerClasses() {
+        return innerClasses.values();
+    }
+
+    @Override
+    public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+        scopeForMemberLookup.addObjectDescriptor(objectDescriptor);
     }
 
     public void addSupertype(@NotNull JetType supertype) {
