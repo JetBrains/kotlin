@@ -637,17 +637,20 @@ public class JavaDescriptorResolver {
             PsiParameter[] parameters, TypeVariableResolver typeVariableResolver) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         JetType receiverType = null;
+        int indexDelta = 0;
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
-            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i, parameter, typeVariableResolver);
+            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
             if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
                 // TODO
+                --indexDelta;
             } else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
                 result.add(meaning.valueParameterDescriptor);
             } else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
                 if (receiverType != null) {
                     throw new IllegalStateException("more then one receiver");
                 }
+                --indexDelta;
                 receiverType = meaning.receiverType;
             }
         }

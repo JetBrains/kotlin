@@ -288,6 +288,9 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
 
         public void serialize(ValueParameterDescriptor valueParameter) {
+            sb.append("/*");
+            sb.append(valueParameter.getIndex());
+            sb.append("*/ ");
             if (valueParameter.getVarargElementType() != null) {
                 sb.append("vararg ");
             }
