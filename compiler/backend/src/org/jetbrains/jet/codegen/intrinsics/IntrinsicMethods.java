@@ -9,9 +9,11 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
@@ -118,55 +120,25 @@ public class IntrinsicMethods {
     }
 
     private void declareArrayMethods() {
+
+        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+            declareArrayMethodsForPrimitive(jvmPrimitiveType);
+        }
+
         declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("ByteArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("ShortArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("IntArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("LongArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("FloatArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("DoubleArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("CharArray", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("BooleanArray", "size", ARRAY_SIZE);
-
         declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("ByteArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("ShortArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("IntArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("LongArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("FloatArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("DoubleArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("CharArray", "indices", ARRAY_INDICES);
-        declareIntrinsicProperty("BooleanArray", "indices", ARRAY_INDICES);
-
         declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("ByteArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("ShortArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("IntArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("LongArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("FloatArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("DoubleArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("CharArray", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("BooleanArray", "set", 2, ARRAY_SET);
-
         declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("ByteArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("ShortArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("IntArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("LongArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("FloatArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("DoubleArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("CharArray", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("BooleanArray", "get", 1, ARRAY_GET);
-
         declareIterator(myStdLib.getArray());
-        declareIterator(myStdLib.getByteArrayClass());
-        declareIterator(myStdLib.getShortArrayClass());
-        declareIterator(myStdLib.getIntArrayClass());
-        declareIterator(myStdLib.getLongArrayClass());
-        declareIterator(myStdLib.getFloatArrayClass());
-        declareIterator(myStdLib.getDoubleArrayClass());
-        declareIterator(myStdLib.getCharArrayClass());
-        declareIterator(myStdLib.getBooleanArrayClass());
+    }
+
+    private void declareArrayMethodsForPrimitive(JvmPrimitiveType jvmPrimitiveType) {
+        PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+        declareIntrinsicProperty(primitiveType.getArrayTypeName(), "size", ARRAY_SIZE);
+        declareIntrinsicProperty(primitiveType.getArrayTypeName(), "indices", ARRAY_INDICES);
+        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "set", 2, ARRAY_SET);
+        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "get", 1, ARRAY_GET);
+        declareIterator(myStdLib.getPrimitiveArrayClassDescriptor(primitiveType));
     }
 
     private void declareIterator(ClassDescriptor classDescriptor) {

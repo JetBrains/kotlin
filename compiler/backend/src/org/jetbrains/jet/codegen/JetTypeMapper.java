@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -35,27 +36,11 @@ public class JetTypeMapper {
     public static final Type TYPE_TYPEINFOPROJECTION = Type.getType(TypeInfoProjection.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
-    public static final Type JL_INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
-    public static final Type JL_LONG_TYPE = Type.getObjectType("java/lang/Long");
-    public static final Type JL_SHORT_TYPE = Type.getObjectType("java/lang/Short");
-    public static final Type JL_BYTE_TYPE = Type.getObjectType("java/lang/Byte");
-    public static final Type JL_CHAR_TYPE = Type.getObjectType("java/lang/Character");
-    public static final Type JL_FLOAT_TYPE = Type.getObjectType("java/lang/Float");
-    public static final Type JL_DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
-    public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
 
-    public static final Type ARRAY_INT_TYPE = Type.getType(int[].class);
-    public static final Type ARRAY_LONG_TYPE = Type.getType(long[].class);
-    public static final Type ARRAY_SHORT_TYPE = Type.getType(short[].class);
-    public static final Type ARRAY_BYTE_TYPE = Type.getType(byte[].class);
-    public static final Type ARRAY_CHAR_TYPE = Type.getType(char[].class);
-    public static final Type ARRAY_FLOAT_TYPE = Type.getType(float[].class);
-    public static final Type ARRAY_DOUBLE_TYPE = Type.getType(double[].class);
-    public static final Type ARRAY_BOOL_TYPE = Type.getType(boolean[].class);
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
 
     private final JetStandardLibrary standardLibrary;
@@ -77,14 +62,6 @@ public class JetTypeMapper {
     public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/runtime/SharedVar$Char");
     public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/runtime/SharedVar$Long");
     public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
-    public static final Type TYPE_BOOLEAN_ITERATOR = Type.getObjectType("jet/BooleanIterator");
-    public static final Type TYPE_CHAR_ITERATOR = Type.getObjectType("jet/CharIterator");
-    public static final Type TYPE_BYTE_ITERATOR = Type.getObjectType("jet/ByteIterator");
-    public static final Type TYPE_SHORT_ITERATOR = Type.getObjectType("jet/ShortIterator");
-    public static final Type TYPE_INT_ITERATOR = Type.getObjectType("jet/IntIterator");
-    public static final Type TYPE_LONG_ITERATOR = Type.getObjectType("jet/LongIterator");
-    public static final Type TYPE_FLOAT_ITERATOR = Type.getObjectType("jet/FloatIterator");
-    public static final Type TYPE_DOUBLE_ITERATOR = Type.getObjectType("jet/DoubleIterator");
     public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
@@ -105,28 +82,6 @@ public class JetTypeMapper {
 
     public static boolean isPrimitive(Type type) {
         return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
-    }
-
-    public static Type getBoxedType(final Type type) {
-        switch (type.getSort()) {
-            case Type.BYTE:
-                return JL_BYTE_TYPE;
-            case Type.BOOLEAN:
-                return JL_BOOLEAN_TYPE;
-            case Type.SHORT:
-                return JL_SHORT_TYPE;
-            case Type.CHAR:
-                return JL_CHAR_TYPE;
-            case Type.INT:
-                return JL_INTEGER_TYPE;
-            case Type.FLOAT:
-                return JL_FLOAT_TYPE;
-            case Type.LONG:
-                return JL_LONG_TYPE;
-            case Type.DOUBLE:
-                return JL_DOUBLE_TYPE;
-        }
-        return type;
     }
 
     public static Type correctElementType(Type type) {
@@ -378,56 +333,21 @@ public class JetTypeMapper {
     }
 
     public static Type unboxType(final Type type) {
-        if (type == JL_INTEGER_TYPE) {
-            return Type.INT_TYPE;
+        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
+        if (jvmPrimitiveType != null) {
+            return jvmPrimitiveType.getAsmType();
+        } else {
+            throw new UnsupportedOperationException("Unboxing: " + type);
         }
-        else if (type == JL_BOOLEAN_TYPE) {
-            return Type.BOOLEAN_TYPE;
-        }
-        else if (type == JL_CHAR_TYPE) {
-            return Type.CHAR_TYPE;
-        }
-        else if (type == JL_SHORT_TYPE) {
-            return Type.SHORT_TYPE;
-        }
-        else if (type == JL_LONG_TYPE) {
-            return Type.LONG_TYPE;
-        }
-        else if (type == JL_BYTE_TYPE) {
-            return Type.BYTE_TYPE;
-        }
-        else if (type == JL_FLOAT_TYPE) {
-            return Type.FLOAT_TYPE;
-        }
-        else if (type == JL_DOUBLE_TYPE) {
-            return Type.DOUBLE_TYPE;
-        }
-        throw new UnsupportedOperationException("Unboxing: " + type);
     }
 
     public static Type boxType(Type asmType) {
-        switch (asmType.getSort()) {
-            case Type.VOID:
-                return Type.VOID_TYPE;
-            case Type.BYTE:
-                return JL_BYTE_TYPE;
-            case Type.BOOLEAN:
-                return JL_BOOLEAN_TYPE;
-            case Type.SHORT:
-                return JL_SHORT_TYPE;
-            case Type.CHAR:
-                return JL_CHAR_TYPE;
-            case Type.INT:
-                return JL_INTEGER_TYPE;
-            case Type.FLOAT:
-                return JL_FLOAT_TYPE;
-            case Type.LONG:
-                return JL_LONG_TYPE;
-            case Type.DOUBLE:
-                return JL_DOUBLE_TYPE;
+        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByAsmType(asmType);
+        if (jvmPrimitiveType != null) {
+            return jvmPrimitiveType.getWrapper().getAsmType();
+        } else {
+            return asmType;
         }
-
-        return asmType;
     }
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
@@ -802,85 +722,39 @@ public class JetTypeMapper {
     private void initKnownTypeNames() {
         knowTypeNames.put(JetStandardClasses.getAnyType(), "ANY_TYPE_INFO");
         knowTypeNames.put(JetStandardClasses.getNullableAnyType(), "NULLABLE_ANY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getIntType(), "INT_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableIntType(), "NULLABLE_INT_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getLongType(), "LONG_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableLongType(), "NULLABLE_LONG_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getShortType(),"SHORT_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableShortType(),"NULLABLE_SHORT_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getByteType(),"BYTE_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableByteType(),"NULLABLE_BYTE_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getCharType(),"CHAR_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableCharType(),"NULLABLE_CHAR_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getFloatType(),"FLOAT_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableFloatType(),"NULLABLE_FLOAT_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getDoubleType(),"DOUBLE_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableDoubleType(),"NULLABLE_DOUBLE_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getBooleanType(),"BOOLEAN_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableBooleanType(),"NULLABLE_BOOLEAN_TYPE_INFO");
+        
+        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+            knowTypeNames.put(standardLibrary.getPrimitiveJetType(primitiveType), jvmPrimitiveType.name() + "_TYPE_INFO");
+            knowTypeNames.put(standardLibrary.getNullablePrimitiveJetType(primitiveType), "NULLABLE_" + jvmPrimitiveType.name() + "_TYPE_INFO");
+            knowTypeNames.put(standardLibrary.getPrimitiveArrayJetType(primitiveType), jvmPrimitiveType.name() + "_ARRAY_TYPE_INFO");
+            knowTypeNames.put(standardLibrary.getNullablePrimitiveArrayJetType(primitiveType), jvmPrimitiveType.name() + "_ARRAY_TYPE_INFO");
+        }
+        
         knowTypeNames.put(standardLibrary.getStringType(),"STRING_TYPE_INFO");
         knowTypeNames.put(standardLibrary.getNullableStringType(),"NULLABLE_STRING_TYPE_INFO");
         knowTypeNames.put(standardLibrary.getTuple0Type(),"TUPLE0_TYPE_INFO");
         knowTypeNames.put(standardLibrary.getNullableTuple0Type(),"NULLABLE_TUPLE0_TYPE_INFO");
-
-        knowTypeNames.put(standardLibrary.getIntArrayType(), "INT_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getLongArrayType(), "LONG_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getShortArrayType(),"SHORT_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getByteArrayType(),"BYTE_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getCharArrayType(),"CHAR_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getFloatArrayType(),"FLOAT_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getDoubleArrayType(),"DOUBLE_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getBooleanArrayType(),"BOOLEAN_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableIntArrayType(), "INT_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableLongArrayType(), "LONG_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableShortArrayType(),"SHORT_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableByteArrayType(),"BYTE_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableCharArrayType(),"CHAR_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableFloatArrayType(),"FLOAT_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableDoubleArrayType(),"DOUBLE_ARRAY_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableBooleanArrayType(),"BOOLEAN_ARRAY_TYPE_INFO");
     }
 
     private void initKnownTypes() {
         knowTypes.put(JetStandardClasses.getNothingType(), TYPE_NOTHING);
         knowTypes.put(JetStandardClasses.getNullableNothingType(), TYPE_NOTHING);
-
-        knowTypes.put(standardLibrary.getIntType(), Type.INT_TYPE);
-        knowTypes.put(standardLibrary.getNullableIntType(), JL_INTEGER_TYPE);
-        knowTypes.put(standardLibrary.getLongType(), Type.LONG_TYPE);
-        knowTypes.put(standardLibrary.getNullableLongType(), JL_LONG_TYPE);
-        knowTypes.put(standardLibrary.getShortType(),Type.SHORT_TYPE);
-        knowTypes.put(standardLibrary.getNullableShortType(),JL_SHORT_TYPE);
-        knowTypes.put(standardLibrary.getByteType(),Type.BYTE_TYPE);
-        knowTypes.put(standardLibrary.getNullableByteType(),JL_BYTE_TYPE);
-        knowTypes.put(standardLibrary.getCharType(),Type.CHAR_TYPE);
-        knowTypes.put(standardLibrary.getNullableCharType(),JL_CHAR_TYPE);
-        knowTypes.put(standardLibrary.getFloatType(),Type.FLOAT_TYPE);
-        knowTypes.put(standardLibrary.getNullableFloatType(),JL_FLOAT_TYPE);
-        knowTypes.put(standardLibrary.getDoubleType(),Type.DOUBLE_TYPE);
-        knowTypes.put(standardLibrary.getNullableDoubleType(),JL_DOUBLE_TYPE);
-        knowTypes.put(standardLibrary.getBooleanType(),Type.BOOLEAN_TYPE);
-        knowTypes.put(standardLibrary.getNullableBooleanType(),JL_BOOLEAN_TYPE);
+        
+        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+            knowTypes.put(standardLibrary.getPrimitiveJetType(primitiveType), jvmPrimitiveType.getAsmType());
+            knowTypes.put(standardLibrary.getNullablePrimitiveJetType(primitiveType), jvmPrimitiveType.getWrapper().getAsmType());
+        }
 
         knowTypes.put(standardLibrary.getStringType(),JL_STRING_TYPE);
         knowTypes.put(standardLibrary.getNullableStringType(),JL_STRING_TYPE);
 
-        knowTypes.put(standardLibrary.getIntArrayType(), ARRAY_INT_TYPE);
-        knowTypes.put(standardLibrary.getLongArrayType(), ARRAY_LONG_TYPE);
-        knowTypes.put(standardLibrary.getShortArrayType(),ARRAY_SHORT_TYPE);
-        knowTypes.put(standardLibrary.getByteArrayType(),ARRAY_BYTE_TYPE);
-        knowTypes.put(standardLibrary.getCharArrayType(),ARRAY_CHAR_TYPE);
-        knowTypes.put(standardLibrary.getFloatArrayType(),ARRAY_FLOAT_TYPE);
-        knowTypes.put(standardLibrary.getDoubleArrayType(),ARRAY_DOUBLE_TYPE);
-        knowTypes.put(standardLibrary.getBooleanArrayType(),ARRAY_BOOL_TYPE);
-        knowTypes.put(standardLibrary.getNullableIntArrayType(), ARRAY_INT_TYPE);
-        knowTypes.put(standardLibrary.getNullableLongArrayType(), ARRAY_LONG_TYPE);
-        knowTypes.put(standardLibrary.getNullableShortArrayType(),ARRAY_SHORT_TYPE);
-        knowTypes.put(standardLibrary.getNullableByteArrayType(),ARRAY_BYTE_TYPE);
-        knowTypes.put(standardLibrary.getNullableCharArrayType(),ARRAY_CHAR_TYPE);
-        knowTypes.put(standardLibrary.getNullableFloatArrayType(),ARRAY_FLOAT_TYPE);
-        knowTypes.put(standardLibrary.getNullableDoubleArrayType(),ARRAY_DOUBLE_TYPE);
-        knowTypes.put(standardLibrary.getNullableBooleanArrayType(),ARRAY_BOOL_TYPE);
+        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+            knowTypes.put(standardLibrary.getPrimitiveArrayJetType(primitiveType), jvmPrimitiveType.getAsmArrayType());
+            knowTypes.put(standardLibrary.getNullablePrimitiveArrayJetType(primitiveType), jvmPrimitiveType.getAsmArrayType());
+        }
     }
 
     public String isKnownTypeInfo(JetType jetType) {

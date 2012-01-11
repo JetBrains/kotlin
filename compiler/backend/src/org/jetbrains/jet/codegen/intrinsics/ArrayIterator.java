@@ -10,7 +10,9 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -31,40 +33,16 @@ public class ArrayIterator implements IntrinsicMethod {
             codegen.generateTypeInfo(funDescriptor.getReturnType().getArguments().get(0).getType(), null);
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;Ljet/TypeInfo;)Ljet/Iterator;");
             return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getByteArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([B)Ljet/ByteIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_BYTE_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getShortArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([S)Ljet/ShortIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_SHORT_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getIntArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([I)Ljet/IntIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_INT_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getLongArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([J)Ljet/LongIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_LONG_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getFloatArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([F)Ljet/FloatIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_FLOAT_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getDoubleArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([D)Ljet/DoubleIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_DOUBLE_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getCharArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([C)Ljet/CharIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_CHAR_ITERATOR);
-        }
-        else if(containingDeclaration.equals(standardLibrary.getBooleanArrayClass())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Z)Ljet/BooleanIterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_BOOLEAN_ITERATOR);
-        }
-        else {
+        } else {
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+                ClassDescriptor arrayClass = standardLibrary.getPrimitiveArrayClassDescriptor(primitiveType);
+                if (containingDeclaration.equals(arrayClass)) {
+                    String methodSignature = "([" + jvmPrimitiveType.getJvmLetter() + ")" + jvmPrimitiveType.getIterator().getDescriptor();
+                    v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
+                    return StackValue.onStack(jvmPrimitiveType.getIterator().getAsmType());
+                }
+            }
             throw new UnsupportedOperationException(containingDeclaration.toString());
         }
     }

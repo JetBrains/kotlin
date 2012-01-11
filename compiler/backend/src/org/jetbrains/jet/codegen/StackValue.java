@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -36,7 +37,7 @@ public abstract class StackValue {
         if (type == Type.VOID_TYPE) {
             instructionAdapter.aconst(null);
         } else {
-            Type boxed = JetTypeMapper.getBoxedType(type);
+            Type boxed = JetTypeMapper.boxType(type);
             instructionAdapter.invokestatic(boxed.getInternalName(), "valueOf", "(" + type.getDescriptor() + ")" + boxed.getDescriptor());
         }
     }
@@ -209,10 +210,10 @@ public abstract class StackValue {
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
             if (this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
                 if (type.getSort() == Type.BOOLEAN) {
-                    v.checkcast(JetTypeMapper.JL_BOOLEAN_TYPE);
+                    v.checkcast(JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType());
                 }
                 else if (type.getSort() == Type.CHAR) {
-                    v.checkcast(JetTypeMapper.JL_CHAR_TYPE);
+                    v.checkcast(JvmPrimitiveType.CHAR.getWrapper().getAsmType());
                 }
                 else {
                     v.checkcast(JetTypeMapper.JL_NUMBER_TYPE);

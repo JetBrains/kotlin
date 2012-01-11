@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.Type;
 
 /**
  * @author Stepan Koltsov
@@ -38,5 +39,14 @@ public class JvmClassName {
             descriptor = sb.toString();
         }
         return descriptor;
+    }
+    
+    private Type asmType;
+    
+    public Type getAsmType() {
+        if (asmType == null) {
+            asmType = Type.getType(getDescriptor());
+        }
+        return asmType;
     }
 }

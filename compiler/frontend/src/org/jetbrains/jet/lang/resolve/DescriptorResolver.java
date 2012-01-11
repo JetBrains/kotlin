@@ -276,31 +276,12 @@ public class DescriptorResolver {
 
     private JetType getVarargParameterType(JetType type) {
         JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
-        if (type.equals(standardLibrary.getByteType())) {
-            return standardLibrary.getByteArrayType();
+        JetType arrayType = standardLibrary.getPrimitiveArrayJetTypeByPrimitiveJetType(type);
+        if (arrayType != null) {
+            return arrayType;
+        } else {
+            return standardLibrary.getArrayType(type);
         }
-        if (type.equals(standardLibrary.getCharType())) {
-            return standardLibrary.getCharArrayType();
-        }
-        if (type.equals(standardLibrary.getShortType())) {
-            return standardLibrary.getShortArrayType();
-        }
-        if (type.equals(standardLibrary.getIntType())) {
-            return standardLibrary.getIntArrayType();
-        }
-        if (type.equals(standardLibrary.getLongType())) {
-            return standardLibrary.getLongArrayType();
-        }
-        if (type.equals(standardLibrary.getFloatType())) {
-            return standardLibrary.getFloatArrayType();
-        }
-        if (type.equals(standardLibrary.getDoubleType())) {
-            return standardLibrary.getDoubleArrayType();
-        }
-        if (type.equals(standardLibrary.getBooleanType())) {
-            return standardLibrary.getBooleanArrayType();
-        }
-        return standardLibrary.getArrayType(type);
     }
 
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
