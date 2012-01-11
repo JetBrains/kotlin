@@ -177,8 +177,7 @@ public class ImportClassFix extends JetHintAction<JetSimpleNameExpression> imple
             @Nullable
             @Override
             public JetIntentionAction<JetSimpleNameExpression> createAction(@NotNull DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetSimpleNameExpression;
-
+                // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
                 if (diagnostic.getPsiElement() instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression psiElement = (JetSimpleNameExpression) diagnostic.getPsiElement();
                     return new ImportClassFix(psiElement);

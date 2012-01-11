@@ -123,6 +123,11 @@ public class JetPsiChecker implements Annotator {
             catch (ProcessCanceledException e) {
                 throw e;
             }
+            catch (AssertionError e) {
+                // For failing tests and to notify about idea internal error in -ea mode
+                holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
+                throw e;
+            }
             catch (Throwable e) {
                 // TODO
                 holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
