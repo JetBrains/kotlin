@@ -64,7 +64,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (element instanceof JetNamedFunction) {
             JetNamedFunction jetFunction = (JetNamedFunction) element;
 
-            final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, jetFunction);
+            final NamedFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, jetFunction);
             if (functionDescriptor == null) return null;
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
             Icon icon = isMember(functionDescriptor) ? (overriddenFunctions.isEmpty() ? PlatformIcons.METHOD_ICON : OVERRIDING_FUNCTION) : PlatformIcons.FUNCTION_ICON;
@@ -182,7 +182,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         );
     }
 
-    private boolean isMember(@NotNull FunctionDescriptor functionDescriptor) {
+    private boolean isMember(@NotNull NamedFunctionDescriptor functionDescriptor) {
         return functionDescriptor.getContainingDeclaration().getOriginal() instanceof ClassifierDescriptor;
     }
 

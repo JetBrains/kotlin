@@ -126,7 +126,7 @@ public class ErrorUtils {
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
-        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");
+        FunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");
         return functionDescriptor.initialize(
                 null,
                 ReceiverDescriptor.NO_RECEIVER,
@@ -139,7 +139,7 @@ public class ErrorUtils {
     }
 
     public static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
-        return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>").initialize(
+        return new NamedFunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>").initialize(
                 null,
                 ReceiverDescriptor.NO_RECEIVER,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO

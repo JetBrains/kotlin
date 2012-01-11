@@ -1112,7 +1112,7 @@ public class JavaDescriptorResolver {
             return null;
         }
         PsiParameter[] parameters = method.getParameterList().getParameters();
-        FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
+        NamedFunctionDescriptorImpl functionDescriptorImpl = new NamedFunctionDescriptorImpl(
                 owner,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 method.getName()

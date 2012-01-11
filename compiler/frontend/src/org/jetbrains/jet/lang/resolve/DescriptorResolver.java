@@ -139,8 +139,8 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
-        final FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
+    public NamedFunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
+        final NamedFunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(
                 containingDescriptor,
                 annotationResolver.resolveAnnotations(scope, function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())

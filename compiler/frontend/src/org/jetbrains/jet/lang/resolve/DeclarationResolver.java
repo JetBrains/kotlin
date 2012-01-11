@@ -103,7 +103,7 @@ public class DeclarationResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
-                    FunctionDescriptorImpl functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(namespaceLike, scopeForFunctions, function);
+                    NamedFunctionDescriptor functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(namespaceLike, scopeForFunctions, function);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.getDeclaringScopes().put(function, scopeForFunctions);

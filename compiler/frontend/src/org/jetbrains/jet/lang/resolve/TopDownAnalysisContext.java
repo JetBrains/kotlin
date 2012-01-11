@@ -34,7 +34,7 @@ import java.util.Set;
     protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
-    private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
+    private final Map<JetNamedFunction, NamedFunctionDescriptor> functions = Maps.newLinkedHashMap();
     private final Map<JetSecondaryConstructor, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
@@ -138,7 +138,7 @@ import java.util.Set;
         return declaringScopes;
     }
 
-    public Map<JetNamedFunction, FunctionDescriptorImpl> getFunctions() {
+    public Map<JetNamedFunction, NamedFunctionDescriptor> getFunctions() {
         return functions;
     }
 

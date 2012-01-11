@@ -18,4 +18,15 @@ public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
     public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, String name) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name);
     }
+
+    @Override
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
+        throw new IllegalStateException();
+    }
+
+    @NotNull
+    @Override
+    public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+        throw new IllegalStateException();
+    }
 }

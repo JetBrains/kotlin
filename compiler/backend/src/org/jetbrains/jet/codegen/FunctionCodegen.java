@@ -40,7 +40,7 @@ public class FunctionCodegen {
     }
 
     public void gen(JetNamedFunction f) {
-        final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
+        final NamedFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
         generateMethod(f, method, functionDescriptor);

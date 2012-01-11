@@ -22,20 +22,20 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
+public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
 
-    private List<TypeParameterDescriptor> typeParameters;
-    private List<ValueParameterDescriptor> unsubstitutedValueParameters;
-    private JetType unsubstitutedReturnType;
+    protected List<TypeParameterDescriptor> typeParameters;
+    protected List<ValueParameterDescriptor> unsubstitutedValueParameters;
+    protected JetType unsubstitutedReturnType;
     private ReceiverDescriptor receiver;
-    private ReceiverDescriptor expectedThisObject;
+    protected ReceiverDescriptor expectedThisObject;
 
-    private Modality modality;
-    private Visibility visibility;
+    protected Modality modality;
+    protected Visibility visibility;
     private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
     private final FunctionDescriptor original;
 
-    public FunctionDescriptorImpl(
+    protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name) {
@@ -43,7 +43,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.original = this;
     }
 
-    public FunctionDescriptorImpl(
+    protected FunctionDescriptorImpl(
             @NotNull FunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name) {
@@ -182,32 +182,11 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return substitutedDescriptor;
     }
 
-    protected FunctionDescriptorImpl createSubstitutedCopy() {
-        return new FunctionDescriptorImpl(
-                this,
-                // TODO : safeSubstitute
-                getAnnotations(),
-                getName());
-    }
+    protected abstract FunctionDescriptorImpl createSubstitutedCopy();
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionDescriptor(this, data);
     }
 
-    @NotNull
-    @Override
-    public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
-        FunctionDescriptorImpl copy = new FunctionDescriptorImpl(newOwner, Lists.newArrayList(getAnnotations()), getName());
-        copy.initialize(
-                getReceiverParameter().exists() ? getReceiverParameter().getType() : null,
-                expectedThisObject,
-                DescriptorUtils.copyTypeParameters(copy, typeParameters),
-                DescriptorUtils.copyValueParameters(copy, unsubstitutedValueParameters),
-                unsubstitutedReturnType,
-                DescriptorUtils.convertModality(modality, makeNonAbstract),
-                visibility
-        );
-        return copy;
-    }
 }

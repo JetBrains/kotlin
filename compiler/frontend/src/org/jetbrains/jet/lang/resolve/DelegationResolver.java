@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -49,10 +50,10 @@ public class DelegationResolver {
                                 context.getTrace().record(DELEGATED, copy);
                             }
                         }
-                        else if (declarationDescriptor instanceof FunctionDescriptor) {
-                            FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
+                        else if (declarationDescriptor instanceof NamedFunctionDescriptor) {
+                            NamedFunctionDescriptor functionDescriptor = (NamedFunctionDescriptor) declarationDescriptor;
                             if (functionDescriptor.getModality().isOverridable()) {
-                                FunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true);
+                                NamedFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true);
                                 classDescriptor.addFunctionDescriptor(copy);
                                 context.getTrace().record(DELEGATED, copy);
                             }

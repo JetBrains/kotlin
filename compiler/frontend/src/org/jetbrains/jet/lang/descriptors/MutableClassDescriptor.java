@@ -27,7 +27,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private final Set<CallableMemberDescriptor> callableMembers = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
-    private final Set<FunctionDescriptor> functions = Sets.newHashSet();
+    private final Set<NamedFunctionDescriptor> functions = Sets.newHashSet();
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
     private Collection<JetType> supertypes = Lists.newArrayList();
     private Map<String, ClassDescriptor> innerClasses = Maps.newHashMap();
@@ -152,7 +152,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
     @Override
-    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+    public void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor) {
         functions.add(functionDescriptor);
         callableMembers.add(functionDescriptor);
         scopeForMemberLookup.addFunctionDescriptor(functionDescriptor);
@@ -160,7 +160,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
     @NotNull
-    public Set<FunctionDescriptor> getFunctions() {
+    public Set<NamedFunctionDescriptor> getFunctions() {
         return functions;
     }
 
