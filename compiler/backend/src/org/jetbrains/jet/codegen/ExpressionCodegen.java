@@ -1864,12 +1864,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void callAugAssignMethod(JetBinaryExpression expression, CallableMethod callable, Type lhsType, final boolean keepReturnValue) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+        assert resolvedCall != null;
+
         StackValue value = gen(expression.getLeft());
         if (keepReturnValue) {
             value.dupReceiver(v);
         }
         value.put(lhsType, v);
-        genToJVMStack(expression.getRight());
+        StackValue receiver = StackValue.onStack(lhsType);
+
+        if(!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
+            receiver = StackValue.receiver(resolvedCall, receiver, this, callable);
+            receiver.put(receiver.type, v);
+        }
+
+        pushTypeArguments(resolvedCall);
+        pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
         callable.invoke(v);
         if (keepReturnValue) {
             value.store(v);

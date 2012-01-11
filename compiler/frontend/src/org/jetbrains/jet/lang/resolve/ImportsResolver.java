@@ -69,22 +69,20 @@ public class ImportsResolver {
             if (importedReference == null) return;
             Collection<DeclarationDescriptor> descriptors;
             if (importedReference instanceof JetQualifiedExpression) {
-                descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) importedReference, namespaceScope);
+                descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) importedReference,
+                                                                      namespaceScope, !importDirective.isAllUnder());
             }
             else {
                 assert importedReference instanceof JetSimpleNameExpression;
 
-                if (importDirective.isAllUnder()) {
-                    // Example: import java.*
-                    descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, namespaceScope);
-                }
-                else {
-                    // Example: import IDENTIFIER
-                    // Should be unresolved error
-                    descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, JetScope.EMPTY);
-                    trace.record(BindingContext.RESOLUTION_SCOPE, importedReference, namespaceScope);
-                }
+                // for "import java.*" there's should be a correct resolving
+                // but for "import SomeClass" we want to get unresolved error, even if SomeClass descriptor exist in outer scope
+                JetScope resolveScope = importDirective.isAllUnder() ? namespaceScope : JetScope.EMPTY;
+
+                descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference,
+                                                                      resolveScope, namespaceScope, !importDirective.isAllUnder());
             }
+
             JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
             if (importDirective.isAllUnder()) {
                 if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression)) return;
@@ -153,16 +151,19 @@ public class ImportsResolver {
         }
 
         @NotNull
-        private Collection<DeclarationDescriptor> lookupDescriptorsForQualifiedExpression(@NotNull JetQualifiedExpression importedReference, @NotNull JetScope outerScope) {
+        private Collection<DeclarationDescriptor> lookupDescriptorsForQualifiedExpression(
+                @NotNull JetQualifiedExpression importedReference, @NotNull JetScope outerScope, boolean isForLastPart) {
+
             JetExpression receiverExpression = importedReference.getReceiverExpression();
             Collection<DeclarationDescriptor> declarationDescriptors;
             if (receiverExpression instanceof JetQualifiedExpression) {
-                declarationDescriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) receiverExpression, outerScope);
+                declarationDescriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) receiverExpression, outerScope, false);
             }
             else {
                 assert receiverExpression instanceof JetSimpleNameExpression;
-                declarationDescriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) receiverExpression, outerScope);
+                declarationDescriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) receiverExpression, outerScope, false);
             }
+
             JetExpression selectorExpression = importedReference.getSelectorExpression();
             assert selectorExpression instanceof JetSimpleNameExpression;
             JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
@@ -173,7 +174,7 @@ public class ImportsResolver {
             Collection<DeclarationDescriptor> result;
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                 if (declarationDescriptor instanceof NamespaceDescriptor) {
-                    result = lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope());
+                    result = lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope(), isForLastPart);
                     if (!result.isEmpty()) return result;
                 }
                 if (declarationDescriptor instanceof ClassDescriptor) {
@@ -205,7 +206,9 @@ public class ImportsResolver {
             return canImport;
         }
         
-        private boolean canImportMembersFrom(@NotNull DeclarationDescriptor descriptor, @NotNull JetSimpleNameExpression reference, @NotNull BindingTrace trace) {
+        private boolean canImportMembersFrom(@NotNull DeclarationDescriptor descriptor,
+                                             @NotNull JetSimpleNameExpression reference,
+                                             @NotNull BindingTrace trace) {
             assert !firstPhase;
             if (descriptor instanceof NamespaceDescriptor) {
                 return true;
@@ -235,7 +238,7 @@ public class ImportsResolver {
             if (firstPhase) return Collections.emptyList();
             JetType classObjectType = classDescriptor.getClassObjectType();
             assert classObjectType != null;
-            Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope());
+            Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope(), true);
             return addBoundToReceiver(members, classDescriptor);
         }
 
@@ -247,7 +250,7 @@ public class ImportsResolver {
                 ClassDescriptor innerClass = classDescriptor.getInnerClass(memberReference.getReferencedName());
                 if (innerClass == null) return Collections.emptyList();
                 descriptors = Collections.<DeclarationDescriptor>singletonList(innerClass);
-                recordReference(descriptors, memberReference, JetScope.EMPTY);
+                storeResolutionResult(descriptors, memberReference, JetScope.EMPTY, true);
             }
             else {
                 descriptors = classDescriptor.getInnerClasses();
@@ -260,17 +263,42 @@ public class ImportsResolver {
 
             JetType variableType = variableDescriptor.getReturnType();
             if (variableType == null) return Collections.emptyList();
-            Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope());
+            Collection<DeclarationDescriptor> members = lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope(), true);
             return addBoundToReceiver(members, variableDescriptor);
         }
 
         @NotNull
-        public static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull final DeclarationDescriptor receiver) {
+        public static Collection<DeclarationDescriptor> addBoundToReceiver(@NotNull Collection<? extends DeclarationDescriptor> descriptors,
+                                                                           @NotNull final DeclarationDescriptor receiver) {
             return Collections2.transform(descriptors, DescriptorUtils.getAddBoundToReceiverFunction(receiver));
         }
 
         @NotNull
-        private Collection<DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope outerScope) {
+        private Collection<DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(
+                @NotNull JetSimpleNameExpression referenceExpression,
+                @NotNull JetScope outerScope,
+                boolean isLastPart) {
+
+            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, outerScope, isLastPart);
+        }
+
+        /**
+         *
+         * @param referenceExpression
+         * @param outerScope
+         * @param bindingScope scope for searching completion descriptors. In most cases it's equal to outer scope
+         *                     but for case "import SomeIdentifier" we want an unresolved reference error, so give empty
+         *                     outer scope.
+         * @param isLastPart is the part given by referenceExpression last in import directive. Parameter should be false
+         *                   if there's .* after it or some other parts in full qualified name.
+         * @return
+         */
+        @NotNull
+        private Collection<DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(
+                @NotNull JetSimpleNameExpression referenceExpression,
+                @NotNull JetScope outerScope,
+                @NotNull JetScope bindingScope,
+                boolean isLastPart) {
 
             List<DeclarationDescriptor> descriptors = Lists.newArrayList();
             String referencedName = referenceExpression.getReferencedName();
@@ -288,25 +316,33 @@ public class ImportsResolver {
 
                 descriptors.addAll(outerScope.getProperties(referencedName));
             }
-            recordReference(descriptors, referenceExpression, outerScope);
+
+            storeResolutionResult(descriptors, referenceExpression, bindingScope, isLastPart);
+
             return descriptors;
         }
 
-        private void recordReference(Collection<? extends DeclarationDescriptor> descriptors, JetSimpleNameExpression referenceExpression, JetScope outerScope) {
-            if (firstPhase) return;
-            if (descriptors.size() == 1) {
-                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
-            }
-            else if (descriptors.size() > 1) {
-                trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
-            }
-            else {
-                trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
-            }
+        private void storeResolutionResult(
+                @NotNull Collection<? extends DeclarationDescriptor> descriptors,
+                @NotNull JetSimpleNameExpression referenceExpression,
+                @NotNull JetScope resolutionScope,
+                boolean isLastPart) {
 
-            // If it's not an ambiguous case - store resolution scope
-            if (descriptors.size() <= 1 && outerScope != JetScope.EMPTY) {
-                trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, outerScope);
+            if (!firstPhase) {
+                if (descriptors.size() == 1 && !(isLastPart && descriptors.iterator().next() instanceof NamespaceDescriptor)) {
+                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
+                }
+                else if (descriptors.size() > 1) {
+                    trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
+                }
+                else {
+                    trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
+                }
+
+                // If it's not an ambiguous case - store resolution scope
+                if (descriptors.size() <= 1) {
+                    trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+                }
             }
         }
     }
