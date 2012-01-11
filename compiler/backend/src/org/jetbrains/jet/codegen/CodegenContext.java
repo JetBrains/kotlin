@@ -228,6 +228,7 @@ public abstract class CodegenContext {
                     pd.getModality(),
                     pd.getVisibility(),
                     pd.isVar(),
+                    pd.isObjectDeclaration(),
                     pd.getName()  + "$bridge$" + accessors.size()
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;

@@ -38,4 +38,9 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
     public boolean isVar() {
         return isVar;
     }
+
+    @Override
+    public boolean isObjectDeclaration() {
+        return false;
+    }
 }

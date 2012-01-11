@@ -476,6 +476,7 @@ public class DescriptorResolver {
                 Modality.FINAL,
                 resolveVisibilityFromModifiers(objectDeclaration.getModifierList()),
                 false,
+                true,
                 JetPsiUtil.safeName(objectDeclaration.getName())
         );
 
@@ -518,6 +519,7 @@ public class DescriptorResolver {
                 resolveModalityFromModifiers(property.getModifierList(), defaultModality),
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
+                false,
                 JetPsiUtil.safeName(property.getName())
         );
 
@@ -839,6 +841,7 @@ public class DescriptorResolver {
                 resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
+                false,
                 name == null ? "<no name>" : name
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);

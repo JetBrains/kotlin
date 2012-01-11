@@ -120,7 +120,7 @@ public class JetStandardClasses {
                         Collections.<AnnotationDescriptor>emptyList(),
                         true, Variance.OUT_VARIANCE, "T" + (j + 1), j);
                 parameters.add(typeParameterDescriptor);
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, "_" + (j + 1));
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, false, "_" + (j + 1));
                 propertyDescriptor.setType(typeParameterDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), classDescriptor.getImplicitReceiver(), ReceiverDescriptor.NO_RECEIVER);
                 propertyDescriptor.initialize(new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, true), null);
                 writableScope.addPropertyDescriptor(propertyDescriptor);

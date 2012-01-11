@@ -99,6 +99,11 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         return isVar;
     }
 
+    @Override
+    public boolean isObjectDeclaration() {
+        return false;
+    }
+
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {

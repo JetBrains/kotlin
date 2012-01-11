@@ -974,7 +974,8 @@ public class JavaDescriptorResolver {
                     Collections.<AnnotationDescriptor>emptyList(),
                     isFinal && !staticMembers ? Modality.FINAL : Modality.OPEN, // TODO: abstract
                     resolveVisibilityFromPsiModifiers(anyMember),
-                    isVar, 
+                    isVar,
+                    false,
                     null,
                     DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                     propertyName,

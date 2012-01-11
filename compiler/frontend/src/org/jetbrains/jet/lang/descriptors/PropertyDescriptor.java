@@ -28,6 +28,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private final Modality modality;
     private final Visibility visibility;
     private final boolean isVar;
+    private final boolean isObject;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
     private final PropertyDescriptor original;
 
@@ -44,9 +45,11 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
+            boolean isObject,
             @NotNull String name) {
         super(containingDeclaration, annotations, name);
         this.isVar = isVar;
+        this.isObject = isObject;
         this.modality = modality;
         this.visibility = visibility;
         this.original = original == null ? this : original.getOriginal();
@@ -58,8 +61,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
+            boolean isObject,
             @NotNull String name) {
-        this(null, containingDeclaration, annotations, modality, visibility, isVar, name);
+        this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name);
     }
 
     public PropertyDescriptor(
@@ -68,12 +72,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
+            boolean isObject,
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull String name,
             @NotNull JetType outType
         ) {
-        this(containingDeclaration, annotations, modality, visibility, isVar, name);
+        this(containingDeclaration, annotations, modality, visibility, isVar, isObject, name);
         setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
     }
 
@@ -124,6 +129,11 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return isVar;
     }
 
+    @Override
+    public boolean isObjectDeclaration() {
+        return isObject;
+    }
+
     @NotNull
     @Override
     public Modality getModality() {
@@ -151,7 +161,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        PropertyDescriptor substitutedDescriptor = new PropertyDescriptor(this, getContainingDeclaration(), getAnnotations(), getModality(), getVisibility(), isVar(), getName());
+        PropertyDescriptor substitutedDescriptor = new PropertyDescriptor(this, getContainingDeclaration(), getAnnotations(), getModality(), getVisibility(), isVar(), isObjectDeclaration(), getName());
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
@@ -212,7 +222,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 newOwner,
                 Lists.newArrayList(getAnnotations()),
-                DescriptorUtils.convertModality(modality, makeNonAbstract), visibility, isVar,
+                DescriptorUtils.convertModality(modality, makeNonAbstract), visibility, isVar, isObject,
                 getName());
 
         propertyDescriptor.setType(getOutType(), DescriptorUtils.copyTypeParameters(propertyDescriptor, getTypeParameters()), expectedThisObject, receiver.exists() ? receiver.getType() : null);

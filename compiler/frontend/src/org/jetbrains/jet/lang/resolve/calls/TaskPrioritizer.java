@@ -3,8 +3,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
@@ -14,6 +13,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastService;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -27,8 +27,8 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
-* @author abreslav
-*/
+ * @author abreslav
+ */
 /*package*/ abstract class TaskPrioritizer<D extends CallableDescriptor> {
 
     public static <D extends CallableDescriptor> void splitLexicallyLocalDescriptors(
@@ -73,14 +73,14 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 
         return result;
     }
-    
+
     private void doComputeTasks(JetScope scope, ReceiverDescriptor receiver, Call call, String name, List<ResolutionTask<D>> result, @NotNull AutoCastService autoCastService) {
         DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);
         if (receiver.exists()) {
             List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
-            
+
             Collection<ResolvedCallImpl<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, getExtensionsByName(scope, name));
             List<ResolvedCallImpl<D>> nonlocals = Lists.newArrayList();
             List<ResolvedCallImpl<D>> locals = Lists.newArrayList();
@@ -155,10 +155,24 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     public static <D extends CallableDescriptor> Collection<ResolvedCallImpl<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
         Collection<ResolvedCallImpl<D>> result = Lists.newArrayList();
         for (ReceiverDescriptor receiverParameter : receiverParameters) {
-            for (D extension : descriptors) {
-                ResolvedCallImpl<D> resolvedCall = ResolvedCallImpl.create(extension);
+            for (D descriptor : descriptors) {
+                ResolvedCallImpl<D> resolvedCall = ResolvedCallImpl.create(descriptor);
                 resolvedCall.setReceiverArgument(receiverParameter);
                 if (setImpliedThis(scope, resolvedCall)) {
+                    result.add(resolvedCall);
+                }
+            }
+        }
+        for (D descriptor : descriptors) {
+            if (descriptor.getExpectedThisObject().exists()) {
+                DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+                if (descriptor instanceof ConstructorDescriptor) {
+                    assert containingDeclaration != null;
+                    containingDeclaration = containingDeclaration.getContainingDeclaration();
+                }
+                if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT) {
+                    ResolvedCallImpl<D> resolvedCall = ResolvedCallImpl.create(descriptor);
+                    resolvedCall.setThisObject(new ClassReceiver((ClassDescriptor) containingDeclaration));
                     result.add(resolvedCall);
                 }
             }
@@ -181,7 +195,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return false;
     }
 
-   private void addTask(@NotNull List<ResolutionTask<D>> result, @NotNull Call call, @NotNull Collection<ResolvedCallImpl<D>> candidates, @NotNull DataFlowInfo dataFlowInfo) {
+    private void addTask(@NotNull List<ResolutionTask<D>> result, @NotNull Call call, @NotNull Collection<ResolvedCallImpl<D>> candidates, @NotNull DataFlowInfo dataFlowInfo) {
         if (candidates.isEmpty()) return;
         result.add(new ResolutionTask<D>(candidates, call, dataFlowInfo));
     }

@@ -215,34 +215,4 @@ public class DescriptorUtils {
         }
         return null;
     }
-
-    @NotNull
-    public static Function<DeclarationDescriptor, DeclarationDescriptor> getAddBoundToReceiverFunction(@NotNull final DeclarationDescriptor receiver) {
-        return new Function<DeclarationDescriptor, DeclarationDescriptor>() {
-            @Override
-            public DeclarationDescriptor apply(@Nullable DeclarationDescriptor descriptor) {
-                if (descriptor instanceof FunctionDescriptor) {
-                    return new FunctionDescriptorBoundToReceiver((FunctionDescriptor) descriptor, receiver);
-                }
-                if (descriptor instanceof VariableDescriptor) {
-                    return new VariableDescriptorBoundToReceiver((VariableDescriptor) descriptor, receiver);
-                }
-                if (descriptor instanceof ClassDescriptor) {
-                    return new ClassDescriptorBoundToReceiver((ClassDescriptor) descriptor, receiver);
-                }
-                return descriptor;
-            }
-        };
-    }
-    
-    //todo
-    public static boolean isObjectDescriptor(@NotNull VariableDescriptor descriptor, BindingTrace bindingTrace) {
-        PsiElement element = bindingTrace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-        return element instanceof JetObjectDeclarationName;
-    }
-
-    public static boolean isObjectDescriptor(@NotNull ClassDescriptor descriptor, BindingTrace bindingTrace) {
-        PsiElement element = bindingTrace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-        return element instanceof JetObjectDeclaration;
-    }
 }
