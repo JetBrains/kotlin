@@ -241,7 +241,7 @@ public class FunctionCodegen {
 
     public static void endVisit(MethodVisitor mv, String description, PsiElement method) {
         try {
-            mv.visitMaxs(0, 0);
+            mv.visitMaxs(-1, -1);
         }
         catch (Throwable t) {
             throw new CompilationException("wrong code generated" + (description != null ? " for " + description : "") + t.getClass().getName() + " " + t.getMessage(), t, method);
