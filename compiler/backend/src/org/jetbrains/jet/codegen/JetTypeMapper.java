@@ -402,13 +402,6 @@ public class JetTypeMapper {
 
     private JvmMethodSignature mapSignature(FunctionDescriptor f, boolean needGenericSignature, OwnerKind kind) {
         
-        for (ValueParameterDescriptor valueParameterDescriptor : f.getValueParameters()) {
-            if (valueParameterDescriptor.hasDefaultValue()) {
-                // TODO
-                needGenericSignature = false;
-            }
-        }
-
         if (kind == OwnerKind.TRAIT_IMPL) {
             needGenericSignature = false;
         }
