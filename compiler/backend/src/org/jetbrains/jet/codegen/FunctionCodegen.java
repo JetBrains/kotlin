@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -144,7 +145,7 @@ public class FunctionCodegen {
                         av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
                     if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
-                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start));
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
                     }
                     av.visitEnd();
                 }

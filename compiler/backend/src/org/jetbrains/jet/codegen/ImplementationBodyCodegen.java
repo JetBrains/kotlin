@@ -115,7 +115,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
 
-        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+        // TODO: generics signature is not always needed
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
 
 
         {   // type parameters
@@ -351,17 +352,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Method constructorMethod;
         CallableMethod callableMethod;
         if (constructorDescriptor == null) {
-            List<Type> parameterTypes = new ArrayList<Type>();
+            
+            BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
+            
+            signatureWriter.writeFormalTypeParametersStart();
+            signatureWriter.writeFormalTypeParametersEnd();
+            
+            signatureWriter.writeParametersStart();
+            
             if (CodegenUtil.hasThis0(descriptor)) {
-                parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
+                signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
+                typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter, false);
+                signatureWriter.writeParameterTypeEnd();
             }
 
             if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType())) {
-                parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
+                signatureWriter.writeTypeInfoParameter();
             }
 
-            constructorMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-            callableMethod = new CallableMethod("", new JvmMethodSignature(constructorMethod, null, null, null, "") /* TODO */, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
+            signatureWriter.writeParametersEnd();
+            
+            signatureWriter.writeVoidReturn();
+
+            JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature("<init>");
+            constructorMethod = jvmMethodSignature.getAsmMethod();
+            callableMethod = new CallableMethod("", jvmMethodSignature, Opcodes.INVOKESPECIAL);
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);

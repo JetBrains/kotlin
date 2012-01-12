@@ -19,17 +19,15 @@ public class CallableMethod implements Callable {
     private String owner;
     private final JvmMethodSignature signature;
     private int invokeOpcode;
-    private final List<Type> valueParameterTypes;
     private ClassDescriptor thisClass = null;
 
     private CallableDescriptor receiverFunction = null;
     private Type generateCalleeType = null;
 
-    public CallableMethod(String owner, JvmMethodSignature signature, int invokeOpcode, List<Type> valueParameterTypes) {
+    public CallableMethod(String owner, JvmMethodSignature signature, int invokeOpcode) {
         this.owner = owner;
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
-        this.valueParameterTypes = valueParameterTypes;
     }
 
     public String getOwner() {
@@ -45,7 +43,7 @@ public class CallableMethod implements Callable {
     }
 
     public List<Type> getValueParameterTypes() {
-        return valueParameterTypes;
+        return signature.getValueParameterTypes();
     }
 
     public void setNeedsReceiver(@Nullable CallableDescriptor receiverClass) {
