@@ -1,7 +1,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.plugin.java;
+package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.*;
@@ -14,7 +14,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 public class JetCodeBlockModificationListener implements PsiTreeChangePreprocessor {
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.java.JetCodeBlockModificationListener");
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetCodeBlockModificationListener");
     
     private final PsiModificationTrackerImpl myModificationTracker;
 

@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="KotlinPlugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
+    <root id="archive" name="KotlinPlugin.zip">
+      <element id="directory" name="Kotlin">
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="asm" />
+          <element id="archive" name="kotlin-plugin.jar">
+            <element id="module-output" name="backend" />
+            <element id="module-output" name="frontend" />
+            <element id="module-output" name="frontend.java" />
+            <element id="module-output" name="idea" />
+            <element id="module-output" name="jet.as.java.psi" />
+          </element>
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

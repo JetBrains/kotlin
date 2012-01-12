@@ -1,7 +1,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.plugin.java;
+package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
