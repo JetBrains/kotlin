@@ -5,29 +5,29 @@ import b.B        //class
 import b.foo      //function
 import b.ext      //extension function
 import b.value    //property
-import b.C.bar    //function from class object
-import b.C.cValue //property from class object
+import b.C.<!CANNOT_BE_IMPORTED!>bar<!>    //function from class object
+import b.C.<!CANNOT_BE_IMPORTED!>cValue<!> //property from class object
 import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.fff     //function from val
 import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.dValue  //property from val
 import b.constant
-import b.E.f      //val from class object
+import b.E.<!CANNOT_BE_IMPORTED!>f<!>      //val from class object
 import <!UNRESOLVED_REFERENCE!>smth<!>.illegal
 import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.illegal
-import <!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.smth
-import <!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.*
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.smth
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.*
 
 fun test(arg: B) {
     foo(value)
     arg.ext()
 
-    bar()
-    foo(cValue)
+    <!UNRESOLVED_REFERENCE!>bar<!>()
+    foo(<!UNRESOLVED_REFERENCE!>cValue<!>)
 
     <!UNRESOLVED_REFERENCE!>fff<!>(<!UNRESOLVED_REFERENCE!>dValue<!>)
 
     constant.fff(constant.dValue)
 
-    f.f()
+    <!UNRESOLVED_REFERENCE!>f<!>.f()
 }
 
 // FILE:b.kt
@@ -80,4 +80,20 @@ object C {
 
 fun foo() {
     if (i == 3) f()
+}
+
+//FILE:d.kt
+package d
+
+import A.B
+import A.C
+
+val b : B = B()
+val c : B = C
+
+class A() {
+    class object {
+        open class B() {}
+        object C : B() {}
+    }
 }

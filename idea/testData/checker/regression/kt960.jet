@@ -1,8 +1,0 @@
-// KT-960  import namespace should give unresolved reference
-package some
-
-import java.<error>util</error>
-
-class Test {
-
-}

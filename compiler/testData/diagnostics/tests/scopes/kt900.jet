@@ -101,7 +101,7 @@ package d
 
 import A.*
 import M.R
-import M.R.bar
+import M.R.<!CANNOT_BE_IMPORTED!>bar<!>
 import M.T
 import M.Y
 
@@ -109,7 +109,7 @@ var r: T = T()
 val y: T = Y
 
 fun f() {
-    bar()
+    <!UNRESOLVED_REFERENCE!>bar<!>()
     R.bar()
     B.foo()
 }

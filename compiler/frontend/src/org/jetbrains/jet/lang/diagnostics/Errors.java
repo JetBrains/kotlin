@@ -84,6 +84,8 @@ public interface Errors {
     SimpleDiagnosticFactory EXPRESSION_EXPECTED_NAMESPACE_FOUND = SimpleDiagnosticFactory.create(ERROR, "Expression expected, but a namespace name found");
 
     ParameterizedDiagnosticFactory1<DeclarationDescriptor> CANNOT_IMPORT_FROM_ELEMENT = ParameterizedDiagnosticFactory1.create(ERROR, "Cannot import from ''{0}''", NAME);
+    ParameterizedDiagnosticFactory1<DeclarationDescriptor> CANNOT_BE_IMPORTED = ParameterizedDiagnosticFactory1.create(ERROR, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
+    SimpleDiagnosticFactory USELESS_IMPORT = SimpleDiagnosticFactory.create(ERROR, "Useless import");
 
     SimpleDiagnosticFactory CANNOT_INFER_PARAMETER_TYPE = SimpleDiagnosticFactory.create(ERROR, "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
 
