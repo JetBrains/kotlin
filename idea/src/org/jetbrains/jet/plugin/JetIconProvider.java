@@ -1,6 +1,7 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -16,6 +17,7 @@ import javax.swing.*;
  */
 public class JetIconProvider extends IconProvider {
     public static final Icon ICON_FOR_OBJECT = PlatformIcons.ANONYMOUS_CLASS_ICON;
+    public static final Icon KOTLIN_ICON = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
 
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {

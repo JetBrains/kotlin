@@ -14,6 +14,10 @@
   </project-components>
 
   <actions>
+     <action id="Kotlin.NewFile" class="org.jetbrains.jet.plugin.actions.NewKotlinFileAction">
+        <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+     </action>
+
      <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
              text="Show Expression Type">
          <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
@@ -32,6 +36,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+
+      <internalFileTemplate name="Kotlin File"/>
+
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
       <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.JetSyntaxHighlighterFactory"/>
       <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
