@@ -560,7 +560,10 @@ public class JavaDescriptorResolver {
     @NotNull
     private TypeParameterDescriptorInitialization resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
         TypeParameterDescriptorInitialization typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
-        assert typeParameterDescriptor != null : psiTypeParameter.getText();
+        if (typeParameterDescriptor == null) {
+            // TODO: report properly without crashing compiler
+            throw new IllegalStateException("failed to resolve type parameter: " + psiTypeParameter.getName());
+        }
         return typeParameterDescriptor;
     }
 
