@@ -329,11 +329,11 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 sb.append("<");
                 boolean first = true;
                 for (TypeProjection proj : type.getArguments()) {
-                    serialize(proj.getProjectionKind());
-                    serialize(proj.getType());
                     if (!first) {
                         sb.append(", ");
                     }
+                    serialize(proj.getProjectionKind());
+                    serialize(proj.getType());
                     first = false;
                 }
                 sb.append(">");
