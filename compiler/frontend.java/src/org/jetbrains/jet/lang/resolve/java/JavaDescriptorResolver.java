@@ -376,11 +376,12 @@ public class JavaDescriptorResolver {
         private final DeclarationDescriptor containingDeclaration;
         private final PsiTypeParameterListOwner psiOwner;
         private final String name;
+        private final int index;
         private final TypeInfoVariance variance;
         private final TypeVariableResolver typeVariableResolver;
 
         protected JetSignatureTypeParameterVisitor(DeclarationDescriptor containingDeclaration, PsiTypeParameterListOwner psiOwner,
-                String name, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
+                String name, int index, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
@@ -389,11 +390,10 @@ public class JavaDescriptorResolver {
             this.containingDeclaration = containingDeclaration;
             this.psiOwner = psiOwner;
             this.name = name;
+            this.index = index;
             this.variance = variance;
             this.typeVariableResolver = typeVariableResolver;
         }
-
-        int index = 0;
 
         List<JetType> upperBounds = new ArrayList<JetType>();
         List<JetType> lowerBounds = new ArrayList<JetType>();
@@ -429,7 +429,7 @@ public class JavaDescriptorResolver {
                     true, // TODO: wrong
                     JetSignatureUtils.translateVariance(variance),
                     name,
-                    ++index);
+                    index);
             PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(psiOwner, name);
             typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(typeParameter, upperBounds, lowerBounds));
             done(typeParameter);
@@ -460,9 +460,11 @@ public class JavaDescriptorResolver {
         }
         
         new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
+            private int formalTypeParameterIndex = 0;
+            
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
-                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptor typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
@@ -1314,10 +1316,12 @@ public class JavaDescriptorResolver {
         }
         
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
+            private int formalTypeParameterIndex = 0;
+            
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
                 
-                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptor typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);

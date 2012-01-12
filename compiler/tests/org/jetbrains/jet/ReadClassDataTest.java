@@ -446,6 +446,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
 
         public void serialize(TypeParameterDescriptor param) {
+            sb.append("/*").append(param.getIndex()).append("*/ ");
             serialize(param.getVariance());
             sb.append(param.getName());
             if (!param.getUpperBounds().isEmpty()) {
