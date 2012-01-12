@@ -574,7 +574,7 @@ public class JetTypeMapper {
     }
 
 
-    public JvmMethodSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
+    public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         Type returnType = mapType(descriptor.getOutType());
         String name = PropertyCodegen.getterName(descriptor.getName());
         ArrayList<Type> params = new ArrayList<Type>();
@@ -595,11 +595,13 @@ public class JetTypeMapper {
         }
 
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null, null, null, null);
+        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null, null, null, null);
+
+        return new JvmPropertyAccessorSignature(jvmMethodSignature, "");
     }
 
     @Nullable
-    public JvmMethodSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
+    public JvmPropertyAccessorSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         if (!descriptor.isVar()) {
             return null;
         }
@@ -627,7 +629,8 @@ public class JetTypeMapper {
         params.add(mapType(outType));
 
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null, null);
+        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null, null);
+        return new JvmPropertyAccessorSignature(jvmMethodSignature, "");
     }
 
     private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, List<Type> valueParameterTypes) {

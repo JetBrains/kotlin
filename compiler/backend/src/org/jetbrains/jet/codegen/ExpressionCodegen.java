@@ -1097,7 +1097,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     }
                 }
                 if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor))
-                    getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getAsmMethod();
+                    getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
                 else
                     getter = null;
             }
@@ -1107,8 +1107,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
             else {
                 if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor)) {
-                    JvmMethodSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                    setter = jvmMethodSignature != null ? jvmMethodSignature.getAsmMethod() : null;
+                    JvmPropertyAccessorSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                    setter = jvmMethodSignature != null ? jvmMethodSignature.getJvmMethodSignature().getAsmMethod() : null;
                 } else {
                     setter = null;
                 }

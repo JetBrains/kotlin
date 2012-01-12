@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
@@ -12,6 +13,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -86,7 +88,8 @@ public class PropertyCodegen {
         final JetPropertyAccessor getter = p.getGetter();
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
-                functionCodegen.generateMethod(getter, state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind), propertyDescriptor.getGetter());
+                JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
+                functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), signature.getPropertyTypeKotlinSignature(), propertyDescriptor.getGetter());
             }
             else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultGetter(p, getter);
@@ -107,7 +110,8 @@ public class PropertyCodegen {
             if (setter.getBodyExpression() != null) {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
-                functionCodegen.generateMethod(setter, state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind), setterDescriptor);
+                JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
+                functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), signature.getPropertyTypeKotlinSignature(), setterDescriptor);
             }
             else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultSetter(p, setter);
@@ -138,10 +142,11 @@ public class PropertyCodegen {
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
-        final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind).getAsmMethod().getDescriptor();
+        JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
+        final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
-        MethodVisitor mv = v.newMethod(origin, flags, getterName, signature, null, null);
-        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
+        MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
+        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature());
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -152,7 +157,7 @@ public class PropertyCodegen {
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
-                iv.invokeinterface(dk.getOwnerClass(), getterName, signature);
+                iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
             }
             else {
                 iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
@@ -162,6 +167,14 @@ public class PropertyCodegen {
             iv.areturn(type);
             FunctionCodegen.endVisit(mv, "getter", origin);
         }
+    }
+
+    public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType) {
+        AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true);
+        if (kotlinType.length() > 0) {
+            annotationVisitor.visit(JvmStdlibNames.JET_PROPERTY_TYPE_FIELD, kotlinType);
+        }
+        annotationVisitor.visitEnd();
     }
 
     private void generateDefaultSetter(JetProperty p, JetDeclaration declaration) {
@@ -184,9 +197,10 @@ public class PropertyCodegen {
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
-        final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind).getAsmMethod().getDescriptor();
-        MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), signature, null, null);
-        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
+        JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
+        final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
+        MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
+        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature());
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -203,7 +217,7 @@ public class PropertyCodegen {
                 dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
 
                 iv.load(paramCode, type);
-                iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), signature);
+                iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), descriptor);
             }
             else {
                 iv.load(paramCode, type);

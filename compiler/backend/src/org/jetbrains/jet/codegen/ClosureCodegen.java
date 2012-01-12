@@ -165,7 +165,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this, state.getTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
-        fc.generateMethod(body, new JvmMethodSignature(invokeSignature(funDescriptor), null, null, null, null), funDescriptor);
+        fc.generateMethod(body, new JvmMethodSignature(invokeSignature(funDescriptor), null, null, null, null), null, funDescriptor);
         return closureContext.outerWasUsed;
     }
 
