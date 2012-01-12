@@ -1012,7 +1012,6 @@ public class JavaDescriptorResolver {
             PsiType receiverType = entry.getValue().receiverType;
             MembersForProperty members = entry.getValue();
 
-            JetType type = semanticServices.getTypeTransformer().transformToType(propertyType);
             boolean isFinal;
             if (members.setter == null && members.getter == null) {
                 isFinal = false;
@@ -1023,7 +1022,7 @@ public class JavaDescriptorResolver {
             } else {
                 isFinal = false;
             }
-            
+
             PsiMemberWrapper anyMember;
             if (members.getter != null) {
                 anyMember = members.getter;
@@ -1087,6 +1086,8 @@ public class JavaDescriptorResolver {
             } else {
                 receiverJetType = semanticServices.getTypeTransformer().transformToType(receiverType);
             }
+
+            JetType type = semanticServices.getTypeTransformer().transformToType(propertyType);
 
             propertyDescriptor.setType(
                     type,
