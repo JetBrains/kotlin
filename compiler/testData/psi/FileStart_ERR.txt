@@ -4,7 +4,7 @@ JetFile: FileStart_ERR.jet
   PsiErrorElement:Expecting namespace or top level declaration
     PsiElement(DIV)('/')
   PsiErrorElement:Expecting namespace or top level declaration
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
     ANNOTATION_ENTRY

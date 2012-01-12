@@ -2,7 +2,7 @@ JetFile: NamespaceBlockFirst.jet
   NAMESPACE_HEADER
     <empty list>
   PsiErrorElement:Expecting namespace or top level declaration
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
     ANNOTATION_ENTRY

@@ -32,7 +32,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
-            NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+            PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
@@ -83,7 +83,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             IDENTIFIER, // SimpleName
             FIELD_IDENTIFIER, // Field reference
 
-            NAMESPACE_KEYWORD // for absolute qualified names
+            PACKAGE_KEYWORD // for absolute qualified names
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -509,7 +509,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(HASH)) {
             parseTupleExpression();
         }
-        else if (at(NAMESPACE_KEYWORD)) {
+        else if (at(PACKAGE_KEYWORD)) {
             parseOneTokenExpression(ROOT_NAMESPACE);
         }
         else if (at(THIS_KEYWORD)) {
@@ -865,7 +865,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myJetParsing.parseAnnotations(false);
 
-        if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER) || at(FUN_KEYWORD) || at(THIS_KEYWORD)) {
+        if (at(PACKAGE_KEYWORD) || at(IDENTIFIER) || at(FUN_KEYWORD) || at(THIS_KEYWORD)) {
             PsiBuilder.Marker rollbackMarker = mark();
             parseBinaryExpression(Precedence.ELVIS);
             if (at(HASH)) {

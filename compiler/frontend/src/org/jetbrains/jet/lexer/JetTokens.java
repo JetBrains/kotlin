@@ -31,7 +31,7 @@ public interface JetTokens {
 
     JetToken RAW_STRING_LITERAL = new JetToken("RAW_STRING_LITERAL");
 
-    JetKeywordToken NAMESPACE_KEYWORD        = JetKeywordToken.keyword("namespace");
+    JetKeywordToken PACKAGE_KEYWORD = JetKeywordToken.keyword("package");
     JetKeywordToken AS_KEYWORD               = JetKeywordToken.keyword("as");
     JetKeywordToken TYPE_KEYWORD             = JetKeywordToken.keyword("type");
     JetKeywordToken CLASS_KEYWORD            = JetKeywordToken.keyword("class");
@@ -145,7 +145,7 @@ public interface JetTokens {
     // TODO: support this as an annotation on arguments. Then, they it probably can not be a soft keyword
     JetKeywordToken REF_KEYWORD       = JetKeywordToken.softKeyword("ref");
 
-    TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
+    TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
             THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,

@@ -19,7 +19,7 @@ public class JetUserType extends JetTypeElement {
     }
 
     public boolean isAbsoluteInRootNamespace() {
-        return findChildByType(JetTokens.NAMESPACE_KEYWORD) != null;
+        return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 
     @Override

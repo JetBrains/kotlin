@@ -88,6 +88,7 @@ public class JavaTypeTransformer {
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
                     TypeParameterDescriptor typeParameterDescriptor = resolver.resolveTypeParameter(typeParameter);
+//                    return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
                     return typeParameterDescriptor.getDefaultType();
                 }
                 else {

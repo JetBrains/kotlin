@@ -29,7 +29,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
-                FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD);
+                FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
     private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
 
@@ -117,8 +117,8 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker firstEntry = mark();
         parseModifierList(MODIFIER_LIST, true);
 
-        if (at(NAMESPACE_KEYWORD)) {
-            advance(); // NAMESPACE_KEYWORD
+        if (at(PACKAGE_KEYWORD)) {
+            advance(); // PACKAGE_KEYWORD
             parseNamespaceName();
 
             if (at(LBRACE)) {
@@ -170,8 +170,8 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // IMPORT_KEYWORD
 
         PsiBuilder.Marker qualifiedName = mark();
-        if (at(NAMESPACE_KEYWORD)) {
-            advance(); // NAMESPACE_KEYWORD
+        if (at(PACKAGE_KEYWORD)) {
+            advance(); // PACKAGE_KEYWORD
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, MUL, SEMICOLON));
         }
 
@@ -233,7 +233,7 @@ public class JetParsing extends AbstractJetParsing {
 
         IElementType keywordToken = tt();
         JetNodeType declType = null;
-//        if (keywordToken == NAMESPACE_KEYWORD) {
+//        if (keywordToken == PACKAGE_KEYWORD) {
 //            declType = parseNamespaceBlock();
 //        }
 //        else
@@ -640,7 +640,7 @@ public class JetParsing extends AbstractJetParsing {
                 parseClassBody();
             }
             else {
-                expect(COLON, "Expecting ':'", TokenSet.create(IDENTIFIER, NAMESPACE_KEYWORD));
+                expect(COLON, "Expecting ':'", TokenSet.create(IDENTIFIER, PACKAGE_KEYWORD));
                 parseDelegationSpecifierList();
                 parseClassBody();
             }
@@ -1253,7 +1253,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(false);
 
-        if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
+        if (at(IDENTIFIER) || at(PACKAGE_KEYWORD)) {
             parseUserType();
         }
         else if (at(HASH)) {
@@ -1340,8 +1340,8 @@ public class JetParsing extends AbstractJetParsing {
     private void parseUserType() {
         PsiBuilder.Marker userType = mark();
 
-        if (at(NAMESPACE_KEYWORD)) {
-            advance(); // NAMESPACE_KEYWORD
+        if (at(PACKAGE_KEYWORD)) {
+            advance(); // PACKAGE_KEYWORD
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER));
         }
 

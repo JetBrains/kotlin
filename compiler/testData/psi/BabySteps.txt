@@ -1,6 +1,6 @@
 JetFile: BabySteps.jet
   NAMESPACE_HEADER
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
   PsiWhiteSpace('\n\n')

@@ -25,7 +25,7 @@ public class JetImportDirective extends JetElement {
     }
 
     public boolean isAbsoluteInRootNamespace() {
-        return findChildByType(JetTokens.NAMESPACE_KEYWORD) != null;
+        return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 
     @Nullable @IfNotParsed

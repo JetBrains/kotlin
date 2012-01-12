@@ -13,6 +13,6 @@ JetFile: NamespaceModifiers.jet
                   PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('name')

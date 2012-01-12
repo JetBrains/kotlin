@@ -49,7 +49,7 @@ JetFile: ShortAnnotations.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('zoo')
     PsiWhiteSpace(' ')
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('aa')
   PsiWhiteSpace('\n\n')

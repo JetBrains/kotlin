@@ -258,7 +258,7 @@ public class DescriptorRenderer implements Renderer {
 
         @Override
         public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
-            builder.append(renderKeyword(JetTokens.NAMESPACE_KEYWORD.getValue())).append(" ");
+            builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
             renderName(namespaceDescriptor, builder);
             return super.visitNamespaceDescriptor(namespaceDescriptor, builder);
         }
