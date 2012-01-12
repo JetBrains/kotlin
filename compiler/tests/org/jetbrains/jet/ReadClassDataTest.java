@@ -97,6 +97,8 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         Assert.assertEquals(nsa.getName(), nsb.getName());
         System.out.println("namespace " + nsa.getName());
 
+        Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
+
         Set<String> classifierNames = new HashSet<String>();
         Set<String> propertyNames = new HashSet<String>();
         Set<String> functionNames = new HashSet<String>();
@@ -112,7 +114,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 throw new AssertionError("unknown member: " + ad);
             }
         }
-        
+
         for (String name : classifierNames) {
             ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
