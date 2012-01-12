@@ -94,7 +94,7 @@ public class FunctionCodegen {
                 int start = 0;
                 if(kind != OwnerKind.TRAIT_IMPL) {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
-                        PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature);
+                        PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter());
                     } else if (functionDescriptor instanceof NamedFunctionDescriptor) {
                         if (propertyTypeSignature != null) {
                             throw new IllegalStateException();

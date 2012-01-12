@@ -146,7 +146,7 @@ public class PropertyCodegen {
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
-        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature());
+        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -169,10 +169,13 @@ public class PropertyCodegen {
         }
     }
 
-    public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType) {
+    public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
         AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true);
         if (kotlinType.length() > 0) {
             annotationVisitor.visit(JvmStdlibNames.JET_PROPERTY_TYPE_FIELD, kotlinType);
+        }
+        if (typeParameters.length() > 0) {
+            annotationVisitor.visit(JvmStdlibNames.JET_PROPERTY_TYPE_PARAMETERS_FIELD, typeParameters);
         }
         annotationVisitor.visitEnd();
     }
@@ -200,7 +203,7 @@ public class PropertyCodegen {
         JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
-        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature());
+        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);

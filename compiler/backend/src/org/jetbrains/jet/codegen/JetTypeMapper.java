@@ -519,9 +519,8 @@ public class JetTypeMapper {
         
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
         
-        signatureWriter.writeFormalTypeParametersStart();
-        signatureWriter.writeFormalTypeParametersEnd();
-        
+        writeFormalTypeParameters(f.getTypeParameters(), signatureWriter);
+
         signatureWriter.writeParametersStart();
         
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
@@ -552,8 +551,7 @@ public class JetTypeMapper {
         // TODO: do not generate generics if not needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
-        signatureWriter.writeFormalTypeParametersStart();
-        signatureWriter.writeFormalTypeParametersEnd();
+        writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
         signatureWriter.writeParametersStart();
 
@@ -597,8 +595,7 @@ public class JetTypeMapper {
         // TODO: generics signature is not always needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
         
-        signatureWriter.writeFormalTypeParametersStart();
-        signatureWriter.writeFormalTypeParametersEnd();
+        writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
         JetType outType = descriptor.getOutType();
 
@@ -644,8 +641,7 @@ public class JetTypeMapper {
         List<ValueParameterDescriptor> parameters = descriptor.getOriginal().getValueParameters();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         
-        signatureWriter.writeFormalTypeParametersStart();
-        signatureWriter.writeFormalTypeParametersEnd();
+        writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
         signatureWriter.writeParametersStart();
 

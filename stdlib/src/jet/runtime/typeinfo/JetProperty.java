@@ -12,4 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JetProperty {
     String type() default "";
+
+    String typeParameters() default "";
 }

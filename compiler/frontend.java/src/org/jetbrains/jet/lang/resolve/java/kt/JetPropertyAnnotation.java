@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 /**
  * @author Stepan Koltsov
  */
-public class JetPropertyAnnotation extends PsiAnnotationWrapper {
+public class JetPropertyAnnotation extends JetMethodOrPropertyAnnotation {
     protected JetPropertyAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }

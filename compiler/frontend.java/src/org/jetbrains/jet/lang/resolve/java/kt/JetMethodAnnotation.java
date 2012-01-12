@@ -9,21 +9,12 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 /**
  * @author Stepan Koltsov
  */
-public class JetMethodAnnotation extends PsiAnnotationWrapper {
+public class JetMethodAnnotation extends JetMethodOrPropertyAnnotation {
 
     public JetMethodAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
 
-    private String typeParameters;
-    @NotNull
-    public String typeParameters() {
-        if (typeParameters == null) {
-            typeParameters = getStringAttribute(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, "");
-        }
-        return typeParameters;
-    }
-    
     private String returnType;
     @NotNull
     public String returnType() {

@@ -1,11 +1,13 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.kt.JetMethodOrPropertyAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetPropertyAnnotation;
 
 import java.util.ArrayList;
@@ -14,19 +16,17 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public class PsiMethodWrapper {
-    @NotNull
-    private final PsiMethod psiMethod;
+public class PsiMethodWrapper extends PsiMemberWrapper {
 
     public PsiMethodWrapper(@NotNull PsiMethod psiMethod) {
-        this.psiMethod = psiMethod;
+        super(psiMethod);
     }
     
     private List<PsiParameterWrapper> parameters;
     @NotNull
     public List<PsiParameterWrapper> getParameters() {
         if (parameters == null) {
-            PsiParameter[] psiParameters = psiMethod.getParameterList().getParameters();
+            PsiParameter[] psiParameters = getPsiMethod().getParameterList().getParameters();
             parameters = new ArrayList<PsiParameterWrapper>(psiParameters.length);
             for (int i = 0; i < psiParameters.length; ++i) {
                 parameters.add(new PsiParameterWrapper(psiParameters[i]));
@@ -40,19 +40,15 @@ public class PsiMethodWrapper {
         return getParameters().get(i);
     }
 
-    public boolean isStatic() {
-        return psiMethod.getModifierList().hasExplicitModifier(PsiModifier.STATIC);
-    }
-
-    public boolean isPrivate() {
-        return psiMethod.hasModifierProperty(PsiModifier.PRIVATE);
+    public boolean isFinal() {
+        return psiMember.hasModifierProperty(PsiModifier.FINAL);
     }
 
     private JetMethodAnnotation jetMethod;
     @NotNull
     public JetMethodAnnotation getJetMethod() {
         if (jetMethod == null) {
-            jetMethod = JetMethodAnnotation.get(psiMethod);
+            jetMethod = JetMethodAnnotation.get(getPsiMethod());
         }
         return jetMethod;
     }
@@ -61,7 +57,7 @@ public class PsiMethodWrapper {
     @NotNull
     public JetConstructorAnnotation getJetConstructor() {
         if (jetConstructor == null) {
-            jetConstructor = JetConstructorAnnotation.get(psiMethod);
+            jetConstructor = JetConstructorAnnotation.get(getPsiMethod());
         }
         return jetConstructor;
     }
@@ -70,8 +66,21 @@ public class PsiMethodWrapper {
     @NotNull
     public JetPropertyAnnotation getJetProperty() {
         if (jetProperty == null) {
-            jetProperty = JetPropertyAnnotation.get(psiMethod);
+            jetProperty = JetPropertyAnnotation.get(getPsiMethod());
         }
         return jetProperty;
+    }
+    
+    public JetMethodOrPropertyAnnotation getJetMethodOrProperty() {
+        if (getJetMethod().isDefined()) {
+            return getJetMethod();
+        } else {
+            return getJetProperty();
+        }
+    }
+
+    @NotNull
+    public PsiMethod getPsiMethod() {
+        return (PsiMethod) psiMember;
     }
 }
