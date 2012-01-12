@@ -153,6 +153,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         return original.getClassObjectType();
     }
 
+    @Override
+    public ClassDescriptor getClassObjectDescriptor() {
+        return original.getClassObjectDescriptor();
+    }
+
     @NotNull
     @Override
     public ClassKind getKind() {
@@ -187,13 +192,13 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public ClassDescriptor getInnerClass(String name) {
-        return original.getInnerClass(name);
+    public ClassDescriptor getInnerClassOrObject(String name) {
+        return original.getInnerClassOrObject(name);
     }
 
     @NotNull
     @Override
-    public Collection<ClassDescriptor> getInnerClasses() {
-        return original.getInnerClasses();
+    public Collection<ClassDescriptor> getInnerClassesAndObjects() {
+        return original.getInnerClassesAndObjects();
     }
 }

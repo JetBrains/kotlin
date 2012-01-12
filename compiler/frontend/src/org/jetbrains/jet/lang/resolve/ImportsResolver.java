@@ -38,9 +38,10 @@ public class ImportsResolver {
         ImportResolver importResolver = new ImportResolver(context.getTrace(), firstPhase);
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            if (firstPhase) {
-                context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope);
+            if (!firstPhase) {
+                namespaceScope.clearImports();
             }
+            context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope);
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
@@ -51,6 +52,8 @@ public class ImportsResolver {
 
     public static class ImportResolver {
         private final BindingTrace trace;
+        /* On first phase all classes and objects are imported,
+        on second phase previous imports are thrown and everything (including functions and properties at namespace level) is imported */
         private final boolean firstPhase;
 
         public ImportResolver(BindingTrace trace, boolean firstPhase) {
@@ -89,13 +92,25 @@ public class ImportsResolver {
                         if (descriptor instanceof NamespaceDescriptor) {
                             namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
                         }
-                        if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.OBJECT) {
-                            Collection<? extends DeclarationDescriptor> innerClasses = getInnerClasses((ClassDescriptor) descriptor, null);
-                            for (DeclarationDescriptor innerClass : innerClasses) {
-                                namespaceScope.importClassifierAlias(innerClass.getName(), (ClassifierDescriptor) innerClass);
+                        if (descriptor instanceof ClassDescriptor) {
+                            ClassDescriptor objectDescriptor;
+                            if (((ClassDescriptor) descriptor).getKind() == ClassKind.OBJECT) {
+                                objectDescriptor = (ClassDescriptor) descriptor;
+                            }
+                            else {
+                                objectDescriptor = ((ClassDescriptor)descriptor).getClassObjectDescriptor();
+                            }
+                            if (objectDescriptor != null) {
+                                Collection<? extends DeclarationDescriptor> innerClassesAndObjects = objectDescriptor.getInnerClassesAndObjects();
+                                for (DeclarationDescriptor innerClassOrObject : innerClassesAndObjects) {
+                                    namespaceScope.importClassifierAlias(innerClassOrObject.getName(), (ClassifierDescriptor) innerClassOrObject);
+                                }
                             }
                         }
                         continue;
+                    }
+                    if (descriptor instanceof NamespaceDescriptor) {
+                        namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
                     }
                     if (descriptor instanceof VariableDescriptor) {
                         JetType type = ((VariableDescriptor) descriptor).getOutType();
@@ -176,12 +191,19 @@ public class ImportsResolver {
                     if (!result.isEmpty()) return result;
                 }
                 if (declarationDescriptor instanceof ClassDescriptor) {
-                    result = lookupObjectMembers(selector, (ClassDescriptor) declarationDescriptor);
+                    if (firstPhase) {
+                        result = lookupInnerClassesAndObjectsInObject(selector, (ClassDescriptor) declarationDescriptor);
+                    }
+                    else {
+                        result = lookupObjectMembers(selector, (ClassDescriptor) declarationDescriptor);
+                    }
                     if (!result.isEmpty()) return result;
                 }
-                if (declarationDescriptor instanceof VariableDescriptor) {
-                    result = lookupVariableMembers(selector, (VariableDescriptor) declarationDescriptor);
-                    if (!result.isEmpty()) return result;
+                if (!firstPhase) {
+                    if (declarationDescriptor instanceof VariableDescriptor) {
+                        result = lookupVariableMembers(selector, (VariableDescriptor) declarationDescriptor);
+                        if (!result.isEmpty()) return result;
+                    }
                 }
             }
 
@@ -228,35 +250,40 @@ public class ImportsResolver {
         }
 
         @NotNull
+        private Collection<? extends DeclarationDescriptor> lookupInnerClassesAndObjectsInObject(@NotNull JetSimpleNameExpression objectReference,
+                                                                                                 @NotNull ClassDescriptor classDescriptor) {
+            assert firstPhase;
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+                return getInnerClassesAndObjectsByName(classDescriptor, objectReference);
+            }
+            MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) classDescriptor).getClassObjectDescriptor();
+            assert classObjectDescriptor != null;
+            return getInnerClassesAndObjectsByName(classObjectDescriptor, objectReference);
+        }
+        
+        @NotNull
         private Collection<? extends DeclarationDescriptor> lookupObjectMembers(@NotNull JetSimpleNameExpression memberReference,
                                                                       @NotNull ClassDescriptor classDescriptor) {
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
-                return getInnerClasses(classDescriptor, memberReference);
-            }
-            if (firstPhase) return Collections.emptyList();
+            assert !firstPhase;
+            //on second phase class descriptor is only a descriptor for class object
             JetType classObjectType = classDescriptor.getClassObjectType();
-            assert classObjectType != null;
+            if (classObjectType == null) return Collections.emptyList();
             return lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope(), true);
         }
 
         @NotNull
-        private Collection<? extends DeclarationDescriptor> getInnerClasses(@NotNull ClassDescriptor classDescriptor, @Nullable JetSimpleNameExpression memberReference) {
+        private Collection<? extends DeclarationDescriptor> getInnerClassesAndObjectsByName(@NotNull ClassDescriptor classDescriptor, @NotNull JetSimpleNameExpression memberReference) {
             if (classDescriptor.getKind() != ClassKind.OBJECT) return Collections.emptyList();
             Collection<? extends DeclarationDescriptor> descriptors;
-            if (memberReference != null) {
-                ClassDescriptor innerClass = classDescriptor.getInnerClass(memberReference.getReferencedName());
-                if (innerClass == null) return Collections.emptyList();
-                descriptors = Collections.<DeclarationDescriptor>singletonList(innerClass);
-                storeResolutionResult(descriptors, memberReference, JetScope.EMPTY, true);
-            }
-            else {
-                descriptors = classDescriptor.getInnerClasses();
-            }
+            ClassDescriptor innerClass = classDescriptor.getInnerClassOrObject(memberReference.getReferencedName());
+            if (innerClass == null) return Collections.emptyList();
+            descriptors = Collections.<DeclarationDescriptor>singletonList(innerClass);
+            storeResolutionResult(descriptors, memberReference, JetScope.EMPTY, true);
             return descriptors;
         }
 
         private Collection<DeclarationDescriptor> lookupVariableMembers(@NotNull JetSimpleNameExpression memberReference, @NotNull VariableDescriptor variableDescriptor) {
-            if (firstPhase) return Collections.emptyList();
+            assert !firstPhase;
 
             JetType variableType = variableDescriptor.getReturnType();
             if (variableType == null) return Collections.emptyList();
@@ -299,12 +326,14 @@ public class ImportsResolver {
                 ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
                 if (classifierDescriptor != null) descriptors.add(classifierDescriptor);
 
-                ClassDescriptor objectDescriptor = outerScope.getObjectDescriptor(referencedName);
-                if (objectDescriptor != null) descriptors.add(objectDescriptor);
+                if (firstPhase) {
+                    descriptors.add(outerScope.getObjectDescriptor(referencedName));
+                }
+                else {
+                    descriptors.addAll(outerScope.getFunctions(referencedName));
 
-                descriptors.addAll(outerScope.getFunctions(referencedName));
-
-                descriptors.addAll(outerScope.getProperties(referencedName));
+                    descriptors.addAll(outerScope.getProperties(referencedName));
+                }
             }
 
             storeResolutionResult(descriptors, referenceExpression, bindingScope, isLastPart);

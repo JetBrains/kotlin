@@ -99,6 +99,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         super.importVariableAlias(aliasName, variableDescriptor);
     }
 
+    @Override
+    public void clearImports() {
+        checkMayWrite();
+
+        super.clearImports();
+    }
+
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

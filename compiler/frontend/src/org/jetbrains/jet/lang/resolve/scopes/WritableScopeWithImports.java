@@ -213,6 +213,12 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
+    public void clearImports() {
+        currentIndividualImportScope = null;
+        getImports().clear();
+    }
+
+    @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration();
     }

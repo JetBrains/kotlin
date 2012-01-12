@@ -51,6 +51,9 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor 
     @Nullable
     JetType getClassObjectType();
 
+    @Nullable
+    ClassDescriptor getClassObjectDescriptor();
+
     @NotNull
     ClassKind getKind();
 
@@ -66,8 +69,8 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor 
     ReceiverDescriptor getImplicitReceiver();
 
     @Nullable
-    ClassDescriptor getInnerClass(String name);
+    ClassDescriptor getInnerClassOrObject(String name);
     
     @NotNull
-    Collection<ClassDescriptor> getInnerClasses();
+    Collection<ClassDescriptor> getInnerClassesAndObjects();
 }

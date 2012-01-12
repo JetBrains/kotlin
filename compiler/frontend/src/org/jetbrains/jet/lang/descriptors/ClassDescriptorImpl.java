@@ -115,6 +115,11 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         return null;
     }
 
+    @Override
+    public ClassDescriptor getClassObjectDescriptor() {
+        return null;
+    }
+
     @NotNull
     @Override
     public ClassKind getKind() {
@@ -163,13 +168,13 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
-    public ClassDescriptor getInnerClass(String name) {
+    public ClassDescriptor getInnerClassOrObject(String name) {
         return null;
     }
 
     @NotNull
     @Override
-    public Collection<ClassDescriptor> getInnerClasses() {
+    public Collection<ClassDescriptor> getInnerClassesAndObjects() {
         return Collections.emptyList();
     }
 }

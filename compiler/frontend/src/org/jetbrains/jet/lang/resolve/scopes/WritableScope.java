@@ -55,4 +55,6 @@ public interface WritableScope extends JetScope {
     void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor);
     
     void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor);
+
+    void clearImports();
 }

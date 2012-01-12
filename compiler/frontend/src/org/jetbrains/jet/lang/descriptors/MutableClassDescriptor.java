@@ -30,7 +30,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
     private Collection<JetType> supertypes = Lists.newArrayList();
-    private Map<String, ClassDescriptor> innerClasses = Maps.newHashMap();
+    private Map<String, ClassDescriptor> innerClassesAndObjects = Maps.newHashMap();
 
     private Modality modality;
     private Visibility visibility;
@@ -109,6 +109,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         }
     }
 
+    @Override
     @Nullable
     public MutableClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor;
@@ -188,22 +189,25 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
         scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
-        innerClasses.put(classDescriptor.getName(), classDescriptor);
+        innerClassesAndObjects.put(classDescriptor.getName(), classDescriptor);
     }
 
+    @Override
     @Nullable
-    public ClassDescriptor getInnerClass(String name) {
-        return innerClasses.get(name);
+    public ClassDescriptor getInnerClassOrObject(String name) {
+        return innerClassesAndObjects.get(name);
     }
-    
+
+    @Override
     @NotNull
-    public Collection<ClassDescriptor> getInnerClasses() {
-        return innerClasses.values();
+    public Collection<ClassDescriptor> getInnerClassesAndObjects() {
+        return innerClassesAndObjects.values();
     }
 
     @Override
     public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
         scopeForMemberLookup.addObjectDescriptor(objectDescriptor);
+        innerClassesAndObjects.put(objectDescriptor.getName(), objectDescriptor);
     }
 
     public void addSupertype(@NotNull JetType supertype) {

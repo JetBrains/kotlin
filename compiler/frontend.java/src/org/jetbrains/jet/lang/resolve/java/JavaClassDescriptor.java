@@ -133,6 +133,11 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     @Override
+    public ClassDescriptor getClassObjectDescriptor() {
+        return null;
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return false;
     }
@@ -175,13 +180,13 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     @Override
-    public ClassDescriptor getInnerClass(String name) {
+    public ClassDescriptor getInnerClassOrObject(String name) {
         return null;
     }
 
     @NotNull
     @Override
-    public Collection<ClassDescriptor> getInnerClasses() {
+    public Collection<ClassDescriptor> getInnerClassesAndObjects() {
         return Collections.emptyList();
     }
 }
