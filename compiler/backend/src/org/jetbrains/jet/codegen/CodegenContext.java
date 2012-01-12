@@ -241,11 +241,9 @@ public abstract class CodegenContext {
             pgd.initialize(myAccessor.getOutType());
             
             PropertySetterDescriptor psd = new PropertySetterDescriptor(
-                        myAccessor.getModality(),
+                    myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
                         myAccessor.getVisibility(),
-                        myAccessor,
-                        Collections.<AnnotationDescriptor>emptyList(),
-                        false, false);
+                    false, false);
             myAccessor.initialize(pgd, psd);
             accessor = myAccessor;
         }

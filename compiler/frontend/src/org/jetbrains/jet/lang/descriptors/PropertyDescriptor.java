@@ -235,10 +235,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             newGetter.initialize(getter.getReturnType());
         }
         PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
-                        DescriptorUtils.convertModality(setter.getModality(), makeNonAbstract), setter.getVisibility(),
-                        propertyDescriptor,
-                        Lists.newArrayList(setter.getAnnotations()),
-                        setter.hasBody(), setter.isDefault());
+                propertyDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), makeNonAbstract), setter.getVisibility(),
+                setter.hasBody(), setter.isDefault());
         if (newSetter != null) {
             newSetter.initialize(setter.getValueParameters().get(0).copy(newSetter));
         }

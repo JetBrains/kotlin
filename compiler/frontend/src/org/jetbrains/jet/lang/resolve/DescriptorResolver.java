@@ -649,9 +649,9 @@ public class DescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    resolveModalityFromModifiers(setter.getModifierList(), propertyDescriptor.getModality()),
+                    propertyDescriptor, annotations, resolveModalityFromModifiers(setter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(setter.getModifierList(), propertyDescriptor.getVisibility()),
-                    propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
+                    setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
 //                    trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
@@ -709,9 +709,9 @@ public class DescriptorResolver {
     private PropertySetterDescriptor createDefaultSetter(PropertyDescriptor propertyDescriptor) {
         PropertySetterDescriptor setterDescriptor;
         setterDescriptor = new PropertySetterDescriptor(
-                propertyDescriptor.getModality(),
+                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
-                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
+                false, true);
         return setterDescriptor;
     }
 
