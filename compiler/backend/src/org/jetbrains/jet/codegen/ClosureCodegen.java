@@ -54,7 +54,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
         Method descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, new JvmMethodSignature(descriptor, null, null, null, null), INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(descriptor, null, null, null, "");
+        final CallableMethod result = new CallableMethod(owner, jvmMethodSignature, INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
         if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(fd);
         }
@@ -165,7 +166,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this, state.getTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
-        fc.generateMethod(body, new JvmMethodSignature(invokeSignature(funDescriptor), null, null, null, null), null, funDescriptor);
+        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(invokeSignature(funDescriptor), null, null, null, "");
+        fc.generateMethod(body, jvmMethodSignature, null, funDescriptor);
         return closureContext.outerWasUsed;
     }
 

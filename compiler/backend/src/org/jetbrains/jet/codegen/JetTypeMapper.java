@@ -494,7 +494,7 @@ public class JetTypeMapper {
         }
         Method method = new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
         if (signatureVisitor == null) {
-            return new JvmMethodSignature(method, null, null, null, null);
+            return new JvmMethodSignature(method, null, null, null, "");
         } else {
             return new JvmMethodSignature(method, signatureVisitor.makeJavaString(),
                     signatureVisitor.makeKotlinMethodTypeParameters(),
@@ -570,34 +570,61 @@ public class JetTypeMapper {
         }
         Type returnType = mapReturnType(f.getReturnType());
         // TODO: proper generic signature
-        return new JvmMethodSignature(new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()])), null, null, null, null);
+        return new JvmMethodSignature(new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()])), null, null, null, "");
     }
 
-
+    
     public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
-        Type returnType = mapType(descriptor.getOutType());
         String name = PropertyCodegen.getterName(descriptor.getName());
         ArrayList<Type> params = new ArrayList<Type>();
+
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
+
+        signatureWriter.writerFormalTypeParametersStart();
+        signatureWriter.writeFormalTypeParametersEnd();
+
+        signatureWriter.writeParametersStart();
+
         if(kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
             assert containingDeclaration != null;
-            params.add(mapType(containingDeclaration.getDefaultType()));
+            signatureWriter.writeParameterType();
+            params.add(mapType(containingDeclaration.getDefaultType(), signatureWriter));
+            signatureWriter.writeParameterTypeEnd();
         }
 
         if(descriptor.getReceiverParameter().exists()) {
-            params.add(mapType(descriptor.getReceiverParameter().getType()));
+            signatureWriter.writeParameterType();
+            params.add(mapType(descriptor.getReceiverParameter().getType(), signatureWriter));
+            signatureWriter.writeParameterTypeEnd();
         }
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             if(typeParameterDescriptor.isReified()) {
+                signatureWriter.writeParameterType();
                 params.add(TYPE_TYPEINFO);
+                visitAsmType(signatureWriter, TYPE_TYPEINFO, false);
+                signatureWriter.writeParameterTypeEnd();
             }
         }
+        
+        signatureWriter.writeParametersEnd();
+
+        signatureWriter.writeReturnType();
+        Type returnType = mapType(descriptor.getOutType(), signatureWriter);
+        signatureWriter.writeReturnTypeEnd();
 
         // TODO: proper generic signature
-        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(new Method(name, returnType, params.toArray(new Type[params.size()])), null, null, null, null);
+        Method asmMethod = new Method(name, returnType, params.toArray(new Type[params.size()]));
+        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(
+                asmMethod,
+                signatureWriter.makeJavaString(),
+                signatureWriter.makeKotlinMethodTypeParameters(),
+                signatureWriter.makeKotlinParameterTypes(),
+                signatureWriter.makeKotlinReturnTypeSignature()
+            );
 
-        return new JvmPropertyAccessorSignature(jvmMethodSignature, "");
+        return new JvmPropertyAccessorSignature(jvmMethodSignature, jvmMethodSignature.getKotlinReturnType());
     }
 
     @Nullable
@@ -605,32 +632,61 @@ public class JetTypeMapper {
         if (!descriptor.isVar()) {
             return null;
         }
+        
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
+        
+        signatureWriter.writerFormalTypeParametersStart();
+        signatureWriter.writeFormalTypeParametersEnd();
 
         JetType outType = descriptor.getOutType();
+
+        signatureWriter.writeParametersStart();
 
         String name = PropertyCodegen.setterName(descriptor.getName());
         ArrayList<Type> params = new ArrayList<Type>();
         if(kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
             assert containingDeclaration != null;
-            params.add(mapType(containingDeclaration.getDefaultType()));
+            signatureWriter.writeParameterType();
+            params.add(mapType(containingDeclaration.getDefaultType(), signatureWriter));
+            signatureWriter.writeParameterTypeEnd();
         }
 
         if(descriptor.getReceiverParameter().exists()) {
-            params.add(mapType(descriptor.getReceiverParameter().getType()));
+            signatureWriter.writeParameterType();
+            params.add(mapType(descriptor.getReceiverParameter().getType(), signatureWriter));
+            signatureWriter.writeParameterTypeEnd();
         }
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             if(typeParameterDescriptor.isReified()) {
+                signatureWriter.writeParameterType();
                 params.add(TYPE_TYPEINFO);
+                signatureWriter.writeParameterType();
+                visitAsmType(signatureWriter, TYPE_TYPEINFO, false);
+                signatureWriter.writeParameterTypeEnd();
             }
         }
 
-        params.add(mapType(outType));
+        signatureWriter.writeParameterType();
+        params.add(mapType(outType, signatureWriter));
+        signatureWriter.writeParameterTypeEnd();
+        
+        signatureWriter.writeParametersEnd();
+        
+        signatureWriter.writeReturnType();
+        visitAsmType(signatureWriter, Type.VOID_TYPE, false);
+        signatureWriter.writeReturnTypeEnd();
 
-        // TODO: proper generic signature
-        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()])), null, null, null, null);
-        return new JvmPropertyAccessorSignature(jvmMethodSignature, "");
+        Method asmMethod = new Method(name, Type.VOID_TYPE, params.toArray(new Type[params.size()]));
+        JvmMethodSignature jvmMethodSignature = new JvmMethodSignature(
+                asmMethod,
+                signatureWriter.makeJavaString(),
+                signatureWriter.makeKotlinMethodTypeParameters(),
+                signatureWriter.makeKotlinParameterTypes(),
+                signatureWriter.makeKotlinReturnTypeSignature()
+            );
+        return new JvmPropertyAccessorSignature(jvmMethodSignature, jvmMethodSignature.getKotlinParameterType(jvmMethodSignature.getParameterCount() - 1));
     }
 
     private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, List<Type> valueParameterTypes) {
@@ -652,7 +708,7 @@ public class JetTypeMapper {
         }
 
         Method method = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-        return new JvmMethodSignature(method, null, null, null, null); // TODO: generics signature
+        return new JvmMethodSignature(method, null, null, null, ""); // TODO: generics signature
     }
 
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind) {

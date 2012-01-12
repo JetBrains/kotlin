@@ -350,7 +350,7 @@ public class BothSignatureWriter {
         return kotlinParameterTypes;
     }
 
-    @Nullable
+    @NotNull
     public String makeKotlinReturnTypeSignature() {
         checkState(State.METHOD_END);
         return kotlinReturnType;
