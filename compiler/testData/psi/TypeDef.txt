@@ -1,6 +1,6 @@
 JetFile: TypeDef.jet
   NAMESPACE_HEADER
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')

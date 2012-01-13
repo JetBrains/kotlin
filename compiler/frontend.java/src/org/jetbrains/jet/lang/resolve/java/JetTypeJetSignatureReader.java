@@ -38,46 +38,22 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     
     private JetType getPrimitiveType(char descriptor, boolean nullable) {
         if (!nullable) {
-            switch (descriptor) {
-                case 'Z':
-                    return jetStandardLibrary.getBooleanType();
-                case 'C':
-                    return jetStandardLibrary.getCharType();
-                case 'B':
-                    return jetStandardLibrary.getByteType();
-                case 'S':
-                    return jetStandardLibrary.getShortType();
-                case 'I':
-                    return jetStandardLibrary.getIntType();
-                case 'F':
-                    return jetStandardLibrary.getFloatType();
-                case 'J':
-                    return jetStandardLibrary.getLongType();
-                case 'D':
-                    return jetStandardLibrary.getDoubleType();
-                case 'V':
-                    return JetStandardClasses.getUnitType();
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                if (jvmPrimitiveType.getJvmLetter() == descriptor) {
+                    return jetStandardLibrary.getPrimitiveJetType(jvmPrimitiveType.getPrimitiveType());
+                }
+            }
+            if (descriptor == 'V') {
+                return JetStandardClasses.getUnitType();
             }
         } else {
-            switch (descriptor) {
-                case 'Z':
-                    return jetStandardLibrary.getNullableBooleanType();
-                case 'C':
-                    return jetStandardLibrary.getNullableCharType();
-                case 'B':
-                    return jetStandardLibrary.getNullableByteType();
-                case 'S':
-                    return jetStandardLibrary.getNullableShortType();
-                case 'I':
-                    return jetStandardLibrary.getNullableIntType();
-                case 'F':
-                    return jetStandardLibrary.getNullableFloatType();
-                case 'J':
-                    return jetStandardLibrary.getNullableLongType();
-                case 'D':
-                    return jetStandardLibrary.getNullableDoubleType();
-                case 'V':
-                    throw new IllegalStateException("incorrect signature: nullable void");
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                if (jvmPrimitiveType.getJvmLetter() == descriptor) {
+                    return jetStandardLibrary.getNullablePrimitiveJetType(jvmPrimitiveType.getPrimitiveType());
+                }
+            }
+            if (descriptor == 'V') {
+                throw new IllegalStateException("incorrect signature: nullable void");
             }
         }
         throw new IllegalStateException("incorrect signature");
@@ -138,7 +114,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
                 JetType primitiveType = getPrimitiveType(descriptor, nullable);
                 JetType arrayType;
                 if (!nullable) {
-                    arrayType = jetStandardLibrary.getPrimitiveArrayType(primitiveType);
+                    arrayType = jetStandardLibrary.getPrimitiveArrayJetTypeByPrimitiveJetType(primitiveType);
                 } else {
                     arrayType = TypeUtils.makeNullableAsSpecified(jetStandardLibrary.getArrayType(primitiveType), nullable);
                 }

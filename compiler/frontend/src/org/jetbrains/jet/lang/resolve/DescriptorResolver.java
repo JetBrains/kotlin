@@ -139,8 +139,8 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
-        final FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
+    public NamedFunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
+        final NamedFunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(
                 containingDescriptor,
                 annotationResolver.resolveAnnotations(scope, function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
@@ -276,31 +276,12 @@ public class DescriptorResolver {
 
     private JetType getVarargParameterType(JetType type) {
         JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
-        if (type.equals(standardLibrary.getByteType())) {
-            return standardLibrary.getByteArrayType();
+        JetType arrayType = standardLibrary.getPrimitiveArrayJetTypeByPrimitiveJetType(type);
+        if (arrayType != null) {
+            return arrayType;
+        } else {
+            return standardLibrary.getArrayType(type);
         }
-        if (type.equals(standardLibrary.getCharType())) {
-            return standardLibrary.getCharArrayType();
-        }
-        if (type.equals(standardLibrary.getShortType())) {
-            return standardLibrary.getShortArrayType();
-        }
-        if (type.equals(standardLibrary.getIntType())) {
-            return standardLibrary.getIntArrayType();
-        }
-        if (type.equals(standardLibrary.getLongType())) {
-            return standardLibrary.getLongArrayType();
-        }
-        if (type.equals(standardLibrary.getFloatType())) {
-            return standardLibrary.getFloatArrayType();
-        }
-        if (type.equals(standardLibrary.getDoubleType())) {
-            return standardLibrary.getDoubleArrayType();
-        }
-        if (type.equals(standardLibrary.getBooleanType())) {
-            return standardLibrary.getBooleanArrayType();
-        }
-        return standardLibrary.getArrayType(type);
     }
 
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
@@ -668,9 +649,9 @@ public class DescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    resolveModalityFromModifiers(setter.getModifierList(), propertyDescriptor.getModality()),
+                    propertyDescriptor, annotations, resolveModalityFromModifiers(setter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(setter.getModifierList(), propertyDescriptor.getVisibility()),
-                    propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
+                    setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
 //                    trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
@@ -728,9 +709,9 @@ public class DescriptorResolver {
     private PropertySetterDescriptor createDefaultSetter(PropertyDescriptor propertyDescriptor) {
         PropertySetterDescriptor setterDescriptor;
         setterDescriptor = new PropertySetterDescriptor(
-                propertyDescriptor.getModality(),
+                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
-                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
+                false, true);
         return setterDescriptor;
     }
 

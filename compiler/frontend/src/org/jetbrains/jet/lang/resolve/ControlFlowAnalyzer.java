@@ -34,9 +34,9 @@ public class ControlFlowAnalyzer {
             if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
             checkClassOrObject(objectDeclaration);
         }
-        for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : context.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, NamedFunctionDescriptor> entry : context.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
-            FunctionDescriptorImpl functionDescriptor = entry.getValue();
+            NamedFunctionDescriptor functionDescriptor = entry.getValue();
             if (!context.completeAnalysisNeeded(function)) continue;
             final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE

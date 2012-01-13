@@ -1,6 +1,6 @@
 JetFile: Imports.jet
   NAMESPACE_HEADER
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
@@ -13,7 +13,7 @@ JetFile: Imports.jet
   IMPORT_DIRECTIVE
     PsiElement(import)('import')
     PsiWhiteSpace(' ')
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiElement(DOT)('.')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')

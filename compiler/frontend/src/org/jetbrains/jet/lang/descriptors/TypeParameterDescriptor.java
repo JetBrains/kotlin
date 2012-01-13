@@ -42,6 +42,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
         return new TypeParameterDescriptor(containingDeclaration, annotations, reified, variance, name, index);
     }
 
+    // 0-based
     private final int index;
     private final Variance variance;
     private final Set<JetType> upperBounds;

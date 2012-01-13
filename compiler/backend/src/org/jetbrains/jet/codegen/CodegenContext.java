@@ -207,11 +207,11 @@ public abstract class CodegenContext {
         if(accessor != null)
             return accessor;
 
-        if(descriptor instanceof FunctionDescriptor) {
-            FunctionDescriptorImpl myAccessor = new FunctionDescriptorImpl(contextType,
+        if(descriptor instanceof NamedFunctionDescriptor) {
+            NamedFunctionDescriptorImpl myAccessor = new NamedFunctionDescriptorImpl(contextType,
                                                                            Collections.<AnnotationDescriptor>emptyList(),
                                                                            descriptor.getName() + "$bridge$" + accessors.size());
-            FunctionDescriptor fd = (FunctionDescriptor) descriptor;
+            FunctionDescriptor fd = (NamedFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                   fd.getExpectedThisObject(),
                                   fd.getTypeParameters(),
@@ -241,11 +241,9 @@ public abstract class CodegenContext {
             pgd.initialize(myAccessor.getOutType());
             
             PropertySetterDescriptor psd = new PropertySetterDescriptor(
-                        myAccessor.getModality(),
+                    myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
                         myAccessor.getVisibility(),
-                        myAccessor,
-                        Collections.<AnnotationDescriptor>emptyList(),
-                        false, false);
+                    false, false);
             myAccessor.initialize(pgd, psd);
             accessor = myAccessor;
         }

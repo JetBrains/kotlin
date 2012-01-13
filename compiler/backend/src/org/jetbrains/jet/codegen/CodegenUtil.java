@@ -85,9 +85,9 @@ public class CodegenUtil {
         return hasDerivedTypeInfoField(type);
     }
 
-    public static FunctionDescriptor createInvoke(ExpressionAsFunctionDescriptor fd) {
+    public static NamedFunctionDescriptor createInvoke(ExpressionAsFunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
-        FunctionDescriptorImpl invokeDescriptor = new FunctionDescriptorImpl(
+        NamedFunctionDescriptorImpl invokeDescriptor = new NamedFunctionDescriptorImpl(
                 fd.getExpectedThisObject().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity),
                 Collections.<AnnotationDescriptor>emptyList(),
                 "invoke");

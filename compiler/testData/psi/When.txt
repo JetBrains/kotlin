@@ -598,7 +598,7 @@ JetFile: When.jet
               DOT_QUALIFIED_EXPRESSION
                 DOT_QUALIFIED_EXPRESSION
                   ROOT_NAMESPACE
-                    PsiElement(namespace)('package')
+                    PsiElement(package)('package')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')

@@ -1,7 +1,5 @@
 package test.collections;
 
-import junit.framework.TestSuite;
-
 /**
  */
 public class TestAll {

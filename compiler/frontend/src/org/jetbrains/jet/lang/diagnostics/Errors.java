@@ -129,11 +129,11 @@ public interface Errors {
             return super.on(elementToBlame, nodeToMark, s, classDescriptor, modifierListOwner).add(DiagnosticParameters.CLASS, modifierListOwner);
         }
     };
-    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
-    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
-    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, FunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract");
+    PsiElementOnlyDiagnosticFactory1<JetFunction, NamedFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
+    PsiElementOnlyDiagnosticFactory1<JetFunction, NamedFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
+    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, NamedFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract");
 
-    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
+    PsiElementOnlyDiagnosticFactory1<JetFunction, NamedFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
     
     DiagnosticWithParameterFactory<JetNamedDeclaration, JetClass> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticWithParameterFactory.create(ERROR, "Non final member in a final class", DiagnosticParameters.CLASS);
 

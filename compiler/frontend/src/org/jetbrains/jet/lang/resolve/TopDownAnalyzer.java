@@ -139,7 +139,7 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+            public void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor) {
                 throw new UnsupportedOperationException();
             }
 

@@ -1,7 +1,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.plugin.java;
+package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.java.JetLightClass");
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetLightClass");
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     private final JetFile file;

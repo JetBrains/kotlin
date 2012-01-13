@@ -5,7 +5,7 @@ import org.jetbrains.jet.codegen.CallableMethod;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.objectweb.asm.Type;
@@ -18,9 +18,9 @@ import java.util.List;
  * @author alex.tkachman
  */
 public class PsiMethodCall implements IntrinsicMethod {
-    private final FunctionDescriptor myMethod;
+    private final NamedFunctionDescriptor myMethod;
 
-    public PsiMethodCall(FunctionDescriptor method) {
+    public PsiMethodCall(NamedFunctionDescriptor method) {
         myMethod = method;
     }
 

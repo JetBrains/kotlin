@@ -1,6 +1,6 @@
 JetFile: RootNamespace.jet
   NAMESPACE_HEADER
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
@@ -16,7 +16,7 @@ JetFile: RootNamespace.jet
     TYPE_PARAMETER_LIST
       <empty list>
   PsiErrorElement:Expecting namespace or top level declaration
-    PsiElement(namespace)('package')
+    PsiElement(package)('package')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
     ANNOTATION_ENTRY
@@ -48,7 +48,7 @@ JetFile: RootNamespace.jet
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
             ROOT_NAMESPACE
-              PsiElement(namespace)('package')
+              PsiElement(package)('package')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
@@ -63,7 +63,7 @@ JetFile: RootNamespace.jet
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
             ROOT_NAMESPACE
-              PsiElement(namespace)('package')
+              PsiElement(package)('package')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
@@ -97,7 +97,7 @@ JetFile: RootNamespace.jet
                 DOT_QUALIFIED_EXPRESSION
                   DOT_QUALIFIED_EXPRESSION
                     ROOT_NAMESPACE
-                      PsiElement(namespace)('package')
+                      PsiElement(package)('package')
                     PsiElement(DOT)('.')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('foo')

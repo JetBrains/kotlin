@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -40,21 +41,22 @@ public class FunctionCodegen {
     }
 
     public void gen(JetNamedFunction f) {
-        final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
+        final NamedFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
-        generateMethod(f, method, functionDescriptor);
+        generateMethod(f, method, null, functionDescriptor);
     }
 
-    public void generateMethod(JetDeclarationWithBody f, JvmMethodSignature jvmMethod, FunctionDescriptor functionDescriptor) {
+    public void generateMethod(JetDeclarationWithBody f, JvmMethodSignature jvmMethod, @Nullable String propertyTypeSignature, FunctionDescriptor functionDescriptor) {
         CodegenContext.MethodContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
-        generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor, f);
+        generatedMethod(bodyExpression, jvmMethod, propertyTypeSignature, funContext, functionDescriptor, f);
     }
 
     private void generatedMethod(JetExpression bodyExpressions,
                                  JvmMethodSignature jvmSignature,
+                                 @Nullable String propertyTypeSignature,
                                  CodegenContext.MethodContext context,
                                  FunctionDescriptor functionDescriptor, JetDeclarationWithBody fun)
     {
@@ -91,17 +93,26 @@ public class FunctionCodegen {
             if(v.generateCode()) {
                 int start = 0;
                 if(kind != OwnerKind.TRAIT_IMPL) {
-                    AnnotationVisitor av = mv.visitAnnotation(JvmStdlibNames.JET_METHOD.getDescriptor(), true);
-                    if(functionDescriptor.getReturnType().isNullable()) {
-                        av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
+                    if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+                        PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter());
+                    } else if (functionDescriptor instanceof NamedFunctionDescriptor) {
+                        if (propertyTypeSignature != null) {
+                            throw new IllegalStateException();
+                        }
+                        AnnotationVisitor av = mv.visitAnnotation(JvmStdlibNames.JET_METHOD.getDescriptor(), true);
+                        if(functionDescriptor.getReturnType().isNullable()) {
+                            av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, true);
+                        }
+                        if (jvmSignature.getKotlinReturnType() != null) {
+                            av.visit(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
+                        }
+                        if (jvmSignature.getKotlinTypeParameter() != null) {
+                            av.visit(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
+                        }
+                        av.visitEnd();
+                    } else {
+                        throw new IllegalStateException();
                     }
-                    if (jvmSignature.getKotlinReturnType() != null) {
-                        av.visit(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD, jvmSignature.getKotlinReturnType());
-                    }
-                    if (jvmSignature.getKotlinTypeParameter() != null) {
-                        av.visit(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, jvmSignature.getKotlinTypeParameter());
-                    }
-                    av.visitEnd();
                 }
 
                 if(kind == OwnerKind.TRAIT_IMPL) {
@@ -134,7 +145,7 @@ public class FunctionCodegen {
                         av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                     }
                     if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
-                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start));
+                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
                     }
                     av.visitEnd();
                 }
@@ -241,7 +252,7 @@ public class FunctionCodegen {
 
     public static void endVisit(MethodVisitor mv, String description, PsiElement method) {
         try {
-            mv.visitMaxs(0, 0);
+            mv.visitMaxs(-1, -1);
         }
         catch (Throwable t) {
             throw new CompilationException("wrong code generated" + (description != null ? " for " + description : "") + t.getClass().getName() + " " + t.getMessage(), t, method);

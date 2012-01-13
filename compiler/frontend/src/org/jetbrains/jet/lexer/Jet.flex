@@ -162,7 +162,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 {RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
 
 "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
-"package"    { return JetTokens.NAMESPACE_KEYWORD ;}
+"package"    { return JetTokens.PACKAGE_KEYWORD ;}
 "return"     { return JetTokens.RETURN_KEYWORD ;}
 "object"     { return JetTokens.OBJECT_KEYWORD ;}
 "while"      { return JetTokens.WHILE_KEYWORD ;}

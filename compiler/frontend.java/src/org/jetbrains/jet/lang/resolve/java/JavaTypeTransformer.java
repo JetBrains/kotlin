@@ -88,6 +88,7 @@ public class JavaTypeTransformer {
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
                     TypeParameterDescriptor typeParameterDescriptor = resolver.resolveTypeParameter(typeParameter);
+//                    return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
                     return typeParameterDescriptor.getDefaultType();
                 }
                 else {
@@ -155,31 +156,13 @@ public class JavaTypeTransformer {
     public Map<String, JetType> getPrimitiveTypesMap() {
         if (primitiveTypesMap == null) {
             primitiveTypesMap = new HashMap<String, JetType>();
-            primitiveTypesMap.put("byte", standardLibrary.getByteType());
-            primitiveTypesMap.put("short", standardLibrary.getShortType());
-            primitiveTypesMap.put("char", standardLibrary.getCharType());
-            primitiveTypesMap.put("int", standardLibrary.getIntType());
-            primitiveTypesMap.put("long", standardLibrary.getLongType());
-            primitiveTypesMap.put("float", standardLibrary.getFloatType());
-            primitiveTypesMap.put("double", standardLibrary.getDoubleType());
-            primitiveTypesMap.put("boolean", standardLibrary.getBooleanType());
-            primitiveTypesMap.put("[byte", standardLibrary.getByteArrayType());
-            primitiveTypesMap.put("[short", standardLibrary.getShortArrayType());
-            primitiveTypesMap.put("[char", standardLibrary.getCharArrayType());
-            primitiveTypesMap.put("[int", standardLibrary.getIntArrayType());
-            primitiveTypesMap.put("[long", standardLibrary.getLongArrayType());
-            primitiveTypesMap.put("[float", standardLibrary.getFloatArrayType());
-            primitiveTypesMap.put("[double", standardLibrary.getDoubleArrayType());
-            primitiveTypesMap.put("[boolean", standardLibrary.getBooleanArrayType());
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+                primitiveTypesMap.put(jvmPrimitiveType.getName(), standardLibrary.getPrimitiveJetType(primitiveType));
+                primitiveTypesMap.put("[" + jvmPrimitiveType.getName(), standardLibrary.getPrimitiveArrayJetType(primitiveType));
+                primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getNullablePrimitiveJetType(primitiveType));
+            }
             primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
-            primitiveTypesMap.put("java.lang.Byte", TypeUtils.makeNullable(standardLibrary.getByteType()));
-            primitiveTypesMap.put("java.lang.Short", TypeUtils.makeNullable(standardLibrary.getShortType()));
-            primitiveTypesMap.put("java.lang.Character", TypeUtils.makeNullable(standardLibrary.getCharType()));
-            primitiveTypesMap.put("java.lang.Integer", TypeUtils.makeNullable(standardLibrary.getIntType()));
-            primitiveTypesMap.put("java.lang.Long", TypeUtils.makeNullable(standardLibrary.getLongType()));
-            primitiveTypesMap.put("java.lang.Float", TypeUtils.makeNullable(standardLibrary.getFloatType()));
-            primitiveTypesMap.put("java.lang.Double", TypeUtils.makeNullable(standardLibrary.getDoubleType()));
-            primitiveTypesMap.put("java.lang.Boolean", TypeUtils.makeNullable(standardLibrary.getBooleanType()));
         }
         return primitiveTypesMap;
     }
@@ -187,14 +170,10 @@ public class JavaTypeTransformer {
     public Map<String, JetType> getClassTypesMap() {
         if (classTypesMap == null) {
             classTypesMap = new HashMap<String, JetType>();
-            classTypesMap.put("java.lang.Byte", TypeUtils.makeNullable(standardLibrary.getByteType()));
-            classTypesMap.put("java.lang.Short", TypeUtils.makeNullable(standardLibrary.getShortType()));
-            classTypesMap.put("java.lang.Character", TypeUtils.makeNullable(standardLibrary.getCharType()));
-            classTypesMap.put("java.lang.Integer", TypeUtils.makeNullable(standardLibrary.getIntType()));
-            classTypesMap.put("java.lang.Long", TypeUtils.makeNullable(standardLibrary.getLongType()));
-            classTypesMap.put("java.lang.Float", TypeUtils.makeNullable(standardLibrary.getFloatType()));
-            classTypesMap.put("java.lang.Double", TypeUtils.makeNullable(standardLibrary.getDoubleType()));
-            classTypesMap.put("java.lang.Boolean", TypeUtils.makeNullable(standardLibrary.getBooleanType()));
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getNullablePrimitiveJetType(primitiveType));
+            }
             classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
             classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
         }
@@ -204,14 +183,10 @@ public class JavaTypeTransformer {
     public Map<String, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
         if (classDescriptorMap == null) {
             classDescriptorMap = new HashMap<String, ClassDescriptor>();
-            classDescriptorMap.put("java.lang.Byte", standardLibrary.getByte());
-            classDescriptorMap.put("java.lang.Short", standardLibrary.getShort());
-            classDescriptorMap.put("java.lang.Character", standardLibrary.getChar());
-            classDescriptorMap.put("java.lang.Integer", standardLibrary.getInt());
-            classDescriptorMap.put("java.lang.Long", standardLibrary.getLong());
-            classDescriptorMap.put("java.lang.Float", standardLibrary.getFloat());
-            classDescriptorMap.put("java.lang.Double", standardLibrary.getDouble());
-            classDescriptorMap.put("java.lang.Boolean", standardLibrary.getBoolean());
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+                classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getPrimitiveClassDescriptor(primitiveType));
+            }
             //classDescriptorMap.put("java.lang.Object", standardLibrary.get
             classDescriptorMap.put("java.lang.String", standardLibrary.getString());
         }

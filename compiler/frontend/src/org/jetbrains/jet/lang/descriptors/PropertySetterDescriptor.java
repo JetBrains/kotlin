@@ -16,12 +16,13 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     private ValueParameterDescriptor parameter;
 
-    public PropertySetterDescriptor(@NotNull Modality modality,
-                                    @NotNull Visibility visibility,
-                                    @NotNull PropertyDescriptor correspondingProperty,
-                                    @NotNull List<AnnotationDescriptor> annotations,
-                                    boolean hasBody,
-                                    boolean isDefault) {
+    public PropertySetterDescriptor(
+            @NotNull PropertyDescriptor correspondingProperty,
+            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Modality modality,
+            @NotNull Visibility visibility,
+            boolean hasBody,
+            boolean isDefault) {
         super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
         if (isDefault) {
             initializeDefault();

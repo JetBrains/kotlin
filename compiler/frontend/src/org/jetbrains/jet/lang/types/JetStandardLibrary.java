@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -50,14 +51,6 @@ public class JetStandardLibrary {
     private JetScope libraryScope;
 
     private ClassDescriptor numberClass;
-    private ClassDescriptor byteClass;
-    private ClassDescriptor charClass;
-    private ClassDescriptor shortClass;
-    private ClassDescriptor intClass;
-    private ClassDescriptor longClass;
-    private ClassDescriptor floatClass;
-    private ClassDescriptor doubleClass;
-    private ClassDescriptor booleanClass;
 
     private ClassDescriptor stringClass;
     private ClassDescriptor arrayClass;
@@ -65,53 +58,9 @@ public class JetStandardLibrary {
     private ClassDescriptor typeInfoClass;
     private ClassDescriptor comparableClass;
 
-    private JetType byteType;
-    private JetType charType;
-    private JetType shortType;
-    private JetType intType;
-    private JetType longType;
-    private JetType floatType;
-    private JetType doubleType;
-    private JetType booleanType;
-
     private JetType stringType;
 
-    private JetType nullableByteType;
-    private JetType nullableCharType;
-    private JetType nullableShortType;
-    private JetType nullableIntType;
-    private JetType nullableLongType;
-    private JetType nullableFloatType;
-    private JetType nullableDoubleType;
-    private JetType nullableBooleanType;
     private JetType nullableTuple0Type;
-
-    private ClassDescriptor byteArrayClass;
-    private ClassDescriptor charArrayClass;
-    private ClassDescriptor shortArrayClass;
-    private ClassDescriptor intArrayClass;
-    private ClassDescriptor longArrayClass;
-    private ClassDescriptor floatArrayClass;
-    private ClassDescriptor doubleArrayClass;
-    private ClassDescriptor booleanArrayClass;
-
-    private JetType byteArrayType;
-    private JetType charArrayType;
-    private JetType shortArrayType;
-    private JetType intArrayType;
-    private JetType longArrayType;
-    private JetType floatArrayType;
-    private JetType doubleArrayType;
-    private JetType booleanArrayType;
-
-    private JetType nullableByteArrayType;
-    private JetType nullableCharArrayType;
-    private JetType nullableShortArrayType;
-    private JetType nullableIntArrayType;
-    private JetType nullableLongArrayType;
-    private JetType nullableFloatArrayType;
-    private JetType nullableDoubleArrayType;
-    private JetType nullableBooleanArrayType;
 
     public JetType getTuple0Type() {
         return tuple0Type;
@@ -121,6 +70,14 @@ public class JetStandardLibrary {
     private JetType nullableStringType;
 
     private Set<FunctionDescriptor> typeInfoFunction;
+
+    private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
+    private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;
+    private EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;
+    private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableJetType;
+    private EnumMap<PrimitiveType, JetType> primitiveTypeToArrayJetType;
+    private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableArrayJetType;
+    private Map<JetType, JetType> primitiveJetTypeToJetArrayType;
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
@@ -168,14 +125,6 @@ public class JetStandardLibrary {
         if(libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
             this.numberClass = (ClassDescriptor) libraryScope.getClassifier("Number");
-            this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
-            this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");
-            this.shortClass = (ClassDescriptor) libraryScope.getClassifier("Short");
-            this.intClass = (ClassDescriptor) libraryScope.getClassifier("Int");
-            this.longClass = (ClassDescriptor) libraryScope.getClassifier("Long");
-            this.floatClass = (ClassDescriptor) libraryScope.getClassifier("Float");
-            this.doubleClass = (ClassDescriptor) libraryScope.getClassifier("Double");
-            this.booleanClass = (ClassDescriptor) libraryScope.getClassifier("Boolean");
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
 
@@ -185,57 +134,39 @@ public class JetStandardLibrary {
             this.typeInfoClass = (ClassDescriptor) libraryScope.getClassifier("TypeInfo");
             this.typeInfoFunction = libraryScope.getFunctions("typeinfo");
 
-            this.byteType = new JetTypeImpl(getByte());
-            this.charType = new JetTypeImpl(getChar());
-            this.shortType = new JetTypeImpl(getShort());
-            this.intType = new JetTypeImpl(getInt());
-            this.longType = new JetTypeImpl(getLong());
-            this.floatType = new JetTypeImpl(getFloat());
-            this.doubleType = new JetTypeImpl(getDouble());
-            this.booleanType = new JetTypeImpl(getBoolean());
-
             this.stringType = new JetTypeImpl(getString());
             this.nullableStringType = TypeUtils.makeNullable(stringType);
 
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
             this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
+            
+            primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
+            primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+            primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+            primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
+            primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+            primitiveTypeToNullableArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+            primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
 
-            this.nullableByteType = TypeUtils.makeNullable(byteType);
-            this.nullableCharType = TypeUtils.makeNullable(charType);
-            this.nullableShortType = TypeUtils.makeNullable(shortType);
-            this.nullableIntType = TypeUtils.makeNullable(intType);
-            this.nullableLongType = TypeUtils.makeNullable(longType);
-            this.nullableFloatType = TypeUtils.makeNullable(floatType);
-            this.nullableDoubleType = TypeUtils.makeNullable(doubleType);
-            this.nullableBooleanType = TypeUtils.makeNullable(booleanType);
-
-            this.byteArrayClass = (ClassDescriptor) libraryScope.getClassifier("ByteArray");
-            this.charArrayClass = (ClassDescriptor) libraryScope.getClassifier("CharArray");
-            this.shortArrayClass = (ClassDescriptor) libraryScope.getClassifier("ShortArray");
-            this.intArrayClass = (ClassDescriptor) libraryScope.getClassifier("IntArray");
-            this.longArrayClass = (ClassDescriptor) libraryScope.getClassifier("LongArray");
-            this.floatArrayClass = (ClassDescriptor) libraryScope.getClassifier("FloatArray");
-            this.doubleArrayClass = (ClassDescriptor) libraryScope.getClassifier("DoubleArray");
-            this.booleanArrayClass = (ClassDescriptor) libraryScope.getClassifier("BooleanArray");
-
-            this.byteArrayType = new JetTypeImpl(byteArrayClass);
-            this.charArrayType = new JetTypeImpl(charArrayClass);
-            this.shortArrayType = new JetTypeImpl(shortArrayClass);
-            this.intArrayType = new JetTypeImpl(intArrayClass);
-            this.longArrayType = new JetTypeImpl(longArrayClass);
-            this.floatArrayType = new JetTypeImpl(floatArrayClass);
-            this.doubleArrayType = new JetTypeImpl(doubleArrayClass);
-            this.booleanArrayType = new JetTypeImpl(booleanArrayClass);
-
-            this.nullableByteArrayType = TypeUtils.makeNullable(byteArrayType);
-            this.nullableCharArrayType = TypeUtils.makeNullable(charArrayType);
-            this.nullableShortArrayType = TypeUtils.makeNullable(shortArrayType);
-            this.nullableIntArrayType = TypeUtils.makeNullable(intArrayType);
-            this.nullableLongArrayType = TypeUtils.makeNullable(longArrayType);
-            this.nullableFloatArrayType = TypeUtils.makeNullable(floatArrayType);
-            this.nullableDoubleArrayType = TypeUtils.makeNullable(doubleArrayType);
-            this.nullableBooleanArrayType = TypeUtils.makeNullable(booleanArrayType);
+            for (PrimitiveType primitive : PrimitiveType.values()) {
+                makePrimitive(primitive);
+            }
         }
+    }
+
+    private void makePrimitive(PrimitiveType primitiveType) {
+        ClassDescriptor clazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName());
+        ClassDescriptor arrayClazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName() + "Array");
+        JetTypeImpl type = new JetTypeImpl(clazz);
+        JetTypeImpl arrayType = new JetTypeImpl(arrayClazz);
+
+        primitiveTypeToClass.put(primitiveType, clazz);
+        primitiveTypeToJetType.put(primitiveType, type);
+        primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
+        primitiveTypeToArrayClass.put(primitiveType, arrayClazz);
+        primitiveTypeToArrayJetType.put(primitiveType, arrayType);
+        primitiveTypeToNullableArrayJetType.put(primitiveType, TypeUtils.makeNullable(arrayType));
+        primitiveJetTypeToJetArrayType.put(type, arrayType);
     }
 
     @NotNull
@@ -245,51 +176,49 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public ClassDescriptor getByte() {
+    public ClassDescriptor getPrimitiveClassDescriptor(PrimitiveType primitiveType) {
         initStdClasses();
-        return byteClass;
+        return primitiveTypeToClass.get(primitiveType);
+    }
+
+    @NotNull
+    public ClassDescriptor getByte() {
+        return getPrimitiveClassDescriptor(PrimitiveType.BYTE);
     }
 
     @NotNull
     public ClassDescriptor getChar() {
-        initStdClasses();
-        return charClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.CHAR);
     }
 
     @NotNull
     public ClassDescriptor getShort() {
-        initStdClasses();
-        return shortClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.SHORT);
     }
 
     @NotNull
     public ClassDescriptor getInt() {
-        initStdClasses();
-        return intClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.INT);
     }
 
     @NotNull
     public ClassDescriptor getLong() {
-        initStdClasses();
-        return longClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.LONG);
     }
 
     @NotNull
     public ClassDescriptor getFloat() {
-        initStdClasses();
-        return floatClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.FLOAT);
     }
 
     @NotNull
     public ClassDescriptor getDouble() {
-        initStdClasses();
-        return doubleClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.DOUBLE);
     }
 
     @NotNull
     public ClassDescriptor getBoolean() {
-        initStdClasses();
-        return booleanClass;
+        return getPrimitiveClassDescriptor(PrimitiveType.BOOLEAN);
     }
 
     @NotNull
@@ -339,39 +268,38 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public JetType getPrimitiveJetType(PrimitiveType primitiveType) {
+        return primitiveTypeToJetType.get(primitiveType);
+    }
+
+    @NotNull
     public JetType getIntType() {
-        initStdClasses();
-        return intType;
+        return getPrimitiveJetType(PrimitiveType.INT);
     }
 
     @NotNull
     public JetType getLongType() {
-        initStdClasses();
-        return longType;
+        return getPrimitiveJetType(PrimitiveType.LONG);
     }
 
     @NotNull
     public JetType getDoubleType() {
-        initStdClasses();
-        return doubleType;
+        return getPrimitiveJetType(PrimitiveType.DOUBLE);
     }
 
     @NotNull
     public JetType getFloatType() {
-        initStdClasses();
-        return floatType;
+        return getPrimitiveJetType(PrimitiveType.FLOAT);
     }
 
     @NotNull
     public JetType getCharType() {
-        initStdClasses();
-        return charType;
+        return getPrimitiveJetType(PrimitiveType.CHAR);
     }
 
     @NotNull
     public JetType getBooleanType() {
-        initStdClasses();
-        return booleanType;
+        return getPrimitiveJetType(PrimitiveType.BOOLEAN);
     }
 
     @NotNull
@@ -382,14 +310,12 @@ public class JetStandardLibrary {
 
     @NotNull
     public JetType getByteType() {
-        initStdClasses();
-        return byteType;
+        return getPrimitiveJetType(PrimitiveType.BYTE);
     }
 
     @NotNull
     public JetType getShortType() {
-        initStdClasses();
-        return shortType;
+        return getPrimitiveJetType(PrimitiveType.SHORT);
     }
 
     @NotNull
@@ -431,168 +357,42 @@ public class JetStandardLibrary {
         return nullableStringType;
     }
 
-    public JetType getNullableByteType() {
+    @NotNull
+    public JetType getNullablePrimitiveJetType(PrimitiveType primitiveType) {
         initStdClasses();
-        return nullableByteType;
-    }
-
-    public JetType getNullableCharType() {
-        initStdClasses();
-        return nullableCharType;
-    }
-
-    public JetType getNullableShortType() {
-        initStdClasses();
-        return nullableShortType;
-    }
-
-    public JetType getNullableIntType() {
-        initStdClasses();
-        return nullableIntType;
-    }
-
-    public JetType getNullableLongType() {
-        initStdClasses();
-        return nullableLongType;
-    }
-
-    public JetType getNullableFloatType() {
-        initStdClasses();
-        return nullableFloatType;
-    }
-
-    public JetType getNullableDoubleType() {
-        initStdClasses();
-        return nullableDoubleType;
-    }
-
-    public JetType getNullableBooleanType() {
-        initStdClasses();
-        return nullableBooleanType;
+        return primitiveTypeToNullableJetType.get(primitiveType);
     }
 
     public JetType getNullableTuple0Type() {
         initStdClasses();
         return nullableTuple0Type;
     }
-
-    public JetType getBooleanArrayType() {
-        initStdClasses();
-        return booleanArrayType;
-    }
-
-    public JetType getByteArrayType() {
-        initStdClasses();
-        return byteArrayType;
-    }
-
-    public JetType getCharArrayType() {
-        initStdClasses();
-        return charArrayType;
-    }
-
-    public JetType getShortArrayType() {
-        initStdClasses();
-        return shortArrayType;
-    }
-
-    public JetType getIntArrayType() {
-        initStdClasses();
-        return intArrayType;
-    }
-
-    public JetType getLongArrayType() {
-        initStdClasses();
-        return longArrayType;
-    }
-
-    public JetType getFloatArrayType() {
-        initStdClasses();
-        return floatArrayType;
-    }
-
-    public JetType getDoubleArrayType() {
-        initStdClasses();
-        return doubleArrayType;
-    }
     
-    public JetType getPrimitiveArrayType(JetType jetType) {
-        if (jetType.equals(getIntType())) {
-            return getIntArrayType();
-        } else {
-            throw new IllegalStateException("not implemented");
-        }
-    }
-
-    public ClassDescriptor getByteArrayClass() {
+    @NotNull
+    public JetType getPrimitiveArrayJetType(PrimitiveType primitiveType) {
         initStdClasses();
-        return byteArrayClass;
+        return primitiveTypeToArrayJetType.get(primitiveType);
     }
 
-    public ClassDescriptor getCharArrayClass() {
+    /**
+     * @return <code>null</code> if not primitive
+     */
+    @Nullable
+    public JetType getPrimitiveArrayJetTypeByPrimitiveJetType(JetType jetType) {
+        return primitiveJetTypeToJetArrayType.get(jetType);
+    }
+
+    @NotNull
+    public ClassDescriptor getPrimitiveArrayClassDescriptor(PrimitiveType primitiveType) {
         initStdClasses();
-        return charArrayClass;
+        return primitiveTypeToArrayClass.get(primitiveType);
     }
 
-    public ClassDescriptor getShortArrayClass() {
+
+    @NotNull
+    public JetType getNullablePrimitiveArrayJetType(PrimitiveType primitiveType) {
         initStdClasses();
-        return shortArrayClass;
+        return primitiveTypeToNullableArrayJetType.get(primitiveType);
     }
 
-    public ClassDescriptor getIntArrayClass() {
-        initStdClasses();
-        return intArrayClass;
-    }
-
-    public ClassDescriptor getLongArrayClass() {
-        initStdClasses();
-        return longArrayClass;
-    }
-
-    public ClassDescriptor getFloatArrayClass() {
-        initStdClasses();
-        return floatArrayClass;
-    }
-
-    public ClassDescriptor getDoubleArrayClass() {
-        initStdClasses();
-        return doubleArrayClass;
-    }
-
-    public ClassDescriptor getBooleanArrayClass() {
-        initStdClasses();
-        return booleanArrayClass;
-    }
-
-    public JetType getNullableByteArrayType() {
-        return nullableByteArrayType;
-    }
-
-    public JetType getNullableCharArrayType() {
-        return nullableCharArrayType;
-    }
-
-    public JetType getNullableShortArrayType() {
-        return nullableShortArrayType;
-    }
-
-    public JetType getNullableIntArrayType() {
-        return nullableIntArrayType;
-    }
-
-    public JetType getNullableLongArrayType() {
-        return nullableLongArrayType;
-    }
-
-    public JetType getNullableFloatArrayType() {
-        return nullableFloatArrayType;
-    }
-
-    public JetType getNullableDoubleArrayType() {
-        return nullableDoubleArrayType;
-    }
-
-    public JetType getNullableBooleanArrayType() {
-        return nullableBooleanArrayType;
-    }
 }

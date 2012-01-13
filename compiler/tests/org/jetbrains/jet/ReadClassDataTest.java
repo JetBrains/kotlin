@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
+import org.codehaus.groovy.ast.expr.DeclarationExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -33,7 +34,9 @@ import org.junit.Assert;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -93,33 +96,73 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
     private void compareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
         Assert.assertEquals(nsa.getName(), nsb.getName());
         System.out.println("namespace " + nsa.getName());
+
+        Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
+
+        Set<String> classifierNames = new HashSet<String>();
+        Set<String> propertyNames = new HashSet<String>();
+        Set<String> functionNames = new HashSet<String>();
+        
         for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
-                ClassifierDescriptor bd = nsb.getMemberScope().getClassifier(ad.getName());
-                Assert.assertTrue("classifier not found: " + ad.getName(), bd != null);
-                compareClassifiers((ClassifierDescriptor) ad, bd);
-                
-                Assert.assertNull(nsb.getMemberScope().getClassifier(ad.getName() + JvmAbi.TRAIT_IMPL_SUFFIX));
-            } else if (ad instanceof FunctionDescriptor) {
-                Set<FunctionDescriptor> functions = nsb.getMemberScope().getFunctions(ad.getName());
-                Assert.assertTrue(functions.size() >= 1);
-                Assert.assertTrue("not implemented", functions.size() == 1);
-                FunctionDescriptor bd = functions.iterator().next();
-                compareDescriptors(ad, bd);
+                classifierNames.add(ad.getName());
             } else if (ad instanceof PropertyDescriptor) {
-                Set<VariableDescriptor> properties = nsb.getMemberScope().getProperties(ad.getName());
-                Assert.assertTrue("property not found by name: " + ad.getName(), properties.size() >= 1);
-                Assert.assertTrue("not implemented", properties.size() == 1);
-                PropertyDescriptor bd = (PropertyDescriptor) properties.iterator().next();
-                compareDescriptors(ad, bd);
-
-                Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.getterName(ad.getName())).isEmpty());
-                Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(ad.getName())).isEmpty());
+                propertyNames.add(ad.getName());
+            } else if (ad instanceof FunctionDescriptor) {
+                functionNames.add(ad.getName());
             } else {
-                throw new AssertionError("Unknown member: " + ad);
+                throw new AssertionError("unknown member: " + ad);
             }
         }
+
+        for (String name : classifierNames) {
+            ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
+            ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
+            Assert.assertTrue(ca != null);
+            Assert.assertTrue(cb != null);
+            compareClassifiers(ca, cb);
+        }
+        
+        for (String name : propertyNames) {
+            Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
+            Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
+            compareDeclarationSets(pa, pb);
+
+            Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.getterName(name)).isEmpty());
+            Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(name)).isEmpty());
+        }
+        
+        for (String name : functionNames) {
+            Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
+            Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
+            compareDeclarationSets(fa, fb);
+        }
     }
+    
+    private void compareDeclarationSets(Set<? extends DeclarationDescriptor> a, Set<? extends DeclarationDescriptor> b) {
+        String at = serializedDeclarationSets(a);
+        String bt = serializedDeclarationSets(b);
+        Assert.assertEquals(at, bt);
+        System.out.print(at);
+    }
+    
+    private String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
+        List<String> strings = new ArrayList<String>();
+        for (DeclarationDescriptor d : ds) {
+            StringBuilder sb = new StringBuilder();
+            new Serializer(sb).serialize(d);
+            strings.add(sb.toString());
+        }
+        
+        Collections.sort(strings);
+        
+        StringBuilder r = new StringBuilder();
+        for (String string : strings) {
+            r.append(string);
+            r.append("\n");
+        }
+        return r.toString();
+    } 
 
     private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b) {
         StringBuilder sba = new StringBuilder();
@@ -282,12 +325,19 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             } else {
                 sb.append("val ");
             }
+            if (prop.getReceiverParameter().exists()) {
+                serialize(prop.getReceiverParameter().getType());
+                sb.append(".");
+            }
             sb.append(prop.getName());
             sb.append(": ");
             serialize(prop.getOutType());
         }
 
         public void serialize(ValueParameterDescriptor valueParameter) {
+            sb.append("/*");
+            sb.append(valueParameter.getIndex());
+            sb.append("*/ ");
             if (valueParameter.getVarargElementType() != null) {
                 sb.append("vararg ");
             }
@@ -322,11 +372,11 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 sb.append("<");
                 boolean first = true;
                 for (TypeProjection proj : type.getArguments()) {
-                    serialize(proj.getProjectionKind());
-                    serialize(proj.getType());
                     if (!first) {
                         sb.append(", ");
                     }
+                    serialize(proj.getProjectionKind());
+                    serialize(proj.getType());
                     first = false;
                 }
                 sb.append(">");
@@ -347,7 +397,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 first = false;
             }
         }
-
+        
         private Method getMethodToSerialize(Object o) {
             // TODO: cache
             for (Method method : this.getClass().getMethods()) {
@@ -396,6 +446,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
 
         public void serialize(TypeParameterDescriptor param) {
+            sb.append("/*").append(param.getIndex()).append("*/ ");
             serialize(param.getVariance());
             sb.append(param.getName());
             if (!param.getUpperBounds().isEmpty()) {

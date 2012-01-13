@@ -39,22 +39,40 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         bindingContext = state.getBindingContext();
     }
 
-    public static Method erasedInvokeSignature(FunctionDescriptor fd) {
+    public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
+        
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
+        
+        signatureWriter.writeFormalTypeParametersStart();
+        signatureWriter.writeFormalTypeParametersEnd();
+        
         boolean isExtensionFunction = fd.getReceiverParameter().exists();
         int paramCount = fd.getValueParameters().size();
         if (isExtensionFunction) {
             paramCount++;
         }
+        
+        signatureWriter.writeParametersStart();
+        
+        for (int i = 0; i < paramCount; ++i) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
+            signatureWriter.writeAsmType(JetTypeMapper.TYPE_OBJECT, true);
+            signatureWriter.writeParameterTypeEnd();
+        }
+        
+        signatureWriter.writeParametersEnd();
 
-        Type[] args = new Type[paramCount];
-        Arrays.fill(args, JetTypeMapper.TYPE_OBJECT);
-        return new Method("invoke", JetTypeMapper.TYPE_OBJECT, args);
+        signatureWriter.writeReturnType();
+        signatureWriter.writeAsmType(JetTypeMapper.TYPE_OBJECT, true);
+        signatureWriter.writeReturnTypeEnd();
+
+        return signatureWriter.makeJvmMethodSignature("invoke");
     }
 
     public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
-        Method descriptor = erasedInvokeSignature(fd);
+        JvmMethodSignature descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, new JvmMethodSignature(descriptor, null, null, null, null), INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+        final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL);
         if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(fd);
         }
@@ -62,8 +80,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return result;
     }
 
-    public Method invokeSignature(FunctionDescriptor fd) {
-        return state.getTypeMapper().mapSignature("invoke", fd).getAsmMethod();
+    public JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
+        return state.getTypeMapper().mapSignature("invoke", fd);
     }
 
     public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
@@ -165,18 +183,19 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this, state.getTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
-        fc.generateMethod(body, new JvmMethodSignature(invokeSignature(funDescriptor), null, null, null, null), funDescriptor);
+        JvmMethodSignature jvmMethodSignature = invokeSignature(funDescriptor);
+        fc.generateMethod(body, jvmMethodSignature, null, funDescriptor);
         return closureContext.outerWasUsed;
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, JetExpression fun, ClassBuilder cv) {
-        final Method bridge = erasedInvokeSignature(funDescriptor);
-        final Method delegate = invokeSignature(funDescriptor);
+        final JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
+        final Method delegate = invokeSignature(funDescriptor).getAsmMethod();
 
-        if(bridge.getDescriptor().equals(delegate.getDescriptor()))
+        if(bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor()))
             return;
 
-        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getDescriptor(), null, new String[0]);
+        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getAsmMethod().getDescriptor(), null, new String[0]);
         if (cv.generateCode()) {
             mv.visitCode();
 

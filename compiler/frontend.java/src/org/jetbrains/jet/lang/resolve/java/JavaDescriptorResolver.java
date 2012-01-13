@@ -6,24 +6,66 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.HierarchicalMethodSignature;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiEllipsisType;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.PsiTypeParameterListOwner;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructorImpl;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -117,7 +159,7 @@ public class JavaDescriptorResolver {
     protected final Map<String, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
     protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
-    protected final Map<PsiTypeParameter, TypeParameterDescriptorInitialization> typeParameterDescriptorCache = Maps.newHashMap();
+    private final Map<PsiTypeParameter, TypeParameterDescriptorInitialization> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
     protected final JavaPsiFacade javaFacade;
@@ -259,17 +301,11 @@ public class JavaDescriptorResolver {
             }
         }
         else {
-            for (PsiMethod constructor : psiConstructors) {
-                PsiAnnotation jetConstructorAnnotation =
-                        constructor.getModifierList().findAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getFqName());
-                if (jetConstructorAnnotation != null) {
-                    PsiLiteralExpression hiddenExpresson = (PsiLiteralExpression) jetConstructorAnnotation.findAttributeValue(JvmStdlibNames.JET_CONSTRUCTOR_HIDDEN_FIELD);
-                    if (hiddenExpresson != null) {
-                        boolean hidden = (Boolean) hiddenExpresson.getValue();
-                        if (hidden) {
-                            continue;
-                        }
-                    }
+            for (PsiMethod psiConstructor : psiConstructors) {
+                PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
+
+                if (constructor.getJetConstructor().hidden()) {
+                    continue;
                 }
 
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
@@ -277,17 +313,17 @@ public class JavaDescriptorResolver {
                         Collections.<AnnotationDescriptor>emptyList(), // TODO
                         false);
                 ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(constructorDescriptor,
-                        constructor.getParameterList().getParameters(),
+                        constructor.getParameters(),
                         new TypeParameterListTypeVariableResolver(typeParameters) // TODO: outer too
                     );
                 if (valueParameterDescriptors.receiverType != null) {
                     throw new IllegalStateException();
                 }
                 constructorDescriptor.initialize(typeParameters, valueParameterDescriptors.descriptors, Modality.FINAL,
-                                                 resolveVisibilityFromPsiModifiers(constructor));
+                                                 resolveVisibilityFromPsiModifiers(psiConstructor));
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor);
-                semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, constructor, constructorDescriptor);
+                semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
             }
         }
 
@@ -297,18 +333,14 @@ public class JavaDescriptorResolver {
     }
 
     private List<TypeParameterDescriptor> resolveClassTypeParameters(PsiClass psiClass, ResolverClassData classData, TypeVariableResolver typeVariableResolver) {
-        for (PsiAnnotation annotation : psiClass.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_CLASS.getFqName())) {
-                classData.kotlin = true;
-                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_CLASS_SIGNATURE);
-                if (attributeValue != null) {
-                    String typeParametersString = (String) attributeValue.getValue();
-                    if (typeParametersString != null) {
-                        return resolveClassTypeParametersFromJetSignature(typeParametersString, psiClass, classData.classDescriptor, typeVariableResolver);
-                    }
-                }
-            }
+        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
+        classData.kotlin = jetClassAnnotation.isDefined();
+        
+        if (jetClassAnnotation.signature().length() > 0) {
+            return resolveClassTypeParametersFromJetSignature(
+                    jetClassAnnotation.signature(), psiClass, classData.classDescriptor, typeVariableResolver);
         }
+
         return makeUninitializedTypeParameters(classData.classDescriptor, psiClass.getTypeParameters());
     }
 
@@ -344,11 +376,12 @@ public class JavaDescriptorResolver {
         private final DeclarationDescriptor containingDeclaration;
         private final PsiTypeParameterListOwner psiOwner;
         private final String name;
+        private final int index;
         private final TypeInfoVariance variance;
         private final TypeVariableResolver typeVariableResolver;
 
         protected JetSignatureTypeParameterVisitor(DeclarationDescriptor containingDeclaration, PsiTypeParameterListOwner psiOwner,
-                String name, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
+                String name, int index, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
@@ -357,11 +390,10 @@ public class JavaDescriptorResolver {
             this.containingDeclaration = containingDeclaration;
             this.psiOwner = psiOwner;
             this.name = name;
+            this.index = index;
             this.variance = variance;
             this.typeVariableResolver = typeVariableResolver;
         }
-
-        int index = 0;
 
         List<JetType> upperBounds = new ArrayList<JetType>();
         List<JetType> lowerBounds = new ArrayList<JetType>();
@@ -397,7 +429,7 @@ public class JavaDescriptorResolver {
                     true, // TODO: wrong
                     JetSignatureUtils.translateVariance(variance),
                     name,
-                    ++index);
+                    index);
             PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(psiOwner, name);
             typeParameterDescriptorCache.put(psiTypeParameter, new TypeParameterDescriptorInitialization(typeParameter, upperBounds, lowerBounds));
             done(typeParameter);
@@ -428,9 +460,11 @@ public class JavaDescriptorResolver {
         }
         
         new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
+            private int formalTypeParameterIndex = 0;
+            
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
-                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptor typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
@@ -527,7 +561,10 @@ public class JavaDescriptorResolver {
     @NotNull
     private TypeParameterDescriptorInitialization resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
         TypeParameterDescriptorInitialization typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
-        assert typeParameterDescriptor != null : psiTypeParameter.getText();
+        if (typeParameterDescriptor == null) {
+            // TODO: report properly without crashing compiler
+            throw new IllegalStateException("failed to resolve type parameter: " + psiTypeParameter.getName());
+        }
         return typeParameterDescriptor;
     }
 
@@ -633,21 +670,24 @@ public class JavaDescriptorResolver {
         }
     }
 
-    public ValueParameterDescriptors resolveParameterDescriptors(DeclarationDescriptor containingDeclaration,
-            PsiParameter[] parameters, TypeVariableResolver typeVariableResolver) {
+    private ValueParameterDescriptors resolveParameterDescriptors(DeclarationDescriptor containingDeclaration,
+            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         JetType receiverType = null;
-        for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
-            PsiParameter parameter = parameters[i];
-            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i, parameter, typeVariableResolver);
+        int indexDelta = 0;
+        for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
+            PsiParameterWrapper parameter = parameters.get(i);
+            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
             if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
                 // TODO
+                --indexDelta;
             } else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
                 result.add(meaning.valueParameterDescriptor);
             } else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
                 if (receiverType != null) {
                     throw new IllegalStateException("more then one receiver");
                 }
+                --indexDelta;
                 receiverType = meaning.receiverType;
             }
         }
@@ -688,8 +728,13 @@ public class JavaDescriptorResolver {
 
     @NotNull
     private JvmMethodParameterMeaning resolveParameterDescriptor(DeclarationDescriptor containingDeclaration, int i,
-            PsiParameter parameter, TypeVariableResolver typeVariableResolver) {
-        PsiType psiType = parameter.getType();
+            PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver) {
+
+        if (parameter.getJetTypeParameter().isDefined()) {
+            return JvmMethodParameterMeaning.typeInfo(new Object());
+        }
+
+        PsiType psiType = parameter.getPsiParameter().getType();
 
         JetType varargElementType;
         if (psiType instanceof PsiEllipsisType) {
@@ -700,56 +745,21 @@ public class JavaDescriptorResolver {
             varargElementType = null;
         }
 
-        boolean changeNullable = false;
-        boolean nullable = true;
-        String typeFromAnnotation = null;
-        
-        boolean receiver = false;
-        boolean hasDefaultValue = false;
-        
+        boolean nullable = parameter.getJetValueParameter().nullable();
+
         // TODO: must be very slow, make it lazy?
-        String name = parameter.getName() != null ? parameter.getName() : "p" + i;
-        for (PsiAnnotation annotation : parameter.getModifierList().getAnnotations()) {
+        String name = parameter.getPsiParameter().getName() != null ? parameter.getPsiParameter().getName() : "p" + i;
 
-            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_VALUE_PARAMETER.getFqName())) {
-                PsiLiteralExpression nameExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD);
-                if (nameExpression != null) {
-                    name = (String) nameExpression.getValue();
-                }
-                
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD);
-                if (nullableExpression != null) {
-                    nullable = (Boolean) nullableExpression.getValue();
-                } else {
-                    // default value of parameter
-                    nullable = false;
-                    changeNullable = true;
-                }
-                
-                PsiLiteralExpression signatureExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD);
-                if (signatureExpression != null) {
-                    typeFromAnnotation = (String) signatureExpression.getValue();
-                }
-
-
-                PsiLiteralExpression receiverExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD);
-                if (receiverExpression != null) {
-                    receiver = (Boolean) receiverExpression.getValue();
-                }
-                
-                PsiLiteralExpression hasDefaultValueExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD);
-                if (hasDefaultValueExpression != null) {
-                    hasDefaultValue = (Boolean) hasDefaultValueExpression.getValue();
-                }
-
-
-            } else if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_TYPE_PARAMETER.getFqName())) {
-                return JvmMethodParameterMeaning.typeInfo(new Object());
-            }
+        if (parameter.getJetValueParameter().name().length() > 0) {
+            name = parameter.getJetValueParameter().name();
         }
         
+        String typeFromAnnotation = parameter.getJetValueParameter().type();
+        boolean receiver = parameter.getJetValueParameter().receiver();
+        boolean hasDefaultValue = parameter.getJetValueParameter().hasDefaultValue();
+
         JetType outType;
-        if (typeFromAnnotation != null && typeFromAnnotation.length() > 0) {
+        if (typeFromAnnotation.length() > 0) {
             outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
         } else {
             outType = semanticServices.getTypeTransformer().transformToType(psiType);
@@ -763,7 +773,7 @@ public class JavaDescriptorResolver {
                     Collections.<AnnotationDescriptor>emptyList(), // TODO
                     name,
                     false,
-                    changeNullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
+                    nullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
                     hasDefaultValue,
                     varargElementType
             ));
@@ -797,24 +807,28 @@ public class JavaDescriptorResolver {
     private static class PropertyKey {
         @NotNull
         private final String name;
-        @NotNull
-        private final PsiType type;
+        //@NotNull
+        //private final PsiType type;
+        //@Nullable
+        //private final PsiType receiverType;
 
-        private PropertyKey(String name, PsiType type) {
+        private PropertyKey(@NotNull String name /*, @NotNull PsiType type, @Nullable PsiType receiverType */) {
             this.name = name;
-            this.type = type;
+            //this.type = type;
+            //this.receiverType = receiverType;
         }
 
         @Override
         public boolean equals(Object o) {
-            // generated by Idea
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
             PropertyKey that = (PropertyKey) o;
 
             if (!name.equals(that.name)) return false;
-            if (!type.equals(that.type)) return false;
+            //if (receiverType != null ? !receiverType.equals(that.receiverType) : that.receiverType != null)
+            //    return false;
+            //if (!type.equals(that.type)) return false;
 
             return true;
         }
@@ -822,15 +836,19 @@ public class JavaDescriptorResolver {
         @Override
         public int hashCode() {
             int result = name.hashCode();
-            result = 31 * result + type.hashCode();
+            //result = 31 * result + type.hashCode();
+            //result = 31 * result + (receiverType != null ? receiverType.hashCode() : 0);
             return result;
         }
     }
 
     private static class MembersForProperty {
-        private PsiField field;
-        private PsiMethod setter;
-        private PsiMethod getter;
+        private PsiFieldWrapper field;
+        private PsiMethodWrapper setter;
+        private PsiMethodWrapper getter;
+
+        private PsiType type;
+        private PsiType receiverType;
     }
     
     private Map<PropertyKey, MembersForProperty> getMembersForProperties(@NotNull PsiClass clazz, boolean staticMembers, boolean kotlin) {
@@ -846,51 +864,106 @@ public class JavaDescriptorResolver {
                 }
 
                 MembersForProperty members = new MembersForProperty();
-                members.field = field;
-                membersMap.put(new PropertyKey(field.getName(), field.getType()), members);
+                members.field = new PsiFieldWrapper(field);
+                members.type = field.getType();
+                membersMap.put(new PropertyKey(field.getName() /*, field.getType(), null*/), members);
             }
         }
         
-        for (PsiMethod method : clazz.getMethods()) {
-            if (method.getModifierList().hasExplicitModifier(PsiModifier.STATIC) != staticMembers) {
+        for (PsiMethod psiMethod : clazz.getMethods()) {
+            PsiMethodWrapper method = new PsiMethodWrapper(psiMethod);
+
+            if (method.isStatic() != staticMembers) {
                 continue;
             }
 
-            if (method.hasModifierProperty(PsiModifier.PRIVATE)) {
+            if (method.isPrivate()) {
                 continue;
             }
 
             // TODO: "is" prefix
-            if (method.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
-                // TODO: some java properties too
-                if (method.getModifierList().findAnnotation(JvmStdlibNames.JET_PROPERTY.getFqName()) != null) {
-                    if (method.getParameterList().getParametersCount() == 0) {
-                        if (method.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD)) {
-                            continue;
-                        }
+            // TODO: remove getJavaClass
+            if (psiMethod.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
 
-                        String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
-                        PropertyKey key = new PropertyKey(propertyName, method.getReturnType());
-                        MembersForProperty members = membersMap.get(key);
-                        if (members == null) {
-                            members = new MembersForProperty();
-                            membersMap.put(key, members);
-                        }
-                        members.getter = method;
+                // TODO: some java properties too
+                if (method.getJetProperty().isDefined()) {
+
+                    if (psiMethod.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD)) {
+                        continue;
                     }
+
+                    int i = 0;
+
+                    PsiType receiverType;
+                    if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
+                        receiverType = method.getParameter(i).getPsiParameter().getType();
+                        ++i;
+                    } else {
+                        receiverType = null;
+                    }
+                    
+                    while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
+                        // TODO: store is reified
+                        ++i;
+                    }
+                    
+                    if (i != method.getParameters().size()) {
+                        // TODO: report error properly
+                        throw new IllegalStateException();
+                    }
+                    
+                    String propertyName = StringUtil.decapitalize(psiMethod.getName().substring(JvmAbi.GETTER_PREFIX.length()));
+                    PropertyKey key = new PropertyKey(propertyName /*, psiMethod.getReturnType(), receiverType*/);
+                    MembersForProperty members = membersMap.get(key);
+                    if (members == null) {
+                        members = new MembersForProperty();
+                        membersMap.put(key, members);
+                    }
+                    members.getter = new PsiMethodWrapper(psiMethod);
+
+                    // TODO: check conflicts with setter
+                    members.type = psiMethod.getReturnType();
+                    members.receiverType = receiverType;
                 }
-            } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
-                if (method.getModifierList().findAnnotation(JvmStdlibNames.JET_PROPERTY.getFqName()) != null) {
-                    if (method.getParameterList().getParametersCount() == 1) {
-                        String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
-                        PropertyKey key = new PropertyKey(propertyName, method.getParameterList().getParameters()[0].getType());
-                        MembersForProperty members = membersMap.get(key);
-                        if (members == null) {
-                            members = new MembersForProperty();
-                            membersMap.put(key, members);
-                        }
-                        members.setter = method;
+            } else if (psiMethod.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+
+                if (method.getJetProperty().isDefined()) {
+                    if (psiMethod.getParameterList().getParametersCount() == 0) {
+                        // TODO: report error properly
+                        throw new IllegalStateException();
                     }
+
+                    int i = 0;
+
+                    PsiType receiverType = null;
+                    PsiParameterWrapper p1 = method.getParameter(0);
+                    if (p1.getJetValueParameter().receiver()) {
+                        receiverType = p1.getPsiParameter().getType();
+                        ++i;
+                    }
+                    
+                    while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
+                        ++i;
+                    }
+                    
+                    if (i + 1 != psiMethod.getParameterList().getParametersCount()) {
+                        throw new IllegalStateException();
+                    }
+                    
+                    PsiType propertyType = psiMethod.getParameterList().getParameters()[i].getType();
+
+                    String propertyName = StringUtil.decapitalize(psiMethod.getName().substring(JvmAbi.SETTER_PREFIX.length()));
+                    PropertyKey key = new PropertyKey(propertyName /*, propertyType, receiverType*/);
+                    MembersForProperty members = membersMap.get(key);
+                    if (members == null) {
+                        members = new MembersForProperty();
+                        membersMap.put(key, members);
+                    }
+                    members.setter = new PsiMethodWrapper(psiMethod);
+
+                    // TODO: check conflicts with getter
+                    members.type = propertyType;
+                    members.receiverType = receiverType;
                 }
             }
         }
@@ -930,28 +1003,29 @@ public class JavaDescriptorResolver {
         }
         
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
-        for (Map.Entry<PropertyKey, MembersForProperty> entry : getMembersForProperties(psiClass, staticMembers, scopeData.kotlin).entrySet()) {
+        Map<PropertyKey, MembersForProperty> membersForProperties = getMembersForProperties(psiClass, staticMembers, scopeData.kotlin);
+        for (Map.Entry<PropertyKey, MembersForProperty> entry : membersForProperties.entrySet()) {
             //VariableDescriptor variableDescriptor = fieldDescriptorCache.get(field);
             //if (variableDescriptor != null) {
             //    return variableDescriptor;
             //}
             String propertyName = entry.getKey().name;
-            PsiType propertyType = entry.getKey().type;
+            PsiType propertyType = entry.getValue().type;
+            PsiType receiverType = entry.getValue().receiverType;
             MembersForProperty members = entry.getValue();
 
-            JetType type = semanticServices.getTypeTransformer().transformToType(propertyType);
             boolean isFinal;
             if (members.setter == null && members.getter == null) {
-                isFinal = members.field.hasModifierProperty(PsiModifier.FINAL);
+                isFinal = false;
             } else if (members.getter != null) {
-                isFinal = members.getter.hasModifierProperty(PsiModifier.FINAL);
+                isFinal = members.getter.isFinal();
             } else if (members.setter != null) {
-                isFinal = members.setter.hasModifierProperty(PsiModifier.FINAL);
+                isFinal = members.setter.isFinal();
             } else {
                 isFinal = false;
             }
-            
-            PsiMember anyMember;
+
+            PsiMemberWrapper anyMember;
             if (members.getter != null) {
                 anyMember = members.getter;
             } else if (members.field != null) {
@@ -973,14 +1047,64 @@ public class JavaDescriptorResolver {
                     owner,
                     Collections.<AnnotationDescriptor>emptyList(),
                     isFinal && !staticMembers ? Modality.FINAL : Modality.OPEN, // TODO: abstract
-                    resolveVisibilityFromPsiModifiers(anyMember),
+                    resolveVisibilityFromPsiModifiers(anyMember.psiMember),
                     isVar,
                     false,
-                    null,
+                    propertyName);
+            
+            PropertyGetterDescriptor getterDescriptor = null;
+            PropertySetterDescriptor setterDescriptor = null;
+            if (members.getter != null) {
+                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false);
+            }
+            if (members.setter != null) {
+                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false);
+            }
+            
+            propertyDescriptor.initialize(getterDescriptor, setterDescriptor);
+
+            final List<TypeParameterDescriptor> classTypeParameters;
+            if (anyMember instanceof PsiMethodWrapper && !anyMember.isStatic()) {
+                classTypeParameters = ((ClassDescriptor) owner).getTypeConstructor().getParameters();
+            } else {
+                classTypeParameters = new ArrayList<TypeParameterDescriptor>(0);
+            }
+            TypeParameterListTypeVariableResolver typeVariableResolver = new TypeParameterListTypeVariableResolver(classTypeParameters);
+
+            List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(0);
+
+            if (members.setter != null) {
+                // call ugly code with side effects
+                typeParameters = resolveMethodTypeParameters(members.setter, propertyDescriptor.getSetter(), typeVariableResolver);
+            }
+            if (members.getter != null) {
+                // call ugly code with side effects
+                typeParameters = resolveMethodTypeParameters(members.getter, propertyDescriptor.getGetter(), typeVariableResolver);
+            }
+
+            JetType receiverJetType;
+            if (receiverType == null) {
+                receiverJetType = null;
+            } else {
+                receiverJetType = semanticServices.getTypeTransformer().transformToType(receiverType);
+            }
+
+            JetType type = semanticServices.getTypeTransformer().transformToType(propertyType);
+
+            propertyDescriptor.setType(
+                    type,
+                    typeParameters,
                     DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
-                    propertyName,
-                    type);
-            semanticServices.getTrace().record(BindingContext.VARIABLE, anyMember, propertyDescriptor);
+                    receiverJetType
+                );
+            if (getterDescriptor != null) {
+                getterDescriptor.initialize(type);
+            }
+            if (setterDescriptor != null) {
+                // TODO: initialize
+            }
+            
+            semanticServices.getTrace().record(BindingContext.VARIABLE, anyMember.psiMember, propertyDescriptor);
             //fieldDescriptorCache.put(field, propertyDescriptor);
             descriptors.add(propertyDescriptor);
         }
@@ -1053,14 +1177,16 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    public FunctionDescriptor resolveMethodToFunctionDescriptor(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethod method) {
-        PsiType returnType = method.getReturnType();
+    public FunctionDescriptor resolveMethodToFunctionDescriptor(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethod psiMethod) {
+        PsiMethodWrapper method = new PsiMethodWrapper(psiMethod);
+        
+        PsiType returnType = psiMethod.getReturnType();
         if (returnType == null) {
             return null;
         }
-        FunctionDescriptor functionDescriptor = methodDescriptorCache.get(method);
+        FunctionDescriptor functionDescriptor = methodDescriptorCache.get(psiMethod);
         if (functionDescriptor != null) {
-            if (method.getContainingClass() != psiClass) {
+            if (psiMethod.getContainingClass() != psiClass) {
                 functionDescriptor = functionDescriptor.substitute(typeSubstitutorForGenericSuperclasses);
             }
             return functionDescriptor;
@@ -1082,44 +1208,36 @@ public class JavaDescriptorResolver {
             kotlin = classData.kotlin;
         }
 
-        // TODO: hide getters and setters properly
-        if (kotlin) {
-            if (method.getName().startsWith(JvmAbi.GETTER_PREFIX) && method.getParameterList().getParametersCount() == 0) {
-                if (method.getModifierList().findAnnotation(JvmStdlibNames.JET_PROPERTY.getFqName()) != null)
-                    return null;
-            }
-            if (method.getName().startsWith(JvmAbi.SETTER_PREFIX) && method.getParameterList().getParametersCount() == 1) {
-                if (method.getModifierList().findAnnotation(JvmStdlibNames.JET_PROPERTY.getFqName()) != null)
-                    return null;
-            }
+        // TODO: ugly
+        if (method.getJetProperty().isDefined()) {
+            return null;
         }
-        
+
         DeclarationDescriptor classDescriptor;
         final List<TypeParameterDescriptor> classTypeParameters;
-        if (method.hasModifierProperty(PsiModifier.STATIC)) {
-            classDescriptor = resolveNamespace(method.getContainingClass());
+        if (method.isStatic()) {
+            classDescriptor = resolveNamespace(psiMethod.getContainingClass());
             classTypeParameters = Collections.emptyList();
         }
         else {
-            ClassDescriptor classClassDescriptor = resolveClass(method.getContainingClass());
+            ClassDescriptor classClassDescriptor = resolveClass(psiMethod.getContainingClass());
             classDescriptor = classClassDescriptor;
             classTypeParameters = classClassDescriptor.getTypeConstructor().getParameters();
         }
         if (classDescriptor == null) {
             return null;
         }
-        PsiParameter[] parameters = method.getParameterList().getParameters();
-        FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
+        NamedFunctionDescriptorImpl functionDescriptorImpl = new NamedFunctionDescriptorImpl(
                 owner,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                method.getName()
+                psiMethod.getName()
         );
-        methodDescriptorCache.put(method, functionDescriptorImpl);
+        methodDescriptorCache.put(psiMethod, functionDescriptorImpl);
 
         // TODO: add outer classes
         TypeParameterListTypeVariableResolver typeVariableResolverForParameters = new TypeParameterListTypeVariableResolver(classTypeParameters);
 
-        final List<TypeParameterDescriptor> methodTypeParameters = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
+        final List<TypeParameterDescriptor> methodTypeParameters = resolveMethodTypeParameters(new PsiMethodWrapper(psiMethod), functionDescriptorImpl, typeVariableResolverForParameters);
 
         class MethodTypeVariableResolver implements TypeVariableResolver {
 
@@ -1141,41 +1259,37 @@ public class JavaDescriptorResolver {
         }
 
 
-        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, parameters, new MethodTypeVariableResolver());
+        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), new MethodTypeVariableResolver());
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.receiverType,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 methodTypeParameters,
                 valueParameterDescriptors.descriptors,
                 makeReturnType(returnType, method, new MethodTypeVariableResolver()),
-                Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL)),
-                resolveVisibilityFromPsiModifiers(method)
+                Modality.convertFromFlags(psiMethod.hasModifierProperty(PsiModifier.ABSTRACT), !psiMethod.hasModifierProperty(PsiModifier.FINAL)),
+                resolveVisibilityFromPsiModifiers(psiMethod)
         );
-        semanticServices.getTrace().record(BindingContext.FUNCTION, method, functionDescriptorImpl);
+        semanticServices.getTrace().record(BindingContext.FUNCTION, psiMethod, functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
-        if (method.getContainingClass() != psiClass) {
+        if (psiMethod.getContainingClass() != psiClass) {
             substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
         }
         return substitutedFunctionDescriptor;
     }
 
-    private List<TypeParameterDescriptor> resolveMethodTypeParameters(PsiMethod method, FunctionDescriptorImpl functionDescriptorImpl, TypeVariableResolver classTypeVariableResolver) {
-        for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_METHOD.getFqName())) {
-                PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD);
-                if (attributeValue != null) {
-                    String typeParametersString = (String) attributeValue.getValue();
-                    if (typeParametersString != null) {
-                        List<TypeParameterDescriptor> r = resolveMethodTypeParametersFromJetSignature(typeParametersString, method, functionDescriptorImpl, classTypeVariableResolver);
-                        initializeTypeParameters(method);
-                        return r;
-                    }
-                }
-            }
+    private List<TypeParameterDescriptor> resolveMethodTypeParameters(
+            @NotNull PsiMethodWrapper method,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull TypeVariableResolver classTypeVariableResolver) {
+        if (method.getJetMethodOrProperty().typeParameters().length() > 0) {
+            List<TypeParameterDescriptor> r = resolveMethodTypeParametersFromJetSignature(
+                    method.getJetMethodOrProperty().typeParameters(), method.getPsiMethod(), functionDescriptor, classTypeVariableResolver);
+            initializeTypeParameters(method.getPsiMethod());
+            return r;
         }
-        
-        List<TypeParameterDescriptor> typeParameters = makeUninitializedTypeParameters(functionDescriptorImpl, method.getTypeParameters());
-        initializeTypeParameters(method);
+
+        List<TypeParameterDescriptor> typeParameters = makeUninitializedTypeParameters(functionDescriptor, method.getPsiMethod().getTypeParameters());
+        initializeTypeParameters(method.getPsiMethod());
         return typeParameters;
     }
 
@@ -1202,10 +1316,12 @@ public class JavaDescriptorResolver {
         }
         
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
+            private int formalTypeParameterIndex = 0;
+            
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
                 
-                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptor typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
@@ -1217,37 +1333,18 @@ public class JavaDescriptorResolver {
         return r;
     }
 
-    private JetType makeReturnType(PsiType returnType, PsiMethod method, TypeVariableResolver typeVariableResolver) {
-        boolean changeNullable = false;
-        boolean nullable = true;
-        
-        String returnTypeFromAnnotation = null;
+    private JetType makeReturnType(PsiType returnType, PsiMethodWrapper method, TypeVariableResolver typeVariableResolver) {
 
-        for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-            if (annotation.getQualifiedName().equals(JvmStdlibNames.JET_METHOD.getFqName())) {
-                PsiLiteralExpression nullableExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD);
-                if (nullableExpression != null) {
-                    nullable = (Boolean) nullableExpression.getValue();
-                } else {
-                    // default value of parameter
-                    nullable = false;
-                    changeNullable = true;
-                }
-                
-                PsiLiteralExpression returnTypeExpression = (PsiLiteralExpression) annotation.findAttributeValue(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD);
-                if (returnTypeExpression != null) {
-                    returnTypeFromAnnotation = (String) returnTypeExpression.getValue();
-                }
-            }
-        }
+        String returnTypeFromAnnotation = method.getJetMethod().returnType();
+
         JetType transformedType;
-        if (returnTypeFromAnnotation != null && returnTypeFromAnnotation.length() > 0) {
+        if (returnTypeFromAnnotation.length() > 0) {
             transformedType = semanticServices.getTypeTransformer().transformToType(returnTypeFromAnnotation, typeVariableResolver);
         } else {
             transformedType = semanticServices.getTypeTransformer().transformToType(returnType);
         }
-        if (changeNullable) {
-            return TypeUtils.makeNullableAsSpecified(transformedType, nullable);
+        if (method.getJetMethod().returnTypeNullable()) {
+            return TypeUtils.makeNullableAsSpecified(transformedType, true);
         } else {
             return transformedType;
         }

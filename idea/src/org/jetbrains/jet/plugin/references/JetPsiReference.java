@@ -11,9 +11,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
@@ -83,6 +83,8 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
+
+        // TODO: Need a better resolution for intrinsic function (KT-975)
         return file;
     }
 
@@ -91,15 +93,19 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
-        ResolveResult[] results = new ResolveResult[declarationDescriptors.size()];
-        int i = 0;
+
+        ArrayList<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
+        
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
             PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, descriptor);
-            if (element != null) {
-                results[i] = new PsiElementResolveResult(element, true);
-                i++;
+            if (element == null) {
+                // TODO: Need a better resolution for intrinsic function (KT-975)
+                element = file;
             }
+
+            results.add(new PsiElementResolveResult(element, true));
         }
-        return results;
+
+        return results.toArray(new ResolveResult[results.size()]);
     }
 }

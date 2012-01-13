@@ -34,4 +34,9 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
     public VariableAsFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
         throw new UnsupportedOperationException("Should not be copied for overriding");
     }
+
+    @Override
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
+        throw new IllegalStateException();
+    }
 }

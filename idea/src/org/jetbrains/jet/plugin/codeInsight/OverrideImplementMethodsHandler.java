@@ -54,8 +54,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
         for (DescriptorClassMember selectedElement : selectedElements) {
             final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
-            if (descriptor instanceof FunctionDescriptor) {
-                JetElement target = overrideFunction(project, (FunctionDescriptor) descriptor);
+            if (descriptor instanceof NamedFunctionDescriptor) {
+                JetElement target = overrideFunction(project, (NamedFunctionDescriptor) descriptor);
                 body.addBefore(target, body.getRBrace());
             }
             else if (descriptor instanceof PropertyDescriptor) {
@@ -84,7 +84,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    private static JetElement overrideFunction(Project project, FunctionDescriptor descriptor) {
+    private static JetElement overrideFunction(Project project, NamedFunctionDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder("override fun ");
         bodyBuilder.append(descriptor.getName());
         bodyBuilder.append("(");
