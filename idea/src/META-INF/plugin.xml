@@ -36,6 +36,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+      <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
       <internalFileTemplate name="Kotlin File"/>
 
