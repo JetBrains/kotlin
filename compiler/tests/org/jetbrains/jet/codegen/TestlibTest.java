@@ -1,12 +1,10 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;

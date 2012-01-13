@@ -1,36 +1,8 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.ClassLoaderUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
-import com.intellij.testFramework.TestRunnerUtil;
-import gnu.trove.THashSet;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.parsing.JetParsingTest;
-
-import java.beans.beancontext.BeanContext;
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.util.Set;
 
 /**
  * @author alex.tkachman

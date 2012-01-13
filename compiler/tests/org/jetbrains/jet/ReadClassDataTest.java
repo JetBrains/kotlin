@@ -7,13 +7,13 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
-import org.codehaus.groovy.ast.expr.DeclarationExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -33,12 +32,7 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Stepan Koltsov

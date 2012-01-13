@@ -15,6 +15,7 @@ import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 

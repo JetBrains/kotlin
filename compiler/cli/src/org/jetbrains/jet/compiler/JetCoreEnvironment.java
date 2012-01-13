@@ -1,9 +1,12 @@
-package org.jetbrains.jet;
+package org.jetbrains.jet.compiler;
 
 import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.psi.PsiElementFinder;
+import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -19,6 +22,11 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         registerFileType(JetFileType.INSTANCE, "jet");
         registerParserDefinition(new JavaParserDefinition());
         registerParserDefinition(new JetParserDefinition());
+
+        Extensions.getArea(myProject)
+                .getExtensionPoint(PsiElementFinder.EP_NAME)
+                .registerExtension(new JavaElementFinder(myProject));
+
     }
 
     public MockApplication getApplication() {
