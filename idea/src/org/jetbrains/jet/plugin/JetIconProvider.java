@@ -21,6 +21,9 @@ public class JetIconProvider extends IconProvider {
 
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
+        if (psiElement instanceof JetFile) {
+            return KOTLIN_ICON;
+        }
         if (psiElement instanceof JetNamespaceHeader) {
             return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? PlatformIcons.PACKAGE_OPEN_ICON : PlatformIcons.PACKAGE_ICON;
         }
