@@ -585,6 +585,12 @@ public class JavaDescriptorResolver {
     }
 
     public NamespaceDescriptor resolveNamespace(String qualifiedName) {
+        // First, let's check that there is no Kotlin package:
+        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(qualifiedName);
+        if (kotlinNamespaceDescriptor != null) {
+            return kotlinNamespaceDescriptor;
+        }
+
         PsiPackage psiPackage = findPackage(qualifiedName);
         if (psiPackage == null) {
             PsiClass psiClass = findClass(qualifiedName);
