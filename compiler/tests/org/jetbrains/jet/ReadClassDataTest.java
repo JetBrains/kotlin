@@ -232,17 +232,6 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                // TODO
-                if (member.getName().equals("equals") || member.getName().equals("hashCode")
-                        || member.getName().equals("wait") || member.getName().equals("notify") || member.getName().equals("notifyAll")
-                        || member.getName().equals("toString") || member.getName().equals("getClass")
-                        || member.getName().equals("clone") || member.getName().equals("finalize")
-                        || member.getName().equals("getTypeInfo") || member.getName().equals("$setTypeInfo") || member.getName().equals("$typeInfo")
-                        || member.getName().equals("getOuterObject")
-                        )
-                {
-                    continue;
-                }
                 StringBuilder memberSb = new StringBuilder();
                 new Serializer(memberSb).serialize(member);
                 memberStrings.add(memberSb.toString());

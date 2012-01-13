@@ -154,7 +154,7 @@ public class NamespaceCodegen {
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
         if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor) && !JetStandardClasses.getAny().equals(declarationDescriptor)) {
             // TODO: we need some better checks here
-            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
+            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
             return;
         }
 

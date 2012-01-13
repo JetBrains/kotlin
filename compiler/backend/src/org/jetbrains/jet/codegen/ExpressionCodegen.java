@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -2658,14 +2659,14 @@ If finally block is present, its last expression is the value of try expression.
                     if (CodegenUtil.hasTypeInfoField(defaultType)) {
                         if(!(context instanceof CodegenContext.ConstructorContext)) {
                             v.load(0, TYPE_OBJECT);
-                            v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
+                            v.getfield(ownerType.getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
                         }
                         else {
                             v.load(((ConstructorFrameMap)myFrameMap).getTypeInfoIndex(), TYPE_OBJECT);
                         }
                     }
                     else {
-                        v.getstatic(ownerType.getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
+                        v.getstatic(ownerType.getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
                     }
                 }
                 else {
@@ -2677,7 +2678,7 @@ If finally block is present, its last expression is the value of try expression.
                 v.load(0, TYPE_OBJECT);
                 while(descriptor != containingDeclaration) {
                     descriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
-                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getOuterObject", "()Ljet/JetObject;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, "()Ljet/JetObject;");
                 }
                 v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "()Ljet/TypeInfo;");
             }

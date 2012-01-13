@@ -50,6 +50,7 @@ public class JvmStdlibNames {
     public static final JvmClassName JET_OBJECT = new JvmClassName("jet.JetObject");
     
     public static final String JET_OBJECT_GET_TYPEINFO_METHOD = "getTypeInfo";
+    public static final String JET_OBJECT_GET_OUTER_OBJECT_METHOD = "getOuterObject";
 
 
     private JvmStdlibNames() {
