@@ -1,14 +1,11 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.JetMethodOrPropertyAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.JetPropertyAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,23 +57,6 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
             jetConstructor = JetConstructorAnnotation.get(getPsiMethod());
         }
         return jetConstructor;
-    }
-
-    private JetPropertyAnnotation jetProperty;
-    @NotNull
-    public JetPropertyAnnotation getJetProperty() {
-        if (jetProperty == null) {
-            jetProperty = JetPropertyAnnotation.get(getPsiMethod());
-        }
-        return jetProperty;
-    }
-    
-    public JetMethodOrPropertyAnnotation getJetMethodOrProperty() {
-        if (getJetMethod().isDefined()) {
-            return getJetMethod();
-        } else {
-            return getJetProperty();
-        }
     }
 
     @NotNull

@@ -17,6 +17,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JetMethod {
+    int KIND_REGULAR = 0;
+    int KIND_PROPERTY = 1;
+    
+    int kind() default KIND_REGULAR;
+    
     /**
      * @return type projections or empty
      */
@@ -37,4 +42,10 @@ public @interface JetMethod {
      * Return type type unless java type is correct Kotlin type.
      */
     String returnType () default "";
+
+    /**
+     * If this is property.
+     * @return
+     */
+    String propertyType() default "";
 }

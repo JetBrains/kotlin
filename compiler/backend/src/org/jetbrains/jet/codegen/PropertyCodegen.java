@@ -13,7 +13,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -89,7 +88,7 @@ public class PropertyCodegen {
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
                 JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
-                functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), signature.getPropertyTypeKotlinSignature(), propertyDescriptor.getGetter());
+                functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(), propertyDescriptor.getGetter());
             }
             else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultGetter(p, getter);
@@ -111,7 +110,7 @@ public class PropertyCodegen {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
                 JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
-                functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), signature.getPropertyTypeKotlinSignature(), setterDescriptor);
+                functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(), setterDescriptor);
             }
             else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultSetter(p, setter);
@@ -170,14 +169,11 @@ public class PropertyCodegen {
     }
 
     public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
-        AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true);
-        if (kotlinType.length() > 0) {
-            annotationVisitor.visit(JvmStdlibNames.JET_PROPERTY_TYPE_FIELD, kotlinType);
-        }
-        if (typeParameters.length() > 0) {
-            annotationVisitor.visit(JvmStdlibNames.JET_PROPERTY_TYPE_PARAMETERS_FIELD, typeParameters);
-        }
-        annotationVisitor.visitEnd();
+        JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
+        aw.writeKind(JvmStdlibNames.JET_METHOD_KIND_PROPERTY);
+        aw.writeTypeParameters(typeParameters);
+        aw.writePropertyType(kotlinType);
+        aw.visitEnd();
     }
 
     private void generateDefaultSetter(JetProperty p, JetDeclaration declaration) {

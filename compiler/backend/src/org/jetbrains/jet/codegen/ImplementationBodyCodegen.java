@@ -245,7 +245,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
                         MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                         PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(), originalSignature.getJvmMethodSignature().getKotlinTypeParameter());
-                        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
                         if (v.generateCode()) {
                             mv.visitCode();
 
@@ -269,7 +268,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
                         MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                         PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(), originalSignature2.getJvmMethodSignature().getKotlinTypeParameter());
-                        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
                         if (v.generateCode()) {
                             mv.visitCode();
 

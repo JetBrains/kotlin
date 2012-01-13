@@ -132,12 +132,11 @@ public class JavaDescriptorResolver {
     private static abstract class ResolverScopeData {
         @Nullable
         private Set<VariableDescriptor> properties;
-        private boolean kotlin;
+        protected boolean kotlin;
     }
 
     private static class ResolverClassData extends ResolverScopeData {
         private JavaClassDescriptor classDescriptor;
-        private boolean kotlin;
 
         @NotNull
         public ClassDescriptor getClassDescriptor() {
@@ -147,7 +146,6 @@ public class JavaDescriptorResolver {
 
     private static class ResolverNamespaceData extends ResolverScopeData {
         private JavaNamespaceDescriptor namespaceDescriptor;
-        private boolean kotlin;
 
         @NotNull
         public NamespaceDescriptor getNamespaceDescriptor() {
@@ -892,7 +890,7 @@ public class JavaDescriptorResolver {
             if (psiMethod.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
 
                 // TODO: some java properties too
-                if (method.getJetProperty().isDefined()) {
+                if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
 
                     if (psiMethod.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD)) {
                         continue;
@@ -933,7 +931,7 @@ public class JavaDescriptorResolver {
                 }
             } else if (psiMethod.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
 
-                if (method.getJetProperty().isDefined()) {
+                if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
                     if (psiMethod.getParameterList().getParametersCount() == 0) {
                         // TODO: report error properly
                         throw new IllegalStateException();
@@ -1215,7 +1213,7 @@ public class JavaDescriptorResolver {
         }
 
         // TODO: ugly
-        if (method.getJetProperty().isDefined()) {
+        if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
             return null;
         }
 
@@ -1308,9 +1306,9 @@ public class JavaDescriptorResolver {
             @NotNull PsiMethodWrapper method,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull TypeVariableResolver classTypeVariableResolver) {
-        if (method.getJetMethodOrProperty().typeParameters().length() > 0) {
+        if (method.getJetMethod().typeParameters().length() > 0) {
             List<TypeParameterDescriptor> r = resolveMethodTypeParametersFromJetSignature(
-                    method.getJetMethodOrProperty().typeParameters(), method.getPsiMethod(), functionDescriptor, classTypeVariableResolver);
+                    method.getJetMethod().typeParameters(), method.getPsiMethod(), functionDescriptor, classTypeVariableResolver);
             initializeTypeParameters(method.getPsiMethod());
             return r;
         }
