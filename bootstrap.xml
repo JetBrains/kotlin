@@ -23,5 +23,8 @@
         <unzip dest="bootstrap.compiler">
             <fileset dir="bootstrap.compiler" includes="kotlin*.zip"/>
         </unzip>
+
+        <delete dir="ideaSDK" includes="ideaIC*.zip"/>
+        <delete dir="bootstrap.compiler" includes="kotlin*.zip"/>
     </target>
 </project>
