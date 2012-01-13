@@ -13,6 +13,8 @@
             <element id="module-output" name="jet.as.java.psi" />
           </element>
         </element>
+        <element id="file-copy" path="$PROJECT_DIR$/out/build.txt" />
+        <element id="dir-copy" path="$PROJECT_DIR$/bootstrap.compiler" />
       </element>
     </root>
   </artifact>
