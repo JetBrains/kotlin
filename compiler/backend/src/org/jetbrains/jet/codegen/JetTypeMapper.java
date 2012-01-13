@@ -20,7 +20,6 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
@@ -247,7 +246,7 @@ public class JetTypeMapper {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (ErrorUtils.isError(descriptor)) {
-            throw new IllegalStateException("should not compile an error type");
+            return Type.getObjectType("error/NonExistentClass");
         }
 
         if (standardLibrary.getArray().equals(descriptor)) {
