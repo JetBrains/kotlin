@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -30,6 +31,8 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     // For file context will be updated after each construction
     // For other tree sub-elements it's immutable.
     private BindingContext context;
+    
+    private String elementText;
 
     public JetStructureViewElement(NavigatablePsiElement element, BindingContext context) {
         myElement = element;
@@ -59,35 +62,17 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     public boolean canNavigateToSource() {
         return myElement.canNavigateToSource();
     }
-
+    
     @Override
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
             @Override
             public String getPresentableText() {
-                String text = "";
-
-                // Try to find text in correspondent descriptor
-//                if (myElement instanceof JetDeclaration) {
-//                    JetDeclaration declaration = (JetDeclaration) myElement;
-//                    final DeclarationDescriptor descriptor =
-//                            context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-//
-//                    if (descriptor != null) {
-//                        text = getDescriptorTreeText(descriptor);
-//                    }
-//                }
-
-                if (StringUtil.isEmpty(text)) {
-                    text = myElement.getName();
+                if (elementText == null) {
+                    elementText = getElementText();
                 }
 
-                if (StringUtil.isEmpty(text)) {
-                    if (myElement instanceof JetClassInitializer) {
-                        return "<class initializer>";
-                    }
-                }
-                return text;
+                return elementText;
             }
 
             @Override
@@ -113,8 +98,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         if (myElement instanceof JetFile) {
             final JetFile jetFile = (JetFile) myElement;
 
-            // TODO: Understand why it significantly reduce responsibility of IDEA during typing
-            // context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+            context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
 
             return wrapDeclarations(jetFile.getDeclarations());
         }
@@ -133,6 +117,33 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             return wrapDeclarations(((JetClassOrObject) myElement).getDeclarations());
         }
         return new TreeElement[0];
+    }
+
+    private String getElementText() {
+        String text = "";
+
+        // Try to find text in correspondent descriptor
+        if (myElement instanceof JetDeclaration) {
+            JetDeclaration declaration = (JetDeclaration) myElement;
+
+            final DeclarationDescriptor descriptor =
+                    context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+            if (descriptor != null) {
+                text = getDescriptorTreeText(descriptor);
+            }
+        }
+
+        if (StringUtil.isEmpty(text)) {
+            text = myElement.getName();
+        }
+
+        if (StringUtil.isEmpty(text)) {
+            if (myElement instanceof JetClassInitializer) {
+                return "<class initializer>";
+            }
+        }
+
+        return text;
     }
     
     private TreeElement[] wrapDeclarations(List<JetDeclaration> declarations) {
