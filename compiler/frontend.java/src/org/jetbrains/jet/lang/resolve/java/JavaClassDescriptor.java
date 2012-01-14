@@ -22,7 +22,6 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private Modality modality;
     private Visibility visibility;
-    private JetType superclassType;
     private final ClassKind kind;
     private ClassReceiver implicitReceiver;
 
@@ -81,16 +80,6 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
         TypeSubstitutor substitutor = createTypeSubstitutor(typeArguments);
         return new SubstitutingScope(unsubstitutedMemberScope, substitutor);
-    }
-
-    @NotNull
-    @Override
-    public JetType getSuperclassType() {
-        return superclassType;
-    }
-
-    public void setSuperclassType(@NotNull JetType superclassType) {
-        this.superclassType = superclassType;
     }
 
     @NotNull

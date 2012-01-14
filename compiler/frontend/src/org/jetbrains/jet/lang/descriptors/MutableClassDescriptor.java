@@ -347,17 +347,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         return kind;
     }
 
-    @NotNull
-    @Override
-    public JetType getSuperclassType() {
-        return superclassType;
-    }
-
-    public void setSuperclassType(@NotNull JetType superclassType) {
-        this.superclassType = superclassType;
-    }
-
-
     public void setModality(Modality modality) {
         this.modality = modality;
     }
