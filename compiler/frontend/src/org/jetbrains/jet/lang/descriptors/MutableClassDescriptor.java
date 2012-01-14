@@ -28,7 +28,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final Set<CallableMemberDescriptor> callableMembers = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
     private final Set<NamedFunctionDescriptor> functions = Sets.newHashSet();
-    private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+    private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
     private Map<String, ClassDescriptor> innerClassesAndObjects = Maps.newHashMap();
 
@@ -217,6 +217,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
     public void setTypeParameterDescriptors(List<TypeParameterDescriptor> typeParameters) {
+        if (this.typeParameters != null) {
+            throw new IllegalStateException();
+        }
+        this.typeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             this.typeParameters.add(typeParameterDescriptor);
             scopeForSupertypeResolution.addTypeParameterDescriptor(typeParameterDescriptor);
