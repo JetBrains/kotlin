@@ -14,7 +14,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -1043,15 +1042,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             owner = typeMapper.getOwner(functionDescriptor, OwnerKind.IMPLEMENTATION);
-            if(containingDeclaration instanceof JavaClassDescriptor) {
-                isInterface = CodegenUtil.isInterface(containingDeclaration);
+            if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT) {
+                isInterface = true;
             }
             else {
-                if(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT)
-                    isInterface = true;
-                else {
-                    isInterface = false;
-                }
+                isInterface = false;
             }
         }
 
@@ -1097,23 +1092,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                     }
                 }
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor))
+                if(!(containingDeclaration instanceof JavaNamespaceDescriptor))
                     getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
                 else
                     getter = null;
+                
+                if (propertyDescriptor.getGetter() == null) {
+                    getter = null;
+                }
             }
             //noinspection ConstantConditions
             if (isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())) {
                 setter = null;
             }
             else {
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor)) {
+                if(!(containingDeclaration instanceof JavaNamespaceDescriptor)) {
                     JvmPropertyAccessorSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
                     setter = jvmMethodSignature != null ? jvmMethodSignature.getJvmMethodSignature().getAsmMethod() : null;
                 } else {
                     setter = null;
                 }
 
+                if (propertyDescriptor.getSetter() == null) {
+                    setter = null;
+                }
             }
         }
 

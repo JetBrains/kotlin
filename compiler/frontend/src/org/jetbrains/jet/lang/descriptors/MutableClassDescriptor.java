@@ -1,9 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -12,8 +10,6 @@ import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
@@ -31,7 +27,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final WritableScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
-        super(containingDeclaration, kind, new TraceBasedRedeclarationHandler(trace));
+        super(containingDeclaration, kind);
 
         if (containingDeclaration instanceof ClassDescriptor
                 || containingDeclaration instanceof NamespaceLike
@@ -43,6 +39,8 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         }
 
         TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
+
+        setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH));
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, this, redeclarationHandler).setDebugName("Initializers").changeLockLevel(WritableScope.LockLevel.BOTH);

@@ -55,15 +55,12 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     private JetType defaultType;
     private final ClassKind kind;
 
-    private final WritableScope scopeForMemberLookup;
+    private JetScope scopeForMemberLookup;
 
     private ClassReceiver implicitReceiver;
 
-    public MutableClassDescriptorLite(DeclarationDescriptor containingDeclaration, ClassKind kind, RedeclarationHandler redeclarationHandler) {
+    public MutableClassDescriptorLite(DeclarationDescriptor containingDeclaration, ClassKind kind) {
         super(containingDeclaration);
-
-        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH);
-
         this.kind = kind;
     }
 
@@ -103,6 +100,10 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         return typeConstructor;
     }
 
+    public void setScopeForMemberLookup(JetScope scopeForMemberLookup) {
+        this.scopeForMemberLookup = scopeForMemberLookup;
+    }
+
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = new TypeConstructorImpl(
@@ -117,9 +118,14 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
+    private WritableScope getScopeForMemberLookupAsWritableScope() {
+        // hack
+        return (WritableScope) scopeForMemberLookup;
+    }
+
     public void addSupertypesToScopeForMemberLookup() {
         for (JetType supertype : supertypes) {
-            scopeForMemberLookup.importScope(supertype.getMemberScope());
+            getScopeForMemberLookupAsWritableScope().importScope(supertype.getMemberScope());
         }
     }
 
@@ -204,12 +210,9 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         return supertypes;
     }
 
-
-
-
-
-
-
+    public void setSupertypes(@NotNull Collection<JetType> supertypes) {
+        this.supertypes = supertypes;
+    }
 
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
@@ -249,12 +252,12 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     @Override
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        scopeForMemberLookup.addPropertyDescriptor(propertyDescriptor);
+        getScopeForMemberLookupAsWritableScope().addPropertyDescriptor(propertyDescriptor);
     }
 
     @Override
     public void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor) {
-        scopeForMemberLookup.addFunctionDescriptor(functionDescriptor);
+        getScopeForMemberLookupAsWritableScope().addFunctionDescriptor(functionDescriptor);
     }
 
     @Override
@@ -269,7 +272,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
-        scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
+        getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
         innerClassesAndObjects.put(classDescriptor.getName(), classDescriptor);
     }
 
@@ -287,7 +290,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     @Override
     public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
-        scopeForMemberLookup.addObjectDescriptor(objectDescriptor);
+        getScopeForMemberLookupAsWritableScope().addObjectDescriptor(objectDescriptor);
         innerClassesAndObjects.put(objectDescriptor.getName(), objectDescriptor);
     }
 
@@ -309,7 +312,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
 
     public void lockScopes() {
-        scopeForMemberLookup.changeLockLevel(WritableScope.LockLevel.READING);
+        getScopeForMemberLookupAsWritableScope().changeLockLevel(WritableScope.LockLevel.READING);
         if (classObjectDescriptor != null) {
             classObjectDescriptor.lockScopes();
         }
