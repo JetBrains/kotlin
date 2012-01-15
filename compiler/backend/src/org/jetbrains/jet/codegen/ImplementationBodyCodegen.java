@@ -95,6 +95,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.visitOuterClass(typeMapper.mapType(container.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), null, null);
         }
 
+        for (ClassDescriptor innerClass : descriptor.getInnerClassesAndObjects()) {
+            // TODO: proper access
+            int innerClassAccess = Opcodes.ACC_PUBLIC;
+            if (innerClass.getModality() == Modality.FINAL) {
+                innerClassAccess |= Opcodes.ACC_FINAL;
+            } else if (innerClass.getModality() == Modality.ABSTRACT) {
+                innerClassAccess |= Opcodes.ACC_ABSTRACT;
+            }
+            // TODO: cache internal names
+            String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName(), innerClassAccess);
+        }
+
         if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
