@@ -8,52 +8,29 @@
         </classpath>
     </taskdef>
 
-    <path id="sourcepath.buildTools">
-        <dirset dir="${basedir}/build-tools">
-            <include name="core/src"/>
-            <include name="ant/src"/>
-            <include name="maven/src"/>
-            <include name="gradle/src"/>
-        </dirset>
-    </path>
-
-    <path id="classpath.buildTools">
-        <path refid="classpath.kotlin"/>
-        <fileset dir="${idea.sdk}/ant/lib" includes="*.jar"/>
-    </path>
-
     <path id="dist.jars">
         <fileset dir="${idea.sdk}"    includes="*.jar"/>
         <fileset dir="${basedir}/lib" includes="*.jar"/>
         <fileset dir="${output}"      includes="*.jar"/>
     </path>
 
-    <target name="buildToolsJar" depends="compile">
-        <mkdir dir    ="${output}/classes/buildTools"/>
-        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source">
-            <src       refid="sourcepath.buildTools"/>
-            <classpath refid="classpath.buildTools"/>
-        </javac>
-        <jar destfile="${output}/kotlin-build-tools.jar">
-            <fileset dir="${output}/classes/buildTools"/>
-            <fileset dir="${basedir}/build-tools/ant/src" includes="**/*.xml"/>
-        </jar>
-    </target>
+    <presetdef name="run-java">
+        <java classpathref  = "dist.jars" failonerror  = "true">
+            <classpath path = "${tests-dir}"/>
+        </java>
+    </presetdef>
+
 
     <macrodef name="hello-java">
         <attribute name="root"/>
         <attribute name="args" default=""/>
         <attribute name="out"/>
         <sequential>
-            <var name               = "java-out"
-                 unset              = "true"/>
-            <java    classpathref   = "dist.jars"
-                     classname      = "namespace"
-                     failonerror    = "true"
-                     outputproperty = "java-out">
-                <classpath path     = "${tests-dir}"/>
-                <arg       line     = "@{args}"/>
-            </java>
+            <var name = "java-out" unset = "true"/>
+            <run-java outputproperty = "java-out"
+                      classname      = "namespace">
+                <arg  line           = "@{args}"/>
+            </run-java>
             <if>
                 <equals arg1="${java-out}" arg2="@{out}"/>
                 <then>
@@ -74,21 +51,67 @@
             <taskdef resource     = "org/jetbrains/jet/buildtools/ant/antlib.xml"
                      classpathref = "dist.jars"/>
 
-            <delete  dir     = "${tests-dir}"     verbose = "false" includes="**/*.class"/>
-            <kotlinc file    = "@{root}/Hello.kt" destdir = "${tests-dir}"/>
-            <hello-java root = "@{root}"          args    = "@{args}" out  = "@{out}"/>
+            <delete  dir     = "${tests-dir}" verbose = "false" includes="**/*.class"/>
+            <kotlinc destdir = "${tests-dir}" file    = "@{root}/Hello.kt" />
+            <hello-java root = "@{root}"      args    = "@{args}" out  = "@{out}"/>
 
             <delete  dir     = "${tests-dir}" verbose = "false" includes="**/*.class"/>
-            <kotlinc srcdir  = "@{root}"      destdir = "${tests-dir}"/>
+            <kotlinc destdir = "${tests-dir}" srcdir  = "@{root}"      />
             <hello-java root = "@{root}"      args    = "@{args}"     out  = "@{out}"/>
         </sequential>
     </macrodef>
 
+
+    <macrodef name="longer-examples">
+        <sequential>
+            <taskdef resource     = "org/jetbrains/jet/buildtools/ant/antlib.xml"
+                     classpathref = "dist.jars"/>
+
+            <delete  dir     = "${tests-dir}" verbose = "false" includes="**/*.class"/>
+            <kotlinc destdir = "${tests-dir}" srcdir  = "${basedir}/build-tools/test/longer-examples" />
+
+            <run-java classname = "bottles.namespace"/>
+            <run-java classname = "maze.namespace"/>
+            <run-java classname = "life.namespace"/>
+            <run-java classname = "html.namespace"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Creates build tools distribution jar -->
+    <target name="buildToolsJar" depends="compile">
+        <mkdir dir    ="${output}/classes/buildTools"/>
+        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source">
+            <src>
+                <dirset dir="${basedir}/build-tools">
+                    <include name="core/src"/>
+                    <include name="ant/src"/>
+                    <include name="maven/src"/>
+                    <include name="gradle/src"/>
+                </dirset>
+            </src>
+            <classpath>
+                <path refid="classpath.kotlin"/>
+                <fileset dir="${idea.sdk}/ant/lib" includes="*.jar"/>
+            </classpath>
+        </javac>
+        <jar destfile="${output}/kotlin-build-tools.jar">
+            <fileset dir="${output}/classes/buildTools"/>
+            <fileset dir="${basedir}/build-tools/ant/src" includes="**/*.xml"/>
+        </jar>
+    </target>
+
+    <!-- Tests build tools distribution jar -->
     <target name="buildToolsTest" depends="jarRT, jar, buildToolsJar">
-        <hello-test  root="${basedir}/build-tools/test/hello/1" out="Hello, world!"/>
+
+        <!-- Compiles every "Hello, World!" example and verifies the output of <java> run -->
+        <hello-test  root="${basedir}/build-tools/test/hello/1"                         out="Hello, world!"/>
         <hello-test  root="${basedir}/build-tools/test/hello/2" args="Kotlin-Developer" out="Hello, Kotlin-Developer!"/>
         <hello-test  root="${basedir}/build-tools/test/hello/3" args="Mickey-Mouse"     out="Hello, Mickey-Mouse!"/>
         <hello-test  root="${basedir}/build-tools/test/hello/4" args="IT"               out="Ciao!"/>
         <hello-test  root="${basedir}/build-tools/test/hello/5" args="Donald-Duck"      out="Hello, Donald-Duck!"/>
+
+        <!-- Compiles and runs all longer examples (99 Bottles of Beer, Maze, Life, HTML Builder) -->
+        <longer-examples/>
     </target>
 </project>
