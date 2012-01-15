@@ -1,5 +1,13 @@
 <project name="build-tools" default="buildToolsJar">
 
+    <property name="tests-dir" location="${output}/build-tools-test"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${basedir}/build-tools/lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
     <path id="sourcepath.buildTools">
         <dirset dir="${basedir}/build-tools">
             <include name="core/src"/>
@@ -32,22 +40,55 @@
         </jar>
     </target>
 
+    <macrodef name="hello-java">
+        <attribute name="root"/>
+        <attribute name="args" default=""/>
+        <attribute name="out"/>
+        <sequential>
+            <var name               = "java-out"
+                 unset              = "true"/>
+            <java    classpathref   = "dist.jars"
+                     classname      = "namespace"
+                     failonerror    = "true"
+                     outputproperty = "java-out">
+                <classpath path     = "${tests-dir}"/>
+                <arg       line     = "@{args}"/>
+            </java>
+            <if>
+                <equals arg1="${java-out}" arg2="@{out}"/>
+                <then>
+                    <echo>${java-out}</echo>
+                </then>
+                <else>
+                    <fail message="[@{root}] 'Hello' test failed: '${java-out}' (received) != '@{out}' (expected)"/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="hello-test">
+        <attribute name="root"/>
+        <attribute name="args" default=""/>
+        <attribute name="out"/>
+        <sequential>
+            <taskdef resource     = "org/jetbrains/jet/buildtools/ant/antlib.xml"
+                     classpathref = "dist.jars"/>
+
+            <delete  dir     = "${tests-dir}"     verbose = "false" includes="**/*.class"/>
+            <kotlinc file    = "@{root}/Hello.kt" destdir = "${tests-dir}"/>
+            <hello-java root = "@{root}"          args    = "@{args}" out  = "@{out}"/>
+
+            <delete  dir     = "${tests-dir}" verbose = "false" includes="**/*.class"/>
+            <kotlinc srcdir  = "@{root}"      destdir = "${tests-dir}"/>
+            <hello-java root = "@{root}"      args    = "@{args}"     out  = "@{out}"/>
+        </sequential>
+    </macrodef>
+
     <target name="buildToolsTest" depends="jarRT, jar, buildToolsJar">
-        <taskdef resource     = "org/jetbrains/jet/buildtools/ant/tasks.xml"
-                 classpathref = "dist.jars"/>
-
-        <kotlinc file         = "${basedir}/build-tools/test/Hello.kt"
-                 destdir      = "${output}/build-tools-test"/>
-        <java    classpathref = "dist.jars"
-                 classname    = "namespace">
-            <classpath path   = "${output}/build-tools-test"/>
-        </java>
-
-        <kotlinc srcdir       = "${basedir}/build-tools/test"
-                 destdir      = "${output}/build-tools-test"/>
-        <java    classpathref = "dist.jars"
-                 classname    = "namespace">
-            <classpath path   = "${output}/build-tools-test"/>
-        </java>
+        <hello-test  root="${basedir}/build-tools/test/hello/1" out="Hello, world!"/>
+        <hello-test  root="${basedir}/build-tools/test/hello/2" args="Kotlin-Developer" out="Hello, Kotlin-Developer!"/>
+        <hello-test  root="${basedir}/build-tools/test/hello/3" args="Mickey-Mouse"     out="Hello, Mickey-Mouse!"/>
+        <hello-test  root="${basedir}/build-tools/test/hello/4" args="IT"               out="Ciao!"/>
+        <hello-test  root="${basedir}/build-tools/test/hello/5" args="Donald-Duck"      out="Hello, Donald-Duck!"/>
     </target>
 </project>

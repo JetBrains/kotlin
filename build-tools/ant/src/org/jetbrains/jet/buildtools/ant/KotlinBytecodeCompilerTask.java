@@ -36,8 +36,8 @@ public class KotlinBytecodeCompilerTask extends Task {
             String src  = getPath( this.srcdir != null ? this.srcdir : this.file );
             String dest = getPath( this.destdir );
 
-            log( String.format( "Kotlin bytecode compiler: [%s] => [%s]", src, dest ));
-            KotlinBytecodeCompiler.src( src, dest );
+            log( String.format( "[%s] => [%s]", src, dest ));
+            KotlinBytecodeCompiler.compileSources( src, dest );
         }
         else {
             throw new RuntimeException( String.format( "Operation is not supported" ));
