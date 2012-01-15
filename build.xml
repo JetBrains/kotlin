@@ -24,6 +24,15 @@
         </dirset>
     </path>
 
+    <path id="buildToolsSourcepath">
+        <dirset dir="${basedir}/build-tools">
+            <include name="core/src"/>
+            <include name="ant/src"/>
+            <include name="maven/src"/>
+            <include name="gradle/src"/>
+        </dirset>
+    </path>
+
     <target name="compileRT">
         <mkdir dir="${output}/classes/runtime"/>
         <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source">
@@ -52,7 +61,7 @@
         </jar>
     </target>
 
-    
+
     <target name="compile" depends="compileRT">
         <mkdir dir="${output}/classes/compiler"/>
         <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source">
@@ -72,7 +81,18 @@
         <delete dir="${output}"/>
     </target>
 
-    <target name="dist" depends="clean,jarRT,jar">
+    <target name="buildTools" depends="compile">
+        <mkdir dir="${output}/classes/buildTools"/>
+        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source">
+            <src refid="buildToolsSourcepath"/>
+            <classpath refid="classpath.kotlin"/>
+        </javac>
+        <jar destfile="${output}/kotlin-build-tools.jar">
+            <fileset dir="${output}/classes/buildTools"/>
+        </jar>
+    </target>
+
+    <target name="dist" depends="clean,jarRT,jar,buildTools">
         <echo file="${output}/build.txt" message="${build.number}"/>
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
