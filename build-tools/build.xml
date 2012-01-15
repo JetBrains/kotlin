@@ -21,14 +21,14 @@
     </presetdef>
 
 
+    <!-- Invokes <java> for compiled Hello class and verifies the output -->
     <macrodef name="hello-java">
         <attribute name="root"/>
         <attribute name="args" default=""/>
         <attribute name="out"/>
         <sequential>
             <var name = "java-out" unset = "true"/>
-            <run-java outputproperty = "java-out"
-                      classname      = "namespace">
+            <run-java outputproperty = "java-out" classname      = "namespace">
                 <arg  line           = "@{args}"/>
             </run-java>
             <if>
@@ -43,6 +43,7 @@
         </sequential>
     </macrodef>
 
+    <!-- Compiles "Hello.kt" as a single file and a folder, runs <java> and verifies the output -->
     <macrodef name="hello-test">
         <attribute name="root"/>
         <attribute name="args" default=""/>
@@ -51,17 +52,17 @@
             <taskdef resource     = "org/jetbrains/jet/buildtools/ant/antlib.xml"
                      classpathref = "dist.jars"/>
 
-            <delete  dir     = "${tests-dir}" verbose = "false" includes="**/*.class"/>
+            <delete  dir     = "${tests-dir}" verbose = "false" includes   = "**/*.class"/>
             <kotlinc destdir = "${tests-dir}" file    = "@{root}/Hello.kt" />
-            <hello-java root = "@{root}"      args    = "@{args}" out  = "@{out}"/>
+            <hello-java root = "@{root}"      args    = "@{args}" out      = "@{out}"/>
 
-            <delete  dir     = "${tests-dir}" verbose = "false" includes="**/*.class"/>
+            <delete  dir     = "${tests-dir}" verbose = "false" includes   = "**/*.class"/>
             <kotlinc destdir = "${tests-dir}" srcdir  = "@{root}"      />
             <hello-java root = "@{root}"      args    = "@{args}"     out  = "@{out}"/>
         </sequential>
     </macrodef>
 
-
+    <!-- Compiles and runs with <java> web demo longer examples -->
     <macrodef name="longer-examples">
         <sequential>
             <taskdef resource     = "org/jetbrains/jet/buildtools/ant/antlib.xml"
@@ -76,7 +77,6 @@
             <run-java classname = "html.namespace"/>
         </sequential>
     </macrodef>
-
 
     <!-- Creates build tools distribution jar -->
     <target name="buildToolsJar" depends="compile">
@@ -111,7 +111,7 @@
         <hello-test  root="${basedir}/build-tools/test/hello/4" args="IT"               out="Ciao!"/>
         <hello-test  root="${basedir}/build-tools/test/hello/5" args="Donald-Duck"      out="Hello, Donald-Duck!"/>
 
-        <!-- Compiles and runs all longer examples (99 Bottles of Beer, Maze, Life, HTML Builder) -->
+        <!-- Compiles and runs web demo longer examples (99 Bottles of Beer, Maze, Life, HTML Builder) -->
         <longer-examples/>
     </target>
 </project>
