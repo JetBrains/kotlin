@@ -1,8 +1,11 @@
 <project name="Kotlin" default="dist">
+
     <property name="output" value="${basedir}/dist"/>
     <property name="build.number" value="snapshot"/>
     <property name="output.name" value="kotlin-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
+
+    <import file="build-tools/build.xml" optional="false"/>
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="*.jar"/>
@@ -21,15 +24,6 @@
             <include name="frontend.java/src"/>
             <include name="backend/src"/>
             <include name="cli/src"/>
-        </dirset>
-    </path>
-
-    <path id="buildToolsSourcepath">
-        <dirset dir="${basedir}/build-tools">
-            <include name="core/src"/>
-            <include name="ant/src"/>
-            <include name="maven/src"/>
-            <include name="gradle/src"/>
         </dirset>
     </path>
 
@@ -81,18 +75,7 @@
         <delete dir="${output}"/>
     </target>
 
-    <target name="buildTools" depends="compile">
-        <mkdir dir="${output}/classes/buildTools"/>
-        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source">
-            <src refid="buildToolsSourcepath"/>
-            <classpath refid="classpath.kotlin"/>
-        </javac>
-        <jar destfile="${output}/kotlin-build-tools.jar">
-            <fileset dir="${output}/classes/buildTools"/>
-        </jar>
-    </target>
-
-    <target name="dist" depends="clean,jarRT,jar,buildTools">
+    <target name="dist" depends="clean,jarRT,jar,buildToolsJar">
         <echo file="${output}/build.txt" message="${build.number}"/>
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
