@@ -1409,4 +1409,13 @@ public class JavaDescriptorResolver {
     public TypeParameterDescriptor resolveTypeParameter(PsiTypeParameter typeParameter) {
         return resolveTypeParameterInitialization(typeParameter).descriptor;
     }
+
+    public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
+        PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
+        List<ClassDescriptor> r = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
+        for (PsiClass innerPsiClass : innerPsiClasses) {
+            r.add(resolveClass(innerPsiClass));
+        }
+        return r;
+    }
 }
