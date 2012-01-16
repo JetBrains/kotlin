@@ -1,4 +1,3 @@
-var `namespace` : Int
 var `as` : Int
 var `type` : Int
 var `val` : Int
