@@ -14,11 +14,13 @@ import static org.jetbrains.jet.j2k.Converter.getDefaultInitializer;
  */
 public class Field extends Member {
   final Identifier myIdentifier;
+  private final int myWritingAccesses;
   final Type myType;
   final Element myInitializer;
 
-  public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer) {
+  public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer, int writingAccesses) {
     myIdentifier = identifier;
+    myWritingAccesses = writingAccesses;
     myModifiers = modifiers;
     myType = type;
     myInitializer = initializer;
@@ -45,7 +47,7 @@ public class Field extends Member {
 
     modifierList.add(accessModifier());
 
-    modifierList.add(myModifiers.contains(Modifier.FINAL) ? "val" : "var");
+    modifierList.add(isVal() ? "val" : "var");
 
     if (modifierList.size() > 0)
       return AstUtil.join(modifierList, SPACE) + SPACE;
@@ -53,24 +55,23 @@ public class Field extends Member {
     return EMPTY;
   }
 
+  public boolean isVal() {
+    return myModifiers.contains(Modifier.FINAL);
+  }
+
   @Override
   public boolean isStatic() {
     return myModifiers.contains(Modifier.STATIC);
   }
 
-  public boolean isFinal() {
-    return myModifiers.contains(Modifier.FINAL);
-  }
-
   @NotNull
   @Override
   public String toKotlin() {
-    String modifier = modifiersToKotlin();
+    final String declaration = modifiersToKotlin() + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin();
 
     if (myInitializer.isEmpty())
-      return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE + EQUAL + SPACE + getDefaultInitializer(this);
+      return declaration + (isVal() && !isStatic() && myWritingAccesses == 1 ? EMPTY : SPACE + EQUAL + SPACE + getDefaultInitializer(this));
 
-    return modifier + myIdentifier.toKotlin() + SPACE + COLON + SPACE + myType.toKotlin() + SPACE +
-      EQUAL + SPACE + myInitializer.toKotlin();
+    return declaration + SPACE + EQUAL + SPACE + myInitializer.toKotlin();
   }
 }

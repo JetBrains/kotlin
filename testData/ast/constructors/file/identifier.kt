@@ -1,13 +1,13 @@
 public open class Identifier(_myName : String?, _myHasDollar : Boolean) {
-{
-myName = _myName
-myHasDollar = _myHasDollar
-}
 private val myName : String? = null
 private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 open public fun getName() : String? {
 return myName
+}
+{
+myName = _myName
+myHasDollar = _myHasDollar
 }
 class object {
 open public fun init(name : String?) : Identifier {

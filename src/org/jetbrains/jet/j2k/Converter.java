@@ -12,6 +12,7 @@ import org.jetbrains.jet.j2k.visitors.*;
 
 import java.util.*;
 
+import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 import static org.jetbrains.jet.j2k.ConverterUtil.createMainFunction;
 import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
 
@@ -99,7 +100,7 @@ public class Converter {
     List<Member> members = new LinkedList<Member>();
     for (PsiElement e : psiClass.getChildren()) {
       if (e instanceof PsiMethod) members.add(methodToFunction((PsiMethod) e, true));
-      else if (e instanceof PsiField) members.add(fieldToField((PsiField) e));
+      else if (e instanceof PsiField) members.add(fieldToField((PsiField) e, psiClass));
       else if (e instanceof PsiClass) members.add(classToClass((PsiClass) e));
       else if (e instanceof PsiClassInitializer) members.add(initializerToInitializer((PsiClassInitializer) e));
       else if (e instanceof PsiMember) System.out.println(e.getClass() + " " + e.getText());
@@ -147,7 +148,7 @@ public class Converter {
   @NotNull
   private static Class classToClass(@NotNull PsiClass psiClass) {
     final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
-    final List<Field> fields = fieldsToFieldList(psiClass.getFields());
+    final List<Field> fields = fieldsToFieldList(psiClass.getFields(), psiClass);
     final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
     final List<Type> implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes());
     final List<Type> extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes());
@@ -260,14 +261,14 @@ public class Converter {
   }
 
   @NotNull
-  private static List<Field> fieldsToFieldList(@NotNull PsiField[] fields) {
+  private static List<Field> fieldsToFieldList(@NotNull PsiField[] fields, PsiClass psiClass) {
     List<Field> result = new LinkedList<Field>();
-    for (PsiField f : fields) result.add(fieldToField(f));
+    for (PsiField f : fields) result.add(fieldToField(f, psiClass));
     return result;
   }
 
   @NotNull
-  private static Field fieldToField(@NotNull PsiField field) {
+  private static Field fieldToField(@NotNull PsiField field, PsiClass psiClass) {
     Set<String> modifiers = modifiersListToModifiersSet(field.getModifierList());
     if (field instanceof PsiEnumConstant) // TODO: remove instanceof
       return new EnumConstant(
@@ -280,7 +281,8 @@ public class Converter {
       new IdentifierImpl(field.getName()), // TODO
       modifiers,
       typeToType(field.getType()),
-      createSureCallOnlyForChain(field.getInitializer(), field.getType()) // TODO: add modifiers
+      createSureCallOnlyForChain(field.getInitializer(), field.getType()), // TODO: add modifiers
+      countWritingAccesses(field, psiClass)
     );
   }
 

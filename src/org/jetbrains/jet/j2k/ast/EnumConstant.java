@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class EnumConstant extends Field {
   public EnumConstant(Identifier identifier, Set<String> modifiers, @NotNull Type type, Element params) {
-    super(identifier, modifiers, type.convertedToNotNull(), params);
+    super(identifier, modifiers, type.convertedToNotNull(), params, 0);
   }
 
   @NotNull

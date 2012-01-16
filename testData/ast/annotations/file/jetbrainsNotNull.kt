@@ -1,8 +1,5 @@
 package test
 public open class Test(str : String) {
-{
-myStr = str
-}
 var myStr : String? = "String2"
 open public fun sout(str : String) : Unit {
 System.out?.println(str)
@@ -16,5 +13,8 @@ var test : String = "String2"
 sout(test)
 sout(dummy(test))
 Test(test)
+}
+{
+myStr = str
 }
 }

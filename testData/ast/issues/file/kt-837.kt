@@ -1,12 +1,12 @@
 package com.voltvoodoo.saplo4j.model
 import java.io.Serializable
 public open class Language(code : String?) : Serializable {
-{
-this.code = code
-}
 protected var code : String? = null
 open public fun equals(other : Language?) : Boolean {
 return other?.toString()?.equals(this.toString()).sure()
+}
+{
+this.code = code
 }
 class object {
 public var ENGLISH : Language? = Language("en")

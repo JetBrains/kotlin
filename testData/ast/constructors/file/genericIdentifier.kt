@@ -1,13 +1,13 @@
 public open class Identifier<T>(_myName : T?, _myHasDollar : Boolean) {
-{
-myName = _myName
-myHasDollar = _myHasDollar
-}
 private val myName : T? = null
 private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 open public fun getName() : T? {
 return myName
+}
+{
+myName = _myName
+myHasDollar = _myHasDollar
 }
 class object {
 open public fun init<T>(name : T?) : Identifier<T> {
