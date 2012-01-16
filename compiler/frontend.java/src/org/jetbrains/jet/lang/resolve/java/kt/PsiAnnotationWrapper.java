@@ -33,4 +33,9 @@ public abstract class PsiAnnotationWrapper {
     protected boolean getBooleanAttribute(String name, boolean defaultValue) {
         return PsiAnnotationUtils.getBooleanAttribute(psiAnnotation, name, defaultValue);
     }
+
+    protected int getIntAttribute(String name, int defaultValue) {
+        return PsiAnnotationUtils.getIntAttribute(psiAnnotation, name, defaultValue);
+    }
+
 }

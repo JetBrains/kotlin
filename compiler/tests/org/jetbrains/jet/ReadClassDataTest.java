@@ -7,22 +7,33 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
-import org.codehaus.groovy.ast.expr.DeclarationExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -31,6 +42,9 @@ import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -168,8 +182,8 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         StringBuilder sba = new StringBuilder();
         StringBuilder sbb = new StringBuilder();
         
-        new Serializer(sba).serializeContent((ClassDescriptor) a);
-        new Serializer(sbb).serializeContent((ClassDescriptor) b);
+        new FullContentSerialier(sba).serialize((ClassDescriptor) a);
+        new FullContentSerialier(sbb).serialize((ClassDescriptor) b);
         
         String as = sba.toString();
         String bs = sbb.toString();
@@ -200,70 +214,6 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
 
         public Serializer(StringBuilder sb) {
             this.sb = sb;
-        }
-
-        private String serializeContent(ClassDescriptor klass) {
-
-            serialize(klass.getModality());
-            sb.append(" ");
-
-            serialize(klass.getKind());
-            sb.append(" ");
-
-            serialize(klass);
-
-            if (!klass.getTypeConstructor().getParameters().isEmpty()) {
-                sb.append("<");
-                serializeCommaSeparated(klass.getTypeConstructor().getParameters());
-                sb.append(">");
-            }
-
-            // TODO: supers
-            // TODO: constructors
-
-            sb.append(" {\n");
-
-            List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
-            for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
-                typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
-            }
-            
-            List<String> memberStrings = new ArrayList<String>();
-            
-            for (ConstructorDescriptor constructor : klass.getConstructors()) {
-                StringBuilder constructorSb = new StringBuilder();
-                new Serializer(constructorSb).serialize(constructor);
-                memberStrings.add(constructorSb.toString());
-            }
-
-            JetScope memberScope = klass.getMemberScope(typeArguments);
-            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                // TODO
-                if (member.getName().equals("equals") || member.getName().equals("hashCode")
-                        || member.getName().equals("wait") || member.getName().equals("notify") || member.getName().equals("notifyAll")
-                        || member.getName().equals("toString") || member.getName().equals("getClass")
-                        || member.getName().equals("clone") || member.getName().equals("finalize")
-                        || member.getName().equals("getTypeInfo") || member.getName().equals("$setTypeInfo") || member.getName().equals("$typeInfo")
-                        || member.getName().equals("getOuterObject")
-                        )
-                {
-                    continue;
-                }
-                StringBuilder memberSb = new StringBuilder();
-                new Serializer(memberSb).serialize(member);
-                memberStrings.add(memberSb.toString());
-            }
-            
-            Collections.sort(memberStrings);
-            
-            for (String memberString : memberStrings) {
-                sb.append("    ");
-                sb.append(memberString);
-                sb.append("\n");
-            }
-
-            sb.append("}\n");
-            return sb.toString();
         }
 
         public void serialize(ClassKind kind) {
@@ -299,12 +249,12 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             sb.append("fun ");
             if (!fun.getTypeParameters().isEmpty()) {
                 sb.append("<");
-                serializeCommaSeparated(fun.getTypeParameters());
+                new Serializer(sb).serializeCommaSeparated(fun.getTypeParameters());
                 sb.append(">");
             }
 
             if (fun.getReceiverParameter().exists()) {
-                serialize(fun.getReceiverParameter());
+                new Serializer(sb).serialize(fun.getReceiverParameter());
                 sb.append(".");
             }
 
@@ -312,7 +262,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             sb.append("(");
             new ValueParameterSerializer(sb).serializeCommaSeparated(fun.getValueParameters());
             sb.append("): ");
-            serialize(fun.getReturnType());
+            new Serializer(sb).serialize(fun.getReturnType());
         }
 
         public void serialize(ExtensionReceiver extensionReceiver) {
@@ -326,12 +276,12 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 sb.append("val ");
             }
             if (prop.getReceiverParameter().exists()) {
-                serialize(prop.getReceiverParameter().getType());
+                new Serializer(sb).serialize(prop.getReceiverParameter().getType());
                 sb.append(".");
             }
             sb.append(prop.getName());
             sb.append(": ");
-            serialize(prop.getOutType());
+            new Serializer(sb).serialize(prop.getOutType());
         }
 
         public void serialize(ValueParameterDescriptor valueParameter) {
@@ -499,7 +449,82 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             sb.append(param.getName());
         }
     }
-    
+
+    private static class FullContentSerialier extends Serializer {
+        private FullContentSerialier(StringBuilder sb) {
+            super(sb);
+        }
+
+        public void serialize(ClassDescriptor klass) {
+
+            serialize(klass.getModality());
+            sb.append(" ");
+
+            serialize(klass.getKind());
+            sb.append(" ");
+
+            new Serializer(sb).serialize(klass);
+
+            if (!klass.getTypeConstructor().getParameters().isEmpty()) {
+                sb.append("<");
+                serializeCommaSeparated(klass.getTypeConstructor().getParameters());
+                sb.append(">");
+            }
+
+            // TODO: supers
+            // TODO: constructors
+
+            sb.append(" {\n");
+
+            List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
+            for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
+                typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
+            }
+
+            List<String> memberStrings = new ArrayList<String>();
+
+            for (ConstructorDescriptor constructor : klass.getConstructors()) {
+                StringBuilder constructorSb = new StringBuilder();
+                new Serializer(constructorSb).serialize(constructor);
+                memberStrings.add(constructorSb.toString());
+            }
+
+            JetScope memberScope = klass.getMemberScope(typeArguments);
+            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                StringBuilder memberSb = new StringBuilder();
+                new FullContentSerialier(memberSb).serialize(member);
+                memberStrings.add(memberSb.toString());
+            }
+
+            Collections.sort(memberStrings);
+
+            for (String memberString : memberStrings) {
+                sb.append(indent(memberString));
+            }
+
+            sb.append("}\n");
+        }
+    }
+
+
+    private static String indent(String string) {
+        try {
+            StringBuilder r = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new StringReader(string));
+            for (;;) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                r.append("    ");
+                r.append(line);
+                r.append("\n");
+            }
+            return r.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static Test suite() {
         return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readClass", true, new JetTestCaseBuilder.NamedTestFactory() {

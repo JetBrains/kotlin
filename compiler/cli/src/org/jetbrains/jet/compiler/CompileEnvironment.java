@@ -7,11 +7,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
-import jet.ExtensionFunction0;
-import jet.modules.IModuleBuilder;
-import jet.modules.IModuleSetBuilder;
+import jet.modules.AllModules;
+import jet.modules.Module;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -20,7 +18,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.*;
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -175,13 +173,14 @@ public class CompileEnvironment {
             e.printStackTrace();
         }
 
-        final IModuleSetBuilder moduleSetBuilder = loadModuleScript(moduleFile);
-        if (moduleSetBuilder == null) {
-            return;
+        final List<Module> modules = loadModuleScript(moduleFile);
+
+        if (modules == null) {
+            throw new CompileEnvironmentException("Module script " + moduleFile + " compilation failed");
         }
 
         final String directory = new File(moduleFile).getParent();
-        for (IModuleBuilder moduleBuilder : moduleSetBuilder.getModules()) {
+        for (Module moduleBuilder : modules) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
             final String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
             try {
@@ -192,7 +191,7 @@ public class CompileEnvironment {
         }
     }
 
-    public IModuleSetBuilder loadModuleScript(String moduleFile) {
+    public List<Module> loadModuleScript(String moduleFile) {
         CompileSession scriptCompileSession = new CompileSession(myEnvironment);
         scriptCompileSession.addSources(moduleFile);
         scriptCompileSession.addStdLibSources(true);
@@ -205,34 +204,25 @@ public class CompileEnvironment {
         return runDefineModules(moduleFile, factory);
     }
 
-    private static IModuleSetBuilder runDefineModules(String moduleFile, ClassFileFactory factory) {
+    private static List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
         GeneratedClassLoader loader = new GeneratedClassLoader(factory);
         try {
-            Class moduleSetBuilderClass = loader.loadClass("kotlin.modules.ModuleSetBuilder");
-            final IModuleSetBuilder moduleSetBuilder = (IModuleSetBuilder) moduleSetBuilderClass.newInstance();
-
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
-            final Field[] fields = namespaceClass.getDeclaredFields();
-            boolean modulesDefined = false;
-            for (Field field : fields) {
-                if (field.getName().equals("modules")) {
-                    field.setAccessible(true);
-                    ExtensionFunction0 defineMudules = (ExtensionFunction0) field.get(null);
-                    defineMudules.invoke(moduleSetBuilder);
-                    modulesDefined = true;
-                    break;
-                }
+            final Method method = namespaceClass.getDeclaredMethod("project");
+            if (method == null) {
+                throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
             }
-            if (!modulesDefined) {
-                throw new CompileEnvironmentException("Module script " + moduleFile + " must define a modules() property");
-            }
-            return moduleSetBuilder;
+
+            method.setAccessible(true);
+            method.invoke(null);
+
+            return AllModules.modules;
         } catch (Exception e) {
             throw new CompileEnvironmentException(e);
         }
     }
 
-    public ClassFileFactory compileModule(IModuleBuilder moduleBuilder, String directory) {
+    public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
         if (!"stdlib".equals(moduleBuilder.getModuleName())) {
             moduleCompileSession.addStdLibSources(false);

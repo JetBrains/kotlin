@@ -1,4 +1,4 @@
-package org.jetbrains.jet;
+package org.jetbrains.jet.compiler;
 
 import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.lang.java.JavaParserDefinition;
@@ -19,6 +19,13 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         registerFileType(JetFileType.INSTANCE, "jet");
         registerParserDefinition(new JavaParserDefinition());
         registerParserDefinition(new JetParserDefinition());
+
+/*
+        Extensions.getArea(myProject)
+                .getExtensionPoint(PsiElementFinder.EP_NAME)
+                .registerExtension(new JavaElementFinder(myProject));
+*/
+
     }
 
     public MockApplication getApplication() {

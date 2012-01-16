@@ -65,6 +65,10 @@ public abstract class ClassBuilder {
         getVisitor().visitOuterClass(owner, name, desc);
     }
 
+    public void visitInnerClass(String name, String outerName, String innerName, int access) {
+        getVisitor().visitInnerClass(name, outerName, innerName, access);
+    }
+
     public boolean generateCode() {
         return true;
     }

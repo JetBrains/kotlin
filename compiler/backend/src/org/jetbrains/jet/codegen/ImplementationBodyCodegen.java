@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -92,6 +93,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassDescriptor container = getContainingClassDescriptor(descriptor);
         if(container != null) {
             v.visitOuterClass(typeMapper.mapType(container.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), null, null);
+        }
+
+        for (ClassDescriptor innerClass : descriptor.getInnerClassesAndObjects()) {
+            // TODO: proper access
+            int innerClassAccess = Opcodes.ACC_PUBLIC;
+            if (innerClass.getModality() == Modality.FINAL) {
+                innerClassAccess |= Opcodes.ACC_FINAL;
+            } else if (innerClass.getModality() == Modality.ABSTRACT) {
+                innerClassAccess |= Opcodes.ACC_ABSTRACT;
+            }
+            // TODO: cache internal names
+            String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName(), innerClassAccess);
         }
 
         if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
@@ -244,7 +259,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
                         MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                         PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(), originalSignature.getJvmMethodSignature().getKotlinTypeParameter());
-                        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
                         if (v.generateCode()) {
                             mv.visitCode();
 
@@ -268,7 +282,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
                         MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                         PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(), originalSignature2.getJvmMethodSignature().getKotlinTypeParameter());
-                        mv.visitAnnotation(JvmStdlibNames.JET_PROPERTY.getDescriptor(), true).visitEnd();
                         if (v.generateCode()) {
                             mv.visitCode();
 
@@ -540,18 +553,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.putfield(classname, fieldName, interfaceDesc);
 
             Type outerType = typeMapper.mapType(outerDescriptor.getDefaultType());
-            MethodVisitor outer = v.newMethod(myClass, Opcodes.ACC_PUBLIC, "getOuterObject", "()Ljet/JetObject;", null, null);
+            MethodVisitor outer = v.newMethod(myClass, Opcodes.ACC_PUBLIC, JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, "()Ljet/JetObject;", null, null);
             outer.visitCode();
             outer.visitVarInsn(Opcodes.ALOAD, 0);
             outer.visitFieldInsn(Opcodes.GETFIELD, classname, "this$0", outerType.getDescriptor());
             outer.visitInsn(Opcodes.ARETURN);
-            FunctionCodegen.endVisit(outer, "getOuterObject", myClass);
+            FunctionCodegen.endVisit(outer, JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, myClass);
         }
 
         if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
             iv.load(0, JetTypeMapper.TYPE_OBJECT);
             iv.load(frameMap.getTypeInfoIndex(), JetTypeMapper.TYPE_OBJECT);
-            iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "$setTypeInfo", "(Ljet/TypeInfo;)V");
+            iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), JvmAbi.SET_TYPE_INFO_METHOD, "(Ljet/TypeInfo;)V");
         }
 
         if(closure != null) {
@@ -887,7 +900,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetType defaultType = descriptor.getDefaultType();
         if(CodegenUtil.requireTypeInfoConstructorArg(defaultType)) {
             if(!CodegenUtil.hasDerivedTypeInfoField(defaultType)) {
-                v.newField(myClass, Opcodes.ACC_PROTECTED, "$typeInfo", "Ljet/TypeInfo;", null, null);
+                v.newField(myClass, Opcodes.ACC_PROTECTED, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;", null, null);
 
                 MethodVisitor mv = v.newMethod(myClass, Opcodes.ACC_PUBLIC, JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "()Ljet/TypeInfo;", null, null);
                 if (v.generateCode()) {
@@ -895,21 +908,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    iv.getfield(owner, "$typeInfo", "Ljet/TypeInfo;");
+                    iv.getfield(owner, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
                     iv.areturn(JetTypeMapper.TYPE_TYPEINFO);
                     FunctionCodegen.endVisit(iv, JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, myClass);
                 }
 
-                mv = v.newMethod(myClass, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL, "$setTypeInfo", "(Ljet/TypeInfo;)V", null, null);
+                mv = v.newMethod(myClass, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL, JvmAbi.SET_TYPE_INFO_METHOD, "(Ljet/TypeInfo;)V", null, null);
                 if (v.generateCode()) {
                     mv.visitCode();
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.load(1, JetTypeMapper.TYPE_OBJECT);
-                    iv.putfield(owner, "$typeInfo", "Ljet/TypeInfo;");
+                    iv.putfield(owner, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
                     mv.visitInsn(Opcodes.RETURN);
-                    FunctionCodegen.endVisit(iv, "$setTypeInfo", myClass);
+                    FunctionCodegen.endVisit(iv, JvmAbi.SET_TYPE_INFO_METHOD, myClass);
                 }
             }
         }

@@ -72,6 +72,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('f')
+      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
@@ -124,6 +125,7 @@ JetFile: FunctionCalls.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
           PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL
@@ -180,6 +182,7 @@ JetFile: FunctionCalls.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
           PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
       FUNCTION_LITERAL_EXPRESSION
         FUNCTION_LITERAL

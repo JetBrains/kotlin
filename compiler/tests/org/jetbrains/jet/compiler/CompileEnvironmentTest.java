@@ -1,7 +1,6 @@
 package org.jetbrains.jet.compiler;
 
-import jet.modules.IModuleBuilder;
-import jet.modules.IModuleSetBuilder;
+import jet.modules.Module;
 import junit.framework.TestCase;
 import org.jetbrains.jet.cli.KotlinCompiler;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -37,9 +36,9 @@ public class CompileEnvironmentTest extends TestCase {
         environment.setJavaRuntime(activeRtJar);
         environment.initializeKotlinRuntime();
         final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";
-        final IModuleSetBuilder setBuilder = environment.loadModuleScript(testDataDir + "Smoke.kts");
-        assertEquals(1, setBuilder.getModules().size());
-        final IModuleBuilder moduleBuilder = setBuilder.getModules().get(0);
+        final List<Module> modules = environment.loadModuleScript(testDataDir + "Smoke.kts");
+        assertEquals(1, modules.size());
+        final Module moduleBuilder = modules.get(0);
         final ClassFileFactory factory = environment.compileModule(moduleBuilder, testDataDir);
         assertNotNull(factory);
         assertNotNull(factory.asBytes("Smoke/namespace.class"));
@@ -51,7 +50,7 @@ public class CompileEnvironmentTest extends TestCase {
         assertTrue(entries.contains("Smoke/namespace.class"));
     }
 
-    public void _testSmokeWithCompilerJar() throws IOException {
+    public void testSmokeWithCompilerJar() throws IOException {
         File tempFile = File.createTempFile("compilerTest", "compilerTest");
         try {
             KotlinCompiler.main(Arrays.asList("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts", "-jar", tempFile.getAbsolutePath()).toArray(new String[0]));

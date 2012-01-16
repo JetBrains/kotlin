@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -50,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructorImpl;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
@@ -132,12 +132,11 @@ public class JavaDescriptorResolver {
     private static abstract class ResolverScopeData {
         @Nullable
         private Set<VariableDescriptor> properties;
-        private boolean kotlin;
+        protected boolean kotlin;
     }
 
     private static class ResolverClassData extends ResolverScopeData {
-        private JavaClassDescriptor classDescriptor;
-        private boolean kotlin;
+        private MutableClassDescriptorLite classDescriptor;
 
         @NotNull
         public ClassDescriptor getClassDescriptor() {
@@ -147,7 +146,6 @@ public class JavaDescriptorResolver {
 
     private static class ResolverNamespaceData extends ResolverScopeData {
         private JavaNamespaceDescriptor namespaceDescriptor;
-        private boolean kotlin;
 
         @NotNull
         public NamespaceDescriptor getNamespaceDescriptor() {
@@ -233,8 +231,9 @@ public class JavaDescriptorResolver {
 
         String name = psiClass.getName();
         ResolverClassData classData = new ResolverClassData();
-        classData.classDescriptor = new JavaClassDescriptor(
-                resolveParentDescriptor(psiClass), psiClass.isInterface() ? ClassKind.TRAIT : ClassKind.CLASS
+        ClassKind kind = psiClass.isInterface() ? ClassKind.TRAIT : ClassKind.CLASS;
+        classData.classDescriptor = new MutableClassDescriptorLite(
+                resolveParentDescriptor(psiClass), kind
         );
         classData.classDescriptor.setName(name);
         
@@ -248,30 +247,26 @@ public class JavaDescriptorResolver {
         }
 
         List<JetType> supertypes = new ArrayList<JetType>();
+
         List<TypeParameterDescriptor> typeParameters = resolveClassTypeParameters(psiClass, classData, new OuterClassTypeVariableResolver());
-        classData.classDescriptor.setTypeConstructor(new TypeConstructorImpl(
-                classData.classDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
-                // TODO
-                psiClass.hasModifierProperty(PsiModifier.FINAL),
-                name,
-                typeParameters,
-                supertypes
-        ));
+        classData.classDescriptor.setTypeParameterDescriptors(typeParameters);
+        classData.classDescriptor.setSupertypes(supertypes);
+        classData.classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(psiClass));
         classData.classDescriptor.setModality(Modality.convertFromFlags(
                 psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
                 !psiClass.hasModifierProperty(PsiModifier.FINAL))
         );
-        classData.classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(psiClass));
+        classData.classDescriptor.createTypeConstructor();
         classDescriptorCache.put(psiClass.getQualifiedName(), classData);
-        classData.classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
+        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
 
-        // UGLY HACK (Andrey Breslav is not sure what did he mean)
         initializeTypeParameters(psiClass);
 
+        // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         supertypes.addAll(getSupertypes(psiClass));
+
         if (psiClass.isInterface()) {
-            classData.classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
+            //classData.classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
         }
         else {
             PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
@@ -279,7 +274,7 @@ public class JavaDescriptorResolver {
             JetType superclassType = extendsListTypes.length == 0
                                             ? JetStandardClasses.getAnyType()
                                             : semanticServices.getTypeTransformer().transformToType(extendsListTypes[0]);
-            classData.classDescriptor.setSuperclassType(superclassType);
+            //classData.classDescriptor.setSuperclassType(superclassType);
         }
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
@@ -296,7 +291,7 @@ public class JavaDescriptorResolver {
                         false);
                 constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), Modality.FINAL, classData.classDescriptor.getVisibility());
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
-                classData.classDescriptor.addConstructor(constructorDescriptor);
+                classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
             }
         }
@@ -322,7 +317,7 @@ public class JavaDescriptorResolver {
                 constructorDescriptor.initialize(typeParameters, valueParameterDescriptors.descriptors, Modality.FINAL,
                                                  resolveVisibilityFromPsiModifiers(psiConstructor));
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
-                classData.classDescriptor.addConstructor(constructorDescriptor);
+                classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
             }
         }
@@ -442,7 +437,7 @@ public class JavaDescriptorResolver {
      * @see #resolveMethodTypeParametersFromJetSignature(String, FunctionDescriptor)
      */
     private List<TypeParameterDescriptor> resolveClassTypeParametersFromJetSignature(String jetSignature, final PsiClass clazz,
-            final JavaClassDescriptor classDescriptor, final TypeVariableResolver outerClassTypeVariableResolver) {
+            final ClassDescriptor classDescriptor, final TypeVariableResolver outerClassTypeVariableResolver) {
         final List<TypeParameterDescriptor> r = new ArrayList<TypeParameterDescriptor>();
         
         class MyTypeVariableResolver implements TypeVariableResolver {
@@ -585,6 +580,12 @@ public class JavaDescriptorResolver {
     }
 
     public NamespaceDescriptor resolveNamespace(String qualifiedName) {
+        // First, let's check that there is no Kotlin package:
+        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(qualifiedName);
+        if (kotlinNamespaceDescriptor != null) {
+            return kotlinNamespaceDescriptor;
+        }
+
         PsiPackage psiPackage = findPackage(qualifiedName);
         if (psiPackage == null) {
             PsiClass psiClass = findClass(qualifiedName);
@@ -886,7 +887,7 @@ public class JavaDescriptorResolver {
             if (psiMethod.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
 
                 // TODO: some java properties too
-                if (method.getJetProperty().isDefined()) {
+                if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
 
                     if (psiMethod.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD)) {
                         continue;
@@ -927,7 +928,7 @@ public class JavaDescriptorResolver {
                 }
             } else if (psiMethod.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
 
-                if (method.getJetProperty().isDefined()) {
+                if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
                     if (psiMethod.getParameterList().getParametersCount() == 0) {
                         // TODO: report error properly
                         throw new IllegalStateException();
@@ -989,7 +990,7 @@ public class JavaDescriptorResolver {
         ResolverScopeData scopeData;
         if (owner instanceof JavaNamespaceDescriptor) {
             scopeData = namespaceDescriptorCacheByFqn.get(((JavaNamespaceDescriptor) owner).getQualifiedName());
-        } else if (owner instanceof JavaClassDescriptor) {
+        } else if (owner instanceof ClassDescriptor) {
             scopeData = classDescriptorCache.get(psiClass.getQualifiedName());
         } else {
             throw new IllegalStateException();
@@ -1209,8 +1210,29 @@ public class JavaDescriptorResolver {
         }
 
         // TODO: ugly
-        if (method.getJetProperty().isDefined()) {
+        if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
             return null;
+        }
+
+        if (kotlin) {
+            // TODO: unless maybe class explicitly extends Object
+            String ownerClassName = method.getPsiMethod().getContainingClass().getQualifiedName();
+            if (ownerClassName.equals("java.lang.Object")) {
+                return null;
+            }
+            
+            if (method.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD) && method.getParameters().size() == 0) {
+                return null;
+            }
+            
+            if (method.getName().equals(JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD) && method.getParameters().size() == 0) {
+                return null;
+            }
+
+            // TODO: check signature
+            if (method.getName().equals(JvmAbi.SET_TYPE_INFO_METHOD)) {
+                return null;
+            }
         }
 
         DeclarationDescriptor classDescriptor;
@@ -1281,9 +1303,9 @@ public class JavaDescriptorResolver {
             @NotNull PsiMethodWrapper method,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull TypeVariableResolver classTypeVariableResolver) {
-        if (method.getJetMethodOrProperty().typeParameters().length() > 0) {
+        if (method.getJetMethod().typeParameters().length() > 0) {
             List<TypeParameterDescriptor> r = resolveMethodTypeParametersFromJetSignature(
-                    method.getJetMethodOrProperty().typeParameters(), method.getPsiMethod(), functionDescriptor, classTypeVariableResolver);
+                    method.getJetMethod().typeParameters(), method.getPsiMethod(), functionDescriptor, classTypeVariableResolver);
             initializeTypeParameters(method.getPsiMethod());
             return r;
         }
@@ -1294,7 +1316,7 @@ public class JavaDescriptorResolver {
     }
 
     /**
-     * @see #resolveClassTypeParametersFromJetSignature(String, com.intellij.psi.PsiClass, JavaClassDescriptor) 
+     * @see #resolveClassTypeParametersFromJetSignature(String, com.intellij.psi.PsiClass, MutableClassDescriptorLite)
      */
     private List<TypeParameterDescriptor> resolveMethodTypeParametersFromJetSignature(String jetSignature, final PsiMethod method,
             final FunctionDescriptor functionDescriptor, final TypeVariableResolver classTypeVariableResolver)
@@ -1386,5 +1408,14 @@ public class JavaDescriptorResolver {
 
     public TypeParameterDescriptor resolveTypeParameter(PsiTypeParameter typeParameter) {
         return resolveTypeParameterInitialization(typeParameter).descriptor;
+    }
+
+    public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
+        PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
+        List<ClassDescriptor> r = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
+        for (PsiClass innerPsiClass : innerPsiClasses) {
+            r.add(resolveClass(innerPsiClass));
+        }
+        return r;
     }
 }

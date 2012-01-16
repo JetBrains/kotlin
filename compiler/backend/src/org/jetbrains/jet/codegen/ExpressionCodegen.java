@@ -14,8 +14,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -1042,15 +1042,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             owner = typeMapper.getOwner(functionDescriptor, OwnerKind.IMPLEMENTATION);
-            if(containingDeclaration instanceof JavaClassDescriptor) {
-                isInterface = CodegenUtil.isInterface(containingDeclaration);
+            if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT) {
+                isInterface = true;
             }
             else {
-                if(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT)
-                    isInterface = true;
-                else {
-                    isInterface = false;
-                }
+                isInterface = false;
             }
         }
 
@@ -1096,23 +1092,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                     }
                 }
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor))
+                if(!(containingDeclaration instanceof JavaNamespaceDescriptor))
                     getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
                 else
                     getter = null;
+                
+                if (propertyDescriptor.getGetter() == null) {
+                    getter = null;
+                }
             }
             //noinspection ConstantConditions
             if (isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())) {
                 setter = null;
             }
             else {
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor) && !(containingDeclaration instanceof JavaClassDescriptor)) {
+                if(!(containingDeclaration instanceof JavaNamespaceDescriptor)) {
                     JvmPropertyAccessorSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
                     setter = jvmMethodSignature != null ? jvmMethodSignature.getJvmMethodSignature().getAsmMethod() : null;
                 } else {
                     setter = null;
                 }
 
+                if (propertyDescriptor.getSetter() == null) {
+                    setter = null;
+                }
             }
         }
 
@@ -2658,14 +2661,14 @@ If finally block is present, its last expression is the value of try expression.
                     if (CodegenUtil.hasTypeInfoField(defaultType)) {
                         if(!(context instanceof CodegenContext.ConstructorContext)) {
                             v.load(0, TYPE_OBJECT);
-                            v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
+                            v.getfield(ownerType.getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
                         }
                         else {
                             v.load(((ConstructorFrameMap)myFrameMap).getTypeInfoIndex(), TYPE_OBJECT);
                         }
                     }
                     else {
-                        v.getstatic(ownerType.getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
+                        v.getstatic(ownerType.getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
                     }
                 }
                 else {
@@ -2677,7 +2680,7 @@ If finally block is present, its last expression is the value of try expression.
                 v.load(0, TYPE_OBJECT);
                 while(descriptor != containingDeclaration) {
                     descriptor = CodegenUtil.getOuterClassDescriptor(descriptor);
-                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), "getOuterObject", "()Ljet/JetObject;");
+                    v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, "()Ljet/JetObject;");
                 }
                 v.invokeinterface(TYPE_JET_OBJECT.getInternalName(), JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "()Ljet/TypeInfo;");
             }

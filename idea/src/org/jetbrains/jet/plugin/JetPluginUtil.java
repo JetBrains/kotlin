@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -65,7 +64,7 @@ public class JetPluginUtil {
         JetScope libraryScope = standardLibrary.getLibraryScope();
 
         DeclarationDescriptor declaration = type.getMemberScope().getContainingDeclaration();
-        if (declaration instanceof JavaClassDescriptor || ErrorUtils.isError(declaration)) {
+        if (ErrorUtils.isError(declaration)) {
             return false;
         }
         while (!(declaration instanceof NamespaceDescriptor)) {

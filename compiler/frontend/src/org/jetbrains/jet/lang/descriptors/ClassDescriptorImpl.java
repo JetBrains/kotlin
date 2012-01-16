@@ -20,7 +20,6 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     private JetScope memberDeclarations;
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
-    private JetType superclassType;
     private ReceiverDescriptor implicitReceiver;
 
     public ClassDescriptorImpl(
@@ -50,7 +49,6 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
-        this.superclassType = superclassType;
         return this;
     }
 
@@ -84,12 +82,6 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         }
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
         return new SubstitutingScope(memberDeclarations, TypeSubstitutor.create(substitutionContext));
-    }
-
-    @NotNull
-    @Override
-    public JetType getSuperclassType() {
-        return superclassType;
     }
 
     @NotNull
