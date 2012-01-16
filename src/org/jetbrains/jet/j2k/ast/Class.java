@@ -174,8 +174,8 @@ public class Class extends Member {
   @NotNull
   String bodyToKotlin() {
     return SPACE + "{" + N +
-      primaryConstructorBodyToKotlin() + N +
       AstUtil.joinNodes(getNonStatic(membersExceptConstructors()), N) + N +
+      primaryConstructorBodyToKotlin() + N +
       classObjectToKotlin() + N +
       "}";
   }

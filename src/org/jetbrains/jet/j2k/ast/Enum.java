@@ -30,8 +30,8 @@ public class Enum extends Class {
   public String toKotlin() {
     return modifiersToKotlin() + "enum class" + SPACE + myName.toKotlin() + primaryConstructorSignatureToKotlin() +
       typeParametersToKotlin() + implementTypesToKotlin() + SPACE + "{" + N +
-      primaryConstructorBodyToKotlin() + N +
       AstUtil.joinNodes(membersExceptConstructors(), N) + N +
+      primaryConstructorBodyToKotlin() + N +
       "public fun name()  : String { return \"\" }" + N + // TODO : remove hack
       "public fun order() : Int { return 0 }" + N +
       "}";

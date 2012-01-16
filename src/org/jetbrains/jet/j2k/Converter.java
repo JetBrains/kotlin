@@ -111,7 +111,7 @@ public class Converter {
   private static List<Field> getFinalOrWithEmptyInitializer(@NotNull List<? extends Field> fields) {
     List<Field> result = new LinkedList<Field>();
     for (Field f : fields)
-      if (f.isFinal() || f.getInitializer().toKotlin().isEmpty())
+      if (f.isVal() || f.getInitializer().toKotlin().isEmpty())
         result.add(f);
     return result;
   }
