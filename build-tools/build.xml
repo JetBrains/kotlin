@@ -42,6 +42,27 @@
     </macrodef>
 
 
+    <!-- Runs <kotlinc> task specifying either "srcdir" or "file" attribute -->
+    <macrodef name="run-kotlinc">
+        <attribute name="file"   default=""/>
+        <attribute name="srcdir" default=""/>
+        <sequential>
+
+            <delete dir = "${tests-dir}" includes = "**/*"/>
+
+            <if>
+                <equals arg1="@{file}" arg2=""/>
+                <then>
+                    <kotlinc  destdir = "${tests-dir}" srcdir = "@{srcdir}"/>
+                </then>
+                <else>
+                    <kotlinc  destdir = "${tests-dir}" file   = "@{file}"/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+
     <!-- Runs <java> for compiled classes and verifies the output correctness -->
     <macrodef name="run-java">
         <attribute name="out"/>
@@ -84,13 +105,10 @@
         <attribute name="args" default=""/>
         <attribute name="out"/>
         <sequential>
-            <delete   dir     = "${tests-dir}" includes = "**/*"/>
-            <kotlinc  destdir = "${tests-dir}" file     = "@{root}/Hello.kt"/>
-            <run-java args    = "@{args}"      out      = "@{out}"/>
-
-            <delete   dir     = "${tests-dir}" includes = "**/*"/>
-            <kotlinc  destdir = "${tests-dir}" srcdir   = "@{root}"/>
-            <run-java args    = "@{args}"      out      = "@{out}"/>
+            <run-kotlinc file   = "@{root}/Hello.kt"/>
+            <run-java    args   = "@{args}" out = "@{out}"/>
+            <run-kotlinc srcdir = "@{root}"/>
+            <run-java    args   = "@{args}" out = "@{out}"/>
         </sequential>
     </macrodef>
 
@@ -111,13 +129,34 @@
     <!-- Compiles, runs and verifies the output of web demo longer examples -->
     <macrodef name="longer-examples-tests">
         <sequential>
-            <delete  dir     = "${tests-dir}" includes = "**/*"/>
-            <kotlinc destdir = "${tests-dir}" srcdir   = "${basedir}/build-tools/test/longer-examples" />
-
+            <run-kotlinc srcdir = "${basedir}/build-tools/test/longer-examples" />
             <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer." />
             <run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>
             <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
             <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Verifies build fails if <kotlinc> fails -->
+    <macrodef name="compilation-fail-test">
+        <sequential>
+            <var name="failed" value="false"/>
+            <trycatch property="error-message" reference="bar">
+                <try>
+                    <!-- Should fail -->
+                    <run-kotlinc srcdir = "${basedir}/build-tools/test/compilation-fail"/>
+                </try>
+                <catch>
+                    <var name="failed" value="true"/>
+                </catch>
+            </trycatch>
+            <if>
+                <isfalse value="${failed}"/>
+                <then>
+                    <fail message="Compilation should have failed!"/>
+                </then>
+            </if>
         </sequential>
     </macrodef>
 
@@ -152,5 +191,6 @@
         <setup-kotlin-home/>
         <hello-tests/>
         <longer-examples-tests/>
+        <compilation-fail-test/>
     </target>
 </project>
