@@ -50,7 +50,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         declarationsObject = context().jsScope().declareName(Namer.nameForClassesVariable());
         assert declarationsObject != null;
         declarationsStatement =
-                AstUtil.newAssignmentStatement(declarationsObject.makeRef(), generateDummyFunctionInvocation());
+                AstUtil.newVar(declarationsObject, generateDummyFunctionInvocation());
     }
 
     @NotNull

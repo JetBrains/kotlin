@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/backend/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/cli/cli.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />

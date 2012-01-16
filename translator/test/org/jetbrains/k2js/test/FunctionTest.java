@@ -75,6 +75,11 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     @Test
+    public void namedArguments() throws Exception {
+        testFooBoxIsTrue("namedArguments.kt");
+    }
+
+    @Test
     public void kt921() throws Exception {
         try {
             checkOutput("KT-921.kt", "");

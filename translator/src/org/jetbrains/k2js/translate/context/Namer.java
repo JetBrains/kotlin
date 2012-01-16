@@ -37,7 +37,8 @@ public final class Namer {
         return "classes";
     }
 
-    public static String getNameForAccessor(String propertyName, boolean isGetter) {
+    @NotNull
+    public static String getNameForAccessor(@NotNull String propertyName, boolean isGetter) {
         if (isGetter) {
             return getNameForGetter(propertyName);
         } else {
