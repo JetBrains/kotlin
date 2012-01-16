@@ -246,7 +246,11 @@ public class JetTypeMapper {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (ErrorUtils.isError(descriptor)) {
-            return Type.getObjectType("error/NonExistentClass");
+            Type asmType = Type.getObjectType("error/NonExistentClass");
+            if (signatureVisitor != null) {
+                visitAsmType(signatureVisitor, asmType, true);
+            }
+            return asmType;
         }
 
         if (standardLibrary.getArray().equals(descriptor)) {
