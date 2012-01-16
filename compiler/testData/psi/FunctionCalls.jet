@@ -4,7 +4,7 @@ fun foo() {
   f<foo>
   (a)
   f {s}
-  f
+  f;
   {s}
   f {
     s
@@ -12,14 +12,14 @@ fun foo() {
   f(a) {
     s
   }
-  f(a)
+  f(a);
   {
     s
   }
   f<a>(a) {
     s
   }
-  f<a>(a)
+  f<a>(a);
   {
     s
   }

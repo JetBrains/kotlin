@@ -53,7 +53,7 @@ fun f() :  Int.() -> Unit = {}
 
 fun main1() {
     1.{Int.() -> 1}();
-    {1}()
+    {1}();
     {(x : Int) -> x}(1)
     1.{Int.(x : Int) -> x}(1)
     @l{1}()
@@ -71,11 +71,11 @@ fun main1() {
 }
 
 fun test() {
-    {(x : Int) -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>
+    {(x : Int) -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>;
     <!MISSING_RECEIVER!>{Int.() -> 1}<!>()
     <!TYPE_MISMATCH!>"sd"<!>.{Int.() -> 1}()
     val i : Int? = null
-    i<!UNSAFE_CALL!>.<!>{Int.() -> 1}()
+    i<!UNSAFE_CALL!>.<!>{Int.() -> 1}();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
     1<!UNNECESSARY_SAFE_CALL!>?.<!>{Int.() -> 1}()
     1.<!NO_RECEIVER_ADMITTED!>{}<!>()

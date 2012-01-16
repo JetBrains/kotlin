@@ -468,8 +468,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
-        while (!myBuilder.newlineBeforeCurrentToken()
-                && (at(LBRACE)
+//        while (!myBuilder.newlineBeforeCurrentToken()
+//                && (at(LBRACE)
+        while ((at(LBRACE)
                     || atSet(LABELS) && lookahead(1) == LBRACE)) {
             if (!at(LBRACE)) {
                 assert _atSet(LABELS);
