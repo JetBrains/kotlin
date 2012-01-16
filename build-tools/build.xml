@@ -125,7 +125,7 @@
     <!-- Creates build tools distribution jar -->
     <target name="buildToolsJar" depends="compile">
         <mkdir dir    ="${output}/classes/buildTools"/>
-        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source">
+        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src>
                 <dirset dir="${basedir}/build-tools">
                     <include name="core/src"/>
@@ -134,6 +134,7 @@
                     <include name="gradle/src"/>
                 </dirset>
             </src>
+            <compilerarg value="-Xlint:all"/>
             <classpath>
                 <path refid  = "classpath.kotlin"/>
                 <fileset dir = "${idea.sdk}/ant/lib" includes="*.jar"/>
