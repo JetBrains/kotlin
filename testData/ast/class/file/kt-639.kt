@@ -14,8 +14,8 @@ return __
 }
 open class User() {
 open fun main() : Unit {
-var m : HashMap<*, *>? = HashMap(1)
-var m2 : HashMap<*, *>? = HashMap(10)
+var m : HashMap<Any?, Any?>? = HashMap(1)
+var m2 : HashMap<Any?, Any?>? = HashMap(10)
 var t1 : Test? = Test.init()
 var t2 : Test? = Test.init("")
 }
