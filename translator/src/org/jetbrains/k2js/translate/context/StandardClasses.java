@@ -33,7 +33,14 @@ public final class StandardClasses {
         declareJavaArrayList(standardClasses);
         declareJavaSystem(standardClasses);
         declareJavaInteger(standardClasses);
+        declareJavaUtilIterator(standardClasses);
         return standardClasses;
+    }
+
+    private static void declareJavaUtilIterator(@NotNull StandardClasses standardClasses) {
+        String iteratorFQName = "<java_root>.java.util.Iterator";
+        standardClasses.declareStandardTopLevelObject(iteratorFQName, "Iterator");
+        declareMethods(standardClasses, iteratorFQName, "next", "hasNext");
     }
 
     private static void declareString(@NotNull StandardClasses standardClasses) {

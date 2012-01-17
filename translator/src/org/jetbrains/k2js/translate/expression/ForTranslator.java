@@ -3,6 +3,8 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
 import org.jetbrains.jet.lang.psi.JetParameter;
@@ -10,7 +12,9 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.reference.CallTranslator;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
 
@@ -58,28 +62,22 @@ public final class ForTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression nextMethodInvocation(@NotNull TemporaryVariable iterator) {
-        return callStandardMethodOnExpression("next", iterator.nameReference());
+        FunctionDescriptor nextFunction = getNextFunction(context().bindingContext(), getLoopRange());
+        return CallTranslator.translate(iterator.nameReference(), nextFunction, context());
     }
 
     @NotNull
     private JsExpression hasNextMethodInvocation(@NotNull TemporaryVariable iterator) {
-        return callStandardMethodOnExpression("hasNext", iterator.nameReference());
-    }
-
-    @NotNull
-    private JsExpression callStandardMethodOnExpression(@NotNull String methodName, @NotNull JsNameRef expression) {
-        JsNameRef hasNext = AstUtil.newQualifiedNameRef(methodName);
-        AstUtil.setQualifier(hasNext, expression);
-        return AstUtil.newInvocation(hasNext);
+        CallableDescriptor hasNextFunction = getHasNextCallable(context().bindingContext(), getLoopRange());
+        return CallTranslator.translate(iterator.nameReference(), hasNextFunction, context());
     }
 
     @NotNull
     private JsExpression iteratorMethodInvocation() {
         JetExpression rangeExpression = getLoopRange();
         JsExpression range = Translation.translateAsExpression(rangeExpression, context());
-        JsNameRef iteratorMethodReference = AstUtil.newQualifiedNameRef("iterator");
-        AstUtil.setQualifier(iteratorMethodReference, range);
-        return AstUtil.newInvocation(iteratorMethodReference);
+        FunctionDescriptor iteratorFunction = getIteratorFunction(context().bindingContext(), rangeExpression);
+        return CallTranslator.translate(range, iteratorFunction, context());
     }
 
     @NotNull

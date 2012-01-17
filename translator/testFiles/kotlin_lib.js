@@ -16,7 +16,6 @@ function $A(iterable) {
     }
 
 
-
     function keys(object) {
         if (Type(object) !== OBJECT_TYPE) {
             throw new TypeError();
@@ -284,7 +283,7 @@ Kotlin.Array = Class.create({
     iterator:function () {
         return new Kotlin.ArrayIterator(this);
     },
-    indices:function() {
+    indices:function () {
         return new Kotlin.NumberRange(0, this.size(), false);
     }
 });
@@ -398,8 +397,20 @@ Kotlin.System = function () {
     };
 }();
 
+Kotlin.AbstractFunctionInvokationError = Class.create();
 
-Kotlin.ArrayIterator = Class.create({
+Kotlin.Iterator = Class.create({
+    initialize:function () {
+    },
+    next:function () {
+        throw new Kotlin.AbstractFunctionInvokationError();
+    },
+    hasNext:function () {
+        throw new Kotlin.AbstractFunctionInvokationError();
+    }
+});
+
+Kotlin.ArrayIterator = Class.create(Kotlin.Iterator, {
     initialize:function (array) {
         this.array = array;
         this.index = 0;
@@ -412,36 +423,37 @@ Kotlin.ArrayIterator = Class.create({
     }
 });
 
-Kotlin.RangeIterator = Kotlin.Class.create({initialize:function (start, count, reversed) {
-    this.$start = start;
-    this.$count = count;
-    this.$reversed = reversed;
-    this.$i = this.get_start();
-}, get_start:function () {
-    return this.$start;
-}, get_count:function () {
-    return this.$count;
-}, set_count:function (tmp$0) {
-    this.$count = tmp$0;
-}, get_reversed:function () {
-    return this.$reversed;
-}, get_i:function () {
-    return this.$i;
-}, set_i:function (tmp$0) {
-    this.$i = tmp$0;
-}, next:function () {
-    this.set_count(this.get_count() - 1);
-    if (this.get_reversed()) {
-        this.set_i(this.get_i() - 1);
-        return this.get_i() + 1;
+Kotlin.RangeIterator = Kotlin.Class.create(Kotlin.Iterator, {
+    initialize:function (start, count, reversed) {
+        this.$start = start;
+        this.$count = count;
+        this.$reversed = reversed;
+        this.$i = this.get_start();
+    }, get_start:function () {
+        return this.$start;
+    }, get_count:function () {
+        return this.$count;
+    }, set_count:function (tmp$0) {
+        this.$count = tmp$0;
+    }, get_reversed:function () {
+        return this.$reversed;
+    }, get_i:function () {
+        return this.$i;
+    }, set_i:function (tmp$0) {
+        this.$i = tmp$0;
+    }, next:function () {
+        this.set_count(this.get_count() - 1);
+        if (this.get_reversed()) {
+            this.set_i(this.get_i() - 1);
+            return this.get_i() + 1;
+        }
+        else {
+            this.set_i(this.get_i() + 1);
+            return this.get_i() - 1;
+        }
+    }, hasNext:function () {
+        return this.get_count() > 0;
     }
-    else {
-        this.set_i(this.get_i() + 1);
-        return this.get_i() - 1;
-    }
-}, hasNext:function () {
-    return this.get_count() > 0;
-}
 });
 
 Kotlin.NumberRange = Kotlin.Class.create({initialize:function (start, size, reversed) {

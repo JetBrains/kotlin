@@ -119,9 +119,7 @@ public class StaticContext {
 
     @NotNull
     public JsName getGlobalName(@NotNull DeclarationDescriptor descriptor) {
-        JsName nameToDeclare = declarations.getName(descriptor);
-        //nameToDeclare.setObfuscatable(false);
-        return nameToDeclare;
+        return declarations.getName(descriptor);
     }
 
     public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {

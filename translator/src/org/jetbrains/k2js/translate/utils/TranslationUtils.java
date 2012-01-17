@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -210,7 +211,7 @@ public final class TranslationUtils {
 
     @Nullable
     public static JsExpression getExtensionFunctionImplicitReceiver(@NotNull TranslationContext context,
-                                                                    @NotNull FunctionDescriptor descriptor) {
+                                                                    @NotNull CallableDescriptor descriptor) {
         return getImplicitReceiverBasedOnOwner(context, descriptor);
     }
 

@@ -127,6 +127,12 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
+    public static JsExpression translate(@NotNull JsExpression receiver, @NotNull CallableDescriptor functionDescriptor,
+                                         @NotNull TranslationContext context) {
+        return (new CallTranslator(receiver, Collections.<JsExpression>emptyList(), functionDescriptor, context)).translate();
+    }
+
+    @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression unaryExpression,
                                          @NotNull TranslationContext context) {
         return (new Builder(context).buildFromUnary(unaryExpression)).translate();
@@ -173,14 +179,14 @@ public final class CallTranslator extends AbstractTranslator {
     private final List<JsExpression> arguments;
 
     @NotNull
-    private final FunctionDescriptor functionDescriptor;
+    private final CallableDescriptor descriptor;
 
     private CallTranslator(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
-                           @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
+                           @NotNull CallableDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
         this.receiver = receiver;
         this.arguments = arguments;
-        this.functionDescriptor = descriptor;
+        this.descriptor = descriptor;
     }
 
     @NotNull
@@ -206,12 +212,14 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        return DescriptorUtils.isExtensionFunction(functionDescriptor);
+        return DescriptorUtils.isExtensionFunction(descriptor);
     }
 
     @NotNull
     private JsExpression intrinsicInvocation() {
-        FunctionIntrinsic functionIntrinsic = context().intrinsics().getFunctionIntrinsic(functionDescriptor);
+        assert descriptor instanceof FunctionDescriptor;
+        FunctionIntrinsic functionIntrinsic =
+                context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
         assert receiver != null : "Functions that have functionIntrinsic implementation should have a receiver.";
         return functionIntrinsic.apply(receiver, arguments, context());
     }
@@ -222,25 +230,25 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isConstructor() {
-        return isConstructorDescriptor(functionDescriptor);
+        return isConstructorDescriptor(descriptor);
     }
 
     private boolean isIntrinsic() {
-        return context().intrinsics().isIntrinsic(functionDescriptor);
+        return context().intrinsics().isIntrinsic(descriptor);
     }
 
     @NotNull
     private JsExpression calleeReference() {
-        if (DescriptorUtils.isVariableDescriptor(functionDescriptor)) {
+        if (DescriptorUtils.isVariableDescriptor(descriptor)) {
             //TODO: write tests on this cases
             VariableDescriptor variableDescriptor =
-                    getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) functionDescriptor);
+                    getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) descriptor);
             if (variableDescriptor instanceof PropertyDescriptor) {
                 return getterCall((PropertyDescriptor) variableDescriptor);
             }
             return qualifiedMethodReference(variableDescriptor);
         }
-        return qualifiedMethodReference(functionDescriptor);
+        return qualifiedMethodReference(descriptor);
     }
 
     @NotNull
@@ -261,7 +269,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression extensionFunctionReference(@NotNull JsExpression methodReference) {
-        JsExpression qualifier = TranslationUtils.getExtensionFunctionImplicitReceiver(context(), functionDescriptor);
+        JsExpression qualifier = TranslationUtils.getExtensionFunctionImplicitReceiver(context(), descriptor);
         if (qualifier != null) {
             AstUtil.setQualifier(methodReference, qualifier);
         }
@@ -270,7 +278,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression constructorCall() {
-        JsNew constructorCall = new JsNew(qualifiedMethodReference(functionDescriptor));
+        JsNew constructorCall = new JsNew(qualifiedMethodReference(descriptor));
         constructorCall.setArguments(arguments);
         return constructorCall;
     }

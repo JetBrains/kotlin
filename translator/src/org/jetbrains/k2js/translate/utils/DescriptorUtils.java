@@ -35,7 +35,7 @@ public final class DescriptorUtils {
         return (functionDescriptor.getName().equals(OperatorConventions.COMPARE_TO));
     }
 
-    public static boolean isConstructorDescriptor(@NotNull FunctionDescriptor descriptor) {
+    public static boolean isConstructorDescriptor(@NotNull CallableDescriptor descriptor) {
         return (descriptor instanceof ConstructorDescriptor);
     }
 
@@ -71,7 +71,8 @@ public final class DescriptorUtils {
                                                        @NotNull String name) {
         Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
         assert functionDescriptors.size() == 1 :
-                "In scope " + scope + " supposed to be exactly one " + name + " function.";
+                "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
+                        "Found: " + functionDescriptors.size();
         //noinspection LoopStatementThatDoesntLoop
         for (FunctionDescriptor descriptor : functionDescriptors) {
             return descriptor;
@@ -122,7 +123,7 @@ public final class DescriptorUtils {
         return containing;
     }
 
-    public static boolean isExtensionFunction(@NotNull FunctionDescriptor functionDescriptor) {
+    public static boolean isExtensionFunction(@NotNull CallableDescriptor functionDescriptor) {
         return (functionDescriptor.getReceiverParameter().exists());
     }
 

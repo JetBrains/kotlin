@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 
+import java.util.Set;
+
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNamespace;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getOwnDeclarations;
 
@@ -41,6 +43,7 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     private JsName declareName(@NotNull DeclarationDescriptor descriptor, @NotNull DeclarationContext context,
                                @NotNull String name) {
         JsName jsName = context.getScope().declareVariable(descriptor, name, shouldObfuscate);
+        jsName.setObfuscatable(false);
         declarations.putName(descriptor, jsName);
         declarations.putQualifier(descriptor, context.getQualifier());
         return jsName;
@@ -85,9 +88,25 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
 
     @Override
     public Void visitFunctionDescriptor(@NotNull FunctionDescriptor descriptor, @NotNull DeclarationContext context) {
+        boolean overridesDeclaredDescriptor = declareAsOverridden(descriptor, context);
+        if (overridesDeclaredDescriptor) {
+            return null;
+        }
         declareName(descriptor, context);
         declareScope(descriptor, context, "function " + descriptor.getName());
         return null;
+    }
+
+    private boolean declareAsOverridden(@NotNull FunctionDescriptor descriptor, @NotNull DeclarationContext context) {
+        Set<? extends FunctionDescriptor> overriddenDescriptors = descriptor.getOverriddenDescriptors();
+        for (FunctionDescriptor overriddenDescriptor : overriddenDescriptors) {
+            if (declarations.hasDeclaredName(overriddenDescriptor)) {
+                declarations.putName(descriptor, declarations.getName(overriddenDescriptor));
+                declareScope(descriptor, context, "function " + descriptor.getName());
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

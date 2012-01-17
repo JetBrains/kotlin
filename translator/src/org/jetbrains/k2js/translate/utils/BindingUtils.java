@@ -22,12 +22,12 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isVariableDescr
  * @author Pavel Talanov
  *         <p/>
  *         This class contains some code related to BindingContext use. Intention is not to pollute other classes.
+ *         Every call to BindingContext.get() is supposed to be wrapped by this utility class.
  */
 public final class BindingUtils {
 
     private BindingUtils() {
     }
-
 
     @NotNull
     static private <E extends PsiElement, D extends DeclarationDescriptor>
@@ -296,6 +296,38 @@ public final class BindingUtils {
         JetExpression defaultValue = psiParameter.getDefaultValue();
         assert defaultValue != null : "No default value found in PSI.";
         return defaultValue;
+    }
+
+    @NotNull
+    public static JetType getTypeForExpression(@NotNull BindingContext context,
+                                               @NotNull JetExpression expression) {
+        JetType jetType = context.get(BindingContext.EXPRESSION_TYPE, expression);
+        assert jetType != null : "Expression must have a type.";
+        return jetType;
+    }
+
+    @NotNull
+    public static FunctionDescriptor getIteratorFunction(@NotNull BindingContext context,
+                                                         @NotNull JetExpression rangeExpression) {
+        FunctionDescriptor functionDescriptor = context.get(BindingContext.LOOP_RANGE_ITERATOR, rangeExpression);
+        assert functionDescriptor != null : "Range expression must have a descriptor for iterator function.";
+        return functionDescriptor;
+    }
+
+    @NotNull
+    public static FunctionDescriptor getNextFunction(@NotNull BindingContext context,
+                                                     @NotNull JetExpression rangeExpression) {
+        FunctionDescriptor functionDescriptor = context.get(BindingContext.LOOP_RANGE_NEXT, rangeExpression);
+        assert functionDescriptor != null : "Range expression must have a descriptor for next function.";
+        return functionDescriptor;
+    }
+
+    @NotNull
+    public static CallableDescriptor getHasNextCallable(@NotNull BindingContext context,
+                                                        @NotNull JetExpression rangeExpression) {
+        CallableDescriptor hasNextDescriptor = context.get(BindingContext.LOOP_RANGE_HAS_NEXT, rangeExpression);
+        assert hasNextDescriptor != null : "Range expression must have a descriptor for hasNext function or property.";
+        return hasNextDescriptor;
     }
 
 }
