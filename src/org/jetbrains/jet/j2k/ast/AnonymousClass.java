@@ -16,7 +16,7 @@ public class AnonymousClass extends Class {
       Collections.<Type>emptyList(),
       Collections.<Expression>emptyList(),
       Collections.<Type>emptyList(),
-      members
+      getMembers(members)
     );
   }
 

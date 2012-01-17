@@ -13,6 +13,17 @@
         <element id="module-output" name="j2k" />
       </root>
     </artifact>
+    <artifact type="jar" build-on-make="true" name="java2kotlin:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/java2kotlin_jar</output-path>
+      <root id="archive" name="java2kotlin.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="j2k" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-io-2.1.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-cli-1.2.jar" path-in-jar="/" />
+      </root>
+    </artifact>
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
@@ -616,6 +627,13 @@
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
+    <library name="commons-cli-1.2">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="commons-io-2.1">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/commons-io-2.1.jar!/" />

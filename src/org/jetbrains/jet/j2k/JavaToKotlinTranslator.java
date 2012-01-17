@@ -73,7 +73,7 @@ public class JavaToKotlinTranslator {
   }
 
   @NotNull
-  private static String prettify(@Nullable String code) {
+  static String prettify(@Nullable String code) {
     if (code == null)
       return "";
     return code
@@ -175,8 +175,8 @@ public class JavaToKotlinTranslator {
   }
 
   @NotNull
-  static String generateKotlinCode(@NotNull String arg) {
-    PsiFile file = createFile(arg);
+  static String generateKotlinCode(@NotNull String javaCode) {
+    PsiFile file = createFile(javaCode);
     if (file != null && file instanceof PsiJavaFile) {
       setClassIdentifiers(file);
       return prettify(Converter.fileToFile((PsiJavaFile) file).toKotlin());
@@ -185,8 +185,8 @@ public class JavaToKotlinTranslator {
   }
 
   @NotNull
-  static String generateKotlinCodeWithCompatibilityImport(@NotNull String arg) {
-    PsiFile file = createFile(arg);
+  static String generateKotlinCodeWithCompatibilityImport(@NotNull String javaCode) {
+    PsiFile file = createFile(javaCode);
     if (file != null && file instanceof PsiJavaFile) {
       setClassIdentifiers(file);
       return prettify(Converter.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());

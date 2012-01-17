@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
-import org.jetbrains.jet.j2k.ast.Modifier;
 import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
 
@@ -35,7 +34,18 @@ public class Converter {
   @Nullable
   private static PsiType ourMethodReturnType = null;
 
+  @NotNull
+  private static Set<String> settings = new HashSet<String>();
+
   private Converter() {
+  }
+
+  public static boolean addSetting(@NotNull String value) {
+    return settings.add(value);
+  }
+
+  public static boolean hasSetting(@NotNull String value) {
+    return settings.contains(value);
   }
 
   public static void setClassIdentifiers(@NotNull Set<String> identifiers) {
@@ -327,7 +337,7 @@ public class Converter {
 
     final IdentifierImpl identifier = new IdentifierImpl(method.getName());
     final Type returnType = typeToType(method.getReturnType(), ConverterUtil.isAnnotatedAsNotNull(method.getModifierList()));
-    final Block body = blockToBlock(method.getBody(), notEmpty);
+    final Block body = hasSetting("declarations-only") ? Block.EMPTY_BLOCK : blockToBlock(method.getBody(), notEmpty); // #TODO
     final Element params = createFunctionParameters(method);
     final List<Element> typeParameters = elementsToElementList(method.getTypeParameters());
 
@@ -608,10 +618,10 @@ public class Converter {
       for (PsiExpression e : arguments)
         actualTypes.add(e.getType());
 
-      assert actualTypes.size() == expectedTypes.size() : "The type list must have the same length";
-
-      for (int i = 0; i < actualTypes.size(); i++)
-        conversions.set(i, createConversionForExpression(arguments[i], expectedTypes.get(i)));
+      if (conversions.size() == actualTypes.size() && actualTypes.size() == expectedTypes.size()) {
+        for (int i = 0; i < actualTypes.size(); i++)
+          conversions.set(i, createConversionForExpression(arguments[i], expectedTypes.get(i)));
+      }
     }
     return conversions;
   }

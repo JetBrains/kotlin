@@ -2,6 +2,7 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.HashSet;
@@ -19,20 +20,34 @@ public class Class extends Member {
   String TYPE = "class";
   final Identifier myName;
   private final List<Expression> myBaseClassParams;
-  private final List<? extends Member> myMembers;
+  private final List<Member> myMembers;
   private final List<Element> myTypeParameters;
   private final List<Type> myExtendsTypes;
   private final List<Type> myImplementsTypes;
 
   public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
-               List<Expression> baseClassParams, List<Type> implementsTypes, List<? extends Member> members) {
+               List<Expression> baseClassParams, List<Type> implementsTypes, List<Member> members) {
     myName = name;
     myBaseClassParams = baseClassParams;
     myModifiers = modifiers;
     myTypeParameters = typeParameters;
     myExtendsTypes = extendsTypes;
     myImplementsTypes = implementsTypes;
-    myMembers = members;
+    myMembers= getMembers(members);
+  }
+
+  static List<Member> getMembers(List<Member> members) {
+    List<Member> withoutPrivate = new LinkedList<Member>();
+    if (Converter.hasSetting("public-only")) {
+      for (Member m : members) {
+        if (m.accessModifier().equals("public") || m.accessModifier().equals("protected") || m.accessModifier().isEmpty()) {
+          withoutPrivate.add(m);
+        }
+      }
+    } else {
+      withoutPrivate = members;
+    }
+    return withoutPrivate;
   }
 
 
