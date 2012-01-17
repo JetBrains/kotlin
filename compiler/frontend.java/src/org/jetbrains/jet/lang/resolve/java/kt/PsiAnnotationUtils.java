@@ -19,6 +19,11 @@ public class PsiAnnotationUtils {
         return getAttribute(annotation, field, defaultValue);
     }
 
+    public static int getIntAttribute(@Nullable PsiAnnotation annotation, @NotNull String field, int defaultValue) {
+        return getAttribute(annotation, field, defaultValue);
+    }
+
+    @NotNull
     private static <T> T getAttribute(@Nullable PsiAnnotation annotation, @NotNull String field, @NotNull T defaultValue) {
         if (annotation == null) {
             return defaultValue;

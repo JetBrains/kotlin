@@ -24,7 +24,6 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -184,7 +183,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this, state.getTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         JvmMethodSignature jvmMethodSignature = invokeSignature(funDescriptor);
-        fc.generateMethod(body, jvmMethodSignature, null, funDescriptor);
+        fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
         return closureContext.outerWasUsed;
     }
 

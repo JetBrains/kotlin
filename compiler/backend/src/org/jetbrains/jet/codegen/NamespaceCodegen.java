@@ -6,7 +6,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -152,9 +151,9 @@ public class NamespaceCodegen {
         }
 
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor) && !JetStandardClasses.getAny().equals(declarationDescriptor)) {
+        if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !JetStandardClasses.getAny().equals(declarationDescriptor)) {
             // TODO: we need some better checks here
-            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/TypeInfo;");
+            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
             return;
         }
 

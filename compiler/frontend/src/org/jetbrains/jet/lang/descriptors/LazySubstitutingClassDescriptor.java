@@ -83,15 +83,6 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetType getSuperclassType() {
-        if (superclassType == null) {
-            superclassType = getSubstitutor().substitute(original.getSuperclassType(), Variance.INVARIANT);
-        }
-        return superclassType;
-    }
-
-    @NotNull
-    @Override
     public JetType getDefaultType() {
         throw new UnsupportedOperationException(); // TODO
     }

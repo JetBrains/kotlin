@@ -744,7 +744,9 @@ public abstract class StackValue {
 
     static class Property extends StackValue {
         private final String name;
+        @Nullable
         private final Method getter;
+        @Nullable
         private final Method setter;
         public final String owner;
         private final boolean isStatic;

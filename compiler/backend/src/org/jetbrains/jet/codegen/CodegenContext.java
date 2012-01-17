@@ -36,6 +36,7 @@ public abstract class CodegenContext {
     private final DeclarationDescriptor contextType;
 
     private final OwnerKind contextKind;
+    @Nullable
     private final CodegenContext parentContext;
     public  final ObjectOrClosureCodegen closure;
     
@@ -142,6 +143,7 @@ public abstract class CodegenContext {
         return frameMap;
     }
 
+    @Nullable
     public CodegenContext getParentContext() {
         return parentContext;
     }

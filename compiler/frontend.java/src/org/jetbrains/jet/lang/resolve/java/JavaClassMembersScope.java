@@ -83,6 +83,8 @@ public class JavaClassMembersScope implements JetScope {
             }
 
             allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(containingDeclaration, psiClass, staticMembers));
+
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(containingDeclaration, psiClass, staticMembers));
         }
         return allDescriptors;
     }
