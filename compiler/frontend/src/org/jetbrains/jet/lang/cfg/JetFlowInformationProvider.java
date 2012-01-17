@@ -252,7 +252,10 @@ public class JetFlowInformationProvider {
         analyzeLocalDeclarations(processLocalDeclaration, pseudocode);
     }
 
-    private void checkIsInitialized(@NotNull VariableDescriptor variableDescriptor, @NotNull JetElement element, @NotNull VariableInitializers variableInitializers, @NotNull Collection<VariableDescriptor> varWithUninitializedErrorGenerated) {
+    private void checkIsInitialized(@NotNull VariableDescriptor variableDescriptor, 
+                                    @NotNull JetElement element, 
+                                    @NotNull VariableInitializers variableInitializers, 
+                                    @NotNull Collection<VariableDescriptor> varWithUninitializedErrorGenerated) {
         if (!(element instanceof JetSimpleNameExpression)) return;
 
         boolean isInitialized = variableInitializers.isInitialized();
@@ -272,7 +275,10 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private boolean checkValReassignment(@NotNull VariableDescriptor variableDescriptor, @NotNull JetExpression expression, @NotNull VariableInitializers enterInitializers, @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated) {
+    private boolean checkValReassignment(@NotNull VariableDescriptor variableDescriptor, 
+                                         @NotNull JetExpression expression, 
+                                         @NotNull VariableInitializers enterInitializers, 
+                                         @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated) {
         boolean isInitializedNotHere = enterInitializers.isInitialized();
         Set<JetElement> possibleLocalInitializers = enterInitializers.getPossibleLocalInitializers();
         if (possibleLocalInitializers.size() == 1) {

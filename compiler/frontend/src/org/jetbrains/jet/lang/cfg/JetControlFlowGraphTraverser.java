@@ -8,10 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author svtk
@@ -140,7 +137,6 @@ public class JetControlFlowGraphTraverser<D> {
             Collections.reverse(instructions);
         }
         for (Instruction instruction : instructions) {
-            if (instruction.isDead()) continue;
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), instructionDataAnalyzeStrategy);
             }

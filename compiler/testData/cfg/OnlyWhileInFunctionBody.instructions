@@ -6,25 +6,28 @@ fun main() {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(1)]                 PREV:[]
+    <START>             NEXT:[r(while(1 > 0) { 2 }) ]    PREV:[]
+    r(while(1 > 0) {
+          2         
+        })              NEXT:[r(1)]                      PREV:[<START>]
 l2:
 l5:
-    r(1)           NEXT:[r(0)]                 PREV:[<START>, jmp(l2)]
-    r(0)           NEXT:[r(>)]                 PREV:[r(1)]
-    r(>)           NEXT:[r(1 > 0)]             PREV:[r(0)]
-    r(1 > 0)       NEXT:[jf(l3)]               PREV:[r(>)]
-    jf(l3)         NEXT:[read (Unit), r(2)]    PREV:[r(1 > 0)]
+    r(1)                NEXT:[r(0)]                      PREV:[r(while(1 > 0) { 2 }) , jmp(l2)]
+    r(0)                NEXT:[r(>)]                      PREV:[r(1)]
+    r(>)                NEXT:[r(1 > 0)]                  PREV:[r(0)]
+    r(1 > 0)            NEXT:[jf(l3)]                    PREV:[r(>)]
+    jf(l3)              NEXT:[read (Unit), r(2)]         PREV:[r(1 > 0)]
 l4:
-    r(2)           NEXT:[jmp(l2)]              PREV:[jf(l3)]
-    jmp(l2)        NEXT:[r(1)]                 PREV:[r(2)]
+    r(2)                NEXT:[jmp(l2)]                   PREV:[jf(l3)]
+    jmp(l2)             NEXT:[r(1)]                      PREV:[r(2)]
 l3:
-    read (Unit)    NEXT:[<END>]                PREV:[jf(l3)]
+    read (Unit)         NEXT:[<END>]                     PREV:[jf(l3)]
 l1:
-    <END>          NEXT:[<SINK>]               PREV:[read (Unit)]
+    <END>               NEXT:[<SINK>]                    PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]                     PREV:[]
+    <ERROR>             NEXT:[]                          PREV:[]
 sink:
-    <SINK>         NEXT:[]                     PREV:[<END>]
+    <SINK>              NEXT:[]                          PREV:[<END>]
 =====================
 == dowhile ==
 fun dowhile() {
@@ -33,22 +36,24 @@ fun dowhile() {
 }
 ---------------------
 l0:
-    <START>        NEXT:[ret l1]                 PREV:[]
+    <START>              NEXT:[r(do {return} while(1 > 0)) ]    PREV:[]
+    r(do {return}    
+        while(1 > 0))    NEXT:[ret l1]                          PREV:[<START>]
 l2:
 l4:
-    ret l1         NEXT:[<END>]                  PREV:[<START>]
+    ret l1               NEXT:[<END>]                           PREV:[r(do {return} while(1 > 0)) ]
 l5:
-*   r(1)           NEXT:[r(0)]                   PREV:[]
-*   r(0)           NEXT:[r(>)]                   PREV:[]
-*   r(>)           NEXT:[r(1 > 0)]               PREV:[]
-*   r(1 > 0)       NEXT:[jt(l2)]                 PREV:[]
-*   jt(l2)         NEXT:[read (Unit), ret l1]    PREV:[]
+-   r(1)                 NEXT:[r(0)]                            PREV:[]
+-   r(0)                 NEXT:[r(>)]                            PREV:[]
+-   r(>)                 NEXT:[r(1 > 0)]                        PREV:[]
+-   r(1 > 0)             NEXT:[jt(l2)]                          PREV:[]
+-   jt(l2)               NEXT:[read (Unit), ret l1]             PREV:[]
 l3:
-*   read (Unit)    NEXT:[<END>]                  PREV:[]
+-   read (Unit)          NEXT:[<END>]                           PREV:[]
 l1:
-    <END>          NEXT:[<SINK>]                 PREV:[ret l1]
+    <END>                NEXT:[<SINK>]                          PREV:[ret l1]
 error:
-    <ERROR>        NEXT:[]                       PREV:[]
+    <ERROR>              NEXT:[]                                PREV:[]
 sink:
-    <SINK>         NEXT:[]                       PREV:[<END>]
+    <SINK>               NEXT:[]                                PREV:[<END>]
 =====================

@@ -8,16 +8,22 @@ fun t1() {
 }
 ---------------------
 l0:
-    <START>    NEXT:[r(1)]      PREV:[]
-    r(1)       NEXT:[r(2)]      PREV:[<START>]
+    <START>          NEXT:[r(try { 1 } finally { 2 }) ]    PREV:[]
+    r(try {      
+        1        
+      } finally {
+        2        
+      })             NEXT:[r(1)]                           PREV:[<START>]
+    r(1)             NEXT:[r(2)]                           PREV:[r(try { 1 } finally { 2 }) ]
 l2:
-    r(2)       NEXT:[<END>]     PREV:[r(1)]
+    r(2)             NEXT:[<END>]                          PREV:[r(1)]
 l1:
-    <END>      NEXT:[<SINK>]    PREV:[r(2)]
+l3:
+    <END>            NEXT:[<SINK>]                         PREV:[r(2)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>          NEXT:[]                               PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>           NEXT:[]                               PREV:[<END>]
 =====================
 == t2 ==
 fun t2() {
@@ -32,27 +38,36 @@ fun t2() {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(1)]                 PREV:[]
-    r(1)           NEXT:[r(2)]                 PREV:[<START>]
-    r(2)           NEXT:[r(3)]                 PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                 PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]             PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l2)]               PREV:[r(>)]
-    jf(l2)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
-    r(2)           NEXT:[ret l1]               PREV:[jf(l2)]
-    ret l1         NEXT:[<END>]                PREV:[r(2)]
-*   jmp(l3)        NEXT:[r(2)]                 PREV:[]
+    <START>             NEXT:[r(try { 1 if (2 > 3) { retur..)]    PREV:[]
+    r(try {         
+        1           
+        if (2 > 3) {
+          return    
+        }           
+      } finally {   
+        2           
+      })                NEXT:[r(1)]                               PREV:[<START>]
+    r(1)                NEXT:[r(2)]                               PREV:[r(try { 1 if (2 > 3) { retur..)]
+    r(2)                NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)            NEXT:[jf(l2)]                             PREV:[r(>)]
+    jf(l2)              NEXT:[read (Unit), r(2)]                  PREV:[r(2 > 3)]
+    r(2)                NEXT:[ret l1]                             PREV:[jf(l2)]
+    ret l1              NEXT:[<END>]                              PREV:[r(2)]
+-   jmp(l3)             NEXT:[r(2)]                               PREV:[]
 l2:
-    read (Unit)    NEXT:[r(2)]                 PREV:[jf(l2)]
+    read (Unit)         NEXT:[r(2)]                               PREV:[jf(l2)]
 l3:
 l4:
-    r(2)           NEXT:[<END>]                PREV:[read (Unit)]
+    r(2)                NEXT:[<END>]                              PREV:[read (Unit)]
 l1:
-    <END>          NEXT:[<SINK>]               PREV:[ret l1, r(2)]
+l5:
+    <END>               NEXT:[<SINK>]                             PREV:[ret l1, r(2)]
 error:
-    <ERROR>        NEXT:[]                     PREV:[]
+    <ERROR>             NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                     PREV:[<END>]
+    <SINK>              NEXT:[]                                   PREV:[<END>]
 =====================
 == anonymous_0 ==
 { () =>
@@ -62,14 +77,15 @@ sink:
     }
 ---------------------
 l3:
-    <START>        NEXT:[r(2)]                   PREV:[]
-    r(2)           NEXT:[r(3)]                   PREV:[<START>]
+    <START>        NEXT:[r(())]                  PREV:[]
+    r(())          NEXT:[r(2)]                   PREV:[<START>]
+    r(2)           NEXT:[r(3)]                   PREV:[r(())]
     r(3)           NEXT:[r(>)]                   PREV:[r(2)]
     r(>)           NEXT:[r(2 > 3)]               PREV:[r(3)]
     r(2 > 3)       NEXT:[jf(l5)]                 PREV:[r(>)]
     jf(l5)         NEXT:[read (Unit), ret l4]    PREV:[r(2 > 3)]
     ret l4         NEXT:[<END>]                  PREV:[jf(l5)]
-*   jmp(l6)        NEXT:[<END>]                  PREV:[]
+-   jmp(l6)        NEXT:[<END>]                  PREV:[]
 l5:
     read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
@@ -95,8 +111,18 @@ fun t3() {
 }
 ---------------------
 l0:
-    <START>                 NEXT:[r(1)]                                                                PREV:[]
-    r(1)                    NEXT:[jmp?(l2)]                                                            PREV:[<START>]
+    <START>                 NEXT:[r(try { 1 @{ () => if (2 > 3..)]                                     PREV:[]
+    r(try {             
+        1               
+        @{ () =>        
+            if (2 > 3) {
+              return@   
+            }           
+        }               
+      } finally {       
+        2               
+      })                    NEXT:[r(1)]                                                                PREV:[<START>]
+    r(1)                    NEXT:[jmp?(l2)]                                                            PREV:[r(try { 1 @{ () => if (2 > 3..)]
     jmp?(l2)                NEXT:[r({ () => if (2 > 3) { retur..), d({ () => if (2 > 3) { retur..)]    PREV:[r(1)]
     d({ () =>           
             if (2 > 3) {
@@ -112,20 +138,22 @@ l2:
 l7:
     r(2)                    NEXT:[<END>]                                                               PREV:[r({ () => if (2 > 3) { retur..)]
 l1:
+l8:
     <END>                   NEXT:[<SINK>]                                                              PREV:[r(2)]
 error:
     <ERROR>                 NEXT:[]                                                                    PREV:[]
 sink:
     <SINK>                  NEXT:[]                                                                    PREV:[d({ () => if (2 > 3) { retur..), <END>]
 l3:
-    <START>        NEXT:[r(2)]                   PREV:[]
-    r(2)           NEXT:[r(3)]                   PREV:[<START>]
+    <START>        NEXT:[r(())]                  PREV:[]
+    r(())          NEXT:[r(2)]                   PREV:[<START>]
+    r(2)           NEXT:[r(3)]                   PREV:[r(())]
     r(3)           NEXT:[r(>)]                   PREV:[r(2)]
     r(>)           NEXT:[r(2 > 3)]               PREV:[r(3)]
     r(2 > 3)       NEXT:[jf(l5)]                 PREV:[r(>)]
     jf(l5)         NEXT:[read (Unit), ret l4]    PREV:[r(2 > 3)]
     ret l4         NEXT:[<END>]                  PREV:[jf(l5)]
-*   jmp(l6)        NEXT:[<END>]                  PREV:[]
+-   jmp(l6)        NEXT:[<END>]                  PREV:[]
 l5:
     read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
@@ -149,27 +177,37 @@ sink:
   }
 ---------------------
 l3:
-    <START>        NEXT:[r(1)]                 PREV:[]
-    r(1)           NEXT:[r(2)]                 PREV:[<START>]
-    r(2)           NEXT:[r(3)]                 PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                 PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]             PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l5)]               PREV:[r(>)]
-    jf(l5)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
-    r(2)           NEXT:[ret l4]               PREV:[jf(l5)]
-    ret l4         NEXT:[<END>]                PREV:[r(2)]
-*   jmp(l6)        NEXT:[r(2)]                 PREV:[]
+    <START>               NEXT:[r(())]                              PREV:[]
+    r(())                 NEXT:[r(try { 1 if (2 > 3) { retur..)]    PREV:[<START>]
+    r(try {           
+          1           
+          if (2 > 3) {
+            return@   
+          }           
+        } finally {   
+          2           
+        })                NEXT:[r(1)]                               PREV:[r(())]
+    r(1)                  NEXT:[r(2)]                               PREV:[r(try { 1 if (2 > 3) { retur..)]
+    r(2)                  NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                  NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                  NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)              NEXT:[jf(l5)]                             PREV:[r(>)]
+    jf(l5)                NEXT:[read (Unit), r(2)]                  PREV:[r(2 > 3)]
+    r(2)                  NEXT:[ret l4]                             PREV:[jf(l5)]
+    ret l4                NEXT:[<END>]                              PREV:[r(2)]
+-   jmp(l6)               NEXT:[r(2)]                               PREV:[]
 l5:
-    read (Unit)    NEXT:[r(2)]                 PREV:[jf(l5)]
+    read (Unit)           NEXT:[r(2)]                               PREV:[jf(l5)]
 l6:
 l7:
-    r(2)           NEXT:[<END>]                PREV:[read (Unit)]
+    r(2)                  NEXT:[<END>]                              PREV:[read (Unit)]
 l4:
-    <END>          NEXT:[<SINK>]               PREV:[ret l4, r(2)]
+l8:
+    <END>                 NEXT:[<SINK>]                             PREV:[ret l4, r(2)]
 error:
-    <ERROR>        NEXT:[]                     PREV:[]
+    <ERROR>               NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                     PREV:[<END>]
+    <SINK>                NEXT:[]                                   PREV:[<END>]
 =====================
 == t4 ==
 fun t4() {
@@ -216,27 +254,37 @@ error:
 sink:
     <SINK>                NEXT:[]                                                                    PREV:[d({ () => try { 1 if (2 > 3)..), <END>]
 l3:
-    <START>        NEXT:[r(1)]                 PREV:[]
-    r(1)           NEXT:[r(2)]                 PREV:[<START>]
-    r(2)           NEXT:[r(3)]                 PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                 PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]             PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l5)]               PREV:[r(>)]
-    jf(l5)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
-    r(2)           NEXT:[ret l4]               PREV:[jf(l5)]
-    ret l4         NEXT:[<END>]                PREV:[r(2)]
-*   jmp(l6)        NEXT:[r(2)]                 PREV:[]
+    <START>               NEXT:[r(())]                              PREV:[]
+    r(())                 NEXT:[r(try { 1 if (2 > 3) { retur..)]    PREV:[<START>]
+    r(try {           
+          1           
+          if (2 > 3) {
+            return@   
+          }           
+        } finally {   
+          2           
+        })                NEXT:[r(1)]                               PREV:[r(())]
+    r(1)                  NEXT:[r(2)]                               PREV:[r(try { 1 if (2 > 3) { retur..)]
+    r(2)                  NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                  NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                  NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)              NEXT:[jf(l5)]                             PREV:[r(>)]
+    jf(l5)                NEXT:[read (Unit), r(2)]                  PREV:[r(2 > 3)]
+    r(2)                  NEXT:[ret l4]                             PREV:[jf(l5)]
+    ret l4                NEXT:[<END>]                              PREV:[r(2)]
+-   jmp(l6)               NEXT:[r(2)]                               PREV:[]
 l5:
-    read (Unit)    NEXT:[r(2)]                 PREV:[jf(l5)]
+    read (Unit)           NEXT:[r(2)]                               PREV:[jf(l5)]
 l6:
 l7:
-    r(2)           NEXT:[<END>]                PREV:[read (Unit)]
+    r(2)                  NEXT:[<END>]                              PREV:[read (Unit)]
 l4:
-    <END>          NEXT:[<SINK>]               PREV:[ret l4, r(2)]
+l8:
+    <END>                 NEXT:[<SINK>]                             PREV:[ret l4, r(2)]
 error:
-    <ERROR>        NEXT:[]                     PREV:[]
+    <ERROR>               NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                     PREV:[<END>]
+    <SINK>                NEXT:[]                                   PREV:[<END>]
 =====================
 == t5 ==
 fun t5() {
@@ -253,35 +301,54 @@ fun t5() {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(true)]              PREV:[]
+    <START>               NEXT:[r(while(true) { try { 1 if (..)]                 PREV:[]
+    r(while(true) {   
+        try {         
+          1           
+          if (2 > 3) {
+            break @   
+          }           
+        } finally {   
+          2           
+        }             
+      })                  NEXT:[r(true)]                                         PREV:[<START>]
 l2:
 l5:
-    r(true)        NEXT:[jf(l3)]               PREV:[<START>, jmp(l2)]
-    jf(l3)         NEXT:[read (Unit), r(1)]    PREV:[r(true)]
+    r(true)               NEXT:[jf(l3)]                                          PREV:[r(while(true) { try { 1 if (..), jmp(l2)]
+    jf(l3)                NEXT:[read (Unit), r(try { 1 if (2 > 3) { break..)]    PREV:[r(true)]
 l4:
-    r(1)           NEXT:[r(2)]                 PREV:[jf(l3)]
-    r(2)           NEXT:[r(3)]                 PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                 PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]             PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l6)]               PREV:[r(>)]
-    jf(l6)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
-    r(2)           NEXT:[jmp(l3)]              PREV:[jf(l6)]
-    jmp(l3)        NEXT:[read (Unit)]          PREV:[r(2)]
-*   jmp(l7)        NEXT:[r(2)]                 PREV:[]
+    r(try {           
+          1           
+          if (2 > 3) {
+            break @   
+          }           
+        } finally {   
+          2           
+        })                NEXT:[r(1)]                                            PREV:[jf(l3)]
+    r(1)                  NEXT:[r(2)]                                            PREV:[r(try { 1 if (2 > 3) { break..)]
+    r(2)                  NEXT:[r(3)]                                            PREV:[r(1)]
+    r(3)                  NEXT:[r(>)]                                            PREV:[r(2)]
+    r(>)                  NEXT:[r(2 > 3)]                                        PREV:[r(3)]
+    r(2 > 3)              NEXT:[jf(l6)]                                          PREV:[r(>)]
+    jf(l6)                NEXT:[read (Unit), r(2)]                               PREV:[r(2 > 3)]
+    r(2)                  NEXT:[jmp(l3)]                                         PREV:[jf(l6)]
+    jmp(l3)               NEXT:[read (Unit)]                                     PREV:[r(2)]
+-   jmp(l7)               NEXT:[r(2)]                                            PREV:[]
 l6:
-    read (Unit)    NEXT:[r(2)]                 PREV:[jf(l6)]
+    read (Unit)           NEXT:[r(2)]                                            PREV:[jf(l6)]
 l7:
 l8:
-    r(2)           NEXT:[jmp(l2)]              PREV:[read (Unit)]
-    jmp(l2)        NEXT:[r(true)]              PREV:[r(2)]
+    r(2)                  NEXT:[jmp(l2)]                                         PREV:[read (Unit)]
+l9:
+    jmp(l2)               NEXT:[r(true)]                                         PREV:[r(2)]
 l3:
-    read (Unit)    NEXT:[<END>]                PREV:[jf(l3), jmp(l3)]
+    read (Unit)           NEXT:[<END>]                                           PREV:[jf(l3), jmp(l3)]
 l1:
-    <END>          NEXT:[<SINK>]               PREV:[read (Unit)]
+    <END>                 NEXT:[<SINK>]                                          PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]                     PREV:[]
+    <ERROR>               NEXT:[]                                                PREV:[]
 sink:
-    <SINK>         NEXT:[]                     PREV:[<END>]
+    <SINK>                NEXT:[]                                                PREV:[<END>]
 =====================
 == t6 ==
 fun t6() {
@@ -299,35 +366,53 @@ fun t6() {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(true)]                 PREV:[]
+    <START>                 NEXT:[r(try { @ while(true) { 1 if..)]    PREV:[]
+    r(try {             
+        @ while(true) { 
+            1           
+            if (2 > 3) {
+              break @   
+            }           
+          }             
+          5             
+      } finally {       
+        2               
+      })                    NEXT:[r(while(true) { 1 if (2 > 3)..)]    PREV:[<START>]
+    r(while(true) {     
+            1           
+            if (2 > 3) {
+              break @   
+            }           
+          })                NEXT:[r(true)]                            PREV:[r(try { @ while(true) { 1 if..)]
 l2:
 l5:
-    r(true)        NEXT:[jf(l3)]                  PREV:[<START>, jmp(l2)]
-    jf(l3)         NEXT:[read (Unit), r(1)]       PREV:[r(true)]
+    r(true)                 NEXT:[jf(l3)]                             PREV:[r(while(true) { 1 if (2 > 3)..), jmp(l2)]
+    jf(l3)                  NEXT:[read (Unit), r(1)]                  PREV:[r(true)]
 l4:
-    r(1)           NEXT:[r(2)]                    PREV:[jf(l3)]
-    r(2)           NEXT:[r(3)]                    PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                    PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]                PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l6)]                  PREV:[r(>)]
-    jf(l6)         NEXT:[read (Unit), jmp(l3)]    PREV:[r(2 > 3)]
-    jmp(l3)        NEXT:[read (Unit)]             PREV:[jf(l6)]
-*   jmp(l7)        NEXT:[jmp(l2)]                 PREV:[]
+    r(1)                    NEXT:[r(2)]                               PREV:[jf(l3)]
+    r(2)                    NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                    NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                    NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)                NEXT:[jf(l6)]                             PREV:[r(>)]
+    jf(l6)                  NEXT:[read (Unit), jmp(l3)]               PREV:[r(2 > 3)]
+    jmp(l3)                 NEXT:[read (Unit)]                        PREV:[jf(l6)]
+-   jmp(l7)                 NEXT:[jmp(l2)]                            PREV:[]
 l6:
-    read (Unit)    NEXT:[jmp(l2)]                 PREV:[jf(l6)]
+    read (Unit)             NEXT:[jmp(l2)]                            PREV:[jf(l6)]
 l7:
-    jmp(l2)        NEXT:[r(true)]                 PREV:[read (Unit)]
+    jmp(l2)                 NEXT:[r(true)]                            PREV:[read (Unit)]
 l3:
-    read (Unit)    NEXT:[r(5)]                    PREV:[jf(l3), jmp(l3)]
-    r(5)           NEXT:[r(2)]                    PREV:[read (Unit)]
+    read (Unit)             NEXT:[r(5)]                               PREV:[jf(l3), jmp(l3)]
+    r(5)                    NEXT:[r(2)]                               PREV:[read (Unit)]
 l8:
-    r(2)           NEXT:[<END>]                   PREV:[r(5)]
+    r(2)                    NEXT:[<END>]                              PREV:[r(5)]
 l1:
-    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
+l9:
+    <END>                   NEXT:[<SINK>]                             PREV:[r(2)]
 error:
-    <ERROR>        NEXT:[]                        PREV:[]
+    <ERROR>                 NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                        PREV:[<END>]
+    <SINK>                  NEXT:[]                                   PREV:[<END>]
 =====================
 == t7 ==
 fun t7() {
@@ -344,34 +429,51 @@ fun t7() {
 }
 ---------------------
 l0:
-    <START>        NEXT:[r(true)]                 PREV:[]
+    <START>                 NEXT:[r(try { @ while(true) { 1 if..)]    PREV:[]
+    r(try {             
+        @ while(true) { 
+            1           
+            if (2 > 3) {
+              break @   
+            }           
+          }             
+      } finally {       
+        2               
+      })                    NEXT:[r(while(true) { 1 if (2 > 3)..)]    PREV:[<START>]
+    r(while(true) {     
+            1           
+            if (2 > 3) {
+              break @   
+            }           
+          })                NEXT:[r(true)]                            PREV:[r(try { @ while(true) { 1 if..)]
 l2:
 l5:
-    r(true)        NEXT:[jf(l3)]                  PREV:[<START>, jmp(l2)]
-    jf(l3)         NEXT:[read (Unit), r(1)]       PREV:[r(true)]
+    r(true)                 NEXT:[jf(l3)]                             PREV:[r(while(true) { 1 if (2 > 3)..), jmp(l2)]
+    jf(l3)                  NEXT:[read (Unit), r(1)]                  PREV:[r(true)]
 l4:
-    r(1)           NEXT:[r(2)]                    PREV:[jf(l3)]
-    r(2)           NEXT:[r(3)]                    PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                    PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]                PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l6)]                  PREV:[r(>)]
-    jf(l6)         NEXT:[read (Unit), jmp(l3)]    PREV:[r(2 > 3)]
-    jmp(l3)        NEXT:[read (Unit)]             PREV:[jf(l6)]
-*   jmp(l7)        NEXT:[jmp(l2)]                 PREV:[]
+    r(1)                    NEXT:[r(2)]                               PREV:[jf(l3)]
+    r(2)                    NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                    NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                    NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)                NEXT:[jf(l6)]                             PREV:[r(>)]
+    jf(l6)                  NEXT:[read (Unit), jmp(l3)]               PREV:[r(2 > 3)]
+    jmp(l3)                 NEXT:[read (Unit)]                        PREV:[jf(l6)]
+-   jmp(l7)                 NEXT:[jmp(l2)]                            PREV:[]
 l6:
-    read (Unit)    NEXT:[jmp(l2)]                 PREV:[jf(l6)]
+    read (Unit)             NEXT:[jmp(l2)]                            PREV:[jf(l6)]
 l7:
-    jmp(l2)        NEXT:[r(true)]                 PREV:[read (Unit)]
+    jmp(l2)                 NEXT:[r(true)]                            PREV:[read (Unit)]
 l3:
-    read (Unit)    NEXT:[r(2)]                    PREV:[jf(l3), jmp(l3)]
+    read (Unit)             NEXT:[r(2)]                               PREV:[jf(l3), jmp(l3)]
 l8:
-    r(2)           NEXT:[<END>]                   PREV:[read (Unit)]
+    r(2)                    NEXT:[<END>]                              PREV:[read (Unit)]
 l1:
-    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
+l9:
+    <END>                   NEXT:[<SINK>]                             PREV:[r(2)]
 error:
-    <ERROR>        NEXT:[]                        PREV:[]
+    <ERROR>                 NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                        PREV:[<END>]
+    <SINK>                  NEXT:[]                                   PREV:[<END>]
 =====================
 == t8 ==
 fun t8(a : Int) {
@@ -388,42 +490,61 @@ fun t8(a : Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[v(a : Int)]           PREV:[]
-    v(a : Int)     NEXT:[w(a)]                 PREV:[<START>]
-    w(a)           NEXT:[r(1)]                 PREV:[v(a : Int)]
-    r(1)           NEXT:[r(a)]                 PREV:[w(a)]
-    r(a)           NEXT:[r(..)]                PREV:[r(1)]
-    r(..)          NEXT:[r(1..a)]              PREV:[r(a)]
-    r(1..a)        NEXT:[v(i)]                 PREV:[r(..)]
-    v(i)           NEXT:[w(i)]                 PREV:[r(1..a)]
-    w(i)           NEXT:[jmp?(l2)]             PREV:[v(i)]
+    <START>                NEXT:[v(a : Int)]                                      PREV:[]
+    v(a : Int)             NEXT:[w(a)]                                            PREV:[<START>]
+    w(a)                   NEXT:[r(for (i in 1..a) { try { 1 ..)]                 PREV:[v(a : Int)]
+    r(for (i in 1..a) {
+        try {          
+          1            
+          if (2 > 3) { 
+            continue @ 
+          }            
+        } finally {    
+          2            
+        }              
+      })                   NEXT:[r(1)]                                            PREV:[w(a)]
+    r(1)                   NEXT:[r(a)]                                            PREV:[r(for (i in 1..a) { try { 1 ..)]
+    r(a)                   NEXT:[r(..)]                                           PREV:[r(1)]
+    r(..)                  NEXT:[r(1..a)]                                         PREV:[r(a)]
+    r(1..a)                NEXT:[v(i)]                                            PREV:[r(..)]
+    v(i)                   NEXT:[w(i)]                                            PREV:[r(1..a)]
+    w(i)                   NEXT:[jmp?(l2)]                                        PREV:[v(i)]
 l3:
-    jmp?(l2)       NEXT:[read (Unit), r(1)]    PREV:[w(i)]
+    jmp?(l2)               NEXT:[read (Unit), r(try { 1 if (2 > 3) { conti..)]    PREV:[w(i)]
 l4:
 l5:
-    r(1)           NEXT:[r(2)]                 PREV:[jmp?(l2), jmp(l4), jmp?(l4)]
-    r(2)           NEXT:[r(3)]                 PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                 PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]             PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l6)]               PREV:[r(>)]
-    jf(l6)         NEXT:[read (Unit), r(2)]    PREV:[r(2 > 3)]
-    r(2)           NEXT:[jmp(l4)]              PREV:[jf(l6)]
-    jmp(l4)        NEXT:[r(1)]                 PREV:[r(2)]
-*   jmp(l7)        NEXT:[r(2)]                 PREV:[]
+    r(try {            
+          1            
+          if (2 > 3) { 
+            continue @ 
+          }            
+        } finally {    
+          2            
+        })                 NEXT:[r(1)]                                            PREV:[jmp?(l2), jmp(l4), jmp?(l4)]
+    r(1)                   NEXT:[r(2)]                                            PREV:[r(try { 1 if (2 > 3) { conti..)]
+    r(2)                   NEXT:[r(3)]                                            PREV:[r(1)]
+    r(3)                   NEXT:[r(>)]                                            PREV:[r(2)]
+    r(>)                   NEXT:[r(2 > 3)]                                        PREV:[r(3)]
+    r(2 > 3)               NEXT:[jf(l6)]                                          PREV:[r(>)]
+    jf(l6)                 NEXT:[read (Unit), r(2)]                               PREV:[r(2 > 3)]
+    r(2)                   NEXT:[jmp(l4)]                                         PREV:[jf(l6)]
+    jmp(l4)                NEXT:[r(try { 1 if (2 > 3) { conti..)]                 PREV:[r(2)]
+-   jmp(l7)                NEXT:[r(2)]                                            PREV:[]
 l6:
-    read (Unit)    NEXT:[r(2)]                 PREV:[jf(l6)]
+    read (Unit)            NEXT:[r(2)]                                            PREV:[jf(l6)]
 l7:
 l8:
-    r(2)           NEXT:[jmp?(l4)]             PREV:[read (Unit)]
-    jmp?(l4)       NEXT:[r(1), read (Unit)]    PREV:[r(2)]
+    r(2)                   NEXT:[jmp?(l4)]                                        PREV:[read (Unit)]
+l9:
+    jmp?(l4)               NEXT:[r(try { 1 if (2 > 3) { conti..), read (Unit)]    PREV:[r(2)]
 l2:
-    read (Unit)    NEXT:[<END>]                PREV:[jmp?(l2), jmp?(l4)]
+    read (Unit)            NEXT:[<END>]                                           PREV:[jmp?(l2), jmp?(l4)]
 l1:
-    <END>          NEXT:[<SINK>]               PREV:[read (Unit)]
+    <END>                  NEXT:[<SINK>]                                          PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]                     PREV:[]
+    <ERROR>                NEXT:[]                                                PREV:[]
 sink:
-    <SINK>         NEXT:[]                     PREV:[<END>]
+    <SINK>                 NEXT:[]                                                PREV:[<END>]
 =====================
 == t9 ==
 fun t9(a : Int) {
@@ -441,42 +562,60 @@ fun t9(a : Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[v(a : Int)]              PREV:[]
-    v(a : Int)     NEXT:[w(a)]                    PREV:[<START>]
-    w(a)           NEXT:[r(1)]                    PREV:[v(a : Int)]
-    r(1)           NEXT:[r(a)]                    PREV:[w(a)]
-    r(a)           NEXT:[r(..)]                   PREV:[r(1)]
-    r(..)          NEXT:[r(1..a)]                 PREV:[r(a)]
-    r(1..a)        NEXT:[v(i)]                    PREV:[r(..)]
-    v(i)           NEXT:[w(i)]                    PREV:[r(1..a)]
-    w(i)           NEXT:[jmp?(l2)]                PREV:[v(i)]
+    <START>                    NEXT:[v(a : Int)]                         PREV:[]
+    v(a : Int)                 NEXT:[w(a)]                               PREV:[<START>]
+    w(a)                       NEXT:[r(try { @ for (i in 1..a) { ..)]    PREV:[v(a : Int)]
+    r(try {                
+        @ for (i in 1..a) {
+            1              
+            if (2 > 3) {   
+              continue @   
+            }              
+          }                
+          5                
+      } finally {          
+        2                  
+      })                       NEXT:[r(for (i in 1..a) { 1 if (2 ..)]    PREV:[w(a)]
+    r(for (i in 1..a) {    
+            1              
+            if (2 > 3) {   
+              continue @   
+            }              
+          })                   NEXT:[r(1)]                               PREV:[r(try { @ for (i in 1..a) { ..)]
+    r(1)                       NEXT:[r(a)]                               PREV:[r(for (i in 1..a) { 1 if (2 ..)]
+    r(a)                       NEXT:[r(..)]                              PREV:[r(1)]
+    r(..)                      NEXT:[r(1..a)]                            PREV:[r(a)]
+    r(1..a)                    NEXT:[v(i)]                               PREV:[r(..)]
+    v(i)                       NEXT:[w(i)]                               PREV:[r(1..a)]
+    w(i)                       NEXT:[jmp?(l2)]                           PREV:[v(i)]
 l3:
-    jmp?(l2)       NEXT:[read (Unit), r(1)]       PREV:[w(i)]
+    jmp?(l2)                   NEXT:[read (Unit), r(1)]                  PREV:[w(i)]
 l4:
 l5:
-    r(1)           NEXT:[r(2)]                    PREV:[jmp?(l2), jmp(l4), jmp?(l4)]
-    r(2)           NEXT:[r(3)]                    PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                    PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]                PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l6)]                  PREV:[r(>)]
-    jf(l6)         NEXT:[read (Unit), jmp(l4)]    PREV:[r(2 > 3)]
-    jmp(l4)        NEXT:[r(1)]                    PREV:[jf(l6)]
-*   jmp(l7)        NEXT:[jmp?(l4)]                PREV:[]
+    r(1)                       NEXT:[r(2)]                               PREV:[jmp?(l2), jmp(l4), jmp?(l4)]
+    r(2)                       NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                       NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                       NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)                   NEXT:[jf(l6)]                             PREV:[r(>)]
+    jf(l6)                     NEXT:[read (Unit), jmp(l4)]               PREV:[r(2 > 3)]
+    jmp(l4)                    NEXT:[r(1)]                               PREV:[jf(l6)]
+-   jmp(l7)                    NEXT:[jmp?(l4)]                           PREV:[]
 l6:
-    read (Unit)    NEXT:[jmp?(l4)]                PREV:[jf(l6)]
+    read (Unit)                NEXT:[jmp?(l4)]                           PREV:[jf(l6)]
 l7:
-    jmp?(l4)       NEXT:[r(1), read (Unit)]       PREV:[read (Unit)]
+    jmp?(l4)                   NEXT:[r(1), read (Unit)]                  PREV:[read (Unit)]
 l2:
-    read (Unit)    NEXT:[r(5)]                    PREV:[jmp?(l2), jmp?(l4)]
-    r(5)           NEXT:[r(2)]                    PREV:[read (Unit)]
+    read (Unit)                NEXT:[r(5)]                               PREV:[jmp?(l2), jmp?(l4)]
+    r(5)                       NEXT:[r(2)]                               PREV:[read (Unit)]
 l8:
-    r(2)           NEXT:[<END>]                   PREV:[r(5)]
+    r(2)                       NEXT:[<END>]                              PREV:[r(5)]
 l1:
-    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
+l9:
+    <END>                      NEXT:[<SINK>]                             PREV:[r(2)]
 error:
-    <ERROR>        NEXT:[]                        PREV:[]
+    <ERROR>                    NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                        PREV:[<END>]
+    <SINK>                     NEXT:[]                                   PREV:[<END>]
 =====================
 == t10 ==
 fun t10(a : Int) {
@@ -493,41 +632,58 @@ fun t10(a : Int) {
 }
 ---------------------
 l0:
-    <START>        NEXT:[v(a : Int)]              PREV:[]
-    v(a : Int)     NEXT:[w(a)]                    PREV:[<START>]
-    w(a)           NEXT:[r(1)]                    PREV:[v(a : Int)]
-    r(1)           NEXT:[r(a)]                    PREV:[w(a)]
-    r(a)           NEXT:[r(..)]                   PREV:[r(1)]
-    r(..)          NEXT:[r(1..a)]                 PREV:[r(a)]
-    r(1..a)        NEXT:[v(i)]                    PREV:[r(..)]
-    v(i)           NEXT:[w(i)]                    PREV:[r(1..a)]
-    w(i)           NEXT:[jmp?(l2)]                PREV:[v(i)]
+    <START>                    NEXT:[v(a : Int)]                         PREV:[]
+    v(a : Int)                 NEXT:[w(a)]                               PREV:[<START>]
+    w(a)                       NEXT:[r(try { @ for (i in 1..a) { ..)]    PREV:[v(a : Int)]
+    r(try {                
+        @ for (i in 1..a) {
+            1              
+            if (2 > 3) {   
+              continue @   
+            }              
+          }                
+      } finally {          
+        2                  
+      })                       NEXT:[r(for (i in 1..a) { 1 if (2 ..)]    PREV:[w(a)]
+    r(for (i in 1..a) {    
+            1              
+            if (2 > 3) {   
+              continue @   
+            }              
+          })                   NEXT:[r(1)]                               PREV:[r(try { @ for (i in 1..a) { ..)]
+    r(1)                       NEXT:[r(a)]                               PREV:[r(for (i in 1..a) { 1 if (2 ..)]
+    r(a)                       NEXT:[r(..)]                              PREV:[r(1)]
+    r(..)                      NEXT:[r(1..a)]                            PREV:[r(a)]
+    r(1..a)                    NEXT:[v(i)]                               PREV:[r(..)]
+    v(i)                       NEXT:[w(i)]                               PREV:[r(1..a)]
+    w(i)                       NEXT:[jmp?(l2)]                           PREV:[v(i)]
 l3:
-    jmp?(l2)       NEXT:[read (Unit), r(1)]       PREV:[w(i)]
+    jmp?(l2)                   NEXT:[read (Unit), r(1)]                  PREV:[w(i)]
 l4:
 l5:
-    r(1)           NEXT:[r(2)]                    PREV:[jmp?(l2), jmp(l4), jmp?(l4)]
-    r(2)           NEXT:[r(3)]                    PREV:[r(1)]
-    r(3)           NEXT:[r(>)]                    PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]                PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l6)]                  PREV:[r(>)]
-    jf(l6)         NEXT:[read (Unit), jmp(l4)]    PREV:[r(2 > 3)]
-    jmp(l4)        NEXT:[r(1)]                    PREV:[jf(l6)]
-*   jmp(l7)        NEXT:[jmp?(l4)]                PREV:[]
+    r(1)                       NEXT:[r(2)]                               PREV:[jmp?(l2), jmp(l4), jmp?(l4)]
+    r(2)                       NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                       NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                       NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)                   NEXT:[jf(l6)]                             PREV:[r(>)]
+    jf(l6)                     NEXT:[read (Unit), jmp(l4)]               PREV:[r(2 > 3)]
+    jmp(l4)                    NEXT:[r(1)]                               PREV:[jf(l6)]
+-   jmp(l7)                    NEXT:[jmp?(l4)]                           PREV:[]
 l6:
-    read (Unit)    NEXT:[jmp?(l4)]                PREV:[jf(l6)]
+    read (Unit)                NEXT:[jmp?(l4)]                           PREV:[jf(l6)]
 l7:
-    jmp?(l4)       NEXT:[r(1), read (Unit)]       PREV:[read (Unit)]
+    jmp?(l4)                   NEXT:[r(1), read (Unit)]                  PREV:[read (Unit)]
 l2:
-    read (Unit)    NEXT:[r(2)]                    PREV:[jmp?(l2), jmp?(l4)]
+    read (Unit)                NEXT:[r(2)]                               PREV:[jmp?(l2), jmp?(l4)]
 l8:
-    r(2)           NEXT:[<END>]                   PREV:[read (Unit)]
+    r(2)                       NEXT:[<END>]                              PREV:[read (Unit)]
 l1:
-    <END>          NEXT:[<SINK>]                  PREV:[r(2)]
+l9:
+    <END>                      NEXT:[<SINK>]                             PREV:[r(2)]
 error:
-    <ERROR>        NEXT:[]                        PREV:[]
+    <ERROR>                    NEXT:[]                                   PREV:[]
 sink:
-    <SINK>         NEXT:[]                        PREV:[<END>]
+    <SINK>                     NEXT:[]                                   PREV:[<END>]
 =====================
 == t11 ==
 fun t11() {
@@ -540,20 +696,27 @@ fun t11() {
 }
 ---------------------
 l0:
-    <START>      NEXT:[r(1)]         PREV:[]
-    r(1)         NEXT:[r(2)]         PREV:[<START>]
-    r(2)         NEXT:[ret(*) l1]    PREV:[r(1)]
-    ret(*) l1    NEXT:[<END>]        PREV:[r(2)]
-*   ret(*) l1    NEXT:[<END>]        PREV:[]
+    <START>         NEXT:[r(try { return 1 } finally {..)]    PREV:[]
+    r(try {     
+        return 1
+      }         
+      finally { 
+        return 2
+      })            NEXT:[r(1)]                               PREV:[<START>]
+    r(1)            NEXT:[r(2)]                               PREV:[r(try { return 1 } finally {..)]
+    r(2)            NEXT:[ret(*) l1]                          PREV:[r(1)]
+    ret(*) l1       NEXT:[<END>]                              PREV:[r(2)]
+-   ret(*) l1       NEXT:[<END>]                              PREV:[]
 l2:
-R   r(2)         NEXT:[ret(*) l1]    PREV:[]
-R   ret(*) l1    NEXT:[<END>]        PREV:[]
+-   r(2)            NEXT:[ret(*) l1]                          PREV:[]
+-   ret(*) l1       NEXT:[<END>]                              PREV:[]
 l1:
-    <END>        NEXT:[<SINK>]       PREV:[ret(*) l1]
+l3:
+    <END>           NEXT:[<SINK>]                             PREV:[ret(*) l1]
 error:
-    <ERROR>      NEXT:[]             PREV:[]
+    <ERROR>         NEXT:[]                                   PREV:[]
 sink:
-    <SINK>       NEXT:[]             PREV:[<END>]
+    <SINK>          NEXT:[]                                   PREV:[<END>]
 =====================
 == t12 ==
 fun t12() : Int {
@@ -566,22 +729,29 @@ fun t12() : Int {
 }
 ---------------------
 l0:
-    <START>         NEXT:[r(1)]            PREV:[]
-    r(1)            NEXT:[r(3)]            PREV:[<START>]
-    r(3)            NEXT:[r(doSmth)]       PREV:[r(1)]
-    r(doSmth)       NEXT:[r(doSmth(3))]    PREV:[r(3)]
-    r(doSmth(3))    NEXT:[ret(*) l1]       PREV:[r(doSmth)]
-    ret(*) l1       NEXT:[<END>]           PREV:[r(doSmth(3))]
+    <START>              NEXT:[r(try { return 1 } finally {..)]    PREV:[]
+    r(try {          
+            return 1 
+        }            
+        finally {    
+            doSmth(3)
+        })               NEXT:[r(1)]                               PREV:[<START>]
+    r(1)                 NEXT:[r(3)]                               PREV:[r(try { return 1 } finally {..)]
+    r(3)                 NEXT:[r(doSmth)]                          PREV:[r(1)]
+    r(doSmth)            NEXT:[r(doSmth(3))]                       PREV:[r(3)]
+    r(doSmth(3))         NEXT:[ret(*) l1]                          PREV:[r(doSmth)]
+    ret(*) l1            NEXT:[<END>]                              PREV:[r(doSmth(3))]
 l2:
-R   r(3)            NEXT:[r(doSmth)]       PREV:[]
-R   r(doSmth)       NEXT:[r(doSmth(3))]    PREV:[]
-R   r(doSmth(3))    NEXT:[<END>]           PREV:[]
+-   r(3)                 NEXT:[r(doSmth)]                          PREV:[]
+-   r(doSmth)            NEXT:[r(doSmth(3))]                       PREV:[]
+-   r(doSmth(3))         NEXT:[<END>]                              PREV:[]
 l1:
-    <END>           NEXT:[<SINK>]          PREV:[ret(*) l1]
+l3:
+    <END>                NEXT:[<SINK>]                             PREV:[ret(*) l1]
 error:
-    <ERROR>         NEXT:[]                PREV:[]
+    <ERROR>              NEXT:[]                                   PREV:[]
 sink:
-    <SINK>          NEXT:[]                PREV:[<END>]
+    <SINK>               NEXT:[]                                   PREV:[<END>]
 =====================
 == t13 ==
 fun t13() : Int {
@@ -597,34 +767,44 @@ fun t13() : Int {
 }
 ---------------------
 l0:
-    <START>                                NEXT:[jmp?(l2)]                               PREV:[]
-    jmp?(l2)                               NEXT:[jmp?(), r(1)]                           PREV:[<START>]
-    r(1)                                   NEXT:[r(3)]                                   PREV:[jmp?(l2)]
-    r(3)                                   NEXT:[r(doSmth)]                              PREV:[r(1)]
-    r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[r(3)]
-    r(doSmth(3))                           NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
-    ret(*) l1                              NEXT:[<END>]                                  PREV:[r(doSmth(3))]
+    <START>                                           NEXT:[r(try { return 1 } catch (e:..)]        PREV:[]
+    r(try {                                       
+            return 1                              
+        }                                         
+        catch (e: UnsupportedOperationException) {
+            doSmth(2)                             
+        }                                         
+        finally {                                 
+            doSmth(3)                             
+        })                                            NEXT:[jmp?(l2)]                               PREV:[<START>]
+    jmp?(l2)                                          NEXT:[jmp?(), r(1)]                           PREV:[r(try { return 1 } catch (e:..)]
+    r(1)                                              NEXT:[r(3)]                                   PREV:[jmp?(l2)]
+    r(3)                                              NEXT:[r(doSmth)]                              PREV:[r(1)]
+    r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[r(3)]
+    r(doSmth(3))                                      NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
+    ret(*) l1                                         NEXT:[<END>]                                  PREV:[r(doSmth(3))]
 l3:
-R   jmp(l4)                                NEXT:[r(3)]                                   PREV:[]
+-   jmp(l4)                                           NEXT:[r(3)]                                   PREV:[]
 l2:
-    jmp?()                                 NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
-    v(e: UnsupportedOperationException)    NEXT:[w(e)]                                   PREV:[jmp?()]
-    w(e)                                   NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
-    r(2)                                   NEXT:[r(doSmth)]                              PREV:[w(e)]
-    r(doSmth)                              NEXT:[r(doSmth(2))]                           PREV:[r(2)]
-    r(doSmth(2))                           NEXT:[jmp(l4)]                                PREV:[r(doSmth)]
+    jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
+    v(e: UnsupportedOperationException)               NEXT:[w(e)]                                   PREV:[jmp?()]
+    w(e)                                              NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
+    r(2)                                              NEXT:[r(doSmth)]                              PREV:[w(e)]
+    r(doSmth)                                         NEXT:[r(doSmth(2))]                           PREV:[r(2)]
+    r(doSmth(2))                                      NEXT:[jmp(l4)]                                PREV:[r(doSmth)]
 l5:
-    jmp(l4)                                NEXT:[r(3)]                                   PREV:[r(doSmth(2))]
+    jmp(l4)                                           NEXT:[r(3)]                                   PREV:[r(doSmth(2))]
 l4:
-    r(3)                                   NEXT:[r(doSmth)]                              PREV:[jmp(l4)]
-    r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[r(3)]
-    r(doSmth(3))                           NEXT:[<END>]                                  PREV:[r(doSmth)]
+    r(3)                                              NEXT:[r(doSmth)]                              PREV:[jmp(l4)]
+    r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[r(3)]
+    r(doSmth(3))                                      NEXT:[<END>]                                  PREV:[r(doSmth)]
 l1:
-    <END>                                  NEXT:[<SINK>]                                 PREV:[ret(*) l1, r(doSmth(3))]
+l6:
+    <END>                                             NEXT:[<SINK>]                                 PREV:[ret(*) l1, r(doSmth(3))]
 error:
-    <ERROR>                                NEXT:[]                                       PREV:[]
+    <ERROR>                                           NEXT:[]                                       PREV:[]
 sink:
-    <SINK>                                 NEXT:[]                                       PREV:[<END>]
+    <SINK>                                            NEXT:[]                                       PREV:[<END>]
 =====================
 == t14 ==
 fun t14() : Int {
@@ -637,28 +817,35 @@ fun t14() : Int {
 }
 ---------------------
 l0:
-    <START>                                NEXT:[jmp?(l2)]                               PREV:[]
-    jmp?(l2)                               NEXT:[jmp?(), r(1)]                           PREV:[<START>]
-    r(1)                                   NEXT:[ret(*) l1]                              PREV:[jmp?(l2)]
-    ret(*) l1                              NEXT:[<END>]                                  PREV:[r(1)]
+    <START>                                           NEXT:[r(try { return 1 } catch (e:..)]        PREV:[]
+    r(try {                                       
+            return 1                              
+        }                                         
+        catch (e: UnsupportedOperationException) {
+            doSmth(2)                             
+        })                                            NEXT:[jmp?(l2)]                               PREV:[<START>]
+    jmp?(l2)                                          NEXT:[jmp?(), r(1)]                           PREV:[r(try { return 1 } catch (e:..)]
+    r(1)                                              NEXT:[ret(*) l1]                              PREV:[jmp?(l2)]
+    ret(*) l1                                         NEXT:[<END>]                                  PREV:[r(1)]
 l3:
-R   jmp(l4)                                NEXT:[<END>]                                  PREV:[]
+-   jmp(l4)                                           NEXT:[<END>]                                  PREV:[]
 l2:
-    jmp?()                                 NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
-    v(e: UnsupportedOperationException)    NEXT:[w(e)]                                   PREV:[jmp?()]
-    w(e)                                   NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
-    r(2)                                   NEXT:[r(doSmth)]                              PREV:[w(e)]
-    r(doSmth)                              NEXT:[r(doSmth(2))]                           PREV:[r(2)]
-    r(doSmth(2))                           NEXT:[jmp(l4)]                                PREV:[r(doSmth)]
+    jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
+    v(e: UnsupportedOperationException)               NEXT:[w(e)]                                   PREV:[jmp?()]
+    w(e)                                              NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
+    r(2)                                              NEXT:[r(doSmth)]                              PREV:[w(e)]
+    r(doSmth)                                         NEXT:[r(doSmth(2))]                           PREV:[r(2)]
+    r(doSmth(2))                                      NEXT:[jmp(l4)]                                PREV:[r(doSmth)]
 l5:
-    jmp(l4)                                NEXT:[<END>]                                  PREV:[r(doSmth(2))]
+    jmp(l4)                                           NEXT:[<END>]                                  PREV:[r(doSmth(2))]
 l1:
 l4:
-    <END>                                  NEXT:[<SINK>]                                 PREV:[ret(*) l1, jmp(l4)]
+l6:
+    <END>                                             NEXT:[<SINK>]                                 PREV:[ret(*) l1, jmp(l4)]
 error:
-    <ERROR>                                NEXT:[]                                       PREV:[]
+    <ERROR>                                           NEXT:[]                                       PREV:[]
 sink:
-    <SINK>                                 NEXT:[]                                       PREV:[<END>]
+    <SINK>                                            NEXT:[]                                       PREV:[<END>]
 =====================
 == t15 ==
 fun t15() : Int {
@@ -674,36 +861,46 @@ fun t15() : Int {
 }
 ---------------------
 l0:
-    <START>                                NEXT:[jmp?(l2)]                               PREV:[]
-    jmp?(l2)                               NEXT:[jmp?(), r(1)]                           PREV:[<START>]
-    r(1)                                   NEXT:[r(3)]                                   PREV:[jmp?(l2)]
-    r(3)                                   NEXT:[r(doSmth)]                              PREV:[r(1)]
-    r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[r(3)]
-    r(doSmth(3))                           NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
-    ret(*) l1                              NEXT:[<END>]                                  PREV:[r(doSmth(3))]
+    <START>                                           NEXT:[r(try { return 1 } catch (e:..)]        PREV:[]
+    r(try {                                       
+            return 1                              
+        }                                         
+        catch (e: UnsupportedOperationException) {
+            return 2                              
+        }                                         
+        finally {                                 
+            doSmth(3)                             
+        })                                            NEXT:[jmp?(l2)]                               PREV:[<START>]
+    jmp?(l2)                                          NEXT:[jmp?(), r(1)]                           PREV:[r(try { return 1 } catch (e:..)]
+    r(1)                                              NEXT:[r(3)]                                   PREV:[jmp?(l2)]
+    r(3)                                              NEXT:[r(doSmth)]                              PREV:[r(1)]
+    r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[r(3)]
+    r(doSmth(3))                                      NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
+    ret(*) l1                                         NEXT:[<END>]                                  PREV:[r(doSmth(3))]
 l3:
-R   jmp(l4)                                NEXT:[r(3)]                                   PREV:[]
+-   jmp(l4)                                           NEXT:[r(3)]                                   PREV:[]
 l2:
-    jmp?()                                 NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
-    v(e: UnsupportedOperationException)    NEXT:[w(e)]                                   PREV:[jmp?()]
-    w(e)                                   NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
-    r(2)                                   NEXT:[r(3)]                                   PREV:[w(e)]
-    r(3)                                   NEXT:[r(doSmth)]                              PREV:[r(2)]
-    r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[r(3)]
-    r(doSmth(3))                           NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
-    ret(*) l1                              NEXT:[<END>]                                  PREV:[r(doSmth(3))]
+    jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
+    v(e: UnsupportedOperationException)               NEXT:[w(e)]                                   PREV:[jmp?()]
+    w(e)                                              NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
+    r(2)                                              NEXT:[r(3)]                                   PREV:[w(e)]
+    r(3)                                              NEXT:[r(doSmth)]                              PREV:[r(2)]
+    r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[r(3)]
+    r(doSmth(3))                                      NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
+    ret(*) l1                                         NEXT:[<END>]                                  PREV:[r(doSmth(3))]
 l5:
-R   jmp(l4)                                NEXT:[r(3)]                                   PREV:[]
+-   jmp(l4)                                           NEXT:[r(3)]                                   PREV:[]
 l4:
-R   r(3)                                   NEXT:[r(doSmth)]                              PREV:[]
-R   r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[]
-R   r(doSmth(3))                           NEXT:[<END>]                                  PREV:[]
+-   r(3)                                              NEXT:[r(doSmth)]                              PREV:[]
+-   r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[]
+-   r(doSmth(3))                                      NEXT:[<END>]                                  PREV:[]
 l1:
-    <END>                                  NEXT:[<SINK>]                                 PREV:[ret(*) l1, ret(*) l1]
+l6:
+    <END>                                             NEXT:[<SINK>]                                 PREV:[ret(*) l1, ret(*) l1]
 error:
-    <ERROR>                                NEXT:[]                                       PREV:[]
+    <ERROR>                                           NEXT:[]                                       PREV:[]
 sink:
-    <SINK>                                 NEXT:[]                                       PREV:[<END>]
+    <SINK>                                            NEXT:[]                                       PREV:[<END>]
 =====================
 == t16 ==
 fun t16() : Int {
@@ -719,34 +916,44 @@ fun t16() : Int {
 }
 ---------------------
 l0:
-    <START>                                NEXT:[jmp?(l2)]                               PREV:[]
-    jmp?(l2)                               NEXT:[jmp?(), r(1)]                           PREV:[<START>]
-    r(1)                                   NEXT:[r(doSmth)]                              PREV:[jmp?(l2)]
-    r(doSmth)                              NEXT:[r(doSmth(1))]                           PREV:[r(1)]
-    r(doSmth(1))                           NEXT:[jmp(l4)]                                PREV:[r(doSmth)]
+    <START>                                           NEXT:[r(try { doSmth(1) } catch (e..)]        PREV:[]
+    r(try {                                       
+            doSmth(1)                             
+        }                                         
+        catch (e: UnsupportedOperationException) {
+            return 2                              
+        }                                         
+        finally {                                 
+            doSmth(3)                             
+        })                                            NEXT:[jmp?(l2)]                               PREV:[<START>]
+    jmp?(l2)                                          NEXT:[jmp?(), r(1)]                           PREV:[r(try { doSmth(1) } catch (e..)]
+    r(1)                                              NEXT:[r(doSmth)]                              PREV:[jmp?(l2)]
+    r(doSmth)                                         NEXT:[r(doSmth(1))]                           PREV:[r(1)]
+    r(doSmth(1))                                      NEXT:[jmp(l4)]                                PREV:[r(doSmth)]
 l3:
-    jmp(l4)                                NEXT:[r(3)]                                   PREV:[r(doSmth(1))]
+    jmp(l4)                                           NEXT:[r(3)]                                   PREV:[r(doSmth(1))]
 l2:
-    jmp?()                                 NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
-    v(e: UnsupportedOperationException)    NEXT:[w(e)]                                   PREV:[jmp?()]
-    w(e)                                   NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
-    r(2)                                   NEXT:[r(3)]                                   PREV:[w(e)]
-    r(3)                                   NEXT:[r(doSmth)]                              PREV:[r(2)]
-    r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[r(3)]
-    r(doSmth(3))                           NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
-    ret(*) l1                              NEXT:[<END>]                                  PREV:[r(doSmth(3))]
+    jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]    PREV:[jmp?(l2)]
+    v(e: UnsupportedOperationException)               NEXT:[w(e)]                                   PREV:[jmp?()]
+    w(e)                                              NEXT:[r(2)]                                   PREV:[v(e: UnsupportedOperationException)]
+    r(2)                                              NEXT:[r(3)]                                   PREV:[w(e)]
+    r(3)                                              NEXT:[r(doSmth)]                              PREV:[r(2)]
+    r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[r(3)]
+    r(doSmth(3))                                      NEXT:[ret(*) l1]                              PREV:[r(doSmth)]
+    ret(*) l1                                         NEXT:[<END>]                                  PREV:[r(doSmth(3))]
 l5:
-R   jmp(l4)                                NEXT:[r(3)]                                   PREV:[]
+-   jmp(l4)                                           NEXT:[r(3)]                                   PREV:[]
 l4:
-    r(3)                                   NEXT:[r(doSmth)]                              PREV:[jmp(l4)]
-    r(doSmth)                              NEXT:[r(doSmth(3))]                           PREV:[r(3)]
-    r(doSmth(3))                           NEXT:[<END>]                                  PREV:[r(doSmth)]
+    r(3)                                              NEXT:[r(doSmth)]                              PREV:[jmp(l4)]
+    r(doSmth)                                         NEXT:[r(doSmth(3))]                           PREV:[r(3)]
+    r(doSmth(3))                                      NEXT:[<END>]                                  PREV:[r(doSmth)]
 l1:
-    <END>                                  NEXT:[<SINK>]                                 PREV:[ret(*) l1, r(doSmth(3))]
+l6:
+    <END>                                             NEXT:[<SINK>]                                 PREV:[ret(*) l1, r(doSmth(3))]
 error:
-    <ERROR>                                NEXT:[]                                       PREV:[]
+    <ERROR>                                           NEXT:[]                                       PREV:[]
 sink:
-    <SINK>                                 NEXT:[]                                       PREV:[<END>]
+    <SINK>                                            NEXT:[]                                       PREV:[<END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {
