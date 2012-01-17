@@ -32,12 +32,12 @@ public class KotlinCompiler {
         @Argument(value = "help", alias = "h", description = "show help")
         public boolean help;
     }
-    
+
     private static void usage(PrintStream target) {
         target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-src <filename or dirname>|-module <module file>] [-includeRuntime] [-excludeStdlib]");
     }
 
-    public static void main(String[] args) {
+    public static void main(String ... args) {
         System.setProperty("java.awt.headless", "true");
         Arguments arguments = new Arguments();
         try {
@@ -53,7 +53,7 @@ public class KotlinCompiler {
             System.exit(1);
             return;
         }
-        
+
         if (arguments.help) {
             usage(System.out);
             System.exit(0);

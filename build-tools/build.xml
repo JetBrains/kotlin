@@ -1,0 +1,196 @@
+<project name="build-tools" default="buildToolsJar">
+
+    <property name="tests-dir"   location="${output}/ant-test/build-tools-test"/>
+    <property name="kotlin-home" location="${output}/ant-test/kotlin-home"/>
+
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${basedir}/build-tools/lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+
+    <!-- Re-creates ${kotlin-home} and defines <kotlin> tasks using "${kotlin-home}/lib" jars -->
+    <macrodef name="setup-kotlin-home">
+        <sequential>
+
+            <if>
+                <not>
+                    <available file="${output}/${output.name}.zip"/>
+                </not>
+                <then>
+                    <antcall target="dist"/>
+                </then>
+            </if>
+
+            <delete dir = "${kotlin-home}" failonerror="true"/>
+            <mkdir  dir = "${kotlin-home}"/>
+            <unzip src  = "${output}/${output.name}.zip"
+                   dest = "${kotlin-home}"/>
+            <move todir = "${kotlin-home}">
+                <fileset dir = "${kotlin-home}/kotlinc"/>
+            </move>
+            <delete dir = "${kotlin-home}/kotlinc" failonerror="true"/>
+
+            <taskdef resource    = "org/jetbrains/jet/buildtools/ant/antlib.xml">
+                <classpath>
+                    <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
+                </classpath>
+            </taskdef>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Runs <kotlinc> task specifying either "srcdir" or "file" attribute -->
+    <macrodef name="run-kotlinc">
+        <attribute name="file"   default=""/>
+        <attribute name="srcdir" default=""/>
+        <sequential>
+
+            <delete dir = "${tests-dir}" includes = "**/*"/>
+
+            <if>
+                <equals arg1="@{file}" arg2=""/>
+                <then>
+                    <kotlinc  destdir = "${tests-dir}" srcdir = "@{srcdir}"/>
+                </then>
+                <else>
+                    <kotlinc  destdir = "${tests-dir}" file   = "@{file}"/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Runs <java> for compiled classes and verifies the output correctness -->
+    <macrodef name="run-java">
+        <attribute name="out"/>
+        <attribute name="classname" default="namespace"/>
+        <attribute name="args"      default=""/>
+        <attribute name="equals"    default="true"/> <!-- Whether strict equality of output to @{out} required -->
+        <sequential>
+            <var name = "java-out" unset = "true"/>
+            <java outputproperty = "java-out"
+                  classname      = "@{classname}"
+                  failonerror    = "true">
+                <classpath>
+                    <pathelement path = "${tests-dir}"/>
+                    <fileset     dir  = "${kotlin-home}/lib" includes = "*.jar"/>
+                </classpath>
+                <arg line = "@{args}"/>
+            </java>
+            <if>
+                <or>
+                    <equals arg1="${java-out}" arg2="@{out}" forcestring="true"/>
+                    <and>
+                        <equals arg1="@{equals}"  arg2="false"/>
+                        <contains string="${java-out}" substring="@{out}"/>
+                    </and>
+                </or>
+                <then>
+                    <echo>${java-out}</echo>
+                </then>
+                <else>
+                    <fail message="Test failed: '${java-out}' (received) != '@{out}' (expected), equals = [@{equals}]"/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Compiles "Hello.kt" as a single file and a folder, runs <java> and verifies the output -->
+    <macrodef name="hello-test">
+        <attribute name="root"/>
+        <attribute name="args" default=""/>
+        <attribute name="out"/>
+        <sequential>
+            <run-kotlinc file   = "@{root}/Hello.kt"/>
+            <run-java    args   = "@{args}" out = "@{out}"/>
+            <run-kotlinc srcdir = "@{root}"/>
+            <run-java    args   = "@{args}" out = "@{out}"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Runs all Hello tests -->
+    <macrodef name="hello-tests">
+        <sequential>
+            <hello-test root="${basedir}/build-tools/test/hello/1"                         out="Hello, world!"/>
+            <hello-test root="${basedir}/build-tools/test/hello/2" args="Kotlin-Developer" out="Hello, Kotlin-Developer!"/>
+            <hello-test root="${basedir}/build-tools/test/hello/3" args="Mickey-Mouse"     out="Hello, Mickey-Mouse!"/>
+            <hello-test root="${basedir}/build-tools/test/hello/4" args="IT"               out="Ciao!"/>
+            <hello-test root="${basedir}/build-tools/test/hello/4" args="FR"               out="Salut!"/>
+            <hello-test root="${basedir}/build-tools/test/hello/5" args="Donald-Duck"      out="Hello, Donald-Duck!"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Compiles, runs and verifies the output of web demo longer examples -->
+    <macrodef name="longer-examples-tests">
+        <sequential>
+            <run-kotlinc srcdir = "${basedir}/build-tools/test/longer-examples" />
+            <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer." />
+            <run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>
+            <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
+            <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Verifies build fails if <kotlinc> fails -->
+    <macrodef name="compilation-fail-test">
+        <sequential>
+            <var name="failed" value="false"/>
+            <trycatch property="error-message" reference="bar">
+                <try>
+                    <!-- Should fail -->
+                    <run-kotlinc srcdir = "${basedir}/build-tools/test/compilation-fail"/>
+                </try>
+                <catch>
+                    <var name="failed" value="true"/>
+                </catch>
+            </trycatch>
+            <if>
+                <isfalse value="${failed}"/>
+                <then>
+                    <fail message="Compilation should have failed!"/>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Creates build tools distribution jar -->
+    <target name="buildToolsJar" depends="compile">
+        <mkdir dir    ="${output}/classes/buildTools"/>
+        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <src>
+                <dirset dir="${basedir}/build-tools">
+                    <include name="core/src"/>
+                    <include name="ant/src"/>
+                    <include name="maven/src"/>
+                    <include name="gradle/src"/>
+                </dirset>
+            </src>
+            <compilerarg value="-Xlint:all"/>
+            <classpath>
+                <path refid  = "classpath.kotlin"/>
+                <fileset dir = "${idea.sdk}/ant/lib" includes="*.jar"/>
+            </classpath>
+        </javac>
+        <jar destfile="${output}/kotlin-build-tools.jar">
+            <fileset dir = "${output}/classes/buildTools"/>
+            <fileset dir = "${basedir}/build-tools/ant/src" includes="**/*.xml"/>
+        </jar>
+    </target>
+
+
+    <!-- Tests build tools distribution jar -->
+    <target name="buildToolsTest">
+        <setup-kotlin-home/>
+        <hello-tests/>
+        <longer-examples-tests/>
+        <compilation-fail-test/>
+    </target>
+</project>
