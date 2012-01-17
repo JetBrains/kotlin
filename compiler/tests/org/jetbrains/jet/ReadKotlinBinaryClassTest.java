@@ -55,15 +55,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Compile Kotlin and then parse model from .class files.
+ *
  * @author Stepan Koltsov
  */
-public class ReadClassDataTest extends TestCaseWithTmpdir {
+public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
     private JetCoreEnvironment jetCoreEnvironment;
 
     private final File testFile;
 
-    public ReadClassDataTest(@NotNull File testFile) {
+    public ReadKotlinBinaryClassTest(@NotNull File testFile) {
         this.testFile = testFile;
         setName(testFile.getName());
     }
@@ -527,11 +529,11 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
     }
 
     public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readClass", true, new JetTestCaseBuilder.NamedTestFactory() {
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readKotlinBinaryClass", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new ReadClassDataTest(file);
+                return new ReadKotlinBinaryClassTest(file);
             }
         });
     }
