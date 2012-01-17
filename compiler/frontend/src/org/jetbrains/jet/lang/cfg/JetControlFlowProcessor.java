@@ -153,6 +153,8 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+            builder.read(expression);
+
             JetExpression innerExpression = expression.getExpression();
             if (innerExpression != null) {
                 value(innerExpression, inCondition);
@@ -340,6 +342,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitTryExpression(JetTryExpression expression) {
+            builder.read(expression);
             final JetFinallySection finallyBlock = expression.getFinallyBlock();
             if (finallyBlock != null) {
                 builder.enterTryFinally(new GenerationTrigger() {
@@ -413,6 +416,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitWhileExpression(JetWhileExpression expression) {
+            builder.read(expression);
             LoopInfo loopInfo = builder.enterLoop(expression, null, null);
 
             builder.bindLabel(loopInfo.getConditionEntryPoint());
@@ -434,6 +438,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitDoWhileExpression(JetDoWhileExpression expression) {
+            builder.read(expression);
             LoopInfo loopInfo = builder.enterLoop(expression, null, null);
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
@@ -453,6 +458,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitForExpression(JetForExpression expression) {
+            builder.read(expression);
             JetExpression loopRange = expression.getLoopRange();
             if (loopRange != null) {
                 value(loopRange, false);

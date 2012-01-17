@@ -6,8 +6,8 @@ package kt1001
 fun foo(<!UNUSED_PARAMETER!>c<!>: Array<Int>) {
     return
 
-    for (<!UNREACHABLE_CODE!>i<!> in <!UNREACHABLE_CODE!>c<!>) {}
-    for (<!UNREACHABLE_CODE!>i<!> in <!UNREACHABLE_CODE!>c<!>) {}
+    <!UNREACHABLE_CODE!>for (i in c) {}<!>
+    <!UNREACHABLE_CODE!>for (i in c) {}<!>
 }
 
 //more tests
