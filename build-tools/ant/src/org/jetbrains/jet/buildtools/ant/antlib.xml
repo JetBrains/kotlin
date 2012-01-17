@@ -5,8 +5,8 @@
 <antlib>
     <taskdef
         name      = "kotlinc"
-        classname = "org.jetbrains.jet.buildtools.ant.KotlinBytecodeCompilerTask"/>
+        classname = "org.jetbrains.jet.buildtools.ant.BytecodeCompilerTask"/>
     <taskdef
         name      = "kotlinJSc"
-        classname = "org.jetbrains.jet.buildtools.ant.KotlinJavaScriptCompilerTask"/>
+        classname = "org.jetbrains.jet.buildtools.ant.JavaScriptCompilerTask"/>
 </antlib>
