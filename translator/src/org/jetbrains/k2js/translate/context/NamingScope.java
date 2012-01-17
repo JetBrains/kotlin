@@ -106,7 +106,6 @@ public final class NamingScope {
         return (getName(descriptor.getOriginal()) != null);
     }
 
-    //TODO protect global namespace
     public JsName declareTemporary() {
         return scope.declareTemporary();
     }

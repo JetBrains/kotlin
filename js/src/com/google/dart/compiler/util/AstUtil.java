@@ -309,28 +309,6 @@ public class AstUtil {
         throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
     }
 
-    public static JsExpression getQualifier(JsExpression expression) {
-        if (expression instanceof JsInvocation) {
-            return ((JsInvocation) expression).getQualifier();
-        }
-        if (expression instanceof JsNameRef) {
-            return ((JsNameRef) expression).getQualifier();
-        }
-        throw new AssertionError("Get qualifier should be applied only to JsInvocation or JsNameRef instances");
-    }
-
-    public static void substituteTopLevelQualifier(JsExpression expression, JsExpression substitutor) {
-        assert expression != null;
-        JsExpression previous = expression;
-        JsExpression current = getQualifier(expression);
-        assert current != null : "Cannot be applied to unqualified expression";
-        while (getQualifier(current) != null) {
-            previous = current;
-            current = getQualifier(current);
-        }
-        setQualifier(previous, substitutor);
-    }
-
     //TODO: look for should-be-usages
     public static JsNameRef qualified(JsName selector, JsExpression qualifier) {
         JsNameRef reference = selector.makeRef();

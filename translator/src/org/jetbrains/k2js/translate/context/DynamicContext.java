@@ -5,8 +5,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
-//TODO: track that temporary declarations is in the scope of the block where they are declared
-
 public class DynamicContext {
 
     @NotNull

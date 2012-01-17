@@ -19,6 +19,7 @@ import static com.google.dart.compiler.util.AstUtil.convertToBlock;
 /**
  * @author Pavel Talanov
  */
+//TODO: not implemented catch logic
 public final class TryTranslator extends AbstractTranslator {
 
     @NotNull
