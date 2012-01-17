@@ -118,7 +118,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true, JetBlockExpression.class) != null;
+            return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true,
+                                               JetBlockExpression.class, JetProperty.class) != null;
         }
 
         @Override
