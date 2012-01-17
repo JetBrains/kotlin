@@ -96,6 +96,12 @@ public class ErrorUtils {
         public Modality getModality() {
             return Modality.OPEN;
         }
+
+        @NotNull
+        @Override
+        public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+            return ERROR_CLASS;
+        }
     };
 
     private static final Set<FunctionDescriptor> ERROR_FUNCTION_GROUP = Collections.singleton(createErrorFunction(0, Collections.<JetType>emptyList()));
