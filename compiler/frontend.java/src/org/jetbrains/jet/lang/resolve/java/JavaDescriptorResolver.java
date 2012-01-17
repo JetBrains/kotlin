@@ -1039,7 +1039,7 @@ public class JavaDescriptorResolver {
             
             boolean isVar;
             if (members.getter == null && members.setter == null) {
-                isVar = true;
+                isVar = !members.field.isFinal();
             } else {
                 isVar = members.setter != null;
             }

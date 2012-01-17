@@ -37,10 +37,6 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
         return getParameters().get(i);
     }
 
-    public boolean isFinal() {
-        return psiMember.hasModifierProperty(PsiModifier.FINAL);
-    }
-
     private JetMethodAnnotation jetMethod;
     @NotNull
     public JetMethodAnnotation getJetMethod() {

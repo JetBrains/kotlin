@@ -23,7 +23,11 @@ public class PsiMemberWrapper {
     public boolean isPrivate() {
         return psiMember.hasModifierProperty(PsiModifier.PRIVATE);
     }
-    
+
+    public boolean isFinal() {
+        return psiMember.hasModifierProperty(PsiModifier.FINAL);
+    }
+
     public String getName() {
         return psiMember.getName();
     }
