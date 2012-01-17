@@ -23,6 +23,11 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<TypeProjection> arguments, JetScope memberScope) {
         super(annotations);
+
+        if (memberScope instanceof ErrorUtils.ErrorScope) {
+            throw new IllegalStateException();
+        }
+
         this.constructor = constructor;
         this.nullable = nullable;
         this.arguments = arguments;

@@ -100,13 +100,7 @@ public class TypeResolver {
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
                         if (ErrorUtils.isError(typeConstructor)) {
-                            result[0] = new JetTypeImpl(
-                                    annotations,
-                                    typeConstructor,
-                                    nullable,
-                                    arguments, // TODO : review
-                                    classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList())
-                            );
+                            result[0] = ErrorUtils.createErrorType("??");
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {

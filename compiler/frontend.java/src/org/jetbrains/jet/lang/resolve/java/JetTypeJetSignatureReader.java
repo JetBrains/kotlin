@@ -142,7 +142,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
                 classDescriptor.getTypeConstructor(),
                 nullable,
                 typeArguments,
-                ErrorUtils.getErrorScope());
+                classDescriptor.getMemberScope(typeArguments));
         done(jetType);
     }
     

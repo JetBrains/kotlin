@@ -100,6 +100,9 @@ public class TypeUtils {
         if (type.isNullable() == nullable) {
             return type;
         }
+        if (ErrorUtils.isErrorType(type)) {
+            return type;
+        }
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
     }
 
