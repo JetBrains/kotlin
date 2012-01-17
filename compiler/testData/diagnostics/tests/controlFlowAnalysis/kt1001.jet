@@ -1,0 +1,35 @@
+//KT-1001 Argument 2 for @NotNull parameter of JetFlowInformationProvider.checkIsInitialized must not be null
+
+package kt1001
+//+JDK
+
+fun foo(<!UNUSED_PARAMETER!>c<!>: Array<Int>) {
+    return
+
+    for (<!UNREACHABLE_CODE!>i<!> in <!UNREACHABLE_CODE!>c<!>) {}
+    for (<!UNREACHABLE_CODE!>i<!> in <!UNREACHABLE_CODE!>c<!>) {}
+}
+
+//more tests
+
+fun t1() : Int {
+    try {
+        return 1
+    }
+    catch (e : Exception) {
+        return 2
+    }
+    <!UNREACHABLE_CODE!>return 3<!>
+}
+
+fun t2() : Int {
+    try {
+        return 1
+    }
+    finally {
+        doSmth()
+    }
+    <!UNREACHABLE_CODE!>return 2<!>
+}
+
+fun doSmth() {}

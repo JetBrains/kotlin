@@ -38,13 +38,13 @@ l2:
 l4:
     ret l1         NEXT:[<END>]                  PREV:[<START>]
 l5:
-*   r(1)           NEXT:[r(0)]                   PREV:[]
-*   r(0)           NEXT:[r(>)]                   PREV:[]
-*   r(>)           NEXT:[r(1 > 0)]               PREV:[]
-*   r(1 > 0)       NEXT:[jt(l2)]                 PREV:[]
-*   jt(l2)         NEXT:[read (Unit), ret l1]    PREV:[]
+-   r(1)           NEXT:[r(0)]                   PREV:[]
+-   r(0)           NEXT:[r(>)]                   PREV:[]
+-   r(>)           NEXT:[r(1 > 0)]               PREV:[]
+-   r(1 > 0)       NEXT:[jt(l2)]                 PREV:[]
+-   jt(l2)         NEXT:[read (Unit), ret l1]    PREV:[]
 l3:
-*   read (Unit)    NEXT:[<END>]                  PREV:[]
+-   read (Unit)    NEXT:[<END>]                  PREV:[]
 l1:
     <END>          NEXT:[<SINK>]                 PREV:[ret l1]
 error:

@@ -56,12 +56,16 @@ public class Pseudocode {
 
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
+    private List<Instruction> deadInstructions;
+    
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
     private final List<PseudocodeLabel> allowedDeadLabels = new ArrayList<PseudocodeLabel>();
+    private final List<PseudocodeLabel> stopAllowDeadLabels = new ArrayList<PseudocodeLabel>();
 
     private final JetElement correspondingElement;
     private SubroutineExitInstruction exitInstruction;
     private SubroutineSinkInstruction sinkInstruction;
+    private SubroutineExitInstruction errorInstruction;
     private boolean postPrecessed = false;
 
     public Pseudocode(JetElement correspondingElement) {
@@ -81,6 +85,10 @@ public class Pseudocode {
     public void allowDead(Label label) {
         allowedDeadLabels.add((PseudocodeLabel) label);
     }
+    
+    public void stopAllowDead(Label label) {
+        stopAllowDeadLabels.add((PseudocodeLabel) label);
+    }
 
     @NotNull
     public List<Instruction> getInstructions() {
@@ -95,10 +103,17 @@ public class Pseudocode {
     
     @NotNull
     public List<Instruction> getDeadInstructions() {
-        List<Instruction> deadInstructions = Lists.newArrayList();
-        for (Instruction instruction : instructions) {
-            if (instruction.isDead()) {
-                deadInstructions.add(instruction);
+        if (deadInstructions != null) {
+            return deadInstructions;
+        }
+        deadInstructions = Lists.newArrayList();
+        Collection<Instruction> allowedDeadInstructions = collectAllowedDeadInstructions();
+
+        for (Instruction instruction : mutableInstructionList) {
+            if (((InstructionImpl)instruction).isDead()) {
+                if (!allowedDeadInstructions.contains(instruction)) {
+                    deadInstructions.add(instruction);
+                }
             }
         }
         return deadInstructions;
@@ -120,6 +135,12 @@ public class Pseudocode {
         addInstruction(sinkInstruction);
         assert this.sinkInstruction == null;
         this.sinkInstruction = sinkInstruction;
+    }
+
+    public void addErrorInstruction(SubroutineExitInstruction errorInstruction) {
+        addInstruction(errorInstruction);
+        assert this.errorInstruction == null;
+        this.errorInstruction = errorInstruction;
     }
 
     public void addInstruction(Instruction instruction) {
@@ -151,88 +172,107 @@ public class Pseudocode {
         if (postPrecessed) return;
         postPrecessed = true;
         for (int i = 0, instructionsSize = mutableInstructionList.size(); i < instructionsSize; i++) {
-            Instruction instruction = mutableInstructionList.get(i);
-            final int currentPosition = i;
-            instruction.accept(new InstructionVisitor() {
-                @Override
-                public void visitInstructionWithNext(InstructionWithNext instruction) {
-                    instruction.setNext(getNextPosition(currentPosition));
-                }
-
-                @Override
-                public void visitJump(AbstractJumpInstruction instruction) {
-                    instruction.setResolvedTarget(getJumpTarget(instruction.getTargetLabel()));
-                }
-
-                @Override
-                public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
-                    instruction.setNext(getNextPosition(currentPosition));
-                    List<Label> targetLabels = instruction.getTargetLabels();
-                    for (Label targetLabel : targetLabels) {
-                        instruction.setResolvedTarget(targetLabel, getJumpTarget(targetLabel));
-                    }
-                }
-
-                @Override
-                public void visitConditionalJump(ConditionalJumpInstruction instruction) {
-                    Instruction nextInstruction = getNextPosition(currentPosition);
-                    Instruction jumpTarget = getJumpTarget(instruction.getTargetLabel());
-                    if (instruction.onTrue()) {
-                        instruction.setNextOnFalse(nextInstruction);
-                        instruction.setNextOnTrue(jumpTarget);
-                    }
-                    else {
-                        instruction.setNextOnFalse(jumpTarget);
-                        instruction.setNextOnTrue(nextInstruction);
-                    }
-                    visitJump(instruction);
-                }
-
-                @Override
-                public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
-                    instruction.getBody().postProcess();
-                    instruction.setNext(getSinkInstruction());
-                }
-
-                @Override
-                public void visitSubroutineExit(SubroutineExitInstruction instruction) {
-                    // Nothing
-                }
-
-                @Override
-                public void visitSubroutineSink(SubroutineSinkInstruction instruction) {
-                    // Nothing
-                }
-
-                @Override
-                public void visitInstruction(Instruction instruction) {
-                    throw new UnsupportedOperationException(instruction.toString());
-                }
-            });
+            processInstruction(mutableInstructionList.get(i), i);
         }
         getExitInstruction().setSink(getSinkInstruction());
-        Set<Instruction> allowedDeadStartInstructions = prepareAllowedDeadInstructions();
+        Set<Instruction> reachableInstructions = collectReachableInstructions();
+        for (Instruction instruction : mutableInstructionList) {
+            if (reachableInstructions.contains(instruction)) {
+                instructions.add(instruction);
+            }
+        }
         markDeadInstructions();
-        Collection<Instruction> allowedDeadInstructions = collectAllowedDeadInstructions(allowedDeadStartInstructions);
-        instructions.addAll(mutableInstructionList);
-        instructions.removeAll(allowedDeadInstructions);
+    }
 
+    private void processInstruction(Instruction instruction, final int currentPosition) {
+        instruction.accept(new InstructionVisitor() {
+            @Override
+            public void visitInstructionWithNext(InstructionWithNext instruction) {
+                instruction.setNext(getNextPosition(currentPosition));
+            }
+
+            @Override
+            public void visitJump(AbstractJumpInstruction instruction) {
+                instruction.setResolvedTarget(getJumpTarget(instruction.getTargetLabel()));
+            }
+
+            @Override
+            public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
+                instruction.setNext(getNextPosition(currentPosition));
+                List<Label> targetLabels = instruction.getTargetLabels();
+                for (Label targetLabel : targetLabels) {
+                    instruction.setResolvedTarget(targetLabel, getJumpTarget(targetLabel));
+                }
+            }
+
+            @Override
+            public void visitConditionalJump(ConditionalJumpInstruction instruction) {
+                Instruction nextInstruction = getNextPosition(currentPosition);
+                Instruction jumpTarget = getJumpTarget(instruction.getTargetLabel());
+                if (instruction.onTrue()) {
+                    instruction.setNextOnFalse(nextInstruction);
+                    instruction.setNextOnTrue(jumpTarget);
+                }
+                else {
+                    instruction.setNextOnFalse(jumpTarget);
+                    instruction.setNextOnTrue(nextInstruction);
+                }
+                visitJump(instruction);
+            }
+
+            @Override
+            public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
+                instruction.getBody().postProcess();
+                instruction.setNext(getSinkInstruction());
+            }
+
+            @Override
+            public void visitSubroutineExit(SubroutineExitInstruction instruction) {
+                // Nothing
+            }
+
+            @Override
+            public void visitSubroutineSink(SubroutineSinkInstruction instruction) {
+                // Nothing
+            }
+
+            @Override
+            public void visitInstruction(Instruction instruction) {
+                throw new UnsupportedOperationException(instruction.toString());
+            }
+        });
+    }
+
+    private Set<Instruction> collectReachableInstructions() {
+        Set<Instruction> visited = Sets.newHashSet();
+        traverseNextInstructions(getEnterInstruction(), visited);
+        if (!visited.contains(getExitInstruction())) {
+            visited.add(getExitInstruction());
+        }
+        if (!visited.contains(errorInstruction)) {
+            visited.add(errorInstruction);
+        }
+        if (!visited.contains(getSinkInstruction())) {
+            visited.add(getSinkInstruction());
+        }
+        return visited;
+    }
+    
+    private void traverseNextInstructions(Instruction instruction, Set<Instruction> visited) {
+        if (visited.contains(instruction)) return;
+        visited.add(instruction);
+        for (Instruction nextInstruction : instruction.getNextInstructions()) {
+            traverseNextInstructions(nextInstruction, visited);
+        }
     }
 
     private void markDeadInstructions() {
-        boolean hasRemovedInstruction = true;
-        Collection<Instruction> processedInstructions = Sets.newHashSet();
-        while (hasRemovedInstruction) {
-            hasRemovedInstruction = false;
-            for (Instruction instruction : mutableInstructionList) {
-                if (!(instruction instanceof SubroutineEnterInstruction || instruction instanceof SubroutineExitInstruction || instruction instanceof SubroutineSinkInstruction) &&
-                    instruction.getPreviousInstructions().isEmpty() && !processedInstructions.contains(instruction)) {
-                    hasRemovedInstruction = true;
-                    for (Instruction nextInstruction : instruction.getNextInstructions()) {
-                        nextInstruction.getPreviousInstructions().remove(instruction);
-                    }
-                    ((InstructionImpl)instruction).die();
-                    processedInstructions.add(instruction);
+        Set<Instruction> instructionSet = Sets.newHashSet(instructions);
+        for (Instruction instruction : mutableInstructionList) {
+            if (!instructionSet.contains(instruction)) {
+                ((InstructionImpl)instruction).die();
+                for (Instruction nextInstruction : instruction.getNextInstructions()) {
+                    nextInstruction.getPreviousInstructions().remove(instruction);
                 }
             }
         }
@@ -243,27 +283,43 @@ public class Pseudocode {
         Set<Instruction> allowedDeadStartInstructions = Sets.newHashSet();
         for (PseudocodeLabel allowedDeadLabel : allowedDeadLabels) {
             Instruction allowedDeadInstruction = getJumpTarget(allowedDeadLabel);
-            if (allowedDeadInstruction.getPreviousInstructions().isEmpty()) {
+            if (((InstructionImpl)allowedDeadInstruction).isDead()) {
                 allowedDeadStartInstructions.add(allowedDeadInstruction);
             }
         }
         return allowedDeadStartInstructions;
     }
+    
+    @NotNull
+    private Set<Instruction> prepareStopAllowedDeadInstructions() {
+        Set<Instruction> stopAllowedDeadInstructions = Sets.newHashSet();
+        for (PseudocodeLabel stopAllowedDeadLabel : stopAllowDeadLabels) {
+            Instruction stopAllowDeadInsruction = getJumpTarget(stopAllowedDeadLabel);
+            if (((InstructionImpl)stopAllowDeadInsruction).isDead()) {
+                stopAllowedDeadInstructions.add(stopAllowDeadInsruction);
+            }
+        }
+        return stopAllowedDeadInstructions;
+    }
 
     @NotNull
-    private Collection<Instruction> collectAllowedDeadInstructions(@NotNull Set<Instruction> allowedDeadStartInstructions) {
+    private Collection<Instruction> collectAllowedDeadInstructions() {
+        Set<Instruction> allowedDeadStartInstructions = prepareAllowedDeadInstructions();
+        Set<Instruction> stopAllowDeadInstructions = prepareStopAllowedDeadInstructions();
         Set<Instruction> allowedDeadInstructions = Sets.newHashSet();
+
         for (Instruction allowedDeadStartInstruction : allowedDeadStartInstructions) {
-            collectAllowedDeadInstructions(allowedDeadStartInstruction, allowedDeadInstructions);
+            collectAllowedDeadInstructions(allowedDeadStartInstruction, allowedDeadInstructions, stopAllowDeadInstructions);
         }
         return allowedDeadInstructions;
     }
     
-    private void collectAllowedDeadInstructions(Instruction allowedDeadInstruction, Set<Instruction> instructionSet) {
-        if (allowedDeadInstruction.isDead()) {
+    private void collectAllowedDeadInstructions(Instruction allowedDeadInstruction, Set<Instruction> instructionSet, Set<Instruction> stopAllowDeadInstructions) {
+        if (stopAllowDeadInstructions.contains(allowedDeadInstruction)) return;
+        if (((InstructionImpl)allowedDeadInstruction).isDead()) {
             instructionSet.add(allowedDeadInstruction);
             for (Instruction instruction : allowedDeadInstruction.getNextInstructions()) {
-                collectAllowedDeadInstructions(instruction, instructionSet);
+                collectAllowedDeadInstructions(instruction, instructionSet, stopAllowDeadInstructions);
             }
         }
     }

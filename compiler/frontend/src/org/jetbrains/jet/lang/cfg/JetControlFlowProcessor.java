@@ -408,6 +408,7 @@ public class JetControlFlowProcessor {
                 builder.exitTryFinally();
                 value(finallyBlock.getFinalExpression(), inCondition);
             }
+            builder.stopAllowDead();
         }
 
         @Override

@@ -74,7 +74,7 @@ l0:
     r(b)             NEXT:[jf(l2)]                 PREV:[w(i)]
     jf(l2)           NEXT:[read (Unit), ret l1]    PREV:[r(b)]
     ret l1           NEXT:[<END>]                  PREV:[jf(l2)]
-*   jmp(l3)          NEXT:[r(i)]                   PREV:[]
+-   jmp(l3)          NEXT:[r(i)]                   PREV:[]
 l2:
     read (Unit)      NEXT:[r(i)]                   PREV:[jf(l2)]
 l3:
@@ -85,7 +85,7 @@ l3:
     r(i is Int)      NEXT:[jf(l4)]                 PREV:[r(i)]
     jf(l4)           NEXT:[read (Unit), ret l1]    PREV:[r(i is Int)]
     ret l1           NEXT:[<END>]                  PREV:[jf(l4)]
-*   jmp(l5)          NEXT:[<END>]                  PREV:[]
+-   jmp(l5)          NEXT:[<END>]                  PREV:[]
 l4:
     read (Unit)      NEXT:[<END>]                  PREV:[jf(l4)]
 l1:

@@ -190,7 +190,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             bindLabel(getExitPoint(subroutine));
             pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
             bindLabel(error);
-            add(new SubroutineExitInstruction(subroutine, "<ERROR>"));
+            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, "<ERROR>"));
             bindLabel(sink);
             pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
             elementToBlockInfo.remove(subroutine);
@@ -264,6 +264,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             Label allowedDeadLabel = createUnboundLabel();
             bindLabel(allowedDeadLabel);
             pseudocode.allowDead(allowedDeadLabel);
+        }
+
+        @Override
+        public void stopAllowDead() {
+            Label allowedDeadLabel = createUnboundLabel();
+            bindLabel(allowedDeadLabel);
+            pseudocode.stopAllowDead(allowedDeadLabel);
         }
 
         @Override

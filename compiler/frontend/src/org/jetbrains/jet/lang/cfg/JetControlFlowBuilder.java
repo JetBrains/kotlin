@@ -19,6 +19,7 @@ public interface JetControlFlowBuilder {
 
     void bindLabel(@NotNull Label label);
     void allowDead();
+    void stopAllowDead();
 
     // Jumps
     void jump(@NotNull Label label);

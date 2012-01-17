@@ -44,6 +44,12 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
+    public void stopAllowDead() {
+        assert builder != null;
+        builder.stopAllowDead();
+    }
+
+    @Override
     public void jump(@NotNull Label label) {
         assert builder != null;
         builder.jump(label);

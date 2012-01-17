@@ -128,7 +128,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             //check edges directions
             Collection<Instruction> instructions = pseudocode.getMutableInstructionList();
             for (Instruction instruction : instructions) {
-                if (!instruction.isDead()) {
+                if (!((InstructionImpl)instruction).isDead()) {
                     for (Instruction nextInstruction : instruction.getNextInstructions()) {
                         assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
                                    nextInstruction.getPreviousInstructions().contains(instruction));
@@ -176,7 +176,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
         String[] parts = instruction.toString().split("\n");
         boolean isRemovedThroughPostProcess = !remainedAfterPostProcessInstructions.contains(instruction);
-        String prefix = isRemovedThroughPostProcess ? "R   " : instruction.isDead() ? "*   " : "    ";
+        String prefix = isRemovedThroughPostProcess ? "-   " : ((InstructionImpl)instruction).isDead() ? "*   " : "    ";
         if (parts.length == 1) {
             return prefix + String.format("%1$-" + maxLength + "s", instruction);
         }
