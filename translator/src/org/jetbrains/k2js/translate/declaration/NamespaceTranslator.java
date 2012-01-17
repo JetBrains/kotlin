@@ -16,6 +16,7 @@ import java.util.List;
  * @author Pavel.Talanov
  */
 //TODO: rework translator to translate everything in the namespace not only in one file
+// TEST IT
 public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
@@ -66,8 +67,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
         addMemberDeclarations(namespaceDeclaration);
         addClassesDeclarations(namespaceDeclaration);
-        return AstUtil.newAssignmentStatement
-                (namespaceName.makeRef(), namespaceDeclaration);
+        return AstUtil.newVar(namespaceName, namespaceDeclaration);
     }
 
     private void addClassesDeclarations(@NotNull JsInvocation namespaceDeclaration) {

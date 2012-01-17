@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
@@ -16,7 +17,6 @@ import org.jetbrains.k2js.translate.operation.IncrementTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
-import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
@@ -247,29 +247,23 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expression.getSelectorExpression() instanceof JetCallExpression) {
             return CallTranslator.translate(expression, context);
         }
-        return translateQualifiedExpression(expression, context);
-    }
-
-    @NotNull
-    private JsExpression translateQualifiedExpression(@NotNull JetQualifiedExpression expression,
-                                                      @NotNull TranslationContext context) {
-        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
-            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, context);
-        }
-        return translateAsQualifiedAccess(expression, context);
-    }
-
-    @NotNull
-    private JsExpression translateAsQualifiedAccess(@NotNull JetQualifiedExpression expression,
-                                                    @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
         JsExpression selector = translateSelector(expression, context);
-        assert (selector instanceof JsNameRef || selector instanceof JsInvocation)
+        return composeQualifiedExpression(receiver, selector);
+    }
+
+    @NotNull
+    private JsExpression composeQualifiedExpression(@NotNull JsExpression receiver, @NotNull JsExpression selector) {
+        //TODO: make sure that logic would not break for binary operation. check if there is a way to provide clearer logic
+        assert (selector instanceof JsNameRef || selector instanceof JsInvocation || selector instanceof JsBinaryOperation)
                 : "Selector should be a name reference or a method invocation in dot qualified expression.";
         if (selector instanceof JsInvocation) {
             return translateAsQualifiedInvocation(receiver, (JsInvocation) selector);
-        } else {
+        } else if (selector instanceof JsNameRef) {
             return translateAsQualifiedNameReference(receiver, (JsNameRef) selector);
+        } else {
+            ((JsBinaryOperation) selector).setArg1(receiver);
+            return selector;
         }
     }
 
@@ -327,11 +321,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression,
                                                @NotNull TranslationContext context) {
-        JsExpression receiver = translateReceiver(expression, context);
+        TemporaryVariable receiver = context.declareTemporary(translateReceiver(expression, context));
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JsExpression thenExpression = translateQualifiedExpression(expression, context);
-        return new JsConditional(notNullCheck(context, receiver),
-                thenExpression, nullLiteral);
+        JsExpression selector = translateSelector(expression, context);
+        JsExpression thenExpression = composeQualifiedExpression(receiver.nameReference(), selector);
+        JsConditional callMethodIfNotNullConditional
+                = new JsConditional(notNullCheck(context, receiver.nameReference()), thenExpression, nullLiteral);
+        return AstUtil.newSequence(receiver.assignmentExpression(), callMethodIfNotNullConditional);
     }
 
     @Override

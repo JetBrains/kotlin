@@ -37,7 +37,6 @@ public final class ForTranslator extends AbstractTranslator {
         this.expression = forExpression;
     }
 
-
     @NotNull
     private JsBlock translate() {
         JsName parameterName = declareParameter();
@@ -55,9 +54,13 @@ public final class ForTranslator extends AbstractTranslator {
 
     @NotNull
     private JsBlock generateCycleBody(@NotNull JsName parameterName, @NotNull TemporaryVariable iterator) {
-        JsStatement parameterAssignment = AstUtil.newAssignmentStatement(parameterName.makeRef(), nextMethodInvocation(iterator));
-        JsNode originalBody = Translation.translateExpression(getLoopBody(expression), context());
-        return AstUtil.newBlock(parameterAssignment, AstUtil.convertToBlock(originalBody));
+        JsBlock cycleBody = new JsBlock();
+        JsStatement parameterAssignment =
+                AstUtil.newVar(parameterName, nextMethodInvocation(iterator));
+        JsNode originalBody = Translation.translateExpression(getLoopBody(expression), context().innerBlock(cycleBody));
+        cycleBody.addStatement(parameterAssignment);
+        cycleBody.addStatement(AstUtil.convertToBlock(originalBody));
+        return cycleBody;
     }
 
     @NotNull

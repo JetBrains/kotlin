@@ -61,7 +61,7 @@ fun main(args:Array<String>)
     v.view(it, {(itemLifetime, item)->
       x.add(item)
       Dump(x)          
-      itemLifetime.attach { x.remove(item); Dump(x) }
+      itemLifetime.attach { x.remove(item as Any); Dump(x) }
     })
   })
 }
