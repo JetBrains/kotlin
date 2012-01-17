@@ -165,15 +165,8 @@ fun print(message : Any?) {
 
 val <T> Array<T>.isEmpty : Boolean get() = size == 0
 
-fun String.split(s : String)  = (this as java.lang.String).split(s)
-
-val String.size : Int
-  get() = length
-
 fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
   for (elem in this)
     result.add(elem)
   return result
 }
-
-fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())

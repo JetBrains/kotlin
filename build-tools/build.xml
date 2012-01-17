@@ -1,6 +1,7 @@
 <project name="build-tools" default="buildToolsJar">
 
     <property name="tests-dir"   location="${output}/ant-test/build-tools-test"/>
+    <property name="tests-jar"   location="${tests-dir}/out.jar"/>
     <property name="kotlin-home" location="${output}/ant-test/kotlin-home"/>
 
 
@@ -42,21 +43,45 @@
     </macrodef>
 
 
-    <!-- Runs <kotlinc> task specifying either "srcdir" or "file" attribute -->
-    <macrodef name="run-kotlinc">
+    <!-- Runs <kotlinc> in test directory -->
+    <macrodef name="kotlinc-dir">
         <attribute name="file"   default=""/>
         <attribute name="srcdir" default=""/>
         <sequential>
 
-            <delete dir = "${tests-dir}" includes = "**/*"/>
+            <delete dir = "${tests-dir}"/>
+            <mkdir  dir = "${tests-dir}"/>
 
             <if>
                 <equals arg1="@{file}" arg2=""/>
                 <then>
-                    <kotlinc  destdir = "${tests-dir}" srcdir = "@{srcdir}"/>
+                    <kotlinc srcdir = "@{srcdir}" destdir = "${tests-dir}" />
                 </then>
                 <else>
-                    <kotlinc  destdir = "${tests-dir}" file   = "@{file}"/>
+                    <kotlinc file   = "@{file}"   destdir = "${tests-dir}" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Runs <kotlinc> with test jar -->
+    <macrodef name="kotlinc-jar">
+        <attribute name="file"    default=""/>
+        <attribute name="srcdir"  default=""/>
+        <sequential>
+
+            <delete dir  = "${tests-dir}"/>
+            <mkdir  dir  = "${tests-dir}"/>
+            <delete file = "${tests-jar}"/>
+
+            <if>
+                <equals arg1="@{file}" arg2=""/>
+                <then>
+                    <kotlinc srcdir = "@{srcdir}" destjar = "${tests-jar}"/>
+                </then>
+                <else>
+                    <kotlinc file   = "@{file}"   destjar = "${tests-jar}"/>
                 </else>
             </if>
         </sequential>
@@ -68,23 +93,41 @@
         <attribute name="out"/>
         <attribute name="classname" default="namespace"/>
         <attribute name="args"      default=""/>
-        <attribute name="equals"    default="true"/> <!-- Whether strict equality of output to @{out} required -->
+        <attribute name="equals"    default="true"/>  <!-- Whether strict equality of output to @{out} required -->
+        <attribute name="run-jar"   default="false"/> <!-- Whether to run compiled classes or a jar file -->
         <sequential>
             <var name = "java-out" unset = "true"/>
-            <java outputproperty = "java-out"
-                  classname      = "@{classname}"
-                  failonerror    = "true">
-                <classpath>
-                    <pathelement path = "${tests-dir}"/>
-                    <fileset     dir  = "${kotlin-home}/lib" includes = "*.jar"/>
-                </classpath>
-                <arg line = "@{args}"/>
-            </java>
+
+            <if>
+                <istrue value="@{run-jar}"/>
+                <then>
+                    <java outputproperty = "java-out"
+                          classname      = "@{classname}"
+                          failonerror    = "true">
+                        <classpath>
+                            <pathelement path = "${tests-jar}"/>
+                        </classpath>
+                        <arg line = "@{args}"/>
+                    </java>
+                </then>
+                <else>
+                    <java outputproperty = "java-out"
+                          classname      = "@{classname}"
+                          failonerror    = "true">
+                        <classpath>
+                            <pathelement path = "${tests-dir}"/>
+                            <fileset     file = "${kotlin-home}/lib/kotlin-runtime.jar"/>
+                        </classpath>
+                        <arg line = "@{args}"/>
+                    </java>
+                </else>
+            </if>
+
             <if>
                 <or>
-                    <equals arg1="${java-out}" arg2="@{out}" forcestring="true"/>
+                    <equals arg1="${java-out}" arg2="@{out}"/>
                     <and>
-                        <equals arg1="@{equals}"  arg2="false"/>
+                        <isfalse  value="@{equals}"/>
                         <contains string="${java-out}" substring="@{out}"/>
                     </and>
                 </or>
@@ -105,10 +148,15 @@
         <attribute name="args" default=""/>
         <attribute name="out"/>
         <sequential>
-            <run-kotlinc file   = "@{root}/Hello.kt"/>
+            <kotlinc-dir file   = "@{root}/Hello.kt"/>
             <run-java    args   = "@{args}" out = "@{out}"/>
-            <run-kotlinc srcdir = "@{root}"/>
+            <kotlinc-dir srcdir = "@{root}"/>
             <run-java    args   = "@{args}" out = "@{out}"/>
+
+            <kotlinc-jar file   = "@{root}/Hello.kt"/>
+            <run-java    args   = "@{args}" out = "@{out}" run-jar="true"/>
+            <kotlinc-jar srcdir = "@{root}"/>
+            <run-java    args   = "@{args}" out = "@{out}" run-jar="true"/>
         </sequential>
     </macrodef>
 
@@ -129,11 +177,19 @@
     <!-- Compiles, runs and verifies the output of web demo longer examples -->
     <macrodef name="longer-examples-tests">
         <sequential>
-            <run-kotlinc srcdir = "${basedir}/build-tools/test/longer-examples" />
-            <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer." />
-            <run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>
-            <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
+            <kotlinc-dir srcdir = "${basedir}/build-tools/test/longer-examples"/>
+
+            <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>
+            <!--<run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>-->
+            <!--<run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>-->
             <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+
+            <kotlinc-jar srcdir = "${basedir}/build-tools/test/longer-examples"/>
+
+            <run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>
+            <!--<run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>-->
+            <!--<run-java classname = "life.namespace"    equals="false" run-jar="true" out="***  ** **  ***"/>-->
+            <run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
         </sequential>
     </macrodef>
 
@@ -145,16 +201,35 @@
             <trycatch property="error-message" reference="bar">
                 <try>
                     <!-- Should fail -->
-                    <run-kotlinc srcdir = "${basedir}/build-tools/test/compilation-fail"/>
+                    <kotlinc-dir srcdir = "${basedir}/build-tools/test/compilation-fail"/>
                 </try>
                 <catch>
                     <var name="failed" value="true"/>
+                    <echo>ERROR: was expected here</echo>
                 </catch>
             </trycatch>
             <if>
                 <isfalse value="${failed}"/>
                 <then>
-                    <fail message="Compilation should have failed!"/>
+                    <fail message="kotlinc-dir: compilation should have failed!"/>
+                </then>
+            </if>
+
+            <var name="failed" value="false"/>
+            <trycatch property="error-message" reference="bar">
+                <try>
+                    <!-- Should fail -->
+                    <kotlinc-jar srcdir = "${basedir}/build-tools/test/compilation-fail"/>
+                </try>
+                <catch>
+                    <var name="failed" value="true"/>
+                    <echo>ERROR: was expected here</echo>
+                </catch>
+            </trycatch>
+            <if>
+                <isfalse value="${failed}"/>
+                <then>
+                    <fail message="kotlinc-jar: compilation should have failed!"/>
                 </then>
             </if>
         </sequential>

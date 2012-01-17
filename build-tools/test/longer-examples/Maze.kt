@@ -210,16 +210,11 @@ fun makeMaze(s : String) : Maze {
 // An excerpt from the Standard Library
 val String?.indices : IntRange get() = IntRange(0, this.sure().size)
 
-val String.size : Int
-  get() = length
-
 fun <K, V> Map<K, V>.set(k : K, v : V) { put(k, v) }
 
 fun comparator<T> (f : (T, T) -> Int) : Comparator<T> = object : Comparator<T> {
     override fun compare(o1 : T, o2 : T) : Int = f(o1, o2)
 }
-
-fun String.split(s : String)  = (this as java.lang.String).split(s)
 
 fun println(message : Any?) {
     System.out?.println(message)
@@ -234,5 +229,3 @@ fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
     result.add(elem)
   return result
 }
-
-fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())

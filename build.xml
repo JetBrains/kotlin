@@ -84,7 +84,7 @@
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
             <zipfileset prefix="kotlinc/license" dir="${basedir}/license"/>
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}"/>
+            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}" excludes="ant/**"/>
             <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
             <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
             <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>
