@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Stepan Koltsov
  */
-public class PsiMemberWrapper {
+public abstract class PsiMemberWrapper {
 
     @NotNull
     protected final PsiMember psiMember;

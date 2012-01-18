@@ -54,11 +54,8 @@ class JavaDescriptorResolverHelper {
 
                     NamedMembers namedMembers = getNamedMembers(field.getName());
 
-                    MembersForProperty members = new MembersForProperty();
-                    members.field = field;
-                    members.type = new TypeSource("", field.getType());
-
-                    namedMembers.properties = members;
+                    TypeSource type = new TypeSource("", field.getType());
+                    namedMembers.addPropertyAccessor(new PropertyAccessorData(field, type, null));
                 }
             }
         }
@@ -110,12 +107,11 @@ class JavaDescriptorResolverHelper {
 
                         String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
                         NamedMembers members = getNamedMembers(propertyName);
-                        members.getForProperty().getter = method;
 
-                        // TODO: check conflicts with setter
                         // TODO: what if returnType == null?
-                        members.getForProperty().type = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType());
-                        members.getForProperty().receiverType = receiverType;
+                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType());
+
+                        members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
                     }
                 } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
 
@@ -147,11 +143,8 @@ class JavaDescriptorResolverHelper {
 
                         String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
                         NamedMembers members = getNamedMembers(propertyName);
-                        members.getForProperty().setter = method;
 
-                        // TODO: check conflicts with getter
-                        members.getForProperty().type = propertyType;
-                        members.getForProperty().receiverType = receiverType;
+                        members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
                     }
                 }
                 

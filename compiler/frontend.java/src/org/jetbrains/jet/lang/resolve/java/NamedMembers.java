@@ -17,25 +17,29 @@ import java.util.Set;
 class NamedMembers {
     String name;
     List<PsiMethodWrapper> methods;
+
     @Nullable
-    MembersForProperty properties;
+    PsiFieldWrapper field;
+    @Nullable
+    List<PropertyAccessorData> propertyAccessors;
+
     @Nullable
     private PsiClass nestedClasses;
     
     Set<VariableDescriptor> propertyDescriptors;
     Set<FunctionDescriptor> functionDescriptors;
 
-    MembersForProperty getForProperty() {
-        if (properties == null) {
-            properties = new MembersForProperty();
-        }
-        return properties;
-    }
-    
     void addMethod(PsiMethodWrapper method) {
         if (methods == null) {
             methods = new ArrayList<PsiMethodWrapper>();
         }
         methods.add(method);
+    }
+    
+    void addPropertyAccessor(PropertyAccessorData propertyAccessorData) {
+        if (propertyAccessors == null) {
+            propertyAccessors = new ArrayList<PropertyAccessorData>();
+        }
+        propertyAccessors.add(propertyAccessorData);
     }
 }

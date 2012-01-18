@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
@@ -37,6 +38,15 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private List<TypeParameterDescriptor> typeParemeters;
     private PropertyGetterDescriptor getter;
     private PropertySetterDescriptor setter;
+    
+    private PropertyDescriptor() {
+        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "dummy");
+        this.modality = null;
+        this.visibility = null;
+        this.isVar = false;
+        this.isObject = false;
+        this.original = null;
+    }
 
     private PropertyDescriptor(
             @Nullable PropertyDescriptor original,
@@ -242,5 +252,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         }
         propertyDescriptor.initialize(newGetter, newSetter);
         return propertyDescriptor;
+    }
+    
+    public static PropertyDescriptor createDummy() {
+        return new PropertyDescriptor();
     }
 }
