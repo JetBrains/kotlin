@@ -23,7 +23,7 @@ JetFile: CallsInWhen.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -38,7 +38,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -57,7 +57,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -81,7 +81,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -111,7 +111,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -146,7 +146,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -166,7 +166,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -189,7 +189,7 @@ JetFile: CallsInWhen.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION

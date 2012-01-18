@@ -762,7 +762,7 @@ JetFile: When.jet
             PsiElement(IDENTIFIER)('Bar')
         PsiWhiteSpace(' ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               PsiErrorElement:Expecting an expression, is-condition or in-condition
                 <empty list>
@@ -1086,13 +1086,13 @@ JetFile: When.jet
             PsiElement(IDENTIFIER)('c')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -1102,13 +1102,13 @@ JetFile: When.jet
                   PsiElement(RPAR)(')')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               BINARY_EXPRESSION
                 INTEGER_CONSTANT
@@ -1228,7 +1228,7 @@ JetFile: When.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('3')
@@ -1242,7 +1242,7 @@ JetFile: When.jet
               PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -1263,7 +1263,7 @@ JetFile: When.jet
               PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -1276,7 +1276,7 @@ JetFile: When.jet
                   PsiElement(IDENTIFIER)('i')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -1297,7 +1297,7 @@ JetFile: When.jet
               PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               BINARY_WITH_PATTERN
                 REFERENCE_EXPRESSION

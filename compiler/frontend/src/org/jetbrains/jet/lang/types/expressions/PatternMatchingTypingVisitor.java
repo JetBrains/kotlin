@@ -38,7 +38,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetPattern pattern = expression.getPattern();
         if (pattern != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in 'is'");
-            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, scopeToExtend, context, DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext()));
+            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, false, scopeToExtend, context, DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext()));
             context.patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
             context.patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
         }
@@ -56,7 +56,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         final JetExpression subjectExpression = expression.getSubjectExpression();
 
         final JetType subjectType = subjectExpression != null ? context.getServices().safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE) : ErrorUtils.createErrorType("Unknown type");
-        final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : null;
+        final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
 
@@ -70,14 +70,14 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 newDataFlowInfo = context.dataFlowInfo;
                 JetWhenCondition condition = conditions[0];
                 if (condition != null) {
-                    newDataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, scopeToExtend, context, variableDescriptor);
+                    newDataFlowInfo = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition, scopeToExtend, context, variableDescriptor);
                 }
             }
             else {
                 scopeToExtend = newWritableScopeImpl(context); // We don't write to this scope
                 newDataFlowInfo = null;
                 for (JetWhenCondition condition : conditions) {
-                    DataFlowInfo dataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, newWritableScopeImpl(context), context, variableDescriptor);
+                    DataFlowInfo dataFlowInfo = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition, newWritableScopeImpl(context), context, variableDescriptor);
                     if (newDataFlowInfo == null) {
                         newDataFlowInfo = dataFlowInfo;
                     }
@@ -113,47 +113,59 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
+    private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final boolean expectedCondition, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
         final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{context.dataFlowInfo};
         condition.accept(new JetVisitorVoid() {
 
             @Override
             public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
                 JetExpression rangeExpression = condition.getRangeExpression();
-                if (rangeExpression != null) {
-                    assert subjectExpression != null;
-                    facade.checkInExpression(condition, condition.getOperationReference(), subjectExpression, rangeExpression, context);
+                if (rangeExpression == null) return;
+                if (expectedCondition) {
+                    context.trace.report(EXPECTED_CONDITION.on(condition));
+                    facade.getType(rangeExpression, context);
+                    return;
                 }
+                facade.checkInExpression(condition, condition.getOperationReference(), subjectExpression, rangeExpression, context);
             }
 
             @Override
             public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
                 JetPattern pattern = condition.getPattern();
+                if (expectedCondition) {
+                    context.trace.report(EXPECTED_CONDITION.on(condition));
+                }
                 if (pattern != null) {
-                    newDataFlowInfo[0] = checkPatternType(pattern, subjectType, scopeToExtend, context, subjectVariables);
+                    newDataFlowInfo[0] = checkPatternType(pattern, subjectType, subjectExpression == null, scopeToExtend, context, subjectVariables);
+                }
+            }
+
+            @Override
+            public void visitWhenConditionExpression(JetWhenConditionWithExpression condition) {
+                JetPattern pattern = condition.getPattern();
+                if (pattern != null) {
+                    newDataFlowInfo[0] = checkPatternType(pattern, subjectType, subjectExpression == null, scopeToExtend, context, subjectVariables);
                 }
             }
 
             @Override
             public void visitJetElement(JetElement element) {
-//                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [OperatorConventions] : " + element);
                 context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             }
         });
         return newDataFlowInfo[0];
     }
 
-    private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, @NotNull final WritableScope scopeToExtend, final ExpressionTypingContext context, @NotNull final DataFlowValue... subjectVariables) {
+    private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, final boolean conditionExpected, @NotNull final WritableScope scopeToExtend, final ExpressionTypingContext context, @NotNull final DataFlowValue... subjectVariables) {
         final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(context.dataFlowInfo);
         pattern.accept(new JetVisitorVoid() {
             @Override
             public void visitTypePattern(JetTypePattern typePattern) {
                 JetTypeReference typeReference = typePattern.getTypeReference();
-                if (typeReference != null) {
-                    JetType type = context.getTypeResolver().resolveType(context.scope, typeReference);
-                    checkTypeCompatibility(type, subjectType, typePattern);
-                    result.set(context.dataFlowInfo.establishSubtyping(subjectVariables, type));
-                }
+                if (typeReference == null) return;
+                JetType type = context.getTypeResolver().resolveType(context.scope, typeReference);
+                checkTypeCompatibility(type, subjectType, typePattern);
+                result.set(context.dataFlowInfo.establishSubtyping(subjectVariables, type));
             }
 
             @Override
@@ -162,25 +174,23 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 TypeConstructor typeConstructor = subjectType.getConstructor();
                 if (!JetStandardClasses.getTuple(entries.size()).getTypeConstructor().equals(typeConstructor)
                     || typeConstructor.getParameters().size() != entries.size()) {
-//                        context.trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern is of type Tuple" + entries.size());
                     context.trace.report(TYPE_MISMATCH_IN_TUPLE_PATTERN.on(pattern, subjectType, entries.size()));
+                    return;
                 }
-                else {
-                    for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
-                        JetTuplePatternEntry entry = entries.get(i);
-                        JetType type = subjectType.getArguments().get(i).getType();
+                for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
+                    JetTuplePatternEntry entry = entries.get(i);
+                    JetType type = subjectType.getArguments().get(i).getType();
 
-                        // TODO : is a name always allowed, ie for tuple patterns, not decomposer arg lists?
-                        ASTNode nameLabelNode = entry.getNameLabelNode();
-                        if (nameLabelNode != null) {
+                    // TODO : is a name always allowed, ie for tuple patterns, not decomposer arg lists?
+                    ASTNode nameLabelNode = entry.getNameLabelNode();
+                    if (nameLabelNode != null) {
 //                                context.trace.getErrorHandler().genericError(nameLabelNode, "Unsupported [OperatorConventions]");
-                            context.trace.report(UNSUPPORTED.on(nameLabelNode, getClass().getCanonicalName()));
-                        }
+                        context.trace.report(UNSUPPORTED.on(nameLabelNode, getClass().getCanonicalName()));
+                    }
 
-                        JetPattern entryPattern = entry.getPattern();
-                        if (entryPattern != null) {
-                            result.set(result.get().and(checkPatternType(entryPattern, type, scopeToExtend, context)));
-                        }
+                    JetPattern entryPattern = entry.getPattern();
+                    if (entryPattern != null) {
+                        result.set(result.get().and(checkPatternType(entryPattern, type, false, scopeToExtend, context)));
                     }
                 }
             }
@@ -194,7 +204,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
                     result.set(checkPatternType(pattern.getArgumentList(), selectorReturnType == null
                                                                            ? ErrorUtils.createErrorType("No type")
-                                                                           : selectorReturnType, scopeToExtend, context));
+                                                                           : selectorReturnType, false, scopeToExtend, context));
                 }
             }
 
@@ -206,10 +216,16 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void visitExpressionPattern(JetExpressionPattern pattern) {
                 JetExpression expression = pattern.getExpression();
-                if (expression != null) {
-                    JetType type = facade.getType(expression, context.replaceScope(scopeToExtend));
-                    checkTypeCompatibility(type, subjectType, pattern);
+                if (expression == null) return;
+                JetType type = facade.getType(expression, context.replaceScope(scopeToExtend));
+                if (conditionExpected) {
+                    JetType booleanType = context.semanticServices.getStandardLibrary().getBooleanType();
+                    if (type != null && !context.semanticServices.getTypeChecker().equalTypes(booleanType, type)) {
+                        context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(pattern, type));
+                    }
+                    return;
                 }
+                checkTypeCompatibility(type, subjectType, pattern);
             }
 
             @Override
@@ -221,7 +237,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 scopeToExtend.addVariableDescriptor(variableDescriptor);
                 if (propertyTypeRef != null) {
                     if (!context.semanticServices.getTypeChecker().isSubtypeOf(subjectType, type)) {
-//                            context.trace.getErrorHandler().genericError(propertyTypeRef.getNode(), type + " must be a supertype of " + subjectType + ". Use 'is' to match against " + type);
                         context.trace.report(TYPE_MISMATCH_IN_BINDING_PATTERN.on(propertyTypeRef, type, subjectType));
                     }
                 }
@@ -232,7 +247,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     DataFlowValue[] newSubjectVariables = new DataFlowValue[oldLength + 1];
                     System.arraycopy(subjectVariables, 0, newSubjectVariables, 0, oldLength);
                     newSubjectVariables[oldLength] = DataFlowValueFactory.INSTANCE.createDataFlowValue(variableDescriptor);
-                    result.set(checkWhenCondition(null, subjectType, condition, scopeToExtend, context, newSubjectVariables));
+                    result.set(checkWhenCondition(null, false, subjectType, condition, scopeToExtend, context, newSubjectVariables));
                 }
             }
 
@@ -245,7 +260,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     return;
                 }
                 if (TypeUtils.intersect(context.semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
-//                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
                     context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
                     return;
                 }
@@ -257,7 +271,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
             @Override
             public void visitJetElement(JetElement element) {
-//                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [OperatorConventions]");
                 context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             }
         });

@@ -309,7 +309,7 @@ JetFile: NewlinesInParentheses.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION

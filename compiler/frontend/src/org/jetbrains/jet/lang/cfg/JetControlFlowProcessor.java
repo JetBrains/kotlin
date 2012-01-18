@@ -82,6 +82,14 @@ public class JetControlFlowProcessor {
             }
 
             @Override
+            public void visitWhenConditionExpression(JetWhenConditionWithExpression condition) {
+                JetExpressionPattern pattern = condition.getPattern();
+                if (pattern != null) {
+                    pattern.accept(patternVisitor);
+                }
+            }
+
+            @Override
             public void visitJetElement(JetElement element) {
                 throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
             }

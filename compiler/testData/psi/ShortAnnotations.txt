@@ -1068,7 +1068,7 @@ JetFile: ShortAnnotations.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')

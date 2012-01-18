@@ -14,7 +14,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -2753,7 +2752,6 @@ If finally block is present, its last expression is the value of try expression.
     }
 
     private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition, @Nullable Label nextEntry) {
-        StackValue conditionValue;
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
             JetExpression rangeExpression = conditionInRange.getRangeExpression();
@@ -2768,16 +2766,22 @@ If finally block is present, its last expression is the value of try expression.
             }
             return StackValue.onStack(Type.BOOLEAN_TYPE);
         }
-        else if (condition instanceof JetWhenConditionIsPattern) {
+        JetPattern pattern;
+        boolean isNegated;
+        if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
-            JetPattern pattern = patternCondition.getPattern();
-            conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
-                                                  subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType), nextEntry);
+            pattern = patternCondition.getPattern();
+            isNegated = patternCondition.isNegated();
+        }
+        else if (condition instanceof JetWhenConditionWithExpression) {
+            pattern = ((JetWhenConditionWithExpression) condition).getPattern();
+            isNegated = false;
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
-        return conditionValue;
+        return generatePatternMatch(pattern, isNegated,
+                                    subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType), nextEntry);
     }
 
     private boolean isIntRangeExpr(JetExpression rangeExpression) {

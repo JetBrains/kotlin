@@ -81,7 +81,7 @@ JetFile: When_ERR.jet
             PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               PsiErrorElement:Expecting an expression, is-condition or in-condition
                 <empty list>
@@ -163,7 +163,7 @@ JetFile: When_ERR.jet
         PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
             EXPRESSION_PATTERN
               PsiErrorElement:Expecting an expression, is-condition or in-condition
                 <empty list>

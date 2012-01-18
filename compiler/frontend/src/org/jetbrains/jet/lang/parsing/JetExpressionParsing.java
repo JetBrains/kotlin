@@ -844,7 +844,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseExpression();
             }
             expressionPattern.done(EXPRESSION_PATTERN);
-            condition.done(WHEN_CONDITION_IS_PATTERN);
+            condition.done(WHEN_CONDITION_EXPRESSION);
         }
         myBuilder.restoreNewlinesState();
     }
