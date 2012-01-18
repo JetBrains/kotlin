@@ -67,6 +67,31 @@ public class Converter {
   }
 
   @NotNull
+  public static String elementToKotlin(@NotNull PsiElement element) {
+    if (element instanceof PsiJavaFile)
+      return fileToFile((PsiJavaFile) element).toKotlin();
+
+    if (element instanceof PsiClass)
+      return classToClass((PsiClass) element).toKotlin();
+
+    if (element instanceof PsiMethod)
+      return methodToFunction((PsiMethod) element).toKotlin();
+
+    if (element instanceof PsiField) {
+      PsiField field = (PsiField) element;
+      return fieldToField(field, field.getContainingClass()).toKotlin();
+    }
+
+    if (element instanceof PsiStatement)
+      return statementToStatement((PsiStatement) element).toKotlin();
+
+    if (element instanceof PsiExpression)
+      return expressionToExpression((PsiExpression) element).toKotlin();
+
+    return "";
+  }
+
+  @NotNull
   public static File fileToFile(@NotNull PsiJavaFile javaFile) {
     return fileToFile(javaFile, Collections.<String>emptyList());
   }
@@ -324,6 +349,11 @@ public class Converter {
       if (s != Statement.EMPTY_STATEMENT && s != Expression.EMPTY_EXPRESSION)
         result.add(s);
     return result;
+  }
+
+  @NotNull
+  private static Function methodToFunction(@NotNull PsiMethod method) {
+    return methodToFunction(method, true);
   }
 
   @NotNull

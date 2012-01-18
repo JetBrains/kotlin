@@ -101,7 +101,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
   private static String generateKotlinCode(@Nullable PsiFile file) {
     if (file != null && file instanceof PsiJavaFile) {
       JavaToKotlinTranslator.setClassIdentifiers(file);
-      return prettify(Converter.fileToFile((PsiJavaFile) file).toKotlin());
+      return prettify(Converter.elementToKotlin(file));
     }
     return "";
   }
