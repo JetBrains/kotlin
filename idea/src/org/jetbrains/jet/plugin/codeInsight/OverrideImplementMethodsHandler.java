@@ -104,12 +104,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (!returnType.equals(stdlib.getTuple0Type())) {
             bodyBuilder.append(": ").append(returnType.toString());
         }
-        bodyBuilder.append("{");
+
         final String initializer = defaultInitializer(returnType, stdlib);
         if (initializer != null) {
-            bodyBuilder.append("return " ).append(initializer);
+            bodyBuilder.append(" = ").append(initializer);
         }
-        bodyBuilder.append("}");
+        else {
+            bodyBuilder.append("{").append("throw UnsupportedOperationException()").append("}");
+        }
+
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());
     }
 
