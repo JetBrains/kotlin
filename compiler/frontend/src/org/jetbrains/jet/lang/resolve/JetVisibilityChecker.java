@@ -12,7 +12,7 @@ public class JetVisibilityChecker {
      * @param subject the descriptor whose visibility is being checked
      * @return <code>true</code> iff subject is visible locationOwner
      */
-    public boolean isVisible(@NotNull DeclarationDescriptor locationOwner, @NotNull DeclarationDescriptor subject) {
+    public static boolean isVisible(@NotNull DeclarationDescriptor locationOwner, @NotNull DeclarationDescriptor subject) {
         // TODO : stub implementation
         return true;
     }

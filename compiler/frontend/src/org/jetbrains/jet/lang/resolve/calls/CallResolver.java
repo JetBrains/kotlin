@@ -241,6 +241,7 @@ public class CallResolver {
 
         ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
         trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, call.getCallElement(), debugInfo);
+        trace.record(RESOLUTION_SCOPE, call.getCalleeExpression(), scope);
 
         debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
 

@@ -23,6 +23,35 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         super(node);
     }
 
+    /**
+     * null if it's not a code expression
+     * @return receiver expression
+     */
+    @Nullable
+    public JetExpression getReceiverExpression() {
+        PsiElement parent = getParent();
+        if (parent instanceof JetQualifiedExpression && !isImportDirectiveExpression()) {
+            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
+            return qualifiedExpression.getReceiverExpression();
+        } else if (parent instanceof JetCallExpression) {
+            //This is in case `a().b()`
+            JetCallExpression callExpression = (JetCallExpression) parent;
+            parent = callExpression.getParent();
+            if (parent instanceof JetQualifiedExpression) {
+                JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
+                return qualifiedExpression.getReceiverExpression();
+            }
+        }
+        return null;
+    }
+
+    public boolean isImportDirectiveExpression() {
+        PsiElement parent = getParent();
+        if (parent == null) return false;
+        else return parent instanceof JetImportDirective ||
+                    parent.getParent() instanceof JetImportDirective;
+    }
+
     @Nullable @IfNotParsed
     public String getReferencedName() {
         PsiElement referencedNameElement = getReferencedNameElement();
