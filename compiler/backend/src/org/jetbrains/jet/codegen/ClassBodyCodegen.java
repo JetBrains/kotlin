@@ -73,6 +73,9 @@ public abstract class ClassBodyCodegen {
         else if (declaration instanceof JetNamedFunction) {
             try {
                 genNamedFunction((JetNamedFunction) declaration, functionCodegen);
+            }
+            catch(CompilationException e) {
+                throw e;
             } catch (RuntimeException e) {
                 throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context, e);
             }
