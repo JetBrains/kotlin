@@ -1,15 +1,15 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 /**
 * @author abreslav
 */
 public class ReadValueInstruction extends InstructionWithNext {
 
-    public ReadValueInstruction(@NotNull JetExpression expression) {
-        super(expression);
+    public ReadValueInstruction(@NotNull JetElement element) {
+        super(element);
     }
 
     @Override

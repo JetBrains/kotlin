@@ -13,9 +13,9 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     protected @Nullable JetControlFlowBuilder builder;
 
     @Override
-    public void read(@NotNull JetExpression expression) {
+    public void read(@NotNull JetElement element) {
         assert builder != null;
-        builder.read(expression);
+        builder.read(element);
     }
 
     @Override

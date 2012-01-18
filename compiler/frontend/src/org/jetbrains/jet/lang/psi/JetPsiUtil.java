@@ -148,4 +148,23 @@ public class JetPsiUtil {
     private static String makeFQName(String prefix, JetClassOrObject jetClass) {
         return ((prefix == null || prefix.length() == 0) ? "" : prefix + ".") + jetClass.getName();
     }
+
+    public static boolean isIrrefutable(JetWhenEntry entry) {
+        if (entry.isElse()) return true;
+        for (JetWhenCondition condition : entry.getConditions()) {
+            if (condition instanceof JetWhenConditionIsPattern) {
+                JetPattern pattern = ((JetWhenConditionIsPattern) condition).getPattern();
+                if (pattern instanceof JetWildcardPattern) {
+                    return true;
+                }
+                if (pattern instanceof JetBindingPattern) {
+                    JetBindingPattern bindingPattern = (JetBindingPattern) pattern;
+                    if (bindingPattern.getVariableDeclaration().getPropertyTypeRef() == null && bindingPattern.getCondition() == null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

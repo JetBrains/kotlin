@@ -4,7 +4,6 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is * -> 1
       is <!INCOMPATIBLE_TYPES!>String<!> -> 1
       !is Int -> 1
       is Any? -> 1
@@ -16,7 +15,7 @@ fun foo() : Int {
       // Commented for KT-621 .<!!UNRESOLVED_REFERENCE!>a<!!> => 1
       // Commented for KT-621 .equals(1).<!!UNRESOLVED_REFERENCE!>a<!!> => 1
       // Commented for KT-621 <!UNNECESSARY_SAFE_CALL!!>?.<!!>equals(1) => 1
-      else -> 1
+      is * -> 1
     }
 
     // Commented for KT-621
@@ -34,7 +33,7 @@ fun test() {
   val x = 1;
   val s = "";
 
-  when (x) {
+  <!NO_ELSE_IN_WHEN!>when<!> (x) {
     <!INCOMPATIBLE_TYPES!>s<!> -> 1
     is <!INCOMPATIBLE_TYPES!>""<!> -> 1
     x -> 1
@@ -44,7 +43,7 @@ fun test() {
 
   val z = #(1, 1)
 
-  when (z) {
+  <!NO_ELSE_IN_WHEN!>when<!> (z) {
     is #(*, *) -> 1
     is #(*, 1) -> 1
     is #(1, 1) -> 1
@@ -55,8 +54,8 @@ fun test() {
   }
 
   when (z) {
-    <!ELSE_MISPLACED_IN_WHEN!>else -> 1<!>
-    #(1, 1) -> 2
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> 1
+    <!UNREACHABLE_CODE!>#(1, 1) -> 2<!>
   }
 
   when (z) {

@@ -33,7 +33,7 @@ public class Pseudocode {
             return name;
         }
 
-        public int getTargetInstructionIndex() {
+        public Integer getTargetInstructionIndex() {
             return targetInstructionIndex;
         }
 

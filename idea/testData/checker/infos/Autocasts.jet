@@ -154,11 +154,13 @@ fun toInt(i: Int?): Int = if (i != null) <info descr="Automatically cast to Int"
 fun illegalWhenBody(a: Any): Int = when(a) {
     is Int -> <info descr="Automatically cast to Int">a</info>
     is String -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
+    else -> 1
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return <info descr="Automatically cast to Int">a</info>
         is String -> return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
+        else -> return 1
     }
 }
 fun declarations(a: Any?) {
@@ -221,7 +223,7 @@ fun mergeAutocasts(a: Any?) {
   if (a is Int || a is String) {
     a.<error descr="Unresolved reference: compareTo">compareTo</error>("")
   }
-  when (a) {
+  <error>when</error> (a) {
     is String, is Any -> a.<error descr="Unresolved reference: compareTo">compareTo</error>("")
   }
   if (a is String && a is Any) {

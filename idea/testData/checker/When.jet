@@ -4,7 +4,6 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is * -> 1
       is <error>String</error> -> 1
       !is Int -> 1
       is Any? -> 1
@@ -16,7 +15,7 @@ fun foo() : Int {
       // Commented for KT-621 .<!error>a</!error> -> 1
       // Commented for KT-621 .equals(1).<!error>a</!error> -> 1
       // Commented for KT-621 <!warning>?.</!warning>equals(1) -> 1
-      else -> 1
+      is * -> 1
     }
 
     // Commented for KT-621
@@ -39,6 +38,7 @@ fun test() {
     x -> 1
     is 1 -> 1
     is <error>#(1, 1)</error> -> 1
+    else -> 1
   }
 
   val z = #(1, 1)
@@ -51,11 +51,12 @@ fun test() {
     is <error>#(1, "1", *)</error> -> 1
     is boo #(1, <error>"a"</error>, *) -> 1
     is boo <error>#(1, *)</error> -> 1
+    else -> 1
   }
 
   when (z) {
-    <error>else -> 1</error>
-    #(1, 1) -> 2
+    <error>else</error> -> 1
+    <error>#(1, 1) -> 2</error>
   }
 
   when (z) {

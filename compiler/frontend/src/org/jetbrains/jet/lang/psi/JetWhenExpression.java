@@ -1,9 +1,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -33,5 +35,10 @@ public class JetWhenExpression extends JetExpression {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitWhenExpression(this, data);
+    }
+
+    @NotNull
+    public PsiElement getWhenKeywordElement() {
+        return findChildByType(JetTokens.WHEN_KEYWORD);
     }
 }

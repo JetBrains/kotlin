@@ -263,7 +263,22 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<CallableDescriptor> TOO_MANY_ARGUMENTS = ParameterizedDiagnosticFactory1.create(ERROR, "Too many arguments for {0}");
     ParameterizedDiagnosticFactory1<String> ERROR_COMPILE_TIME_VALUE = ParameterizedDiagnosticFactory1.create(ERROR, "{0}");
 
-    SimpleDiagnosticFactory ELSE_MISPLACED_IN_WHEN = SimpleDiagnosticFactory.create(ERROR, "'else' entry must be the last one in a when-expression");
+    SimpleDiagnosticFactoryWithPsiElement<JetWhenEntry> ELSE_MISPLACED_IN_WHEN = new SimpleDiagnosticFactoryWithPsiElement<JetWhenEntry>(ERROR, "'else' entry must be the last one in a when-expression") {
+        @NotNull
+        @Override
+        public TextRange getTextRange(@NotNull JetWhenEntry entry) {
+            PsiElement elseKeywordElement = entry.getElseKeywordElement();
+            assert elseKeywordElement != null;
+            return elseKeywordElement.getTextRange();
+        }
+    };
+    SimpleDiagnosticFactoryWithPsiElement<JetWhenExpression> NO_ELSE_IN_WHEN = new SimpleDiagnosticFactoryWithPsiElement<JetWhenExpression>(ERROR, "'when' expression must contain 'else' branch") {
+        @NotNull
+        @Override
+        public TextRange getTextRange(@NotNull JetWhenExpression element) {
+            return element.getWhenKeywordElement().getTextRange();
+        }
+    };
     SimpleDiagnosticFactory CYCLIC_INHERITANCE_HIERARCHY = SimpleDiagnosticFactory.create(ERROR, "There's a cycle in the inheritance hierarchy for this type");
 
     SimpleDiagnosticFactory MANY_CLASSES_IN_SUPERTYPE_LIST = SimpleDiagnosticFactory.create(ERROR, "Only one class may appear in a supertype list");

@@ -746,6 +746,7 @@ public class JetControlFlowProcessor {
             if (subjectExpression != null) {
                 value(subjectExpression, inCondition);
             }
+            boolean hasElseOrIrrefutableBranch = false;
 
             Label doneLabel = builder.createUnboundLabel();
 
@@ -753,10 +754,17 @@ public class JetControlFlowProcessor {
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
 
+                builder.read(whenEntry);
+
                 if (whenEntry.isElse()) {
+                    hasElseOrIrrefutableBranch = true;
                     if (iterator.hasNext()) {
                         trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
+                }
+                boolean isIrrefutable = JetPsiUtil.isIrrefutable(whenEntry);
+                if (isIrrefutable) {
+                    hasElseOrIrrefutableBranch = true;
                 }
 
                 Label bodyLabel = builder.createUnboundLabel();
@@ -770,17 +778,22 @@ public class JetControlFlowProcessor {
                     }
                 }
 
-                builder.nondeterministicJump(nextLabel);
+                if (!isIrrefutable) {
+                    builder.nondeterministicJump(nextLabel);
+                }
 
                 builder.bindLabel(bodyLabel);
                 value(whenEntry.getExpression(), inCondition);
+                builder.allowDead();
                 builder.jump(doneLabel);
                 builder.bindLabel(nextLabel);
                 nextLabel = builder.createUnboundLabel();
             }
-            // TODO : if there's else, no error can happen
-            builder.jumpToError(null);
             builder.bindLabel(doneLabel);
+            if (!hasElseOrIrrefutableBranch) {
+                trace.report(NO_ELSE_IN_WHEN.on(expression));
+            }
+            builder.stopAllowDead();
         }
 
         @Override

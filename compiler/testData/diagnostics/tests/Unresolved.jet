@@ -15,12 +15,11 @@ fun testUnresolved() {
     foo1(<!UNRESOLVED_REFERENCE!>i<!>)
     s.<!UNRESOLVED_REFERENCE!>foo<!>()
 
-    when(<!UNRESOLVED_REFERENCE!>a<!>) {
+    <!NO_ELSE_IN_WHEN!>when<!>(<!UNRESOLVED_REFERENCE!>a<!>) {
         is Int -> <!UNRESOLVED_REFERENCE!>a<!>
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
-    //TODO
     for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
        var i: Int = j
        i += 1

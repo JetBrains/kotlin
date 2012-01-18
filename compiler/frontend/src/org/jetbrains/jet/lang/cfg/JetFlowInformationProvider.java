@@ -74,7 +74,7 @@ public class JetFlowInformationProvider {
         wrappedTrace.close();
     }
 
-    private void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull final Collection<JetExpression> returnedExpressions) {
+    private void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull final Collection<JetElement> returnedExpressions) {
         Pseudocode pseudocode = pseudocodeMap.get(subroutine);
         assert pseudocode != null;
 
@@ -85,14 +85,14 @@ public class JetFlowInformationProvider {
                 @Override
                 public void visitReturnValue(ReturnValueInstruction instruction) {
                     if (instructions.contains(instruction)) { //exclude non-local return expressions
-                        returnedExpressions.add((JetExpression) instruction.getElement());
+                        returnedExpressions.add(instruction.getElement());
                     }
                 }
 
                 @Override
                 public void visitReturnNoValue(ReturnNoValueInstruction instruction) {
                     if (instructions.contains(instruction)) {
-                        returnedExpressions.add((JetExpression) instruction.getElement());
+                        returnedExpressions.add(instruction.getElement());
                     }
                 }
 
@@ -122,7 +122,7 @@ public class JetFlowInformationProvider {
                 public void visitInstruction(Instruction instruction) {
                     if (instruction instanceof JetElementInstruction) {
                         JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
-                        returnedExpressions.add((JetExpression) elementInstruction.getElement());
+                        returnedExpressions.add(elementInstruction.getElement());
                     }
                     else {
                         throw new IllegalStateException(instruction + " precedes the exit point");
@@ -138,7 +138,7 @@ public class JetFlowInformationProvider {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
         
-        List<JetExpression> returnedExpressions = Lists.newArrayList();
+        List<JetElement> returnedExpressions = Lists.newArrayList();
         collectReturnExpressions(function.asElement(), returnedExpressions);
 
         boolean nothingReturned = returnedExpressions.isEmpty();
@@ -155,7 +155,7 @@ public class JetFlowInformationProvider {
             trace.report(UNREACHABLE_CODE.on(element));
         }
 
-        for (JetExpression returnedExpression : returnedExpressions) {
+        for (JetElement returnedExpression : returnedExpressions) {
             returnedExpression.accept(new JetVisitorVoid() {
                 @Override
                 public void visitReturnExpression(JetReturnExpression expression) {

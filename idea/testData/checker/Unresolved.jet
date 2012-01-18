@@ -18,9 +18,9 @@ fun testUnresolved() {
     when(<error>a</error>) {
         is Int -> <error>a</error>
         is String -> <error>a</error>
+        else -> <error>a</error>
     }
 
-    //TODO
     for (j in <error>collection</error>) {
        var i: Int = j
        i += 1

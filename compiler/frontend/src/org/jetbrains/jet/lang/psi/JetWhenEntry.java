@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -14,7 +15,12 @@ public class JetWhenEntry extends JetElement {
     }
 
     public boolean isElse() {
-        return findChildByType(JetTokens.ELSE_KEYWORD) != null;
+        return getElseKeywordElement() != null;
+    }
+
+    @Nullable
+    public PsiElement getElseKeywordElement() {
+        return findChildByType(JetTokens.ELSE_KEYWORD);
     }
 
     @Nullable

@@ -227,8 +227,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void read(@NotNull JetExpression expression) {
-            add(new ReadValueInstruction(expression));
+        public void read(@NotNull JetElement element) {
+            add(new ReadValueInstruction(element));
         }
 
         @Override

@@ -10,7 +10,7 @@ import java.util.List;
  * @author abreslav
  */
 public interface JetControlFlowBuilder {
-    void read(@NotNull JetExpression expression);
+    void read(@NotNull JetElement element);
     void readUnit(@NotNull JetExpression expression);
 
     // General label management
