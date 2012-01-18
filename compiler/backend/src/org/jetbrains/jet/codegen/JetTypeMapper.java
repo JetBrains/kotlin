@@ -298,7 +298,7 @@ public class JetTypeMapper {
                 signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable());
                 for (TypeProjection proj : jetType.getArguments()) {
                     // TODO: +-
-                    signatureVisitor.writeTypeArgument('=');
+                    signatureVisitor.writeTypeArgument(proj.getProjectionKind());
                     mapType(proj.getType(), kind, signatureVisitor, true);
                     signatureVisitor.writeTypeArgumentEnd();
                 }

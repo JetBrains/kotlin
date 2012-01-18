@@ -76,7 +76,7 @@ public class JetSignatureAdapter implements JetSignatureVisitor {
     }
 
     @Override
-    public JetSignatureVisitor visitTypeArgument(char wildcard) {
+    public JetSignatureVisitor visitTypeArgument(JetSignatureVariance wildcard) {
         return this;
     }
 

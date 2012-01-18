@@ -12,11 +12,14 @@ import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
+import org.jetbrains.jet.rt.signature.JetSignatureVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Stepan Koltsov
@@ -75,6 +78,26 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         
         this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
 
+        if (this.classDescriptor == null && ourName.equals("java.lang.Object")) {
+            this.classDescriptor = JetStandardClasses.getAny();
+        }
+
+        if (classDescriptor == null) {
+            // TODO: this is the worst code in Kotlin project
+            Matcher matcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName);
+            if (matcher.matches()) {
+                classDescriptor = JetStandardClasses.getFunction(Integer.parseInt(matcher.group(1)));
+            }
+        }
+        
+        if (classDescriptor == null) {
+            Matcher matcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName);
+            if (matcher.matches()) {
+                classDescriptor = JetStandardClasses.getTuple(Integer.parseInt(matcher.group(1)));
+            }
+        }
+
+
         if (this.classDescriptor == null) {
             this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
         }
@@ -86,22 +109,22 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         this.typeArguments = new ArrayList<TypeProjection>();
     }
 
-    private static Variance parseVariance(char wildcard) {
-        switch (wildcard) {
-            case '=': return Variance.INVARIANT;
-            case '+': return Variance.OUT_VARIANCE;
-            case '-': return Variance.IN_VARIANCE;
+    private static Variance parseVariance(JetSignatureVariance variance) {
+        switch (variance) {
+            case INVARIANT: return Variance.INVARIANT;
+            case OUT: return Variance.OUT_VARIANCE;
+            case IN: return Variance.IN_VARIANCE;
             default: throw new IllegalStateException();
         }
     }
 
     @Override
-    public JetSignatureVisitor visitTypeArgument(final char wildcard) {
+    public JetSignatureVisitor visitTypeArgument(final JetSignatureVariance variance) {
         return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableResolver) {
 
             @Override
             protected void done(@NotNull JetType jetType) {
-                typeArguments.add(new TypeProjection(parseVariance(wildcard), jetType));
+                typeArguments.add(new TypeProjection(parseVariance(variance), jetType));
             }
         };
     }

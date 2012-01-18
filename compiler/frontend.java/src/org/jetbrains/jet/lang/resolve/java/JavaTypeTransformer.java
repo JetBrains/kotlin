@@ -190,7 +190,6 @@ public class JavaTypeTransformer {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getPrimitiveClassDescriptor(primitiveType));
             }
-            //classDescriptorMap.put("java.lang.Object", standardLibrary.get
             classDescriptorMap.put("java.lang.String", standardLibrary.getString());
         }
         return classDescriptorMap;

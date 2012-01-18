@@ -15,6 +15,8 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -216,7 +218,13 @@ class NamespaceComparator {
             } else {
                 sb.append("val ");
             }
+            if (!prop.getTypeParameters().isEmpty()) {
+                sb.append(" <");
+                new Serializer(sb).serializeCommaSeparated(prop.getTypeParameters());
+                sb.append("> ");
+            }
             if (prop.getReceiverParameter().exists()) {
+                // TODO: print only name for type parameter
                 new Serializer(sb).serialize(prop.getReceiverParameter().getType());
                 sb.append(".");
             }
@@ -272,6 +280,9 @@ class NamespaceComparator {
                 }
                 sb.append(">");
             }
+            if (type.isNullable()) {
+                sb.append("?");
+            }
         }
 
         public void serializeCommaSeparated(List<?> list) {
@@ -290,6 +301,10 @@ class NamespaceComparator {
         }
 
         private Method getMethodToSerialize(Object o) {
+            if (o == null) {
+                throw new IllegalStateException("won't serialize null");
+            }
+
             // TODO: cache
             for (Method method : this.getClass().getMethods()) {
                 if (!method.getName().equals("serialize")) {
@@ -328,11 +343,12 @@ class NamespaceComparator {
         }
 
         public void serialize(NamespaceDescriptor ns) {
-            if (ns.getContainingDeclaration() == null) {
-                // root ns
+            if (isRootNs(ns)) {
                 return;
             }
-            new NamespacePrefixSerializer(sb).serialize(ns.getContainingDeclaration());
+            if (ns.getContainingDeclaration() != null) {
+                new NamespacePrefixSerializer(sb).serialize(ns.getContainingDeclaration());
+            }
             sb.append(ns.getName());
         }
 
@@ -356,6 +372,11 @@ class NamespaceComparator {
 
     }
 
+    private static boolean isRootNs(DeclarationDescriptor ns) {
+        // upyachka
+        return ns instanceof JavaNamespaceDescriptor && JavaDescriptorResolver.JAVA_ROOT.equals(ns.getName());
+    }
+
     private static class NamespacePrefixSerializer extends Serializer {
 
         public NamespacePrefixSerializer(StringBuilder sb) {
@@ -364,11 +385,10 @@ class NamespaceComparator {
 
         @Override
         public void serialize(NamespaceDescriptor ns) {
-            if (ns.getContainingDeclaration() == null) {
-                // root ns
+            super.serialize(ns);
+            if (isRootNs(ns)) {
                 return;
             }
-            super.serialize(ns);
             sb.append(".");
         }
 

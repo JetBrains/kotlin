@@ -171,13 +171,13 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public JetSignatureWriter visitTypeArgument(final char wildcard) {
+    public JetSignatureWriter visitTypeArgument(JetSignatureVariance variance) {
         if (argumentStack % 2 == 0) {
             ++argumentStack;
             buf.append('<');
         }
-        if (wildcard != '=') {
-            buf.append(wildcard);
+        if (variance.getC() != '=') {
+            buf.append(variance.getC());
         }
         return this;
     }
