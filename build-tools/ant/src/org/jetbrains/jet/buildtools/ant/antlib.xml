@@ -1,0 +1,12 @@
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- http://evgeny-goldin.org/javadoc/ant/Types/antlib.html -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<antlib>
+    <taskdef
+        name      = "kotlinc"
+        classname = "org.jetbrains.jet.buildtools.ant.BytecodeCompilerTask"/>
+    <taskdef
+        name      = "kotlinJSc"
+        classname = "org.jetbrains.jet.buildtools.ant.JavaScriptCompilerTask"/>
+</antlib>

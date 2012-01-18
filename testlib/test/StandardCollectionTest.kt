@@ -1,7 +1,7 @@
 package test.collections
 
 import std.*
-import std.test.*
+import stdhack.test.*
 
 class StandardCollectionTest() : TestSupport() {
 

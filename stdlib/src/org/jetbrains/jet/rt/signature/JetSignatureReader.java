@@ -194,12 +194,12 @@ public class JetSignatureReader {
                                     case '-':
                                         pos = parseType(signature,
                                                         pos + 1,
-                                                        v.visitTypeArgument(c));
+                                                        v.visitTypeArgument(JetSignatureVariance.parseVariance(c)));
                                         break;
                                     default:
                                         pos = parseType(signature,
                                                         pos,
-                                                        v.visitTypeArgument('='));
+                                                        v.visitTypeArgument(JetSignatureVariance.INVARIANT));
                                         break;
                                 }
                             }

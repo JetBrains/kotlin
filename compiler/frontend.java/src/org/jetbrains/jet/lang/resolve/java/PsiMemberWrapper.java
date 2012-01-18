@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Stepan Koltsov
  */
-public class PsiMemberWrapper {
+public abstract class PsiMemberWrapper {
 
     @NotNull
     protected final PsiMember psiMember;
@@ -23,7 +23,11 @@ public class PsiMemberWrapper {
     public boolean isPrivate() {
         return psiMember.hasModifierProperty(PsiModifier.PRIVATE);
     }
-    
+
+    public boolean isFinal() {
+        return psiMember.hasModifierProperty(PsiModifier.FINAL);
+    }
+
     public String getName() {
         return psiMember.getName();
     }

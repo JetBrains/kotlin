@@ -108,11 +108,14 @@ public class JavaTypeTransformer {
                         for (TypeParameterDescriptor parameter : parameters) {
                             arguments.add(TypeUtils.makeStarProjection(parameter));
                         }
-                    } else {
+                    }
+                    else {
+                        List<TypeParameterDescriptor> parameters = descriptor.getTypeConstructor().getParameters();
                         PsiType[] psiArguments = classType.getParameters();
-                        for (int i = 0, psiArgumentsLength = psiArguments.length; i < psiArgumentsLength; i++) {
+                        for (int i = 0; i < parameters.size(); i++) {
                             PsiType psiArgument = psiArguments[i];
-                            TypeParameterDescriptor typeParameterDescriptor = descriptor.getTypeConstructor().getParameters().get(i);
+                            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+
                             arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor));
                         }
                     }
@@ -187,7 +190,6 @@ public class JavaTypeTransformer {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getPrimitiveClassDescriptor(primitiveType));
             }
-            //classDescriptorMap.put("java.lang.Object", standardLibrary.get
             classDescriptorMap.put("java.lang.String", standardLibrary.getString());
         }
         return classDescriptorMap;

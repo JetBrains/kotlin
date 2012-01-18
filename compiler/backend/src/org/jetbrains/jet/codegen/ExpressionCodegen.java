@@ -1024,7 +1024,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapter v) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
         String owner;
 
@@ -1092,29 +1092,31 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                     }
                 }
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor))
-                    getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                else
-                    getter = null;
-                
+                getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+
                 if (propertyDescriptor.getGetter() == null) {
                     getter = null;
                 }
+
+                if (getter == null && propertyDescriptor.getReceiverParameter().exists()) {
+                    throw new IllegalStateException();
+                }
+
             }
             //noinspection ConstantConditions
             if (isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())) {
                 setter = null;
             }
             else {
-                if(!(containingDeclaration instanceof JavaNamespaceDescriptor)) {
-                    JvmPropertyAccessorSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                    setter = jvmMethodSignature != null ? jvmMethodSignature.getJvmMethodSignature().getAsmMethod() : null;
-                } else {
-                    setter = null;
-                }
+                JvmPropertyAccessorSignature jvmMethodSignature = typeMapper.mapSetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                setter = jvmMethodSignature != null ? jvmMethodSignature.getJvmMethodSignature().getAsmMethod() : null;
 
                 if (propertyDescriptor.getSetter() == null) {
                     setter = null;
+                }
+                
+                if (setter == null && propertyDescriptor.isVar() && propertyDescriptor.getReceiverParameter().exists()) {
+                    throw new IllegalStateException();
                 }
             }
         }

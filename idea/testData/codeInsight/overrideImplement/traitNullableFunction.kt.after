@@ -1,0 +1,8 @@
+trait Some {
+    fun foo(some : Int?) : Int
+}
+
+class SomeOther : Some {
+
+    override fun foo(some: Int?): Int = 0
+}

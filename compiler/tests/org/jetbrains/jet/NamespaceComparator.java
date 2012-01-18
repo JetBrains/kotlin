@@ -1,20 +1,7 @@
 package org.jetbrains.jet;
 
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
-import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.PropertyCodegen;
-import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -28,24 +15,18 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,57 +38,19 @@ import java.util.Set;
 /**
  * @author Stepan Koltsov
  */
-public class ReadClassDataTest extends TestCaseWithTmpdir {
+class NamespaceComparator {
 
-    private JetCoreEnvironment jetCoreEnvironment;
+    private final boolean includeObject;
 
-    private final File testFile;
-
-    public ReadClassDataTest(@NotNull File testFile) {
-        this.testFile = testFile;
-        setName(testFile.getName());
+    private NamespaceComparator(boolean includeObject) {
+        this.includeObject = includeObject;
     }
 
-    @Override
-    public void runTest() throws Exception {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
-
-        String text = FileUtil.loadFile(testFile);
-
-        LightVirtualFile virtualFile = new LightVirtualFile(testFile.getName(), JetLanguage.INSTANCE, text);
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
-
-        GenerationState state = new GenerationState(jetCoreEnvironment.getProject(), ClassBuilderFactory.BINARIES);
-        AnalyzingUtils.checkForSyntacticErrors(psiFile);
-        BindingContext bindingContext = state.compile(psiFile);
-
-        ClassFileFactory classFileFactory = state.getFactory();
-
-        CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
-        
-        NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile);
-
-        Assert.assertEquals("test", namespaceFromSource.getName());
-
-        Disposer.dispose(myTestRootDisposable);
-
-
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
-
-        jetCoreEnvironment.addToClasspath(tmpdir);
-        jetCoreEnvironment.addToClasspath(new File("out/production/stdlib"));
-
-        JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(jetCoreEnvironment.getProject());
-        JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), jetSemanticServices, new BindingTraceContext());
-
-        JavaDescriptorResolver javaDescriptorResolver = semanticServices.getDescriptorResolver();
-        NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace("test");
-        
-        compareNamespaces(namespaceFromSource, namespaceFromClass);
+    public static void compareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb, boolean includeObject) {
+        new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
     }
 
-    private void compareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
+    private void doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
         Assert.assertEquals(nsa.getName(), nsb.getName());
         System.out.println("namespace " + nsa.getName());
 
@@ -116,7 +59,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         Set<String> classifierNames = new HashSet<String>();
         Set<String> propertyNames = new HashSet<String>();
         Set<String> functionNames = new HashSet<String>();
-        
+
         for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
                 classifierNames.add(ad.getName());
@@ -136,7 +79,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             Assert.assertTrue(cb != null);
             compareClassifiers(ca, cb);
         }
-        
+
         for (String name : propertyNames) {
             Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
             Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
@@ -145,59 +88,59 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.getterName(name)).isEmpty());
             Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(name)).isEmpty());
         }
-        
+
         for (String name : functionNames) {
             Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
             Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
             compareDeclarationSets(fa, fb);
         }
     }
-    
-    private void compareDeclarationSets(Set<? extends DeclarationDescriptor> a, Set<? extends DeclarationDescriptor> b) {
+
+    private static void compareDeclarationSets(Set<? extends DeclarationDescriptor> a, Set<? extends DeclarationDescriptor> b) {
         String at = serializedDeclarationSets(a);
         String bt = serializedDeclarationSets(b);
         Assert.assertEquals(at, bt);
         System.out.print(at);
     }
-    
-    private String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
+
+    private static String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
         List<String> strings = new ArrayList<String>();
         for (DeclarationDescriptor d : ds) {
             StringBuilder sb = new StringBuilder();
             new Serializer(sb).serialize(d);
             strings.add(sb.toString());
         }
-        
+
         Collections.sort(strings);
-        
+
         StringBuilder r = new StringBuilder();
         for (String string : strings) {
             r.append(string);
             r.append("\n");
         }
         return r.toString();
-    } 
+    }
 
     private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b) {
         StringBuilder sba = new StringBuilder();
         StringBuilder sbb = new StringBuilder();
-        
+
         new FullContentSerialier(sba).serialize((ClassDescriptor) a);
         new FullContentSerialier(sbb).serialize((ClassDescriptor) b);
-        
+
         String as = sba.toString();
         String bs = sbb.toString();
 
         Assert.assertEquals(as, bs);
         System.out.println(as);
     }
-    
+
     private void compareDescriptors(@NotNull DeclarationDescriptor a, @NotNull DeclarationDescriptor b) {
         StringBuilder sba = new StringBuilder();
         StringBuilder sbb = new StringBuilder();
         new Serializer(sba).serialize(a);
         new Serializer(sbb).serialize(b);
-        
+
         String as = sba.toString();
         String bs = sbb.toString();
 
@@ -275,7 +218,13 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             } else {
                 sb.append("val ");
             }
+            if (!prop.getTypeParameters().isEmpty()) {
+                sb.append(" <");
+                new Serializer(sb).serializeCommaSeparated(prop.getTypeParameters());
+                sb.append("> ");
+            }
             if (prop.getReceiverParameter().exists()) {
+                // TODO: print only name for type parameter
                 new Serializer(sb).serialize(prop.getReceiverParameter().getType());
                 sb.append(".");
             }
@@ -331,6 +280,9 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 }
                 sb.append(">");
             }
+            if (type.isNullable()) {
+                sb.append("?");
+            }
         }
 
         public void serializeCommaSeparated(List<?> list) {
@@ -347,8 +299,12 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
                 first = false;
             }
         }
-        
+
         private Method getMethodToSerialize(Object o) {
+            if (o == null) {
+                throw new IllegalStateException("won't serialize null");
+            }
+
             // TODO: cache
             for (Method method : this.getClass().getMethods()) {
                 if (!method.getName().equals("serialize")) {
@@ -387,16 +343,22 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
 
         public void serialize(NamespaceDescriptor ns) {
-            if (ns.getContainingDeclaration() == null) {
-                // root ns
+            if (isRootNs(ns)) {
                 return;
             }
-            new NamespacePrefixSerializer(sb).serialize(ns.getContainingDeclaration());
+            if (ns.getContainingDeclaration() != null) {
+                new NamespacePrefixSerializer(sb).serialize(ns.getContainingDeclaration());
+            }
             sb.append(ns.getName());
         }
 
         public void serialize(TypeParameterDescriptor param) {
-            sb.append("/*").append(param.getIndex()).append("*/ ");
+            sb.append("/*");
+            sb.append(param.getIndex());
+            if (param.isReified()) {
+                sb.append(",r");
+            }
+            sb.append("*/ ");
             serialize(param.getVariance());
             sb.append(param.getName());
             if (!param.getUpperBounds().isEmpty()) {
@@ -414,7 +376,12 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
 
     }
-    
+
+    private static boolean isRootNs(DeclarationDescriptor ns) {
+        // upyachka
+        return ns instanceof JavaNamespaceDescriptor && JavaDescriptorResolver.JAVA_ROOT.equals(ns.getName());
+    }
+
     private static class NamespacePrefixSerializer extends Serializer {
 
         public NamespacePrefixSerializer(StringBuilder sb) {
@@ -423,11 +390,10 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
 
         @Override
         public void serialize(NamespaceDescriptor ns) {
-            if (ns.getContainingDeclaration() == null) {
-                // root ns
+            super.serialize(ns);
+            if (isRootNs(ns)) {
                 return;
             }
-            super.serialize(ns);
             sb.append(".");
         }
 
@@ -437,7 +403,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
             sb.append(".");
         }
     }
-    
+
     private static class ValueParameterSerializer extends Serializer {
 
         public ValueParameterSerializer(StringBuilder sb) {
@@ -450,7 +416,7 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static class FullContentSerialier extends Serializer {
+    private class FullContentSerialier extends Serializer {
         private FullContentSerialier(StringBuilder sb) {
             super(sb);
         }
@@ -491,6 +457,11 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                if (!includeObject) {
+                    if (member.getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
+                        continue;
+                    }
+                }
                 StringBuilder memberSb = new StringBuilder();
                 new FullContentSerialier(memberSb).serialize(member);
                 memberStrings.add(memberSb.toString());
@@ -526,14 +497,5 @@ public class ReadClassDataTest extends TestCaseWithTmpdir {
         }
     }
 
-    public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readClass", true, new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new ReadClassDataTest(file);
-            }
-        });
-    }
-    
+
 }

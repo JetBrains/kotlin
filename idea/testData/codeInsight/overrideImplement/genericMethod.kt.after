@@ -4,7 +4,5 @@ trait G<T> {
 
 class GC() : G<Int> {
 
-    override fun foo(t: Int): Int {
-        return 0
-    }
+    override fun foo(t: Int): Int = 0
 }

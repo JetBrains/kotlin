@@ -73,7 +73,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                 this,
                 annotations,
                 false,
-                "&" + name,
+                name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
     }

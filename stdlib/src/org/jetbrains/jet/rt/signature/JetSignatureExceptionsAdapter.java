@@ -82,7 +82,7 @@ public class JetSignatureExceptionsAdapter implements JetSignatureVisitor {
     }
 
     @Override
-    public JetSignatureVisitor visitTypeArgument(char wildcard) {
+    public JetSignatureVisitor visitTypeArgument(JetSignatureVariance wildcard) {
         throw new IllegalStateException();
     }
 

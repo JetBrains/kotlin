@@ -1,8 +1,11 @@
 <project name="Kotlin" default="dist">
+
     <property name="output" value="${basedir}/dist"/>
     <property name="build.number" value="snapshot"/>
     <property name="output.name" value="kotlin-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
+
+    <import file="build-tools/build.xml" optional="false"/>
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="*.jar"/>
@@ -29,7 +32,7 @@
 
     <target name="compileRT">
         <mkdir dir="${output}/classes/runtime"/>
-        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source">
+        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src path="${basedir}/stdlib/src"/>
             <classpath refid="classpath"/>
         </javac>
@@ -55,10 +58,10 @@
         </jar>
     </target>
 
-    
+
     <target name="compile" depends="compileRT">
         <mkdir dir="${output}/classes/compiler"/>
-        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source">
+        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src refid="sourcepath"/>
             <classpath refid="classpath"/>
         </javac>
@@ -75,13 +78,13 @@
         <delete dir="${output}"/>
     </target>
 
-    <target name="dist" depends="clean,jarRT,jar">
+    <target name="dist" depends="clean,jarRT,jar,buildToolsJar">
         <echo file="${output}/build.txt" message="${build.number}"/>
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
             <zipfileset prefix="kotlinc/license" dir="${basedir}/license"/>
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}"/>
+            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}" excludes="ant/**"/>
             <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
             <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
             <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>

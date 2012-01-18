@@ -100,6 +100,9 @@ public class TypeUtils {
         if (type.isNullable() == nullable) {
             return type;
         }
+        if (ErrorUtils.isErrorType(type)) {
+            return type;
+        }
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
     }
 
@@ -285,6 +288,9 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
+        if (ErrorUtils.isError(classDescriptor)) {
+            return ErrorUtils.createErrorType("This is very helpful diagnostics message");
+        }
         List<TypeProjection> arguments = getDefaultTypeProjections(classDescriptor.getTypeConstructor().getParameters());
         return new JetTypeImpl(
                 Collections.<AnnotationDescriptor>emptyList(),

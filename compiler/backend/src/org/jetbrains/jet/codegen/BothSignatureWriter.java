@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
+import org.jetbrains.jet.rt.signature.JetSignatureVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
@@ -203,10 +204,20 @@ public class BothSignatureWriter {
     public void writeArrayEnd() {
         pop();
     }
+    
+    private static JetSignatureVariance toJetSignatureVariance(Variance variance) {
+        switch (variance) {
+            case INVARIANT: return JetSignatureVariance.INVARIANT;
+            case IN_VARIANCE: return JetSignatureVariance.IN;
+            case OUT_VARIANCE: return JetSignatureVariance.OUT;
+            default: throw new IllegalStateException();
+        }
+    }
 
-    public void writeTypeArgument(char c) {
-        push(signatureVisitor().visitTypeArgument(c));
-        jetSignatureWriter.visitTypeArgument(c);
+    public void writeTypeArgument(Variance variance) {
+        JetSignatureVariance jsVariance = toJetSignatureVariance(variance);
+        push(signatureVisitor().visitTypeArgument(jsVariance.getC()));
+        jetSignatureWriter.visitTypeArgument(jsVariance);
         generic = true;
     }
     

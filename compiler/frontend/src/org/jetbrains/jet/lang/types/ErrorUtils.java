@@ -15,7 +15,13 @@ import java.util.*;
 public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor("<ERROR MODULE>");
-    private static final JetScope ERROR_SCOPE = new JetScope() {
+
+
+    private static final JetScope ERROR_SCOPE = new ErrorScope();
+
+    public static class ErrorScope implements JetScope {
+
+        private ErrorScope() {}
 
         @Override
         public ClassifierDescriptor getClassifier(@NotNull String name) {
@@ -82,7 +88,7 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
-    };
+    }
 
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<ERROR CLASS>") {
         @NotNull
@@ -95,6 +101,12 @@ public class ErrorUtils {
         @Override
         public Modality getModality() {
             return Modality.OPEN;
+        }
+
+        @NotNull
+        @Override
+        public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+            return ERROR_CLASS;
         }
     };
 

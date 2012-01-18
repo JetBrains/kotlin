@@ -78,6 +78,7 @@ public class JetStandardLibrary {
     private EnumMap<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableArrayJetType;
     private Map<JetType, JetType> primitiveJetTypeToJetArrayType;
+    private Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
@@ -147,6 +148,7 @@ public class JetStandardLibrary {
             primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             primitiveTypeToNullableArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
+            jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
 
             for (PrimitiveType primitive : PrimitiveType.values()) {
                 makePrimitive(primitive);
@@ -167,6 +169,7 @@ public class JetStandardLibrary {
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveTypeToNullableArrayJetType.put(primitiveType, TypeUtils.makeNullable(arrayType));
         primitiveJetTypeToJetArrayType.put(type, arrayType);
+        jetArrayTypeToPrimitiveJetType.put(arrayType, type);
     }
 
     @NotNull
@@ -333,6 +336,22 @@ public class JetStandardLibrary {
                 types,
                 getArray().getMemberScope(types)
         );
+    }
+    
+    @NotNull
+    public JetType getArrayElementType(@NotNull JetType arrayType) {
+        // make non-null?
+        if (arrayType.getConstructor().getDeclarationDescriptor() == getArray()) {
+            if (arrayType.getArguments().size() != 1) {
+                throw new IllegalStateException();
+            }
+            return arrayType.getArguments().get(0).getType();
+        }
+        JetType primitiveType = jetArrayTypeToPrimitiveJetType.get(arrayType);
+        if (primitiveType == null) {
+            throw new IllegalStateException("not array: " + arrayType);
+        }
+        return primitiveType;
     }
 
     @NotNull
