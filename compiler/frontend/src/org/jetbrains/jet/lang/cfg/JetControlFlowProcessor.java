@@ -750,7 +750,7 @@ public class JetControlFlowProcessor {
 
             Label doneLabel = builder.createUnboundLabel();
 
-            Label nextLabel = builder.createUnboundLabel();
+            Label nextLabel = null;
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
 
@@ -779,6 +779,7 @@ public class JetControlFlowProcessor {
                 }
 
                 if (!isIrrefutable) {
+                    nextLabel = builder.createUnboundLabel();
                     builder.nondeterministicJump(nextLabel);
                 }
 
@@ -786,8 +787,10 @@ public class JetControlFlowProcessor {
                 value(whenEntry.getExpression(), inCondition);
                 builder.allowDead();
                 builder.jump(doneLabel);
-                builder.bindLabel(nextLabel);
-                nextLabel = builder.createUnboundLabel();
+
+                if (!isIrrefutable) {
+                    builder.bindLabel(nextLabel);
+                }
             }
             builder.bindLabel(doneLabel);
             if (!hasElseOrIrrefutableBranch) {
