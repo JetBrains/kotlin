@@ -251,7 +251,7 @@
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <path refid  = "classpath.kotlin"/>
-                <fileset dir = "${idea.sdk}/ant/lib" includes="*.jar"/>
+                <fileset dir = "${ant.home}/lib" includes="*.jar"/>
             </classpath>
         </javac>
         <jar destfile="${output}/kotlin-build-tools.jar">
