@@ -3,7 +3,7 @@ package test.collections
 import std.*
 import std.io.*
 import std.util.*
-import std.test.*
+import stdhack.test.*
 import java.util.*
 import java.io.*
 

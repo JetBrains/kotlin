@@ -1,4 +1,4 @@
-package std.test
+package stdhack.test
 
 import std.io.*
 import std.util.*

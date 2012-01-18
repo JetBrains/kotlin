@@ -1,6 +1,6 @@
 package test.collections
 
-import std.test.*
+import stdhack.test.*
 
 import std.io.*
 import std.util.*
