@@ -20,7 +20,7 @@ inline fun <T> java.util.Iterator<T>.iterator() = this
 /*
 Helper to make java.util.Enumeration usable in for
 */
-inline fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
+inline fun <T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterator<T> {
   override val hasNext: Boolean
     get() = hasMoreElements()
 
