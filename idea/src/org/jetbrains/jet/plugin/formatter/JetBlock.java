@@ -84,16 +84,15 @@ public class JetBlock implements ASTBlock {
     private List<Block> buildSubBlocks() {
         List<Block> blocks = new ArrayList<Block>();
         for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
+            IElementType childType = child.getElementType();
 
-          IElementType childType = child.getElementType();
+            if (child.getTextRange().getLength() == 0) continue;
 
-          if (child.getTextRange().getLength() == 0) continue;
+            if (childType == TokenType.WHITE_SPACE) {
+                continue;
+            }
 
-          if (childType == TokenType.WHITE_SPACE) {
-            continue;
-          }
-
-          blocks.add(buildSubBlock(child));
+            blocks.add(buildSubBlock(child));
         }
         return Collections.unmodifiableList(blocks);
     }
@@ -106,8 +105,21 @@ public class JetBlock implements ASTBlock {
         if (CODE_BLOCKS.contains(myNode.getElementType())) {
             childIndent = indentIfNotBrace(child);
         }
-        else if (myNode.getElementType() == JetNodeTypes.WHEN) {
-            childIndent = indentIfNotBrace(child);
+        else if (child.getTreeParent() != null && child.getTreeParent().getElementType() == JetNodeTypes.BODY &&
+                 child.getElementType() != JetNodeTypes.BLOCK) {
+            // For a single statement if 'for'
+            childIndent = Indent.getNormalIndent();
+        }
+        else if (child.getElementType() == JetNodeTypes.WHEN_ENTRY) {
+            // For the entry in when
+            // TODO: Add an option for configuration?
+            childIndent = Indent.getNormalIndent();
+        }
+        else if (child.getTreeParent() != null && child.getTreeParent().getElementType() == JetNodeTypes.WHEN_ENTRY) {
+            ASTNode prev = getPrevWithoutWhitespace(child);
+            if (prev != null && prev.getText().equals("->")) {
+                childIndent = indentIfNotBrace(child);
+            }
         }
         else if (STATEMENT_PARTS.contains(myNode.getElementType()) && child.getElementType() != JetNodeTypes.BLOCK) {
             childIndent = Indent.getNormalIndent();
@@ -120,6 +132,15 @@ public class JetBlock implements ASTBlock {
         return child.getElementType() == JetTokens.RBRACE || child.getElementType() == JetTokens.LBRACE
                 ? Indent.getNoneIndent()
                 : Indent.getNormalIndent();
+    }
+
+    private static ASTNode getPrevWithoutWhitespace(ASTNode node) {
+        node = node.getTreePrev();
+        while (node != null && node.getElementType() == TokenType.WHITE_SPACE) {
+            node = node.getTreePrev();
+        }
+
+        return node;
     }
 
     @Override
