@@ -65,10 +65,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     static class LoopBlockStackElement extends BlockStackElement {
         final Label continueLabel;
         final Label breakLabel;
+        public JetSimpleNameExpression targetLabel;
 
-        LoopBlockStackElement(Label breakLabel, Label continueLabel) {
+        LoopBlockStackElement(Label breakLabel, Label continueLabel, JetSimpleNameExpression targetLabel) {
             this.breakLabel = breakLabel;
             this.continueLabel = continueLabel;
+            this.targetLabel = targetLabel;
         }
     }
 
@@ -258,7 +260,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.mark(condition);
 
         Label end = continueLabel != null ? continueLabel : new Label();
-        blockStackElements.push(new LoopBlockStackElement(end, condition));
+        blockStackElements.push(new LoopBlockStackElement(end, condition, targetLabel(expression)));
 
         Label savedContinueLabel = continueLabel;
         continueLabel = condition;
@@ -278,14 +280,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(Type.VOID_TYPE);
     }
 
+    
     @Override
     public StackValue visitDoWhileExpression(JetDoWhileExpression expression, StackValue receiver) {
         Label condition = new Label();
         v.mark(condition);
 
         Label end = new Label();
-
-        blockStackElements.push(new LoopBlockStackElement(end, condition));
+        
+        blockStackElements.push(new LoopBlockStackElement(end, condition, targetLabel(expression)));
 
         gen(expression.getBody(), Type.VOID_TYPE);
 
@@ -356,7 +359,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         Label begin = new Label();
-        blockStackElements.push(new LoopBlockStackElement(end, begin));
+        blockStackElements.push(new LoopBlockStackElement(end, begin, targetLabel(expression)));
 
         v.mark(begin);
         v.load(iteratorVar, asmIterType);
@@ -426,7 +429,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Label increment = new Label();
             v.mark(condition);
 
-            blockStackElements.push(new LoopBlockStackElement(end, increment));
+            blockStackElements.push(new LoopBlockStackElement(end, increment, targetLabel(expression)));
 
             generateCondition(asmParamType, end);
 
@@ -607,9 +610,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
             else if(stackElement instanceof LoopBlockStackElement) {
                 LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
-                Label label = labelElement == null ? loopBlockStackElement.breakLabel : null; // TODO:
-                v.goTo(label);
-                return StackValue.none();
+                if (labelElement == null || loopBlockStackElement.targetLabel != null && labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
+                    v.goTo(loopBlockStackElement.breakLabel);
+                    return StackValue.none();
+                }
             }
             else {
                 throw new UnsupportedOperationException();
@@ -632,9 +636,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
             else if(stackElement instanceof LoopBlockStackElement) {
                 LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
-                Label label = labelElement == null ? loopBlockStackElement.continueLabel : null; // TODO:
-                v.goTo(label);
-                return StackValue.none();
+                if (labelElement == null || loopBlockStackElement.targetLabel != null && labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
+                    v.goTo(loopBlockStackElement.continueLabel);
+                    return StackValue.none();
+                }
             }
             else {
                 throw new UnsupportedOperationException();
@@ -1960,8 +1965,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
     }
 
+    private JetSimpleNameExpression targetLabel(JetExpression expression) {
+        if(expression.getParent() instanceof JetPrefixExpression) {
+            JetPrefixExpression parent = (JetPrefixExpression) expression.getParent();
+            JetSimpleNameExpression operationSign = parent.getOperationReference();
+            if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+                return operationSign;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public StackValue visitPrefixExpression(JetPrefixExpression expression, StackValue receiver) {
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+            return genQualified(receiver, expression.getBaseExpression());
+        }
+
         DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         final Callable callable = resolveToCallable(op, false);
         if (callable instanceof IntrinsicMethod) {

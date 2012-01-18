@@ -266,4 +266,8 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testKt1076() throws Exception {
         blackBoxFile("regressions/kt1076.kt");
     }
+
+    public void testKt998() throws Exception {
+        blackBoxFile("regressions/kt998.kt");
+    }
 }
