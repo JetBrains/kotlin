@@ -3,7 +3,9 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 
@@ -55,8 +57,17 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
         return jetConstructor;
     }
 
+    public boolean isAbstract() {
+        return psiMember.hasModifierProperty(PsiModifier.ABSTRACT);
+    }
+
     @NotNull
     public PsiMethod getPsiMethod() {
         return (PsiMethod) psiMember;
+    }
+
+    @Nullable
+    public PsiType getReturnType() {
+        return getPsiMethod().getReturnType();
     }
 }
