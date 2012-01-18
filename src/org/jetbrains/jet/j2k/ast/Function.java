@@ -82,7 +82,9 @@ public class Function extends Member {
     if (myModifiers.contains(Modifier.NOT_OPEN))
       modifierList.remove(Modifier.OPEN);
 
-    modifierList.add(accessModifier());
+    String accessModifier = accessModifier();
+    if (!accessModifier.isEmpty())
+      modifierList.add(accessModifier);
 
     if (modifierList.size() > 0)
       return AstUtil.join(modifierList, SPACE) + SPACE;
