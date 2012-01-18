@@ -1024,7 +1024,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapter v) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
         String owner;
 
