@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -46,6 +47,14 @@ public class JavaSemanticServices {
     
     @Nullable
     public ClassDescriptor getKotlinClassDescriptor(String qualifiedName) {
+        if (qualifiedName.startsWith("jet.")) {
+            ClassDescriptor r = (ClassDescriptor) jetSemanticServices.getStandardLibrary().getLibraryScope().getClassifier(qualifiedName.substring("jet.".length()));
+            if (r == null) {
+                // TODO: better error
+                //throw new IllegalStateException();
+            }
+            return r;
+        }
         return getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
     }
 
