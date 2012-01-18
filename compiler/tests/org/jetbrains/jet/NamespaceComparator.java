@@ -353,7 +353,12 @@ class NamespaceComparator {
         }
 
         public void serialize(TypeParameterDescriptor param) {
-            sb.append("/*").append(param.getIndex()).append("*/ ");
+            sb.append("/*");
+            sb.append(param.getIndex());
+            if (param.isReified()) {
+                sb.append(",r");
+            }
+            sb.append("*/ ");
             serialize(param.getVariance());
             sb.append(param.getName());
             if (!param.getUpperBounds().isEmpty()) {
