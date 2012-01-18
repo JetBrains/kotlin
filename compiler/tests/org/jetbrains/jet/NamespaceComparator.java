@@ -218,7 +218,13 @@ class NamespaceComparator {
             } else {
                 sb.append("val ");
             }
+            if (!prop.getTypeParameters().isEmpty()) {
+                sb.append(" <");
+                new Serializer(sb).serializeCommaSeparated(prop.getTypeParameters());
+                sb.append("> ");
+            }
             if (prop.getReceiverParameter().exists()) {
+                // TODO: print only name for type parameter
                 new Serializer(sb).serialize(prop.getReceiverParameter().getType());
                 sb.append(".");
             }
