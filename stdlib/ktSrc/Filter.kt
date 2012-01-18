@@ -11,21 +11,19 @@ inline fun <T> java.util.Iterator<T>.filter(f: (T)-> Boolean) : java.util.Iterat
 /*
 Adds filtered elements in to given container
 */
-/*
-inline fun <T,U : Collection<in T>> java.lang.Iterable<T>.filterTo(var container: U, filter: fun(T): Boolean) : U {
+inline fun <T,U : Collection<in T>> java.lang.Iterable<T>.filterTo(var container: U, filter: (T)->Boolean) : U {
    for(element in this) {
       if(filter(element))
         container.add(element)
    }
    return container
 }
-*/
 
 /*
 Create iterator filtering given java.lang.Iterable
 */
 /*
-inline fun <T> java.lang.Iterable<T>.filter(f: fun(T): Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
+inline fun <T> java.lang.Iterable<T>.filter(f: (T)->Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
 */
 
 private class FilterIterator<T>(val original: java.util.Iterator<T>, val filter: (T)-> Boolean) : java.util.Iterator<T> {

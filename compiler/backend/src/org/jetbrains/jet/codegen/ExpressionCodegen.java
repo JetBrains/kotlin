@@ -514,7 +514,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private class ForInRangeLoopGenerator extends ForLoopGenerator {
-        private int myEndVar;
+        private int myCountVar;
+        private int myDeltaVar;
+        private int myIndexVar;
 
         public ForInRangeLoopGenerator(JetForExpression expression, Type loopRangeType) {
             super(expression, loopRangeType);
@@ -522,41 +524,73 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void generatePrologue() {
-            myEndVar = myFrameMap.enterTemp();
+            myIndexVar = lookupLocal(parameterDescriptor);
+            myCountVar = myFrameMap.enterTemp();
+            myDeltaVar = myFrameMap.enterTemp();
             if(isIntRangeExpr(expression.getLoopRange())) {
                 JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getLoopRange();
                 //noinspection ConstantConditions
                 gen(rangeExpression.getLeft(), Type.INT_TYPE);
-                v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
+                v.store(myIndexVar, Type.INT_TYPE);
                 gen(rangeExpression.getRight(), Type.INT_TYPE);
-                v.store(myEndVar, Type.INT_TYPE);
+                v.store(myCountVar, Type.INT_TYPE);
+
+                v.load(myCountVar, Type.INT_TYPE);
+                v.load(myIndexVar, Type.INT_TYPE);
+                v.sub(Type.INT_TYPE);
+                v.iconst(1);
+                v.add(Type.INT_TYPE);
+                v.store(myCountVar, Type.INT_TYPE);
+                
+                v.load(myCountVar, Type.INT_TYPE);
+                v.iflt(end);
+
+                v.iconst(1);
+                v.store(myDeltaVar, Type.INT_TYPE);
             }
             else {
                 gen(expression.getLoopRange(), loopRangeType);
                 v.dup();
+                v.dup();
 
-                v.invokevirtual("jet/IntRange", "getIteratorStart", "()I");
-                v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
-                v.invokevirtual("jet/IntRange", "getEnd", "()I");
-                v.store(myEndVar, Type.INT_TYPE);
+                v.invokevirtual("jet/IntRange", "getStart", "()I");
+                v.store(myIndexVar, Type.INT_TYPE);
+                v.invokevirtual("jet/IntRange", "getSize", "()I");
+                v.store(myCountVar, Type.INT_TYPE);
+
+                v.invokevirtual("jet/IntRange", "getIsReversed", "()Z");
+                Label down = new Label();
+
+                v.ifne(down);
+                v.iconst(1);
+                Label initEnd = new Label();
+                v.goTo(initEnd);
+                v.mark(down);
+                v.iconst(-1);
+                v.mark(initEnd);
+                v.store(myDeltaVar, Type.INT_TYPE);
             }
         }
 
         @Override
         protected void generateCondition(Type asmParamType, Label end) {
-            v.load(lookupLocal(parameterDescriptor), Type.INT_TYPE);
-            v.load(myEndVar, Type.INT_TYPE);
-            v.ificmpgt(end);
+            v.load(myCountVar, Type.INT_TYPE);
+            v.ifeq(end);
         }
 
         @Override
         protected void generateIncrement() {
-            v.iinc(lookupLocal(parameterDescriptor), 1);  // TODO support decreasing order
+            v.load(myIndexVar, Type.INT_TYPE);
+            v.load(myDeltaVar, Type.INT_TYPE);
+            v.add(Type.INT_TYPE);
+            v.store(myIndexVar, Type.INT_TYPE);
+            v.iinc(myCountVar, -1);
         }
 
         @Override
         protected void cleanupTemp() {
-            myFrameMap.leaveTemp(1);
+            myFrameMap.leaveTemp();
+            myFrameMap.leaveTemp();
         }
     }
 

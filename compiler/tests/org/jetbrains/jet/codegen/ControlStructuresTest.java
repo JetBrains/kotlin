@@ -262,4 +262,8 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("controlStructures/ifInWhile.jet");
 //        System.out.println(generateToText());
     }
+
+    public void testKt1076() throws Exception {
+        blackBoxFile("regressions/kt1076.kt");
+    }
 }
