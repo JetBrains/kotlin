@@ -21,10 +21,11 @@ import java.util.List;
 public class Equals implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
 
         boolean leftNullable = true;
+        JetExpression rightExpr;
         if(element instanceof JetCallExpression) {
+            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
             JetCallExpression jetCallExpression = (JetCallExpression) element;
             JetExpression calleeExpression = jetCallExpression.getCalleeExpression();
             if(calleeExpression != null) {
@@ -32,9 +33,15 @@ public class Equals implements IntrinsicMethod {
                 if(leftType != null)
                     leftNullable = leftType.isNullable();
             }
+            rightExpr = arguments.get(0);
         }
-        
-        JetExpression rightExpr = arguments.get(0);
+        else {
+            JetExpression leftExpr = arguments.get(0);
+            leftNullable = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, leftExpr).isNullable();
+            codegen.gen(leftExpr).put(JetTypeMapper.TYPE_OBJECT, v);
+            rightExpr = arguments.get(1);
+        }
+
         JetType rightType = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, rightExpr);
         codegen.gen(rightExpr).put(JetTypeMapper.TYPE_OBJECT, v);
 
