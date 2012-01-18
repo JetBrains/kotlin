@@ -40,7 +40,7 @@ public class Class extends Member {
     List<Member> withoutPrivate = new LinkedList<Member>();
     if (Converter.hasSetting("public-only")) {
       for (Member m : members) {
-        if (m.accessModifier().equals("public") || m.accessModifier().equals("protected") || m.accessModifier().isEmpty()) {
+        if (m.accessModifier().equals("public") || m.accessModifier().equals("protected")) {
           withoutPrivate.add(m);
         }
       }
