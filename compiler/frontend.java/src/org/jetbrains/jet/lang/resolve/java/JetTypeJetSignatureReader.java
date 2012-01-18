@@ -74,6 +74,10 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         String ourName = name.replace('/', '.');
         
         this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
+        
+        if (this.classDescriptor == null && ourName.equals("java.lang.Object")) {
+            this.classDescriptor = JetStandardClasses.getAny();
+        }
 
         if (this.classDescriptor == null) {
             this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
