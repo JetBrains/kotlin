@@ -6,6 +6,7 @@ import jet.typeinfo.TypeInfoProjection;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
+import org.jetbrains.jet.rt.signature.JetSignatureVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import java.lang.reflect.TypeVariable;
@@ -176,17 +177,17 @@ class TypeInfoParser {
             this.projections = new ArrayList<TypeInfoProjection>();
         }
 
-        private static TypeInfoVariance parseVariance(char wildcard) {
-            switch (wildcard) {
-                case '=': return TypeInfoVariance.INVARIANT;
-                case '+': return TypeInfoVariance.OUT;
-                case '-': return TypeInfoVariance.IN;
+        private static TypeInfoVariance parseVariance(JetSignatureVariance variance) {
+            switch (variance) {
+                case INVARIANT: return TypeInfoVariance.INVARIANT;
+                case OUT: return TypeInfoVariance.OUT;
+                case IN: return TypeInfoVariance.IN;
                 default: throw new IllegalStateException();
             }
         }
 
         @Override
-        public JetSignatureVisitor visitTypeArgument(final char wildcard) {
+        public JetSignatureVisitor visitTypeArgument(final JetSignatureVariance wildcard) {
             final TypeInfoVariance variance = parseVariance(wildcard);
             return new SignatureParserJetSignatureAdapter(classLoader, signature) {
                 @Override

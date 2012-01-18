@@ -134,7 +134,7 @@ public interface JetSignatureVisitor {
      * @param wildcard '+', '-' or '='.
      * @return a non null visitor to visit the signature of the type argument.
      */
-    JetSignatureVisitor visitTypeArgument(char wildcard);
+    JetSignatureVisitor visitTypeArgument(JetSignatureVariance wildcard);
 
     /**
      * Ends the visit of a signature corresponding to a class or interface type.
