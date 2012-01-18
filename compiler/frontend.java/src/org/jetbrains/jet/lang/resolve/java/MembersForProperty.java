@@ -1,7 +1,5 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiType;
-
 /**
 * @author Stepan Koltsov
 */
@@ -10,6 +8,6 @@ class MembersForProperty {
     PsiMethodWrapper setter;
     PsiMethodWrapper getter;
 
-    PsiType type;
-    PsiType receiverType;
+    TypeSource type;
+    TypeSource receiverType;
 }

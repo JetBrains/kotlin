@@ -735,15 +735,6 @@ public class JavaDescriptorResolver {
 
         PsiType psiType = parameter.getPsiParameter().getType();
 
-        JetType varargElementType;
-        if (psiType instanceof PsiEllipsisType) {
-            PsiEllipsisType psiEllipsisType = (PsiEllipsisType) psiType;
-            varargElementType = semanticServices.getTypeTransformer().transformToType(psiEllipsisType.getComponentType());
-        }
-        else {
-            varargElementType = null;
-        }
-
         boolean nullable = parameter.getJetValueParameter().nullable();
 
         // TODO: must be very slow, make it lazy?
@@ -763,6 +754,14 @@ public class JavaDescriptorResolver {
         } else {
             outType = semanticServices.getTypeTransformer().transformToType(psiType);
         }
+
+        JetType varargElementType;
+        if (psiType instanceof PsiEllipsisType) {
+            varargElementType = semanticServices.getJetSemanticServices().getStandardLibrary().getArrayElementType(outType);
+        } else {
+            varargElementType = null;
+        }
+
         if (receiver) {
             return JvmMethodParameterMeaning.receiver(outType);
         } else {
@@ -823,8 +822,8 @@ public class JavaDescriptorResolver {
             return;
         }
         
-        PsiType propertyType = namedMembers.properties.type;
-        PsiType receiverType = namedMembers.properties.receiverType;
+        TypeSource propertyType = namedMembers.properties.type;
+        TypeSource receiver = namedMembers.properties.receiverType;
         MembersForProperty members = namedMembers.properties;
 
         boolean isFinal;
@@ -894,15 +893,28 @@ public class JavaDescriptorResolver {
             // call ugly code with side effects
             typeParameters = resolveMethodTypeParameters(members.getter, propertyDescriptor.getGetter(), typeVariableResolver);
         }
+        
+        List<TypeParameterDescriptor> typeParametersForReceiver = new ArrayList<TypeParameterDescriptor>();
+        typeParametersForReceiver.addAll(classTypeParameters);
+        typeParametersForReceiver.addAll(typeParameters);
 
+        TypeParameterListTypeVariableResolver typeVariableResolverForPropertyInternals = new TypeParameterListTypeVariableResolver(typeParametersForReceiver);
+        
         JetType receiverJetType;
-        if (receiverType == null) {
+        if (receiver == null) {
             receiverJetType = null;
+        } else if (receiver.getTypeString().length() > 0) {
+            receiverJetType = semanticServices.getTypeTransformer().transformToType(receiver.getTypeString(), typeVariableResolverForPropertyInternals);
         } else {
-            receiverJetType = semanticServices.getTypeTransformer().transformToType(receiverType);
+            receiverJetType = semanticServices.getTypeTransformer().transformToType(receiver.getPsiType());
         }
 
-        JetType type = semanticServices.getTypeTransformer().transformToType(propertyType);
+        JetType type;
+        if (propertyType.getTypeString().length() > 0) {
+            type = semanticServices.getTypeTransformer().transformToType(propertyType.getTypeString(), typeVariableResolverForPropertyInternals);
+        } else {
+            type = semanticServices.getTypeTransformer().transformToType(propertyType.getPsiType());
+        }
 
         propertyDescriptor.setType(
                 type,

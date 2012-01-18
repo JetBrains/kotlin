@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.HierarchicalMethodSignature;
-import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -12,8 +11,8 @@ import java.util.Map;
  * @author Stepan Koltsov
  */
 class JavaDescriptorResolverHelper {
-    
-    
+
+
     private static class Builder {
         private final PsiClassWrapper psiClass;
         private final boolean staticMembers;
@@ -57,7 +56,7 @@ class JavaDescriptorResolverHelper {
 
                     MembersForProperty members = new MembersForProperty();
                     members.field = field;
-                    members.type = field.getType();
+                    members.type = new TypeSource("", field.getType());
 
                     namedMembers.properties = members;
                 }
@@ -90,9 +89,10 @@ class JavaDescriptorResolverHelper {
 
                         int i = 0;
 
-                        PsiType receiverType;
+                        TypeSource receiverType;
                         if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
-                            receiverType = method.getParameter(i).getPsiParameter().getType();
+                            PsiParameterWrapper receiverParameter = method.getParameter(i);
+                            receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType());
                             ++i;
                         } else {
                             receiverType = null;
@@ -114,7 +114,7 @@ class JavaDescriptorResolverHelper {
 
                         // TODO: check conflicts with setter
                         // TODO: what if returnType == null?
-                        members.getForProperty().type = method.getReturnType();
+                        members.getForProperty().type = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType());
                         members.getForProperty().receiverType = receiverType;
                     }
                 } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
@@ -127,10 +127,10 @@ class JavaDescriptorResolverHelper {
 
                         int i = 0;
 
-                        PsiType receiverType = null;
+                        TypeSource receiverType = null;
                         PsiParameterWrapper p1 = method.getParameter(0);
                         if (p1.getJetValueParameter().receiver()) {
-                            receiverType = p1.getPsiParameter().getType();
+                            receiverType = new TypeSource(p1.getJetValueParameter().type(), p1.getPsiParameter().getType());
                             ++i;
                         }
 
@@ -142,7 +142,8 @@ class JavaDescriptorResolverHelper {
                             throw new IllegalStateException();
                         }
 
-                        PsiType propertyType = method.getParameter(i).getPsiParameter().getType();
+                        PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
+                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType());
 
                         String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
                         NamedMembers members = getNamedMembers(propertyName);

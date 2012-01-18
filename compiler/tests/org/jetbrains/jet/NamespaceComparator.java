@@ -274,6 +274,9 @@ class NamespaceComparator {
                 }
                 sb.append(">");
             }
+            if (type.isNullable()) {
+                sb.append("?");
+            }
         }
 
         public void serializeCommaSeparated(List<?> list) {
