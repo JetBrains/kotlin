@@ -17,6 +17,8 @@ import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Stepan Koltsov
@@ -74,10 +76,26 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         String ourName = name.replace('/', '.');
         
         this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
-        
+
         if (this.classDescriptor == null && ourName.equals("java.lang.Object")) {
             this.classDescriptor = JetStandardClasses.getAny();
         }
+
+        if (classDescriptor == null) {
+            // TODO: this is the worst code in Kotlin project
+            Matcher matcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName);
+            if (matcher.matches()) {
+                classDescriptor = JetStandardClasses.getFunction(Integer.parseInt(matcher.group(1)));
+            }
+        }
+        
+        if (classDescriptor == null) {
+            Matcher matcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName);
+            if (matcher.matches()) {
+                classDescriptor = JetStandardClasses.getTuple(Integer.parseInt(matcher.group(1)));
+            }
+        }
+
 
         if (this.classDescriptor == null) {
             this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
