@@ -1,8 +1,6 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +12,10 @@ import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
+
+import java.util.Arrays;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
@@ -32,7 +31,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     private static final String MESSAGE = "Cannot be accessor call. Use canBeProperty*Call to ensure this method " +
             "can be called safely.";
 
-
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
                                                             @NotNull TranslationContext context) {
@@ -40,13 +38,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert descriptor instanceof PropertyDescriptor : "Must be a property descriptor.";
         return (PropertyDescriptor) descriptor;
-    }
-
-    @NotNull
-    public static JsExpression translateAsPropertyGetterCall(@NotNull JetQualifiedExpression expression,
-                                                             @NotNull TranslationContext context) {
-        return (newInstance(expression, context))
-                .translateAsGet();
     }
 
     @NotNull
@@ -163,15 +154,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private JsExpression getterCall() {
-        //TODO: HACK to make standard example work
-        if (DescriptorUtils.getFQName(propertyDescriptor).equals("jet.String.length")) {
-            JsNameRef lengthMethodReference = AstUtil.newQualifiedNameRef("length");
-            AstUtil.setQualifier(lengthMethodReference, translateQualifier());
-            return lengthMethodReference;
-        }
-
-        JsName getterName = getGetterName();
-        return qualifiedAccessorInvocation(getterName);
+        return CallTranslator.translate(translateQualifier(), getGetterDescriptor(), context());
     }
 
     @Override
@@ -186,23 +169,13 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     private JsExpression setterCall(@NotNull JsExpression toSetTo) {
-        JsName setterName = getSetterName();
-        JsInvocation setterCall = qualifiedAccessorInvocation(setterName);
-        setterCall.getArguments().add(toSetTo);
-        return setterCall;
+        return CallTranslator.translate(translateQualifier(), Arrays.asList(toSetTo), getSetterDescriptor(), context());
     }
 
     @NotNull
     private JsExpression backingFieldAssignment(@NotNull JsExpression toSetTo) {
         JsNameRef backingFieldReference = backingFieldReference(context(), propertyDescriptor);
         return AstUtil.newAssignment(backingFieldReference, toSetTo);
-    }
-
-    @NotNull
-    private JsInvocation qualifiedAccessorInvocation(@NotNull JsName accessorName) {
-        JsNameRef accessorReference = accessorName.makeRef();
-        AstUtil.setQualifier(accessorReference, translateQualifier());
-        return AstUtil.newInvocation(accessorReference);
     }
 
     @NotNull
@@ -215,7 +188,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         return implicitReceiver;
     }
 
-
     @NotNull
     private static JetSimpleNameExpression getNotNullSelector(@NotNull JetQualifiedExpression qualifiedExpression) {
         JetSimpleNameExpression selectorExpression = getSelectorAsSimpleName(qualifiedExpression);
@@ -224,28 +196,10 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     }
 
     @NotNull
-    private JsName getGetterName() {
-        //TODO: hack alert. properties for standard objects that do not have their implementation
-        // do not have getters and thus this workaround is needed
-        if (context().isStandardObject(propertyDescriptor)) {
-            return context().getNameForStandardObject(propertyDescriptor);
-        }
-
-        PropertyGetterDescriptor getter = getGetterDescriptor();
-        return context().getNameForDescriptor(getter);
-    }
-
-    @NotNull
     private PropertyGetterDescriptor getGetterDescriptor() {
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
         assert getter != null : propertyDescriptor.getName() + " does not have a getter.";
         return getter;
-    }
-
-    @NotNull
-    private JsName getSetterName() {
-        PropertySetterDescriptor setter = getSetterDescriptor();
-        return context().getNameForDescriptor(setter);
     }
 
     @NotNull

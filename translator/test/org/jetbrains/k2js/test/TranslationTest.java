@@ -4,7 +4,13 @@ import org.jetbrains.k2js.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +24,7 @@ public abstract class TranslationTest {
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
+    private static final String EXPECTED = "expected/";
 
     protected abstract String mainDirectory();
 
@@ -47,6 +54,14 @@ public abstract class TranslationTest {
 
     private String getInputPath() {
         return testFilesPath() + casesDirectoryName();
+    }
+
+    private String getExpectedPath() {
+        return testFilesPath() + expectedDirectoryName();
+    }
+
+    private String expectedDirectoryName() {
+        return EXPECTED;
     }
 
     protected void testFunctionOutput(String filename, String namespaceName,
@@ -81,6 +96,10 @@ public abstract class TranslationTest {
         return getInputFilePath(filename);
     }
 
+    private String expected(String testName) {
+        return getExpectedPath() + testName + ".out";
+    }
+
     protected void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
         FileReader reader = new FileReader(inputFile);
         context.evaluateReader(scope, reader, inputFile, 1, null);
@@ -110,5 +129,22 @@ public abstract class TranslationTest {
         runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
                 new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
     }
+
+    protected void testWithMain(String testName, String testId, String... args) throws Exception {
+        checkOutput(testName + ".kt", readFile(expected(testName + testId)), args);
+    }
+
+    private static String readFile(String path) throws IOException {
+        FileInputStream stream = new FileInputStream(new File(path));
+        try {
+            FileChannel fc = stream.getChannel();
+            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            /* Instead of using default, pass in a decoder. */
+            return Charset.defaultCharset().decode(bb).toString();
+        } finally {
+            stream.close();
+        }
+    }
+
 
 }

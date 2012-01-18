@@ -5,9 +5,9 @@ import org.junit.Test;
 /**
  * @author Pavel Talanov
  */
-public final class WebDemoExamplesTest extends TranslationTest {
+public final class WebDemoExamples1Test extends TranslationTest {
 
-    final private static String MAIN = "webDemoExamples/";
+    final private static String MAIN = "webDemoExamples1/";
 
     @Override
     protected String mainDirectory() {

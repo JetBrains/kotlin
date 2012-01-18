@@ -46,8 +46,8 @@ fun lifetime(body: (Lifetime)->Unit)
 fun<T> Dump(items:ArrayList<T>)
 {
   for(item in items)
-   System.out?.print(item.toString() + ", ")
-  System.out?.println()
+   print(item.toString() + ", ")
+  println()
 }
 
 fun main(args:Array<String>)

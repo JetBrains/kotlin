@@ -1,5 +1,7 @@
+iimport
+
 fun stdout(): java.io.PrintStream? {
-  System.out?.println("stdout")
+  println("stdout")
   return System.out
 }
 

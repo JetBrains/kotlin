@@ -2,16 +2,14 @@ package org.jetbrains.k2js.translate.intrinsic;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayNullConstructorIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
+import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
@@ -20,6 +18,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
 
 /**
  * @author Pavel Talanov
@@ -48,8 +47,15 @@ public final class Intrinsics {
     private Intrinsics(@NotNull JetStandardLibrary library) {
         this.library = library;
         declareOperatorIntrinsics();
+        declareStringIntrinsics();
         //TODO: array intrinsic are under consideration
         //declareArrayIntrinsics();
+    }
+
+    private void declareStringIntrinsics() {
+        PropertyDescriptor lengthProperty =
+                getPropertyByName(library.getString().getDefaultType().getMemberScope(), "length");
+        functionIntrinsics.put(lengthProperty.getGetter(), LengthIntrinsic.INSTANCE);
     }
 
     private void declareOperatorIntrinsics() {
@@ -70,6 +76,7 @@ public final class Intrinsics {
 
         FunctionDescriptor setFunction = getFunctionByName(library.getArray(), "set");
         functionIntrinsics.put(setFunction, ArraySetIntrinsic.INSTANCE);
+
     }
 
     public boolean isIntrinsic(@NotNull DeclarationDescriptor descriptor) {

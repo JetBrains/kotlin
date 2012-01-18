@@ -32,10 +32,4 @@ public class MiscTest extends AbstractExpressionTest {
     public void safecallComputesExpressionOnlyOnce() throws Exception {
         testFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
     }
-
-    @Test
-    public void KT962() throws Exception {
-        checkOutput("KT-962.kt", "stdout\n" +
-                "Hello, world!\n");
-    }
 }

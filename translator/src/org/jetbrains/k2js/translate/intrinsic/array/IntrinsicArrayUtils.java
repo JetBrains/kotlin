@@ -36,6 +36,6 @@ public final class IntrinsicArrayUtils {
     @NotNull
     private static JsExpression throwOutOfBoundsException() {
         //TODO: think about exception
-        return new JsThisRef();
+        return AstUtil.newQualifiedNameRef("ErrorName");
     }
 }

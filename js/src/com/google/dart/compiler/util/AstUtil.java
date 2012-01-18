@@ -290,7 +290,7 @@ public class AstUtil {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
     }
 
-    //TODO
+    //TODO refactor
     public static void setQualifier(JsExpression selector, JsExpression receiver) {
         if (selector instanceof JsInvocation) {
             setQualifier(((JsInvocation) selector).getQualifier(), receiver);

@@ -1,5 +1,7 @@
 package foo
 
+import js.*
+
 class RangeIterator(val start : Int, var count : Int, val reversed : Boolean) {
 
     var i = start
@@ -59,7 +61,7 @@ fun testRange() : Boolean {
         sum += i;
     }
     for (i in oneToFive) {
-        System.out?.print(i)
+        print(i)
     }
 
     if (sum != 10) return false;
@@ -70,7 +72,7 @@ fun testRange() : Boolean {
 
 fun testReversedRange() : Boolean {
 
-    System.out?.println("Testing reversed range.");
+    println("Testing reversed range.");
 
     val tenToFive = NumberRange(10, 5, true);
 
@@ -89,7 +91,7 @@ fun testReversedRange() : Boolean {
     if (!(tenToFive.end == 6)) return false;
 
     for (i in tenToFive) {
-        System.out?.println(i)
+        println(i)
     }
 
 
@@ -106,5 +108,5 @@ fun testReversedRange() : Boolean {
 }
 
 fun main(args : Array<String>) {
-    System.out?.println(box())
+    println(box())
 }

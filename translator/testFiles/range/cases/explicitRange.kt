@@ -1,5 +1,7 @@
 package foo
 
+import js.*
+
 fun box() : Boolean {
 
     var oneToFive = IntRange(1, 4)
@@ -21,7 +23,7 @@ fun box() : Boolean {
         sum += i;
     }
     for (i in oneToFive) {
-        System.out?.print(i)
+        print(i)
     }
 
     if (sum != 10) return false;

@@ -280,10 +280,14 @@ Kotlin.Array = Class.create({
     size:function () {
         return this.array.length;
     },
+    //TODO: remove duplicated methods
+    get_size:function () {
+        return this.array.length;
+    },
     iterator:function () {
         return new Kotlin.ArrayIterator(this);
     },
-    indices:function () {
+    get_indices:function () {
         return new Kotlin.NumberRange(0, this.size(), false);
     }
 });
@@ -358,15 +362,11 @@ Kotlin.ArrayIterator = Class.create({
     }
 });
 
-Kotlin.Integer = function () {
-
-    return {
-        parseInt:function (str) {
-            return parseInt(str);
-        }
+Kotlin.parseInt =
+    function (str) {
+        return parseInt(str);
     }
-
-}();
+;
 
 Kotlin.System = function () {
     var output = "";
@@ -397,6 +397,14 @@ Kotlin.System = function () {
     };
 }();
 
+Kotlin.println = function (s) {
+    Kotlin.System.out().println(s);
+}
+
+Kotlin.print = function (s) {
+    Kotlin.System.out().print(s);
+}
+
 Kotlin.AbstractFunctionInvokationError = Class.create();
 
 Kotlin.Iterator = Class.create({
@@ -420,6 +428,9 @@ Kotlin.ArrayIterator = Class.create(Kotlin.Iterator, {
     },
     hasNext:function () {
         return (this.array.size() > this.index);
+    },
+    get_hasNext:function () {
+        return this.hasNext();
     }
 });
 
@@ -453,6 +464,8 @@ Kotlin.RangeIterator = Kotlin.Class.create(Kotlin.Iterator, {
         }
     }, hasNext:function () {
         return this.get_count() > 0;
+    }, get_hasNext:function () {
+        return this.hasNext();
     }
 });
 

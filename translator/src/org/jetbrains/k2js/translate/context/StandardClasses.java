@@ -19,6 +19,7 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 /**
  * @author Pavel Talanov
  */
+//TODO: REFACTOR FFS
 public final class StandardClasses {
 
     //TODO: move declaration code to some kind of builder
@@ -31,22 +32,32 @@ public final class StandardClasses {
         declareRange(standardClasses);
         declareString(standardClasses);
         declareJavaArrayList(standardClasses);
-        declareJavaSystem(standardClasses);
-        declareJavaInteger(standardClasses);
-        declareJavaUtilIterator(standardClasses);
+        declareTopLevelFunctions(standardClasses);
+        declareInteger(standardClasses);
         return standardClasses;
     }
 
-    private static void declareJavaUtilIterator(@NotNull StandardClasses standardClasses) {
-        String iteratorFQName = "<java_root>.java.util.Iterator";
-        standardClasses.declareStandardTopLevelObject(iteratorFQName, "Iterator");
-        declareMethods(standardClasses, iteratorFQName, "next", "hasNext");
+    //TODO: refactor
+    private static void declareTopLevelFunctions(@NotNull StandardClasses standardClasses) {
+        String parseIntFQName = "js.parseInt";
+        standardClasses.declareStandardTopLevelObject(parseIntFQName, "parseInt");
+        String printlnFQName = "js.println";
+        standardClasses.declareStandardTopLevelObject(printlnFQName, "println");
+        String printFQName = "js.print";
+        standardClasses.declareStandardTopLevelObject(printFQName, "print");
     }
+
+    private static void declareInteger(@NotNull StandardClasses standardClasses) {
+        String integerFQName = "Integer";
+        standardClasses.declareStandardTopLevelObject(integerFQName, "Integer");
+        standardClasses.declareStandardInnerDeclaration(integerFQName, "parseInt", "parseInt");
+    }
+
 
     private static void declareString(@NotNull StandardClasses standardClasses) {
         String stringFQName = "jet.String";
         standardClasses.declareStandardTopLevelObject(stringFQName, "String");
-        standardClasses.declareStandardInnerDeclaration(stringFQName, "length", "length");
+        declareReadonlyProperties(standardClasses, stringFQName, "length");
     }
 
     //TODO: duplication
@@ -55,27 +66,12 @@ public final class StandardClasses {
         standardClasses.declareStandardTopLevelObject(intRangeFQName, "NumberRange");
         standardClasses.declareStandardInnerDeclaration(intRangeFQName, "<init>", "NumberRange");
         declareMethods(standardClasses, intRangeFQName, "iterator", "contains");
-        declareProperties(standardClasses, intRangeFQName, "start", "size", "end", "reversed");
+        declareReadonlyProperties(standardClasses, intRangeFQName, "start", "size", "end", "reversed");
     }
 
-    private static void declareJavaInteger(@NotNull StandardClasses standardClasses) {
-        String integerFQName = "<java_root>.java.lang.Integer";
-        standardClasses.declareStandardTopLevelObject(integerFQName, "Integer");
-        declareMethods(standardClasses, integerFQName, "parseInt");
-    }
-
-    private static void declareJavaSystem(@NotNull StandardClasses standardClasses) {
-        String systemFQName = "<java_root>.java.lang.System";
-        standardClasses.declareStandardTopLevelObject(systemFQName, "System");
-        declareMethods(standardClasses, systemFQName, "out");
-        String printStreamFQName = "<java_root>.java.io.PrintStream";
-        //TODO:
-        standardClasses.declareStandardTopLevelObject(printStreamFQName, "ErrorName");
-        declareMethods(standardClasses, printStreamFQName, "print", "println");
-    }
 
     private static void declareJavaArrayList(@NotNull StandardClasses standardClasses) {
-        String arrayListFQName = "<java_root>.java.util.ArrayList";
+        String arrayListFQName = "java.util.ArrayList";
         standardClasses.declareStandardTopLevelObject(arrayListFQName, "ArrayList");
         standardClasses.declareStandardInnerDeclaration(arrayListFQName, "<init>", "ArrayList");
         declareMethods(standardClasses, arrayListFQName, "size", "add", "get",
@@ -113,12 +109,16 @@ public final class StandardClasses {
         }
     }
 
-    private static void declareProperties(@NotNull StandardClasses standardClasses,
-                                          @NotNull String classFQName,
-                                          @NotNull String... propertyNames) {
+    private static void declareReadonlyProperties(@NotNull StandardClasses standardClasses,
+                                                  @NotNull String classFQName,
+                                                  @NotNull String... propertyNames) {
         for (String propertyName : propertyNames) {
             standardClasses.declareStandardInnerDeclaration(classFQName,
-                    propertyName, Namer.getNameForGetter(propertyName));
+                    propertyName, propertyName);
+            //TODO: provide general and concise way to declare
+//            standardClasses.declareStandardInnerDeclaration(classFQName,
+//                    "get-" + propertyName, propertyName);
+
         }
     }
 

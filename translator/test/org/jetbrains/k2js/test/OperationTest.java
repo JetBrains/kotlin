@@ -35,7 +35,7 @@ public class OperationTest extends AbstractExpressionTest {
 
     @Test
     public void assign() throws Exception {
-        testFunctionOutput("assign.jet", "foo", "f", 2.0);
+        testFunctionOutput("assign.kt", "foo", "f", 2.0);
     }
 
     @Test

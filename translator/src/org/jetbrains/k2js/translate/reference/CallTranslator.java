@@ -126,9 +126,16 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JsExpression receiver, @NotNull CallableDescriptor functionDescriptor,
+    public static JsExpression translate(@Nullable JsExpression receiver, @NotNull CallableDescriptor functionDescriptor,
                                          @NotNull TranslationContext context) {
-        return (new CallTranslator(receiver, Collections.<JsExpression>emptyList(), functionDescriptor, context)).translate();
+        return translate(receiver, Collections.<JsExpression>emptyList(), functionDescriptor, context);
+    }
+
+    @NotNull
+    public static JsExpression translate(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
+                                         @NotNull CallableDescriptor functionDescriptor,
+                                         @NotNull TranslationContext context) {
+        return (new CallTranslator(receiver, arguments, functionDescriptor, context)).translate();
     }
 
     @NotNull
