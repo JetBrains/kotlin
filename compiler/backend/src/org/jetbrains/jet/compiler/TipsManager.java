@@ -10,10 +10,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -43,13 +40,9 @@ public final class TipsManager {
 
     @NotNull
     public static Collection<DeclarationDescriptor> getReferenceVariants(JetSimpleNameExpression expression, BindingContext context) {
-        PsiElement parent = expression.getParent();
-
-        if (parent instanceof JetQualifiedExpression && !(parent.getParent() instanceof JetImportDirective)) {
+        JetExpression receiverExpression = expression.getReceiverExpression();
+        if (receiverExpression != null) {
             // Process as call expression
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
-            JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
-
             final JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
             final JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
 
@@ -58,14 +51,12 @@ public final class TipsManager {
                         expressionType.getMemberScope().getAllDescriptors(),
                         resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
             }
-        }
-        else {
+        } else {
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
             if (resolutionScope != null) {
-                if (parent instanceof JetImportDirective) {
+                if (expression.getParent() instanceof JetImportDirective) {
                     return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
-                }
-                else {
+                } else {
                     return excludeNotCallableExtensions(resolutionScope.getAllDescriptors(), resolutionScope);
                 }
             }

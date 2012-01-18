@@ -51,6 +51,8 @@
       <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
       <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
+      <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
+
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.GlobalMemberCompletionContributor"/>
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor"/>
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
