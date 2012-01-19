@@ -26,7 +26,7 @@ public abstract class Node implements INode {
     "double", "float", "long", "int", "short", "byte", "boolean", "char"
   ));
 
-  static final String N = System.getProperty("line.separator");
+  static final String N = "\n";
   @NotNull
   static final String N2 = N + N;
   @NotNull
