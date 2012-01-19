@@ -28,7 +28,7 @@ import java.util.Set;
  * @author yole
  */
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
-    public static List<DescriptorClassMember> membersFromDescriptors(Set<CallableMemberDescriptor> missingImplementations) {
+    public static List<DescriptorClassMember> membersFromDescriptors(Iterable<CallableMemberDescriptor> missingImplementations) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
             members.add(new DescriptorClassMember(memberDescriptor));
@@ -52,7 +52,13 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (body == null) {
             return;
         }
+
+        String lineSeparator = System.getProperty("line.separator");
+
         for (DescriptorClassMember selectedElement : selectedElements) {
+
+            body.addBefore(JetPsiFactory.createWhiteSpace(body.getProject(), lineSeparator + lineSeparator), body.getRBrace());
+
             final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof NamedFunctionDescriptor) {
                 JetElement target = overrideFunction(project, (NamedFunctionDescriptor) descriptor);

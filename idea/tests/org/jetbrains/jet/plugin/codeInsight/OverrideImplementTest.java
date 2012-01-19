@@ -12,6 +12,9 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -54,9 +57,19 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doFileTest();
     }
 
+    public void testGenerateMulti() {
+        doMultiFileTest();
+    }
+
     private void doFileTest() {
         myFixture.configureByFile(getTestName(true) + ".kt");
         doImplement();
+        myFixture.checkResultByFile(getTestName(true) + ".kt.after");
+    }
+
+    private void doMultiFileTest() {
+        myFixture.configureByFile(getTestName(true) + ".kt");
+        doMultiImplement();
         myFixture.checkResultByFile(getTestName(true) + ".kt.after");
     }
 
@@ -75,8 +88,32 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
             protected void run(Result result) throws Throwable {
-                ImplementMethodsHandler.generateMethods(myFixture.getProject(), myFixture.getEditor(), classOrObject,
-                                                        ImplementMethodsHandler.membersFromDescriptors(descriptors));
+                OverrideImplementMethodsHandler.generateMethods(
+                        myFixture.getProject(), myFixture.getEditor(), classOrObject,
+                        OverrideImplementMethodsHandler.membersFromDescriptors(descriptors));
+            }
+        }.execute();
+    }
+
+    private void doMultiImplement() {
+        final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
+        final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
+
+        final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
+        Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {
+            @Override
+            public int compare(CallableMemberDescriptor desc1, CallableMemberDescriptor desc2) {
+                return desc1.getName().compareTo(desc2.getName());
+            }
+        });
+
+        new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
+            @Override
+            protected void run(Result result) throws Throwable {
+                OverrideImplementMethodsHandler.generateMethods(
+                        myFixture.getProject(), myFixture.getEditor(), classOrObject,
+                        OverrideImplementMethodsHandler.membersFromDescriptors(descriptorsList));
             }
         }.execute();
     }
