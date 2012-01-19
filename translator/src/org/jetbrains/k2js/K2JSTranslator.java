@@ -40,8 +40,8 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNames
 public final class K2JSTranslator {
 
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsCollectionSupport.jet",
-            "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsSupport.jet"
+            "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsSupport.jet",
+            "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsDeclarations.kt"
     );
 
     @NotNull

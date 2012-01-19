@@ -77,7 +77,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         return new PropertyAccessTranslator(propertyDescriptor, null, isBackingFieldReference(expression), context);
     }
 
-
     @NotNull
     public static PropertyAccessTranslator newInstance(@NotNull JetExpression expression,
                                                        @NotNull TranslationContext context) {

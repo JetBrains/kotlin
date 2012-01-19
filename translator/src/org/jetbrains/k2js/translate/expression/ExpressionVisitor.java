@@ -244,6 +244,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
                                               @NotNull TranslationContext context) {
+        //TODO: problem with extension properties lies here
+//        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
+//            return PropertyAccessTranslator.translateAsPropertyGetterCall()
+//        }
         if (expression.getSelectorExpression() instanceof JetCallExpression) {
             return CallTranslator.translate(expression, context);
         }

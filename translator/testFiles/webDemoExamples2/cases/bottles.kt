@@ -33,7 +33,7 @@ fun main(args : Array<String>) {
     printBottles(99)
   }
   else {
-    val bottles = Integer.parseInt(args[0]);
+    val bottles = parseInt(args[0]);
     if (bottles != null) {
         printBottles(bottles);
     } else {

@@ -162,11 +162,10 @@ public class WhenTranslator extends AbstractTranslator {
         }
     }
 
-
     @NotNull
     private JsExpression translateCondition(@NotNull JetWhenCondition condition) {
-        if (condition instanceof JetWhenConditionIsPattern) {
-            return translatePatternCondition((JetWhenConditionIsPattern) condition);
+        if ((condition instanceof JetWhenConditionIsPattern) || (condition instanceof JetWhenConditionWithExpression)) {
+            return translatePatternCondition(condition);
         }
         throw new AssertionError("Unsupported when condition " + condition.getClass());
     }
@@ -177,19 +176,33 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translatePatternCondition(@NotNull JetWhenConditionIsPattern condition) {
+    private JsExpression translatePatternCondition(@NotNull JetWhenCondition condition) {
         JsExpression patternMatchExpression = Translation.patternTranslator(context()).
                 translatePattern(getPattern(condition), expressionToMatch);
-        if (condition.isNegated()) {
+        if (isNegated(condition)) {
             return AstUtil.negated(patternMatchExpression);
         }
         return patternMatchExpression;
     }
 
+    private boolean isNegated(@NotNull JetWhenCondition condition) {
+        if (condition instanceof JetWhenConditionIsPattern) {
+            return ((JetWhenConditionIsPattern) condition).isNegated();
+        }
+        return false;
+    }
+
     @NotNull
-    private JetPattern getPattern(@NotNull JetWhenConditionIsPattern condition) {
-        JetPattern pattern = condition.getPattern();
-        assert pattern != null : "Is condition should have a non null pattern.";
+    private JetPattern getPattern(@NotNull JetWhenCondition condition) {
+        JetPattern pattern;
+        if (condition instanceof JetWhenConditionIsPattern) {
+            pattern = ((JetWhenConditionIsPattern) condition).getPattern();
+        } else if (condition instanceof JetWhenConditionWithExpression) {
+            pattern = ((JetWhenConditionWithExpression) condition).getPattern();
+        } else {
+            throw new AssertionError("Wrong type of JetWhenCondition");
+        }
+        assert pattern != null : "Condition should have a non null pattern.";
         return pattern;
     }
 
