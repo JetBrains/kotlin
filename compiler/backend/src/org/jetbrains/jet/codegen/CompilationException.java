@@ -2,14 +2,8 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
-import org.objectweb.asm.Label;
-
-import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
 
 /**
 * @author alex.tkachman
@@ -42,6 +36,11 @@ public class CompilationException extends RuntimeException {
             col = -1;
         }
 
-        return "Internal error: (" + (line+1) + "," + col + ") " + getCause().toString();
+        return "Internal error: (" + (line+1) + "," + col + ") " + (getCause().getMessage() != null ? getCause().getMessage() : getCause().toString());
+    }
+
+    @Override
+    public String getMessage() {
+        return this.toString();
     }
 }
