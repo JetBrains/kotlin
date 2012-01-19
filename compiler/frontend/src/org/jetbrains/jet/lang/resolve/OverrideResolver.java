@@ -1,10 +1,12 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -13,6 +15,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,44 +50,46 @@ public class OverrideResolver {
     private void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
-                if (overridden != null) {
-                    ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
+                Collection<FunctionDescriptor> overridden = findFunctionsOverridableBy(declaredFunction, supertype);
+                for (FunctionDescriptor functionDescriptor : overridden) {
+                    ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(functionDescriptor);
                 }
             }
         }
 
         for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                PropertyDescriptor overridden = findPropertyOverridableBy(propertyDescriptor, supertype);
-                if (overridden != null) {
-                    propertyDescriptor.addOverriddenDescriptor(overridden);
+                Collection<PropertyDescriptor> overridden = findPropertiesOverridableBy(propertyDescriptor, supertype);
+                for (PropertyDescriptor descriptor : overridden) {
+                    propertyDescriptor.addOverriddenDescriptor(descriptor);
                 }
             }
         }
     }
 
-    @Nullable
-    private FunctionDescriptor findFunctionOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
+    @NotNull
+    private Collection<FunctionDescriptor> findFunctionsOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
+        List<FunctionDescriptor> result = Lists.newArrayList();
         Set<FunctionDescriptor> functionGroup = supertype.getMemberScope().getFunctions(declaredFunction.getName());
         for (FunctionDescriptor functionDescriptor : functionGroup) {
             if (OverridingUtil.isOverridableBy(functionDescriptor, declaredFunction).isSuccess()) {
-                return functionDescriptor;
+                result.add(functionDescriptor);
             }
         }
-        return null;
+        return result;
     }
 
-    @Nullable
-    private PropertyDescriptor findPropertyOverridableBy(@NotNull PropertyDescriptor declaredProperty, @NotNull JetType supertype) {
+    @NotNull
+    private Collection<PropertyDescriptor> findPropertiesOverridableBy(@NotNull PropertyDescriptor declaredProperty, @NotNull JetType supertype) {
+        List<PropertyDescriptor> result = Lists.newArrayList();
         Set<VariableDescriptor> properties = supertype.getMemberScope().getProperties(declaredProperty.getName());
         for (VariableDescriptor property : properties) {
             assert property instanceof PropertyDescriptor;
             if (OverridingUtil.isOverridableBy(property, declaredProperty).isSuccess()) {
-                return (PropertyDescriptor) property;
+                result.add((PropertyDescriptor) property);
             }
         }
-        return null;
+        return result;
     }
 
     private void checkOverrides() {
