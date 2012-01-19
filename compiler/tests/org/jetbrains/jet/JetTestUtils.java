@@ -153,6 +153,9 @@ public class JetTestUtils {
             return;
         }
         if (!file.mkdirs()) {
+            if (file.exists()) {
+                throw new IOException("failed to create " + file + " file exists and not a directory");
+            }
             throw new IOException();
         }
     }
