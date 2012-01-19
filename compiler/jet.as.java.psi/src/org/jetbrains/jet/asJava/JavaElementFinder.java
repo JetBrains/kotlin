@@ -185,7 +185,7 @@ public class JavaElementFinder extends PsiElementFinder {
 
             final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
 
-            VirtualFile[] contentRoots = ProjectRootManager.getInstance(project).getContentRoots();
+            List<VirtualFile> contentRoots = Arrays.asList(ProjectRootManager.getInstance(project).getContentRoots());
 
             CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
                 @Override
