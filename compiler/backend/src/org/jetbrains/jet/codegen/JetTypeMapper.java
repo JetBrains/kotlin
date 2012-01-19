@@ -92,8 +92,11 @@ public class JetTypeMapper {
     public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName((NamespaceDescriptor) containingDeclaration));
+        if (containingDeclaration instanceof JavaNamespaceDescriptor) {
+            JavaNamespaceDescriptor javaNamespaceDescriptor = (JavaNamespaceDescriptor) containingDeclaration;
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName((NamespaceDescriptor) containingDeclaration), javaNamespaceDescriptor.isNamespace());
+        } else if (containingDeclaration instanceof NamespaceDescriptor) {
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName((NamespaceDescriptor) containingDeclaration), true);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -365,7 +368,11 @@ public class JetTypeMapper {
         ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent));
+            boolean namespace = true;
+            if (functionParent instanceof JavaNamespaceDescriptor) {
+                namespace = ((JavaNamespaceDescriptor) functionParent).isNamespace();
+            }
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent), namespace);
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
         }
@@ -711,7 +718,7 @@ public class JetTypeMapper {
 
         String baseName;
         if (container instanceof JetFile) {
-            baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetFile) container)));
+            baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetFile) container)), true);
         }
         else {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);

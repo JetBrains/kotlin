@@ -633,7 +633,8 @@ public class JavaDescriptorResolver {
                 resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 name == null ? JAVA_ROOT : name,
-                name == null ? JAVA_ROOT : psiPackage.getQualifiedName()
+                name == null ? JAVA_ROOT : psiPackage.getQualifiedName(),
+                true
         );
 
         namespaceData.namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceData.namespaceDescriptor, semanticServices));
@@ -657,7 +658,8 @@ public class JavaDescriptorResolver {
                 resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName(),
-                psiClass.getQualifiedName()
+                psiClass.getQualifiedName(),
+                false
         );
         namespaceData.namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
         semanticServices.getTrace().record(BindingContext.NAMESPACE, psiClass, namespaceData.namespaceDescriptor);

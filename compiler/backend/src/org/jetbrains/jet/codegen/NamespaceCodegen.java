@@ -34,7 +34,7 @@ public class NamespaceCodegen {
 
         v.defineClass(sourceFile, V1_6,
                       ACC_PUBLIC/*|ACC_SUPER*/,
-                      getJVMClassName(fqName),
+                      getJVMClassName(fqName, true),
                       null,
                       //"jet/lang/Namespace",
                       "java/lang/Object",
@@ -118,7 +118,7 @@ public class NamespaceCodegen {
 
     private void generateTypeInfoFields(JetFile file, CodegenContext context) {
         if(context.typeInfoConstants != null) {
-            String jvmClassName = getJVMClassName(JetPsiUtil.getFQName(file));
+            String jvmClassName = getJVMClassName(JetPsiUtil.getFQName(file), true);
             for(int index = 0; index != context.typeInfoConstantsCount; index++) {
                 JetType type = context.reverseTypeInfoConstants.get(index);
                 String fieldName = "$typeInfoCache$" + index;
@@ -205,14 +205,20 @@ public class NamespaceCodegen {
         v.done();
     }
 
-    public static String getJVMClassName(String fqName) {
+    /**
+     * @param namespace true for "namespace" suffix 
+     */
+    public static String getJVMClassName(String fqName, boolean namespace) {
         if (fqName.length() == 0) {
             return JvmAbi.PACKAGE_CLASS;
         }
 
-        String name = fqName.replace('.', '/') + "/" + JvmAbi.PACKAGE_CLASS;
+        String name = fqName.replace('.', '/');
         if(name.startsWith("<java_root>")) {
-            name = name.substring("<java_root>".length() + 1, name.length() - 1 - JvmAbi.PACKAGE_CLASS.length());
+            name = name.substring("<java_root>".length() + 1, name.length());
+        }
+        if (namespace) {
+            name += "/" + JvmAbi.PACKAGE_CLASS;
         }
         return name;
     }

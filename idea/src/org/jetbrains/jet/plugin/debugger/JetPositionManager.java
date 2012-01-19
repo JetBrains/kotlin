@@ -119,10 +119,10 @@ public class JetPositionManager implements PositionManager {
                 else {
                     JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
                     if (namespace != null) {
-                        names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace)));
+                        names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(namespace), true));
                     }
                     else {
-                        names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(file)));
+                        names.add(NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(file), true));
                     }
                 }
             }
