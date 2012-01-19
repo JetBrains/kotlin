@@ -1,1 +1,1 @@
-x = (x xor 2)
+x = x xor 2

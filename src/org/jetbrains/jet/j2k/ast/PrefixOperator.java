@@ -17,6 +17,6 @@ public class PrefixOperator extends Expression {
   @NotNull
   @Override
   public String toKotlin() {
-    return "(" + myOp + myExpression.toKotlin() + ")";
+    return myOp + myExpression.toKotlin();
   }
 }

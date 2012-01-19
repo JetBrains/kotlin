@@ -15,7 +15,7 @@ return 2
 return 3
 }
 else -> {
-return (-1)
+return -1
 }
 }
 }

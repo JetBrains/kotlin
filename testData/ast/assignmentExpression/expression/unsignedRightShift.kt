@@ -1,1 +1,1 @@
-x = (x ushr 2)
+x = x ushr 2

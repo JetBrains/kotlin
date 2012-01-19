@@ -2,9 +2,9 @@
 var n : Int = substring.length()
 var j : Int = i
 var k : Int = 0
-while (((n--) != 0))
+while (n-- != 0)
 {
-if ((searchMe.charAt((j++)) != substring.charAt((k++))))
+if (searchMe.charAt(j++) != substring.charAt(k++))
 {
 continue@test
 }

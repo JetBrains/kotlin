@@ -1,1 +1,1 @@
-(1 ushr 2 ushr 3)
+1 ushr 2 ushr 3

@@ -24,6 +24,6 @@ public class PolyadicExpression extends Expression {
   @Override
   public String toKotlin() {
     List<String> expressionsWithConversions = AstUtil.applyConversions(AstUtil.nodesToKotlin(myExpressions), myConversions);
-    return "(" + AstUtil.join(expressionsWithConversions, SPACE + myToken + SPACE) + ")";
+    return AstUtil.join(expressionsWithConversions, SPACE + myToken + SPACE);
   }
 }

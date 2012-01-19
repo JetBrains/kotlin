@@ -17,6 +17,6 @@ public class PostfixOperator extends Expression {
   @NotNull
   @Override
   public String toKotlin() {
-    return "(" + myExpression.toKotlin() + myOp + ")";
+    return myExpression.toKotlin() + myOp;
   }
 }

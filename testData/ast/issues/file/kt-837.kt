@@ -11,6 +11,6 @@ this.code = code
 class object {
 public var ENGLISH : Language? = Language("en")
 public var SWEDISH : Language? = Language("sv")
-private val serialVersionUID : Long = (-2442762969929206780)
+private val serialVersionUID : Long = -2442762969929206780
 }
 }

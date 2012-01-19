@@ -30,6 +30,6 @@ public class BinaryExpression extends Expression {
   @Override
   public String toKotlin() {
     List<String> expressionsWithConversions = AstUtil.applyConversions(AstUtil.nodesToKotlin(Arrays.asList(myLeft, myRight)), myConversions);
-    return "(" + AstUtil.join(expressionsWithConversions, SPACE + myOp + SPACE) + ")";
+    return AstUtil.join(expressionsWithConversions, SPACE + myOp + SPACE);
   }
 }

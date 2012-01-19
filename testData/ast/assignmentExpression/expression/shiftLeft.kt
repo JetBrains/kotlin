@@ -1,1 +1,1 @@
-x = (x shl 2)
+x = x shl 2

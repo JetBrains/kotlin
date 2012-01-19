@@ -1,1 +1,1 @@
-x = (x and 2)
+x = x and 2
