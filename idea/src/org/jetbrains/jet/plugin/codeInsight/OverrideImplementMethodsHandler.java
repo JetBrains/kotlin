@@ -53,11 +53,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             return;
         }
 
-        String lineSeparator = System.getProperty("line.separator");
+        final PsiElement newLineWhitespace = JetPsiFactory.createWhiteSpace(body.getProject(), "\n");
 
         for (DescriptorClassMember selectedElement : selectedElements) {
 
-            body.addBefore(JetPsiFactory.createWhiteSpace(body.getProject(), lineSeparator + lineSeparator), body.getRBrace());
+            // TODO: Insert spaces should be done by formatter
+            body.addBefore(newLineWhitespace, body.getRBrace());
 
             final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof NamedFunctionDescriptor) {
