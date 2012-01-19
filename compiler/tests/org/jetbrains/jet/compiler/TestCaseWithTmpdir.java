@@ -1,6 +1,7 @@
-package org.jetbrains.jet;
+package org.jetbrains.jet.compiler;
 
 import com.intellij.testFramework.UsefulTestCase;
+import org.jetbrains.jet.JetTestUtils;
 
 import java.io.File;
 

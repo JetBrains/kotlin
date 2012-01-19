@@ -1,4 +1,4 @@
-package org.jetbrains.jet;
+package org.jetbrains.jet.compiler;
 
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
@@ -11,11 +11,11 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;

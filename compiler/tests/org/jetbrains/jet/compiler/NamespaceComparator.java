@@ -1,4 +1,4 @@
-package org.jetbrains.jet;
+package org.jetbrains.jet.compiler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;

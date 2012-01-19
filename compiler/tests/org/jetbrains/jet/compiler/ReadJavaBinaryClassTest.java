@@ -1,17 +1,14 @@
-package org.jetbrains.jet;
+package org.jetbrains.jet.compiler;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
