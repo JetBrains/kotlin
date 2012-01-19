@@ -16,7 +16,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,7 +41,7 @@ public final class WholeProjectAnalyzerFacade {
             final ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
 
             if (rootManager != null /* && !ApplicationManager.getApplication().isUnitTestMode() */) {
-                VirtualFile[] contentRoots = rootManager.getContentRoots();
+                List<VirtualFile> contentRoots = Arrays.asList(rootManager.getContentRoots());
 
                 CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
                     @Override
