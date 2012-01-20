@@ -1,0 +1,37 @@
+<project name="Update Dependencies" default="update">
+    <property name="build.zip" value="ideaIC-112.SNAPSHOT.win.zip"/>
+
+    <target name="update">
+        <execute_update/>
+    </target>
+
+    <target name="jb_update">
+        <execute_update teamcity="http://buildserver.labs.intellij.net" teamcity.build="bt662"/>
+    </target>
+
+    <macrodef name="execute_update">
+        <attribute name="teamcity" default="http://teamcity.jetbrains.com"/>
+        <attribute name="teamcity.build" default="bt343"/>
+        <sequential>
+            <property name="core" value="ideaSDK/core"/>
+            <property name="tc" value="@{teamcity}/guestAuth/repository/download/@{teamcity.build}/.lastSuccessful"/>
+            <delete dir="ideaSDK" failonerror="false">
+                <exclude name="config/**"/>
+                <exclude name="system/**"/>
+            </delete>
+            <mkdir dir="${core}"/>
+            <get src="${tc}/core/intellij-core.jar" dest="${core}"/>
+            <get src="${tc}/core/annotations.jar" dest="${core}"/>
+            <get src="${tc}/core/asm.jar" dest="${core}"/>
+            <get src="${tc}/core/asm-commons.jar" dest="${core}"/>
+            <get src="${tc}/core/cli-10.jar" dest="${core}"/>
+            <get src="${tc}/core/guava-r09.jar" dest="${core}"/>
+            <get src="${tc}/core/picocontainer.jar" dest="${core}"/>
+            <get src="${tc}/core/trove4j.jar" dest="${core}"/>
+    
+            <get src="${tc}/${build.zip}" dest="ideaSDK" />
+            <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
+            <delete file="ideaSDK/${build.zip}"/>
+        </sequential>
+    </macrodef>
+</project>

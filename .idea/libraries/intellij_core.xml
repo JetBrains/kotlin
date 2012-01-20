@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="intellij-core">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/core" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/core" recursive="false" />
+  </library>
+</component>

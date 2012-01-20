@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 
+import java.lang.reflect.Method;
+
 /**
  * @author alex.tkachman
  */
@@ -82,5 +84,30 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testKt274 () {
 //        blackBoxFile("regressions/kt274.kt");
+    }
+
+    //from ClassGenTest
+    public void testKt344 () throws Exception {
+        loadFile("regressions/kt344.jet");
+//        System.out.println(generateToText());
+        blackBox();
+    }
+
+    //from ExtensionFunctionsTest
+    public void testGeneric() throws Exception {
+        blackBoxFile("extensionFunctions/generic.jet");
+    }
+
+    //from NamespaceGenTest
+    public void testPredicateOperator() throws Exception {
+        loadText("fun foo(s: String) = s?startsWith(\"J\")");
+        final Method main = generateFunction();
+        try {
+            assertEquals("JetBrains", main.invoke(null, "JetBrains"));
+            assertNull(main.invoke(null, "IntelliJ"));
+        } catch (Throwable t) {
+//            System.out.println(generateToText());
+            t.printStackTrace();
+        }
     }
 }

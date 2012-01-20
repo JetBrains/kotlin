@@ -9,3 +9,5 @@ fun test(s: String?) {
    val <!UNUSED_VARIABLE!>f<!>: Int = s?.length ?: b ?: 1
    val <!UNUSED_VARIABLE!>g<!>: Int? = e? startsWith("s")?.length
 }
+
+fun String.startsWith(<!UNUSED_PARAMETER!>s<!>: String): Boolean = true

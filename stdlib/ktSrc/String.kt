@@ -8,6 +8,8 @@ inline fun String.lastIndexOf(s: String)  = (this as java.lang.String).lastIndex
 
 inline fun String.lastIndexOf(s: Char) = (this as java.lang.String).lastIndexOf(s.toString())
 
+inline fun String.equalsIgnoreCase(s: String) = (this as java.lang.String).equalsIgnoreCase(s)
+
 inline fun String.indexOf(s : String) = (this as java.lang.String).indexOf(s)
 
 inline fun String.indexOf(p0 : String, p1 : Int) = (this as java.lang.String).indexOf(p0, p1)
@@ -33,6 +35,10 @@ inline fun String.split(s : String)  = (this as java.lang.String).split(s)
 inline fun String.substring(i : Int) = (this as java.lang.String).substring(i).sure()
 
 inline fun String.substring(i0 : Int, i1 : Int)  = (this as java.lang.String).substring(i0, i1).sure()
+
+inline fun String.startsWith(prefix: String) = (this as java.lang.String).startsWith(prefix)
+
+inline fun String.startsWith(prefix: String, toffset: Int) = (this as java.lang.String).startsWith(prefix, toffset)
 
 inline val String.size : Int
     get() = length()
