@@ -18,6 +18,7 @@ public final class ReferenceAccessTranslator extends AccessTranslator {
         return new ReferenceAccessTranslator(expression, context);
     }
 
+    //TODO: condider evaluating only once
 
     @NotNull
     private final JetSimpleNameExpression expression;

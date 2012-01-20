@@ -40,7 +40,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     protected JsFunction generateInitializerFunction() {
         JsFunction result = functionWithScope(initializerMethodScope);
-        //NOTE: that while we translate constructor parameters we also add property initializer statements
+        //NOTE: that while we translateAsLocalNameReference constructor parameters we also add property initializer statements
         // for properties declared as constructor parameters
         result.setParameters(translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();

@@ -29,7 +29,7 @@
  import js.*
 
 fun main(args : Array<String>) {
-  if (args.isEmpty) {
+  if (args.isEmpty()) {
     printBottles(99)
   }
   else {
@@ -72,4 +72,4 @@ fun bottlesOfBeer(count : Int) : String =
 // From the std package
 // This is an extension property, i.e. a property that is defined for the
 // type Array<T>, but does not sit inside the class Array
-val <T> Array<T>.isEmpty : Boolean get() = size == 0
+fun <T> Array<T>.isEmpty() = size == 0

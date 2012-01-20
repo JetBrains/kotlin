@@ -32,9 +32,42 @@ public final class StandardClasses {
         declareRange(standardClasses);
         declareString(standardClasses);
         declareJavaArrayList(standardClasses);
+        declareJavaHasMap(standardClasses);
+        declareJavaStringBuilder(standardClasses);
         declareTopLevelFunctions(standardClasses);
+        declareJavaCollection(standardClasses);
+        declareMap(standardClasses);
         declareInteger(standardClasses);
         return standardClasses;
+    }
+
+    private static void declareMap(@NotNull StandardClasses standardClasses) {
+        String hashMapFQName = "java.util.Map";
+        standardClasses.declareStandardTopLevelObject(hashMapFQName, "Map");
+        standardClasses.declareStandardInnerDeclaration(hashMapFQName, "<init>", "HashMap");
+        declareMethods(standardClasses, hashMapFQName, "size", "put", "get",
+                "isEmpty", "remove", "addAll", "clear", "keySet");
+    }
+
+    private static void declareJavaCollection(@NotNull StandardClasses standardClasses) {
+        String collection = "java.util.Collection";
+        standardClasses.declareStandardTopLevelObject(collection, "Collection");
+        declareMethods(standardClasses, collection, "iterator");
+    }
+
+    private static void declareJavaStringBuilder(@NotNull StandardClasses standardClasses) {
+        String stringBuilderFQName = "java.util.StringBuilder";
+        standardClasses.declareStandardTopLevelObject(stringBuilderFQName, "StringBuilder");
+        standardClasses.declareStandardInnerDeclaration(stringBuilderFQName, "<init>", "StringBuilder");
+        declareMethods(standardClasses, stringBuilderFQName, "append", "toString");
+    }
+
+    private static void declareJavaHasMap(@NotNull StandardClasses standardClasses) {
+        String hashMapFQName = "java.util.HashMap";
+        standardClasses.declareStandardTopLevelObject(hashMapFQName, "HashMap");
+        standardClasses.declareStandardInnerDeclaration(hashMapFQName, "<init>", "HashMap");
+        declareMethods(standardClasses, hashMapFQName, "size", "put", "get",
+                "isEmpty", "remove", "addAll", "clear", "keySet");
     }
 
     //TODO: refactor

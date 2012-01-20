@@ -222,21 +222,11 @@ public final class BindingUtils {
     }
 
     @NotNull
-    private static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
-                                                   @NotNull JetExpression expression) {
+    public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
+                                                  @NotNull JetExpression expression) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
         assert resolvedCall != null : "Must resolve to a call.";
         return resolvedCall;
-    }
-
-    @NotNull
-    public static FunctionDescriptor getFunctionDescriptorForCallExpression(@NotNull BindingContext context,
-                                                                            @NotNull JetCallExpression expression) {
-        ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context, expression);
-        CallableDescriptor descriptor = getDescriptorForResolvedCall(resolvedCall);
-        assert descriptor instanceof FunctionDescriptor :
-                "Callee expression must have resolved call with descriptor of type FunctionDescriptor";
-        return (FunctionDescriptor) descriptor;
     }
 
     @NotNull

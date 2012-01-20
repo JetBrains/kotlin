@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -23,6 +24,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCompileTimeValue;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 
@@ -375,8 +377,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,
                                       @NotNull TranslationContext context) {
-        if (context.aliaser().hasAliasForThis()) {
-            return context.aliaser().getAliasForThis();
+        DeclarationDescriptor descriptor =
+                getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
+        if (context.aliaser().hasAliasForThis(descriptor)) {
+            return context.aliaser().getAliasForThis(descriptor);
         }
         return new JsThisRef();
     }

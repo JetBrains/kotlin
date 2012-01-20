@@ -27,7 +27,12 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
             throws Exception {
         runMain(context, scope);
         String result = getSystemOutput(context, scope);
-        assertTrue("Returned:\n" + result + "\n\nExpected:\n" + expectedResult, result.equals(expectedResult));
+        String trimmedExpected = trimSpace(expectedResult);
+        String trimmedActual = trimSpace(result);
+        System.out.println(trimmedActual);
+        System.out.println(trimmedExpected);
+        assertTrue("Returned:\n" + trimmedActual + "END_OF_RETURNED\nExpected:\n" + trimmedExpected
+                + "END_OF_EXPECTED\n", trimmedExpected.equals(trimmedActual));
     }
 
     private String getSystemOutput(@NotNull Context context, @NotNull Scriptable scope) {
@@ -39,5 +44,14 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
     private void runMain(Context context, Scriptable scope) {
         String callToMain = GenerationUtils.generateCallToMain("Anonymous", arguments);
         context.evaluateString(scope, callToMain, "function call", 0, null);
+    }
+
+    public String trimSpace(String s) {
+        String[] choppedUpString = s.trim().split("\\s");
+        StringBuilder sb = new StringBuilder();
+        for (String word : choppedUpString) {
+            sb.append(word);
+        }
+        return sb.toString();
     }
 }

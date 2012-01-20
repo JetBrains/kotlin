@@ -7,46 +7,65 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
+//TODO: code gets duplicated
 public class Aliaser {
 
     public static Aliaser newInstance() {
         return new Aliaser();
     }
 
+    //TODO: rename
     @NotNull
     private final Map<DeclarationDescriptor, JsName> aliasesForDescriptors = new HashMap<DeclarationDescriptor, JsName>();
     @NotNull
-    private final Stack<JsName> thisAliases = new Stack<JsName>();
+    private final Map<DeclarationDescriptor, JsName> aliasesForThis = new HashMap<DeclarationDescriptor, JsName>();
+    @NotNull
+    private final Map<DeclarationDescriptor, JsName> aliasesForReceiver = new HashMap<DeclarationDescriptor, JsName>();
 
     private Aliaser() {
     }
 
     @NotNull
-    public JsNameRef getAliasForThis() {
-        assert !thisAliases.empty() : "No alias. Use hasAliasForThis function to check.";
-        return thisAliases.peek().makeRef();
+    public JsNameRef getAliasForThis(@NotNull DeclarationDescriptor descriptor) {
+        JsName aliasName = aliasesForThis.get(descriptor.getOriginal());
+        assert aliasName != null : "This " + descriptor.getOriginal() + " doesn't have an alias.";
+        return aliasName.makeRef();
     }
 
-    public void setAliasForThis(@NotNull JsName alias) {
-        thisAliases.push(alias);
+    public void setAliasForThis(@NotNull DeclarationDescriptor descriptor, @NotNull JsName alias) {
+        aliasesForThis.put(descriptor.getOriginal(), alias);
     }
 
-    //NOTE: here we are passing alias to check that they are set and removed in consistent order.
-    public void removeAliasForThis(@NotNull JsName aliasToRemove) {
-        assert !thisAliases.empty() : "Error: removing alias, when it is not set.";
-        JsName lastAlias = thisAliases.pop();
-        assert lastAlias.equals(aliasToRemove) : "Error: inconsistent alias removing.";
+    public void removeAliasForThis(@NotNull DeclarationDescriptor descriptor) {
+        JsName removed = aliasesForThis.remove(descriptor.getOriginal());
+        assert removed != null;
     }
 
-    public boolean hasAliasForThis() {
-        return (!thisAliases.empty());
+    public boolean hasAliasForThis(@NotNull DeclarationDescriptor descriptor) {
+        return (aliasesForThis.containsKey(descriptor.getOriginal()));
     }
 
-    public boolean hasAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
-        return aliasesForDescriptors.containsKey(declaration.getOriginal());
+    @NotNull
+    public JsNameRef getAliasForReceiver(@NotNull DeclarationDescriptor descriptor) {
+        JsName aliasName = aliasesForReceiver.get(descriptor.getOriginal());
+        assert aliasName != null : "This descriptor doesn't have an alias.";
+        return aliasName.makeRef();
     }
+
+    public void setAliasForReceiver(@NotNull DeclarationDescriptor descriptor, @NotNull JsName alias) {
+        aliasesForReceiver.put(descriptor.getOriginal(), alias);
+    }
+
+    public void removeAliasForReceiver(@NotNull DeclarationDescriptor descriptor) {
+        JsName removed = aliasesForReceiver.remove(descriptor.getOriginal());
+        assert removed != null;
+    }
+
+    public boolean hasAliasForReceiver(@NotNull DeclarationDescriptor descriptor) {
+        return (aliasesForReceiver.containsKey(descriptor.getOriginal()));
+    }
+
 
     @NotNull
     public JsName getAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
@@ -64,4 +83,10 @@ public class Aliaser {
         assert (hasAliasForDeclaration(declaration.getOriginal())) : "This declaration does not has an alias!";
         aliasesForDescriptors.remove(declaration.getOriginal());
     }
+
+    public boolean hasAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {
+        return aliasesForDescriptors.containsKey(declaration.getOriginal());
+    }
+
+
 }

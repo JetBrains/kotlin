@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.ArrayList;
@@ -135,5 +136,31 @@ public final class DescriptorUtils {
             return "Anonymous";
         }
         return name;
+    }
+
+    //TODO: why callable descriptor
+    @Nullable
+    public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor functionDescriptor) {
+        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+        if (!receiverParameter.exists()) {
+            return null;
+        }
+        DeclarationDescriptor declarationDescriptor =
+                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
+        //TODO: WHY assert?
+        assert declarationDescriptor != null;
+        return declarationDescriptor.getOriginal();
+    }
+
+    @Nullable
+    public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor functionDescriptor) {
+        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+        if (!receiverParameter.exists()) {
+            return null;
+        }
+        DeclarationDescriptor declarationDescriptor =
+                functionDescriptor.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor();
+        assert declarationDescriptor != null;
+        return declarationDescriptor.getOriginal();
     }
 }

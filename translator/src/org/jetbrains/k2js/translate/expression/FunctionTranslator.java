@@ -3,9 +3,13 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -16,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThisDescriptor;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 
@@ -64,11 +70,17 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
+
+    //TODO: refactor
     @NotNull
     public JsExpression translateAsLiteral() {
-        TemporaryVariable aliasForThis = context().newAliasForThis();
+        DeclarationDescriptor expectedThisDescriptor = getExpectedThisDescriptor(descriptor);
+        if (expectedThisDescriptor == null) {
+            return generateFunctionObject();
+        }
+        TemporaryVariable aliasForThis = context().newAliasForThis(expectedThisDescriptor);
         JsFunction function = generateFunctionObject();
-        context().removeAliasForThis(aliasForThis.name());
+        context().removeAliasForThis(expectedThisDescriptor);
         return AstUtil.newSequence(aliasForThis.assignmentExpression(), function);
     }
 
@@ -83,8 +95,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void restoreContext() {
         if (isExtensionFunction()) {
-            JsName receiverAlias = functionBodyContext.jsScope().findExistingName(RECEIVER_PARAMETER_NAME);
-            functionBodyContext.removeAliasForThis(receiverAlias);
+            functionBodyContext.removeAliasForThis(getExpectedReceiverDescriptor(descriptor));
         }
     }
 
@@ -100,21 +111,20 @@ public final class FunctionTranslator extends AbstractTranslator {
         throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
-    private boolean isLiteral() {
-        return functionDeclaration instanceof JetFunctionLiteralExpression;
-    }
-
-    private boolean isDeclaration() {
-        return (functionDeclaration instanceof JetNamedFunction) ||
-                (functionDeclaration instanceof JetPropertyAccessor);
-    }
-
     private void translateBody() {
         JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
-        //TODO decide if there are cases where this assert is illegal
-        assert jetBodyExpression != null : "Function without body not supported";
+        if (jetBodyExpression == null) {
+            assert descriptor.getModality().equals(Modality.ABSTRACT);
+            return;
+        }
         JsNode realBody = Translation.translateExpression(jetBodyExpression, functionBodyContext);
-        functionBody.addStatement(wrapWithReturnIfNeeded(realBody, !functionDeclaration.hasBlockBody()));
+        functionBody.addStatement(wrapWithReturnIfNeeded(realBody, mustAddReturnToGeneratedFunctionBody()));
+    }
+
+    private boolean mustAddReturnToGeneratedFunctionBody() {
+        JetType functionReturnType = descriptor.getReturnType();
+        assert functionReturnType != null : "Function return typed type must be resolved.";
+        return (!functionDeclaration.hasBlockBody()) && (!JetStandardClasses.isUnit(functionReturnType));
     }
 
     @NotNull
@@ -173,14 +183,24 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
         if (isExtensionFunction()) {
+            //TODO: dont do this
             JsName receiver = functionBodyContext.jsScope().declareName(RECEIVER_PARAMETER_NAME);
-            context().aliaser().setAliasForThis(receiver);
+            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+            context().aliaser().setAliasForReceiver(expectedReceiverDescriptor, receiver);
             jsParameters.add(new JsParameter(receiver));
         }
     }
 
     private boolean isExtensionFunction() {
-        FunctionDescriptor functionDescriptor = getFunctionDescriptor(context().bindingContext(), functionDeclaration);
-        return DescriptorUtils.isExtensionFunction(functionDescriptor);
+        return DescriptorUtils.isExtensionFunction(descriptor);
+    }
+
+    private boolean isLiteral() {
+        return functionDeclaration instanceof JetFunctionLiteralExpression;
+    }
+
+    private boolean isDeclaration() {
+        return (functionDeclaration instanceof JetNamedFunction) ||
+                (functionDeclaration instanceof JetPropertyAccessor);
     }
 }

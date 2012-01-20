@@ -4,11 +4,11 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.NamingScope;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isExtensionFunction;
 
 /**
  * @author Pavel Talanov
@@ -57,6 +56,7 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(jetExpression, context);
     }
 
+    //TODO: refactor backing field reference generation to use the generic way
     @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull JetProperty expression) {
@@ -69,7 +69,7 @@ public final class TranslationUtils {
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
         if (isOwnedByClass(descriptor)) {
-            return getThisQualifiedNameReference(context, backingFieldName);
+            return AstUtil.qualified(backingFieldName, new JsThisRef());
         }
         assert isOwnedByNamespace(descriptor)
                 : "Only classes and namespaces may own backing fields.";
@@ -109,19 +109,11 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static JsNameRef getThisQualifiedNameReference(@NotNull TranslationContext context,
-                                                           @NotNull JsName name) {
-        JsExpression qualifier = getThisQualifier(context);
-        JsNameRef reference = name.makeRef();
-        AstUtil.setQualifier(reference, qualifier);
-        return reference;
-    }
-
-    @NotNull
-    private static JsExpression getThisQualifier(@NotNull TranslationContext context) {
+    public static JsExpression getThisQualifier(@NotNull TranslationContext context,
+                                                @NotNull DeclarationDescriptor correspondingDeclaration) {
         JsExpression qualifier;
-        if (context.aliaser().hasAliasForThis()) {
-            qualifier = context.aliaser().getAliasForThis();
+        if (context.aliaser().hasAliasForThis(correspondingDeclaration)) {
+            qualifier = context.aliaser().getAliasForThis(correspondingDeclaration);
         } else {
             qualifier = new JsThisRef();
         }
@@ -200,32 +192,26 @@ public final class TranslationUtils {
 
     @Nullable
     public static JsExpression getImplicitReceiver(@NotNull TranslationContext context,
-                                                   @NotNull DeclarationDescriptor referencedDescriptor) {
-        if (referencedDescriptor instanceof FunctionDescriptor) {
-            if (isExtensionFunction((FunctionDescriptor) referencedDescriptor)) {
-                return TranslationUtils.getThisQualifier(context);
-            }
-        }
-        return getImplicitReceiverBasedOnOwner(context, referencedDescriptor);
+                                                   @NotNull ReceiverDescriptor receiverDescriptor) {
+        DeclarationDescriptor correspondingDescriptor =
+                receiverDescriptor.getType().getConstructor().getDeclarationDescriptor();
+        assert correspondingDescriptor != null;
+        return context.aliaser().getAliasForReceiver(correspondingDescriptor);
     }
 
     @Nullable
-    public static JsExpression getExtensionFunctionImplicitReceiver(@NotNull TranslationContext context,
-                                                                    @NotNull CallableDescriptor descriptor) {
-        return getImplicitReceiverBasedOnOwner(context, descriptor);
+    public static JsExpression getImplicitThis(@NotNull TranslationContext context,
+                                               @NotNull ReceiverDescriptor receiverDescriptor) {
+        if (!receiverDescriptor.exists()) {
+            return new JsThisRef();
+        }
+        DeclarationDescriptor correspondingDescriptor =
+                receiverDescriptor.getType().getConstructor().getDeclarationDescriptor();
+        assert correspondingDescriptor != null;
+        if (!context.aliaser().hasAliasForThis(correspondingDescriptor)) {
+            return new JsThisRef();
+        }
+        return context.aliaser().getAliasForThis(correspondingDescriptor);
     }
 
-    @Nullable
-    private static JsExpression getImplicitReceiverBasedOnOwner(@NotNull TranslationContext context,
-                                                                @NotNull DeclarationDescriptor referencedDescriptor) {
-        if (isOwnedByClass(referencedDescriptor)) {
-            return TranslationUtils.getThisQualifier(context);
-        }
-        if (isOwnedByNamespace(referencedDescriptor)) {
-            if (context.hasQualifierForDescriptor(referencedDescriptor)) {
-                return context.getQualifierForDescriptor(referencedDescriptor);
-            }
-        }
-        return null;
-    }
 }

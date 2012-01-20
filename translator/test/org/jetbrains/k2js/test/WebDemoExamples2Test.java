@@ -16,8 +16,17 @@ public final class WebDemoExamples2Test extends TranslationTest {
 
     @Test
     public void bottles() throws Exception {
+        testWithMain("bottles", "2", "2");
         testWithMain("bottles", "");
     }
 
+    @Test
+    public void life() throws Exception {
+        testWithMain("life", "", "2");
+    }
 
+    @Test
+    public void builder() throws Exception {
+        testWithMain("builder", "");
+    }
 }

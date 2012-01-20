@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
@@ -165,14 +166,15 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public TemporaryVariable newAliasForThis() {
-        TemporaryVariable aliasForThis = dynamicContext.declareTemporary(new JsThisRef());
-        aliaser().setAliasForThis(aliasForThis.name());
+    public TemporaryVariable newAliasForThis(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression thisQualifier = TranslationUtils.getThisQualifier(this, descriptor);
+        TemporaryVariable aliasForThis = dynamicContext.declareTemporary(thisQualifier);
+        aliaser().setAliasForThis(descriptor, aliasForThis.name());
         return aliasForThis;
     }
 
-    public void removeAliasForThis(@NotNull JsName aliasToRemove) {
-        aliaser().removeAliasForThis(aliasToRemove);
+    public void removeAliasForThis(@NotNull DeclarationDescriptor descriptor) {
+        aliaser().removeAliasForThis(descriptor);
     }
 
     @NotNull
