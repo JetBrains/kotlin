@@ -191,12 +191,6 @@ public class ClassGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
-    public void testKt344 () throws Exception {
-        loadFile("regressions/kt344.jet");
-//        System.out.println(generateToText());
-        blackBox();
-    }
-
     public void testKt508 () throws Exception {
         loadFile("regressions/kt508.jet");
 //        System.out.println(generateToText());

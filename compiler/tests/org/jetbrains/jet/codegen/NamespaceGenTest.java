@@ -503,19 +503,6 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals("aaa", tuple4._3);
     }
 
-    public void testPredicateOperator() throws Exception {
-        loadText("fun foo(s: String) = s?startsWith(\"J\")");
-        final Method main = generateFunction();
-        try {
-        assertEquals("JetBrains", main.invoke(null, "JetBrains"));
-        assertNull(main.invoke(null, "IntelliJ"));
-        }
-        catch (Throwable t) {
-//            System.out.println(generateToText());
-            t.printStackTrace();
-        }
-    }
-
     public void testEscapeSequence() throws Exception {
         loadText("fun foo() = \"a\\nb\\$\"");
         final Method main = generateFunction();
