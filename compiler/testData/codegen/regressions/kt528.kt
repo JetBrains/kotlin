@@ -1,6 +1,5 @@
 package mask
 
-import std.io.*
 import java.io.*
 import java.util.*
 import java.util.Iterator as It
