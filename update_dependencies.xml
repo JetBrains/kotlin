@@ -15,7 +15,10 @@
         <sequential>
             <property name="core" value="ideaSDK/core"/>
             <property name="tc" value="@{teamcity}/guestAuth/repository/download/@{teamcity.build}/.lastSuccessful"/>
-            <delete dir="ideaSDK" failonerror="false"/>
+            <delete dir="ideaSDK" failonerror="false">
+                <exclude name="config/**"/>
+                <exclude name="system/**"/>
+            </delete>
             <mkdir dir="${core}"/>
             <get src="${tc}/core/intellij-core.jar" dest="${core}"/>
             <get src="${tc}/core/annotations.jar" dest="${core}"/>
