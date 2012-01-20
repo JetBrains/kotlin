@@ -429,18 +429,20 @@ public class JetFlowInformationProvider {
         Map<VariableDescriptor, VariableInitializers> exitInstructionData = Maps.newHashMap(enterInstructionData);
         if (instruction instanceof WriteValueInstruction) {
             VariableDescriptor variable = extractVariableDescriptorIfAny(instruction, false);
-            VariableInitializers initializationAtThisElement = new VariableInitializers(((WriteValueInstruction) instruction).getElement());
+            VariableInitializers enterInitializers = enterInstructionData.get(variable);
+            VariableInitializers initializationAtThisElement = new VariableInitializers(((WriteValueInstruction) instruction).getElement(), enterInitializers);
             exitInstructionData.put(variable, initializationAtThisElement);
         }
         else if (instruction instanceof VariableDeclarationInstruction) {
             VariableDescriptor variable = extractVariableDescriptorIfAny(instruction, false);
             VariableInitializers enterInitializers = enterInstructionData.get(variable);
-            if (enterInitializers == null || !enterInitializers.isInitialized()) {
+            if (enterInitializers == null || !enterInitializers.isInitialized() || !enterInitializers.isDeclared()) {
                 JetElement element = ((VariableDeclarationInstruction) instruction).getElement();
                 if (element instanceof JetProperty) {
                     JetProperty property = (JetProperty) element;
                     if (property.getInitializer() == null) {
-                        VariableInitializers variableDeclarationInfo = new VariableInitializers(false, true);
+                        boolean isInitialized = enterInitializers != null && enterInitializers.isInitialized();
+                        VariableInitializers variableDeclarationInfo = new VariableInitializers(isInitialized, true);
                         exitInstructionData.put(variable, variableDeclarationInfo);
                     }
                 }
@@ -640,7 +642,7 @@ public class JetFlowInformationProvider {
     }
 
 ////////////////////////////////////////////////////////////////////////////////
-//  Util methods
+//  Util methods                                                                                                              7
 
     @Nullable
     private VariableDescriptor extractVariableDescriptorIfAny(Instruction instruction, boolean onlyReference) {
@@ -709,9 +711,9 @@ public class JetFlowInformationProvider {
             this.isDeclared = isDeclared;
         }
 
-        public VariableInitializers(JetElement element) {
+        public VariableInitializers(JetElement element, @Nullable VariableInitializers previous) {
             isInitialized = true;
-            isDeclared = element instanceof JetProperty;
+            isDeclared = element instanceof JetProperty || (previous != null && previous.isDeclared());
             possibleLocalInitializers.add(element);
         }
         
@@ -748,8 +750,11 @@ public class JetFlowInformationProvider {
 
             VariableInitializers that = (VariableInitializers) o;
 
+            if (isDeclared != that.isDeclared) return false;
             if (isInitialized != that.isInitialized) return false;
-            if (possibleLocalInitializers != null ? !possibleLocalInitializers.equals(that.possibleLocalInitializers) : that.possibleLocalInitializers != null) {
+            if (possibleLocalInitializers != null
+                ? !possibleLocalInitializers.equals(that.possibleLocalInitializers)
+                : that.possibleLocalInitializers != null) {
                 return false;
             }
 
@@ -760,6 +765,7 @@ public class JetFlowInformationProvider {
         public int hashCode() {
             int result = possibleLocalInitializers != null ? possibleLocalInitializers.hashCode() : 0;
             result = 31 * result + (isInitialized ? 1 : 0);
+            result = 31 * result + (isDeclared ? 1 : 0);
             return result;
         }
     }
