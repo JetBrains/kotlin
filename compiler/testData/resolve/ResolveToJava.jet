@@ -1,5 +1,5 @@
 import `java::java`java.*
-import `java::java.util`util.*
+import java.`java::java.util`util.*
 
 fun foo(~a~a : `std::Array`Array<`std::Int`Int>) : `java::java.util.List`List {
   `a`a.`std::Array.get(Int)`get(1)

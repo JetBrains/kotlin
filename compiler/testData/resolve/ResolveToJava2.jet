@@ -1,5 +1,5 @@
 import `java::java`java.*
-import `java::java.util`util.*
+import java.`java::java.util`util.*
 
 ~c~fun c(~x~x : java.lang.`java::java.lang.Number`Number) {
   `x`x.`java::java.lang.Number.intValue()`intValue()

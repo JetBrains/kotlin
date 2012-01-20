@@ -1,7 +1,6 @@
 // +JDK
 
-import java.*
-import util.*
+import java.util.*
 
 import java.io.*
 

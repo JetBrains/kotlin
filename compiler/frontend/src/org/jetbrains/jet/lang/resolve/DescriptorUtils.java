@@ -215,4 +215,12 @@ public class DescriptorUtils {
         }
         return null;
     }
+
+    @Nullable
+    public static ClassDescriptor getObjectIfObjectOrClassObjectDescriptor(ClassDescriptor descriptor) {
+        if ((descriptor).getKind() == ClassKind.OBJECT) {
+            return descriptor;
+        }
+        return descriptor.getClassObjectDescriptor();
+    }
 }

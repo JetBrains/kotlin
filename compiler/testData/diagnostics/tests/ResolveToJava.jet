@@ -2,7 +2,7 @@
 // +JDK
 
 import java.*
-import util.*
+import java.util.*
 import <!UNRESOLVED_REFERENCE!>utils<!>.*
 
 import java.io.PrintStream

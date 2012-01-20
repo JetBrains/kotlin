@@ -1,5 +1,5 @@
 import `java::java`java.*
-import `java::java.util`util.*
+import java.`java::java.util`util.*
 
 class B : `java::java.lang.Object`Object {
   fun bar(~o~o : `java::java.lang.Object`Object) {

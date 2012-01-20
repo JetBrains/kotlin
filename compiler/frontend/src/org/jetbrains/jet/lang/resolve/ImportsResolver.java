@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -39,19 +40,21 @@ public class ImportsResolver {
         ImportResolver importResolver = new ImportResolver(context.getTrace(), firstPhase);
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
+            Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope, firstPhase);
             if (!firstPhase) {
                 namespaceScope.clearImports();
             }
-            context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope);
+            context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope, delayedImporter);
             Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
-                Collection<? extends DeclarationDescriptor> descriptors = importResolver.processImportReference(importDirective, namespaceScope);
+                Collection<? extends DeclarationDescriptor> descriptors = importResolver.processImportReference(importDirective, namespaceScope, delayedImporter);
                 if (descriptors != null && descriptors.size() == 1) {
                     resolvedDirectives.put(importDirective, descriptors.iterator().next());
                 }
             }
+            delayedImporter.processImports();
 
             if (firstPhase) continue;
             for (JetImportDirective importDirective : importDirectives) {
@@ -59,6 +62,7 @@ public class ImportsResolver {
             }
         }
     }
+
     @Nullable
     private static JetSimpleNameExpression getLastReference(@NotNull JetExpression importedReference) {
         if (importedReference instanceof JetDotQualifiedExpression) {
@@ -123,7 +127,7 @@ public class ImportsResolver {
         }
 
         @Nullable
-        public Collection<? extends DeclarationDescriptor> processImportReference(@NotNull JetImportDirective importDirective, @NotNull WritableScope namespaceScope) {
+        public Collection<? extends DeclarationDescriptor> processImportReference(@NotNull JetImportDirective importDirective, @NotNull JetScope scope, @NotNull Importer importer) {
             if (importDirective.isAbsoluteInRootNamespace()) {
                 trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
                 return null;
@@ -132,18 +136,18 @@ public class ImportsResolver {
             if (importedReference == null) return null;
             Collection<? extends DeclarationDescriptor> descriptors;
             if (importedReference instanceof JetQualifiedExpression) {
-                descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) importedReference, namespaceScope);
+                descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) importedReference, scope);
             }
             else {
                 assert importedReference instanceof JetSimpleNameExpression;
-                descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, namespaceScope, true);
+                descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) importedReference, scope, true);
             }
 
             JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
             if (importDirective.isAllUnder()) {
                 if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression)) return null;
                 for (DeclarationDescriptor descriptor : descriptors) {
-                    importAllUnderDeclaration(descriptor, namespaceScope);
+                    importer.addAllUnderImport(descriptor);
                 }
                 return null;
             }
@@ -152,63 +156,9 @@ public class ImportsResolver {
             if (aliasName == null) return null;
 
             for (DeclarationDescriptor descriptor : descriptors) {
-                importDeclarationAlias(namespaceScope, aliasName, descriptor);
+                importer.addAliasImport(descriptor, aliasName);
             }
             return descriptors;
-        }
-
-        private void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull WritableScope namespaceScope) {
-            if (firstPhase) {
-                if (descriptor instanceof NamespaceDescriptor) {
-                    namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
-                }
-                if (descriptor instanceof ClassDescriptor) {
-                    ClassDescriptor objectDescriptor = getObjectIfObjectOrClassObjectDescriptor((ClassDescriptor) descriptor);
-                    if (objectDescriptor != null) {
-                        Collection<? extends DeclarationDescriptor> innerClassesAndObjects = objectDescriptor.getInnerClassesAndObjects();
-                        for (DeclarationDescriptor innerClassOrObject : innerClassesAndObjects) {
-                            namespaceScope.importClassifierAlias(innerClassOrObject.getName(), (ClassifierDescriptor) innerClassOrObject);
-                        }
-                    }
-                }
-                return;
-            }
-            if (descriptor instanceof NamespaceDescriptor) {
-                namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
-            }
-            if (descriptor instanceof VariableDescriptor) {
-                JetType type = ((VariableDescriptor) descriptor).getOutType();
-                namespaceScope.importScope(type.getMemberScope());
-            }
-            else if (descriptor instanceof ClassDescriptor) {
-                JetType classObjectType = ((ClassDescriptor) descriptor).getClassObjectType();
-                if (classObjectType != null) {
-                    namespaceScope.importScope(classObjectType.getMemberScope());
-                }
-            }
-        }
-
-        @Nullable
-        private static ClassDescriptor getObjectIfObjectOrClassObjectDescriptor(ClassDescriptor descriptor) {
-            if ((descriptor).getKind() == ClassKind.OBJECT) {
-                return descriptor;
-            }
-            return descriptor.getClassObjectDescriptor();
-        }
-
-        private static void importDeclarationAlias(WritableScope namespaceScope, String aliasName, DeclarationDescriptor descriptor) {
-            if (descriptor instanceof ClassifierDescriptor) {
-                namespaceScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
-            }
-            else if (descriptor instanceof NamespaceDescriptor) {
-                namespaceScope.importNamespaceAlias(aliasName, (NamespaceDescriptor) descriptor);
-            }
-            else if (descriptor instanceof FunctionDescriptor) {
-                namespaceScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
-            }
-            else if (descriptor instanceof VariableDescriptor) {
-                namespaceScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
-            }
         }
 
         @NotNull
@@ -292,7 +242,7 @@ public class ImportsResolver {
         @NotNull
         private Collection<? extends DeclarationDescriptor> lookupObjectMembers(@NotNull ClassDescriptor classDescriptor, @NotNull JetSimpleNameExpression memberReference) {
             if (firstPhase) {
-                ClassDescriptor objectDescriptor = getObjectIfObjectOrClassObjectDescriptor(classDescriptor);
+                ClassDescriptor objectDescriptor = DescriptorUtils.getObjectIfObjectOrClassObjectDescriptor(classDescriptor);
                 if (objectDescriptor == null) return Collections.emptyList();
                 return getInnerClassesAndObjectsByName(objectDescriptor, memberReference);
             }

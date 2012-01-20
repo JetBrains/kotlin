@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.Importer;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 /**
@@ -27,10 +28,10 @@ public class JavaBridgeConfiguration implements Configuration {
     }
 
     @Override
-    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope) {
+    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
         rootScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
-        rootScope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
-        delegateConfiguration.addDefaultImports(trace, rootScope);
+        importer.addScopeImport(new JavaPackageScope("java.lang", null, javaSemanticServices));
+        delegateConfiguration.addDefaultImports(trace, rootScope, importer);
     }
 
     @Override

@@ -3,9 +3,9 @@ package org.jetbrains.jet.lang;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.Importer;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -24,9 +24,9 @@ public class StandardConfiguration implements Configuration {
     }
 
     @Override
-    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope) {
-        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, "std.*");
-        new ImportsResolver.ImportResolver(trace, true).processImportReference(importDirective, rootScope);
+    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
+        ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(trace, true);
+        importResolver.processImportReference(JetPsiFactory.createImportDirective(project, "std.*"), rootScope, importer);
     }
 
     @Override

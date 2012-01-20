@@ -1,5 +1,5 @@
 import `java::java`java.*
-import `java::java.util`util.*
+import java.`java::java.util`util.*
 
 fun typeTransform() {
     Integer.getInteger("", 239)`:std::Int`

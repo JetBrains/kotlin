@@ -1,5 +1,5 @@
 import java.*
-import util.*
+import java.util.*
 
 fun f_plus(): Int {
   var x: Int = 1
