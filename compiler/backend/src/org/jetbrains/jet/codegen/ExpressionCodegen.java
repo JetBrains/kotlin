@@ -965,14 +965,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
                 JetExpression r = getReceiverForSelector(expression);
                 final boolean isSuper = r instanceof JetSuperExpression;
-                if(propertyDescriptor.getVisibility() == Visibility.PRIVATE && context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
-                    DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
-                    if(enclosed != null && enclosed != context.getThisDescriptor()) {
-                        CodegenContext c = context;
-                        while(c.getContextDescriptor() != enclosed) {
-                            c = c.getParentContext();
+                if(propertyDescriptor.getVisibility() == Visibility.PRIVATE && !CodegenUtil.isClassObject(propertyDescriptor.getContainingDeclaration())) {
+                    if(context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
+                        DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
+                        if(enclosed != null && enclosed != context.getThisDescriptor()) {
+                            CodegenContext c = context;
+                            while(c.getContextDescriptor() != enclosed) {
+                                c = c.getParentContext();
+                            }
+                            propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
                         }
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
                     }
                 }
                 final StackValue.Property iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
@@ -1080,12 +1082,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             owner = typeMapper.getOwner(functionDescriptor, OwnerKind.IMPLEMENTATION);
-            if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT) {
-                isInterface = true;
-            }
-            else {
-                isInterface = false;
-            }
+            isInterface = CodegenUtil.isInterface(containingDeclaration);
         }
 
         v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getAsmMethod().getDescriptor());

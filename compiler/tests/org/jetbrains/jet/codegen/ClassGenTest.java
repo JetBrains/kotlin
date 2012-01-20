@@ -199,7 +199,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testKt508 () throws Exception {
         loadFile("regressions/kt508.jet");
-//        System.out.println(generateToText());
+        System.out.println(generateToText());
         blackBox();
     }
 
@@ -244,5 +244,9 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testKt940 () throws Exception {
         blackBoxFile("regressions/kt940.kt");
+    }
+
+    public void testKt1018 () throws Exception {
+        blackBoxFile("regressions/kt1018.kt");
     }
 }

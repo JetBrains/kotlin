@@ -684,18 +684,26 @@ public class JetTypeMapper {
         return new CallableMethod(owner, method, INVOKESPECIAL);
     }
 
-    static int getAccessModifiers(JetDeclaration p, int defaultFlags) {
-        int flags = 0;
-        if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-            flags |= ACC_PUBLIC;
+    static int getAccessModifiers(DeclarationDescriptorWithVisibility p, int defaultFlags) {
+        DeclarationDescriptor declaration = p.getContainingDeclaration();
+        if(CodegenUtil.isInterface(declaration)) {
+            return ACC_PUBLIC;
         }
-        else if (p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-            flags |= ACC_PRIVATE;
+        if (p.getVisibility() == Visibility.PUBLIC) {
+            return ACC_PUBLIC;
+        }
+        else if (p.getVisibility() == Visibility.PROTECTED) {
+            return ACC_PROTECTED;
+        }
+        else if (p.getVisibility() == Visibility.PRIVATE) {
+            if(CodegenUtil.isClassObject(declaration)) {
+                return defaultFlags;
+            }
+            return ACC_PRIVATE;
         }
         else {
-            flags |= defaultFlags;
+            return defaultFlags;
         }
-        return flags;
     }
 
     String classNameForAnonymousClass(JetExpression expression) {

@@ -8,7 +8,7 @@ trait M {
 }
 
 class N() : M {
-    override var backingB : Int = 0
+    public override var backingB : Int = 0
 
     val a : Int
         get() {

@@ -3,10 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -70,7 +67,7 @@ public class PropertyCodegen {
             }
             int modifiers;
             if (kind == OwnerKind.NAMESPACE) {
-                int access = isExternallyAccessible(p) ? Opcodes.ACC_PUBLIC : Opcodes.ACC_PRIVATE;
+                int access = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
                 modifiers = access | Opcodes.ACC_STATIC;
             }
             else {
@@ -90,17 +87,17 @@ public class PropertyCodegen {
                 JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
                 functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(), propertyDescriptor.getGetter());
             }
-            else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-                generateDefaultGetter(p, getter);
+            else if (isExternallyAccessible(propertyDescriptor)) {
+                generateDefaultGetter(p);
             }
         }
-        else if (isExternallyAccessible(p)) {
-            generateDefaultGetter(p, p);
+        else if (isExternallyAccessible(propertyDescriptor)) {
+            generateDefaultGetter(p);
         }
     }
 
-    private static boolean isExternallyAccessible(JetProperty p) {
-        return !p.hasModifier(JetTokens.PRIVATE_KEYWORD);
+    private static boolean isExternallyAccessible(PropertyDescriptor p) {
+        return p.getVisibility() != Visibility.PRIVATE || CodegenUtil.isClassObject(p.getContainingDeclaration());
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {
@@ -112,18 +109,18 @@ public class PropertyCodegen {
                 JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
                 functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(), setterDescriptor);
             }
-            else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-                generateDefaultSetter(p, setter);
+            else if (isExternallyAccessible(propertyDescriptor)) {
+                generateDefaultSetter(p);
             }
         }
-        else if (isExternallyAccessible(p) && p.isVar()) {
-            generateDefaultSetter(p, p);
+        else if (isExternallyAccessible(propertyDescriptor) && propertyDescriptor.isVar()) {
+            generateDefaultSetter(p);
         }
     }
 
-    private void generateDefaultGetter(JetProperty p, JetDeclaration declaration) {
+    private void generateDefaultGetter(JetProperty p) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
-        int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
+        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
         generateDefaultGetter(propertyDescriptor, flags, p);
     }
 
@@ -176,9 +173,13 @@ public class PropertyCodegen {
         aw.visitEnd();
     }
 
-    private void generateDefaultSetter(JetProperty p, JetDeclaration declaration) {
+    private void generateDefaultSetter(JetProperty p) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
-        int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
+        assert propertyDescriptor != null;
+
+        int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        int flags = setter == null ? modifiers : JetTypeMapper.getAccessModifiers(setter, modifiers);
         generateDefaultSetter(propertyDescriptor, flags, p);
     }
 

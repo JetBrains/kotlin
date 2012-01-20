@@ -50,7 +50,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertNotNull(findMethodByName(aClass, "setFoo"));
     }
 
-    public void testPropertyInNamespace() throws Exception {
+    public void testPrivatePropertyInNamespace() throws Exception {
         loadText("private val x = 239");
         final Class nsClass = generateNamespaceClass();
         final Field[] fields = nsClass.getDeclaredFields();
@@ -59,6 +59,18 @@ public class PropertyGenTest extends CodegenTestCase {
         field.setAccessible(true);
         assertEquals("x", field.getName());
         assertEquals(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
+        assertEquals(239, field.get(null));
+    }
+
+    public void testProtectedPropertyInNamespace() throws Exception {
+        loadText("protected val x : Int = 239");
+        final Class nsClass = generateNamespaceClass();
+        final Field[] fields = nsClass.getDeclaredFields();
+        assertEquals(1, fields.length);
+        final Field field = fields[0];
+        field.setAccessible(true);
+        assertEquals("x", field.getName());
+        assertEquals(Modifier.PROTECTED | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
         assertEquals(239, field.get(null));
     }
 
@@ -96,12 +108,16 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsWithoutBody() throws Exception {
-        loadText("class AccessorsWithoutBody() { public var foo: Int = 349\n  get\n  private set\n fun setter() { foo = 610; } } ");
+        loadText("class AccessorsWithoutBody() { protected var foo: Int = 349\n get\n  private set\n fun setter() { foo = 610; } } ");
+        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
         final Object instance = aClass.newInstance();
         final Method getFoo = findMethodByName(aClass, "getFoo");
+        getFoo.setAccessible(true);
+        assertTrue((getFoo.getModifiers() & Modifier.PROTECTED) != 0);
         assertEquals(349, getFoo.invoke(instance));
         final Method setFoo = findMethodByName(aClass, "setFoo");
+        setFoo.setAccessible(true);
         assertTrue((setFoo.getModifiers() & Modifier.PRIVATE) != 0);
         final Method setter = findMethodByName(aClass,  "setter");
         setter.invoke(instance);
@@ -111,6 +127,7 @@ public class PropertyGenTest extends CodegenTestCase {
     public void testInitializersForNamespaceProperties() throws Exception {
         loadText("val x = System.currentTimeMillis()");
         final Method method = generateFunction("getX");
+        method.setAccessible(true);
         assertIsCurrentTime((Long) method.invoke(null));
     }
 
@@ -144,6 +161,7 @@ public class PropertyGenTest extends CodegenTestCase {
     public void testKt160() throws Exception {
         loadText("internal val s = java.lang.Double.toString(1.0)");
         final Method method = generateFunction("getS");
+        method.setAccessible(true);
         assertEquals(method.invoke(null), "1.0");
     }
 }
