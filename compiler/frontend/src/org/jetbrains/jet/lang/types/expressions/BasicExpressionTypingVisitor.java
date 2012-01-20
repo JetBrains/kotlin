@@ -814,7 +814,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
 
-    public void checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
+    public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
         String name = "contains";
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, context.replaceExpectedType(NO_EXPECTED_TYPE));
         OverloadResolutionResults<FunctionDescriptor> functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
@@ -823,6 +823,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 name);
         JetType containsType = functionDescriptor.isSuccess() ? functionDescriptor.getResultingDescriptor().getReturnType() : null;
         ensureBooleanResult(operationSign, name, containsType, context);
+        return functionDescriptor.isSuccess();
     }
 
     private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {

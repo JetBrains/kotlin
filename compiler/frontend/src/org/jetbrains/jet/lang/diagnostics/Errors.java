@@ -279,6 +279,13 @@ public interface Errors {
             return element.getWhenKeywordElement().getTextRange();
         }
     };
+    SimpleDiagnosticFactoryWithPsiElement<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = new SimpleDiagnosticFactoryWithPsiElement<JetWhenConditionInRange>(ERROR, "Type mismatch: incompatible types of range and element checked in it") {
+        @NotNull
+        @Override
+        public TextRange getTextRange(@NotNull JetWhenConditionInRange condition) {
+            return condition.getOperationReference().getTextRange();
+        }
+    };
     SimpleDiagnosticFactory CYCLIC_INHERITANCE_HIERARCHY = SimpleDiagnosticFactory.create(ERROR, "There's a cycle in the inheritance hierarchy for this type");
 
     SimpleDiagnosticFactory MANY_CLASSES_IN_SUPERTYPE_LIST = SimpleDiagnosticFactory.create(ERROR, "Only one class may appear in a supertype list");

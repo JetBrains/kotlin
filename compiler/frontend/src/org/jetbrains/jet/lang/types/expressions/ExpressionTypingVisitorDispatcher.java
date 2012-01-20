@@ -59,8 +59,8 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
     }
 
     @Override
-    public void checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
-        basic.checkInExpression(callElement, operationSign, left, right, context);
+    public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
+        return basic.checkInExpression(callElement, operationSign, left, right, context);
     }
 
     @Override

@@ -126,7 +126,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     facade.getType(rangeExpression, context);
                     return;
                 }
-                facade.checkInExpression(condition, condition.getOperationReference(), subjectExpression, rangeExpression, context);
+                if (!facade.checkInExpression(condition, condition.getOperationReference(), subjectExpression, rangeExpression, context)) {
+                    context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition));
+                }
             }
 
             @Override
