@@ -27,6 +27,7 @@ public class StandardConfiguration implements Configuration {
     public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
         ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(trace, true);
         importResolver.processImportReference(JetPsiFactory.createImportDirective(project, "std.*"), rootScope, importer);
+        importResolver.processImportReference(JetPsiFactory.createImportDirective(project, "std.io.*"), rootScope, importer);
     }
 
     @Override
