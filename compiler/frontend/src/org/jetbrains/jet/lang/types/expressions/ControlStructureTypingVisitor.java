@@ -20,7 +20,10 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -182,7 +185,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         else if (body != null) {
             WritableScope writableScope = newWritableScopeImpl(context).setDebugName("do..while body scope");
             conditionScope = writableScope;
-            context.getServices().getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context);
+            List<JetElement> block;
+            if (body instanceof JetBlockExpression) {
+                block = ((JetBlockExpression)body).getStatements();
+            }
+            else {
+                block = Collections.<JetElement>singletonList(body);
+            }
+            context.getServices().getBlockReturnedTypeWithWritableScope(writableScope, block, CoercionStrategy.NO_COERCION, context);
         }
         JetExpression condition = expression.getCondition();
         checkCondition(conditionScope, condition, context);
