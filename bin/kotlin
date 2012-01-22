@@ -22,7 +22,7 @@ classpath="$classpath:$root/out/production/backend:$root/out/production/frontend
 classpath="$classpath:$root/out/production/stdlib"
 classpath="$classpath:$root/lib/*:$ideaRoot/lib/*:$ideaRoot/lib/rt/*"
 
-exec java \
+exec java $JAVA_OPTS \
     -classpath "$classpath" \
     org.jetbrains.jet.cli.KotlinCompiler \
     "$@"
