@@ -1,8 +1,10 @@
 <project name="build-tools" default="buildToolsJar">
 
-    <property name="tests-dir"   location="${output}/ant-test/build-tools-test"/>
-    <property name="tests-jar"   location="${tests-dir}/out.jar"/>
-    <property name="kotlin-home" location="${output}/ant-test/kotlin-home"/>
+    <property name="tests-dir"     location="${output}/ant-test/build-tools-test"/>
+    <property name="kotlin-home"   location="${output}/ant-test/kotlin-home"/>
+    <property name="tests-jar"     location="${tests-dir}/out.jar"/>
+    <property name="bootstrap-dir" location="${basedir}/bootstrap.compiler"/>
+
 
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -24,11 +26,11 @@
                     <mkdir  dir = "${kotlin-home}"/>
 
                     <if>
-                        <available file="${basedir}/bootstrap.compiler/kotlinc" type="dir"/>
+                        <available file="${bootstrap-dir}/kotlinc" type="dir"/>
                         <then>
                             <!-- Running in TeamCity environment -->
                             <copy todir="${kotlin-home}">
-                                <fileset dir = "${basedir}/bootstrap.compiler/kotlinc"/>
+                                <fileset dir = "${bootstrap-dir}/kotlinc"/>
                             </copy>
                         </then>
                         <else>
@@ -282,6 +284,15 @@
             <fileset dir = "${output}/classes/buildTools"/>
             <fileset dir = "${basedir}/build-tools/ant/src" includes="**/*.xml"/>
         </jar>
+    </target>
+
+
+    <!-- Simulates a bootstrap environment as in TeamCity build -->
+    <target name="buildToolsBootstrap">
+        <delete dir="${bootstrap-dir}" failonerror="true"/>
+        <mkdir  dir="${bootstrap-dir}"/>
+        <copy file="${output}/${output.name}.zip" todir="${bootstrap-dir}"/>
+        <ant antfile="${basedir}/bootstrap.xml"/>
     </target>
 
 
