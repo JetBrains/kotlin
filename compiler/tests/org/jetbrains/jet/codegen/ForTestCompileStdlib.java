@@ -100,7 +100,7 @@ class ForTestCompileStdlib {
     }
 
     private static void compileKotlinPartOfStdlibToJar(JarOutputStream jarOutputStream) throws IOException {
-        File file = JetTestUtils.tmpDirForTest(ForTestCompileStdlib.class + "/stdlib-kt");
+        File file = new File(JetTestUtils.tmpDirForTest(ForTestCompileStdlib.class), "stdlib-kt");
         JetTestUtils.recreateDirectory(file);
         // lame
         KotlinCompiler.main("-excludeStdlib", "-output", file.getPath(), "-src", "./stdlib/ktSrc");
