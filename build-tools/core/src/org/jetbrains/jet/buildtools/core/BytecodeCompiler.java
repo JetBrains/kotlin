@@ -45,11 +45,12 @@ public class BytecodeCompiler {
     /**
      * {@code CompileEnvironment#compileBunchOfSources} wrapper.
      *
-     * @param source      compilation source (directory or file)
-     * @param destination compilation destination
+     * @param source        compilation source (directory or file)
+     * @param destination   compilation destination
+     * @param excludeStdlib whether Kotlin standard library is excluded in compilation
      */
-    public void sourcesToDir ( String source, String destination, boolean includeRuntime, boolean excludeStdlib ) {
-        boolean success = ENV.compileBunchOfSources( source, null, destination, includeRuntime, ! excludeStdlib );
+    public void sourcesToDir ( String source, String destination, boolean excludeStdlib ) {
+        boolean success = ENV.compileBunchOfSources( source, null, destination, true, ! excludeStdlib );
         if ( ! success ) {
             throw new RuntimeException( compilationError( source ));
         }
@@ -59,13 +60,27 @@ public class BytecodeCompiler {
     /**
      * {@code CompileEnvironment#compileBunchOfSources} wrapper.
      *
-     * @param source compilation source (directory or file)
-     * @param jar    compilation destination jar
+     * @param source         compilation source (directory or file)
+     * @param jar            compilation destination jar
+     * @param includeRuntime whether Kotlin runtime library is included in destination jar
+     * @param excludeStdlib whether Kotlin standard library is excluded in compilation
      */
     public void sourcesToJar ( String source, String jar, boolean includeRuntime, boolean excludeStdlib ) {
         boolean success = ENV.compileBunchOfSources( source, jar, null, includeRuntime, ! excludeStdlib );
         if ( ! success ) {
             throw new RuntimeException( compilationError( source ));
         }
+    }
+
+
+    /**
+     * {@code CompileEnvironment#compileModuleScript} wrapper.
+     *
+     * @param moduleFile     compilation module file
+     * @param jar            compilation destination jar
+     * @param includeRuntime whether Kotlin runtime library is included in destination jar
+     */
+    public void moduleToJar ( String moduleFile, String jar, boolean includeRuntime ) {
+        ENV.compileModuleScript( moduleFile, jar, includeRuntime );
     }
 }

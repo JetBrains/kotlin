@@ -18,6 +18,7 @@ public class BytecodeCompilerTask extends Task {
 
     private final BytecodeCompiler compiler = new BytecodeCompiler();
 
+    private File    module;
     private File    srcdir;
     private File    file;
     private File    destdir;
@@ -25,6 +26,7 @@ public class BytecodeCompilerTask extends Task {
     private boolean includeRuntime = true;
     private boolean excludeStdlib  = false;
 
+    public void setModule  ( File module  ) { this.module  = module;  }
     public void setSrcdir  ( File srcdir  ) { this.srcdir  = srcdir;  }
     public void setFile    ( File file    ) { this.file    = file;    }
     public void setDestdir ( File destdir ) { this.destdir = destdir; }
@@ -49,15 +51,25 @@ public class BytecodeCompilerTask extends Task {
             log( String.format( "[%s] => [%s]", src, dest ));
 
             if ( this.destdir != null ) {
-                compiler.sourcesToDir( src, dest, this.includeRuntime, this.excludeStdlib );
+                compiler.sourcesToDir( src, dest, this.excludeStdlib );
             }
             else {
                 compiler.sourcesToJar( src, dest, this.includeRuntime, this.excludeStdlib );
             }
+        }
+        else if ( this.module != null ) {
 
+            if ( this.destdir != null ) {
+                throw new RuntimeException( "Module compilation is only supported for jar destination" );
+            }
+
+            String modulePath = getPath( this.module );
+            String jarPath    = ( this.destjar != null ? getPath( this.destjar ) : null );
+
+            compiler.moduleToJar( modulePath, jarPath, this.includeRuntime );
         }
         else {
-            throw new RuntimeException( "Operation is not supported yet" );
+            throw new RuntimeException( "This operation is not supported" );
         }
     }
 }

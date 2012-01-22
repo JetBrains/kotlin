@@ -1,10 +1,10 @@
 <project name="build-tools" default="buildToolsJar">
 
-    <property name="tests-dir"     location="${output}/ant-test/build-tools-test"/>
-    <property name="kotlin-home"   location="${output}/ant-test/kotlin-home"/>
-    <property name="tests-jar"     location="${tests-dir}/out.jar"/>
-    <property name="bootstrap-dir" location="${basedir}/bootstrap.compiler"/>
-
+    <property name="tests-dir"        location="${output}/ant-test/build-tools-test"/>
+    <property name="kotlin-home"      location="${output}/ant-test/kotlin-home"/>
+    <property name="tests-jar"        location="${tests-dir}/out.jar"/>
+    <property name="bootstrap-dir"    location="${basedir}/bootstrap.compiler"/>
+    <property name="failonerror"      value="false"/> <!-- Whether invoking compiled classes should file on error -->
 
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -14,8 +14,8 @@
     </taskdef>
 
 
-    <!-- Re-creates ${kotlin-home} and defines <kotlin> tasks using "${kotlin-home}/lib" jars -->
-    <macrodef name="setup-kotlin-home">
+    <!-- Creates ${kotlin-home} and defines <kotlin> task -->
+    <macrodef name="define-kotlinc">
         <sequential>
 
             <if>
@@ -65,14 +65,23 @@
     </macrodef>
 
 
-    <!-- Runs <kotlinc> in test directory -->
+    <!-- Deletes all previously compiled files -->
+    <macrodef name="cleanup">
+        <sequential>
+            <delete dir  = "${tests-dir}" failonerror="true"/>
+            <delete file = "${tests-jar}" failonerror="true"/>
+            <mkdir  dir  = "${tests-dir}"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Runs <kotlinc> create a *.class files in directory -->
     <macrodef name="kotlinc-dir">
         <attribute name="file"   default=""/>
         <attribute name="srcdir" default=""/>
         <sequential>
 
-            <delete dir = "${tests-dir}"/>
-            <mkdir  dir = "${tests-dir}"/>
+            <cleanup/>
 
             <if>
                 <equals arg1="@{file}" arg2=""/>
@@ -87,23 +96,40 @@
     </macrodef>
 
 
-    <!-- Runs <kotlinc> with test jar -->
+    <!-- Runs <kotlinc> to create a *.class files in a jar -->
     <macrodef name="kotlinc-jar">
-        <attribute name="file"    default=""/>
-        <attribute name="srcdir"  default=""/>
+        <attribute name="file"   default=""/>
+        <attribute name="srcdir" default=""/>
+        <attribute name="module" default=""/>
         <sequential>
 
-            <delete dir  = "${tests-dir}"/>
-            <mkdir  dir  = "${tests-dir}"/>
-            <delete file = "${tests-jar}"/>
+            <cleanup/>
 
             <if>
-                <equals arg1="@{file}" arg2=""/>
+                <not>
+                    <equals arg1="@{file}" arg2=""/>
+                </not>
                 <then>
-                    <kotlinc srcdir = "@{srcdir}" destjar = "${tests-jar}"/>
+                    <kotlinc file = "@{file}" destjar = "${tests-jar}"/>
                 </then>
+                <elseif>
+                    <not>
+                        <equals arg1="@{srcdir}" arg2=""/>
+                    </not>
+                    <then>
+                        <kotlinc srcdir = "@{srcdir}" destjar = "${tests-jar}"/>
+                    </then>
+                </elseif>
+                <elseif>
+                    <not>
+                        <equals arg1="@{module}" arg2=""/>
+                    </not>
+                    <then>
+                        <kotlinc module = "@{module}" destjar = "${tests-jar}"/>
+                    </then>
+                </elseif>
                 <else>
-                    <kotlinc file   = "@{file}"   destjar = "${tests-jar}"/>
+                    <fail message="One of 'file', 'srcdir', or 'module' should be specified"/>
                 </else>
             </if>
         </sequential>
@@ -123,10 +149,10 @@
             <if>
                 <istrue value="@{run-jar}"/>
                 <then>
-                    <echo>Running [@{classname}], cp = [${tests-jar}]</echo>
+                    <echo>Running [@{classname}], classpath = "${tests-jar}"</echo>
                     <java outputproperty = "java-out"
                           classname      = "@{classname}"
-                          failonerror    = "true">
+                          failonerror    = "${failonerror}">
                         <classpath>
                             <pathelement path = "${tests-jar}"/>
                         </classpath>
@@ -134,10 +160,10 @@
                     </java>
                 </then>
                 <else>
-                    <echo>Running [@{classname}], cp = [${tests-dir}];[${kotlin-home}/lib/kotlin-runtime.jar]</echo>
+                    <echo>Running [@{classname}], classpath = "${tests-dir};${kotlin-home}/lib/kotlin-runtime.jar"</echo>
                     <java outputproperty = "java-out"
                           classname      = "@{classname}"
-                          failonerror    = "true">
+                          failonerror    = "${failonerror}">
                         <classpath>
                             <pathelement path = "${tests-dir}"/>
                             <fileset     file = "${kotlin-home}/lib/kotlin-runtime.jar"/>
@@ -158,9 +184,12 @@
                 <then>
                     <echo>${java-out}</echo>
                 </then>
-                <else>
-                    <fail message="Test failed: '${java-out}' (received) != '@{out}' (expected), equals = [@{equals}]"/>
-                </else>
+                <elseif>
+                    <istrue value="${failonerror}"/>
+                    <then>
+                        <fail message="Test failed: '${java-out}' (received) != '@{out}' (expected), equals = [@{equals}]"/>
+                    </then>
+                </elseif>
             </if>
         </sequential>
     </macrodef>
@@ -205,17 +234,26 @@
         <sequential>
             <kotlinc-dir srcdir = "${basedir}/build-tools/test/longer-examples"/>
 
-            <!--<run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>-->
-            <!--<run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>-->
-            <!--<run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>-->
-            <!--<run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>-->
+            <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>
+            <run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>
+            <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
+            <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
 
             <kotlinc-jar srcdir = "${basedir}/build-tools/test/longer-examples"/>
 
-            <!--<run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>-->
-            <!--<run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>-->
-            <!--<run-java classname = "life.namespace"    equals="false" run-jar="true" out="***  ** **  ***"/>-->
-            <!--<run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>-->
+            <run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>
+            <run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>
+            <run-java classname = "life.namespace"    equals="false" run-jar="true" out="***  ** **  ***"/>
+            <run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Compiles and runs a Kotlin module -->
+    <macrodef name="module-tests">
+        <sequential>
+            <kotlinc-jar module="${basedir}/build-tools/test/modules/smoke/Smoke.kts"/>
+            <run-java classname = "Smoke.namespace" run-jar = "true" args = "1 2 3" out = "1|2|3"/>
         </sequential>
     </macrodef>
 
@@ -287,7 +325,7 @@
     </target>
 
 
-    <!-- Simulates a bootstrap environment as in TeamCity build -->
+    <!-- Invoked manually in a dev environment - simulates a bootstrap environment as in TeamCity build -->
     <target name="buildToolsBootstrap">
         <delete dir="${bootstrap-dir}" failonerror="true"/>
         <mkdir  dir="${bootstrap-dir}"/>
@@ -298,9 +336,10 @@
 
     <!-- Tests build tools distribution jar -->
     <target name="buildToolsTest">
-        <setup-kotlin-home/>
+        <define-kotlinc/>
         <hello-tests/>
         <longer-examples-tests/>
+        <module-tests/>
         <compilation-fail-test/>
     </target>
 </project>
