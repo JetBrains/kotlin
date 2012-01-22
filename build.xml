@@ -8,8 +8,8 @@
     <import file="build-tools/build.xml" optional="false"/>
 
     <path id="classpath">
-        <fileset dir="${idea.sdk}/core" includes="*.jar"/>
-        <fileset dir="${basedir}/lib"   includes="*.jar"/>
+        <fileset dir="${idea.sdk}" includes="*.jar"/>
+        <fileset dir="${basedir}/lib" includes="*.jar"/>
         <pathelement path="${output}/classes/runtime"/>
     </path>
 
@@ -84,7 +84,7 @@
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
             <zipfileset prefix="kotlinc/license" dir="${basedir}/license"/>
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}/core"/>
+            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}"/>
             <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
             <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
             <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>
