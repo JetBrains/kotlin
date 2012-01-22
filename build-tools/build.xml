@@ -18,27 +18,34 @@
 
             <if>
                 <not>
-                    <available file="${output}/${output.name}.zip"/>
+                    <available file="${kotlin-home}" type="dir"/>
                 </not>
                 <then>
-                    <antcall target="dist"/>
+                    <if>
+                        <not>
+                            <available file="${output}/${output.name}.zip"/>
+                        </not>
+                        <then>
+                            <antcall target="dist"/>
+                        </then>
+                    </if>
+
+                    <mkdir  dir = "${kotlin-home}"/>
+                    <unzip src  = "${output}/${output.name}.zip"
+                           dest = "${kotlin-home}"/>
+                    <move todir = "${kotlin-home}">
+                        <fileset dir = "${kotlin-home}/kotlinc"/>
+                    </move>
+                    <delete dir = "${kotlin-home}/kotlinc" failonerror = "true"/>
                 </then>
             </if>
-
-            <delete dir = "${kotlin-home}" failonerror="true"/>
-            <mkdir  dir = "${kotlin-home}"/>
-            <unzip src  = "${output}/${output.name}.zip"
-                   dest = "${kotlin-home}"/>
-            <move todir = "${kotlin-home}">
-                <fileset dir = "${kotlin-home}/kotlinc"/>
-            </move>
-            <delete dir = "${kotlin-home}/kotlinc" failonerror="true"/>
 
             <taskdef resource    = "org/jetbrains/jet/buildtools/ant/antlib.xml">
                 <classpath>
                     <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
                 </classpath>
             </taskdef>
+
         </sequential>
     </macrodef>
 
@@ -101,6 +108,7 @@
             <if>
                 <istrue value="@{run-jar}"/>
                 <then>
+                    <echo>Running [@{classname}], cp = [${tests-jar}]</echo>
                     <java outputproperty = "java-out"
                           classname      = "@{classname}"
                           failonerror    = "true">
@@ -111,6 +119,7 @@
                     </java>
                 </then>
                 <else>
+                    <echo>Running [@{classname}], cp = [${tests-dir}];[${kotlin-home}/lib/kotlin-runtime.jar]</echo>
                     <java outputproperty = "java-out"
                           classname      = "@{classname}"
                           failonerror    = "true">
@@ -150,11 +159,13 @@
         <sequential>
             <kotlinc-dir file   = "@{root}/Hello.kt"/>
             <run-java    args   = "@{args}" out = "@{out}"/>
+
             <kotlinc-dir srcdir = "@{root}"/>
             <run-java    args   = "@{args}" out = "@{out}"/>
 
             <kotlinc-jar file   = "@{root}/Hello.kt"/>
             <run-java    args   = "@{args}" out = "@{out}" run-jar="true"/>
+
             <kotlinc-jar srcdir = "@{root}"/>
             <run-java    args   = "@{args}" out = "@{out}" run-jar="true"/>
         </sequential>
@@ -179,17 +190,17 @@
         <sequential>
             <kotlinc-dir srcdir = "${basedir}/build-tools/test/longer-examples"/>
 
-            <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>
+            <!--<run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>-->
             <!--<run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>-->
             <!--<run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>-->
-            <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+            <!--<run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>-->
 
             <kotlinc-jar srcdir = "${basedir}/build-tools/test/longer-examples"/>
 
-            <run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>
+            <!--<run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>-->
             <!--<run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>-->
             <!--<run-java classname = "life.namespace"    equals="false" run-jar="true" out="***  ** **  ***"/>-->
-            <run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+            <!--<run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>-->
         </sequential>
     </macrodef>
 
@@ -205,7 +216,7 @@
                 </try>
                 <catch>
                     <var name="failed" value="true"/>
-                    <echo>ERROR: was expected here</echo>
+                    <echo>"ERROR:" was expected here</echo>
                 </catch>
             </trycatch>
             <if>
@@ -223,7 +234,7 @@
                 </try>
                 <catch>
                     <var name="failed" value="true"/>
-                    <echo>ERROR: was expected here</echo>
+                    <echo>"ERROR:" was expected here</echo>
                 </catch>
             </trycatch>
             <if>
