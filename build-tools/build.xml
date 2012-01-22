@@ -21,22 +21,35 @@
                     <available file="${kotlin-home}" type="dir"/>
                 </not>
                 <then>
-                    <if>
-                        <not>
-                            <available file="${output}/${output.name}.zip"/>
-                        </not>
-                        <then>
-                            <antcall target="dist"/>
-                        </then>
-                    </if>
-
                     <mkdir  dir = "${kotlin-home}"/>
-                    <unzip src  = "${output}/${output.name}.zip"
-                           dest = "${kotlin-home}"/>
-                    <move todir = "${kotlin-home}">
-                        <fileset dir = "${kotlin-home}/kotlinc"/>
-                    </move>
-                    <delete dir = "${kotlin-home}/kotlinc" failonerror = "true"/>
+
+                    <if>
+                        <available file="${basedir}/bootstrap.compiler/kotlinc" type="dir"/>
+                        <then>
+                            <!-- Running in TeamCity environment -->
+                            <copy todir="${kotlin-home}">
+                                <fileset dir = "${basedir}/bootstrap.compiler/kotlinc"/>
+                            </copy>
+                        </then>
+                        <else>
+                            <!-- Running in dev environment -->
+                            <if>
+                                <not>
+                                    <available file="${output}/${output.name}.zip"/>
+                                </not>
+                                <then>
+                                    <antcall target="dist"/>
+                                </then>
+                            </if>
+
+                            <unzip src  = "${output}/${output.name}.zip"
+                                   dest = "${kotlin-home}"/>
+                            <move todir = "${kotlin-home}">
+                                <fileset dir = "${kotlin-home}/kotlinc"/>
+                            </move>
+                            <delete dir = "${kotlin-home}/kotlinc" failonerror = "true"/>
+                        </else>
+                    </if>
                 </then>
             </if>
 
