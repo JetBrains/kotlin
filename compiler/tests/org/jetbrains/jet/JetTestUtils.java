@@ -172,8 +172,20 @@ public class JetTestUtils {
         }
     }
     
+    public static File tmpRoot() {
+        return new File("tmp");
+    }
+    
     public static File tmpDirForTest(TestCase test) {
-        return new File("tmp/" + test.getClass().getSimpleName() + "/" + test.getName());
+        return new File(tmpRoot(), test.getClass().getSimpleName() + "/" + test.getName());
+    }
+    
+    public static File tmpDirForTest(Class<?> clazz) {
+        return tmpDirForTest(clazz.getSimpleName());
+    }
+    
+    public static File tmpDirForTest(String name) {
+        return new File(tmpRoot(), name);
     }
 
     public static void recreateDirectory(File file) throws IOException {

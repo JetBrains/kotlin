@@ -9,7 +9,11 @@ public class GeneratedClassLoader extends ClassLoader {
     private final ClassFileFactory state;
 
     public GeneratedClassLoader(@NotNull ClassFileFactory state) {
-        super(GeneratedClassLoader.class.getClassLoader());
+        this(state, GeneratedClassLoader.class.getClassLoader());
+    }
+
+    public GeneratedClassLoader(@NotNull ClassFileFactory state, ClassLoader parentClassLoader) {
+        super(parentClassLoader);
         this.state = state;
     }
 

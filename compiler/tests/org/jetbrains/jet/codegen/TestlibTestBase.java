@@ -26,12 +26,19 @@ import java.util.Set;
 /**
  * @author alex.tkachman
  */
-public class TestlibTest extends CodegenTestCase {
-    public static TestSuite suite() {
-        TestlibTest testlibTest = new TestlibTest();
+public abstract class TestlibTestBase extends CodegenTestCase {
+
+    /** Binary or source */
+    private final boolean binary;
+
+    protected TestlibTestBase(boolean binary) {
+        this.binary = binary;
+    }
+
+    protected TestSuite buildSuite() {
         try {
-            testlibTest.setUp();
-            return testlibTest.buildSuite();
+            setUp();
+            return doBuildSuite();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -39,20 +46,25 @@ public class TestlibTest extends CodegenTestCase {
         }
         finally {
             try {
-                testlibTest.tearDown();
+                tearDown();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
-    
-    public TestSuite buildSuite () {
+
+    private TestSuite doBuildSuite() {
         try {
             CompileSession session = new CompileSession(myEnvironment);
-            CompileEnvironment.initializeKotlinRuntime(myEnvironment);
+            
+            if (binary) {
+                myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
+            } else {
+                CompileEnvironment.initializeKotlinRuntime(myEnvironment);
+            }
+            
             URLClassLoader classLoader = (URLClassLoader) TestCase.class.getClassLoader();
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
             for(URL url: classLoader.getURLs()) {
@@ -65,14 +77,24 @@ public class TestlibTest extends CodegenTestCase {
             }
             VirtualFile path = localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test");
             session.addSources(path);
-            session.addStdLibSources(true);
+
+            if (!binary) {
+                session.addStdLibSources(true);
+            }
 
             if (!session.analyze(System.out)) {
                 throw new RuntimeException();
             }
 
             ClassFileFactory classFileFactory = session.generate();
-            GeneratedClassLoader loader = new GeneratedClassLoader(classFileFactory);
+            GeneratedClassLoader loader;
+            if (binary) {
+                URLClassLoader parentClassLoader = new URLClassLoader(new URL[]{
+                        ForTestCompileStdlib.stdlibJarForTests().toURI().toURL() });
+                loader = new GeneratedClassLoader(classFileFactory, parentClassLoader);
+            } else {
+                loader = new GeneratedClassLoader(classFileFactory);
+            }
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
             TestSuite suite = new TestSuite("StandardLibrary");
@@ -122,7 +144,7 @@ public class TestlibTest extends CodegenTestCase {
             throw new RuntimeException(e);
         }
     }
-
+    
     @Override
     public void setUp() throws Exception {
         super.setUp();
