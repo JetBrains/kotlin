@@ -21,7 +21,7 @@ public final class ReferenceTranslator {
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
                                                    @NotNull TranslationContext context) {
         if (PropertyAccessTranslator.canBePropertyAccess(expression, context)) {
-            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, context);
+            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, null, context);
         }
         DeclarationDescriptor referencedDescriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);

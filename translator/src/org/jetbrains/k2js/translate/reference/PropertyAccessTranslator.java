@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.Arrays;
 
@@ -49,15 +48,9 @@ public final class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
     public static JsExpression translateAsPropertyGetterCall(@NotNull JetSimpleNameExpression expression,
+                                                             @Nullable JsExpression qualifier,
                                                              @NotNull TranslationContext context) {
-        return (newInstance(expression, context))
-                .translateAsGet();
-    }
-
-    @NotNull
-    public static JsExpression translateAsPropertyGetterCall(@NotNull JetQualifiedExpression expression,
-                                                             @NotNull TranslationContext context) {
-        return (newInstance(expression, context))
+        return (newInstance(expression, qualifier, context))
                 .translateAsGet();
     }
 
@@ -69,37 +62,14 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     }
 
     @NotNull
-    public static PropertyAccessTranslator newInstance(@NotNull JetQualifiedExpression expression,
-                                                       @NotNull TranslationContext context) {
-        JetExpression qualifier = expression.getReceiverExpression();
-        JetSimpleNameExpression selector = getNotNullSelector(expression);
-        ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), selector);
-        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(selector, context);
-        boolean isBackingFieldAccess = isBackingFieldReference(selector);
-        JsExpression jsQualifier = Translation.translateAsExpression(qualifier, context);
-        return new PropertyAccessTranslator(propertyDescriptor, jsQualifier,
-                isBackingFieldAccess, resolvedCall, context);
-    }
-
-    @NotNull
     public static PropertyAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+                                                       @Nullable JsExpression qualifier,
                                                        @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
         ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
-        return new PropertyAccessTranslator(propertyDescriptor, null,
-                isBackingFieldReference(expression), resolvedCall, context);
-    }
-
-    @NotNull
-    public static PropertyAccessTranslator newInstance(@NotNull JetExpression expression,
-                                                       @NotNull TranslationContext context) {
-        if (expression instanceof JetQualifiedExpression) {
-            return newInstance((JetQualifiedExpression) expression, context);
-        }
-        if (expression instanceof JetSimpleNameExpression) {
-            return newInstance((JetSimpleNameExpression) expression, context);
-        }
-        throw new AssertionError(MESSAGE);
+        boolean backingFieldAccess = isBackingFieldReference(expression);
+        return new PropertyAccessTranslator(propertyDescriptor, qualifier,
+                backingFieldAccess, resolvedCall, context);
     }
 
     public static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,

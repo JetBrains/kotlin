@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.QualifiedExpressionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 /**
@@ -16,8 +17,12 @@ public abstract class AccessTranslator extends AbstractTranslator {
                                                        @NotNull TranslationContext context) {
         assert ((referenceExpression instanceof JetReferenceExpression) ||
                 (referenceExpression instanceof JetDotQualifiedExpression));
+        //TODO:
         if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
-            return PropertyAccessTranslator.newInstance(referenceExpression, context);
+            if (referenceExpression instanceof JetQualifiedExpression) {
+                return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context);
+            }
+            return PropertyAccessTranslator.newInstance((JetSimpleNameExpression) referenceExpression, null, context);
         }
         if (referenceExpression instanceof JetArrayAccessExpression) {
             return ArrayAccessTranslator.newInstance((JetArrayAccessExpression) referenceExpression, context);

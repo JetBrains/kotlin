@@ -6,8 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
+import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
@@ -18,6 +20,16 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 public final class QualifiedExpressionTranslator {
 
     private QualifiedExpressionTranslator() {
+    }
+
+    @NotNull
+    public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
+                                                       @NotNull TranslationContext context) {
+        if (expression instanceof JetDotQualifiedExpression) {
+            JsExpression receiver = translateReceiver(expression, context);
+            return PropertyAccessTranslator.newInstance(PsiUtils.getSelectorAsSimpleName(expression), receiver, context);
+        }
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
@@ -35,15 +47,15 @@ public final class QualifiedExpressionTranslator {
     @NotNull
     public static JsExpression translateDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
                                                                @NotNull TranslationContext context) {
-        //TODO: problem with extension properties lies here
-        //TODO: problem with extension properties lies here
-        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
-            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, context);
-        }
         if (expression.getSelectorExpression() instanceof JetCallExpression) {
             return CallTranslator.translate(expression, context);
         }
+        //TODO: problem with extension properties lies here
         JsExpression receiver = translateReceiver(expression, context);
+        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
+            return PropertyAccessTranslator.translateAsPropertyGetterCall
+                    (PsiUtils.getSelectorAsSimpleName(expression), receiver, context);
+        }
         JsExpression selector = translateSelector(expression, context);
         return composeQualifiedExpression(receiver, selector);
     }
