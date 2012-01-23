@@ -13,7 +13,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -160,6 +162,13 @@ public class JetTypeMapper {
         return null;
     }
 
+    public JvmClassName getClassFQName(ClassDescriptor classDescriptor) {
+        return JvmClassName.byInternalName(getFQName(classDescriptor));
+    }
+
+    /**
+     * @return Internal name
+     */
     public String getFQName(DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
 
@@ -285,6 +294,7 @@ public class JetTypeMapper {
         if (descriptor instanceof ClassDescriptor) {
 
             Type asmType;
+            boolean forceReal;
 
             if (standardLibrary.getComparable().equals(descriptor)) {
                 if (jetType.getArguments().size() != 1) {
@@ -292,13 +302,15 @@ public class JetTypeMapper {
                 }
 
                 asmType = JL_COMPARABLE_TYPE;
+                forceReal = false;
             } else {
-                String name = getFQName(descriptor);
-                asmType = Type.getObjectType(name + (kind == OwnerKind.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+                JvmClassName name = getClassFQName((ClassDescriptor) descriptor);
+                asmType = Type.getObjectType(name.getInternalName() + (kind == OwnerKind.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+                forceReal = isForceReal(name);
             }
 
             if (signatureVisitor != null) {
-                signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable());
+                signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal);
                 for (TypeProjection proj : jetType.getArguments()) {
                     // TODO: +-
                     signatureVisitor.writeTypeArgument(proj.getProjectionKind());
@@ -789,6 +801,11 @@ public class JetTypeMapper {
             knowTypes.put(standardLibrary.getPrimitiveArrayJetType(primitiveType), jvmPrimitiveType.getAsmArrayType());
             knowTypes.put(standardLibrary.getNullablePrimitiveArrayJetType(primitiveType), jvmPrimitiveType.getAsmArrayType());
         }
+    }
+    
+    private boolean isForceReal(JvmClassName className) {
+        return JvmPrimitiveType.getByWrapperClass(className) != null
+                || className.getFqName().equals("java.lang.String") || className.getFqName().equals("java.lang.Object");
     }
 
     public String isKnownTypeInfo(JetType jetType) {

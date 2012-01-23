@@ -64,7 +64,7 @@ public class JetSignatureAdapter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitClassType(String name, boolean nullable) {
+    public void visitClassType(String name, boolean nullable, boolean forceReal) {
     }
 
     @Override

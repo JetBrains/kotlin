@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
@@ -73,12 +72,15 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     private List<TypeProjection> typeArguments;
 
     @Override
-    public void visitClassType(String name, boolean nullable) {
+    public void visitClassType(String name, boolean nullable, boolean forceReal) {
         String ourName = name.replace('/', '.');
         
-        this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
+        this.classDescriptor = null;
+        if (this.classDescriptor == null && !forceReal) {
+            this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
+        }
 
-        if (this.classDescriptor == null && ourName.equals("java.lang.Object")) {
+        if (this.classDescriptor == null && ourName.equals("java.lang.Object") && !forceReal) {
             this.classDescriptor = JetStandardClasses.getAny();
         }
 

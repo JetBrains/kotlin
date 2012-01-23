@@ -145,9 +145,9 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitClassType(final String name, boolean nullable) {
+    public void visitClassType(final String name, boolean nullable, boolean forceReal) {
         visitNullabe(nullable);
-        buf.append('L');
+        buf.append(forceReal ? 'M' : 'L');
         buf.append(name);
         argumentStack *= 2;
     }

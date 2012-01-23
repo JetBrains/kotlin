@@ -142,7 +142,7 @@ public class BothSignatureWriter {
     public void writeAsmType(Type asmType, boolean nullable) {
         switch (asmType.getSort()) {
             case Type.OBJECT:
-                writeClassBegin(asmType.getInternalName(), nullable);
+                writeClassBegin(asmType.getInternalName(), nullable, false);
                 writeClassEnd();
                 return;
             case Type.ARRAY:
@@ -182,9 +182,9 @@ public class BothSignatureWriter {
         }
     }
 
-    public void writeClassBegin(String internalName, boolean nullable) {
+    public void writeClassBegin(String internalName, boolean nullable, boolean real) {
         signatureVisitor().visitClassType(internalName);
-        jetSignatureWriter.visitClassType(internalName, nullable);
+        jetSignatureWriter.visitClassType(internalName, nullable, real);
         writeAsmType0(Type.getObjectType(internalName));
     }
 

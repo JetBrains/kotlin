@@ -113,7 +113,7 @@ public interface JetSignatureVisitor {
      *
      * @param name the internal name of the class or interface.
      */
-    void visitClassType(String name, boolean nullable);
+    void visitClassType(String name, boolean nullable, boolean forceReal);
 
     /**
      * Visits an inner class.

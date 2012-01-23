@@ -13,6 +13,12 @@ public class JvmClassName {
     public JvmClassName(@NotNull String fqName) {
         this.fqName = fqName;
     }
+    
+    public static JvmClassName byInternalName(@NotNull String internalName) {
+        JvmClassName r = new JvmClassName(internalName.replace('/', '.'));
+        r.internalName = internalName;
+        return r;
+    }
 
     public String getFqName() {
         return fqName;

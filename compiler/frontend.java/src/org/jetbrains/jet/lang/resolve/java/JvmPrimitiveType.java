@@ -108,4 +108,9 @@ public enum JvmPrimitiveType {
     public static JvmPrimitiveType getByWrapperAsmType(Type type) {
         return MapByWrapperAsmTypeHolder.map.get(type);
     }
+
+    @Nullable
+    public static JvmPrimitiveType getByWrapperClass(JvmClassName className) {
+        return getByWrapperAsmType(className.getAsmType());
+    }
 }

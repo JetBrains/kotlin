@@ -149,7 +149,9 @@ public class JetSignatureReader {
                 v.visitTypeVariable(signature.substring(pos, end), nullable);
                 return end + 1;
 
-            default: // case 'L':
+            case 'L':
+            case 'M':
+                boolean forceReal = signature.charAt(pos - 1) == 'M';
                 start = pos;
                 visited = false;
                 inner = false;
@@ -162,7 +164,7 @@ public class JetSignatureReader {
                                 if (inner) {
                                     v.visitInnerClassType(name, nullable);
                                 } else {
-                                    v.visitClassType(name, nullable);
+                                    v.visitClassType(name, nullable, forceReal);
                                 }
                             }
                             if (c == ';') {
@@ -179,7 +181,7 @@ public class JetSignatureReader {
                             if (inner) {
                                 v.visitInnerClassType(name, nullable);
                             } else {
-                                v.visitClassType(name, nullable);
+                                v.visitClassType(name, nullable, forceReal);
                             }
                             visited = true;
                             top: for (;;) {
@@ -205,6 +207,8 @@ public class JetSignatureReader {
                             }
                     }
                 }
+            default:
+                throw new IllegalStateException();
         }
     }
 

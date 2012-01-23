@@ -167,8 +167,9 @@ class TypeInfoParser {
         private List<TypeInfoProjection> projections;
 
         @Override
-        public void visitClassType(String name, boolean nullable) {
+        public void visitClassType(String name, boolean nullable, boolean forceReal) {
             try {
+                // TODO: real flag
                 klass = classLoader.loadClass(name.replace('/', '.'));
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException();

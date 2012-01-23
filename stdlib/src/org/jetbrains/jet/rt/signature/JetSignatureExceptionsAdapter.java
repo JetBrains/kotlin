@@ -67,7 +67,7 @@ public class JetSignatureExceptionsAdapter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitClassType(String name, boolean nullable) {
+    public void visitClassType(String name, boolean nullable, boolean forceReal) {
         throw new IllegalStateException();
     }
 

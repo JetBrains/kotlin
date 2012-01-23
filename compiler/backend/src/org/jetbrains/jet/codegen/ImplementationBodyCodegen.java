@@ -144,7 +144,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         {   // superclass
             signatureVisitor.writeSuperclass();
             if (superClassType == null) {
-                signatureVisitor.writeClassBegin(superClass, false);
+                signatureVisitor.writeClassBegin(superClass, false, false);
                 signatureVisitor.writeClassEnd();
             } else {
                 typeMapper.mapType(superClassType, OwnerKind.IMPLEMENTATION, signatureVisitor, true);
