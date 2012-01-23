@@ -53,7 +53,7 @@ public class DescriptorResolver {
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                     descriptor,
                     annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
-                    true,
+                    !typeParameter.hasModifier(JetTokens.ERASED_KEYWORD),
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
                     index
@@ -301,7 +301,7 @@ public class DescriptorResolver {
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 containingDescriptor,
                 annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
-                true,
+                !typeParameter.hasModifier(JetTokens.ERASED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index
