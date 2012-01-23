@@ -55,6 +55,13 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     }
 
     @NotNull
+    public static JsExpression translateAsPropertyGetterCall(@NotNull JetQualifiedExpression expression,
+                                                             @NotNull TranslationContext context) {
+        return (newInstance(expression, context))
+                .translateAsGet();
+    }
+
+    @NotNull
     private static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
                                                         @NotNull ResolvedCall<?> resolvedCall,
                                                         @NotNull TranslationContext context) {

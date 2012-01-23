@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
@@ -26,7 +25,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCompileTimeValue;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 
 /**
@@ -247,59 +245,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
                                               @NotNull TranslationContext context) {
-        //TODO: problem with extension properties lies here
-//        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
-//            return PropertyAccessTranslator.translateAsPropertyGetterCall()
-//        }
-        if (expression.getSelectorExpression() instanceof JetCallExpression) {
-            return CallTranslator.translate(expression, context);
-        }
-        JsExpression receiver = translateReceiver(expression, context);
-        JsExpression selector = translateSelector(expression, context);
-        return composeQualifiedExpression(receiver, selector);
-    }
-
-    @NotNull
-    private JsExpression composeQualifiedExpression(@NotNull JsExpression receiver, @NotNull JsExpression selector) {
-        //TODO: make sure that logic would not break for binary operation. check if there is a way to provide clearer logic
-        assert (selector instanceof JsNameRef || selector instanceof JsInvocation || selector instanceof JsBinaryOperation)
-                : "Selector should be a name reference or a method invocation in dot qualified expression.";
-        if (selector instanceof JsInvocation) {
-            return translateAsQualifiedInvocation(receiver, (JsInvocation) selector);
-        } else if (selector instanceof JsNameRef) {
-            return translateAsQualifiedNameReference(receiver, (JsNameRef) selector);
-        } else {
-            ((JsBinaryOperation) selector).setArg1(receiver);
-            return selector;
-        }
-    }
-
-    @NotNull
-    private JsExpression translateSelector(@NotNull JetQualifiedExpression expression,
-                                           @NotNull TranslationContext context) {
-        JetExpression jetSelector = expression.getSelectorExpression();
-        assert jetSelector != null : "Selector should not be null in dot qualified expression.";
-        return translateAsExpression(jetSelector, context);
-    }
-
-    @NotNull
-    private JsExpression translateReceiver(@NotNull JetQualifiedExpression expression,
-                                           @NotNull TranslationContext context) {
-        return translateAsExpression(expression.getReceiverExpression(), context);
-    }
-
-    @NotNull
-    private JsExpression translateAsQualifiedNameReference(@NotNull JsExpression receiver, @NotNull JsNameRef selector) {
-        selector.setQualifier(receiver);
-        return selector;
-    }
-
-    @NotNull
-    private JsExpression translateAsQualifiedInvocation(@NotNull JsExpression receiver, @NotNull JsInvocation selector) {
-        JsExpression qualifier = selector.getQualifier();
-        JsNameRef nameRef = (JsNameRef) qualifier;
-        nameRef.setQualifier(receiver);
-        return selector;
+        return QualifiedExpressionTranslator.translateDotQualifiedExpression(expression, context);
     }
 
     @Override
@@ -328,13 +274,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression,
                                                @NotNull TranslationContext context) {
-        TemporaryVariable receiver = context.declareTemporary(translateReceiver(expression, context));
-        JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JsExpression selector = translateSelector(expression, context);
-        JsExpression thenExpression = composeQualifiedExpression(receiver.nameReference(), selector);
-        JsConditional callMethodIfNotNullConditional
-                = new JsConditional(notNullCheck(context, receiver.nameReference()), thenExpression, nullLiteral);
-        return AstUtil.newSequence(receiver.assignmentExpression(), callMethodIfNotNullConditional);
+        return QualifiedExpressionTranslator.translateSafeQualifiedExpression(expression, context);
     }
 
     @Override
