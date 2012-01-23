@@ -40,6 +40,12 @@ public class AnalyzerFacade {
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
 
+    /**
+     * Analyze project with string cache for given file. Given file will be fully analyzed.
+     * @param file
+     * @param declarationProvider
+     * @return
+     */
     public static BindingContext analyzeFileWithCache(@NotNull final JetFile file, @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
@@ -49,7 +55,11 @@ public class AnalyzerFacade {
                     @Override
                     public Result<BindingContext> compute() {
                         try {
-                            BindingContext bindingContext = analyzeFilesWithJavaIntegration(file.getProject(), declarationProvider.fun(file), Predicates.<PsiFile>equalTo(file), JetControlFlowDataTraceFactory.EMPTY);
+                            BindingContext bindingContext = analyzeFilesWithJavaIntegration(
+                                    file.getProject(),
+                                    declarationProvider.fun(file),
+                                    Predicates.<PsiFile>equalTo(file),
+                                    JetControlFlowDataTraceFactory.EMPTY);
                             return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                         catch (ProcessCanceledException e) {
@@ -71,11 +81,49 @@ public class AnalyzerFacade {
         }
     }
 
+    /**
+     * Analyze project with string cache for the whole project. All given files will be analyzed only for descriptors.
+     */
+    public static BindingContext analyzeProjectWithCache(@NotNull final Project project,
+                                                         @NotNull final Collection<JetFile> files) {
+        // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
+        synchronized (lock) {
+            CachedValue<BindingContext> bindingContextCachedValue = project.getUserData(BINDING_CONTEXT);
+            if (bindingContextCachedValue == null) {
+                bindingContextCachedValue = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<BindingContext>() {
+                    @Override
+                    public Result<BindingContext> compute() {
+                        try {
+                            BindingContext bindingContext = analyzeFilesWithJavaIntegration(
+                                    project,
+                                    files,
+                                    Predicates.<PsiFile>alwaysFalse(),
+                                    JetControlFlowDataTraceFactory.EMPTY);
+                            return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                        catch (ProcessCanceledException e) {
+                            throw e;
+                        }
+                        catch (Throwable e) {
+                            DiagnosticUtils.throwIfRunningOnServer(e);
+                            e.printStackTrace();
+                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                            return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                    }
+                }, false);
+                project.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
+            }
+            return bindingContextCachedValue.getValue();
+        }
+    }
+
     public static BindingContext analyzeOneFileWithJavaIntegration(JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory);
     }
 
-    public static BindingContext analyzeFilesWithJavaIntegration(Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    public static BindingContext analyzeFilesWithJavaIntegration(Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
+                                                                 JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         return AnalyzingUtils.analyzeFilesWithGivenTrace(

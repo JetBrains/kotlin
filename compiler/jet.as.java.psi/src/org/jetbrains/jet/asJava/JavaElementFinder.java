@@ -3,14 +3,13 @@
  */
 package org.jetbrains.jet.asJava;
 
-import com.intellij.openapi.compiler.ex.CompilerPathsEx;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFinder;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
@@ -18,9 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class JavaElementFinder extends PsiElementFinder {
     private final Project project;
@@ -181,29 +182,8 @@ public class JavaElementFinder extends PsiElementFinder {
         List<JetFile> cachedFiles = jetFiles.get(scope);
         
         if (cachedFiles == null) {
-            final List<JetFile> answer = new ArrayList<JetFile>();
-
-            final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-
-            List<VirtualFile> contentRoots = Arrays.asList(ProjectRootManager.getInstance(project).getContentRoots());
-
-            CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
-                @Override
-                protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
-                    final FileType fileType = fileTypeManager.getFileTypeByFile(file);
-                    if (fileType != JetFileType.INSTANCE) return;
-
-                    if (scope.accept(file)) {
-                        final PsiFile psiFile = psiManager.findFile(file);
-                        if (psiFile instanceof JetFile) {
-                            answer.add((JetFile) psiFile);
-                        }
-                    }
-                }
-            });
-
-            cachedFiles = answer;
-             jetFiles.put(scope, answer);
+            cachedFiles = JetFileUtil.collectJetFiles(project, scope);
+             jetFiles.put(scope, cachedFiles);
         }
 
         return cachedFiles;

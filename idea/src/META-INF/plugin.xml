@@ -11,6 +11,9 @@
       <component>
           <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
       </component>
+      <component>
+          <implementation-class>org.jetbrains.jet.plugin.caches.JetCacheManager</implementation-class>
+      </component>
   </project-components>
 
   <actions>
@@ -74,6 +77,7 @@
       <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler"/>
 
       <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
+      <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
 
       <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 
