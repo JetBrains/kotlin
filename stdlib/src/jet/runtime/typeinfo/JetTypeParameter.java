@@ -18,5 +18,5 @@ public @interface JetTypeParameter {
     /**
      * @return name of parameter
      */
-    String name();
+    String name() default "";
 }

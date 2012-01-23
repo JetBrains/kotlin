@@ -446,8 +446,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType())) {
-                // TODO
-                i++;
+                AnnotationVisitor jetTypeParameterAnnotation =
+                        mv.visitParameterAnnotation(i++, JvmStdlibNames.JET_TYPE_PARAMETER.getDescriptor(), true);
+                jetTypeParameterAnnotation.visitEnd();
             }
 
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
