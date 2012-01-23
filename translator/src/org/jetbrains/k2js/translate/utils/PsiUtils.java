@@ -29,6 +29,13 @@ public final class PsiUtils {
     }
 
     @NotNull
+    public static JetSimpleNameExpression getNotNullSimpleNameSelector(@NotNull JetQualifiedExpression expression) {
+        JetSimpleNameExpression selectorAsSimpleName = getSelectorAsSimpleName(expression);
+        assert selectorAsSimpleName != null;
+        return selectorAsSimpleName;
+    }
+
+    @NotNull
     public static JetToken getOperationToken(@NotNull JetOperationExpression expression) {
         JetSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();

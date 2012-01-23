@@ -7,7 +7,10 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lang.resolve.calls.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
@@ -76,22 +79,11 @@ public final class CallTranslator extends AbstractTranslator {
         }
 
         @NotNull
-        private CallTranslator buildFromDotQualified(@NotNull JetDotQualifiedExpression dotExpression) {
-            JsExpression receiver = translateReceiver(context, dotExpression);
-            //TODO: util?
-            JetExpression selectorExpression = dotExpression.getSelectorExpression();
-            assert selectorExpression instanceof JetCallExpression;
-            JetCallExpression callExpression = (JetCallExpression) selectorExpression;
+        private CallTranslator buildFromCallExpression(@NotNull JetCallExpression callExpression,
+                                                       @Nullable JsExpression receiver) {
             ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
             List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
             return new CallTranslator(receiver, arguments, resolvedCall, null, context);
-        }
-
-        @NotNull
-        private CallTranslator buildFromCallExpression(@NotNull JetCallExpression callExpression) {
-            ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
-            List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
-            return new CallTranslator(null, arguments, resolvedCall, null, context);
         }
 
         @NotNull
@@ -152,16 +144,10 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JetDotQualifiedExpression dotExpression,
-                                         @NotNull TranslationContext context) {
-        return (new Builder(context).buildFromDotQualified(dotExpression)).translate();
-    }
-
-
-    @NotNull
     public static JsExpression translate(@NotNull JetCallExpression callExpression,
+                                         @Nullable JsExpression receiver,
                                          @NotNull TranslationContext context) {
-        return (new Builder(context).buildFromCallExpression(callExpression)).translate();
+        return (new Builder(context).buildFromCallExpression(callExpression, receiver)).translate();
     }
 
     @NotNull

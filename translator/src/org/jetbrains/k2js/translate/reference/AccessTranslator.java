@@ -22,6 +22,7 @@ public abstract class AccessTranslator extends AbstractTranslator {
             if (referenceExpression instanceof JetQualifiedExpression) {
                 return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context);
             }
+            assert referenceExpression instanceof JetSimpleNameExpression;
             return PropertyAccessTranslator.newInstance((JetSimpleNameExpression) referenceExpression, null, context);
         }
         if (referenceExpression instanceof JetArrayAccessExpression) {

@@ -116,7 +116,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(@NotNull JetCallExpression expression,
                                       @NotNull TranslationContext context) {
-        return CallTranslator.translate(expression, context);
+        return CallTranslator.translate(expression, null, context);
     }
 
     @Override

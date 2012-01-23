@@ -87,6 +87,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
                 (context.bindingContext(), expression) instanceof PropertyDescriptor);
     }
 
+    //TODO: make this method more specific
     public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
                                                   @NotNull TranslationContext context) {
         if (expression instanceof JetQualifiedExpression) {
