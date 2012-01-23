@@ -46,6 +46,19 @@ public class JvmMethodSignature {
         this.kotlinReturnType = "";
         this.genericsAvailable = false;
     }
+    
+    public static JvmMethodSignature simple(@NotNull String methodName, @NotNull Type returnType, @NotNull List<JvmMethodParameterSignature> parameterSignatures) {
+        return new JvmMethodSignature(new Method(methodName, returnType, getTypes(parameterSignatures).toArray(new Type[0])), parameterSignatures);
+    }
+    
+    @NotNull
+    private static List<Type> getTypes(@NotNull List<JvmMethodParameterSignature> signatures) {
+        List<Type> r = new ArrayList<Type>(signatures.size());
+        for (JvmMethodParameterSignature signature : signatures) {
+            r.add(signature.getAsmType());
+        }
+        return r;
+    }
 
     private void checkGenericsAvailable() {
         if (!genericsAvailable) {

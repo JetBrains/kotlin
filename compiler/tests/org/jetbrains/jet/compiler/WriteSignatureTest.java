@@ -182,17 +182,33 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                             public AnnotationVisitor visitAnnotationDefault() {
                                 return new EmptyVisitor();
                             }
-                            
+
+                            @Nullable
                             private String makeKotlinSignature() {
+                                boolean allNulls = true;
+                                
                                 StringBuilder sb = new StringBuilder();
                                 sb.append(typeParameters);
+                                if (typeParameters != null && typeParameters.length() > 0) {
+                                    allNulls = false;
+                                }
                                 sb.append("(");
                                 for (String parameterType : parameterTypes) {
                                     sb.append(parameterType);
+                                    if (parameterType != null) {
+                                        allNulls = false;
+                                    }
                                 }
                                 sb.append(")");
                                 sb.append(returnType);
-                                return sb.toString();
+                                if (returnType != null) {
+                                    allNulls = false;
+                                }
+                                if (allNulls) {
+                                    return null;
+                                } else {
+                                    return sb.toString();
+                                }
                             }
 
                             @Override

@@ -650,8 +650,9 @@ public class JetTypeMapper {
         
         List<ValueParameterDescriptor> parameters = descriptor.getOriginal().getValueParameters();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
-        
-        writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
+
+        // constructor type parmeters are fake
+        writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
 
         signatureWriter.writeParametersStart();
 

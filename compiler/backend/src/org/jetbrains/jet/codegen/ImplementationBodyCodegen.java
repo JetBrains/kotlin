@@ -362,7 +362,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
-        Method constructorMethod;
+        JvmMethodSignature constructorMethod;
         CallableMethod callableMethod;
         if (constructorDescriptor == null) {
             
@@ -387,23 +387,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             
             signatureWriter.writeVoidReturn();
 
-            JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature("<init>");
-            constructorMethod = jvmMethodSignature.getAsmMethod();
-            callableMethod = new CallableMethod("", jvmMethodSignature, Opcodes.INVOKESPECIAL);
+            constructorMethod = signatureWriter.makeJvmMethodSignature("<init>");
+            callableMethod = new CallableMethod("", constructorMethod, Opcodes.INVOKESPECIAL);
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
-            constructorMethod = callableMethod.getSignature().getAsmMethod();
+            constructorMethod = callableMethod.getSignature();
         }
 
         ObjectOrClosureCodegen closure = context.closure;
         if(closure != null) {
-            final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(constructorMethod.getArgumentTypes()));
+            final LinkedList<JvmMethodParameterSignature> consArgTypes = new LinkedList<JvmMethodParameterSignature>(constructorMethod.getKotlinParameterTypes());
 
             int insert = 0;
             if(closure.captureThis) {
                 if(!CodegenUtil.hasThis0(descriptor))
-                    consArgTypes.add(insert, Type.getObjectType(context.getThisDescriptor().getName()));
+                    consArgTypes.add(insert, new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName()), "", JvmMethodParameterKind.THIS0));
                 insert++;
             }
             else {
@@ -412,24 +411,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if(closure.captureReceiver != null)
-                consArgTypes.add(insert++, closure.captureReceiver);
+                consArgTypes.add(insert++, new JvmMethodParameterSignature(closure.captureReceiver, "", JvmMethodParameterKind.RECEIVER));
 
             for (DeclarationDescriptor descriptor : closure.closure.keySet()) {
                 if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                     final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
                     final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
-                    consArgTypes.add(insert++, type);
+                    consArgTypes.add(insert++, new JvmMethodParameterSignature(type, "", JvmMethodParameterKind.SHARED_VAR));
                 }
                 else if(descriptor instanceof FunctionDescriptor) {
                     assert closure.captureReceiver != null;
                 }
             }
 
-            constructorMethod = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
+            constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
         }
 
         int flags = Opcodes.ACC_PUBLIC; // TODO
-        final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getDescriptor(), null, null);
+        final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(), constructorMethod.getGenericsSignature(), null);
         if (!v.generateCode()) return;
         
         AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
@@ -613,7 +612,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitInsn(Opcodes.RETURN);
         FunctionCodegen.endVisit(mv, "constructor", myClass);
 
-        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod, constructorDescriptor, OwnerKind.IMPLEMENTATION);
+        FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod.getAsmMethod(), constructorDescriptor, OwnerKind.IMPLEMENTATION);
     }
 
     private void generateTraitMethods(ExpressionCodegen codegen) {
