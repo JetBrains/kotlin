@@ -64,17 +64,16 @@ public abstract class TestlibTestBase extends CodegenTestCase {
             } else {
                 CompileEnvironment.initializeKotlinRuntime(myEnvironment);
             }
-            
-            URLClassLoader classLoader = (URLClassLoader) TestCase.class.getClassLoader();
-            CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            for(URL url: classLoader.getURLs()) {
-                if(url.getProtocol().equals("file") && url.getPath().contains("junit")) {
-                    File file = new File(URLDecoder.decode(url.getPath()));
-                    if(file.exists()) {
-                        myEnvironment.addToClasspath(file);
-                    }
-                }
+
+            File junitJar = new File("testlib/lib/junit-4.9.jar");
+
+            if (!junitJar.exists()) {
+                throw new AssertionError();
             }
+
+            myEnvironment.addToClasspath(junitJar);
+
+            CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
             VirtualFile path = localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test");
             session.addSources(path);
 
@@ -87,13 +86,15 @@ public abstract class TestlibTestBase extends CodegenTestCase {
             }
 
             ClassFileFactory classFileFactory = session.generate();
+
+            URLClassLoader dependenciesClassLoader = new URLClassLoader(new URL[] { junitJar.toURI().toURL() });
             GeneratedClassLoader loader;
             if (binary) {
                 URLClassLoader parentClassLoader = new URLClassLoader(new URL[]{
-                        ForTestCompileStdlib.stdlibJarForTests().toURI().toURL() });
+                        ForTestCompileStdlib.stdlibJarForTests().toURI().toURL() }, dependenciesClassLoader);
                 loader = new GeneratedClassLoader(classFileFactory, parentClassLoader);
             } else {
-                loader = new GeneratedClassLoader(classFileFactory);
+                loader = new GeneratedClassLoader(classFileFactory, dependenciesClassLoader);
             }
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
