@@ -53,13 +53,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             return;
         }
 
-        final PsiElement newLineWhitespace = JetPsiFactory.createWhiteSpace(body.getProject(), "\n");
-
-        for (DescriptorClassMember selectedElement : selectedElements) {
-
-            // TODO: Insert spaces should be done by formatter
-            body.addBefore(newLineWhitespace, body.getRBrace());
-
+       for (DescriptorClassMember selectedElement : selectedElements) {
             final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof NamedFunctionDescriptor) {
                 JetElement target = overrideFunction(project, (NamedFunctionDescriptor) descriptor);

@@ -47,10 +47,6 @@ public class ImportClassHelper {
 
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importString);
 
-        // TODO: Should be processed with formatter
-        final PsiElement newLineWhitespace = JetPsiFactory.createWhiteSpace(file.getProject(), "\n");
-        final PsiElement doubleLineWhitespace = JetPsiFactory.createWhiteSpace(file.getProject(), "\n\n");
-
         if (!importDirectives.isEmpty()) {
 
             // Check if import is already present
@@ -62,14 +58,12 @@ public class ImportClassHelper {
 
             JetImportDirective lastDirective = importDirectives.get(importDirectives.size() - 1);
             lastDirective.getParent().addAfter(newDirective, lastDirective);
-            lastDirective.getParent().addAfter(newLineWhitespace, lastDirective);
         }
         else {
             List<JetDeclaration> declarations = file.getDeclarations();
             assert !declarations.isEmpty();
             JetDeclaration firstDeclaration = declarations.iterator().next();
             firstDeclaration.getParent().addBefore(newDirective, firstDeclaration);
-            firstDeclaration.getParent().addBefore(doubleLineWhitespace, firstDeclaration);
         }
     }
 }

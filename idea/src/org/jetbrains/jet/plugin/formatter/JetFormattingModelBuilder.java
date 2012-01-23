@@ -7,8 +7,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -27,6 +25,16 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {
         return new SpacingBuilder(settings)
+                .before(IMPORT_DIRECTIVE).lineBreakInCode()
+                .between(IMPORT_DIRECTIVE, CLASS).blankLines(1)
+                .between(IMPORT_DIRECTIVE, FUN).blankLines(1)
+                .between(IMPORT_DIRECTIVE, PROPERTY).blankLines(1)
+
+                .before(FUN).lineBreakInCode()
+                .before(PROPERTY).lineBreakInCode()
+                .between(FUN, FUN).blankLines(1)
+                .between(FUN, PROPERTY).blankLines(1)
+
                 .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
                 .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
                 .around(EQ).spaceIf(settings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
