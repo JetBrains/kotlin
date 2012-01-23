@@ -59,7 +59,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
 
     protected void createEnvironmentWithFullJdk() {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable());
-        final File rtJar = CompileEnvironment.findRtJar(true);
+        final File rtJar = CompileEnvironment.findRtJar();
         myEnvironment.addToClasspath(rtJar);
     }
 

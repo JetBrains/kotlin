@@ -1,11 +1,8 @@
 package org.jetbrains.jet.compiler;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import jet.modules.AllModules;
 import jet.modules.Module;
@@ -20,7 +17,6 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 import java.util.jar.*;
 
@@ -93,34 +89,18 @@ public class CompileEnvironment {
         myEnvironment.addToClasspath(rtJarPath);
     }
     
-    public static File findRtJar(boolean failOnError) {
-        String javaHome = System.getenv("JAVA_HOME");
-        if (javaHome == null) {
-            javaHome = System.getProperty("java.home");
-            if ("jre".equals(new File(javaHome).getName())) {
-                javaHome = new File(javaHome).getParent();
-            }
+    public static File findRtJar() {
+        String javaHome = System.getProperty("java.home");
+        if ("jre".equals(new File(javaHome).getName())) {
+            javaHome = new File(javaHome).getParent();
         }
 
-        File rtJar;
-        if (javaHome == null) {
-            rtJar = findActiveRtJar(failOnError);
+        File rtJar = findRtJar(javaHome);
 
-            if(rtJar == null && failOnError) {
-                throw new CompileEnvironmentException("JAVA_HOME environment variable needs to be defined");
-            }
-        }
-        else {
-            rtJar = findRtJar(javaHome);
+        if (rtJar == null || !rtJar.exists()) {
+            throw new CompileEnvironmentException("No JDK rt.jar found under" + javaHome);
         }
 
-        if ((rtJar == null || !rtJar.exists()) && failOnError) {
-            rtJar = findActiveRtJar(failOnError);
-
-            if ((rtJar == null || !rtJar.exists())) {
-                throw new CompileEnvironmentException("No JDK rt.jar found under JAVA_HOME=" + javaHome);
-            }
-        }
         return rtJar;
     }
 
@@ -137,42 +117,7 @@ public class CompileEnvironment {
         return null;
     }
 
-    public static File findActiveRtJar(boolean failOnError) {
-        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-        if (systemClassLoader instanceof URLClassLoader) {
-            URLClassLoader loader = (URLClassLoader) systemClassLoader;
-            for (URL url: loader.getURLs()) {
-                if("file".equals(url.getProtocol())) {
-                    if(url.getFile().endsWith("/lib/rt.jar")) {
-                        return new File(url.getFile());
-                    }
-                    if(url.getFile().endsWith("/Classes/classes.jar")) {
-                        return new File(url.getFile()).getAbsoluteFile();
-                    }
-                }
-            }
-            if (failOnError) {
-                throw new CompileEnvironmentException("Could not find rt.jar in system class loader: " + StringUtil.join(loader.getURLs(), new Function<URL, String>() {
-                    @Override
-                    public String fun(URL url) {
-                        return url.toString() + "\n";
-                    }
-                }, ", "));
-            }
-        }
-        else if (failOnError) {
-            throw new CompileEnvironmentException("System class loader is not an URLClassLoader: " + systemClassLoader);
-        }
-        return null;
-    }
-
     public void compileModuleScript(String moduleFile, String jarPath, boolean jarRuntime) {
-        try {
-            System.out.println("module file text: " + FileUtil.loadFile(new File(moduleFile)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         final List<Module> modules = loadModuleScript(moduleFile);
 
         if (modules == null) {
@@ -244,10 +189,6 @@ public class CompileEnvironment {
             return null;
         }
         return moduleCompileSession.generate();
-    }
-
-    private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(CompileEnvironment.class, "/org/jetbrains/jet/compiler/CompileEnvironment.class")).getParentFile().getParentFile().getParent();
     }
 
     public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable String mainClass, boolean includeRuntime) {

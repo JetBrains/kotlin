@@ -32,7 +32,7 @@ public class CompileEnvironmentTest extends TestCase {
     }
 
     public void _testSmoke() throws IOException {
-        final File activeRtJar = CompileEnvironment.findRtJar(true);
+        final File activeRtJar = CompileEnvironment.findRtJar();
         environment.setJavaRuntime(activeRtJar);
         environment.initializeKotlinRuntime();
         final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";

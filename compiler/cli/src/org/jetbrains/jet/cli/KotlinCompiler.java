@@ -62,7 +62,7 @@ public class KotlinCompiler {
         CompileEnvironment environment = new CompileEnvironment();
 
         try {
-            environment.setJavaRuntime(CompileEnvironment.findRtJar(true));
+            environment.setJavaRuntime(CompileEnvironment.findRtJar());
             if (!environment.initializeKotlinRuntime()) {
                 System.err.println("No Kotlin runtime library found");
                 System.exit(1);
