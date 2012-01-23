@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiArrayType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiElement;
@@ -825,16 +826,22 @@ public class JavaDescriptorResolver {
         } else if (typeSource.getTypeString().length() > 0) {
             return typeSource.getTypeString();
         } else {
-            if (typeSource.getPsiType() instanceof PsiClassType) {
-                return ((PsiClassType) typeSource.getPsiType()).getClassName();
-            } else if (typeSource.getPsiType() instanceof PsiPrimitiveType) {
-                return typeSource.getPsiType().getPresentableText();
-            } else {
-                throw new IllegalStateException("" + typeSource.getPsiType().getClass());
-            }
+            return psiTypeToKey(typeSource.getPsiType());
         }
     }
-    
+
+    private Object psiTypeToKey(PsiType psiType) {
+        if (psiType instanceof PsiClassType) {
+            return ((PsiClassType) psiType).getClassName();
+        } else if (psiType instanceof PsiPrimitiveType) {
+            return psiType.getPresentableText();
+        } else if (psiType instanceof PsiArrayType) {
+            return Pair.create("[", psiTypeToKey(((PsiArrayType) psiType).getComponentType()));
+        } else {
+            throw new IllegalStateException("" + psiType.getClass());
+        }
+    }
+
     private Object propertyKeyForGrouping(PropertyAccessorData propertyAccessor) {
         Object type = key(propertyAccessor.getType());
         Object receiverType = key(propertyAccessor.getReceiverType());
