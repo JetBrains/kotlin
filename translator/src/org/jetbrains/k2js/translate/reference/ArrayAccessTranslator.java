@@ -1,16 +1,15 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
@@ -30,13 +29,14 @@ public final class ArrayAccessTranslator extends AccessTranslator {
     @NotNull
     private final JetArrayAccessExpression expression;
     @NotNull
-    private final DeclarationDescriptor methodDescriptor;
+    private final FunctionDescriptor methodDescriptor;
 
     private ArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        this.methodDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        this.methodDescriptor = (FunctionDescriptor)
+                getDescriptorForReferenceExpression(context.bindingContext(), expression);
     }
 
     @Override
@@ -52,6 +52,7 @@ public final class ArrayAccessTranslator extends AccessTranslator {
         return context().intrinsics().isIntrinsic(methodDescriptor);
     }
 
+    //TODO: hide direct access to intrinsics
     @NotNull
     private JsExpression intrinsicGet() {
         return ArrayGetIntrinsic.INSTANCE.apply(translateArrayExpression(), translateIndexExpressions(), context());
@@ -74,27 +75,25 @@ public final class ArrayAccessTranslator extends AccessTranslator {
     }
 
     @NotNull
-    private JsExpression overloadedSet(@NotNull JsExpression expression) {
-        JsInvocation setCall = translateAsAccessMethodCall();
-        setCall.getArguments().add(expression);
-        return setCall;
+    private JsExpression overloadedSet(@NotNull JsExpression expressionToSetTo) {
+        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context().bindingContext(), expression);
+        List<JsExpression> arguments = translateIndexExpressions();
+        arguments.add(expressionToSetTo);
+        return CallTranslator.translate(translateArrayExpression(), arguments, resolvedCall,
+                methodDescriptor, context());
     }
 
     @NotNull
-    private JsInvocation translateAsAccessMethodCall() {
-        JsNameRef accessMethodReference = getAccessMethodReference();
-        AstUtil.setQualifier(accessMethodReference, translateArrayExpression());
-        return AstUtil.newInvocation(accessMethodReference, translateIndexExpressions());
+    private JsExpression translateAsAccessMethodCall() {
+        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context().bindingContext(), expression);
+        List<JsExpression> arguments = translateIndexExpressions();
+        return CallTranslator.translate(translateArrayExpression(), arguments, resolvedCall,
+                methodDescriptor, context());
     }
 
     @NotNull
     private List<JsExpression> translateIndexExpressions() {
         return TranslationUtils.translateExpressionList(context(), expression.getIndexExpressions());
-    }
-
-    @NotNull
-    private JsNameRef getAccessMethodReference() {
-        return context().getNameForDescriptor(methodDescriptor).makeRef();
     }
 
     @NotNull

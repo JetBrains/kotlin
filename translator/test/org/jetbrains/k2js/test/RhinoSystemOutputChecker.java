@@ -29,8 +29,8 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
         String result = getSystemOutput(context, scope);
         String trimmedExpected = trimSpace(expectedResult);
         String trimmedActual = trimSpace(result);
-        System.out.println(trimmedActual);
-        System.out.println(trimmedExpected);
+        // System.out.println(trimmedActual);
+        // System.out.println(trimmedExpected);
         assertTrue("Returned:\n" + trimmedActual + "END_OF_RETURNED\nExpected:\n" + trimmedExpected
                 + "END_OF_EXPECTED\n", trimmedExpected.equals(trimmedActual));
     }
