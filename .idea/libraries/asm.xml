@@ -5,7 +5,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="file://$USER_HOME$/libs/asm-3.3.1/src" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-3.3.1.zip!/asm-3.3.1/src" />
     </SOURCES>
   </library>
 </component>
