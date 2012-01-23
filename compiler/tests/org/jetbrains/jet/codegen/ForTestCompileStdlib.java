@@ -80,12 +80,16 @@ class ForTestCompileStdlib {
     }
 
     private static void copyToJar(File root, JarOutputStream os) throws IOException {
+        System.err.println("cp directory " + root + " to jar");
+
         Stack<Pair<String, File>> toCopy = new Stack<Pair<String, File>>();
         toCopy.add(new Pair<String, File>("", root));
         while (!toCopy.empty()) {
             Pair<String, File> pop = toCopy.pop();
             File file = pop.getSecond();
             if (file.isFile()) {
+                System.err.println("cp file " + file + " to jar path " + pop.getFirst());
+
                 os.putNextEntry(new JarEntry(pop.getFirst()));
                 Files.copy(file, os);
             } else if (file.isDirectory()) {
