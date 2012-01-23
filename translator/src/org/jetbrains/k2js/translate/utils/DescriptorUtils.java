@@ -140,11 +140,17 @@ public final class DescriptorUtils {
 
     //TODO: why callable descriptor
     @Nullable
-    public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor functionDescriptor) {
-        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
-        if (!receiverParameter.exists()) {
+    public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
+        ReceiverDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
+        if (!expectedThisObject.exists()) {
             return null;
         }
+        return getDeclarationDescriptorForReceiver(expectedThisObject);
+    }
+
+    @NotNull
+    public static DeclarationDescriptor getDeclarationDescriptorForReceiver
+            (@NotNull ReceiverDescriptor receiverParameter) {
         DeclarationDescriptor declarationDescriptor =
                 receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         //TODO: WHY assert?
@@ -153,14 +159,25 @@ public final class DescriptorUtils {
     }
 
     @Nullable
-    public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor functionDescriptor) {
-        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+    public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor callableDescriptor) {
+        ReceiverDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
         if (!receiverParameter.exists()) {
             return null;
         }
-        DeclarationDescriptor declarationDescriptor =
-                functionDescriptor.getReceiverParameter().getType().getConstructor().getDeclarationDescriptor();
-        assert declarationDescriptor != null;
-        return declarationDescriptor.getOriginal();
+        return getDeclarationDescriptorForReceiver(receiverParameter);
     }
+
+    //TODO: maybe we have similar routine
+    @Nullable
+    public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        while (containing != null) {
+            if (containing instanceof ClassDescriptor) {
+                return (ClassDescriptor) containing;
+            }
+            containing = containing.getContainingDeclaration();
+        }
+        return null;
+    }
+
 }

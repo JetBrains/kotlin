@@ -3,10 +3,7 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -20,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThisDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 
@@ -70,17 +66,17 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
-
     //TODO: refactor
     @NotNull
     public JsExpression translateAsLiteral() {
-        DeclarationDescriptor expectedThisDescriptor = getExpectedThisDescriptor(descriptor);
-        if (expectedThisDescriptor == null) {
+        assert getExpectedThisDescriptor(descriptor) == null;
+        ClassDescriptor containingClass = getContainingClass(descriptor);
+        if (containingClass == null) {
             return generateFunctionObject();
         }
-        TemporaryVariable aliasForThis = context().newAliasForThis(expectedThisDescriptor);
+        TemporaryVariable aliasForThis = context().newAliasForThis(containingClass);
         JsFunction function = generateFunctionObject();
-        context().removeAliasForThis(expectedThisDescriptor);
+        context().removeAliasForThis(containingClass);
         return AstUtil.newSequence(aliasForThis.assignmentExpression(), function);
     }
 
@@ -95,14 +91,16 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void restoreContext() {
         if (isExtensionFunction()) {
-            functionBodyContext.removeAliasForThis(getExpectedReceiverDescriptor(descriptor));
+            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+            assert expectedReceiverDescriptor != null : "Extension functions should always have receiver descriptors.";
+            functionBodyContext.aliaser().removeAliasForThis(expectedReceiverDescriptor);
         }
     }
 
+    @NotNull
     private JsFunction createFunctionObject() {
         if (isDeclaration()) {
-            return functionWithScope
-                    (context().getScopeForElement((JetDeclaration) functionDeclaration));
+            return functionWithScope(context().getScopeForElement((JetDeclaration) functionDeclaration));
         }
         if (isLiteral()) {
             //TODO: look into
@@ -147,8 +145,8 @@ public final class FunctionTranslator extends AbstractTranslator {
         List<JsStatement> statements = bodyBlock.getStatements();
         int lastIndex = statements.size() - 1;
         JsStatement lastStatement = statements.get(lastIndex);
-        statements.set(lastIndex,
-                new JsReturn(AstUtil.extractExpressionFromStatement(lastStatement)));
+        JsReturn returnStatement = new JsReturn(AstUtil.extractExpressionFromStatement(lastStatement));
+        statements.set(lastIndex, returnStatement);
     }
 
     @NotNull
@@ -186,7 +184,8 @@ public final class FunctionTranslator extends AbstractTranslator {
             //TODO: dont do this
             JsName receiver = functionBodyContext.jsScope().declareName(RECEIVER_PARAMETER_NAME);
             DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
-            context().aliaser().setAliasForReceiver(expectedReceiverDescriptor, receiver);
+            assert expectedReceiverDescriptor != null;
+            context().aliaser().setAliasForThis(expectedReceiverDescriptor, receiver);
             jsParameters.add(new JsParameter(receiver));
         }
     }

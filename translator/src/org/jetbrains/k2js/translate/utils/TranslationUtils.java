@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
 
 /**
  * @author Pavel Talanov
@@ -108,16 +110,27 @@ public final class TranslationUtils {
         return reference;
     }
 
+    //TODO: refactor
     @NotNull
-    public static JsExpression getThisQualifier(@NotNull TranslationContext context,
-                                                @NotNull DeclarationDescriptor correspondingDeclaration) {
-        JsExpression qualifier;
-        if (context.aliaser().hasAliasForThis(correspondingDeclaration)) {
-            qualifier = context.aliaser().getAliasForThis(correspondingDeclaration);
-        } else {
-            qualifier = new JsThisRef();
+    public static JsExpression getThisObject(@NotNull TranslationContext context,
+                                             @NotNull DeclarationDescriptor correspondingDeclaration) {
+        JsExpression thisRef = null;
+        if (correspondingDeclaration instanceof ClassDescriptor) {
+            if (context.aliaser().hasAliasForThis(correspondingDeclaration)) {
+                thisRef = context.aliaser().getAliasForThis(correspondingDeclaration);
+            }
         }
-        return qualifier;
+        if (correspondingDeclaration instanceof FunctionDescriptor) {
+            DeclarationDescriptor receiverDescriptor = getExpectedReceiverDescriptor((FunctionDescriptor) correspondingDeclaration);
+            assert receiverDescriptor != null;
+            if (context.aliaser().hasAliasForThis(receiverDescriptor)) {
+                thisRef = context.aliaser().getAliasForThis(receiverDescriptor);
+            }
+        }
+        if (thisRef != null) {
+            return thisRef;
+        }
+        return new JsThisRef();
     }
 
     @NotNull
@@ -196,7 +209,7 @@ public final class TranslationUtils {
         DeclarationDescriptor correspondingDescriptor =
                 receiverDescriptor.getType().getConstructor().getDeclarationDescriptor();
         assert correspondingDescriptor != null;
-        return context.aliaser().getAliasForReceiver(correspondingDescriptor);
+        return context.aliaser().getAliasForThis(correspondingDescriptor);
     }
 
     @Nullable

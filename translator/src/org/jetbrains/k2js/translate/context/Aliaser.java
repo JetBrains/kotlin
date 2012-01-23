@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 //TODO: code gets duplicated
 public class Aliaser {
@@ -19,53 +20,45 @@ public class Aliaser {
     @NotNull
     private final Map<DeclarationDescriptor, JsName> aliasesForDescriptors = new HashMap<DeclarationDescriptor, JsName>();
     @NotNull
-    private final Map<DeclarationDescriptor, JsName> aliasesForThis = new HashMap<DeclarationDescriptor, JsName>();
-    @NotNull
-    private final Map<DeclarationDescriptor, JsName> aliasesForReceiver = new HashMap<DeclarationDescriptor, JsName>();
+    private final Map<DeclarationDescriptor, Stack<JsName>> aliasesForThis
+            = new HashMap<DeclarationDescriptor, Stack<JsName>>();
 
     private Aliaser() {
     }
 
+    //TODO: refactor
     @NotNull
     public JsNameRef getAliasForThis(@NotNull DeclarationDescriptor descriptor) {
-        JsName aliasName = aliasesForThis.get(descriptor.getOriginal());
+        Stack<JsName> aliasStack = aliasesForThis.get(descriptor.getOriginal());
+        assert !aliasStack.empty();
+        JsName aliasName = aliasStack.peek();
         assert aliasName != null : "This " + descriptor.getOriginal() + " doesn't have an alias.";
         return aliasName.makeRef();
     }
 
     public void setAliasForThis(@NotNull DeclarationDescriptor descriptor, @NotNull JsName alias) {
-        aliasesForThis.put(descriptor.getOriginal(), alias);
+        Stack<JsName> aliasStack = aliasesForThis.get(descriptor.getOriginal());
+        if (aliasStack == null) {
+            aliasStack = new Stack<JsName>();
+            aliasesForThis.put(descriptor, aliasStack);
+        }
+        aliasStack.push(alias);
     }
 
+    //TODO: make the reference null
     public void removeAliasForThis(@NotNull DeclarationDescriptor descriptor) {
-        JsName removed = aliasesForThis.remove(descriptor.getOriginal());
-        assert removed != null;
+        Stack<JsName> aliasStack = aliasesForThis.get(descriptor.getOriginal());
+        assert !aliasStack.empty();
+        aliasStack.pop();
     }
 
     public boolean hasAliasForThis(@NotNull DeclarationDescriptor descriptor) {
-        return (aliasesForThis.containsKey(descriptor.getOriginal()));
+        Stack<JsName> aliasStack = aliasesForThis.get(descriptor.getOriginal());
+        if (aliasStack == null) {
+            return false;
+        }
+        return (!aliasStack.empty());
     }
-
-    @NotNull
-    public JsNameRef getAliasForReceiver(@NotNull DeclarationDescriptor descriptor) {
-        JsName aliasName = aliasesForReceiver.get(descriptor.getOriginal());
-        assert aliasName != null : "This descriptor doesn't have an alias.";
-        return aliasName.makeRef();
-    }
-
-    public void setAliasForReceiver(@NotNull DeclarationDescriptor descriptor, @NotNull JsName alias) {
-        aliasesForReceiver.put(descriptor.getOriginal(), alias);
-    }
-
-    public void removeAliasForReceiver(@NotNull DeclarationDescriptor descriptor) {
-        JsName removed = aliasesForReceiver.remove(descriptor.getOriginal());
-        assert removed != null;
-    }
-
-    public boolean hasAliasForReceiver(@NotNull DeclarationDescriptor descriptor) {
-        return (aliasesForReceiver.containsKey(descriptor.getOriginal()));
-    }
-
 
     @NotNull
     public JsName getAliasForDeclaration(@NotNull DeclarationDescriptor declaration) {

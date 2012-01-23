@@ -165,9 +165,10 @@ public final class TranslationContext {
         return dynamicContext.declareLocalVariable(declarationDescriptor);
     }
 
+    //TODO: consider moving somewhere
     @NotNull
     public TemporaryVariable newAliasForThis(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression thisQualifier = TranslationUtils.getThisQualifier(this, descriptor);
+        JsExpression thisQualifier = TranslationUtils.getThisObject(this, descriptor);
         TemporaryVariable aliasForThis = dynamicContext.declareTemporary(thisQualifier);
         aliaser().setAliasForThis(descriptor, aliasForThis.name());
         return aliasForThis;

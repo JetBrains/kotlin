@@ -52,4 +52,9 @@ public final class ExtensionFunctionTest extends TranslationTest {
     public void extensionInsideFunctionLiteral() throws Exception {
         testFooBoxIsTrue("extensionInsideFunctionLiteral.kt");
     }
+
+    @Test
+    public void genericExtension() throws Exception {
+        testFooBoxIsOk("generic.kt");
+    }
 }

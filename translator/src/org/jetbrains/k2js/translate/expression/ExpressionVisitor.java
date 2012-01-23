@@ -20,6 +20,7 @@ import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
@@ -373,16 +374,16 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return Translation.functionTranslator(expression, context).translateAsLiteral();
     }
 
+
+    //TODO: refactor
+    //TODO: strange logic. look where it should be applied
     @Override
     @NotNull
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,
                                       @NotNull TranslationContext context) {
         DeclarationDescriptor descriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
-        if (context.aliaser().hasAliasForThis(descriptor)) {
-            return context.aliaser().getAliasForThis(descriptor);
-        }
-        return new JsThisRef();
+        return TranslationUtils.getThisObject(context, descriptor);
     }
 
     @Override

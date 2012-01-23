@@ -31,8 +31,9 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                       @NotNull TranslationContext context) {
-
-        assert context.hasQualifierForDescriptor(referencedDescriptor);
+        if (!context.hasQualifierForDescriptor(referencedDescriptor)) {
+            return translateAsLocalNameReference(referencedDescriptor, context);
+        }
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
         JsExpression qualifier = context.getQualifierForDescriptor(referencedDescriptor);
         return AstUtil.qualified(referencedName, qualifier);

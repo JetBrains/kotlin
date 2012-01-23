@@ -12,19 +12,18 @@ import org.jetbrains.jet.lang.resolve.calls.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.*;
 
 import static com.google.dart.compiler.util.AstUtil.not;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
@@ -187,7 +186,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private final JsExpression receiver;
+    private JsExpression receiver;
 
     @NotNull
     private final List<JsExpression> arguments;
@@ -227,11 +226,19 @@ public final class CallTranslator extends AbstractTranslator {
         return methodCall();
     }
 
+    //TODO: refactor
     @NotNull
     private JsExpression extensionFunctionCall() {
         List<JsExpression> argumentList = new ArrayList<JsExpression>();
+        if (receiver == null) {
+            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+            assert expectedReceiverDescriptor != null;
+            receiver = getThisObject(context(), expectedReceiverDescriptor);
+        }
         argumentList.add(receiver);
         argumentList.addAll(arguments);
+        //Now the rest of the code can work as if it was simple method invocation
+        receiver = null;
         return AstUtil.newInvocation(calleeReference(), argumentList);
     }
 
@@ -263,7 +270,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression calleeReference() {
-        if (DescriptorUtils.isVariableDescriptor(descriptor)) {
+        if (isVariableDescriptor(descriptor)) {
             //TODO: write tests on this cases
             VariableDescriptor variableDescriptor =
                     getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) descriptor);
@@ -282,23 +289,26 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression qualifiedMethodReference(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression methodReference = ReferenceTranslator.translateAsLocalNameReference(descriptor, context());
-        //TODO: should insert checks for IMPLICIT RECEIVER
-        if (isExtensionFunction()) {
-            return extensionFunctionReference(methodReference);
-        } else if (receiver != null) {
-            AstUtil.setQualifier(methodReference, receiver);
+        JsExpression thisObject = thisObject();
+        if (thisObject == null) {
+            return ReferenceTranslator.translateAsFQReference(descriptor, context());
         }
+        JsExpression methodReference = ReferenceTranslator.translateAsLocalNameReference(descriptor, context());
+        AstUtil.setQualifier(methodReference, thisObject);
         return methodReference;
     }
 
-    @NotNull
-    private JsExpression extensionFunctionReference(@NotNull JsExpression methodReference) {
-        JsExpression qualifier = TranslationUtils.getImplicitReceiver(context(), resolvedCall.getReceiverArgument());
-        if (qualifier != null) {
-            AstUtil.setQualifier(methodReference, qualifier);
+    @Nullable
+    private JsExpression thisObject() {
+        if (receiver != null) {
+            return receiver;
         }
-        return methodReference;
+        ReceiverDescriptor thisObject = resolvedCall.getThisObject();
+        if (!thisObject.exists()) {
+            return null;
+        }
+        DeclarationDescriptor expectedThisDescriptor = getDeclarationDescriptorForReceiver(thisObject);
+        return TranslationUtils.getThisObject(context(), expectedThisDescriptor);
     }
 
     @NotNull
