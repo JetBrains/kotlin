@@ -14,13 +14,12 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 /**
  * @author Pavel Talanov
  */
-//TODO: get rid of the class, move to util
 public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
                                                    @NotNull TranslationContext context) {
-        if (PropertyAccessTranslator.canBePropertyAccess(expression, context)) {
+        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
             return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, null, context);
         }
         DeclarationDescriptor referencedDescriptor =

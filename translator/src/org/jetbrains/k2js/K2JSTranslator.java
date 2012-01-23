@@ -99,8 +99,6 @@ public final class K2JSTranslator {
     @NotNull
     private JsProgram generateProgram(@NotNull JetFile psiFile) {
 
-//        bindingContext = analyzeNamespace(psiFile,
-//                JetControlFlowDataTraceFactory.EMPTY);
         List<JetFile> files = getJsSupportStdLib();
         files.add(psiFile);
         bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(psiFile.getProject(), files, new Predicate<PsiFile>() {

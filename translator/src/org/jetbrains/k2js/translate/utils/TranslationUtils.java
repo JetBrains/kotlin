@@ -9,8 +9,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.NamingScope;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -203,28 +203,18 @@ public final class TranslationUtils {
         return context.program().getNumberLiteral(0);
     }
 
-    @Nullable
-    public static JsExpression getImplicitReceiver(@NotNull TranslationContext context,
-                                                   @NotNull ReceiverDescriptor receiverDescriptor) {
-        DeclarationDescriptor correspondingDescriptor =
-                receiverDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        assert correspondingDescriptor != null;
-        return context.aliaser().getAliasForThis(correspondingDescriptor);
+    @NotNull
+    public static TemporaryVariable newAliasForThis(@NotNull TranslationContext context,
+                                                    @NotNull DeclarationDescriptor descriptor) {
+        JsExpression thisQualifier = getThisObject(context, descriptor);
+        TemporaryVariable aliasForThis = context.declareTemporary(thisQualifier);
+        context.aliaser().setAliasForThis(descriptor, aliasForThis.name());
+        return aliasForThis;
     }
 
-    @Nullable
-    public static JsExpression getImplicitThis(@NotNull TranslationContext context,
-                                               @NotNull ReceiverDescriptor receiverDescriptor) {
-        if (!receiverDescriptor.exists()) {
-            return new JsThisRef();
-        }
-        DeclarationDescriptor correspondingDescriptor =
-                receiverDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        assert correspondingDescriptor != null;
-        if (!context.aliaser().hasAliasForThis(correspondingDescriptor)) {
-            return new JsThisRef();
-        }
-        return context.aliaser().getAliasForThis(correspondingDescriptor);
+    public static void removeAliasForThis(@NotNull TranslationContext context,
+                                          @NotNull DeclarationDescriptor descriptor) {
+        context.aliaser().removeAliasForThis(descriptor);
     }
 
 }

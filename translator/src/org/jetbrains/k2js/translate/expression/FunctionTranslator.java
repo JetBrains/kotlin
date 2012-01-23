@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 
 /**
@@ -66,7 +66,6 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
 
-    //TODO: refactor
     @NotNull
     public JsExpression translateAsLiteral() {
         assert getExpectedThisDescriptor(descriptor) == null;
@@ -74,9 +73,14 @@ public final class FunctionTranslator extends AbstractTranslator {
         if (containingClass == null) {
             return generateFunctionObject();
         }
-        TemporaryVariable aliasForThis = context().newAliasForThis(containingClass);
+        return generateFunctionObjectWithAliasedThisReference(containingClass);
+    }
+
+    @NotNull
+    private JsExpression generateFunctionObjectWithAliasedThisReference(@NotNull ClassDescriptor containingClass) {
+        TemporaryVariable aliasForThis = newAliasForThis(context(), containingClass);
         JsFunction function = generateFunctionObject();
-        context().removeAliasForThis(containingClass);
+        removeAliasForThis(context(), containingClass);
         return AstUtil.newSequence(aliasForThis.assignmentExpression(), function);
     }
 

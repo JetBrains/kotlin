@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
@@ -139,15 +138,6 @@ public final class TranslationContext {
         return getNameForDescriptor(descriptor);
     }
 
-    public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        return standardClasses().isStandardObject(descriptor);
-    }
-
-    @NotNull
-    public JsName getNameForStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        return standardClasses().getStandardObjectName(descriptor);
-    }
-
     @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
@@ -163,19 +153,6 @@ public final class TranslationContext {
         DeclarationDescriptor declarationDescriptor =
                 BindingUtils.getDescriptorForElement(bindingContext(), element);
         return dynamicContext.declareLocalVariable(declarationDescriptor);
-    }
-
-    //TODO: consider moving somewhere
-    @NotNull
-    public TemporaryVariable newAliasForThis(@NotNull DeclarationDescriptor descriptor) {
-        JsExpression thisQualifier = TranslationUtils.getThisObject(this, descriptor);
-        TemporaryVariable aliasForThis = dynamicContext.declareTemporary(thisQualifier);
-        aliaser().setAliasForThis(descriptor, aliasForThis.name());
-        return aliasForThis;
-    }
-
-    public void removeAliasForThis(@NotNull DeclarationDescriptor descriptor) {
-        aliaser().removeAliasForThis(descriptor);
     }
 
     @NotNull

@@ -212,20 +212,31 @@ public final class CallTranslator extends AbstractTranslator {
         return methodCall();
     }
 
-    //TODO: refactor
     @NotNull
     private JsExpression extensionFunctionCall() {
-        List<JsExpression> argumentList = new ArrayList<JsExpression>();
-        if (receiver == null) {
-            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
-            assert expectedReceiverDescriptor != null;
-            receiver = getThisObject(context(), expectedReceiverDescriptor);
-        }
-        argumentList.add(receiver);
-        argumentList.addAll(arguments);
+        receiver = getExtensionFunctionCallReceiver();
+        List<JsExpression> argumentList = generateExtensionCallArgumentList();
         //Now the rest of the code can work as if it was simple method invocation
         receiver = null;
         return AstUtil.newInvocation(calleeReference(), argumentList);
+    }
+
+    @NotNull
+    private List<JsExpression> generateExtensionCallArgumentList() {
+        List<JsExpression> argumentList = new ArrayList<JsExpression>();
+        argumentList.add(receiver);
+        argumentList.addAll(arguments);
+        return argumentList;
+    }
+
+    @NotNull
+    private JsExpression getExtensionFunctionCallReceiver() {
+        if (receiver != null) {
+            return receiver;
+        }
+        DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+        assert expectedReceiverDescriptor != null;
+        return getThisObject(context(), expectedReceiverDescriptor);
     }
 
     private boolean isExtensionFunction() {

@@ -9,14 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-//TODO: code gets duplicated
 public class Aliaser {
 
     public static Aliaser newInstance() {
         return new Aliaser();
     }
 
-    //TODO: rename
     @NotNull
     private final Map<DeclarationDescriptor, JsName> aliasesForDescriptors = new HashMap<DeclarationDescriptor, JsName>();
     @NotNull
@@ -26,7 +24,6 @@ public class Aliaser {
     private Aliaser() {
     }
 
-    //TODO: refactor
     @NotNull
     public JsNameRef getAliasForThis(@NotNull DeclarationDescriptor descriptor) {
         Stack<JsName> aliasStack = aliasesForThis.get(descriptor.getOriginal());
@@ -45,11 +42,13 @@ public class Aliaser {
         aliasStack.push(alias);
     }
 
-    //TODO: make the reference null
     public void removeAliasForThis(@NotNull DeclarationDescriptor descriptor) {
         Stack<JsName> aliasStack = aliasesForThis.get(descriptor.getOriginal());
         assert !aliasStack.empty();
         aliasStack.pop();
+        if (aliasStack.empty()) {
+            aliasesForThis.put(descriptor, null);
+        }
     }
 
     public boolean hasAliasForThis(@NotNull DeclarationDescriptor descriptor) {

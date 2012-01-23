@@ -236,11 +236,6 @@ public final class BindingUtils {
         return getResolvedCall(context, calleeExpression);
     }
 
-    @NotNull
-    private static CallableDescriptor getDescriptorForResolvedCall(@NotNull ResolvedCall<?> resolvedCall) {
-        return resolvedCall.getCandidateDescriptor();
-    }
-
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
         Boolean result = context.get(BindingContext.VARIABLE_REASSIGNMENT, expression);
         assert result != null;
@@ -286,14 +281,6 @@ public final class BindingUtils {
         JetExpression defaultValue = psiParameter.getDefaultValue();
         assert defaultValue != null : "No default value found in PSI.";
         return defaultValue;
-    }
-
-    @NotNull
-    public static JetType getTypeForExpression(@NotNull BindingContext context,
-                                               @NotNull JetExpression expression) {
-        JetType jetType = context.get(BindingContext.EXPRESSION_TYPE, expression);
-        assert jetType != null : "Expression must have a type.";
-        return jetType;
     }
 
     @NotNull

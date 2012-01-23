@@ -87,7 +87,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
                 (context.bindingContext(), expression) instanceof PropertyDescriptor);
     }
 
-    //TODO: make this method more specific
     public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
                                                   @NotNull TranslationContext context) {
         if (expression instanceof JetQualifiedExpression) {
@@ -164,12 +163,5 @@ public final class PropertyAccessTranslator extends AccessTranslator {
     private JsExpression backingFieldAssignment(@NotNull JsExpression toSetTo) {
         JsNameRef backingFieldReference = backingFieldReference(context(), propertyDescriptor);
         return AstUtil.newAssignment(backingFieldReference, toSetTo);
-    }
-
-    @NotNull
-    private static JetSimpleNameExpression getNotNullSelector(@NotNull JetQualifiedExpression qualifiedExpression) {
-        JetSimpleNameExpression selectorExpression = getSelectorAsSimpleName(qualifiedExpression);
-        assert selectorExpression != null : MESSAGE;
-        return selectorExpression;
     }
 }

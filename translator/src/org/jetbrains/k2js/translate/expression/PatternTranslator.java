@@ -61,6 +61,7 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression translateTypePattern(@NotNull JsExpression expressionToMatch,
                                               @NotNull JetTypePattern pattern) {
         //TODO: HACK to make some examples work
+        //TODO: look into using intrinsics or other mechanisms to implement this logic
         JsName className = getClassReference(pattern).getName();
         if (className.getIdent().equals("String")) {
             return AstUtil.typeof(expressionToMatch, program().getStringLiteral("string"));

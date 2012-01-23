@@ -12,12 +12,12 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
  */
 public abstract class AccessTranslator extends AbstractTranslator {
 
+    //TODO: this piece of code represents dangerously convoluted logic, think of the ways it can be improved
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetExpression referenceExpression,
                                                        @NotNull TranslationContext context) {
         assert ((referenceExpression instanceof JetReferenceExpression) ||
                 (referenceExpression instanceof JetDotQualifiedExpression));
-        //TODO:
         if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
             if (referenceExpression instanceof JetQualifiedExpression) {
                 return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context);

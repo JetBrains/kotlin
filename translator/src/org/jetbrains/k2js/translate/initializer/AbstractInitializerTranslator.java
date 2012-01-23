@@ -31,7 +31,6 @@ public abstract class AbstractInitializerTranslator extends AbstractTranslator {
 
     abstract protected JsFunction generateInitializerFunction();
 
-
     @NotNull
     public JsPropertyInitializer generateInitializeMethod() {
         JsPropertyInitializer initializer = new JsPropertyInitializer();

@@ -22,7 +22,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsFor
  */
 public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
 
-
     /*package*/ InitializerVisitor() {
     }
 

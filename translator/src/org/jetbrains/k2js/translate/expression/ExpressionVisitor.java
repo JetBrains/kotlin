@@ -314,9 +314,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return Translation.functionTranslator(expression, context).translateAsLiteral();
     }
 
-
-    //TODO: refactor
-    //TODO: strange logic. look where it should be applied
     @Override
     @NotNull
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,

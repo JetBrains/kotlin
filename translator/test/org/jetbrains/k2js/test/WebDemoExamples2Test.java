@@ -28,5 +28,7 @@ public final class WebDemoExamples2Test extends TranslationTest {
     @Test
     public void builder() throws Exception {
         testWithMain("builder", "");
+        testWithMain("builder", "1", "over9000" +
+                "");
     }
 }
