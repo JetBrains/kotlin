@@ -105,7 +105,7 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    final MutableClassDescriptor objectDescriptor = createClassDescriptorForObject(declaration, owner, outerScope);
+                    final MutableClassDescriptor objectDescriptor = createClassDescriptorForObject(declaration, owner, outerScope, ClassKind.OBJECT);
                     context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
                 }
 
@@ -114,32 +114,27 @@ public class TypeHierarchyResolver {
                     MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) owner).getClassObjectDescriptor();
                     assert classObjectDescriptor != null : enumEntry.getParent().getText();
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                        MutableClassDescriptor classDescriptor = createClassDescriptorForObject(enumEntry, classObjectDescriptor, outerScopeForStatic);
-                        context.getObjects().remove(enumEntry);
-                        context.getClasses().put(enumEntry, classDescriptor);
+                        createClassDescriptorForObject(enumEntry, classObjectDescriptor, outerScopeForStatic, ClassKind.ENUM_ENTRY);
+                        return;
                     }
-                    else {
-                        // TODO : Special kind for enum entry classes?
-                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), classObjectDescriptor, outerScope, ClassKind.CLASS);
-                        visitClassOrObject(
-                                enumEntry,
-                                (Map) context.getClasses(),
-                                mutableClassDescriptor
-                        );
-                        classObjectDescriptor.addClassifierDescriptor(mutableClassDescriptor);
-                    }
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), classObjectDescriptor, outerScope, ClassKind.ENUM_ENTRY);
+                    visitClassOrObject(
+                            enumEntry,
+                            (Map) context.getClasses(),
+                            mutableClassDescriptor
+                    );
+                    classObjectDescriptor.addClassifierDescriptor(mutableClassDescriptor);
                 }
 
-                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration,
-                                                                              @NotNull NamespaceLike owner, JetScope scope) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, ClassKind.OBJECT) {
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope, ClassKind classKind) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, classKind) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
                         }
                     };
-
-                    visitClassOrObject(declaration, (Map) context.getObjects(), mutableClassDescriptor);
+                    Map<JetClassOrObject, MutableClassDescriptor> map = classKind == ClassKind.OBJECT ? (Map) context.getObjects() : (Map) context.getClasses();
+                    visitClassOrObject(declaration, map, mutableClassDescriptor);
                     createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
                     owner.addObjectDescriptor(mutableClassDescriptor);
                     context.getTrace().record(BindingContext.CLASS, declaration, mutableClassDescriptor);
@@ -176,7 +171,7 @@ public class TypeHierarchyResolver {
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {
-                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic));
+                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic, ClassKind.OBJECT));
                         switch (status) {
                             case DUPLICATE:
                                 context.getTrace().report(MANY_CLASS_OBJECTS.on(classObject));

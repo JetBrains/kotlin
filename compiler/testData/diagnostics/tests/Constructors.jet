@@ -1,14 +1,14 @@
 open class NoC
-class NoC1 : NoC
+class NoC1 : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT!>NoC<!>
 
-class WithC0() : NoC<!NO_CONSTRUCTOR!>()<!>
-open class WithC1() : NoC
-class NoC2 : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
-class NoC3 : WithC1<!PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL!>()<!>
-class WithC2() : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
+class WithC0() : NoC()
+open class WithC1() : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT!>NoC<!>
+class NoC2 : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT!>WithC1<!>
+class NoC3 : WithC1()
+class WithC2() : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT!>WithC1<!>
 
-class NoPC {
-  <!SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY!>this<!>() {}
+class <!CONFLICTING_OVERLOADS!>NoPC<!> {
+  <!CONFLICTING_OVERLOADS!><!SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST!>this<!>() {}<!>
 }
 
 class WithPC0() {
@@ -28,7 +28,7 @@ class WithPC1(a : Int) {
 }
 
 
-class Foo() : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>WithPC0<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST, SYNTAX!>this<!>() {
+class Foo() : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT, FINAL_SUPERTYPE!>WithPC0<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST, SYNTAX!>this<!>() {
 
 }
 
@@ -42,8 +42,8 @@ class WithCPI(x : Int) {
   val xy : Int = x
 }
 
-class <!PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY!>NoCPI<!> {
-  val a = <!PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR!>1<!>
+class NoCPI {
+  val a = 1
   var ab = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
     set(v) {}

@@ -788,7 +788,7 @@ public class DescriptorResolver {
 
     @Nullable
     public ConstructorDescriptorImpl resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
-        if (!classElement.hasPrimaryConstructor()) return null;
+        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY && !classElement.hasPrimaryConstructor()) return null;
         return createConstructorDescriptor(
                 scope,
                 classDescriptor,

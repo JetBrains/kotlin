@@ -3,7 +3,7 @@ abstract open class Default {
 }
 
 class MyInt() {
-  class object : Default {
+  class object : Default() {
     override fun defaultValue(): Int = 610
   }
 }

@@ -120,32 +120,26 @@ public class BodyResolver {
                     context.getTrace().report(SUPERTYPE_INITIALIZED_IN_TRAIT.on(node));
                 }
                 JetTypeReference typeReference = call.getTypeReference();
-                if (typeReference != null) {
-                    if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        OverloadResolutionResults<FunctionDescriptor> results = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY).resolveCall(
-                                context.getTrace(), scopeForConstructor,
-                                CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
-                        if (results.isSuccess()) {
-                            JetType supertype = results.getResultingDescriptor().getReturnType();
-                            recordSupertype(typeReference, supertype);
-                            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
-                            if (classDescriptor != null) {
-                                if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                                    context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(node));
-                                }
-                            }
-                        }
-                        else {
-                            recordSupertype(typeReference, context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference));
+                if (typeReference == null) return;
+                if (descriptor.getUnsubstitutedPrimaryConstructor() == null) {
+                    assert descriptor.getKind() == ClassKind.TRAIT;
+                    return;
+                }
+                OverloadResolutionResults<FunctionDescriptor> results = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY).resolveCall(
+                        context.getTrace(), scopeForConstructor,
+                        CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
+                if (results.isSuccess()) {
+                    JetType supertype = results.getResultingDescriptor().getReturnType();
+                    recordSupertype(typeReference, supertype);
+                    ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
+                    if (classDescriptor != null) {
+                        if (classDescriptor.getKind() == ClassKind.TRAIT) {
+                            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(node));
                         }
                     }
-                    else if (descriptor.getKind() != ClassKind.TRAIT) {
-                        JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference);
-                        recordSupertype(typeReference, supertype);
-
-                        assert valueArgumentList != null;
-                        context.getTrace().report(PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL.on(valueArgumentList, jetClass));
-                    }
+                }
+                else {
+                    recordSupertype(typeReference, context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference));
                 }
             }
 
@@ -159,7 +153,18 @@ public class BodyResolver {
                     if (classDescriptor != null) {
                         if (descriptor.getKind() != ClassKind.TRAIT) {
                             if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
-                                context.getTrace().report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
+                                boolean hasConstructorWithoutParams = false;
+                                for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
+                                    if (constructor.getValueParameters().isEmpty()) {
+                                        hasConstructorWithoutParams = true;
+                                    }
+                                }
+                                if (!hasConstructorWithoutParams) {
+                                    context.getTrace().report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
+                                }
+                                else {
+                                    context.getTrace().report(SUPERTYPE_NOT_INITIALIZED_DEFAULT.on(specifier));
+                                }
                             }
                         }
                     }
@@ -287,9 +292,7 @@ public class BodyResolver {
 
         final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
 
-        JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
-        assert containingClass != null : "This must be guaranteed by the parser";
-        if (!containingClass.hasPrimaryConstructor()) {
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
             context.getTrace().report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(declaration.getNameNode()));
         }
         else {

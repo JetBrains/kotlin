@@ -2,7 +2,7 @@ open class Foo {
   fun xyzzy(): String = "xyzzy"
 }
 
-class Bar(): Foo {
+class Bar(): Foo() {
   fun test(): String = xyzzy()
 }
 

@@ -80,7 +80,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (classifier != null) {
             context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
             context.trace.record(REFERENCE_TARGET, expression, classifier);
-            return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
+            return classifier.getDefaultType();
         }
         temporaryTrace.commit();
         return result[0];

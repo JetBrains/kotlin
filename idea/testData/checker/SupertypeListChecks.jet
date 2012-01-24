@@ -39,9 +39,9 @@ trait Test6 : <error>C1</error> {}
 
 class CTest1() : OC1() {}
 
-class CTest2 : C2 {}
+class CTest2 : <error>C2</error> {}
 
-class CTest3 : C2, <error>C3</error> {}
+class CTest3 : <error>C2</error>, <error>C3</error> {}
 
 class CTest4 : T1 {}
 

@@ -8,7 +8,6 @@ fun f_plus(): Int {
 }
 
 ~X~class X<~T~T> {
-  ~X()~this() {}
   fun foo(a : `T`T) : `X`X<`T`T>{}
   ~plus~fun plus(t : `T`T) : Int {}
   ~minus~fun minus(t : String) : Int {}
@@ -23,7 +22,7 @@ fun f_plus(): Int {
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
   `t`t<Int>(1)`:std::Int`
   `t`t<`t.T`T>(`t.t`t)`:t.T`
-  `X()`X<`t.T`T>()
+  `X`X<`t.T`T>()
   1 `std::Int.plus(Int)`+ 1
   1 `std::Int.plus(Int)`+= 1
   X<String>() `plus`+ "1"
@@ -50,7 +49,6 @@ fun f_plus(): Int {
 }
 
 ~Bar~class Bar : Foo {
-  ~Bar()~this() {}
   ~not~fun not() : String {}
   ~inc~fun inc() : Bar
   ~dec~fun dec() : Bar
@@ -61,7 +59,7 @@ fun f_plus(): Int {
 fun <T> tt(t : T) : T {
   val x : List<Int> = 0
   x`java::java.util.List.get()`[1]
-  val foo = `Bar()`Bar()
+  val foo = `Bar`Bar()
   foo`!!`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]

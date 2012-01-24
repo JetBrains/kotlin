@@ -93,12 +93,6 @@ public class QuickFixes {
         add(Errors.REDUNDANT_MODIFIER_IN_TRAIT, removeRedundantModifierFactory);
         add(Errors.TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.FINAL_KEYWORD));
 
-        add(Errors.PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR, RemovePartsFromPropertyFix.createRemoveInitializerFactory());
-
-        JetIntentionActionFactory<JetClass> addPrimaryConstructorFactory = AddPrimaryConstructorFix.createFactory();
-        add(Errors.PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addPrimaryConstructorFactory, DiagnosticParameters.CLASS));
-        add(Errors.PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY, addPrimaryConstructorFactory);
-
         JetIntentionActionFactory<JetModifierListOwner> addOpenModifierFactory = AddModifierFix.createFactory(JetTokens.OPEN_KEYWORD, new JetToken[]{JetTokens.FINAL_KEYWORD});
         JetIntentionActionFactory<JetModifierListOwner> removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.OPEN_KEYWORD);
         add(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addOpenModifierFactory, DiagnosticParameters.CLASS));

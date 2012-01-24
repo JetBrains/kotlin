@@ -1,15 +1,15 @@
 
 open class NoC
-class NoC1 : NoC
+class NoC1 : NoC()
 
-class WithC0() : NoC<error>()</error>
-open class WithC1() : NoC
+class WithC0() : NoC()
+open class WithC1() : NoC()
 class NoC2 : <error>WithC1</error>
-class NoC3 : WithC1<error>()</error>
+class NoC3 : WithC1()
 class WithC2() : <error>WithC1</error>
 
-class NoPC {
-  <error>this</error>() {}
+class <error>NoPC</error> {
+  <error><error>this</error>() {}</error>
 }
 
 class WithPC0() {
@@ -29,7 +29,7 @@ class WithPC1(a : Int) {
 }
 
 
-class Foo() : <error>WithPC0</error>, <error>this</error>() {
+class Foo() : <error>WithPC0</error>(), <error>this</error>() {
 
 }
 
@@ -43,8 +43,8 @@ class WithCPI(x : Int) {
   val xy : Int = x
 }
 
-class <error>NoCPI</error> {
-  val a = <error>1</error>
+class NoCPI {
+  val a = 1
   var ab = <error>1</error>
     get() = 1
     set(v) {}

@@ -34,8 +34,6 @@ public class DeclarationsChecker {
     }
 
     public void process() {
-        checkIfPrimaryConstructorIsNecessary();
-
         Map<JetClass, MutableClassDescriptor> classes = context.getClasses();
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass aClass = entry.getKey();
@@ -75,25 +73,6 @@ public class DeclarationsChecker {
             checkModifiers(property.getModifierList());
         }
 
-    }
-
-    private void checkIfPrimaryConstructorIsNecessary() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            MutableClassDescriptor classDescriptor = entry.getValue();
-            JetClass jetClass = entry.getKey();
-            if (!context.completeAnalysisNeeded(jetClass)) return;
-            if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null && !(classDescriptor.getKind() == ClassKind.TRAIT)) {
-                for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
-                    if (context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                        PsiElement nameIdentifier = jetClass.getNameIdentifier();
-                        if (nameIdentifier != null) {
-                            context.getTrace().report(PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY.on(jetClass, nameIdentifier, propertyDescriptor));
-                        }
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     private void checkClass(JetClass aClass, MutableClassDescriptor classDescriptor) {
@@ -245,12 +224,6 @@ public class DeclarationsChecker {
         }
         else if (!backingFieldRequired) {
             context.getTrace().report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
-        }
-        else if (classDescriptor != null && classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
-            PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
-            assert classElement instanceof JetClass;
-
-            context.getTrace().report(PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR.on(property, initializer, (JetClass) classElement));
         }
     }
 

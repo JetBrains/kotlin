@@ -7,6 +7,7 @@ public enum ClassKind {
     CLASS,
     TRAIT,
     ENUM_CLASS,
+    ENUM_ENTRY,
     ANNOTATION_CLASS,
     OBJECT
 }

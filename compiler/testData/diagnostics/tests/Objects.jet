@@ -71,7 +71,7 @@ package localObjects
 
   fun test() {
     A.x
-    val b = object : Foo {
+    val b = object : Foo() {
     }
     b.foo()
 

@@ -2,11 +2,11 @@ package html
 
 import java.util.*
 
-  abstract class Factory<T> {
-    abstract fun create() : T
+  trait Factory<T> {
+    fun create() : T
   }
 
-  abstract class Element
+  trait Element
 
   class TextElement(val text : String) : Element
 

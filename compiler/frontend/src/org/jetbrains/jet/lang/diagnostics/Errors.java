@@ -116,7 +116,6 @@ public interface Errors {
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Property must be initialized or be abstract");
     DiagnosticWithParameterFactory<JetProperty, JetType> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticWithParameterFactory.create(ERROR, "Property initializers are not allowed in traits", DiagnosticParameters.TYPE);
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
-    DiagnosticWithParameterFactory<JetProperty, JetClass> PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR = DiagnosticWithParameterFactory.create(ERROR, "Property initializers are not allowed when no primary constructor is present", DiagnosticParameters.CLASS);
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass>(ERROR, "Abstract property {0} in non-abstract class {1}") {
         @NotNull
         protected DiagnosticWithPsiElement<JetModifierListOwner> on(@NotNull JetModifierListOwner elementToBlame, @NotNull TextRange textRangeToMark, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass aClass) {
@@ -141,19 +140,13 @@ public interface Errors {
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");
+    SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED_DEFAULT = SimpleDiagnosticFactory.create(ERROR, "Constructor invocation should be explicitly specified");
     SimpleDiagnosticFactory SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY = SimpleDiagnosticFactory.create(ERROR, "A secondary constructor may appear only in a class that has a primary constructor");
     SimpleDiagnosticFactory SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST = SimpleDiagnosticFactory.create(ERROR, "Secondary constructors must have an initializer list");
     SimpleDiagnosticFactory BY_IN_SECONDARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "'by'-clause is only supported for primary constructors");
     SimpleDiagnosticFactory INITIALIZER_WITH_NO_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Constructor arguments required");
     SimpleDiagnosticFactory MANY_CALLS_TO_THIS = SimpleDiagnosticFactory.create(ERROR, "Only one call to 'this(...)' is allowed");
     PsiElementOnlyDiagnosticFactory1<JetModifierList, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing", DescriptorRenderer.TEXT);
-    PsiElementOnlyDiagnosticFactory1<JetClass, PropertyDescriptor> PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "This class must have a primary constructor, because property {0} has a backing field");
-    ParameterizedDiagnosticFactory1<JetClassOrObject> PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL = new ParameterizedDiagnosticFactory1<JetClassOrObject>(ERROR, "Class {0} must have a constructor in order to be able to initialize supertypes") {
-        @Override
-        protected String makeMessageFor(@NotNull JetClassOrObject argument) {
-            return JetPsiUtil.safeName(argument.getName());
-        }
-    };
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
@@ -217,7 +210,7 @@ public interface Errors {
     SimpleDiagnosticFactory CAST_NEVER_SUCCEEDS = SimpleDiagnosticFactory.create(WARNING, "This cast can never succeed");
     DiagnosticWithParameterFactory<JetPropertyAccessor, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticWithParameterFactory.create(ERROR, "Setter parameter type must be equal to the type of the property, i.e. {0}", DiagnosticParameters.TYPE);
     DiagnosticWithParameterFactory<JetPropertyAccessor, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticWithParameterFactory.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}", DiagnosticParameters.TYPE);
-    ParameterizedDiagnosticFactory1<ClassifierDescriptor> NO_CLASS_OBJECT = ParameterizedDiagnosticFactory1.create(ERROR, "Classifier {0} does not have a class object", NAME);
+    ParameterizedDiagnosticFactory1<ClassifierDescriptor> NO_CLASS_OBJECT = ParameterizedDiagnosticFactory1.create(ERROR, "Please specify constructor invocation; classifier {0} does not have a class object", NAME);
     SimpleDiagnosticFactory NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR, "Generic arguments of the base type must be specified");
 
     SimpleDiagnosticFactory HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");

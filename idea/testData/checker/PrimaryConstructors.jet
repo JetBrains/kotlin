@@ -1,4 +1,4 @@
-class <error>X</error> {
+class X {
   val <error>x</error> : Int
 }
 
@@ -10,5 +10,5 @@ class Y1 {
   val x : Int get() = 1
 }
 
-class Z : Y<error>()</error> {
+class Z : Y() {
 }

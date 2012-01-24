@@ -6,7 +6,7 @@ trait ALE<T> : AL<T> {
     fun getOrValue(index: Int, value : T) : T = get(index) ?: value
 }
 
-class SmartArrayList() : ALE<String>, AL<String> {
+class SmartArrayList() : ALE<String>, AL<String>() {
 }
 
 fun box() : String {

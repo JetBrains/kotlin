@@ -40,14 +40,14 @@ abstract class Iteratee<in I, out O> {
   abstract fun done() : O
 }
 
-class StrangeIterateeImpl<in I, out O>(val obj: O) : Iteratee<I, O> {
+class StrangeIterateeImpl<in I, out O>(val obj: O) : Iteratee<I, O>() {
     override fun process(item: I): Iteratee<I, O> = StrangeIterateeImpl<I, O>(obj)
     override val isDone = true
     override val result = obj
     override fun done() = obj
 }
 
-abstract class Sum() : Iteratee<Int, Int> {
+abstract class Sum() : Iteratee<Int, Int>() {
   override fun process(item : Int) : Iteratee<Int, Int> {
     return foobar.done<Int>(item);
   }

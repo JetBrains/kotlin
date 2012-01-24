@@ -8,29 +8,29 @@ package override
         abstract fun bar()
     }
 
-    open class MyClass : MyTrait, MyAbstractClass {
+    open class MyClass : MyTrait, MyAbstractClass() {
         override fun foo() {}
         override fun bar() {}
     }
 
-    class MyChildClass : MyClass {}
+    class MyChildClass : MyClass() {}
 
-    class <error>MyIllegalClass</error> : MyTrait, MyAbstractClass {}
+    class <error>MyIllegalClass</error> : MyTrait, MyAbstractClass() {}
 
-    class <error>MyIllegalClass2</error> : MyTrait, MyAbstractClass {
+    class <error>MyIllegalClass2</error> : MyTrait, MyAbstractClass() {
         override fun foo() {}
     }
 
-    class <error>MyIllegalClass3</error> : MyTrait, MyAbstractClass {
+    class <error>MyIllegalClass3</error> : MyTrait, MyAbstractClass() {
         override fun bar() {}
     }
 
-    class <error>MyIllegalClass4</error> : MyTrait, MyAbstractClass {
+    class <error>MyIllegalClass4</error> : MyTrait, MyAbstractClass() {
         fun <error>foo</error>() {}
         <error>override</error> fun other() {}
     }
 
-    class MyChildClass1 : MyClass {
+    class MyChildClass1 : MyClass() {
         fun <error>foo</error>() {}
         override fun bar() {}
     }

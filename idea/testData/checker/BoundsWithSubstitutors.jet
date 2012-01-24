@@ -1,7 +1,7 @@
     open class A<T>
     class B<X : A<X>>()
 
-    class C : A<C>
+    class C : A<C>()
 
     val a = B<C>()
     val a1 = B<<error>Int</error>>()

@@ -143,11 +143,12 @@ public class DeclarationResolver {
     }
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
-        if (!klass.hasPrimaryConstructor()) return;
-
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
-//           context.getTrace().getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
-            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(klass.getPrimaryConstructorParameterList()));
+            JetParameterList primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
+            if (primaryConstructorParameterList != null) {
+                context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructorParameterList));
+            }
+            if (!klass.hasPrimaryConstructor()) return;
         }
 
         // TODO : not all the parameters are real properties

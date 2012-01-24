@@ -27,15 +27,17 @@ public class FunctionSignatureDiagnosticFactory extends DiagnosticFactoryWithMes
             // primary constructor
             JetClass klass = (JetClass) jetDeclaration;
             PsiElement nameAsDeclaration = klass.getNameIdentifier();
-            PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
-            if (nameAsDeclaration == null || primaryConstructorParameterList == null) {
+            if (nameAsDeclaration == null){
                 return klass.getTextRange();
-            } else {
-                return new TextRange(
-                        nameAsDeclaration.getTextRange().getStartOffset(),
-                        primaryConstructorParameterList.getTextRange().getEndOffset()
-                );
             }
+            PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
+            if (primaryConstructorParameterList == null) {
+                return nameAsDeclaration.getTextRange();
+            }
+            return new TextRange(
+                    nameAsDeclaration.getTextRange().getStartOffset(),
+                    primaryConstructorParameterList.getTextRange().getEndOffset()
+            );
         } else {
             // safe way
             return jetDeclaration.getTextRange();
