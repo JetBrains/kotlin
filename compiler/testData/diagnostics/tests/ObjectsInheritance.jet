@@ -4,4 +4,4 @@ package toplevelObjectDeclarations
 
 object CObj {}
 
-object DOjb : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>CObj<!> {}
+object DOjb : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT, FINAL_SUPERTYPE!>CObj<!> {}
