@@ -38,8 +38,21 @@ public final class StandardClasses {
         declareJavaCollection(standardClasses);
         declareMap(standardClasses);
         declareInteger(standardClasses);
+        // declareTuples(standardClasses);
         return standardClasses;
     }
+
+//    private static void declareTuples(@NotNull StandardClasses standardClasses) {
+//        for (int tupleId = 0; tupleId <= JetStandardClasses.TUPLE_COUNT) {
+//            declareTuple(standardClasses, tupleId);
+//        }
+//    }
+//
+//    private static void declareTuple(@NotNull StandardClasses standardClasses,
+//                                     int tupleId) {
+//        String tupleFQName = "jet.Tuple" + tupleId;
+//
+//    }
 
     private static void declareMap(@NotNull StandardClasses standardClasses) {
         String hashMapFQName = "java.util.Map";

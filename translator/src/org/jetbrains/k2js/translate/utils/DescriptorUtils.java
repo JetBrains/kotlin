@@ -91,7 +91,7 @@ public final class DescriptorUtils {
             variable = scope.getPropertyByFieldReference("$" + name);
         }
         Set<VariableDescriptor> variables = scope.getProperties(name);
-        assert variables.size() == 1;
+        assert variables.size() == 1 : "Actual size: " + variables.size();
         variable = variables.iterator().next();
         PropertyDescriptor descriptor = (PropertyDescriptor) variable;
         assert descriptor != null : "Must have a descriptor.";

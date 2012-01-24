@@ -343,4 +343,15 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                      @NotNull TranslationContext context) {
         return TryTranslator.translate(expression, context);
     }
+
+    @Override
+    @NotNull
+    public JsNode visitTupleExpression(@NotNull JetTupleExpression expression,
+                                       @NotNull TranslationContext context) {
+        JsArrayLiteral result = new JsArrayLiteral();
+        for (JetExpression entry : expression.getEntries()) {
+            result.getExpressions().add(Translation.translateAsExpression(entry, context));
+        }
+        return result;
+    }
 }

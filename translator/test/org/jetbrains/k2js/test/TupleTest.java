@@ -1,9 +1,11 @@
 package org.jetbrains.k2js.test;
 
+import org.junit.Test;
+
 /**
  * @author Pavel Talanov
  */
-public class TupleTest extends TranslationTest {
+public final class TupleTest extends TranslationTest {
 
     final private static String MAIN = "tuple/";
 
@@ -12,11 +14,16 @@ public class TupleTest extends TranslationTest {
         return MAIN;
     }
 
-    //TODO: excluded because Tuples are not implemented
-//    @Test
-//    public void twoElements() throws Exception {
-//        testFooBoxIsTrue("twoElements.kt");
-//    }
+    @Test
+    public void twoElements() throws Exception {
+        testFooBoxIsTrue("twoElements.kt");
+    }
+
+    @Test
+    public void multipleMembers() throws Exception {
+        testFooBoxIsTrue("multipleMembers.kt");
+    }
+
 
 }
 
