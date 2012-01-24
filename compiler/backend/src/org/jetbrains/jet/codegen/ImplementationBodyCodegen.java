@@ -21,6 +21,8 @@ import org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
+import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
+
 /**
  * @author max
  * @author yole
@@ -212,6 +214,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             generatePrimaryConstructor();
         }
+        catch (CompilationException e) {
+            throw e;
+        }
         catch(RuntimeException e) {
             throw new RuntimeException("Error generating primary constructor of class " + myClass.getName() + " with kind " + kind, e);
         }
@@ -396,6 +401,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         ObjectOrClosureCodegen closure = context.closure;
+        int firstSuperArgument = -1;
         if(closure != null) {
             final LinkedList<JvmMethodParameterSignature> consArgTypes = new LinkedList<JvmMethodParameterSignature>(constructorMethod.getKotlinParameterTypes());
 
@@ -424,6 +430,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
+            if(myClass instanceof JetObjectDeclaration) {
+                if(superCall instanceof JetDelegatorToSuperCall) {
+                    closure.superCall = (JetDelegatorToSuperCall) superCall;
+                    ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
+                    CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+                    firstSuperArgument = insert;
+                    for(Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
+                        consArgTypes.add(insert++, new JvmMethodParameterSignature(t, "", JvmMethodParameterKind.SHARED_VAR));
+                    }
+                }
+            }
+            
             constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
         }
 
@@ -488,32 +506,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        if (superCall == null || superCall instanceof JetDelegatorToSuperClass) {
+        if (superCall == null) {
             iv.load(0, Type.getType("L" + superClass + ";"));
-            if(superCall == null) {
-                iv.invokespecial(superClass, "<init>", "()V");
+            iv.invokespecial(superClass, "<init>", "()V");
+        }
+        else if (superCall instanceof JetDelegatorToSuperClass) {
+            iv.load(0, Type.getType("L" + superClass + ";"));
+            JetType superType = bindingContext.get(BindingContext.TYPE, superCall.getTypeReference());
+            List<Type> parameterTypes = new ArrayList<Type>();
+            assert superType != null;
+            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+            if (CodegenUtil.hasThis0(superClassDescriptor)) {
+                iv.load(1, JetTypeMapper.TYPE_OBJECT);
+                parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
             }
-            else {
-                JetType superType = bindingContext.get(BindingContext.TYPE, superCall.getTypeReference());
-                List<Type> parameterTypes = new ArrayList<Type>();
-                assert superType != null;
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                if (CodegenUtil.hasThis0(superClassDescriptor)) {
-                    iv.load(1, JetTypeMapper.TYPE_OBJECT);
-                    parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
-                }
-                for(TypeProjection typeParameterDescriptor : superType.getArguments()) {
-                    codegen.generateTypeInfo(typeParameterDescriptor.getType(), null);
-                    parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
-                }
-                Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
-                iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "<init>", superCallMethod.getDescriptor());
+            for(TypeProjection typeParameterDescriptor : superType.getArguments()) {
+                codegen.generateTypeInfo(typeParameterDescriptor.getType(), null);
+                parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
             }
+            Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
+            iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "<init>", superCallMethod.getDescriptor());
         }
         else {
             iv.load(0, classType);
             ConstructorDescriptor constructorDescriptor1 = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
-            generateDelegatorToConstructorCall(iv, codegen, (JetDelegatorToSuperCall) superCall, constructorDescriptor1, frameMap);
+            generateDelegatorToConstructorCall(iv, codegen, (JetDelegatorToSuperCall) superCall, constructorDescriptor1, frameMap, firstSuperArgument);
         }
 
         int n = 0;
@@ -685,10 +702,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateDelegatorToConstructorCall(InstructionAdapter iv, ExpressionCodegen codegen, JetCallElement constructorCall,
                                                     ConstructorDescriptor constructorDescriptor,
-                                                    ConstructorFrameMap frameMap) {
+                                                    ConstructorFrameMap frameMap, int firstSuperArgument) {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
-        Type type;
-        type = typeMapper.mapType(classDecl.getDefaultType(), OwnerKind.IMPLEMENTATION);
+        Type type = typeMapper.mapType(classDecl.getDefaultType(), OwnerKind.IMPLEMENTATION);
 
         iv.load(0, type);
 
@@ -697,7 +713,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
-        codegen.invokeMethodWithArguments(method, constructorCall, StackValue.none());
+        if(myClass instanceof JetObjectDeclaration && superCall instanceof JetDelegatorToSuperCall) {
+            iv.load(0, TYPE_OBJECT);
+            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
+            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+            int nextVar = firstSuperArgument+1;
+            for(Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
+                iv.load(nextVar, t);
+                nextVar += t.getSize();
+            }
+            method.invoke(codegen.v);
+        }
+        else {
+            codegen.invokeMethodWithArguments(method, constructorCall, StackValue.none());
+        }
     }
 
     @Override
@@ -785,7 +814,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (!(thisDescriptor instanceof ConstructorDescriptor)) {
                         throw new UnsupportedOperationException("expected 'this' delegator to resolve to constructor");
                     }
-                    generateDelegatorToConstructorCall(iv, codegen, thisCall, (ConstructorDescriptor) thisDescriptor, frameMap);
+                    generateDelegatorToConstructorCall(iv, codegen, thisCall, (ConstructorDescriptor) thisDescriptor, frameMap, flags);
                 }
                 else {
                     throw new UnsupportedOperationException("unknown initializer type");

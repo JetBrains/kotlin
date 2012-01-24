@@ -782,6 +782,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
+        if(closureCodegen.superCall != null) {
+            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) closureCodegen.superCall).getCalleeExpression().getConstructorReferenceExpression());
+            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+            Type[] argumentTypes = superCallable.getSignature().getAsmMethod().getArgumentTypes();
+            Collections.addAll(consArgTypes, argumentTypes);
+            ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, closureCodegen.superCall.getCalleeExpression());
+            pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes));
+        }
+        
         Method cons = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
         v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
         return StackValue.onStack(Type.getObjectType(closure.getClassname()));

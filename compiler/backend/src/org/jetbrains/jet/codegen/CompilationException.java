@@ -36,7 +36,7 @@ public class CompilationException extends RuntimeException {
             col = -1;
         }
 
-        return "Internal error: (" + (line+1) + "," + col + ") " + (getCause().getMessage() != null ? getCause().getMessage() : getCause().toString());
+        return "Internal error: (" + (line+1) + "," + col + ") " + (getCause().getMessage() != null ? getCause().getMessage() : getCause().toString()) + "\n@" + getCause().getStackTrace()[0].getFileName() + ":" + getCause().getStackTrace()[0].getLineNumber();
     }
 
     @Override

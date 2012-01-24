@@ -243,4 +243,14 @@ public class ClassGenTest extends CodegenTestCase {
     public void testKt1018 () throws Exception {
         blackBoxFile("regressions/kt1018.kt");
     }
+
+    public void testKt1120 () throws Exception {
+//        createEnvironmentWithFullJdk();
+//        blackBoxFile("regressions/kt1120.kt");
+    }
+
+    public void testSelfCreate() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("classes/selfcreate.kt");
+    }
 }

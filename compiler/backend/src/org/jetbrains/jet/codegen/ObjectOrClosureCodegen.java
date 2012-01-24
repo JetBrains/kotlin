@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -20,6 +21,7 @@ public class ObjectOrClosureCodegen {
     protected ClassBuilder cv = null;
     public String name = null;
     protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+    public JetDelegatorToSuperCall superCall;
 
     public ObjectOrClosureCodegen(ExpressionCodegen exprContext, CodegenContext context, GenerationState state) {
         this.exprContext = exprContext;

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="intellij-core">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/ideaSDK/core" />
+      <root url="file://$PROJECT_DIR$/IdeaSDK/core" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
