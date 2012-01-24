@@ -200,10 +200,9 @@ public class JetFunctionParameterInfoHandler implements
                         }
                     }
                     if (refExpression != null) {
-                        ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, refExpression);
-                        if (call != null) {
-                            CallableDescriptor candidateDescriptor = call.getCandidateDescriptor();
-                            if (candidateDescriptor == functionDescriptor) {
+                        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, refExpression);
+                        if (declarationDescriptor != null) {
+                            if (declarationDescriptor == functionDescriptor) {
                                color = GREEN_BACKGROUND;
                             }
                         }
