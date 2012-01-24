@@ -87,7 +87,6 @@ public class QuickFixes {
 
         add(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
 
-
         JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory(true);
         add(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);
         add(Errors.REDUNDANT_MODIFIER_IN_TRAIT, removeRedundantModifierFactory);
@@ -112,6 +111,8 @@ public class QuickFixes {
         JetIntentionActionFactory<JetSimpleNameExpression> unresolvedReferenceFactory = ImportClassFix.createFactory();
         add(Errors.UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
+        add(Errors.SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToInvocationFix.createFactory());
+        
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actionMap.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
         actionMap.put(Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);

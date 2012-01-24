@@ -148,25 +148,22 @@ public class BodyResolver {
                 JetTypeReference typeReference = specifier.getTypeReference();
                 JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
-                if (supertype != null) {
-                    ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
-                    if (classDescriptor != null) {
-                        if (descriptor.getKind() != ClassKind.TRAIT) {
-                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
-                                boolean hasConstructorWithoutParams = false;
-                                for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
-                                    if (constructor.getValueParameters().isEmpty()) {
-                                        hasConstructorWithoutParams = true;
-                                    }
-                                }
-                                if (!hasConstructorWithoutParams) {
-                                    context.getTrace().report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
-                                }
-                                else {
-                                    context.getTrace().report(SUPERTYPE_NOT_INITIALIZED_DEFAULT.on(specifier));
-                                }
-                            }
+                if (supertype == null) return;
+                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
+                if (classDescriptor == null) return;
+                if (descriptor.getKind() != ClassKind.TRAIT && classDescriptor.hasConstructors() &&
+                    !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
+                    boolean hasConstructorWithoutParams = false;
+                    for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
+                        if (constructor.getValueParameters().isEmpty()) {
+                            hasConstructorWithoutParams = true;
                         }
+                    }
+                    if (!hasConstructorWithoutParams) {
+                        context.getTrace().report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
+                    }
+                    else {
+                        context.getTrace().report(SUPERTYPE_NOT_INITIALIZED_DEFAULT.on(specifier));
                     }
                 }
             }

@@ -140,7 +140,7 @@ public interface Errors {
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");
-    SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED_DEFAULT = SimpleDiagnosticFactory.create(ERROR, "Constructor invocation should be explicitly specified");
+    SimplePsiElementOnlyDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED_DEFAULT = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Constructor invocation should be explicitly specified");
     SimpleDiagnosticFactory SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY = SimpleDiagnosticFactory.create(ERROR, "A secondary constructor may appear only in a class that has a primary constructor");
     SimpleDiagnosticFactory SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST = SimpleDiagnosticFactory.create(ERROR, "Secondary constructors must have an initializer list");
     SimpleDiagnosticFactory BY_IN_SECONDARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "'by'-clause is only supported for primary constructors");
