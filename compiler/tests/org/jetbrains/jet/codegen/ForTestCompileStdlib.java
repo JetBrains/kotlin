@@ -2,7 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.JetTestUtils;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.cli.KotlinCompiler;
 import org.junit.Assert;
 
@@ -26,58 +26,35 @@ import java.util.jar.JarOutputStream;
  * @author Stepan Koltsov
  */
 public class ForTestCompileStdlib {
+    private static File stdlibJarFile;
 
-    public static final File stdlibJarForTests = new File(
-            JetTestUtils.tmpDirForTest(ForTestCompileStdlib.class), "stdlib.jar");
+    private static File doCompile() throws Exception {
+        File tmpDir = FileUtil.createTempDirectory("stdlibjar", "");
 
-    private static boolean compiled = false;
-
-    static void compileStdlibForTest() {
-        if (compiled) {
-            return;
-        }
-
-        try {
-            doCompile();
-        } catch (Exception e) {
-            // TODO: do not try to compile again if failed
-            throw new RuntimeException(e);
-        }
-
-        compiled = true;
-    }
-
-    private static void doCompile() throws Exception {
-        System.err.println("compiling stdlib for tests, resulting file: " + stdlibJarForTests);
-
-        File tmpFile = new File(stdlibJarForTests.getPath() + "~");
-        JetTestUtils.mkdirs(tmpFile.getParentFile());
+        File jarFile = new File(tmpDir, "stdlib.jar");
         
-        File tmpDir = new File(JetTestUtils.tmpDirForTest(ForTestCompileStdlib.class), "classes");
-        JetTestUtils.recreateDirectory(tmpDir);
-        compileKotlinPartOfStdlib(tmpDir);
-        compileJavaPartOfStdlib(tmpDir);
+        File classesDir = new File(tmpDir, "classes");
 
-        FileOutputStream stdlibJar = new FileOutputStream(tmpFile);
+        compileKotlinPartOfStdlib(classesDir);
+        compileJavaPartOfStdlib(classesDir);
+
+        FileOutputStream stdlibJar = new FileOutputStream(jarFile);
         try {
             JarOutputStream jarOutputStream = new JarOutputStream(stdlibJar);
-
-            copyToJar(tmpDir, jarOutputStream);
-
-            jarOutputStream.close();
-            stdlibJar.close();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
             try {
-                stdlibJar.close();
-            } catch (Throwable e) { }
+                copyToJar(classesDir, jarOutputStream);
+            }
+            finally {
+                jarOutputStream.close();
+            }
         }
+        finally {
+            stdlibJar.close();
+        }
+        
+        FileUtil.delete(classesDir);
+        return jarFile;
 
-        if (!tmpFile.renameTo(stdlibJarForTests)) {
-            throw new RuntimeException();
-        }
     }
     private static void copyToJar(File root, JarOutputStream os) throws IOException {
         Stack<Pair<String, File>> toCopy = new Stack<Pair<String, File>>();
@@ -131,15 +108,25 @@ public class ForTestCompileStdlib {
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
 
             Assert.assertTrue(task.call());
-        } finally {
+        }
+        finally {
             fileManager.close();
         }
     }
 
     
     public static File stdlibJarForTests() {
-        compileStdlibForTest();
-        return stdlibJarForTests;
+        synchronized (ForTestCompileStdlib.class) {
+            if (stdlibJarFile == null) {
+                try {
+                    stdlibJarFile = doCompile();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return stdlibJarFile;
+        }
+
     }
 
 }
