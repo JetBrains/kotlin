@@ -84,7 +84,7 @@ public class JetFunctionParameterInfoHandler implements
 
     @Override
     public Object[] getParametersForDocumentation(Object p, ParameterInfoContext context) {
-        return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo:
+        return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo: ?
     }
 
     @Override
@@ -203,9 +203,7 @@ public class JetFunctionParameterInfoHandler implements
                         ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, refExpression);
                         if (call != null) {
                             CallableDescriptor candidateDescriptor = call.getCandidateDescriptor();
-                            PsiElement elem = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidateDescriptor);
-                            PsiElement ourElem = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor);
-                            if (elem.equals(ourElem)) {
+                            if (candidateDescriptor == functionDescriptor) {
                                color = GREEN_BACKGROUND;
                             }
                         }

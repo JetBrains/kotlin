@@ -4,13 +4,15 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -24,6 +26,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -31,7 +34,7 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.RECEIVER;
 
 /**
- * @author Nikolay Krasko
+ * @author Nikolay Krasko, Alefas
  */
 public final class TipsManager {
 
@@ -57,7 +60,15 @@ public final class TipsManager {
                 if (expression.getParent() instanceof JetImportDirective) {
                     return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
                 } else {
-                    return excludeNotCallableExtensions(resolutionScope.getAllDescriptors(), resolutionScope);
+                    java.util.HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
+                    ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
+                    resolutionScope.getImplicitReceiversHierarchy(result);
+                    for (ReceiverDescriptor receiverDescriptor : result) {
+                        JetType receiverType = receiverDescriptor.getType();
+                        descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
+                    }
+                    descriptorsSet.addAll(resolutionScope.getAllDescriptors());
+                    return excludeNotCallableExtensions(descriptorsSet, resolutionScope);
                 }
             }
         }
@@ -70,11 +81,20 @@ public final class TipsManager {
     ) {
         final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
+        final ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
+        scope.getImplicitReceiversHierarchy(result);
+
         descriptorsSet.removeAll(
                 Collections2.filter(JetScopeUtils.getAllExtensions(scope), new Predicate<CallableDescriptor>() {
                     @Override
                     public boolean apply(CallableDescriptor callableDescriptor) {
-                        return !checkReceiverResolution(scope.getImplicitReceiver(), callableDescriptor);
+                        if (!callableDescriptor.getReceiverParameter().exists()) {
+                            return false;
+                        }
+                        for (ReceiverDescriptor receiverDescriptor : result) {
+                            if (checkReceiverResolution(receiverDescriptor, callableDescriptor)) return false;
+                        }
+                        return true;
                     }
                 }));
 
