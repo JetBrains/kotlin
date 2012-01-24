@@ -10,7 +10,7 @@ fun measureTimeMillis(block: () -> Unit) : Long {
 }
 
 /**
-Executes current block and returns elapsed time in milliseconds
+Executes current block and returns elapsed time in nanoseconds
 */
 fun measureTimeNano(block: () -> Unit) : Long {
     val start = System.nanoTime()

@@ -8,7 +8,7 @@ class TypeInfo<out T> {
 fun typeinfo<T>() : TypeInfo<T>
 fun typeinfo<T>(expression : T) : TypeInfo<T>
 
-fun <R> Any.synchronized(block : () -> R) : R
+fun <R> synchronized(lock: Any, block : () -> R) : R
 
 fun Any?.identityEquals(other : Any?) : Boolean // = this === other
 

@@ -11,16 +11,16 @@ fun thread(block: ()->Unit ) {
 }
 
 fun box() : String {
-   val ref = AtomicInteger()
+   val mtref = AtomicInteger()
    val cdl = CountDownLatch(11)
    for(i in 0..10) {
        thread {
           var current = 0
           do {
-              current = ref.synchronized {
-                val v = ref.get() + 1
+              current = synchronized(mtref) {
+                val v = mtref.get() + 1
                 if(v < 100)
-                    ref.set(v+1)
+                    mtref.set(v+1)
                 v
               }
           }
@@ -29,5 +29,5 @@ fun box() : String {
        }
    }
    cdl.await()
-   return if(ref.get() == 100) "OK" else ref.get().toString()
+   return if(mtref.get() == 100) "OK" else mtref.get().toString()
 }

@@ -17,8 +17,7 @@ import java.util.List;
 public class StupidSync implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, @Nullable PsiElement element, @Nullable List<JetExpression> arguments, StackValue receiver) {
-        receiver.put(receiver.type, v);
-        codegen.pushMethodArguments((JetCallExpression)element, Arrays.asList(JetTypeMapper.TYPE_FUNCTION0));
+        codegen.pushMethodArguments((JetCallExpression)element, Arrays.asList(JetTypeMapper.TYPE_OBJECT, JetTypeMapper.TYPE_FUNCTION0));
         v.invokestatic("jet/runtime/Intrinsics", "stupidSync", "(Ljava/lang/Object;Ljet/Function0;)Ljava/lang/Object;");
         StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(expectedType, v);
         return StackValue.onStack(expectedType);
