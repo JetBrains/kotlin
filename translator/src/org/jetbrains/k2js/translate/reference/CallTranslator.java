@@ -11,10 +11,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
-import org.jetbrains.jet.lang.resolve.calls.DefaultValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -52,7 +49,7 @@ public final class CallTranslator extends AbstractTranslator {
             List<JsExpression> arguments = Collections.emptyList();
             ResolvedCall<?> resolvedCall =
                     getResolvedCall(context.bindingContext(), unaryExpression.getOperationReference());
-            return new CallTranslator(receiver, arguments, resolvedCall, null, context);
+            return new CallTranslator(receiver, null, arguments, resolvedCall, null, context);
         }
 
         //TODO: method too long
@@ -75,7 +72,7 @@ public final class CallTranslator extends AbstractTranslator {
 
             ResolvedCall<?> resolvedCall =
                     getResolvedCall(context.bindingContext(), binaryExpression.getOperationReference());
-            return new CallTranslator(receiver, arguments, resolvedCall, null, context);
+            return new CallTranslator(receiver, null, arguments, resolvedCall, null, context);
         }
 
         @NotNull
@@ -83,7 +80,23 @@ public final class CallTranslator extends AbstractTranslator {
                                                        @Nullable JsExpression receiver) {
             ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
             List<JsExpression> arguments = translateArgumentsForCallExpression(callExpression, context);
-            return new CallTranslator(receiver, arguments, resolvedCall, null, context);
+            JsExpression callee = null;
+            if (resolvedCall.getCandidateDescriptor() instanceof ExpressionAsFunctionDescriptor) {
+                callee = Translation.translateAsExpression(getCallee(callExpression), context);
+            }
+            return new CallTranslator(receiver, callee, arguments, resolvedCall, null, context);
+        }
+
+        @Nullable
+        private JsExpression translateCalleeIfExpressionAsFunction(@NotNull JetCallExpression callExpression) {
+            //TODO: util
+            JetExpression calleeExpression = callExpression.getCalleeExpression();
+            assert calleeExpression != null;
+            JsExpression callee = null;
+            if (isExpressionAsFunction(context.bindingContext(), calleeExpression)) {
+                callee = Translation.translateAsExpression(calleeExpression, context);
+            }
+            return callee;
         }
 
         @NotNull
@@ -134,7 +147,7 @@ public final class CallTranslator extends AbstractTranslator {
                                          @NotNull ResolvedCall<?> resolvedCall,
                                          @Nullable CallableDescriptor descriptorToCall,
                                          @NotNull TranslationContext context) {
-        return (new CallTranslator(receiver, arguments, resolvedCall, descriptorToCall, context)).translate();
+        return (new CallTranslator(receiver, null, arguments, resolvedCall, descriptorToCall, context)).translate();
     }
 
     @NotNull
@@ -172,7 +185,10 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private JsExpression receiver;
+    private /*var*/ JsExpression receiver;
+
+    @Nullable
+    private final JsExpression callee;
 
     @NotNull
     private final List<JsExpression> arguments;
@@ -183,13 +199,15 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private final CallableDescriptor descriptor;
 
-    private CallTranslator(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
+    private CallTranslator(@Nullable JsExpression receiver, @Nullable JsExpression callee,
+                           @NotNull List<JsExpression> arguments,
                            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
                            @Nullable CallableDescriptor descriptorToCall,
                            @NotNull TranslationContext context) {
         super(context);
         this.receiver = receiver;
         this.arguments = arguments;
+        this.callee = callee;
         this.resolvedCall = resolvedCall;
         if (descriptorToCall != null) {
             this.descriptor = descriptorToCall;
@@ -268,6 +286,9 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression calleeReference() {
+        if (callee != null) {
+            return callee;
+        }
         if (isVariableDescriptor(descriptor)) {
             //TODO: write tests on this cases
             VariableDescriptor variableDescriptor =

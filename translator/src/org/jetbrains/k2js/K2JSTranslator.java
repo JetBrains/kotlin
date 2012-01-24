@@ -120,7 +120,7 @@ public final class K2JSTranslator {
     }
 
     private void includeRtJar() {
-        final File rtJar = CompileEnvironment.findRtJar(true);
+        final File rtJar = CompileEnvironment.findRtJar();
         environment.addToClasspath(rtJar);
     }
 

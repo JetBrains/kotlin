@@ -1,7 +1,7 @@
 package org.jetbrains.k2js.translate.declaration;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.google.dart.compiler.util.AstUtil;
@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
@@ -67,14 +68,14 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     private void addSuperclassReferences(@NotNull JsInvocation jsClassDeclaration) {
-        for (JsNameRef superClassReference : getSuperclassNameReferences()) {
+        for (JsExpression superClassReference : getSuperclassNameReferences()) {
             jsClassDeclaration.getArguments().add(superClassReference);
         }
     }
 
     @NotNull
-    private List<JsNameRef> getSuperclassNameReferences() {
-        List<JsNameRef> superclassReferences = new ArrayList<JsNameRef>();
+    private List<JsExpression> getSuperclassNameReferences() {
+        List<JsExpression> superclassReferences = new ArrayList<JsExpression>();
         List<ClassDescriptor> superclassDescriptors =
                 BindingUtils.getSuperclassDescriptors(context().bindingContext(), classDeclaration);
         addAncestorClass(superclassReferences, superclassDescriptors);
@@ -82,7 +83,7 @@ public final class ClassTranslator extends AbstractTranslator {
         return superclassReferences;
     }
 
-    private void addTraits(@NotNull List<JsNameRef> superclassReferences,
+    private void addTraits(@NotNull List<JsExpression> superclassReferences,
                            @NotNull List<ClassDescriptor> superclassDescriptors) {
         for (ClassDescriptor superClassDescriptor :
                 superclassDescriptors) {
@@ -91,7 +92,7 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    private void addAncestorClass(@NotNull List<JsNameRef> superclassReferences,
+    private void addAncestorClass(@NotNull List<JsExpression> superclassReferences,
                                   @NotNull List<ClassDescriptor> superclassDescriptors) {
         //here we remove ancestor class from the list
         ClassDescriptor ancestorClass = findAndRemoveAncestorClass(superclassDescriptors);
@@ -101,10 +102,14 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
+    private JsExpression getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         //TODO we actually know that in current implementation superclass must have an alias but
         // in future it might change
-        return context().aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
+        if (aliaser().hasAliasForDeclaration(superClassDescriptor)) {
+            return context().aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
+        } else {
+            return ReferenceTranslator.translateAsFQReference(superClassDescriptor, context());
+        }
     }
 
     @Nullable

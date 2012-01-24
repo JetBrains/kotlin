@@ -88,7 +88,8 @@ public final class ClassSorter {
     private ClassDescriptor popFromList() {
         assert !classesWithNoAncestors.isEmpty();
         ClassDescriptor result = classesWithNoAncestors.get(classesWithNoAncestors.size() - 1);
-        classesWithNoAncestors.remove(classesWithNoAncestors.size() - 1);
+        ClassDescriptor removed = classesWithNoAncestors.remove(classesWithNoAncestors.size() - 1);
+        assert removed != null;
         return result;
     }
 
@@ -105,9 +106,16 @@ public final class ClassSorter {
     private void setInitialCount() {
         for (ClassDescriptor descriptor : descriptorList) {
             List<ClassDescriptor> superclasses = getSuperclassDescriptors(descriptor);
+            int count = 0;
+            for (ClassDescriptor superclassDescriptor : superclasses) {
+                if (descriptorList.contains(superclassDescriptor)) {
+                    count++;
+                }
+            }
             classWasInheritedCount.put(descriptor, superclasses.size());
-            if (!superclasses.isEmpty()) {
-                classesWithNoAncestors.remove(descriptor);
+            if (count > 0) {
+                boolean success = classesWithNoAncestors.remove(descriptor);
+                assert success;
             }
         }
     }

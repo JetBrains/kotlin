@@ -75,7 +75,7 @@ public final class PsiUtils {
     }
 
     @NotNull
-    /*package*/ static JetExpression getCallee(@NotNull JetCallExpression expression) {
+    public static JetExpression getCallee(@NotNull JetCallExpression expression) {
         JetExpression calleeExpression = expression.getCalleeExpression();
         assert calleeExpression != null;
         return calleeExpression;
