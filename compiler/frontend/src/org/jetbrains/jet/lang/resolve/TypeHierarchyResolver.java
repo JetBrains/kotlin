@@ -79,8 +79,6 @@ public class TypeHierarchyResolver {
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
                     context.getNamespaceScopes().put(file, namespaceScope);
 
-//                    processImports(namespace, namespaceScope, outerScope);
-
                     collectNamespacesAndClassifiers(namespaceScope, namespaceScope, namespaceDescriptor, file.getDeclarations());
                 }
 
@@ -99,17 +97,16 @@ public class TypeHierarchyResolver {
                         createPrimaryConstructorForObject(null, classObjectDescriptor);
                         mutableClassDescriptor.setClassObjectDescriptor(classObjectDescriptor);
                     }
-                    visitClassOrObject(
-                            klass,
-                            (Map) context.getClasses(),
-                            mutableClassDescriptor
-                    );
+
+                    visitClassOrObject(klass, (Map) context.getClasses(), mutableClassDescriptor);
+
                     owner.addClassifierDescriptor(mutableClassDescriptor);
                 }
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    createClassDescriptorForObject(declaration, owner, outerScope);
+                    final MutableClassDescriptor objectDescriptor = createClassDescriptorForObject(declaration, owner, outerScope);
+                    context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
                 }
 
                 @Override
@@ -122,7 +119,8 @@ public class TypeHierarchyResolver {
                         context.getClasses().put(enumEntry, classDescriptor);
                     }
                     else {
-                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), classObjectDescriptor, outerScope, ClassKind.CLASS); // TODO : Special kind for enum entry classes?
+                        // TODO : Special kind for enum entry classes?
+                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), classObjectDescriptor, outerScope, ClassKind.CLASS);
                         visitClassOrObject(
                                 enumEntry,
                                 (Map) context.getClasses(),
@@ -132,13 +130,15 @@ public class TypeHierarchyResolver {
                     }
                 }
 
-                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope) {
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration,
+                                                                              @NotNull NamespaceLike owner, JetScope scope) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, ClassKind.OBJECT) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
                         }
                     };
+
                     visitClassOrObject(declaration, (Map) context.getObjects(), mutableClassDescriptor);
                     createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
                     owner.addObjectDescriptor(mutableClassDescriptor);

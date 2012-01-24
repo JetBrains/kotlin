@@ -11,7 +11,7 @@ package toplevelObjectDeclarations {
     }
   }
 
-  object B : `!`A {}
+  object B : A {}
 
   ~ns.x~val x = `A`A.`foo()`foo()
 
