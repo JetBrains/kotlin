@@ -40,7 +40,7 @@ public class KotlinCompiler {
     }
 
     private static void usage(PrintStream target) {
-        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-src <filename or dirname>|-module <module file>] [-includeRuntime] [-excludeStdlib]");
+        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
     }
 
     public static void main(String ... args) {

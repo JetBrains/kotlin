@@ -46,7 +46,6 @@
                 <path refid="classpath"/>
                 <pathelement location="${output}/kotlin-compiler.jar"/>
             </classpath>
-            <arg value="-excludeStdlib"/>
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>
             <arg value="-output"/>
