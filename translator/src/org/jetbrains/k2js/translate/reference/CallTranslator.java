@@ -248,8 +248,9 @@ public final class CallTranslator extends AbstractTranslator {
         assert descriptor instanceof FunctionDescriptor;
         FunctionIntrinsic functionIntrinsic =
                 context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
-        assert receiver != null : "Functions that have functionIntrinsic implementation should have a receiver.";
-        return functionIntrinsic.apply(receiver, arguments, context());
+        JsExpression receiverExpression = thisObject();
+        assert receiverExpression != null : "Intrinsic function should have a receiver.";
+        return functionIntrinsic.apply(receiverExpression, arguments, context());
     }
 
     @NotNull

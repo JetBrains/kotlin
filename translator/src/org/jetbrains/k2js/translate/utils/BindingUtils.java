@@ -102,8 +102,8 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
-                                                         @NotNull ValueParameterDescriptor descriptor) {
+    private static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
+                                                          @NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         assert result instanceof JetParameter : "ValueParameterDescriptor should have corresponding JetParameter.";
         return (JetParameter) result;

@@ -4,10 +4,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.NamingScope;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
@@ -120,8 +117,9 @@ public final class TranslationUtils {
                 thisRef = context.aliaser().getAliasForThis(correspondingDeclaration);
             }
         }
-        if (correspondingDeclaration instanceof FunctionDescriptor) {
-            DeclarationDescriptor receiverDescriptor = getExpectedReceiverDescriptor((FunctionDescriptor) correspondingDeclaration);
+        if (correspondingDeclaration instanceof CallableDescriptor) {
+            DeclarationDescriptor receiverDescriptor =
+                    getExpectedReceiverDescriptor((CallableDescriptor) correspondingDeclaration);
             assert receiverDescriptor != null;
             if (context.aliaser().hasAliasForThis(receiverDescriptor)) {
                 thisRef = context.aliaser().getAliasForThis(receiverDescriptor);
