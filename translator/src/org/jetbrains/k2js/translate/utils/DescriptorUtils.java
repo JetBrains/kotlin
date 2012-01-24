@@ -82,6 +82,7 @@ public final class DescriptorUtils {
                 + " supposed to be exactly one " + name + " function.");
     }
 
+    //TODO: some stange stuff happening to this method
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
@@ -89,6 +90,9 @@ public final class DescriptorUtils {
         if (variable == null) {
             variable = scope.getPropertyByFieldReference("$" + name);
         }
+        Set<VariableDescriptor> variables = scope.getProperties(name);
+        assert variables.size() == 1;
+        variable = variables.iterator().next();
         PropertyDescriptor descriptor = (PropertyDescriptor) variable;
         assert descriptor != null : "Must have a descriptor.";
         return descriptor;
