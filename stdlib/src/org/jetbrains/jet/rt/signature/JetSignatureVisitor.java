@@ -28,9 +28,11 @@ public interface JetSignatureVisitor {
     /**
      * Visits a formal type parameter.
      *
+     * TODO should not store reified flag in signature
+     *
      * @param name the name of the formal parameter.
      */
-    JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance);
+    JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified);
 
     void visitFormalTypeParameterEnd();
 

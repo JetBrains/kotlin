@@ -232,11 +232,11 @@ public class BothSignatureWriter {
         writeAsmType0(asmType);
     }
 
-    public void writeFormalTypeParameter(final String name, Variance variance) {
+    public void writeFormalTypeParameter(final String name, Variance variance, boolean reified) {
         checkTopLevel();
 
         signatureVisitor().visitFormalTypeParameter(name);
-        jetSignatureWriter.visitFormalTypeParameter(name, JetSignatureUtils.translateVariance(variance));
+        jetSignatureWriter.visitFormalTypeParameter(name, JetSignatureUtils.translateVariance(variance), reified);
 
         generic = true;
     }

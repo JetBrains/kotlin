@@ -49,6 +49,12 @@ public class JetSignatureReader {
             pos = 1;
             do {
                 TypeInfoVariance variance;
+                boolean reified = true;
+                
+                if (signature.substring(pos).startsWith("erased ")) {
+                    reified = false;
+                    pos += "erased ".length();
+                }
                 if (signature.substring(pos).startsWith("in ")) {
                     variance = TypeInfoVariance.IN;
                     pos += "in ".length();
@@ -67,7 +73,7 @@ public class JetSignatureReader {
                 if (typeParameterName.isEmpty()) {
                     throw new IllegalStateException("incorrect signature: " + signature);
                 }
-                JetSignatureVisitor parameterVisitor = v.visitFormalTypeParameter(typeParameterName, variance);
+                JetSignatureVisitor parameterVisitor = v.visitFormalTypeParameter(typeParameterName, variance, reified);
                 pos = end + 1;
 
                 c = signature.charAt(pos);

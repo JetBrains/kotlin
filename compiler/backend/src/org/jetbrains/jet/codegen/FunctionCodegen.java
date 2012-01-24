@@ -130,6 +130,9 @@ public class FunctionCodegen {
                         av.visitEnd();
                     }
                     for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+                        if (!typeParameterDescriptor.isReified()) {
+                            continue;
+                        }
                         AnnotationVisitor av = mv.visitParameterAnnotation(start++, JvmStdlibNames.JET_TYPE_PARAMETER.getDescriptor(), true);
                         av.visit(JvmStdlibNames.JET_TYPE_PARAMETER_NAME_FIELD, typeParameterDescriptor.getName());
                         av.visitEnd();
@@ -171,6 +174,9 @@ public class FunctionCodegen {
                     add++;
 
                 for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+                    if (!typeParameterDescriptor.isReified()) {
+                        continue;
+                    }
                     int slot = frameMap.enterTemp();
                     add++;
                     codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(slot, JetTypeMapper.TYPE_TYPEINFO));

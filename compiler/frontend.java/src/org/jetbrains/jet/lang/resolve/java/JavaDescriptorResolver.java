@@ -375,12 +375,13 @@ public class JavaDescriptorResolver {
         private final DeclarationDescriptor containingDeclaration;
         private final PsiTypeParameterListOwner psiOwner;
         private final String name;
+        private final boolean reified;
         private final int index;
         private final TypeInfoVariance variance;
         private final TypeVariableResolver typeVariableResolver;
 
         protected JetSignatureTypeParameterVisitor(DeclarationDescriptor containingDeclaration, PsiTypeParameterListOwner psiOwner,
-                String name, int index, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
+                String name, boolean reified, int index, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
@@ -389,6 +390,7 @@ public class JavaDescriptorResolver {
             this.containingDeclaration = containingDeclaration;
             this.psiOwner = psiOwner;
             this.name = name;
+            this.reified = reified;
             this.index = index;
             this.variance = variance;
             this.typeVariableResolver = typeVariableResolver;
@@ -425,7 +427,7 @@ public class JavaDescriptorResolver {
             TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
                     containingDeclaration,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
-                    true, // TODO: wrong
+                    reified,
                     JetSignatureUtils.translateVariance(variance),
                     name,
                     index);
@@ -462,8 +464,8 @@ public class JavaDescriptorResolver {
             private int formalTypeParameterIndex = 0;
             
             @Override
-            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
-                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
+            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
+                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptor typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
@@ -1269,9 +1271,9 @@ public class JavaDescriptorResolver {
             private int formalTypeParameterIndex = 0;
             
             @Override
-            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
+            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
                 
-                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptor typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);

@@ -43,10 +43,13 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     // ------------------------------------------------------------------------
 
     @Override
-    public JetSignatureVisitor visitFormalTypeParameter(final String name, TypeInfoVariance variance) {
+    public JetSignatureVisitor visitFormalTypeParameter(final String name, TypeInfoVariance variance, boolean reified) {
         if (!hasFormals) {
             hasFormals = true;
             buf.append('<');
+        }
+        if (!reified) {
+            buf.append("erased ");
         }
         switch (variance) {
             case OUT:

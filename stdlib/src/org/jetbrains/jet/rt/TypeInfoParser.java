@@ -74,7 +74,7 @@ class TypeInfoParser {
         new JetSignatureReader(annotationValue).accept(new JetSignatureExceptionsAdapter() {
 
             @Override
-            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance) {
+            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
 
                 // TODO: nullability
 
