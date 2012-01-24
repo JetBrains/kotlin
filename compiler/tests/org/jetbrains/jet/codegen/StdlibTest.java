@@ -37,9 +37,11 @@ public class StdlibTest extends CodegenTestCase {
     protected ClassFileFactory generateClassesInFile() {
         try {
             CompileSession session = new CompileSession(myEnvironment);
-            CompileEnvironment.initializeKotlinRuntime(myEnvironment);
-            session.addSources(myFile.getVirtualFile());
+
             session.addStdLibSources(true);
+            session.addSources(myFile.getVirtualFile());
+
+            CompileEnvironment.ensureRuntime(myEnvironment);
 
             if (!session.analyze(System.out)) {
                 throw new RuntimeException();

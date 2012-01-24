@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -125,6 +126,7 @@ public class CompileSession {
         return generationState.createText();
     }
 
+    @TestOnly
     public boolean addStdLibSources(boolean toModuleSources) {
         final File unpackedRuntimePath = CompileEnvironment.getUnpackedRuntimePath();
         if (unpackedRuntimePath != null) {

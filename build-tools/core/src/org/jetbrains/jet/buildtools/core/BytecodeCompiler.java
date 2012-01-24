@@ -20,15 +20,7 @@ public class BytecodeCompiler {
      * @return new {@link CompileEnvironment} instance
      */
     private CompileEnvironment createCompileEnvironment () {
-
-        CompileEnvironment environment = new CompileEnvironment();
-        environment.setJavaRuntime( CompileEnvironment.findRtJar( true ));
-
-        if ( ! environment.initializeKotlinRuntime()) {
-            throw new RuntimeException( "No Kotlin runtime library found" );
-        }
-
-        return environment;
+        return new CompileEnvironment();
     }
 
 
@@ -50,7 +42,7 @@ public class BytecodeCompiler {
      * @param excludeStdlib whether Kotlin standard library is excluded in compilation
      */
     public void sourcesToDir ( String source, String destination, boolean excludeStdlib ) {
-        boolean success = ENV.compileBunchOfSources( source, null, destination, true, ! excludeStdlib );
+        boolean success = ENV.compileBunchOfSources( source, null, destination, true);
         if ( ! success ) {
             throw new RuntimeException( compilationError( source ));
         }
@@ -66,7 +58,7 @@ public class BytecodeCompiler {
      * @param excludeStdlib whether Kotlin standard library is excluded in compilation
      */
     public void sourcesToJar ( String source, String jar, boolean includeRuntime, boolean excludeStdlib ) {
-        boolean success = ENV.compileBunchOfSources( source, jar, null, includeRuntime, ! excludeStdlib );
+        boolean success = ENV.compileBunchOfSources( source, jar, null, includeRuntime);
         if ( ! success ) {
             throw new RuntimeException( compilationError( source ));
         }

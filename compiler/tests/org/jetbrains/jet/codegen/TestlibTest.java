@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -20,19 +19,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.util.Set;
 
 /**
  * @author alex.tkachman
  */
-public abstract class TestlibTestBase extends CodegenTestCase {
+public class TestlibTest extends CodegenTestCase {
 
-    /** Binary or source */
-    private final boolean binary;
-
-    protected TestlibTestBase(boolean binary) {
-        this.binary = binary;
+    public static TestSuite suite() {
+        return new TestlibTest().buildSuite();
     }
 
     protected TestSuite buildSuite() {
@@ -58,12 +53,8 @@ public abstract class TestlibTestBase extends CodegenTestCase {
     private TestSuite doBuildSuite() {
         try {
             CompileSession session = new CompileSession(myEnvironment);
-            
-            if (binary) {
-                myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
-            } else {
-                CompileEnvironment.initializeKotlinRuntime(myEnvironment);
-            }
+
+            myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
 
             File junitJar = new File("testlib/lib/junit-4.9.jar");
 
@@ -77,10 +68,6 @@ public abstract class TestlibTestBase extends CodegenTestCase {
             VirtualFile path = localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test");
             session.addSources(path);
 
-            if (!binary) {
-                session.addStdLibSources(true);
-            }
-
             if (!session.analyze(System.out)) {
                 throw new RuntimeException();
             }
@@ -89,13 +76,9 @@ public abstract class TestlibTestBase extends CodegenTestCase {
 
             URLClassLoader dependenciesClassLoader = new URLClassLoader(new URL[] { junitJar.toURI().toURL() });
             GeneratedClassLoader loader;
-            if (binary) {
-                URLClassLoader parentClassLoader = new URLClassLoader(new URL[]{
-                        ForTestCompileStdlib.stdlibJarForTests().toURI().toURL() }, dependenciesClassLoader);
-                loader = new GeneratedClassLoader(classFileFactory, parentClassLoader);
-            } else {
-                loader = new GeneratedClassLoader(classFileFactory, dependenciesClassLoader);
-            }
+            URLClassLoader parentClassLoader = new URLClassLoader(new URL[]{
+                    ForTestCompileStdlib.stdlibJarForTests().toURI().toURL()}, dependenciesClassLoader);
+            loader = new GeneratedClassLoader(classFileFactory, parentClassLoader);
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
             TestSuite suite = new TestSuite("StandardLibrary");

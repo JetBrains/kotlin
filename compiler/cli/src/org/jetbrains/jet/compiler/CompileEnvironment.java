@@ -1,8 +1,11 @@
 package org.jetbrains.jet.compiler;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import jet.modules.AllModules;
 import jet.modules.Module;
@@ -16,7 +19,9 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.jar.*;
 
@@ -29,6 +34,7 @@ public class CompileEnvironment {
     private JetCoreEnvironment myEnvironment;
     private final Disposable myRootDisposable;
     private PrintStream myErrorStream = System.out;
+    private URL myStdlib;
 
     public CompileEnvironment() {
         myRootDisposable = new Disposable() {
@@ -45,27 +51,6 @@ public class CompileEnvironment {
 
     public void dispose() {
         Disposer.dispose(myRootDisposable);
-    }
-
-    public boolean initializeKotlinRuntime() {
-        return initializeKotlinRuntime(myEnvironment);
-    }
-
-    public static boolean initializeKotlinRuntime(JetCoreEnvironment environment) {
-        final File unpackedRuntimePath = getUnpackedRuntimePath();
-        if (unpackedRuntimePath != null) {
-            environment.addToClasspath(unpackedRuntimePath);
-        }
-        else {
-            final File runtimeJarPath = getRuntimeJarPath();
-            if (runtimeJarPath != null && runtimeJarPath.exists()) {
-                environment.addToClasspath(runtimeJarPath);
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static File getUnpackedRuntimePath() {
@@ -85,10 +70,25 @@ public class CompileEnvironment {
         return null;
     }
 
-    public void setJavaRuntime(File rtJarPath) {
-        myEnvironment.addToClasspath(rtJarPath);
+    public void ensureRuntime() {
+        ensureRuntime(myEnvironment);
     }
-    
+
+    public static void ensureRuntime(JetCoreEnvironment env) {
+        Project project = env.getProject();
+        if (JavaPsiFacade.getInstance(project).findClass("java.lang.Obect", GlobalSearchScope.allScope(project)) == null) {
+            // TODO: prepend
+            env.addToClasspath(findRtJar());
+        }
+
+        if (JavaPsiFacade.getInstance(project).findClass("jet.JetObject", GlobalSearchScope.allScope(project)) == null) {
+            // TODO: prepend
+            File kotlin = getUnpackedRuntimePath();
+            if (kotlin == null) kotlin = getRuntimeJarPath();
+            env.addToClasspath(kotlin);
+        }
+    }
+
     public static File findRtJar() {
         String javaHome = System.getProperty("java.home");
         if ("jre".equals(new File(javaHome).getName())) {
@@ -139,7 +139,7 @@ public class CompileEnvironment {
     public List<Module> loadModuleScript(String moduleFile) {
         CompileSession scriptCompileSession = new CompileSession(myEnvironment);
         scriptCompileSession.addSources(moduleFile);
-        scriptCompileSession.addStdLibSources(true);
+        ensureRuntime();
 
         if (!scriptCompileSession.analyze(myErrorStream)) {
             return null;
@@ -149,8 +149,8 @@ public class CompileEnvironment {
         return runDefineModules(moduleFile, factory);
     }
 
-    private static List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        GeneratedClassLoader loader = new GeneratedClassLoader(factory);
+    private List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
+        ClassLoader loader = myStdlib != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {myStdlib})) : new GeneratedClassLoader(factory);
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
             final Method method = namespaceClass.getDeclaredMethod("project");
@@ -163,16 +163,12 @@ public class CompileEnvironment {
 
             return AllModules.modules;
         } catch (Exception e) {
-            throw new CompileEnvironmentException(e);
+            throw new ModuleExecutionException(e);
         }
     }
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
-        if (!"stdlib".equals(moduleBuilder.getModuleName())) {
-            moduleCompileSession.addStdLibSources(false);
-        }
-
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
@@ -182,9 +178,11 @@ public class CompileEnvironment {
             moduleCompileSession.addSources(source.getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
-            if (classpathRoot.contains("/stdlib/") || classpathRoot.contains("\\stdlib\\")) continue; // TODO: We have source-level dependency on stdlib for now
             myEnvironment.addToClasspath(new File(classpathRoot));
         }
+
+        ensureRuntime();
+
         if (!moduleCompileSession.analyze(myErrorStream)) {
             return null;
         }
@@ -268,12 +266,9 @@ public class CompileEnvironment {
         }
     }
 
-    public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime, boolean includeSources) {
+    public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = new CompileSession(myEnvironment);
         session.addSources(sourceFileOrDir);
-        if (includeSources) {
-            session.addStdLibSources(false);
-        }
 
         String mainClass = null;
         for (JetFile file : session.getSourceFileNamespaces()) {
@@ -282,6 +277,9 @@ public class CompileEnvironment {
                 break;
             }
         }
+
+        ensureRuntime();
+
         if (!session.analyze(myErrorStream)) {
             return false;
         }
@@ -313,5 +311,21 @@ public class CompileEnvironment {
                 throw new CompileEnvironmentException(e);
             }
         }
+    }
+
+    public void setStdlib(String stdlib) {
+        File path = new File(stdlib);
+        if (!path.exists()) {
+            throw new CompileEnvironmentException("'" + stdlib + "' does not exist");
+        }
+
+        try {
+            myStdlib = path.toURL();
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+        myEnvironment.addToClasspath(path);
     }
 }

@@ -9,6 +9,7 @@
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="*.jar"/>
+        <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${basedir}/lib" includes="*.jar"/>
         <pathelement path="${output}/classes/runtime"/>
     </path>
@@ -38,23 +39,25 @@
         </javac>
     </target>
 
-    <target name="compileStdlib" depends="compile">
+    <target name="compileStdlib" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">
-            <classpath refid="classpath.kotlin"/>
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${output}/kotlin-compiler.jar"/>
+            </classpath>
             <arg value="-excludeStdlib"/>
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>
             <arg value="-output"/>
-            <arg value="${basedir}/classes/stdlib"/>
+            <arg value="${output}/classes/stdlib"/>
         </java>
     </target>
 
-    <target name="jarRT" depends="compile">
+    <target name="jarRT" depends="compile,compileStdlib">
         <jar destfile="${output}/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
-            <!--<fileset dir="${output}/classes/stdlib"/>-->
-            <fileset dir="${basedir}" includes="stdlib/ktSrc/**/*"/>
+            <fileset dir="${output}/classes/stdlib"/>
         </jar>
     </target>
 

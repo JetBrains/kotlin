@@ -1,14 +1,15 @@
 package org.jetbrains.jet.compiler;
 
-import jet.modules.Module;
+import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.jet.cli.KotlinCompiler;
-import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.ForTestCompileStdlib;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -31,30 +32,17 @@ public class CompileEnvironmentTest extends TestCase {
         super.tearDown();
     }
 
-    public void _testSmoke() throws IOException {
-        final File activeRtJar = CompileEnvironment.findRtJar();
-        environment.setJavaRuntime(activeRtJar);
-        environment.initializeKotlinRuntime();
-        final String testDataDir = JetParsingTest.getTestDataDir() + "/compiler/smoke/";
-        final List<Module> modules = environment.loadModuleScript(testDataDir + "Smoke.kts");
-        assertEquals(1, modules.size());
-        final Module moduleBuilder = modules.get(0);
-        final ClassFileFactory factory = environment.compileModule(moduleBuilder, testDataDir);
-        assertNotNull(factory);
-        assertNotNull(factory.asBytes("Smoke/namespace.class"));
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        CompileEnvironment.writeToJar(factory, baos, null, false);
-        JarInputStream is = new JarInputStream(new ByteArrayInputStream(baos.toByteArray()));
-        final List<String> entries = listEntries(is);
-        assertTrue(entries.contains("Smoke/namespace.class"));
-    }
-
     public void testSmokeWithCompilerJar() throws IOException {
-        File tempFile = File.createTempFile("compilerTest", "compilerTest");
+        File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
+
         try {
-            KotlinCompiler.main(Arrays.asList("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts", "-jar", tempFile.getAbsolutePath()).toArray(new String[0]));
-            FileInputStream fileInputStream = new FileInputStream(tempFile);
+            File stdlib = new File(tempDir, "stdlib.jar");
+            FileUtil.copy(ForTestCompileStdlib.stdlibJarForTests(), stdlib);
+            File resultJar = new File(tempDir, "result.jar");
+            KotlinCompiler.main("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+                                "-jar", resultJar.getAbsolutePath(),
+                                "-stdlib", stdlib.getAbsolutePath());
+            FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
                 JarInputStream is = new JarInputStream(fileInputStream);
                 try {
@@ -71,33 +59,24 @@ public class CompileEnvironmentTest extends TestCase {
             }
         }
         finally {
-            tempFile.delete();
+            FileUtil.delete(tempDir);
         }
     }
-    
-    private static boolean delete(File file) {
-        boolean success = true;
-        if(file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                success = success && delete(child);
-            }
-        }
 
-        return file.delete() && success;
-    }
-    
     public void testSmokeWithCompilerOutput() throws IOException {
-        File tempFile = File.createTempFile("compilerTest", "compilerTest");
-        tempFile.delete();
-        tempFile = new File(tempFile.getAbsolutePath());
-        tempFile.mkdir();
+        File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
         try {
-            KotlinCompiler.main(Arrays.asList("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output", tempFile.getAbsolutePath()).toArray(new String[0]));
-            assertEquals(1, tempFile.listFiles().length);
-            assertEquals(1, tempFile.listFiles()[0].listFiles().length);
-        }
-        finally {
-            delete(tempFile);
+            File out = new File(tempDir, "out");
+            File stdlib = new File(tempDir, "stdlib.jar");
+            FileUtil.copy(ForTestCompileStdlib.stdlibJarForTests(), stdlib);
+            KotlinCompiler.main("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
+                                "-output", out.getAbsolutePath(),
+                                "-stdlib", stdlib.getAbsolutePath());
+
+            assertEquals(1, out.listFiles().length);
+            assertEquals(1, out.listFiles()[0].listFiles().length);
+        } finally {
+            FileUtil.delete(tempDir);
         }
     }
 

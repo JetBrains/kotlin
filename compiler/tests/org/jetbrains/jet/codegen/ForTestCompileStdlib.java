@@ -1,6 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.jet.JetTestUtils;
@@ -15,12 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Stack;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
@@ -31,7 +25,7 @@ import java.util.jar.JarOutputStream;
  *
  * @author Stepan Koltsov
  */
-class ForTestCompileStdlib {
+public class ForTestCompileStdlib {
 
     public static final File stdlibJarForTests = new File(
             JetTestUtils.tmpDirForTest(ForTestCompileStdlib.class), "stdlib.jar");
@@ -107,7 +101,7 @@ class ForTestCompileStdlib {
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
         // lame
-        KotlinCompiler.main("-excludeStdlib", "-output", destdir.getPath(), "-src", "./stdlib/ktSrc");
+        KotlinCompiler.main("-output", destdir.getPath(), "-src", "./stdlib/ktSrc");
     }
     
     private static List<File> javaFilesInDir(File dir) {
