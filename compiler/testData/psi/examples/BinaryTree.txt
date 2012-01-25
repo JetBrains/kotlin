@@ -544,10 +544,15 @@ JetFile: BinaryTree.jet
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(ref)('ref')
-                    PsiWhiteSpace(' ')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('root')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Ref')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('root')
+                        PsiElement(RPAR)(')')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   VALUE_ARGUMENT
@@ -597,9 +602,6 @@ JetFile: BinaryTree.jet
             VALUE_PARAMETER_LIST
               PsiElement(LPAR)('(')
               VALUE_PARAMETER
-                MODIFIER_LIST
-                  PsiElement(ref)('ref')
-                PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('node')
                 PsiWhiteSpace(' ')
                 PsiElement(COLON)(':')
@@ -607,7 +609,17 @@ JetFile: BinaryTree.jet
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('TreeNode')
+                      PsiElement(IDENTIFIER)('Ref')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          NULLABLE_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('TreeNode')
+                            PsiElement(QUEST)('?')
+                      PsiElement(GT)('>')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER
@@ -637,8 +649,12 @@ JetFile: BinaryTree.jet
                 PsiElement(LPAR)('(')
                 CONDITION
                   BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('node')
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('node')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('value')
                     PsiWhiteSpace(' ')
                     OPERATION_REFERENCE
                       PsiElement(EQEQ)('==')
@@ -652,8 +668,12 @@ JetFile: BinaryTree.jet
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n        ')
                     BINARY_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('node')
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('node')
+                        PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('value')
                       PsiWhiteSpace(' ')
                       OPERATION_REFERENCE
                         PsiElement(EQ)('=')
@@ -697,8 +717,12 @@ JetFile: BinaryTree.jet
                     PsiWhiteSpace(' ')
                     VALUE_ARGUMENT
                       DOT_QUALIFIED_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('node')
+                        DOT_QUALIFIED_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('node')
+                          PsiElement(DOT)('.')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('value')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('value')
@@ -732,14 +756,24 @@ JetFile: BinaryTree.jet
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT
-                        PsiElement(ref)('ref')
-                        PsiWhiteSpace(' ')
-                        DOT_QUALIFIED_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('node')
-                          PsiElement(DOT)('.')
-                          REFERENCE_EXPRESSION
+                        BINARY_EXPRESSION
+                          BINARY_EXPRESSION
+                            BINARY_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('ref')
+                              PsiWhiteSpace(' ')
+                              OPERATION_REFERENCE
+                                PsiElement(IDENTIFIER)('node')
+                              PsiErrorElement:Expecting an element
+                                PsiElement(DOT)('.')
+                            OPERATION_REFERENCE
+                              PsiElement(IDENTIFIER)('value')
+                            PsiErrorElement:Expecting an element
+                              PsiElement(DOT)('.')
+                          OPERATION_REFERENCE
                             PsiElement(IDENTIFIER)('left')
+                          PsiErrorElement:Expecting an element
+                            <empty list>
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       VALUE_ARGUMENT
@@ -761,14 +795,24 @@ JetFile: BinaryTree.jet
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT
-                        PsiElement(ref)('ref')
-                        PsiWhiteSpace(' ')
-                        DOT_QUALIFIED_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('node')
-                          PsiElement(DOT)('.')
-                          REFERENCE_EXPRESSION
+                        BINARY_EXPRESSION
+                          BINARY_EXPRESSION
+                            BINARY_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('ref')
+                              PsiWhiteSpace(' ')
+                              OPERATION_REFERENCE
+                                PsiElement(IDENTIFIER)('node')
+                              PsiErrorElement:Expecting an element
+                                PsiElement(DOT)('.')
+                            OPERATION_REFERENCE
+                              PsiElement(IDENTIFIER)('value')
+                            PsiErrorElement:Expecting an element
+                              PsiElement(DOT)('.')
+                          OPERATION_REFERENCE
                             PsiElement(IDENTIFIER)('right')
+                          PsiErrorElement:Expecting an element
+                            <empty list>
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       VALUE_ARGUMENT
