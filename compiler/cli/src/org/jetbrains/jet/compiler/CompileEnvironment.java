@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.*;
 
@@ -124,6 +125,10 @@ public class CompileEnvironment {
             throw new CompileEnvironmentException("Module script " + moduleFile + " compilation failed");
         }
 
+        if (modules.isEmpty()) {
+            throw new CompileEnvironmentException("No modules where defined by " + moduleFile);
+        }
+
         final String directory = new File(moduleFile).getParent();
         for (Module moduleBuilder : modules) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
@@ -150,7 +155,7 @@ public class CompileEnvironment {
     }
 
     private List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        ClassLoader loader = myStdlib != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {myStdlib})) : new GeneratedClassLoader(factory);
+        ClassLoader loader = myStdlib != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {myStdlib}, AllModules.class.getClassLoader())) : new GeneratedClassLoader(factory);
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
             final Method method = namespaceClass.getDeclaredMethod("project");
@@ -161,7 +166,9 @@ public class CompileEnvironment {
             method.setAccessible(true);
             method.invoke(null);
 
-            return AllModules.modules;
+            ArrayList<Module> answer = new ArrayList<Module>(AllModules.modules);
+            AllModules.modules.clear();
+            return answer;
         } catch (Exception e) {
             throw new ModuleExecutionException(e);
         }
@@ -169,10 +176,19 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
+
+        if (moduleBuilder.getSourceFiles().isEmpty()) {
+            throw new CompileEnvironmentException("No source files where defined");
+        }
+
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
                 source = new File(directory, sourceFile);
+            }
+
+            if (!source.exists()) {
+                throw new CompileEnvironmentException("'" + source + "' does not exist");
             }
 
             moduleCompileSession.addSources(source.getPath());

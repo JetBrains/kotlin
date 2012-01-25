@@ -38,7 +38,7 @@ public class CompileEnvironmentTest extends TestCase {
         try {
             File stdlib = ForTestCompileStdlib.stdlibJarForTests();
             File resultJar = new File(tempDir, "result.jar");
-            KotlinCompiler.main("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+            KotlinCompiler.exec("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
                                 "-jar", resultJar.getAbsolutePath(),
                                 "-stdlib", stdlib.getAbsolutePath());
             FileInputStream fileInputStream = new FileInputStream(resultJar);
@@ -68,7 +68,7 @@ public class CompileEnvironmentTest extends TestCase {
             File out = new File(tempDir, "out");
             File stdlib = new File(tempDir, "stdlib.jar");
             FileUtil.copy(ForTestCompileStdlib.stdlibJarForTests(), stdlib);
-            KotlinCompiler.main("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
+            KotlinCompiler.exec("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
                                 "-output", out.getAbsolutePath(),
                                 "-stdlib", stdlib.getAbsolutePath());
 
