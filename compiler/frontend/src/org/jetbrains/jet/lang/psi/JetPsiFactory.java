@@ -46,7 +46,12 @@ public class JetPsiFactory {
 
     @NotNull
     public static JetFile createFile(Project project, String text) {
-        return (JetFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jet", JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);
+        return createFile(project, "dummy.jet", text);
+    }
+
+    @NotNull
+    public static JetFile createFile(Project project, String fileName, String text) {
+        return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);
     }
 
     public static JetProperty createProperty(Project project, String name, String type, boolean isVar) {
