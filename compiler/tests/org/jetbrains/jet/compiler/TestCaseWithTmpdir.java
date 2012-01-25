@@ -16,7 +16,6 @@ public abstract class TestCaseWithTmpdir extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         tmpdir = JetTestUtils.tmpDirForTest(this);
-        JetTestUtils.recreateDirectory(tmpdir);
     }
 
 }

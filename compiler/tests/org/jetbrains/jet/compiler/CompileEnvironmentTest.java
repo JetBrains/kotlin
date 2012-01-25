@@ -66,8 +66,7 @@ public class CompileEnvironmentTest extends TestCase {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
         try {
             File out = new File(tempDir, "out");
-            File stdlib = new File(tempDir, "stdlib.jar");
-            FileUtil.copy(ForTestCompileStdlib.stdlibJarForTests(), stdlib);
+            File stdlib = ForTestCompileStdlib.stdlibJarForTests();
             KotlinCompiler.exec("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
                                 "-output", out.getAbsolutePath(),
                                 "-stdlib", stdlib.getAbsolutePath());

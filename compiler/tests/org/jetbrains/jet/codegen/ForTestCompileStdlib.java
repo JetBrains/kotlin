@@ -30,8 +30,7 @@ public class ForTestCompileStdlib {
     private static File stdlibJarFile;
 
     private static File doCompile() throws Exception {
-        File tmpDir = FileUtil.createTempDirectory("stdlibjar", "");
-        JetTestUtils.deleteOnShutdown(tmpDir);
+        File tmpDir = JetTestUtils.tmpDir("stdlibjar");
 
         File jarFile = new File(tmpDir, "stdlib.jar");
         
@@ -119,7 +118,7 @@ public class ForTestCompileStdlib {
     
     public static File stdlibJarForTests() {
         synchronized (ForTestCompileStdlib.class) {
-            if (stdlibJarFile == null) {
+            if (stdlibJarFile == null || !stdlibJarFile.exists()) {
                 try {
                     stdlibJarFile = doCompile();
                 } catch (Exception e) {
