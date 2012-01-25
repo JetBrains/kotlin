@@ -204,9 +204,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     ReceiverDescriptor receiver = new TransientReceiver(subjectType);
                     JetType selectorReturnType = facade.getSelectorReturnType(receiver, null, decomposerExpression, context);
 
-                    result.set(checkPatternType(pattern.getArgumentList(), selectorReturnType == null
+                    if (pattern.getArgumentList() != null) {
+                        result.set(checkPatternType(pattern.getArgumentList(), selectorReturnType == null
                                                                            ? ErrorUtils.createErrorType("No type")
                                                                            : selectorReturnType, false, scopeToExtend, context));
+                    }
                 }
             }
 

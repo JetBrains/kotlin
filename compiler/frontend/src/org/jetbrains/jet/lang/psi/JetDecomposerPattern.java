@@ -18,6 +18,7 @@ public class JetDecomposerPattern extends JetPattern {
         return findChildByClass(JetExpression.class);
     }
 
+    @Nullable
     public JetTuplePattern getArgumentList() {
         return (JetTuplePattern) findChildByType(JetNodeTypes.DECOMPOSER_ARGUMENT_LIST);
     }

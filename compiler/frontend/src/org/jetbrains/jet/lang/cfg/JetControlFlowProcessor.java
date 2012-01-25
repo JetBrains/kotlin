@@ -124,7 +124,10 @@ public class JetControlFlowProcessor {
             @Override
             public void visitDecomposerPattern(JetDecomposerPattern pattern) {
                 value(pattern.getDecomposerExpression(), inCondition);
-                pattern.getArgumentList().accept(this);
+                JetTuplePattern argumentList = pattern.getArgumentList();
+                if (argumentList != null) {
+                    argumentList.accept(this);
+                }
             }
 
             @Override
