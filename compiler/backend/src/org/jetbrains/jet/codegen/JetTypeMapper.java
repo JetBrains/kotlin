@@ -38,6 +38,7 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
+    public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
 
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
@@ -141,8 +142,6 @@ public class JetTypeMapper {
         }
         return mapType(jetType, OwnerKind.IMPLEMENTATION, signatureVisitor);
     }
-
-    private HashMap<DeclarationDescriptor,Map<DeclarationDescriptor,String>> naming = new HashMap<DeclarationDescriptor, Map<DeclarationDescriptor, String>>();
 
     private String getStableNameForObject(JetObjectDeclaration object, DeclarationDescriptor descriptor) {
         String local = getLocalNameForObject(object);
@@ -781,6 +780,8 @@ public class JetTypeMapper {
 
         knowTypes.put(standardLibrary.getStringType(),JL_STRING_TYPE);
         knowTypes.put(standardLibrary.getNullableStringType(),JL_STRING_TYPE);
+        knowTypes.put(standardLibrary.getCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
+        knowTypes.put(standardLibrary.getNullableCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();

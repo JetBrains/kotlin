@@ -179,6 +179,7 @@ public class JavaTypeTransformer {
             }
             classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
             classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
+            classTypesMap.put("java.lang.CharSequence", standardLibrary.getNullableCharSequenceType());
         }
         return classTypesMap;
     }
@@ -191,6 +192,7 @@ public class JavaTypeTransformer {
                 classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getPrimitiveClassDescriptor(primitiveType));
             }
             classDescriptorMap.put("java.lang.String", standardLibrary.getString());
+            classDescriptorMap.put("java.lang.CharSequence", standardLibrary.getCharSequence());
         }
         return classDescriptorMap;
     }

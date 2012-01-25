@@ -40,6 +40,8 @@ inline fun String.startsWith(prefix: String) = (this as java.lang.String).starts
 
 inline fun String.startsWith(prefix: String, toffset: Int) = (this as java.lang.String).startsWith(prefix, toffset)
 
+inline fun String.contains(seq: CharSequence) : Boolean = (this as java.lang.String).contains(seq)
+
 inline val String.size : Int
     get() = length()
 
@@ -67,18 +69,13 @@ inline fun String(stringBuffer : java.lang.StringBuffer) = java.lang.String(stri
 inline fun String(stringBuilder : java.lang.StringBuilder) = java.lang.String(stringBuilder) as String
 
 /*
-Iterator for characters of given String
-*/
-inline fun String.iterator() : CharIterator = (this as java.lang.String).iterator()
-
-/*
 Iterator for characters of given CharSequence
 */
-inline fun java.lang.CharSequence.iterator() : CharIterator = object: jet.CharIterator() {
+inline fun CharSequence.iterator() : CharIterator = object: jet.CharIterator() {
     private var index = 0
 
-    public override fun nextChar(): Char = charAt(index++)
+    public override fun nextChar(): Char = get(index++)
 
     public override val hasNext: Boolean
-        get() = index < length()
+        get() = index < length
 }

@@ -17,7 +17,7 @@ public class StringLength implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         receiver.put(JetTypeMapper.TYPE_OBJECT, v);
-        v.invokevirtual("java/lang/String", "length", "()I");
+        v.invokeinterface("java/lang/CharSequence", "length", "()I");
         return StackValue.onStack(Type.INT_TYPE);
     }
 }

@@ -43,13 +43,16 @@ class Boolean : Comparable<Boolean> {
   fun equals(other : Any?) : Boolean
 }
 
-class String() : Comparable<String> {
+trait CharSequence {
   fun get(index : Int) : Char
+
   val length : Int
 
+  fun toString() : String
+}
+
+class String() : Comparable<String>, CharSequence {
   fun plus(other : Any?) : String
 
   fun equals(other : Any?) : Boolean
 }
-
-

@@ -52,6 +52,7 @@ public class JetStandardLibrary {
 
     private ClassDescriptor numberClass;
 
+    private ClassDescriptor charSequenceClass;
     private ClassDescriptor stringClass;
     private ClassDescriptor arrayClass;
     private ClassDescriptor iterableClass;
@@ -59,6 +60,9 @@ public class JetStandardLibrary {
     private ClassDescriptor comparableClass;
 
     private JetType stringType;
+    private JetType nullableStringType;
+    private JetType charSequenceType;
+    private JetType nullableCharSequenceType;
 
     private JetType nullableTuple0Type;
 
@@ -67,7 +71,6 @@ public class JetStandardLibrary {
     }
 
     private JetType tuple0Type;
-    private JetType nullableStringType;
 
     private Set<FunctionDescriptor> typeInfoFunction;
 
@@ -127,6 +130,7 @@ public class JetStandardLibrary {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
             this.numberClass = (ClassDescriptor) libraryScope.getClassifier("Number");
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
+            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier("CharSequence");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
@@ -136,6 +140,8 @@ public class JetStandardLibrary {
             this.typeInfoFunction = libraryScope.getFunctions("typeinfo");
 
             this.stringType = new JetTypeImpl(getString());
+            this.charSequenceType = new JetTypeImpl(getCharSequence());
+            this.nullableCharSequenceType = TypeUtils.makeNullable(charSequenceType);
             this.nullableStringType = TypeUtils.makeNullable(stringType);
 
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
@@ -231,6 +237,12 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public ClassDescriptor getCharSequence() {
+        initStdClasses();
+        return charSequenceClass;
+    }
+
+    @NotNull
     public ClassDescriptor  getArray() {
         initStdClasses();
         return arrayClass;
@@ -312,6 +324,12 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public JetType getCharSequenceType() {
+        initStdClasses();
+        return charSequenceType;
+    }
+
+    @NotNull
     public JetType getByteType() {
         return getPrimitiveJetType(PrimitiveType.BYTE);
     }
@@ -371,9 +389,16 @@ public class JetStandardLibrary {
         );
     }
 
+    @NotNull
     public JetType getNullableStringType() {
         initStdClasses();
         return nullableStringType;
+    }
+
+    @NotNull
+    public JetType getNullableCharSequenceType() {
+        initStdClasses();
+        return nullableCharSequenceType;
     }
 
     @NotNull

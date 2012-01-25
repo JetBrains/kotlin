@@ -88,7 +88,7 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("Boolean", "not", 0, new Not());
 
         declareIntrinsicFunction("String", "plus", 1, new Concat());
-        declareIntrinsicFunction("String", "get", 1, new StringGetChar());
+        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar());
 
         declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
@@ -114,7 +114,7 @@ public class IntrinsicMethods {
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
         declareIntrinsicStringMethods();
-        declareIntrinsicProperty("String", "length", new StringLength());
+        declareIntrinsicProperty("CharSequence", "length", new StringLength());
 
         declareArrayMethods();
     }
