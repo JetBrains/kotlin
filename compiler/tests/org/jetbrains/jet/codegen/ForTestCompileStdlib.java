@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.KotlinCompiler;
 import org.junit.Assert;
 
@@ -30,6 +31,7 @@ public class ForTestCompileStdlib {
 
     private static File doCompile() throws Exception {
         File tmpDir = FileUtil.createTempDirectory("stdlibjar", "");
+        JetTestUtils.deleteOnShutdown(tmpDir);
 
         File jarFile = new File(tmpDir, "stdlib.jar");
         

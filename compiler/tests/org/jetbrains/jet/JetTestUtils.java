@@ -2,6 +2,8 @@ package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.ShutDownTracker;
+import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
@@ -19,6 +21,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +32,8 @@ import java.util.regex.Pattern;
  * @author abreslav
  */
 public class JetTestUtils {
+    private static List<File> filesToDelete = new ArrayList<File>();
+
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
 
@@ -162,13 +167,7 @@ public class JetTestUtils {
 
     public static void rmrf(File file) {
         if (file != null) {
-            File[] children = file.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    rmrf(child);
-                }
-            }
-            file.delete();
+            FileUtil.delete(file);
         }
     }
     
@@ -191,6 +190,26 @@ public class JetTestUtils {
     public static void recreateDirectory(File file) throws IOException {
         rmrf(file);
         mkdirs(file);
+    }
+
+    public static void deleteOnShutdown(File file) {
+        if (filesToDelete.isEmpty()) {
+            ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
+                  @Override
+                  public void run() {
+                    ShutDownTracker.invokeAndWait(true, true, new Runnable() {
+                      @Override
+                      public void run() {
+                          for (File victim : filesToDelete) {
+                              FileUtil.delete(victim);
+                          }
+                      }
+                    });
+                  }
+                });
+        }
+
+        filesToDelete.add(file);
     }
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
