@@ -164,6 +164,11 @@ public class GenerationState {
             public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
                 typeMapper.classNameForAnonymousClass(expression.getObjectDeclaration());
             }
+
+            @Override
+            public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+                typeMapper.classNameForAnonymousClass(expression.getFunctionLiteral());
+            }
         });
     }
 

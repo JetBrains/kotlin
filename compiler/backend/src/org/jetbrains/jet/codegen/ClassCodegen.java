@@ -22,7 +22,7 @@ public class ClassCodegen {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         ClassBuilder classBuilder = state.forClassImplementation(descriptor);
         if (classBuilder.generateCode()) {
-            GenerationState.prepareAnonymousClasses((JetElement) aClass, state.getTypeMapper());
+            GenerationState.prepareAnonymousClasses(aClass, state.getTypeMapper());
         }
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state.getTypeMapper());

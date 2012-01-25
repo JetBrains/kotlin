@@ -13,13 +13,11 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -46,7 +44,7 @@ public class JetTypeMapper {
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
-    private final Map<JetExpression, String> classNamesForAnonymousClasses = new HashMap<JetExpression, String>();
+    private final Map<JetElement, String> classNamesForAnonymousClasses = new HashMap<JetElement, String>();
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
     private final HashMap<JetType,String> knowTypeNames = new HashMap<JetType, String>();
@@ -96,9 +94,9 @@ public class JetTypeMapper {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof JavaNamespaceDescriptor) {
             JavaNamespaceDescriptor javaNamespaceDescriptor = (JavaNamespaceDescriptor) containingDeclaration;
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName((NamespaceDescriptor) containingDeclaration), javaNamespaceDescriptor.isNamespace());
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration), javaNamespaceDescriptor.isNamespace());
         } else if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName((NamespaceDescriptor) containingDeclaration), true);
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration), true);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -179,29 +177,7 @@ public class JetTypeMapper {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
-            // create and store name
-            Map<DeclarationDescriptor, String> map = naming.get(container);
-            if(map == null) {
-                map = new HashMap<DeclarationDescriptor, String>();
-                naming.put(container, map);
-            }
-
-            name = map.get(descriptor);
-            if(name == null) {
-                PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-                if (declaration instanceof JetObjectDeclaration) {
-                    String stable = getStableNameForObject((JetObjectDeclaration) declaration, descriptor);
-                    if (stable != null) {
-                        name = stable;
-                    }
-                }
-
-                if (name == null) {
-                    name = getFQName(container) + "$" + (map.size()+1);
-                }
-                map.put(descriptor, name);
-            }
-            return name;
+            return classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
         }
         if(name.contains("/"))
             return name;
@@ -719,14 +695,15 @@ public class JetTypeMapper {
         }
     }
 
-    String classNameForAnonymousClass(JetExpression expression) {
+    String classNameForAnonymousClass(JetElement expression) {
         if(expression instanceof JetObjectLiteralExpression) {
             JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
             expression = jetObjectLiteralExpression.getObjectDeclaration();
         }
-        if(expression instanceof JetObjectDeclaration) {
-            DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
-            return getFQName(declarationDescriptor);
+
+        if(expression instanceof JetFunctionLiteralExpression) {
+            JetFunctionLiteralExpression jetFunctionLiteralExpression = (JetFunctionLiteralExpression) expression;
+            expression = jetFunctionLiteralExpression.getFunctionLiteral();
         }
 
         String name = classNamesForAnonymousClasses.get(expression);
@@ -735,15 +712,18 @@ public class JetTypeMapper {
         }
 
         @SuppressWarnings("unchecked")
-        PsiElement container = PsiTreeUtil.getParentOfType(expression, JetFile.class, JetClass.class, JetObjectDeclaration.class);
+        PsiElement container = PsiTreeUtil.getParentOfType(expression, JetFile.class, JetClass.class, JetObjectDeclaration.class, JetFunctionLiteral.class);
 
         String baseName;
-        if (container instanceof JetFile) {
+        if(container instanceof JetFile) {
             baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetFile) container)), true);
         }
-        else {
+        else if(container instanceof JetClass) {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);
             baseName = mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+        }
+        else {
+            baseName = classNameForAnonymousClass((JetElement) container);
         }
 
         Integer count = anonymousSubclassesCount.get(baseName);
