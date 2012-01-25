@@ -10,7 +10,6 @@ fun test(<caret>) {
 // ABSENT: catch
 // ABSENT: class
 // ABSENT: continue
-// ABSENT: default
 // ABSENT: do
 // ABSENT: else
 // ABSENT: enum
@@ -35,7 +34,6 @@ fun test(<caret>) {
 // ABSENT: private
 // ABSENT: protected
 // ABSENT: public
-// EXIST:  ref
 // ABSENT: return
 // ABSENT: set
 // ABSENT: super

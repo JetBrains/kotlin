@@ -18,11 +18,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
  * A keyword contributor for Kotlin
@@ -42,7 +46,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
             new LeftNeighbour(new TextFilter("."))
     ));
 
-    private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList("get", "set");
+    private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -169,29 +173,58 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     public JetKeywordCompletionContributor() {
         registerScopeKeywordsCompletion(new InTopFilter(),
-                                        "abstract", "class", "enum", "final", "fun", "get", "import", "inline",
-                                        "internal", "open", "package", "private", "protected", "public", "set",
-                                        "trait", "type", "val", "var");
+                ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
+                FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
+                IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
+                PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
+                TRAIT_KEYWORD, TYPE_KEYWORD, VAL_KEYWORD,
+                VAR_KEYWORD);
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
-                                        "abstract", "class", "enum", "final", "fun", "get", "inline", "internal",
-                                        "object", "open", "override", "private", "protected", "public", "set", "trait",
-                                        "type", "val", "var");
+                ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
+                FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
+                INLINE_KEYWORD, INTERNAL_KEYWORD, OBJECT_KEYWORD,
+                OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
+                PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
+                TRAIT_KEYWORD, TYPE_KEYWORD, VAL_KEYWORD,
+                VAR_KEYWORD);
 
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
-                                        "as", "break", "by", "catch", "class", "continue", "default", "do", "else",
-                                        "enum", "false", "finally", "for", "fun", "get", "if", "in", "inline",
-                                        "internal", "is", "null", "object", "private", "protected", "public", "ref",
-                                        "return", "set", "super", "This", "this", "throw", "trait", "true", "try",
-                                        "type", "val", "var", "vararg", "when", "where", "while");
+                AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
+                CATCH_KEYWORD, CLASS_KEYWORD, CONTINUE_KEYWORD,
+                DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
+                FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD,
+                FUN_KEYWORD, GET_KEYWORD, IF_KEYWORD,
+                IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
+                PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
+                RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
+                CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
+                TRAIT_KEYWORD, TRUE_KEYWORD, TRY_KEYWORD,
+                TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+                VARARG_KEYWORD, WHEN_KEYWORD, WHERE_KEYWORD,
+                WHILE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InPropertyFilter(), "else", "false", "if", "null", "this", "true");
+        registerScopeKeywordsCompletion(new InPropertyFilter(),
+                ELSE_KEYWORD, FALSE_KEYWORD, IF_KEYWORD,
+                NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InParametersFilter(), "ref", "out");
+        registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
     }
 
-    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
-        extend(CompletionType.BASIC, getPlacePattern(placeFilter), new KeywordsCompletionProvider(keywords));
+    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, JetToken... keywords) {
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter),
+               new KeywordsCompletionProvider(convertTokensToStrings(keywords)));
+    }
+
+    private static String[] convertTokensToStrings(JetToken... keywords) {
+        final ArrayList<String> strings = new ArrayList<String>(keywords.length);
+        for (JetToken keyword : keywords) {
+            strings.add(keyword.toString());
+        }
+        
+        return strings.toArray(new String[strings.size()]);
     }
 
     private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter) {

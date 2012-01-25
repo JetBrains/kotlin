@@ -10,7 +10,6 @@ fun foo() {
 // EXIST: catch
 // EXIST: class
 // EXIST: continue
-// EXIST: default
 // EXIST: do
 // EXIST: else
 // EXIST: enum
@@ -35,7 +34,6 @@ fun foo() {
 // EXIST: private
 // EXIST: protected
 // EXIST: public
-// EXIST: ref
 // EXIST: return
 // EXIST: set
 // EXIST: super
