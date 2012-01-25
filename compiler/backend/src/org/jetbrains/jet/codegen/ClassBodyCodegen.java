@@ -40,19 +40,19 @@ public abstract class ClassBodyCodegen {
         this.v = v;
     }
 
-    public final void generate(@Nullable HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+    public final void generate() {
         generateDeclaration();
 
         generateClassBody();
 
-        generateSyntheticParts(accessors);
+        generateSyntheticParts();
 
         generateStaticInitializer();
     }
 
     protected abstract void generateDeclaration();
 
-    protected void generateSyntheticParts(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+    protected void generateSyntheticParts() {
     }
 
     private void generateClassBody() {

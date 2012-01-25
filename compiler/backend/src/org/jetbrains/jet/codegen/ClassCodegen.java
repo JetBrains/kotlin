@@ -51,11 +51,12 @@ public class ClassCodegen {
     private void generateImplementation(CodegenContext context, JetClassOrObject aClass, OwnerKind kind, HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors, ClassBuilder classBuilder) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         CodegenContext classContext = context.intoClass(descriptor, kind, state.getTypeMapper());
-        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate(accessors);
+        classContext.copyAccessors(accessors);
+        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
 
         if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
             ClassBuilder traitBuilder = state.forTraitImplementation(descriptor);
-            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state.getTypeMapper()), traitBuilder, state).generate(null);
+            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state.getTypeMapper()), traitBuilder, state).generate();
             traitBuilder.done();
         }
     }

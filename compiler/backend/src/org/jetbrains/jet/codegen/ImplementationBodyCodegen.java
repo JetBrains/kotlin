@@ -206,10 +206,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateSyntheticParts(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+    protected void generateSyntheticParts() {
         generateFieldForObjectInstance();
         generateFieldForClassObject();
-        generateAccessors(accessors);
 
         try {
             generatePrimaryConstructor();
@@ -222,98 +221,104 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         generateGetTypeInfo();
+
+        generateAccessors();
     }
 
-    private void generateAccessors(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
-        if(accessors != null) {
-            for (Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry : accessors.entrySet()) {
-                if(entry.getValue() instanceof FunctionDescriptor) {
-                    FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
-                    FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
+    private void generateAccessors() {
+        if(context.accessors != null) {
+            for (Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry : context.accessors.entrySet()) {
+                genAccessor(entry);
+            }
+        }
+    }
 
-                    Method method = typeMapper.mapSignature(bridge.getName(), bridge).getAsmMethod();
-                    Method originalMethod = typeMapper.mapSignature(original.getName(), original).getAsmMethod();
-                    Type[] argTypes = method.getArgumentTypes();
+    private void genAccessor(Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry) {
+        if(entry.getValue() instanceof FunctionDescriptor) {
+            FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
+            FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
 
-                    MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, bridge.getName(), method.getDescriptor(), null, null);
-                    if (v.generateCode()) {
-                        mv.visitCode();
+            Method method = typeMapper.mapSignature(bridge.getName(), bridge).getAsmMethod();
+            Method originalMethod = typeMapper.mapSignature(original.getName(), original).getAsmMethod();
+            Type[] argTypes = method.getArgumentTypes();
 
-                        InstructionAdapter iv = new InstructionAdapter(mv);
+            MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_BRIDGE|Opcodes.ACC_FINAL, bridge.getName(), method.getDescriptor(), null, null);
+            if (v.generateCode()) {
+                mv.visitCode();
 
-                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                            Type argType = argTypes[i];
-                            iv.load(reg, argType);
-                            //noinspection AssignmentToForLoopParameter
-                            reg += argType.getSize();
-                        }
+                InstructionAdapter iv = new InstructionAdapter(mv);
+
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                    Type argType = argTypes[i];
+                    iv.load(reg, argType);
+                    //noinspection AssignmentToForLoopParameter
+                    reg += argType.getSize();
+                }
+                iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+
+                iv.areturn(method.getReturnType());
+                FunctionCodegen.endVisit(iv, "accessor", null);
+            }
+        }
+        else if(entry.getValue() instanceof PropertyDescriptor) {
+            PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
+            PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
+
+            {
+                Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                JvmPropertyAccessorSignature originalSignature = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
+                Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
+                MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
+                PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(), originalSignature.getJvmMethodSignature().getKotlinTypeParameter());
+                if (v.generateCode()) {
+                    mv.visitCode();
+
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    if(original.getVisibility() == Visibility.PRIVATE)
+                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getReturnType().getDescriptor());
+                    else
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
-                        iv.areturn(method.getReturnType());
-                        FunctionCodegen.endVisit(iv, "accessor", null);
-                    }
-                }
-                else if(entry.getValue() instanceof PropertyDescriptor) {
-                    PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
-                    PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
-
-                    {
-                        Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                        JvmPropertyAccessorSignature originalSignature = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
-                        Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
-                        MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
-                        PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(), originalSignature.getJvmMethodSignature().getKotlinTypeParameter());
-                        if (v.generateCode()) {
-                            mv.visitCode();
-
-                            InstructionAdapter iv = new InstructionAdapter(mv);
-
-                            iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                            if(original.getVisibility() == Visibility.PRIVATE)
-                                iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getReturnType().getDescriptor());
-                            else
-                                iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
-
-                            iv.areturn(method.getReturnType());
-                            FunctionCodegen.endVisit(iv, "accessor", null);
-                        }
-                    }
-
-                    {
-
-                        Method method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                        JvmPropertyAccessorSignature originalSignature2 = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
-                        Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
-                        MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
-                        PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(), originalSignature2.getJvmMethodSignature().getKotlinTypeParameter());
-                        if (v.generateCode()) {
-                            mv.visitCode();
-
-                            InstructionAdapter iv = new InstructionAdapter(mv);
-
-                            iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                            Type[] argTypes = method.getArgumentTypes();
-                            for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                                Type argType = argTypes[i];
-                                iv.load(reg, argType);
-                                //noinspection AssignmentToForLoopParameter
-                                reg += argType.getSize();
-                            }
-                            if(original.getVisibility() == Visibility.PRIVATE)
-                                iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
-                            else
-                                iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
-
-                            iv.areturn(method.getReturnType());
-                            FunctionCodegen.endVisit(iv, "accessor", null);
-                        }
-                    }
-                }
-                else {
-                    throw new UnsupportedOperationException();
+                    iv.areturn(method.getReturnType());
+                    FunctionCodegen.endVisit(iv, "accessor", null);
                 }
             }
+
+            if(bridge.isVar())
+            {
+                Method method = typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                JvmPropertyAccessorSignature originalSignature2 = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
+                Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
+                MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_BRIDGE | Opcodes.ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
+                PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(), originalSignature2.getJvmMethodSignature().getKotlinTypeParameter());
+                if (v.generateCode()) {
+                    mv.visitCode();
+
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    Type[] argTypes = method.getArgumentTypes();
+                    for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(reg, argType);
+                        //noinspection AssignmentToForLoopParameter
+                        reg += argType.getSize();
+                    }
+                    if(original.getVisibility() == Visibility.PRIVATE)
+                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
+                    else
+                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+
+                    iv.areturn(method.getReturnType());
+                    FunctionCodegen.endVisit(iv, "accessor", null);
+                }
+            }
+        }
+        else {
+            throw new UnsupportedOperationException();
         }
     }
 
