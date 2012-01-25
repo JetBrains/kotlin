@@ -66,3 +66,19 @@ inline fun String(stringBuffer : java.lang.StringBuffer) = java.lang.String(stri
 
 inline fun String(stringBuilder : java.lang.StringBuilder) = java.lang.String(stringBuilder) as String
 
+/*
+Iterator for characters of given String
+*/
+inline fun String.iterator() : CharIterator = (this as java.lang.String).iterator()
+
+/*
+Iterator for characters of given CharSequence
+*/
+inline fun java.lang.CharSequence.iterator() : CharIterator = object: jet.CharIterator() {
+    private var index = 0
+
+    public override fun nextChar(): Char = charAt(index++)
+
+    public override val hasNext: Boolean
+        get() = index < length()
+}

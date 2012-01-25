@@ -110,6 +110,23 @@ public class StdlibTest extends CodegenTestCase {
         } catch (Throwable t) {
 //            System.out.println(generateToText());
             t.printStackTrace();
+            throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
+        }
+    }
+
+    public void testForInString() throws Exception {
+        loadText("fun foo() : Int {        var sum = 0\n" +
+                 "        for(c in \"239\")\n" +
+                 "            sum += (c.int - '0'.int)\n" +
+                 "        return sum" +
+                 "}" );
+        final Method main = generateFunction();
+        try {
+            assertEquals(14, main.invoke(null));
+        } catch (Throwable t) {
+            System.out.println(generateToText());
+            t.printStackTrace();
+            throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
         }
     }
 }
