@@ -111,6 +111,7 @@ public class JetParsingTest extends ParsingTestCase {
         String prefix = JetParsingTest.getTestDataDir() + "/psi/";
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "/", false, factory));
         suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "examples", true, factory));
+        suite.addTest(JetTestCaseBuilder.suiteForDirectory(prefix, "greatSyntacticShift", true, factory));
         return suite;
     }
 
