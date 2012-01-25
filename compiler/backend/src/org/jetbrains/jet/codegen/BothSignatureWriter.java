@@ -167,6 +167,22 @@ public class BothSignatureWriter {
         jetSignatureWriter.visitBaseType(c, nullable);
         writeAsmType0(Type.getType(String.valueOf(c)));
     }
+
+    public void writeNothing(boolean nullable) {
+        if (nullable) {
+            signatureVisitor().visitClassType("java/lang/Object");
+            signatureVisitor().visitEnd();
+        } else {
+            signatureVisitor().visitBaseType('V');
+        }
+        jetSignatureWriter.visitClassType("jet/Nothing", nullable, false);
+        jetSignatureWriter.visitEnd();
+        if (nullable) {
+            writeAsmType0(JetTypeMapper.TYPE_OBJECT);
+        } else {
+            writeAsmType0(Type.VOID_TYPE);
+        }
+    }
     
     private String makeArrayPrefix() {
         StringBuilder sb = new StringBuilder();

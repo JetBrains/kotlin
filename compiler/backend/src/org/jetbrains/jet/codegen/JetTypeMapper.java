@@ -121,15 +121,21 @@ public class JetTypeMapper {
     }
 
     @NotNull private Type mapReturnType(final JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
+        if (jetType.equals(JetStandardClasses.getUnitType())) {
             if (signatureVisitor != null) {
                 signatureVisitor.writeAsmType(Type.VOID_TYPE, false);
             }
             return Type.VOID_TYPE;
         }
+        else if (jetType.equals(JetStandardClasses.getNothingType())) {
+            if (signatureVisitor != null) {
+                signatureVisitor.writeNothing(false);
+            }
+            return Type.VOID_TYPE;
+        }
         if (jetType.equals(JetStandardClasses.getNullableNothingType())) {
             if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, TYPE_OBJECT, false);
+                signatureVisitor.writeNothing(true);
             }
             return TYPE_OBJECT;
         }
