@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.*;
 
@@ -165,7 +166,9 @@ public class CompileEnvironment {
             method.setAccessible(true);
             method.invoke(null);
 
-            return AllModules.modules;
+            ArrayList<Module> answer = new ArrayList<Module>(AllModules.modules);
+            AllModules.modules.clear();
+            return answer;
         } catch (Exception e) {
             throw new ModuleExecutionException(e);
         }
