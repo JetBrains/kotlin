@@ -124,6 +124,10 @@ public class CompileEnvironment {
             throw new CompileEnvironmentException("Module script " + moduleFile + " compilation failed");
         }
 
+        if (modules.isEmpty()) {
+            throw new CompileEnvironmentException("No modules where defined by " + moduleFile);
+        }
+
         final String directory = new File(moduleFile).getParent();
         for (Module moduleBuilder : modules) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
@@ -169,10 +173,19 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
+
+        if (moduleBuilder.getSourceFiles().isEmpty()) {
+            throw new CompileEnvironmentException("No source files where defined");
+        }
+
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
                 source = new File(directory, sourceFile);
+            }
+
+            if (!source.exists()) {
+                throw new CompileEnvironmentException("'" + source + "' does not exist");
             }
 
             moduleCompileSession.addSources(source.getPath());
