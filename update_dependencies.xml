@@ -32,6 +32,9 @@
             <get src="${tc}/${build.zip}" dest="ideaSDK" />
             <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
             <delete file="ideaSDK/${build.zip}"/>
+
+            <mkdir dir="ideaSDK/sources"/>
+            <get src="${tc}/sources.zip" dest="ideaSDK/sources"/>
         </sequential>
     </macrodef>
 </project>

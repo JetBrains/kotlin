@@ -6,32 +6,16 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeConstructorImpl;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Stepan Koltsov
@@ -39,6 +23,8 @@ import java.util.Set;
 public class MutableClassDescriptorLite extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLike {
     private ConstructorDescriptor primaryConstructor;
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
+
+    private final List<AnnotationDescriptor> annotations = Lists.newArrayList();
 
     private Map<String, ClassDescriptor> innerClassesAndObjects = Maps.newHashMap();
 
@@ -339,4 +325,8 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         return visitor.visitClassDescriptor(this, data);
     }
 
+    @Override
+    public List<AnnotationDescriptor> getAnnotations() {
+        return annotations;
+    }
 }

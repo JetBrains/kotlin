@@ -54,6 +54,8 @@ public class TypeHierarchyResolver {
 
         // At this point, there are no loops in the type hierarchy
 
+        resolveAnnotations();
+
         checkSupertypesForConsistency();
 //        computeSuperclasses();
 
@@ -361,6 +363,22 @@ public class TypeHierarchyResolver {
             if (node != null) {
                 context.getTrace().report(CYCLIC_INHERITANCE_HIERARCHY.on(node));
             }
+        }
+    }
+
+    private void resolveAnnotations() {
+        AnnotationResolver annotationResolver = new AnnotationResolver(context.getSemanticServices(), context.getTrace());
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
+            JetModifierList modifierList = jetClass.getModifierList();
+            if (modifierList != null) {
+                descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotations(descriptor.getScopeForSupertypeResolution(), modifierList.getAnnotationEntries()));
+            }
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
+            JetObjectDeclaration objectDeclaration = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
         }
     }
 

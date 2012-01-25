@@ -1,9 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-
-import java.util.List;
 
 /**
  * @author abreslav
@@ -14,11 +11,6 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
 
     public MutableDeclarationDescriptor(DeclarationDescriptor containingDeclaration) {
         this.containingDeclaration = containingDeclaration;
-    }
-
-    @Override
-    public List<AnnotationDescriptor> getAnnotations() {
-        throw new UnsupportedOperationException(); // TODO
     }
 
     @NotNull
