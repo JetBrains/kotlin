@@ -1,8 +1,11 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.*;
@@ -153,7 +156,12 @@ public class CommonSupertypes {
         }
 
         // TODO : attributes?
-        return new JetTypeImpl(Collections.<AnnotationDescriptor>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB); // TODO : scope
+        JetScope newScope = JetStandardClasses.STUB;
+        DeclarationDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
+        if (declarationDescriptor instanceof ClassDescriptor) {
+            newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);
+        }
+        return new JetTypeImpl(Collections.<AnnotationDescriptor>emptyList(), constructor, nullable, newProjections, newScope);
     }
 
     @NotNull
