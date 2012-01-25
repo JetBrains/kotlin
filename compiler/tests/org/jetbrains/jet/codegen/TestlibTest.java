@@ -74,11 +74,10 @@ public class TestlibTest extends CodegenTestCase {
 
             ClassFileFactory classFileFactory = session.generate();
 
-            URLClassLoader dependenciesClassLoader = new URLClassLoader(new URL[] { junitJar.toURI().toURL() });
-            GeneratedClassLoader loader;
-            URLClassLoader parentClassLoader = new URLClassLoader(new URL[]{
-                    ForTestCompileStdlib.stdlibJarForTests().toURI().toURL()}, dependenciesClassLoader);
-            loader = new GeneratedClassLoader(classFileFactory, parentClassLoader);
+            GeneratedClassLoader loader = new GeneratedClassLoader(
+                    classFileFactory,
+                    new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
+                                       TestCase.class.getClassLoader()));
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
             TestSuite suite = new TestSuite("StandardLibrary");
