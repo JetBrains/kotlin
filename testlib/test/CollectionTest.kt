@@ -188,7 +188,7 @@ class CollectionTest() : TestSupport() {
     /**
       TODO compiler bug
       we should be able to remove the explicit type on the function
-      http://youtrack.jetbrains.net/issue/KT-849
+      http://youtrack.jetbrains.net/issue/KT-1145
     */
     val lengths = data.map<String,Int>{s -> s.length}
     assert {
