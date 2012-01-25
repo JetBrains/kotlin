@@ -30,4 +30,8 @@ public class ObjectGenTest extends CodegenTestCase {
     public void testKt640() throws Exception {
         blackBoxFile("regressions/kt640.jet");
     }
+
+    public void testKt1136() throws Exception {
+        blackBoxFile("regressions/kt1136.kt");
+    }
 }

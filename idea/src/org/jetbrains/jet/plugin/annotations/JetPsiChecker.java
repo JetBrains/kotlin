@@ -173,9 +173,10 @@ public class JetPsiChecker implements Annotator {
                 return;
             }
 
-            // General annotation
+            // Generic annotation
+            Annotation errorAnnotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
             registerQuickFix(
-                    holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic)),
+                    errorAnnotation,
                     diagnostic);
         }
         else if (diagnostic.getSeverity() == Severity.WARNING) {

@@ -264,6 +264,15 @@ public abstract class CodegenContext {
 
     public abstract boolean isStatic();
 
+    public void copyAccessors(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+        if(accessors != null) {
+            if(this.accessors == null) {
+                this.accessors = new HashMap<DeclarationDescriptor,DeclarationDescriptor>();
+            }
+            this.accessors.putAll(accessors);
+        }
+    }
+
     public abstract static class ReceiverContext extends CodegenContext {
         final CallableDescriptor receiverDescriptor;
 

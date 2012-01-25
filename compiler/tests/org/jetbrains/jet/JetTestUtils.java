@@ -165,31 +165,16 @@ public class JetTestUtils {
         }
     }
 
-    public static void rmrf(File file) {
-        if (file != null) {
-            FileUtil.delete(file);
-        }
+    public static File tmpDirForTest(TestCase test) throws IOException {
+        File answer = FileUtil.createTempDirectory(test.getClass().getSimpleName(), test.getName());
+        deleteOnShutdown(answer);
+        return answer;
     }
     
-    public static File tmpRoot() {
-        return new File("tmp");
-    }
-    
-    public static File tmpDirForTest(TestCase test) {
-        return new File(tmpRoot(), test.getClass().getSimpleName() + "/" + test.getName());
-    }
-    
-    public static File tmpDirForTest(Class<?> clazz) {
-        return tmpDirForTest(clazz.getSimpleName());
-    }
-    
-    public static File tmpDirForTest(String name) {
-        return new File(tmpRoot(), name);
-    }
-
-    public static void recreateDirectory(File file) throws IOException {
-        rmrf(file);
-        mkdirs(file);
+    public static File tmpDir(String name) throws IOException {
+        File answer = FileUtil.createTempDirectory(name, "");
+        deleteOnShutdown(answer);
+        return answer;
     }
 
     public static void deleteOnShutdown(File file) {
