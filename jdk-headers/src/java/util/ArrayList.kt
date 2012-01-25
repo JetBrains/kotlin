@@ -3,8 +3,7 @@ public open class ArrayList<erased E>(c : java.util.Collection<out E>) : java.ut
                                                         java.util.List<E>,
                                                         java.util.RandomAccess,
                                                         java.lang.Cloneable,
-                                                        java.io.Serializable,
-                                                        java.lang.Object {
+                                                        java.io.Serializable {
     public this() {}
     public this(initialCapacity : Int) {}
     open public fun trimToSize() : Unit {}

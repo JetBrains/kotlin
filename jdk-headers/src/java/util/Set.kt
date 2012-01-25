@@ -18,3 +18,4 @@ public trait Set<erased E> : java.util.Collection<E> {
 //    override fun equals(o : Any?) : Boolean
 //    override fun hashCode() : Int
 }
+
