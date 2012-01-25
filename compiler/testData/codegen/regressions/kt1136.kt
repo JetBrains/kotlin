@@ -1,5 +1,20 @@
 import java.util.ArrayList
 
+public object SomeObject {
+    private val workerThread = object : Thread() {
+        override fun run() {
+            foo()
+        }
+    }
+
+    {
+        workerThread.start()
+    }
+
+    private fun foo() : Unit {
+    }
+}
+
 public class SomeClass() {
     class Inner {
         val copy = list
