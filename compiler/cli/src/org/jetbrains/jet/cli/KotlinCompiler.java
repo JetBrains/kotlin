@@ -43,7 +43,20 @@ public class KotlinCompiler {
         target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
     }
 
-    public static void main(String ... args) {
+    public static void main(String... args) {
+        try {
+            int rc = exec(args);
+            if (rc != 0) {
+                System.err.println("exec() finished with " + rc + " return code");
+                System.exit(rc);
+            }
+        } catch (CompileEnvironmentException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    public static int exec(String... args) {
         System.setProperty("java.awt.headless", "true");
         Arguments arguments = new Arguments();
         try {
@@ -51,18 +64,16 @@ public class KotlinCompiler {
         }
         catch (IllegalArgumentException e) {
             usage(System.err);
-            System.exit(1);
-            return;
+            return 1;
         }
         catch (Throwable t) {
             t.printStackTrace();
-            System.exit(1);
-            return;
+            return 1;
         }
 
         if (arguments.help) {
             usage(System.out);
-            System.exit(0);
+            return 0;
         }
 
         CompileEnvironment environment = new CompileEnvironment();
@@ -71,22 +82,16 @@ public class KotlinCompiler {
             environment.setStdlib(arguments.stdlib);
         }
 
-        try {
-            if (arguments.module != null) {
-                environment.compileModuleScript(arguments.module, arguments.jar, arguments.includeRuntime);
-                return;
-            }
-            else {
-                if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime)) {
-                    System.exit(1);
-                    return;
-                }
-            }
-        } catch (CompileEnvironmentException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-            return;
+        if (arguments.module != null) {
+            environment.compileModuleScript(arguments.module, arguments.jar, arguments.includeRuntime);
+            return 0;
         }
-    }
+        else {
+            if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime)) {
+                return 1;
+            }
+        }
 
+        return 0;
+    }
 }
