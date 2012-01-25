@@ -80,13 +80,18 @@ public class TypeResolver {
 
                         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);
 
-                        result[0] = new JetTypeImpl(
-                                annotations,
-                                typeParameterDescriptor.getTypeConstructor(),
-                                nullable || TypeUtils.hasNullableLowerBound(typeParameterDescriptor),
-                                Collections.<TypeProjection>emptyList(),
-                                getScopeForTypeParameter(typeParameterDescriptor)
-                        );
+                        JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor);
+                        if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
+                            result[0] = ErrorUtils.createErrorType("?");
+                        } else {
+                            result[0] = new JetTypeImpl(
+                                    annotations,
+                                    typeParameterDescriptor.getTypeConstructor(),
+                                    nullable || TypeUtils.hasNullableLowerBound(typeParameterDescriptor),
+                                    Collections.<TypeProjection>emptyList(),
+                                    scopeForTypeParameter
+                            );
+                        }
 
                         resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
                     }
