@@ -39,7 +39,7 @@ import java.util.Map;
 
 // Based on from com.intellij.psi.formatter.java.AbstractJavaFormatterTest
 @SuppressWarnings("UnusedDeclaration")
-public abstract class AbstractKotlinFormatterTest extends LightIdeaTestCase {
+public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
 
     protected enum Action {REFORMAT, INDENT}
 
@@ -94,6 +94,10 @@ public abstract class AbstractKotlinFormatterTest extends LightIdeaTestCase {
 
     public void doTextTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
         doTextTest(Action.REFORMAT, text, textAfter);
+    }
+
+    public void doIndentTextTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
+        doTextTest(Action.INDENT, text, textAfter);
     }
 
     public void doTextTest(final Action action, final String text, String textAfter) throws IncorrectOperationException {

@@ -3,7 +3,7 @@ package org.jetbrains.jet.formatter;
 /**
  * Based on com.intellij.psi.formatter.java.JavaFormatterTest
  */
-public class KotlinFormatterTest extends AbstractKotlinFormatterTest {
+public class JetFormatterTest extends AbstractJetFormatterTest {
     public void testBlockFor() throws Exception {
         doTest();
     }

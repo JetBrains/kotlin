@@ -20,6 +20,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
 
+
     private static final ImmutableMap<String, JetToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
     private static ImmutableMap<String, JetToken> tokenSetToMap(TokenSet tokens) {
@@ -1406,9 +1407,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseControlStructureBody();
         }
 
-        expect(WHILE_KEYWORD, "Expecting 'while' followed by a post-condition");
-
-        parseCondition();
+        if (expect(WHILE_KEYWORD, "Expecting 'while' followed by a post-condition")) {
+            parseCondition();
+        }
 
         loop.done(DO_WHILE);
     }

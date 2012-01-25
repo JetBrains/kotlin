@@ -2,9 +2,9 @@ package org.jetbrains.jet.plugin.formatter;
 
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -16,15 +16,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * @see Block for good JavaDoc documentation
  * @author yole
  */
-public class JetBlock implements ASTBlock {
-    private ASTNode myNode;
-    private Alignment myAlignment;
+public class JetBlock extends AbstractBlock {
     private Indent myIndent;
-    private Wrap myWrap;
     private CodeStyleSettings mySettings;
     private final SpacingBuilder mySpacingBuilder;
+    
     private List<Block> mySubBlocks;
 
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
@@ -35,31 +34,20 @@ public class JetBlock implements ASTBlock {
     private static final TokenSet STATEMENT_PARTS = TokenSet.create(
             JetNodeTypes.THEN,
             JetNodeTypes.ELSE);
+    
+    // private static final List<IndentWhitespaceRule>
 
-    public JetBlock(ASTNode node, Alignment alignment, Indent indent, Wrap wrap, CodeStyleSettings settings,
-                    SpacingBuilder spacingBuilder) {
-        myNode = node;
-        myAlignment = alignment;
+    public JetBlock(@NotNull ASTNode node,
+            Alignment alignment,
+            Indent indent,
+            Wrap wrap,
+            CodeStyleSettings settings,
+            SpacingBuilder spacingBuilder) {
+
+        super(node, wrap, alignment);
         myIndent = indent;
-        myWrap = wrap;
         mySettings = settings;
         mySpacingBuilder = spacingBuilder;
-    }
-
-    @Override
-    public ASTNode getNode() {
-        return myNode;
-    }
-
-    @NotNull
-    @Override
-    public TextRange getTextRange() {
-        return myNode.getTextRange();
-    }
-
-    @Override
-    public Wrap getWrap() {
-        return myWrap;
     }
 
     @Override
@@ -68,19 +56,13 @@ public class JetBlock implements ASTBlock {
     }
 
     @Override
-    public Alignment getAlignment() {
-        return myAlignment;
-    }
-
-    @NotNull
-    @Override
-    public List<Block> getSubBlocks() {
+    protected List<Block> buildChildren() {
         if (mySubBlocks == null) {
             mySubBlocks = buildSubBlocks();
         }
         return new ArrayList<Block>(mySubBlocks);
     }
-
+    
     private List<Block> buildSubBlocks() {
         List<Block> blocks = new ArrayList<Block>();
         for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
@@ -97,7 +79,8 @@ public class JetBlock implements ASTBlock {
         return Collections.unmodifiableList(blocks);
     }
 
-    private Block buildSubBlock(ASTNode child) {
+    @NotNull
+    private Block buildSubBlock(@NotNull ASTNode child) {
         Wrap wrap = null;
         Indent childIndent = Indent.getNoneIndent();
         Alignment childAlignment = null;
@@ -128,7 +111,7 @@ public class JetBlock implements ASTBlock {
         return new JetBlock(child, childAlignment, childIndent, wrap, mySettings, mySpacingBuilder);
     }
 
-    private static Indent indentIfNotBrace(ASTNode child) {
+    private static Indent indentIfNotBrace(@NotNull ASTNode child) {
         return child.getElementType() == JetTokens.RBRACE || child.getElementType() == JetTokens.LBRACE
                 ? Indent.getNoneIndent()
                 : Indent.getNormalIndent();
@@ -151,16 +134,18 @@ public class JetBlock implements ASTBlock {
     @NotNull
     @Override
     public ChildAttributes getChildAttributes(int newChildIndex) {
-        Indent childIndent = Indent.getNoneIndent();
-        if (CODE_BLOCKS.contains(myNode.getElementType()) || myNode.getElementType() == JetNodeTypes.WHEN) {
-            childIndent = Indent.getNormalIndent();
-        }
-        return new ChildAttributes(childIndent, null);
-    }
+        final IElementType type = getNode().getElementType();
+        if (CODE_BLOCKS.contains(type) ||
+                type == JetNodeTypes.WHEN ||
+                type == JetNodeTypes.IF ||
+                type == JetNodeTypes.FOR ||
+                type == JetNodeTypes.WHILE ||
+                type == JetNodeTypes.DO_WHILE) {
 
-    @Override
-    public boolean isIncomplete() {
-        return false;
+            return new ChildAttributes(Indent.getNormalIndent(), null);
+        }
+
+        return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
     @Override
