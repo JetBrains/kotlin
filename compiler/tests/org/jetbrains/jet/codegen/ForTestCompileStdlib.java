@@ -80,7 +80,7 @@ public class ForTestCompileStdlib {
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
         // lame
-        KotlinCompiler.main("-output", destdir.getPath(), "-src", "./stdlib/ktSrc");
+        KotlinCompiler.exec("-output", destdir.getPath(), "-src", "./stdlib/ktSrc");
     }
     
     private static List<File> javaFilesInDir(File dir) {
