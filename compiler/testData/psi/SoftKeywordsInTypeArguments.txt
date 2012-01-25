@@ -35,7 +35,9 @@ JetFile: SoftKeywordsInTypeArguments.jet
     PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n\n  ')
+      PsiWhiteSpace('\n\n')
+      PsiComment(EOL_COMMENT)('//  Foo<out out>')
+      PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('Foo')
@@ -48,7 +50,7 @@ JetFile: SoftKeywordsInTypeArguments.jet
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('out')
+                  PsiElement(IDENTIFIER)('Int')
           PsiElement(GT)('>')
       PsiWhiteSpace('\n\n')
       PsiElement(RBRACE)('}')

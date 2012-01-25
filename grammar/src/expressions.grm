@@ -232,7 +232,7 @@ typeArguments
   ;
 
 valueArguments
-  : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
+  : "(" (SimpleName "=")? expression{","} ")"
   ;
 
 jump

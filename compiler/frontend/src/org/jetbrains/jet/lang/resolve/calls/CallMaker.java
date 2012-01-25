@@ -45,16 +45,6 @@ public class CallMaker {
             return false;
         }
 
-        @Override
-        public boolean isOut() {
-            return false;
-        }
-
-        @Override
-        public boolean isRef() {
-            return false;
-        }
-
         @NotNull
         @Override
         public PsiElement asElement() {

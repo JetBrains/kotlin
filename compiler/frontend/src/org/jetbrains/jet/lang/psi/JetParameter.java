@@ -44,19 +44,8 @@ public class JetParameter extends JetNamedDeclaration {
         return null;
     }
 
-    public boolean isRef() {
-        ASTNode refNode = getRefNode();
-        return refNode != null;
-    }
-
-    @Nullable
-    public ASTNode getRefNode() {
-        JetModifierList modifierList = getModifierList();
-        return modifierList == null ? null : modifierList.getModifierNode(JetTokens.REF_KEYWORD);
-    }
-
     public boolean isMutable() {
-        return findChildByType(JetTokens.VAR_KEYWORD) != null || isRef();
+        return findChildByType(JetTokens.VAR_KEYWORD) != null;
     }
 
     public boolean isVarArg() {

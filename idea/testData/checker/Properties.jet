@@ -1,6 +1,6 @@
  var x : Int = 1 + x
    get() : Int = 1
-   set(<error>ref</error> value : <error>Long</error>) {
+   set(value : <error>Long</error>) {
       $x = value.int
       $x = <error>1.lng</error>
     }

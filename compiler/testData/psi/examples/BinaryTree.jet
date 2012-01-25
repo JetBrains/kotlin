@@ -36,7 +36,7 @@ class BinaryTree<T> : IMutableSet<T> {
   }
 
   override fun add(item : T) : Boolean {
-    if (add(ref root, null)) {
+    if (add(Ref(root), null)) {
       size++
       version++
       return true
@@ -45,15 +45,15 @@ class BinaryTree<T> : IMutableSet<T> {
 
     // In principle, this has access to item anyway, but then it's unreachable code
     // BAD: the naive implementation of ref will create H(T) ref objects, but can be optimized to create only one
-    fun add(ref node : TreeNode, parent : TreeNode) : Boolean {
-      if (node == null) {
-        node = TreeNode(item, parent)
+    fun add(node : Ref<TreeNode?>, parent : TreeNode) : Boolean {
+      if (node[] == null) {
+        node[] = TreeNode(item, parent)
         return true
       }
-      when (compare(item, node.value)) {
+      when (compare(item, node[].value)) {
         EQ -> false
-        LS -> add(ref node.left, node)
-        GT -> add(ref node.right, node)
+        LS -> add(ref node[].left, node)
+        GT -> add(ref node[].right, node)
       }
     }
 

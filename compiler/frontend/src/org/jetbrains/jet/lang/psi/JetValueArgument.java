@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
@@ -39,16 +38,6 @@ public class JetValueArgument extends JetElement implements ValueArgument {
     @Override
     public boolean isNamed() {
         return getArgumentName() != null;
-    }
-
-    @Override
-    public boolean isOut() {
-        return findChildByType(JetTokens.OUT_KEYWORD) != null;
-    }
-
-    @Override
-    public boolean isRef() {
-        return findChildByType(JetTokens.REF_KEYWORD) != null;
     }
 
     @NotNull

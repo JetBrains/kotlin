@@ -1,6 +1,6 @@
 var x : Int = 1 + x
    get() : Int = 1
-   set(<!REF_SETTER_PARAMETER!>ref<!> value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
+   set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
       $x = value.int
       $x = <!TYPE_MISMATCH!>1.lng<!>
     }

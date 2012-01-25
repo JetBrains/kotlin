@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -228,12 +227,6 @@ public class DescriptorResolver {
         for (int i = 0, valueParametersSize = valueParameters.size(); i < valueParametersSize; i++) {
             JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
-
-            ASTNode valOrVarNode = valueParameter.getValOrVarNode();
-            if (valueParameter.isRef() && valOrVarNode != null) {
-//                trace.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
-                trace.report(REF_PARAMETER_WITH_VAL_OR_VAR.on(valOrVarNode));
-            }
 
             JetType type;
             if (typeReference == null) {
@@ -653,15 +646,10 @@ public class DescriptorResolver {
                     resolveVisibilityFromModifiers(setter.getModifierList(), propertyDescriptor.getVisibility()),
                     setter.getBodyExpression() != null, false);
             if (parameter != null) {
-                if (parameter.isRef()) {
-//                    trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
-                    trace.report(Errors.REF_SETTER_PARAMETER.on(parameter.getRefNode()));
-                }
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
                 JetExpression defaultValue = parameter.getDefaultValue();
                 if (defaultValue != null) {
-//                    trace.getErrorHandler().genericError(defaultValue.getNode(), "Setter parameters can not have default values");
                     trace.report(SETTER_PARAMETER_WITH_DEFAULT_VALUE.on(defaultValue));
                 }
 
@@ -675,7 +663,6 @@ public class DescriptorResolver {
                     JetType inType = propertyDescriptor.getOutType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
-//                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
                             trace.report(WRONG_SETTER_PARAMETER_TYPE.on(setter, typeReference, inType));
                         }
                     }

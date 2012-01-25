@@ -197,7 +197,6 @@ public interface Errors {
     SimpleDiagnosticFactory NAMESPACE_IS_NOT_AN_EXPRESSION = SimpleDiagnosticFactory.create(ERROR, "'namespace' is not an expression, it can only be used on the left-hand side of a dot ('.')");
     ParameterizedDiagnosticFactory1<String> SUPER_IS_NOT_AN_EXPRESSION = ParameterizedDiagnosticFactory1.create(ERROR, "{0} is not an expression, it can only be used on the left-hand side of a dot ('.')");
     SimpleDiagnosticFactory DECLARATION_IN_ILLEGAL_CONTEXT = SimpleDiagnosticFactory.create(ERROR, "Declarations are not allowed in this position");
-    SimpleDiagnosticFactory REF_SETTER_PARAMETER = SimpleDiagnosticFactory.create(ERROR, "Setter parameters can not be 'ref'");
     SimpleDiagnosticFactory SETTER_PARAMETER_WITH_DEFAULT_VALUE = SimpleDiagnosticFactory.create(ERROR, "Setter parameters can not have default values");
     SimpleDiagnosticFactory NO_THIS = SimpleDiagnosticFactory.create(ERROR, "'this' is not defined in this context");
     SimpleDiagnosticFactory SUPER_NOT_AVAILABLE = SimpleDiagnosticFactory.create(ERROR, "No supertypes are accessible in this context");
@@ -290,7 +289,6 @@ public interface Errors {
 
     ParameterizedDiagnosticFactory1<String> ILLEGAL_SELECTOR = ParameterizedDiagnosticFactory1.create(ERROR, "Expression ''{0}'' cannot be a selector (occur after a dot)");
 
-    SimpleDiagnosticFactory REF_PARAMETER_WITH_VAL_OR_VAR = SimpleDiagnosticFactory.create(ERROR, "'val' and 'var' are not allowed on ref-parameters");
     SimpleDiagnosticFactory VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = SimpleDiagnosticFactory.create(ERROR, "A type annotation is required on a value parameter");
     SimpleDiagnosticFactory BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = SimpleDiagnosticFactory.create(ERROR, "'break' and 'continue' are only allowed inside a loop");
     ParameterizedDiagnosticFactory1<String> NOT_A_LOOP_LABEL = ParameterizedDiagnosticFactory1.create(ERROR, "The label ''{0}'' does not denote a loop");

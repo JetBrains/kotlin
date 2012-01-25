@@ -1398,9 +1398,11 @@ public class JetParsing extends AbstractJetParsing {
         while (true) {
             PsiBuilder.Marker projection = mark();
 
-            TokenSet lookFor = TokenSet.create(IDENTIFIER);
-            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);
-            parseModifierListWithShortAnnotations(MODIFIER_LIST, lookFor, stopAt);
+//            TokenSet lookFor = TokenSet.create(IDENTIFIER);
+//            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);
+//            parseModifierListWithShortAnnotations(MODIFIER_LIST, lookFor, stopAt);
+            // Currently we do not allow annotations
+            parseModifierList(MODIFIER_LIST, false);
 
             if (at(MUL)) {
                 advance(); // MUL
@@ -1429,7 +1431,7 @@ public class JetParsing extends AbstractJetParsing {
 
     private void parseModifierListWithShortAnnotations(JetNodeType modifierList, TokenSet lookFor, TokenSet stopAt) {
         int lastId = findLastBefore(lookFor, stopAt, false);
-        createTruncatedBuilder(lastId).parseModifierList(modifierList, false);
+        createTruncatedBuilder(lastId).parseModifierList(modifierList, true);
     }
 
     /*

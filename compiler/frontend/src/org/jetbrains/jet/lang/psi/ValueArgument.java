@@ -17,10 +17,6 @@ public interface ValueArgument {
 
     boolean isNamed();
 
-    boolean isOut();
-
-    boolean isRef();
-
     @NotNull
     PsiElement asElement();
 

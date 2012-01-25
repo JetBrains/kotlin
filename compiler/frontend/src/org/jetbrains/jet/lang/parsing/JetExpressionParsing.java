@@ -1817,7 +1817,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * (SimpleName "=")? ("out" | "ref")? element
+     * (SimpleName "=")? element
      */
     private void parseValueArgument() {
         PsiBuilder.Marker argument = mark();
@@ -1829,7 +1829,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             argName.done(VALUE_ARGUMENT_NAME);
             advance(); // EQ
         }
-        if (at(OUT_KEYWORD) || at(REF_KEYWORD)) advance(); // REF or OUT
         parseExpression();
         argument.done(VALUE_ARGUMENT);
     }

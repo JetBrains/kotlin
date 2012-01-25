@@ -446,74 +446,7 @@ JetFile: FunctionTypes.jet
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  TYPEDEF
-    PsiElement(type)('type')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
-    PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
-    TYPE_REFERENCE
-      FUNCTION_TYPE
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            MODIFIER_LIST
-              PsiElement(ref)('ref')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          VALUE_PARAMETER
-            MODIFIER_LIST
-              PsiElement(ref)('ref')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace('  ')
-            TYPE_REFERENCE
-              FUNCTION_TYPE
-                VALUE_PARAMETER_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_PARAMETER
-                    MODIFIER_LIST
-                      PsiElement(ref)('ref')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
-                  PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                PsiElement(ARROW)('->')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(ARROW)('->')
-        PsiWhiteSpace('  ')
-        TYPE_REFERENCE
-          FUNCTION_TYPE
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              TUPLE_TYPE
-                PsiElement(HASH)('#')
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+  PsiComment(EOL_COMMENT)('//type f =  (ref foo, ref a :  (ref a) -> b) ->  () -> #()')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(type)('type')
