@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="jdk-headers:jar">
+    <output-path>$PROJECT_DIR$</output-path>
+    <root id="root">
+      <element id="archive" name="jdk-headers.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="jdk-headers" />
+      </element>
+    </root>
+  </artifact>
+</component>
