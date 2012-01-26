@@ -53,10 +53,31 @@
         </java>
     </target>
 
+    <target name="compileJDKHeaders" depends="jar">
+        <mkdir dir="${output}/classes/stdlib"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${output}/kotlin-compiler.jar"/>
+            </classpath>
+            <arg value="-src"/>
+            <arg value="${basedir}/jdk-headers/src"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/jdk-headers"/>
+            <arg value="-ignoreErrors"/>
+        </java>
+    </target>
+
     <target name="jarRT" depends="compile,compileStdlib">
         <jar destfile="${output}/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
+        </jar>
+    </target>
+
+    <target name="jarJDKHeaders" depends="compile,compileJDKHeaders">
+        <jar destfile="${output}/kotlin-jdk-headers.jar">
+            <fileset dir="${output}/classes/jdk-headers"/>
         </jar>
     </target>
 
@@ -80,7 +101,7 @@
         <delete dir="${output}"/>
     </target>
 
-    <target name="dist" depends="clean,jarRT,jar,buildToolsJar">
+    <target name="dist" depends="clean,jarRT,jarJDKHeaders,jar,buildToolsJar">
         <echo file="${output}/build.txt" message="${build.number}"/>
         <zip destfile="${output}/${output.name}.zip">
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
