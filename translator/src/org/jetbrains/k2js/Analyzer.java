@@ -22,6 +22,7 @@ import java.util.List;
  */
 public final class Analyzer {
 
+    //TODO: provide some generic way to access
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
             "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsSupport.jet",
             "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsDeclarations.kt"
@@ -39,19 +40,36 @@ public final class Analyzer {
     @NotNull
     public static BindingContext analyzeFiles(@NotNull List<JetFile> files) {
         final List<JetFile> jsLibFiles = getJsSupportStdLib();
+        List<JetFile> allFiles = allFiles(files, jsLibFiles);
+        Project project = getProject(files);
+        return AnalyzingUtils.analyzeFiles(project, JsConfiguration.jsLibConfiguration(project),
+                allFiles, notLibFiles(jsLibFiles), JetControlFlowDataTraceFactory.EMPTY);
+    }
+
+    @NotNull
+    private static Project getProject(@NotNull List<JetFile> files) {
+        assert !files.isEmpty();
+        return files.iterator().next().getProject();
+    }
+
+    @NotNull
+    private static List<JetFile> allFiles(@NotNull List<JetFile> files,
+                                          @NotNull List<JetFile> jsLibFiles) {
         List<JetFile> allFiles = new ArrayList<JetFile>();
         allFiles.addAll(files);
         allFiles.addAll(jsLibFiles);
-        assert !files.isEmpty();
-        Project project = files.iterator().next().getProject();
-        return AnalyzingUtils.analyzeFiles(project, new JsConfiguration(project),
-                allFiles, new Predicate<PsiFile>() {
+        return allFiles;
+    }
+
+    @NotNull
+    private static Predicate<PsiFile> notLibFiles(@NotNull final List<JetFile> jsLibFiles) {
+        return new Predicate<PsiFile>() {
             @Override
             public boolean apply(@Nullable PsiFile file) {
                 assert file instanceof JetFile;
                 return (!jsLibFiles.contains(file));
             }
-        }, JetControlFlowDataTraceFactory.EMPTY);
+        };
     }
 
     private static class JsConfiguration implements Configuration {
@@ -59,7 +77,7 @@ public final class Analyzer {
         @NotNull
         private Project project;
 
-        public static JsConfiguration createStandardConfiguration(@NotNull Project project) {
+        public static JsConfiguration jsLibConfiguration(@NotNull Project project) {
             return new JsConfiguration(project);
         }
 

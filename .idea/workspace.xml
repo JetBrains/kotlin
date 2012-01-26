@@ -10,20 +10,14 @@
   </component>
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/translator/testFiles/propertyAccess/cases/safeCallReturnsNullIfFails.kt" line="3" />
-    <bookmark url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" line="67" />
+    <bookmark url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" line="57" />
     <bookmark url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" line="155" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/testFiles/examples/cases/jquery.kt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/testFiles/libImplementations/jQuery.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../WebView/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../WebView/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StaticContext.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StaticContext.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -281,7 +275,7 @@
     <favorites_list name="k2js" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.46774197">
+    <splitter split-orientation="horizontal" split-proportion="0.43108505">
       <split-first>
         <leaf>
           <file leaf-file-name="Arrays.kt" pinned="false" current="false" current-in-tab="false">
@@ -347,14 +341,14 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Analyzer.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="Analyzer.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="45" column="32" selection-start="1651" selection-end="1651" vertical-scroll-proportion="-0.15295815">
+                <state line="24" column="46" selection-start="799" selection-end="799" vertical-scroll-proportion="0.4227994">
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#1164#1173#0" expanded="true" />
-                    <element signature="e#1537#1546#0" expanded="true" />
+                    <element signature="e#1169#1178#0" expanded="true" />
+                    <element signature="e#2182#2191#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -382,12 +376,12 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="94" column="83" selection-start="3705" selection-end="3705" vertical-scroll-proportion="0.4">
+                <state line="27" column="19" selection-start="897" selection-end="897" vertical-scroll-proportion="0.21398601">
                   <folding>
-                    <element signature="e#2356#2365#0" expanded="true" />
+                    <element signature="e#1904#1913#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -396,7 +390,7 @@
           <file leaf-file-name="JetFileUtils.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="57" column="8" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0">
+                <state line="30" column="0" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -514,9 +508,9 @@
         <option value="$PROJECT_DIR$/translator/testFiles/libImplementations/jQuery.js" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StaticContext.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java" />
       </list>
     </option>
   </component>
@@ -1330,7 +1324,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.6570605" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2709781" sideWeight="0.7463977" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2536023" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2536023" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CodeWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.0908605" sideWeight="0.7146974" order="2" side_tool="false" content_ui="combo" />
       <window_info id="ResolveWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1377,7 +1371,7 @@
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="test for one namespace defined in multiple files" />
+    <option name="LAST_COMMIT_MESSAGE" value="add configuration for using js backend &#10;refactor K2JSTranslator" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1390,7 +1384,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="switch to using ValueParameterDescriptor instead of JetParameter when translating function declarations&#10;implemented support for implicit 'it' parameter&#10;added 'clear' function to ArrayList temporary implementation" />
     <MESSAGE value="switch to using descriptors on call site&#10;default arguments support" />
     <MESSAGE value="ongoing refactoring" />
     <MESSAGE value="refactoring call translator" />
@@ -1415,6 +1408,7 @@
     <MESSAGE value="big refactoring for StandardClasses class" />
     <MESSAGE value="tests for expression as function" />
     <MESSAGE value="test for one namespace defined in multiple files" />
+    <MESSAGE value="add configuration for using js backend &#10;refactor K2JSTranslator" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1487,24 +1481,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="8" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="83" selection-start="3705" selection-end="3705" vertical-scroll-proportion="0.4">
-          <folding>
-            <element signature="e#2356#2365#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../Kotlin/jet/stdlib/ktSrc/jssupport/JsDeclarations.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="0" selection-start="17" selection-end="18" vertical-scroll-proportion="0.0">
@@ -1535,11 +1511,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="32" selection-start="1651" selection-end="1651" vertical-scroll-proportion="-0.15295815">
+        <state line="24" column="46" selection-start="799" selection-end="799" vertical-scroll-proportion="0.4227994">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1164#1173#0" expanded="true" />
-            <element signature="e#1537#1546#0" expanded="true" />
+            <element signature="e#1169#1178#0" expanded="true" />
+            <element signature="e#2182#2191#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/JetFileUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="0" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="19" selection-start="897" selection-end="897" vertical-scroll-proportion="0.21398601">
+          <folding>
+            <element signature="e#1904#1913#0" expanded="true" />
           </folding>
         </state>
       </provider>

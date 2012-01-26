@@ -29,7 +29,6 @@ public final class JetFileUtils {
         }
     });
 
-
     @NotNull
     public static String loadFile(@NotNull String path) throws IOException {
         return doLoadFile(path);
@@ -60,8 +59,10 @@ public final class JetFileUtils {
     private static PsiFile createFile(@NotNull String name, @NotNull String text) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(environment.getProject()))
+        PsiFile result = ((PsiFileFactoryImpl) PsiFileFactory.getInstance(environment.getProject()))
                 .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        assert result != null;
+        return result;
     }
 
 }
