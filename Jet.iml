@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/config" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system" />
+      <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system-idea" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
