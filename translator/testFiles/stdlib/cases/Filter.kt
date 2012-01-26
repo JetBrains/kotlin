@@ -43,11 +43,11 @@ private class FilterIterator<T>(val original: Iterator<T>, val filter: (T)-> Boo
                         if((filter)(candidate)) {
                             nextElement = candidate
                             state = 1
-                            return true
+                            true
                         }
                     }
                     state = 2
-                    return false
+                    false
                 }()}
             }
 
