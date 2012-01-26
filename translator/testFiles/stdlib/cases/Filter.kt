@@ -33,23 +33,24 @@ private class FilterIterator<T>(val original: Iterator<T>, val filter: (T)-> Boo
     var nextElement: T? = null
 
     override val hasNext: Boolean
-        get() =
-            when(state) {
-                1 -> true  // checked and next present
-                2 -> false // checked and next not present
-              else -> {{() : Boolean -> 
-                    while(original.hasNext) {
-                        val candidate = original.next()
-                        if((filter)(candidate)) {
-                            nextElement = candidate
-                            state = 1
-                            true
-                        }
-                    }
-                    state = 2
-                    false
-                }()}
-            }
+    get() {
+      if (state == 1) {
+          return true;
+      }
+      if (state == 2) {
+          return false;
+      }
+      while(original.hasNext) {
+         val candidate = original.next()
+          if((filter)(candidate)) {
+              nextElement = candidate
+              state = 1;
+              return true;
+          }
+      }
+        state = 2;
+        return false;
+    }
 
     override fun next(): T {
             val res = nextElement as T

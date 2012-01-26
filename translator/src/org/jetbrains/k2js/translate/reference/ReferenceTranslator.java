@@ -43,6 +43,7 @@ public final class ReferenceTranslator {
                                                              @NotNull TranslationContext context) {
 
         if (referencedDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+            assert context.hasQualifierForDescriptor(referencedDescriptor) : referencedDescriptor;
             return translateAsFQReference(referencedDescriptor, context);
         }
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);

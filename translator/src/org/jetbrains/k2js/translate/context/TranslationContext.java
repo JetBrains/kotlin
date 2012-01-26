@@ -43,7 +43,7 @@ public final class TranslationContext {
         return new TranslationContext(staticContext, DynamicContext.contextWithScope(newScope));
     }
 
-    // Note: Should be used if and only if scope has no corresponding descriptor
+    // Note: Should be used ONLY if scope has no corresponding descriptor
     @NotNull
     public TranslationContext innerJsScope(@NotNull JsScope enclosingScope) {
         return new TranslationContext(staticContext, dynamicContext.innerScope(enclosingScope));
