@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -16,7 +15,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author abreslav
@@ -73,26 +71,14 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
-            TypeSubstitutor substitutorForGenericSupertypes = getTypeSubstitutorForSupertypes();
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass.getPsiClass(), descriptor, staticMembers, substitutorForGenericSupertypes));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass.getPsiClass(), descriptor));
 
             allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass.getPsiClass(), staticMembers));
 
             allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass.getPsiClass(), staticMembers));
         }
         return allDescriptors;
-    }
-
-    private TypeSubstitutor getTypeSubstitutorForSupertypes() {
-        TypeSubstitutor substitutorForGenericSupertypes;
-        if (descriptor instanceof ClassDescriptor) {
-            substitutorForGenericSupertypes = semanticServices.getDescriptorResolver().createSubstitutorForGenericSupertypes((ClassDescriptor) descriptor);
-        }
-        else {
-            substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
-        }
-        return substitutorForGenericSupertypes;
     }
 
     private ClassifierDescriptor doGetClassifierDescriptor(String name) {

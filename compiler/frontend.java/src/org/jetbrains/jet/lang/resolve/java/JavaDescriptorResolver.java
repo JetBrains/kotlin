@@ -95,6 +95,7 @@ public class JavaDescriptorResolver {
         private Map<String, NamedMembers> namedMembersMap;
     }
 
+    /** Class with instance members */
     private static class ResolverClassData extends ResolverScopeData {
         private MutableClassDescriptorLite classDescriptor;
 
@@ -104,6 +105,7 @@ public class JavaDescriptorResolver {
         }
     }
 
+    /** Either package or class with static members */
     private static class ResolverNamespaceData extends ResolverScopeData {
         private JavaNamespaceDescriptor namespaceDescriptor;
 
@@ -1015,7 +1017,7 @@ public class JavaDescriptorResolver {
         namedMembers.propertyDescriptors = r;
     }
 
-    private void resolveNamedGroupFunctions(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, boolean staticMembers, NamedMembers namedMembers, String functionName) {
+    private void resolveNamedGroupFunctions(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers) {
         if (namedMembers.functionDescriptors != null) {
             return;
         }
@@ -1027,7 +1029,10 @@ public class JavaDescriptorResolver {
 
         Set<FunctionDescriptor> functionDescriptors = new HashSet<FunctionDescriptor>(namedMembers.methods.size());
         for (PsiMethodWrapper method : namedMembers.methods) {
-            functionDescriptors.add(resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutorForGenericSuperclasses, method));
+            FunctionDescriptor function = resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutorForGenericSuperclasses, method);
+            if (function != null) {
+                functionDescriptors.add(function);
+            }
         }
         namedMembers.functionDescriptors = functionDescriptors;
     }
@@ -1073,12 +1078,12 @@ public class JavaDescriptorResolver {
         } else {
             typeSubstitutor = TypeSubstitutor.EMPTY;
         }
-        resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, staticMembers, namedMembers, methodName);
+        resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, namedMembers);
         
         return namedMembers.functionDescriptors;
     }
 
-    public TypeSubstitutor createSubstitutorForGenericSupertypes(@Nullable ClassDescriptor classDescriptor) {
+    private TypeSubstitutor createSubstitutorForGenericSupertypes(@Nullable ClassDescriptor classDescriptor) {
         TypeSubstitutor typeSubstitutor;
         if (classDescriptor != null) {
             typeSubstitutor = TypeUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
@@ -1230,18 +1235,23 @@ public class JavaDescriptorResolver {
         return substitutedFunctionDescriptor;
     }
     
-    public List<FunctionDescriptor> resolveMethods(PsiClass psiClass, DeclarationDescriptor containingDeclaration, boolean staticMembers, TypeSubstitutor substitutorForGenericSupertypes) {
-        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
-        for (HierarchicalMethodSignature signature : psiClass.getVisibleSignatures()) {
-            PsiMethod method = signature.getMethod();
-            if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
-                continue;
-            }
-            FunctionDescriptor functionDescriptor = semanticServices.getDescriptorResolver().resolveMethodToFunctionDescriptor(containingDeclaration, psiClass, substitutorForGenericSupertypes, new PsiMethodWrapper(method));
-            if (functionDescriptor != null) {
-                functions.add(functionDescriptor);
-            }
+    public List<FunctionDescriptor> resolveMethods(PsiClass psiClass, DeclarationDescriptor containingDeclaration) {
+        ResolverScopeData scopeData = getResolverScopeData(containingDeclaration, new PsiClassWrapper(psiClass));
+
+        TypeSubstitutor substitutorForGenericSupertypes;
+        if (scopeData instanceof ResolverClassData) {
+            substitutorForGenericSupertypes = createSubstitutorForGenericSupertypes(((ResolverClassData) scopeData).classDescriptor);
+        } else {
+            substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
         }
+
+        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
+        
+        for (NamedMembers namedMembers : scopeData.namedMembersMap.values()) {
+            resolveNamedGroupFunctions(containingDeclaration, psiClass, substitutorForGenericSupertypes, namedMembers);
+            functions.addAll(namedMembers.functionDescriptors);
+        }
+
         return functions;
     }
 
