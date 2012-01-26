@@ -1,3 +1,3 @@
 package test
 
-fun <A> cuatro() where A : java.lang.CharSequence, A : java.lang.Number = 1
+fun <A> cuatro() where A : java.io.Serializable, A : java.lang.Number = 1

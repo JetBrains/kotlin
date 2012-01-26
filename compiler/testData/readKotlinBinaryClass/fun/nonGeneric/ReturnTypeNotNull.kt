@@ -1,3 +1,3 @@
 package test
 
-fun ff(): java.lang.CharSequence = throw Exception()
+fun ff(): java.lang.Integer = throw Exception()

@@ -1,3 +1,3 @@
 package test
 
-fun ff(): java.lang.CharSequence? = null
+fun ff(): java.lang.Integer? = null

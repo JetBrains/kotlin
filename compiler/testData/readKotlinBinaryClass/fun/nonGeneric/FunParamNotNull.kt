@@ -1,3 +1,3 @@
 package test
 
-fun fff(a: java.lang.CharSequence) = 1
+fun fff(a: java.lang.Integer) = 1

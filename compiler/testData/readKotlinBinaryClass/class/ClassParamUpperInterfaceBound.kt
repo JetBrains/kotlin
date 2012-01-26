@@ -1,3 +1,3 @@
 package test
 
-class Clock<A : java.lang.CharSequence>
+class Clock<A : java.io.Serializable>
