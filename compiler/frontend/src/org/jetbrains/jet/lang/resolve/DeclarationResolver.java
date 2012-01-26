@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT;
-import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION;
 
 /**
 * @author abreslav
@@ -45,20 +43,23 @@ public class DeclarationResolver {
     }
 
     private void resolveAnnotationStubsOnClassesAndConstructors() {
+        AnnotationResolver annotationResolver = new AnnotationResolver(context.getSemanticServices(), context.getTrace());
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
-            MutableClassDescriptor mutableClassDescriptor = entry.getValue();
+            MutableClassDescriptor descriptor = entry.getValue();
+            resolveAnnotationsForClassOrObject(annotationResolver, jetClass, descriptor);
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
+            JetObjectDeclaration objectDeclaration = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
+            resolveAnnotationsForClassOrObject(annotationResolver, objectDeclaration, descriptor);
+        }
+    }
 
-            JetModifierList modifierList = jetClass.getModifierList();
-            if (modifierList != null) {
-                List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
-                for (JetAnnotationEntry annotationEntry : annotationEntries) {
-                    AnnotationDescriptor annotationDescriptor = context.getTrace().get(ANNOTATION, annotationEntry);
-                    if (annotationDescriptor != null) {
-                        annotationResolver.resolveAnnotationStub(mutableClassDescriptor.getScopeForSupertypeResolution(), annotationEntry, annotationDescriptor);
-                    }
-                }
-            }
+    private void resolveAnnotationsForClassOrObject(AnnotationResolver annotationResolver, JetClassOrObject jetClass, MutableClassDescriptor descriptor) {
+        JetModifierList modifierList = jetClass.getModifierList();
+        if (modifierList != null) {
+            descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotations(descriptor.getScopeForSupertypeResolution(), modifierList.getAnnotationEntries()));
         }
     }
 
