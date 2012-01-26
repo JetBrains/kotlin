@@ -99,6 +99,7 @@
 
     <target name="clean">
         <delete dir="${output}"/>
+        <delete dir="${basedir}/bootstrap.compiler"/>
     </target>
 
     <target name="dist" depends="clean,jarRT,jarJDKHeaders,jar,buildToolsJar">

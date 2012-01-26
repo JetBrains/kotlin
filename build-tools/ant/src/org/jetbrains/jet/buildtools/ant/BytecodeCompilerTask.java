@@ -16,28 +16,30 @@ import java.io.File;
  */
 public class BytecodeCompilerTask extends Task {
 
-    private final BytecodeCompiler compiler = new BytecodeCompiler();
+    private boolean includeRuntime = true;
+    private String  stdlib;
 
     private File    module;
     private File    srcdir;
     private File    file;
     private File    destdir;
     private File    destjar;
-    private boolean includeRuntime = true;
-    private boolean excludeStdlib  = false;
 
-    public void setModule  ( File module  ) { this.module  = module;  }
-    public void setSrcdir  ( File srcdir  ) { this.srcdir  = srcdir;  }
-    public void setFile    ( File file    ) { this.file    = file;    }
-    public void setDestdir ( File destdir ) { this.destdir = destdir; }
-    public void setDestjar ( File destjar ) { this.destjar = destjar; }
+
+    public void setStdlib  ( String stdlib ) { this.stdlib  = stdlib;  }
+    public void setModule  ( File module   ) { this.module  = module;  }
+    public void setSrcdir  ( File srcdir   ) { this.srcdir  = srcdir;  }
+    public void setFile    ( File file     ) { this.file    = file;    }
+    public void setDestdir ( File destdir  ) { this.destdir = destdir; }
+    public void setDestjar ( File destjar  ) { this.destjar = destjar; }
 
     public void setIncludeRuntime ( boolean includeRuntime ) { this.includeRuntime = includeRuntime; }
-    public void setExcludeStdlib  ( boolean excludeStdlib  ) { this.excludeStdlib  = excludeStdlib;  }
 
 
     @Override
     public void execute() {
+
+        final BytecodeCompiler compiler = new BytecodeCompiler( this.stdlib );
 
         if (( this.srcdir != null ) || ( this.file != null )) {
 
@@ -51,10 +53,10 @@ public class BytecodeCompilerTask extends Task {
             log( String.format( "[%s] => [%s]", src, dest ));
 
             if ( this.destdir != null ) {
-                compiler.sourcesToDir( src, dest, this.excludeStdlib );
+                compiler.sourcesToDir( src, dest );
             }
             else {
-                compiler.sourcesToJar( src, dest, this.includeRuntime, this.excludeStdlib );
+                compiler.sourcesToJar( src, dest, this.includeRuntime );
             }
         }
         else if ( this.module != null ) {

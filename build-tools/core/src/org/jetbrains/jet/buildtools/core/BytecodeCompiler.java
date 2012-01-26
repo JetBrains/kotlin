@@ -8,19 +8,14 @@ import org.jetbrains.jet.compiler.CompileEnvironment;
  */
 public class BytecodeCompiler {
 
-    private final CompileEnvironment ENV = createCompileEnvironment();
+    private final CompileEnvironment ENV;
 
 
-    public BytecodeCompiler () {
-    }
-
-
-    /**
-     * Creates and initializes new {@link CompileEnvironment} instance.
-     * @return new {@link CompileEnvironment} instance
-     */
-    private CompileEnvironment createCompileEnvironment () {
-        return new CompileEnvironment();
+    public BytecodeCompiler ( String stdlib ) {
+        ENV = new CompileEnvironment();
+        if ( stdlib != null ) {
+            ENV.setStdlib( stdlib );
+        }
     }
 
 
@@ -39,10 +34,9 @@ public class BytecodeCompiler {
      *
      * @param source        compilation source (directory or file)
      * @param destination   compilation destination
-     * @param excludeStdlib whether Kotlin standard library is excluded in compilation
      */
-    public void sourcesToDir ( String source, String destination, boolean excludeStdlib ) {
-        boolean success = ENV.compileBunchOfSources( source, null, destination, true);
+    public void sourcesToDir ( String source, String destination ) {
+        boolean success = ENV.compileBunchOfSources( source, null, destination, true );
         if ( ! success ) {
             throw new RuntimeException( compilationError( source ));
         }
@@ -55,10 +49,9 @@ public class BytecodeCompiler {
      * @param source         compilation source (directory or file)
      * @param jar            compilation destination jar
      * @param includeRuntime whether Kotlin runtime library is included in destination jar
-     * @param excludeStdlib whether Kotlin standard library is excluded in compilation
      */
-    public void sourcesToJar ( String source, String jar, boolean includeRuntime, boolean excludeStdlib ) {
-        boolean success = ENV.compileBunchOfSources( source, jar, null, includeRuntime);
+    public void sourcesToJar ( String source, String jar, boolean includeRuntime ) {
+        boolean success = ENV.compileBunchOfSources( source, jar, null, includeRuntime );
         if ( ! success ) {
             throw new RuntimeException( compilationError( source ));
         }

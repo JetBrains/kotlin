@@ -43,13 +43,11 @@
                                     <antcall target="dist"/>
                                 </then>
                             </if>
-
-                            <unzip src  = "${output}/${output.name}.zip"
-                                   dest = "${kotlin-home}"/>
-                            <move todir = "${kotlin-home}">
-                                <fileset dir = "${kotlin-home}/kotlinc"/>
-                            </move>
-                            <delete dir = "${kotlin-home}/kotlinc" failonerror = "true"/>
+                            <delete dir="${bootstrap-dir}" failonerror="true"/>
+                            <mkdir  dir="${bootstrap-dir}"/>
+                            <copy file="${output}/${output.name}.zip" todir="${bootstrap-dir}"/>
+                            <ant antfile="${basedir}/bootstrap.xml"/>
+                            <define-kotlinc/> <!-- Recursive invocation, will use bootstrapped compiler this time -->
                         </else>
                     </if>
                 </then>
@@ -60,7 +58,6 @@
                     <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
                 </classpath>
             </taskdef>
-
         </sequential>
     </macrodef>
 
@@ -77,8 +74,11 @@
 
     <!-- Runs <kotlinc> create a *.class files in directory -->
     <macrodef name="kotlinc-dir">
-        <attribute name="file"   default=""/>
-        <attribute name="srcdir" default=""/>
+        <attribute name="file"           default=""/>
+        <attribute name="srcdir"         default=""/>
+        <attribute name="includeRuntime" default="true"/>
+        <attribute name="stdlib"         default="${kotlin-home}/lib/kotlin-runtime.jar"/>
+
         <sequential>
 
             <cleanup/>
@@ -86,10 +86,10 @@
             <if>
                 <equals arg1="@{file}" arg2=""/>
                 <then>
-                    <kotlinc srcdir = "@{srcdir}" destdir = "${tests-dir}" />
+                    <kotlinc srcdir = "@{srcdir}" destdir = "${tests-dir}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                 </then>
                 <else>
-                    <kotlinc file   = "@{file}"   destdir = "${tests-dir}" />
+                    <kotlinc file   = "@{file}"   destdir = "${tests-dir}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                 </else>
             </if>
         </sequential>
@@ -98,9 +98,11 @@
 
     <!-- Runs <kotlinc> to create a *.class files in a jar -->
     <macrodef name="kotlinc-jar">
-        <attribute name="file"   default=""/>
-        <attribute name="srcdir" default=""/>
-        <attribute name="module" default=""/>
+        <attribute name="file"           default=""/>
+        <attribute name="srcdir"         default=""/>
+        <attribute name="module"         default=""/>
+        <attribute name="includeRuntime" default="true"/>
+        <attribute name="stdlib"         default="${kotlin-home}/lib/kotlin-runtime.jar"/>
         <sequential>
 
             <cleanup/>
@@ -110,14 +112,14 @@
                     <equals arg1="@{file}" arg2=""/>
                 </not>
                 <then>
-                    <kotlinc file = "@{file}" destjar = "${tests-jar}"/>
+                    <kotlinc file = "@{file}" destjar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                 </then>
                 <elseif>
                     <not>
                         <equals arg1="@{srcdir}" arg2=""/>
                     </not>
                     <then>
-                        <kotlinc srcdir = "@{srcdir}" destjar = "${tests-jar}"/>
+                        <kotlinc srcdir = "@{srcdir}" destjar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                     </then>
                 </elseif>
                 <elseif>
@@ -125,7 +127,7 @@
                         <equals arg1="@{module}" arg2=""/>
                     </not>
                     <then>
-                        <kotlinc module = "@{module}" destjar = "${tests-jar}"/>
+                        <kotlinc module = "@{module}" destjar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                     </then>
                 </elseif>
                 <else>
@@ -322,15 +324,6 @@
             <fileset dir = "${output}/classes/buildTools"/>
             <fileset dir = "${basedir}/build-tools/ant/src" includes="**/*.xml"/>
         </jar>
-    </target>
-
-
-    <!-- Invoked manually in a dev environment - simulates a bootstrap environment as in TeamCity build -->
-    <target name="buildToolsBootstrap">
-        <delete dir="${bootstrap-dir}" failonerror="true"/>
-        <mkdir  dir="${bootstrap-dir}"/>
-        <copy file="${output}/${output.name}.zip" todir="${bootstrap-dir}"/>
-        <ant antfile="${basedir}/bootstrap.xml"/>
     </target>
 
 
