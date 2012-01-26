@@ -726,6 +726,13 @@ public class JetTypeMapper {
         else if(container instanceof JetClass) {
             ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);
             baseName = mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+
+            ClassDescriptor myClass = bindingContext.get(BindingContext.CLASS, expression);
+            if(CodegenUtil.isClassObject(myClass)) {
+                return mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + "$ClassObject$";
+            }
+            else
+                baseName = classNameForAnonymousClass((JetElement) container);
         }
         else {
             baseName = classNameForAnonymousClass((JetElement) container);
