@@ -275,6 +275,17 @@ public class JetControlFlowProcessor {
                     builder.unsupported(expression); // TODO
                 }
             }
+            else if (operationType == JetTokens.ELVIS) {
+                builder.read(expression);
+                value(expression.getLeft(), false);
+                value(expression.getOperationReference(), false);
+                Label afterElvis = builder.createUnboundLabel();
+                builder.jumpOnTrue(afterElvis);
+                if (right != null) {
+                    value(right, false);
+                }
+                builder.bindLabel(afterElvis);
+            }
             else {
                 value(expression.getLeft(), false);
                 if (right != null) {
