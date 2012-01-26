@@ -12,7 +12,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -33,6 +32,8 @@ import java.util.StringTokenizer;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getNamespaceDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNamespace;
+
+//TODO: clean up the code
 
 /**
  * @author Pavel Talanov
@@ -72,11 +73,27 @@ public final class K2JSTranslator {
     }
 
     public void translateFile(@NotNull String inputFile, @NotNull String outputFile) throws Exception {
-        JetFile PsiFile = loadPsiFile(inputFile);
+        JetFile psiFile = loadPsiFile(inputFile);
         // includeRtJar();
-        JsProgram program = generateProgram(PsiFile);
+        JsProgram program = generateProgram(Arrays.asList(psiFile));
         CodeGenerator generator = new CodeGenerator();
         generator.generateToFile(program, new File(outputFile));
+    }
+
+    public void translateFiles(@NotNull List<String> inputFiles, @NotNull String outputFile) throws Exception {
+        List<JetFile> psiFiles = createPsiFileList(inputFiles);
+        JsProgram program = generateProgram(psiFiles);
+        CodeGenerator generator = new CodeGenerator();
+        generator.generateToFile(program, new File(outputFile));
+    }
+
+    @NotNull
+    private List<JetFile> createPsiFileList(@NotNull List<String> inputFiles) {
+        List<JetFile> psiFiles = new ArrayList<JetFile>();
+        for (String inputFile : inputFiles) {
+            psiFiles.add(loadPsiFile(inputFile));
+        }
+        return psiFiles;
     }
 
     @NotNull
@@ -91,37 +108,34 @@ public final class K2JSTranslator {
 
     @NotNull
     private String generateProgramCode(@NotNull JetFile psiFile) {
-        JsProgram program = generateProgram(psiFile);
+        JsProgram program = generateProgram(Arrays.asList(psiFile));
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
     }
 
     @NotNull
-    private JsProgram generateProgram(@NotNull JetFile psiFile) {
+    private JsProgram generateProgram(@NotNull List<JetFile> psiFiles) {
 
         List<JetFile> files = getJsSupportStdLib();
-        files.add(psiFile);
-        bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(psiFile.getProject(), files, new Predicate<PsiFile>() {
-            @Override
-            public boolean apply(@Nullable PsiFile file) {
-                for (String libFileName : LIB_FILE_NAMES) {
-                    if (libFileName.contains(file.getName().substring(0, file.getName().lastIndexOf('.')))) {
-                        return false;
+        files.addAll(psiFiles);
+        bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration
+                (psiFiles.iterator().next().getProject(), files, new Predicate<PsiFile>() {
+                    @Override
+                    public boolean apply(@Nullable PsiFile file) {
+                        for (String libFileName : LIB_FILE_NAMES) {
+                            if (libFileName.contains(file.getName().substring(0, file.getName().lastIndexOf('.')))) {
+                                return false;
+                            }
+                        }
+                        return true;
                     }
-                }
-                return true;
-            }
-        }, JetControlFlowDataTraceFactory.EMPTY);
+                }, JetControlFlowDataTraceFactory.EMPTY);
+        for (PsiFile file : psiFiles) {
+            AnalyzingUtils.checkForSyntacticErrors(file);
+            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+        }
         assert bindingContext != null;
-        AnalyzingUtils.checkForSyntacticErrors(psiFile);
-        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-
-        return Translation.generateAst(bindingContext, psiFile, environment.getProject());
-    }
-
-    private void includeRtJar() {
-        final File rtJar = CompileEnvironment.findRtJar();
-        environment.addToClasspath(rtJar);
+        return Translation.generateAst(bindingContext, psiFiles.iterator().next(), environment.getProject());
     }
 
     @NotNull

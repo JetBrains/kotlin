@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO: spread the test* methods amongst classes that actually use them
 
 /**
  * @author Pavel Talanov
@@ -71,8 +73,26 @@ public abstract class TranslationTest {
                 new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
+    protected void testMultiFile(String dirName, String namespaceName,
+                                 String functionName, Object expectedResult) throws Exception {
+        translateFilesInDir(dirName);
+        runRhinoTest(generateFilenameList(getOutputFilePath(dirName + ".kt")),
+                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+    }
+
     protected void translateFile(String filename) throws Exception {
         (new K2JSTranslator()).translateFile(getInputFilePath(filename), getOutputFilePath(filename));
+    }
+
+    protected void translateFilesInDir(String dirName) throws Exception {
+        String dirPath = getInputFilePath(dirName);
+        File dir = new File(dirPath);
+        List<String> fullFilePaths = new ArrayList<String>();
+        for (String fileName : dir.list()) {
+            fullFilePaths.add(getInputFilePath(dirName) + "\\" + fileName);
+        }
+        assert dir.isDirectory();
+        (new K2JSTranslator()).translateFiles(fullFilePaths, getOutputFilePath(dirName + ".kt"));
     }
 
     protected List<String> generateFilenameList(String inputFile) {
