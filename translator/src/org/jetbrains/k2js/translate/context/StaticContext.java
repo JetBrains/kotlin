@@ -22,7 +22,8 @@ public class StaticContext {
         NamingScope scope = NamingScope.rootScope(jsRootScope);
         Declarations declarations = Declarations.newInstance(scope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
-        StandardClasses standardClasses = StandardClasses.bindImplementations(library, namer.getKotlinScope());
+        StandardClasses standardClasses =
+                StandardClasses.bindImplementations(namer.getKotlinScope(), jsRootScope);
         return new StaticContext(program, bindingContext, declarations, aliaser,
                 namer, intrinsics, standardClasses, scope);
     }

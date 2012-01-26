@@ -5,21 +5,15 @@ import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getContainingDeclaration;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
 
 /**
  * @author Pavel Talanov
  */
-//TODO: REFACTOR FFS
 public final class StandardClasses {
 
     private final class Builder {
@@ -27,7 +21,7 @@ public final class StandardClasses {
         @Nullable
         private /*var*/ String currentFQName = null;
         @Nullable
-        private /*var*/ String currentKotlinName = null;
+        private /*var*/ String currentObjectName = null;
 
         @NotNull
         public Builder forFQ(@NotNull String classFQName) {
@@ -36,107 +30,131 @@ public final class StandardClasses {
         }
 
         @NotNull
-        public Builder kotlinName(@NotNull String kotlinName) {
-            assert currentFQName != null;
-            currentKotlinName = kotlinName;
-            declareStandardTopLevelObject(currentFQName, kotlinName);
+        public Builder kotlinClass(@NotNull String kotlinName) {
+            kotlinTopLevelObject(kotlinName);
             constructor();
+            return this;
+        }
+
+        @NotNull
+        public Builder externalClass(@NotNull String nativeName) {
+            externalObject(nativeName);
+            constructor();
+            return this;
+        }
+
+        @NotNull
+        public Builder externalFunction(@NotNull String nativeName) {
+            externalObject(nativeName);
+            return this;
+        }
+
+        private void externalObject(@NotNull String nativeName) {
+            currentObjectName = nativeName;
+            assert currentFQName != null;
+            declareExternalTopLevelObject(currentFQName, nativeName);
+        }
+
+        private void kotlinTopLevelObject(@NotNull String kotlinName) {
+            assert currentFQName != null;
+            currentObjectName = kotlinName;
+            declareKotlinObject(currentFQName, kotlinName);
+        }
+
+        @NotNull
+        public Builder kotlinFunction(@NotNull String kotlinName) {
+            kotlinTopLevelObject(kotlinName);
             return this;
         }
 
         @NotNull
         private Builder constructor() {
             assert currentFQName != null;
-            assert currentKotlinName != null;
-            declareStandardInnerDeclaration(currentFQName, "<init>", currentKotlinName);
+            assert currentObjectName != null;
+            declareInner(currentFQName, "<init>", currentObjectName);
             return this;
         }
 
         @NotNull
-        public Builder methods(String... methodNames) {
+        public Builder methods(@NotNull String... methodNames) {
             assert currentFQName != null;
             declareMethods(currentFQName, methodNames);
             return this;
         }
 
         @NotNull
-        public Builder properties(String... propertyNames) {
+        public Builder properties(@NotNull String... propertyNames) {
             assert currentFQName != null;
             declareReadonlyProperties(currentFQName, propertyNames);
             return this;
         }
     }
 
-    //TODO: move declaration code to some kind of builder
     @NotNull
-    public static StandardClasses bindImplementations(@NotNull JetStandardLibrary standardLibrary,
-                                                      @NotNull JsScope kotlinObjectScope) {
-        StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
-        declareJetObjects(standardLibrary, standardClasses);
+    public static StandardClasses bindImplementations(@NotNull JsScope kotlinObjectScope,
+                                                      @NotNull JsScope rootScope) {
+        StandardClasses standardClasses = new StandardClasses(kotlinObjectScope, rootScope);
+        declareJetObjects(standardClasses);
         declareJavaUtilObjects(standardClasses);
         declareTopLevelFunctions(standardClasses);
-        declareInteger(standardClasses);
+        declareJQuery(standardClasses);
         return standardClasses;
+    }
+
+    private static void declareJQuery(@NotNull StandardClasses standardClasses) {
+        standardClasses.declare().forFQ("jquery.JQuery").externalClass("jQuery")
+                .methods("addClass", "attr", "hasClass");
+        standardClasses.declare().forFQ("jquery").externalFunction("jq");
     }
 
     //TODO: test all the methods
     private static void declareJavaUtilObjects(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("java.util.ArrayList").kotlinName("ArrayList")
+        standardClasses.declare().forFQ("java.util.ArrayList").kotlinClass("ArrayList")
                 .methods("size", "add", "get", "isEmpty", "set", "remove", "addAll", "contains", "clear", "iterator");
 
-        standardClasses.declare().forFQ("java.util.Collection").kotlinName("Collection")
+        standardClasses.declare().forFQ("java.util.Collection").kotlinClass("Collection")
                 .methods("iterator");
 
-        standardClasses.declare().forFQ("java.util.HashMap").kotlinName("HashMap")
+        standardClasses.declare().forFQ("java.util.HashMap").kotlinClass("HashMap")
                 .methods("size", "put", "get", "isEmpty", "remove", "addAll", "clear", "keySet");
 
-        standardClasses.declare().forFQ("java.util.StringBuilder").kotlinName("StringBuilder")
+        standardClasses.declare().forFQ("java.util.StringBuilder").kotlinClass("StringBuilder")
                 .methods("append", "toString");
 
-        standardClasses.declare().forFQ("java.util.Map").kotlinName("Map")
+        standardClasses.declare().forFQ("java.util.Map").kotlinClass("Map")
                 .methods("size", "put", "get", "isEmpty", "remove", "addAll", "clear", "keySet");
+
+        standardClasses.declare().forFQ("Integer").kotlinClass("Integer")
+                .methods("parseInt");
     }
 
-    private static void declareJetObjects(@NotNull JetStandardLibrary standardLibrary,
-                                          @NotNull StandardClasses standardClasses) {
-        declareArray(standardClasses, standardLibrary);
+    private static void declareJetObjects(@NotNull StandardClasses standardClasses) {
+        standardClasses.declare().forFQ("jet.Array").kotlinClass("Array")
+                .properties("size", "indices");
 
-        standardClasses.declare().forFQ("jet.Iterator").kotlinName("ArrayIterator")
+        standardClasses.declare().forFQ("jet.Array").kotlinFunction("array");
+
+        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("ArrayIterator")
                 .methods("next", "hasNext");
 
-        standardClasses.declare().forFQ("jet.IntRange").kotlinName("NumberRange")
+        standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "size", "end", "reversed");
 
-        standardClasses.declare().forFQ("jet.String").kotlinName("String").
+        standardClasses.declare().forFQ("jet.String").kotlinClass("String").
                 properties("length");
     }
 
-    //TODO: refactor
     private static void declareTopLevelFunctions(@NotNull StandardClasses standardClasses) {
-        String parseIntFQName = "js.parseInt";
-        standardClasses.declareStandardTopLevelObject(parseIntFQName, "parseInt");
-        String printlnFQName = "js.println";
-        standardClasses.declareStandardTopLevelObject(printlnFQName, "println");
-        String printFQName = "js.print";
-        standardClasses.declareStandardTopLevelObject(printFQName, "print");
-    }
-
-    private static void declareInteger(@NotNull StandardClasses standardClasses) {
-        String integerFQName = "Integer";
-        standardClasses.declareStandardTopLevelObject(integerFQName, "Integer");
-        standardClasses.declareStandardInnerDeclaration(integerFQName, "parseInt", "parseInt");
-    }
-
-    private static void declareArray(@NotNull StandardClasses standardClasses,
-                                     @NotNull JetStandardLibrary standardLibrary) {
-        standardClasses.declare().forFQ("jet.Array").kotlinName("Array")
-                .properties("size", "indices");
-        FunctionDescriptor nullConstructorFunction = getFunctionByName(standardLibrary.getLibraryScope(), "Array");
-        standardClasses.declareTopLevel(nullConstructorFunction, "array");
+        standardClasses.declare().forFQ("js.parseInt").kotlinFunction("parseInt");
+        standardClasses.declare().forFQ("js.println").kotlinFunction("println");
+        standardClasses.declare().forFQ("js.print").kotlinFunction("print");
     }
 
     @NotNull
     private final JsScope kotlinScope;
+
+    @NotNull
+    private final JsScope rootScope;
 
     @NotNull
     private final Map<String, JsName> nameMap = new HashMap<String, JsName>();
@@ -144,34 +162,34 @@ public final class StandardClasses {
     @NotNull
     private final Map<String, JsScope> scopeMap = new HashMap<String, JsScope>();
 
-    private StandardClasses(@NotNull JsScope kotlinScope) {
+    private StandardClasses(@NotNull JsScope kotlinScope, @NotNull JsScope rootScope) {
+        this.rootScope = rootScope;
         this.kotlinScope = kotlinScope;
     }
 
-    private void declareTopLevel(@NotNull DeclarationDescriptor descriptor,
-                                 @NotNull String kotlinLibName) {
-        declareStandardTopLevelObject(DescriptorUtils.getFQName(descriptor), kotlinLibName);
-    }
-
-    private void declareStandardTopLevelObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
-        JsName declaredName = kotlinScope.declareName(kotlinLibName);
+    private void declareTopLevelObjectInScope(@NotNull JsScope scope,
+                                              @NotNull String fullQualifiedName, @NotNull String name) {
+        JsName declaredName = scope.declareName(name);
         declaredName.setObfuscatable(false);
         nameMap.put(fullQualifiedName, declaredName);
-        scopeMap.put(fullQualifiedName, new JsScope(kotlinScope, "standard object " + kotlinLibName));
+        scopeMap.put(fullQualifiedName, new JsScope(scope, "scope for " + name));
     }
 
-    private void declareInner(@NotNull DeclarationDescriptor descriptor,
-                              @NotNull String kotlinLibName) {
-        String containingFQName = DescriptorUtils.getFQName(getContainingDeclaration(descriptor));
-        declareStandardInnerDeclaration(containingFQName, descriptor.getName(), kotlinLibName);
+    private void declareKotlinObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
+        declareTopLevelObjectInScope(kotlinScope, fullQualifiedName, kotlinLibName);
     }
 
-    private void declareStandardInnerDeclaration(@NotNull String fullQualifiedClassName,
-                                                 @NotNull String shortMethodName,
-                                                 @NotNull String kotlinLibName) {
+    private void declareExternalTopLevelObject(@NotNull String fullQualifiedName, @NotNull String externalObjectName) {
+        declareTopLevelObjectInScope(rootScope, fullQualifiedName, externalObjectName);
+    }
+
+    private void declareInner(@NotNull String fullQualifiedClassName,
+                              @NotNull String shortMethodName,
+                              @NotNull String javascriptName) {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
+        assert classScope != null;
         String fullQualifiedMethodName = fullQualifiedClassName + "." + shortMethodName;
-        JsName declaredName = classScope.declareName(kotlinLibName);
+        JsName declaredName = classScope.declareName(javascriptName);
         declaredName.setObfuscatable(false);
         nameMap.put(fullQualifiedMethodName, declaredName);
     }
@@ -179,14 +197,14 @@ public final class StandardClasses {
     private void declareMethods(@NotNull String classFQName,
                                 @NotNull String... methodNames) {
         for (String methodName : methodNames) {
-            declareStandardInnerDeclaration(classFQName, methodName, methodName);
+            declareInner(classFQName, methodName, methodName);
         }
     }
 
     private void declareReadonlyProperties(@NotNull String classFQName,
                                            @NotNull String... propertyNames) {
         for (String propertyName : propertyNames) {
-            declareStandardInnerDeclaration(classFQName, propertyName, propertyName);
+            declareInner(classFQName, propertyName, propertyName);
 
         }
     }
