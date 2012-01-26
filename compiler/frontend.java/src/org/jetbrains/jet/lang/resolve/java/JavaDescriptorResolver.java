@@ -243,12 +243,53 @@ public class JavaDescriptorResolver {
             // Example:
             // class Kotlin() : Java() {}
             // abstract public class Java {}
-            if (!psiClass.isInterface() || psiClass.isAnnotationType()) {
+            if (!psiClass.isInterface()) {
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                         classData.classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false);
                 constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), Modality.FINAL, classData.classDescriptor.getVisibility());
+                constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
+                classData.classDescriptor.addConstructor(constructorDescriptor, null);
+                semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
+            }
+            if (psiClass.isAnnotationType()) {
+                // A constructor for an annotation type takes all the "methods" in the @interface as parameters
+                ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                        classData.classDescriptor,
+                        Collections.<AnnotationDescriptor>emptyList(),
+                        false);
+
+                List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+                PsiMethod[] methods = psiClass.getMethods();
+                for (int i = 0; i < methods.length; i++) {
+                    PsiMethod method = methods[i];
+                    if (method instanceof PsiAnnotationMethod) {
+                        PsiAnnotationMethod annotationMethod = (PsiAnnotationMethod) method;
+                        assert annotationMethod.getParameterList().getParameters().length == 0;
+
+                        PsiType returnType = annotationMethod.getReturnType();
+
+                        // We take the following heuristical convention:
+                        // if the last method of the @interface is an array, we convert it into a vararg
+                        JetType varargElementType = null;
+                        if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
+                            varargElementType = semanticServices.getTypeTransformer().transformToType(((PsiArrayType) returnType).getComponentType());
+                        }
+
+                        valueParameters.add(new ValueParameterDescriptorImpl(
+                                constructorDescriptor,
+                                i,
+                                Collections.<AnnotationDescriptor>emptyList(),
+                                method.getName(),
+                                false,
+                                semanticServices.getTypeTransformer().transformToType(returnType),
+                                annotationMethod.getDefaultValue() != null,
+                                varargElementType));
+                    }
+                }
+
+                constructorDescriptor.initialize(typeParameters, valueParameters, Modality.FINAL, classData.classDescriptor.getVisibility());
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
