@@ -37,6 +37,9 @@ public class KotlinCompiler {
 
         @Argument(value = "help", alias = "h", description = "show help")
         public boolean help;
+
+        @Argument(value = "ignoreErrors", description = "Emit byte code even if there are compilation errors (not recommended)")
+        public boolean ignoreErrors;
     }
 
     private static void usage(PrintStream target) {
@@ -77,6 +80,7 @@ public class KotlinCompiler {
         }
 
         CompileEnvironment environment = new CompileEnvironment();
+        environment.setIgnoreErrors(arguments.ignoreErrors);
 
         if (arguments.stdlib != null) {
             environment.setStdlib(arguments.stdlib);

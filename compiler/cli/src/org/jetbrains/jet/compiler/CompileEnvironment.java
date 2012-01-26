@@ -37,6 +37,8 @@ public class CompileEnvironment {
     private PrintStream myErrorStream = System.out;
     private URL myStdlib;
 
+    private boolean ignoreErrors = false;
+
     public CompileEnvironment() {
         myRootDisposable = new Disposable() {
             @Override
@@ -48,6 +50,10 @@ public class CompileEnvironment {
 
     public void setErrorStream(PrintStream errorStream) {
         myErrorStream = errorStream;
+    }
+
+    public void setIgnoreErrors(boolean ignoreErrors) {
+        this.ignoreErrors = ignoreErrors;
     }
 
     public void dispose() {
@@ -199,7 +205,7 @@ public class CompileEnvironment {
 
         ensureRuntime();
 
-        if (!moduleCompileSession.analyze(myErrorStream)) {
+        if (!moduleCompileSession.analyze(myErrorStream) && !ignoreErrors) {
             return null;
         }
         return moduleCompileSession.generate();
@@ -296,7 +302,7 @@ public class CompileEnvironment {
 
         ensureRuntime();
 
-        if (!session.analyze(myErrorStream)) {
+        if (!session.analyze(myErrorStream) && !ignoreErrors) {
             return false;
         }
 
