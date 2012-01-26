@@ -79,6 +79,8 @@
       <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
       <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
 
+      <java.elementFinder implementation="org.jetbrains.jet.plugin.caches.JdkHeadersFinder"/>
+
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 
       <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>

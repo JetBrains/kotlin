@@ -29,4 +29,13 @@ public class CompilerUtil {
 
         return answer.exists() ? answer : null;
     }
+
+    public static File getJdkHeadersPath() {
+        File compilerPath = getDefaultCompilerPath();
+        if (compilerPath == null) return null;
+
+        File answer = new File(compilerPath, "lib/kotlin-jdk-headers.jar");
+
+        return answer.exists() ? answer : null;
+    }
 }
