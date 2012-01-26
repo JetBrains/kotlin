@@ -121,6 +121,9 @@ public class OverrideResolver {
         }
         else if (klass instanceof JetObjectDeclaration) {
             nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
+            if (nameIdentifier == null) {
+                nameIdentifier = ((JetObjectDeclaration) klass).getObjectKeyword();
+            }
         }
         if (nameIdentifier == null) return;
 

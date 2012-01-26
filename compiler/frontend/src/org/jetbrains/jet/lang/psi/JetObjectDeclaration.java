@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -96,4 +97,9 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     public boolean isObjectLiteral() {
         return getNameAsDeclaration() == null;
     }
+
+    @NotNull
+    public PsiElement getObjectKeyword() {
+        return findChildByType(JetTokens.OBJECT_KEYWORD);
+    }     
 }

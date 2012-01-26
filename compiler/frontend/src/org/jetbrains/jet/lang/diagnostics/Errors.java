@@ -401,10 +401,14 @@ public interface Errors {
 
     ParameterizedDiagnosticFactory2<PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL = new ParameterizedDiagnosticFactory2<PropertyDescriptor, PropertyDescriptor>(ERROR, "Var-property {0} cannot be overridden by val-property {1}", DescriptorRenderer.TEXT);
 
-    ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract member {1}") {
+    ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "{0} must be declared abstract or implement abstract member {1}") {
         @Override
         protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
-            return JetPsiUtil.safeName(jetClassOrObject.getName());
+            String name = jetClassOrObject.getName() != null ? " '" + jetClassOrObject.getName() + "'" : "";
+            if (jetClassOrObject instanceof JetClass) {
+                return "Class" + name;
+            }
+            return "Object" + name;
         }
 
         @Override

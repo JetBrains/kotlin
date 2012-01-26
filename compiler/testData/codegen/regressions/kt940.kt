@@ -8,6 +8,8 @@ fun box() : String {
             val l2 = o2?.length ?: 0
             return l1 - l2
         }
+
+         override fun equals(obj: Any?): Boolean = obj === this
     }
 
     w.compare("aaa", "bbb")
