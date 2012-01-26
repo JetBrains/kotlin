@@ -2,9 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -12,9 +10,6 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -26,36 +21,36 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class JavaClassMembersScope implements JetScope {
-    private final PsiClass psiClass;
-    private final JavaSemanticServices semanticServices;
+public class JavaClassMembersScope extends JavaClassOrPackageScope {
+    private final PsiClassWrapper psiClass;
     private final boolean staticMembers;
-    private final DeclarationDescriptor containingDeclaration;
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    public JavaClassMembersScope(@NotNull DeclarationDescriptor classOrNamespaceDescriptor, PsiClass psiClass, JavaSemanticServices semanticServices, boolean staticMembers) {
-        this.containingDeclaration = classOrNamespaceDescriptor;
-        this.psiClass = psiClass;
-        this.semanticServices = semanticServices;
+    public JavaClassMembersScope(
+            @NotNull DeclarationDescriptor classOrNamespaceDescriptor,
+            @NotNull PsiClass psiClass,
+            @NotNull JavaSemanticServices semanticServices,
+            boolean staticMembers) {
+        super(classOrNamespaceDescriptor, semanticServices);
+        this.psiClass = new PsiClassWrapper(psiClass);
         this.staticMembers = staticMembers;
     }
 
-    @NotNull
     @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
+    protected PsiClassWrapper psiClass() {
+        return psiClass;
+    }
+
+    @Override
+    protected boolean staticMembers() {
+        return staticMembers;
     }
 
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
         throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
-        return null;
     }
 
     @Override
@@ -80,28 +75,19 @@ public class JavaClassMembersScope implements JetScope {
             allDescriptors = Sets.newHashSet();
             TypeSubstitutor substitutorForGenericSupertypes = getTypeSubstitutorForSupertypes();
 
-            for (HierarchicalMethodSignature signature : psiClass.getVisibleSignatures()) {
-                PsiMethod method = signature.getMethod();
-                if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
-                    continue;
-                }
-                FunctionDescriptor functionDescriptor = semanticServices.getDescriptorResolver().resolveMethodToFunctionDescriptor(containingDeclaration, psiClass, substitutorForGenericSupertypes, new PsiMethodWrapper(method));
-                if (functionDescriptor != null) {
-                    allDescriptors.add(functionDescriptor);
-                }
-            }
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass.getPsiClass(), descriptor, staticMembers, substitutorForGenericSupertypes));
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(containingDeclaration, psiClass, staticMembers));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass.getPsiClass(), staticMembers));
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(containingDeclaration, psiClass, staticMembers));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass.getPsiClass(), staticMembers));
         }
         return allDescriptors;
     }
 
     private TypeSubstitutor getTypeSubstitutorForSupertypes() {
         TypeSubstitutor substitutorForGenericSupertypes;
-        if (containingDeclaration instanceof ClassDescriptor) {
-            substitutorForGenericSupertypes = semanticServices.getDescriptorResolver().createSubstitutorForGenericSupertypes((ClassDescriptor) containingDeclaration);
+        if (descriptor instanceof ClassDescriptor) {
+            substitutorForGenericSupertypes = semanticServices.getDescriptorResolver().createSubstitutorForGenericSupertypes((ClassDescriptor) descriptor);
         }
         else {
             substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
@@ -111,7 +97,7 @@ public class JavaClassMembersScope implements JetScope {
 
     private ClassifierDescriptor doGetClassifierDescriptor(String name) {
         // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
+        for (PsiClass innerClass : psiClass.getPsiClass().getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
                 ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(innerClass);
@@ -121,28 +107,6 @@ public class JavaClassMembersScope implements JetScope {
             }
         }
         return null;
-    }
-
-    @NotNull
-    @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(containingDeclaration,  psiClass, name, staticMembers);
-    }
-
-    @Override
-    public VariableDescriptor getLocalVariable(@NotNull String name) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(
-                containingDeclaration,
-                psiClass,
-                staticMembers ? null : (ClassDescriptor) containingDeclaration,
-                name,
-                staticMembers);
     }
 
     @Override

@@ -12,6 +12,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -543,8 +545,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), semanticServices, JetTestUtils.DUMMY_TRACE);
-        writableScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
-        writableScope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
+        writableScope.importScope(new JavaPackageScope("", JavaBridgeConfiguration.createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, ""), javaSemanticServices));
+        writableScope.importScope(new JavaPackageScope("java.lang", JavaBridgeConfiguration.createNamespaceDescriptor("lang", "java.lang"), javaSemanticServices));
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return writableScope;
     }

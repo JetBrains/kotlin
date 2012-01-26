@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.Importer;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+
+import java.util.Collections;
 
 /**
  * @author abreslav
@@ -29,9 +32,13 @@ public class JavaBridgeConfiguration implements Configuration {
 
     @Override
     public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
-        rootScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
-        importer.addScopeImport(new JavaPackageScope("java.lang", null, javaSemanticServices));
+        rootScope.importScope(new JavaPackageScope("", createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, ""), javaSemanticServices));
+        importer.addScopeImport(new JavaPackageScope("java.lang", createNamespaceDescriptor("lang", "java.lang"), javaSemanticServices));
         delegateConfiguration.addDefaultImports(trace, rootScope, importer);
+    }
+
+    public static JavaNamespaceDescriptor createNamespaceDescriptor(String name, String qualifiedName) {
+        return new JavaNamespaceDescriptor(null, Collections.<AnnotationDescriptor>emptyList(), name, qualifiedName, true);
     }
 
     @Override

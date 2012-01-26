@@ -2,12 +2,14 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,17 +18,17 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class JavaPackageScope extends JetScopeImpl {
-    private final JavaSemanticServices semanticServices;
-    private final DeclarationDescriptor containingDescriptor;
+public class JavaPackageScope extends JavaClassOrPackageScope {
     private final String packageFQN;
 
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    public JavaPackageScope(@NotNull String packageFQN, DeclarationDescriptor containingDescriptor, JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public JavaPackageScope(
+            @NotNull String packageFQN,
+            @NotNull DeclarationDescriptor containingDescriptor,
+            @NotNull JavaSemanticServices semanticServices) {
+        super(containingDescriptor, semanticServices);
         this.packageFQN = packageFQN;
-        this.containingDescriptor = containingDescriptor;
     }
 
     @Override
@@ -36,6 +38,7 @@ public class JavaPackageScope extends JetScopeImpl {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        // TODO
         return null;
     }
 
@@ -43,8 +46,9 @@ public class JavaPackageScope extends JetScopeImpl {
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(name));
     }
-    
-    private PsiClass getPsiClassForPackage() {
+
+    @Override
+    protected PsiClassWrapper psiClass() {
         // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
         // Kotlin functions are already there
         NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
@@ -58,42 +62,12 @@ public class JavaPackageScope extends JetScopeImpl {
             return null;
         }
 
-        if (containingDescriptor == null) {
-            return null;
-        }
-
-        return psiClass;
+        return new PsiClassWrapper(psiClass);
     }
 
-    @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-        PsiClass psiClassForPackage = getPsiClassForPackage();
-        
-        if (psiClassForPackage == null) {
-            return Collections.emptySet();
-        }
-
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(containingDescriptor, psiClassForPackage, null, name, true);
-    }
-
-    @NotNull
-    @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        PsiClass psiClassForPackage = getPsiClassForPackage();
-        
-        if (psiClassForPackage == null) {
-            return Collections.emptySet();
-        }
-        
-        // TODO: cache
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(containingDescriptor, psiClassForPackage, name, true);
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDescriptor;
+    protected boolean staticMembers() {
+        return true;
     }
 
     @NotNull

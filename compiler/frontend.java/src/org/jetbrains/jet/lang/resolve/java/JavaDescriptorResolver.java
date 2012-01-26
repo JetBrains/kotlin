@@ -1056,9 +1056,9 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull DeclarationDescriptor descriptor, @NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
 
-        ResolverScopeData resolverScopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
+        ResolverScopeData resolverScopeData = getResolverScopeData(descriptor, new PsiClassWrapper(psiClass));
 
         Map<String, NamedMembers> namedMembersMap = resolverScopeData.namedMembersMap;
 
@@ -1067,13 +1067,18 @@ public class JavaDescriptorResolver {
             return Collections.emptySet();
         }
 
-        TypeSubstitutor typeSubstitutor = createSubstitutorForGenericSupertypes(classDescriptor);
-        resolveNamedGroupFunctions(owner, psiClass, typeSubstitutor, staticMembers, namedMembers, methodName);
+        TypeSubstitutor typeSubstitutor;
+        if (descriptor instanceof ClassDescriptor && !staticMembers) {
+            typeSubstitutor = createSubstitutorForGenericSupertypes((ClassDescriptor) descriptor);
+        } else {
+            typeSubstitutor = TypeSubstitutor.EMPTY;
+        }
+        resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, staticMembers, namedMembers, methodName);
         
         return namedMembers.functionDescriptors;
     }
 
-    public TypeSubstitutor createSubstitutorForGenericSupertypes(ClassDescriptor classDescriptor) {
+    public TypeSubstitutor createSubstitutorForGenericSupertypes(@Nullable ClassDescriptor classDescriptor) {
         TypeSubstitutor typeSubstitutor;
         if (classDescriptor != null) {
             typeSubstitutor = TypeUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
@@ -1105,7 +1110,7 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    public FunctionDescriptor resolveMethodToFunctionDescriptor(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethodWrapper method) {
+    private FunctionDescriptor resolveMethodToFunctionDescriptor(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethodWrapper method) {
         
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
@@ -1223,6 +1228,21 @@ public class JavaDescriptorResolver {
             substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
         }
         return substitutedFunctionDescriptor;
+    }
+    
+    public List<FunctionDescriptor> resolveMethods(PsiClass psiClass, DeclarationDescriptor containingDeclaration, boolean staticMembers, TypeSubstitutor substitutorForGenericSupertypes) {
+        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
+        for (HierarchicalMethodSignature signature : psiClass.getVisibleSignatures()) {
+            PsiMethod method = signature.getMethod();
+            if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
+                continue;
+            }
+            FunctionDescriptor functionDescriptor = semanticServices.getDescriptorResolver().resolveMethodToFunctionDescriptor(containingDeclaration, psiClass, substitutorForGenericSupertypes, new PsiMethodWrapper(method));
+            if (functionDescriptor != null) {
+                functions.add(functionDescriptor);
+            }
+        }
+        return functions;
     }
 
     private List<TypeParameterDescriptor> resolveMethodTypeParameters(
