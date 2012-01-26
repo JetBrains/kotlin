@@ -11,6 +11,7 @@
             <element id="module-output" name="frontend.java" />
             <element id="module-output" name="idea" />
             <element id="module-output" name="jet.as.java.psi" />
+            <element id="module-output" name="stdlib" />
           </element>
         </element>
         <element id="file-copy" path="$PROJECT_DIR$/out/build.txt" />
