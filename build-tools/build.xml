@@ -251,6 +251,22 @@
     </macrodef>
 
 
+    <!-- Compiles "testlib" Kotlin tests (file, dir, module => dir/jar) -->
+    <!-- Currently disabled, see "buildToolsTest" -->
+    <macrodef name="testlib-tests">
+        <sequential>
+            <kotlinc-dir file   = "${basedir}/testlib/test/CollectionTest.kt"/>
+            <kotlinc-dir file   = "${basedir}/testlib/test/Test.kt"/>
+            <kotlinc-dir srcdir = "${basedir}/testlib/test"/>
+
+            <kotlinc-jar file   = "${basedir}/testlib/test/CollectionTest.kt"/>
+            <kotlinc-jar file   = "${basedir}/testlib/test/Test.kt"/>
+            <kotlinc-jar srcdir = "${basedir}/testlib/test"/>
+            <kotlinc-jar module = "${basedir}/build-tools/test/modules/Testlib.kts"/>
+        </sequential>
+    </macrodef>
+
+
     <!-- Compiles and runs a Kotlin module -->
     <macrodef name="module-tests">
         <sequential>
@@ -333,6 +349,7 @@
         <hello-tests/>
         <longer-examples-tests/>
         <module-tests/>
+        <!--<testlib-tests/>-->
         <compilation-fail-test/>
     </target>
 </project>
