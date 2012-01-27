@@ -76,7 +76,8 @@
     </target>
 
     <target name="jarJDKHeaders" depends="compile,compileJDKHeaders">
-        <jar destfile="${output}/kotlin-jdk-headers.jar">
+        <mkdir dir="${output}/alt"/>
+        <jar destfile="${output}/alt/kotlin-jdk-headers.jar">
             <fileset dir="${output}/classes/jdk-headers"/>
         </jar>
     </target>
@@ -108,6 +109,7 @@
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
             <zipfileset prefix="kotlinc/license" dir="${basedir}/license"/>
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
+            <zipfileset prefix="kotlinc/lib/alt" dir="${output}/alt" includes="*.jar"/>
             <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}"/>
             <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
             <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
