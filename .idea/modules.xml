@@ -11,6 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/idea_fix/idea_fix.iml" filepath="$PROJECT_DIR$/idea_fix/idea_fix.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/jetTests.iml" filepath="$PROJECT_DIR$/examples/jetTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/js/js.iml" filepath="$PROJECT_DIR$/js/js.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jslib/jslib.iml" filepath="$PROJECT_DIR$/jslib/jslib.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/translator/translator.iml" filepath="$PROJECT_DIR$/translator/translator.iml" />
     </modules>

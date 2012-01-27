@@ -2,6 +2,8 @@ package jquery;
 
 fun fail() : Nothing = throw RuntimeException();
 
+fun JQuery.toString() = ""
+
 class JQuery() {
     fun addClass(className : String) : JQuery = fail();
     fun attr(attrName : String) = ""
@@ -12,6 +14,7 @@ class JQuery() {
     fun width() = 0
     fun click() = this;
     fun click(handler : (DomElement)->Unit) = this;
+    fun append(str : String) = this;
 }
 
 class DomElement() {

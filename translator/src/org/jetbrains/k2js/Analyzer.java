@@ -25,25 +25,29 @@ public final class Analyzer {
 
     //TODO: provide some generic way to access
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "jslib\\src\\jquery\\common.kt",
-            "jslib\\src\\core\\javautil.kt",
-            "jslib\\src\\core\\core.kt"
+            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\jquery\\common.kt",
+            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\javautil.kt",
+            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\core.kt"
     );
 
     @NotNull
-    public static List<JetFile> getJsSupportStdLib() {
+    public static List<JetFile> getJsSupportStdLib(@Nullable Project project) {
         List<JetFile> libFiles = new ArrayList<JetFile>();
         for (String libFileName : LIB_FILE_NAMES) {
-            libFiles.add(JetFileUtils.loadPsiFile(libFileName));
+            libFiles.add(JetFileUtils.loadPsiFile(libFileName, project));
         }
         return libFiles;
     }
 
     @NotNull
-    public static BindingContext analyzeFiles(@NotNull List<JetFile> files) {
-        final List<JetFile> jsLibFiles = getJsSupportStdLib();
+    public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
+                                              @Nullable Project externalProject) {
+        Project project = externalProject;
+        if (project == null) {
+            project = getProject(files);
+        }
+        final List<JetFile> jsLibFiles = getJsSupportStdLib(project);
         List<JetFile> allFiles = allFiles(files, jsLibFiles);
-        Project project = getProject(files);
         return AnalyzingUtils.analyzeFiles(project, JsConfiguration.jsLibConfiguration(project),
                 allFiles, notLibFiles(jsLibFiles), JetControlFlowDataTraceFactory.EMPTY);
     }

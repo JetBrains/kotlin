@@ -32,8 +32,9 @@ public class MiscTest extends AbstractExpressionTest {
         testFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
     }
 
-    @Test
-    public void jquery() throws Exception {
-        testFooBoxIsTrue("jquery.kt");
-    }
+    //TODO:
+//    @Test
+//    public void jquery() throws Exception {
+//        testFooBoxIsTrue("jquery.kt");
+//    }
 }

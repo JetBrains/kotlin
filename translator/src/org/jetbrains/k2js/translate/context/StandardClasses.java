@@ -103,7 +103,7 @@ public final class StandardClasses {
 
     private static void declareJQuery(@NotNull StandardClasses standardClasses) {
         standardClasses.declare().forFQ("jquery.JQuery").externalClass("jQuery")
-                .methods("addClass", "attr", "hasClass");
+                .methods("addClass", "attr", "hasClass", "append");
         standardClasses.declare().forFQ("jquery.jq").externalFunction("jQuery");
     }
 

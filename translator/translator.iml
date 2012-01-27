@@ -27,6 +27,7 @@
     <orderEntry type="library" name="guava-10.0.1" level="application" />
     <orderEntry type="library" name="junit-4.10" level="application" />
     <orderEntry type="library" name="js" level="application" />
+    <orderEntry type="library" name="idea-full" level="application" />
   </component>
 </module>
 
