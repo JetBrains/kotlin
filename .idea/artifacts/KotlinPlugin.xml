@@ -1,6 +1,12 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="KotlinPlugin">
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
+    <properties id="ant-postprocessing">
+      <options enabled="true">
+        <file>file://$PROJECT_DIR$/plugin_post_build.xml</file>
+        <target>renamePluginZip</target>
+      </options>
+    </properties>
     <root id="archive" name="KotlinPlugin.zip">
       <element id="directory" name="Kotlin">
         <element id="directory" name="lib">
