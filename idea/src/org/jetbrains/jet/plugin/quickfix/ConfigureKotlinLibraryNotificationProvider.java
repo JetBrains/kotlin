@@ -3,7 +3,6 @@
  */
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.ProjectTopics;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -15,7 +14,9 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -48,18 +49,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         return KEY;
     }
 
-    public ConfigureKotlinLibraryNotificationProvider(Project project, final EditorNotifications notifications) {
+    public ConfigureKotlinLibraryNotificationProvider(Project project) {
         myProject = project;
-        project.getMessageBus().connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-            @Override
-            public void beforeRootsChange(ModuleRootEvent event) {
-            }
-
-            @Override
-            public void rootsChanged(ModuleRootEvent event) {
-                notifications.updateAllNotifications();
-            }
-        });
     }
 
 
@@ -146,6 +137,12 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                             ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
                             model.addLibraryEntry(library);
                             model.commit();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EditorNotifications.getInstance(myProject).updateAllNotifications();
+                                }
+                            });
                         }
                     }
                 });
