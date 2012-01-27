@@ -134,21 +134,9 @@ public class JavaDescriptorResolver {
             public boolean contains(VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
             }
-
-            @Override
-            public int compare(VirtualFile file1, VirtualFile file2) {
-                if (isInJdkHeaders(file1)) return 1;
-                if (isInJdkHeaders(file2)) return -1;
-                return super.compare(file1, file2);
-            }
         };
         this.semanticServices = semanticServices;
         altClassFinder = new AltClassFinder(project);
-    }
-
-    public static boolean isInJdkHeaders(VirtualFile file) {
-        // TODO: need faster check
-        return file.getUrl().contains("kotlin-jdk-headers.jar");
     }
 
     @Nullable
