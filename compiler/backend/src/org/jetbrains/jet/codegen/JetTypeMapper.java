@@ -31,6 +31,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class JetTypeMapper {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
+    public static final Type TYPE_THROWABLE = Type.getObjectType("java/lang/Throwable");
     public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
     public static final Type TYPE_TYPEINFOPROJECTION = Type.getType(TypeInfoProjection.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);

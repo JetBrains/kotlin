@@ -1375,6 +1375,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
         CodegenContext cur = context;
 
+        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, calleeContainingClass);
+        boolean isObject = psiElement instanceof JetClassOrObject && CodegenUtil.isNonLiteralObject((JetClassOrObject)psiElement);
+        
+        cur = context;
         StackValue result = StackValue.local(0, TYPE_OBJECT);
         while (cur != null) {
             if(cur instanceof CodegenContext.MethodContext && !(cur instanceof CodegenContext.ConstructorContext))
@@ -1382,8 +1386,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             if (CodegenUtil.isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
                 Type type = asmType(calleeContainingClass.getDefaultType());
-                result.put(TYPE_OBJECT, v);
-                return castToRequiredTypeOfInterfaceIfNeeded(StackValue.onStack(type), cur.getThisDescriptor(), calleeContainingClass);
+                if(!isObject || (cur.getThisDescriptor() == calleeContainingClass)) {
+                    result.put(TYPE_OBJECT, v);
+                    return castToRequiredTypeOfInterfaceIfNeeded(StackValue.onStack(type), cur.getThisDescriptor(), calleeContainingClass);
+                }
+                else {
+                    v.getstatic(type.getInternalName(), "$instance", type.getDescriptor());
+                }
             }
 
             result = cur.getOuterExpression(result);
@@ -2345,7 +2354,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitThrowExpression(JetThrowExpression expression, StackValue receiver) {
-        gen(expression.getThrownExpression(), TYPE_OBJECT);
+        gen(expression.getThrownExpression(), TYPE_THROWABLE);
         doFinallyOnReturnOrThrow();
         v.athrow();
         return StackValue.none();

@@ -145,7 +145,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
     private void generateConstInstance(PsiElement fun) {
         String classDescr = "L" + name + ";";
-        cv.newField(fun, ACC_PRIVATE | ACC_STATIC, "$instance", classDescr, null, null);
+        cv.newField(fun, ACC_PRIVATE | ACC_STATIC | ACC_FINAL, "$instance", classDescr, null, null);
 
         MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()" + classDescr, null, new String[0]);
         if (cv.generateCode()) {
