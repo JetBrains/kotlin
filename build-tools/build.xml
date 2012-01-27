@@ -77,7 +77,7 @@
         <attribute name="file"           default=""/>
         <attribute name="srcdir"         default=""/>
         <attribute name="includeRuntime" default="true"/>
-        <attribute name="stdlib"         default="${kotlin-home}/lib/kotlin-runtime.jar"/>
+        <attribute name="stdlib"         default=""/>
 
         <sequential>
 
@@ -102,7 +102,7 @@
         <attribute name="srcdir"         default=""/>
         <attribute name="module"         default=""/>
         <attribute name="includeRuntime" default="true"/>
-        <attribute name="stdlib"         default="${kotlin-home}/lib/kotlin-runtime.jar"/>
+        <attribute name="stdlib"         default=""/>
         <sequential>
 
             <cleanup/>

@@ -13,7 +13,7 @@ public class BytecodeCompiler {
 
     public BytecodeCompiler ( String stdlib ) {
         ENV = new CompileEnvironment();
-        if ( stdlib != null ) {
+        if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
             ENV.setStdlib( stdlib );
         }
     }
