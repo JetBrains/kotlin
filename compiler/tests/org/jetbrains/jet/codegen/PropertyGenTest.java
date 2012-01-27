@@ -164,4 +164,12 @@ public class PropertyGenTest extends CodegenTestCase {
         method.setAccessible(true);
         assertEquals(method.invoke(null), "1.0");
     }
+
+    public void testKt1165() throws Exception {
+        blackBoxFile("regressions/kt1165.kt");
+    }
+
+    public void testKt1168() throws Exception {
+        blackBoxFile("regressions/kt1168.kt");
+    }
 }
