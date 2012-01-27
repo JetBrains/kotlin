@@ -2006,19 +2006,36 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                       Arrays.asList(expression.getBaseExpression()), receiver);
         }
         else {
-            return invokeOperation(expression, (FunctionDescriptor) op, (CallableMethod) callable);
+            DeclarationDescriptor cls = op.getContainingDeclaration();
+            if (isNumberPrimitive(cls) || !(op.getName().equals("inc") || op.getName().equals("dec")) ) {
+                return invokeOperation(expression, (FunctionDescriptor) op, (CallableMethod) callable);
+            }
+            else {
+                ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+                assert resolvedCall != null;
+
+                StackValue value = gen(expression.getBaseExpression());
+                value.dupReceiver(v);
+                value.dupReceiver(v);
+
+                Type type = expressionType(expression.getBaseExpression());
+                value.put(type, v);
+                ((CallableMethod)callable).invoke(v);
+                value.store(v);
+                value.put(type, v);
+                return StackValue.onStack(type);
+            }
         }
     }
 
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
         assert resolvedCall != null;
-        CallableMethod callableMethod = (CallableMethod) callable;
-        genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callableMethod);
+        genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callable);
         pushTypeArguments(resolvedCall);
-        pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
-        callableMethod.invoke(v);
-        return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getAsmMethod().getReturnType());
+        pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
+        callable.invoke(v);
+        return  returnValueAsStackValue(op, callable.getSignature().getAsmMethod().getReturnType());
     }
 
     @Override
@@ -2027,19 +2044,63 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (isNumberPrimitive(cls) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
-                receiver.put(receiver.type, v);
-                JetExpression operand = expression.getBaseExpression();
-                if (operand instanceof JetReferenceExpression) {
-                    final int index = indexOfLocal((JetReferenceExpression) operand);
-                    if (index >= 0 && isIntPrimitive(asmType)) {
-                        int increment = op.getName().equals("inc") ? 1 : -1;
-                        return StackValue.postIncrement(index, increment);
+            if (op.getName().equals("inc") || op.getName().equals("dec")) {
+                if (isNumberPrimitive(cls)) {
+                    receiver.put(receiver.type, v);
+                    JetExpression operand = expression.getBaseExpression();
+                    if (operand instanceof JetReferenceExpression) {
+                        final int index = indexOfLocal((JetReferenceExpression) operand);
+                        if (index >= 0 && isIntPrimitive(asmType)) {
+                            int increment = op.getName().equals("inc") ? 1 : -1;
+                            return StackValue.postIncrement(index, increment);
+                        }
                     }
+                    gen(operand, asmType);                               // old value
+                    generateIncrement(op, asmType, operand, receiver);   // increment in-place
+                    return StackValue.onStack(asmType);                                         // old value
                 }
-                gen(operand, asmType);                               // old value
-                generateIncrement(op, asmType, operand, receiver);   // increment in-place
-                return StackValue.onStack(asmType);                                         // old value
+                else {
+                    ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+                    assert resolvedCall != null;
+
+                    final Callable callable = resolveToCallable(op, false);
+
+                    StackValue value = gen(expression.getBaseExpression());
+                    value.dupReceiver(v);
+
+                    Type type = expressionType(expression.getBaseExpression());
+                    value.put(type, v);
+
+                    switch(value.receiverSize()) {
+                        case 0:
+                            if(type.getSize() == 2)
+                                v.dup2();
+                            else
+                                v.dup();
+                        break;
+
+                        case 1:
+                            if(type.getSize() == 2)
+                                v.dup2X1();
+                            else
+                                v.dupX1();
+                        break;
+
+                        case 2:
+                            if(type.getSize() == 2)
+                                v.dup2X2();
+                            else
+                                v.dupX2();
+                            break;
+
+                        case -1:
+                            throw new UnsupportedOperationException();
+                    }
+                            
+                    ((CallableMethod)callable).invoke(v);
+                    value.store(v);
+                    return StackValue.onStack(type);
+                }
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");

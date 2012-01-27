@@ -729,6 +729,7 @@ public class DescriptorResolver {
         }
         else {
             getterDescriptor = createDefaultGetter(propertyDescriptor);
+            getterDescriptor.initialize(propertyDescriptor.getOutType());
         }
         return getterDescriptor;
     }
