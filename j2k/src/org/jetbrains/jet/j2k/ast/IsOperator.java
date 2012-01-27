@@ -6,17 +6,17 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class IsOperator extends Expression {
-  private final Expression myExpression;
-  private final Element myTypeElement;
+    private final Expression myExpression;
+    private final Element myTypeElement;
 
-  public IsOperator(Expression expression, Element typeElement) {
-    myExpression = expression;
-    myTypeElement = typeElement;
-  }
+    public IsOperator(Expression expression, Element typeElement) {
+        myExpression = expression;
+        myTypeElement = typeElement;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return "(" + myExpression.toKotlin() + SPACE + "is" + SPACE + myTypeElement.toKotlin() + ")";
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return "(" + myExpression.toKotlin() + SPACE + "is" + SPACE + myTypeElement.toKotlin() + ")";
+    }
 }

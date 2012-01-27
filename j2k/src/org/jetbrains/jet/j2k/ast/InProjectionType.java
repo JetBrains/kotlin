@@ -6,15 +6,15 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class InProjectionType extends Type {
-  private final Type myBound;
+    private final Type myBound;
 
-  public InProjectionType(Type bound) {
-    myBound = bound;
-  }
+    public InProjectionType(Type bound) {
+        myBound = bound;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return "in" + SPACE + myBound.toKotlin();
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return "in" + SPACE + myBound.toKotlin();
+    }
 }

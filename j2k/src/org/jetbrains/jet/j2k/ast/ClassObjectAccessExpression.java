@@ -6,15 +6,15 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ClassObjectAccessExpression extends Expression {
-  private final Element myTypeElement;
+    private final Element myTypeElement;
 
-  public ClassObjectAccessExpression(Element typeElement) {
-    myTypeElement = typeElement;
-  }
+    public ClassObjectAccessExpression(Element typeElement) {
+        myTypeElement = typeElement;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return "getJavaClass" + "<" + myTypeElement.toKotlin() + ">";
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return "getJavaClass" + "<" + myTypeElement.toKotlin() + ">";
+    }
 }

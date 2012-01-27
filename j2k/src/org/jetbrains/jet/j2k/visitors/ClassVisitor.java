@@ -11,20 +11,20 @@ import java.util.Set;
  * @author ignatov
  */
 public class ClassVisitor extends JavaRecursiveElementVisitor {
-  private final Set<String> myClassIdentifiers;
+    private final Set<String> myClassIdentifiers;
 
-  public ClassVisitor() {
-    myClassIdentifiers = new HashSet<String>();
-  }
+    public ClassVisitor() {
+        myClassIdentifiers = new HashSet<String>();
+    }
 
-  @NotNull
-  public Set<String> getClassIdentifiers() {
-    return new HashSet<String>(myClassIdentifiers);
-  }
+    @NotNull
+    public Set<String> getClassIdentifiers() {
+        return new HashSet<String>(myClassIdentifiers);
+    }
 
-  @Override
-  public void visitClass(@NotNull PsiClass aClass) {
-    myClassIdentifiers.add(aClass.getQualifiedName());
-    super.visitClass(aClass);
-  }
+    @Override
+    public void visitClass(@NotNull PsiClass aClass) {
+        myClassIdentifiers.add(aClass.getQualifiedName());
+        super.visitClass(aClass);
+    }
 }

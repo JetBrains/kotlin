@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public interface Identifier extends INode {
-  @NotNull
-  Identifier EMPTY_IDENTIFIER = new IdentifierImpl("");
+    @NotNull
+    Identifier EMPTY_IDENTIFIER = new IdentifierImpl("");
 
-  boolean isEmpty();
+    boolean isEmpty();
 
-  String getName();
+    String getName();
 }

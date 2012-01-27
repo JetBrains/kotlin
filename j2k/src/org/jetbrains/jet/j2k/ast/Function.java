@@ -11,93 +11,101 @@ import java.util.Set;
  * @author ignatov
  */
 public class Function extends Member {
-  private final Identifier myName;
-  private final Type myType;
-  private final List<Element> myTypeParameters;
-  final Element myParams;
+    private final Identifier myName;
+    private final Type myType;
+    private final List<Element> myTypeParameters;
+    final Element myParams;
 
-  // TODO: maybe remove it?
-  public void setBlock(Block block) {
-    myBlock = block;
-  }
-
-  Block myBlock;
-
-  public Function(Identifier name, Set<String> modifiers, Type type, List<Element> typeParameters, Element params, Block block) {
-    myName = name;
-    myModifiers = modifiers;
-    myType = type;
-    myTypeParameters = typeParameters;
-    myParams = params;
-    myBlock = block;
-  }
-
-  public List<Element> getTypeParameters() {
-    return myTypeParameters;
-  }
-
-  public Element getParams() {
-    return myParams;
-  }
-
-  public Block getBlock() {
-    return myBlock;
-  }
-
-  @NotNull
-  private String typeParametersToKotlin() {
-    return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
-  }
-
-  private boolean hasWhere() {
-    for (Element t : myTypeParameters)
-      if (t instanceof TypeParameter && ((TypeParameter) t).hasWhere())
-        return true;
-    return false;
-  }
-
-  private String typeParameterWhereToKotlin() {
-    if (hasWhere()) {
-      List<String> wheres = new LinkedList<String>();
-      for (Element t : myTypeParameters)
-        if (t instanceof TypeParameter)
-          wheres.add(((TypeParameter) t).getWhereToKotlin());
-      return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
+    // TODO: maybe remove it?
+    public void setBlock(Block block) {
+        myBlock = block;
     }
-    return EMPTY;
-  }
 
-  String modifiersToKotlin() {
-    List<String> modifierList = new LinkedList<String>();
+    Block myBlock;
 
-    if (isAbstract())
-      modifierList.add(Modifier.ABSTRACT);
+    public Function(Identifier name, Set<String> modifiers, Type type, List<Element> typeParameters, Element params, Block block) {
+        myName = name;
+        myModifiers = modifiers;
+        myType = type;
+        myTypeParameters = typeParameters;
+        myParams = params;
+        myBlock = block;
+    }
 
-    if (myModifiers.contains(Modifier.OVERRIDE))
-      modifierList.add(Modifier.OVERRIDE);
+    public List<Element> getTypeParameters() {
+        return myTypeParameters;
+    }
 
-    if (!myModifiers.contains(Modifier.OVERRIDE) && !myModifiers.contains(Modifier.FINAL))
-      modifierList.add(Modifier.OPEN);
+    public Element getParams() {
+        return myParams;
+    }
 
-    if (myModifiers.contains(Modifier.NOT_OPEN))
-      modifierList.remove(Modifier.OPEN);
+    public Block getBlock() {
+        return myBlock;
+    }
 
-    String accessModifier = accessModifier();
-    if (!accessModifier.isEmpty())
-      modifierList.add(accessModifier);
+    @NotNull
+    private String typeParametersToKotlin() {
+        return myTypeParameters.size() > 0 ? "<" + AstUtil.joinNodes(myTypeParameters, COMMA_WITH_SPACE) + ">" : EMPTY;
+    }
 
-    if (modifierList.size() > 0)
-      return AstUtil.join(modifierList, SPACE) + SPACE;
+    private boolean hasWhere() {
+        for (Element t : myTypeParameters)
+            if (t instanceof TypeParameter && ((TypeParameter) t).hasWhere()) {
+                return true;
+            }
+        return false;
+    }
 
-    return EMPTY;
-  }
+    private String typeParameterWhereToKotlin() {
+        if (hasWhere()) {
+            List<String> wheres = new LinkedList<String>();
+            for (Element t : myTypeParameters)
+                if (t instanceof TypeParameter) {
+                    wheres.add(((TypeParameter) t).getWhereToKotlin());
+                }
+            return SPACE + "where" + SPACE + AstUtil.join(wheres, COMMA_WITH_SPACE) + SPACE;
+        }
+        return EMPTY;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return modifiersToKotlin() + "fun" + SPACE + myName.toKotlin() + typeParametersToKotlin() + "(" + myParams.toKotlin() + ")" + SPACE + COLON +
-      SPACE + myType.toKotlin() + SPACE +
-      typeParameterWhereToKotlin() +
-      myBlock.toKotlin();
-  }
+    String modifiersToKotlin() {
+        List<String> modifierList = new LinkedList<String>();
+
+        if (isAbstract()) {
+            modifierList.add(Modifier.ABSTRACT);
+        }
+
+        if (myModifiers.contains(Modifier.OVERRIDE)) {
+            modifierList.add(Modifier.OVERRIDE);
+        }
+
+        if (!myModifiers.contains(Modifier.OVERRIDE) && !myModifiers.contains(Modifier.FINAL)) {
+            modifierList.add(Modifier.OPEN);
+        }
+
+        if (myModifiers.contains(Modifier.NOT_OPEN)) {
+            modifierList.remove(Modifier.OPEN);
+        }
+
+        String accessModifier = accessModifier();
+        if (!accessModifier.isEmpty()) {
+            modifierList.add(accessModifier);
+        }
+
+        if (modifierList.size() > 0) {
+            return AstUtil.join(modifierList, SPACE) + SPACE;
+        }
+
+        return EMPTY;
+    }
+
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return modifiersToKotlin() + "fun" + SPACE + myName.toKotlin() + typeParametersToKotlin() + "(" + myParams.toKotlin() + ")" + SPACE + COLON +
+               SPACE + myType.toKotlin() + SPACE +
+               typeParameterWhereToKotlin() +
+               myBlock.toKotlin();
+    }
 }

@@ -9,19 +9,19 @@ import java.util.List;
  * @author ignatov
  */
 public class SwitchContainer extends Statement {
-  private final Expression myExpression;
-  private final List<CaseContainer> myCaseContainers;
+    private final Expression myExpression;
+    private final List<CaseContainer> myCaseContainers;
 
-  public SwitchContainer(final Expression expression, final List<CaseContainer> caseContainers) {
-    myExpression = expression;
-    myCaseContainers = caseContainers;
-  }
+    public SwitchContainer(final Expression expression, final List<CaseContainer> caseContainers) {
+        myExpression = expression;
+        myCaseContainers = caseContainers;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return "when" + SPACE + "(" + myExpression.toKotlin() + ")" + SPACE + "{" + N +
-      AstUtil.joinNodes(myCaseContainers, N) + N +
-      "}";
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return "when" + SPACE + "(" + myExpression.toKotlin() + ")" + SPACE + "{" + N +
+               AstUtil.joinNodes(myCaseContainers, N) + N +
+               "}";
+    }
 }

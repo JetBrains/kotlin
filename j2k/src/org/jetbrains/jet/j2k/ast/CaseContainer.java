@@ -10,21 +10,22 @@ import java.util.List;
  * @author ignatov
  */
 public class CaseContainer extends Statement {
-  private final List<Statement> myCaseStatement;
-  private final Block myBlock;
+    private final List<Statement> myCaseStatement;
+    private final Block myBlock;
 
-  public CaseContainer(final List<Statement> caseStatement, @NotNull final List<Statement> statements) {
-    myCaseStatement = caseStatement;
-    List<Statement> newStatements = new LinkedList<Statement>();
-    for (Statement s : statements)
-      if (s.getKind() != Kind.BREAK && s.getKind() != Kind.CONTINUE)
-        newStatements.add(s);
-    myBlock = new Block(newStatements);
-  }
+    public CaseContainer(final List<Statement> caseStatement, @NotNull final List<Statement> statements) {
+        myCaseStatement = caseStatement;
+        List<Statement> newStatements = new LinkedList<Statement>();
+        for (Statement s : statements)
+            if (s.getKind() != Kind.BREAK && s.getKind() != Kind.CONTINUE) {
+                newStatements.add(s);
+            }
+        myBlock = new Block(newStatements);
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return AstUtil.joinNodes(myCaseStatement, COMMA_WITH_SPACE) + SPACE + "->" + SPACE + myBlock.toKotlin();
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return AstUtil.joinNodes(myCaseStatement, COMMA_WITH_SPACE) + SPACE + "->" + SPACE + myBlock.toKotlin();
+    }
 }

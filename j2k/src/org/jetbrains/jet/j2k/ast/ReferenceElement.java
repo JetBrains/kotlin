@@ -9,20 +9,20 @@ import java.util.List;
  * @author ignatov
  */
 public class ReferenceElement extends Element {
-  @NotNull
-  private final Identifier myReference;
-  @NotNull
-  private final List<Type> myTypes;
+    @NotNull
+    private final Identifier myReference;
+    @NotNull
+    private final List<Type> myTypes;
 
-  public ReferenceElement(@NotNull Identifier reference, @NotNull List<Type> types) {
-    myReference = reference;
-    myTypes = types;
-  }
+    public ReferenceElement(@NotNull Identifier reference, @NotNull List<Type> types) {
+        myReference = reference;
+        myTypes = types;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    String typesIfNeeded = myTypes.size() > 0 ? "<" + AstUtil.joinNodes(myTypes, COMMA_WITH_SPACE) + ">" : EMPTY;
-    return myReference.toKotlin() + typesIfNeeded;
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        String typesIfNeeded = myTypes.size() > 0 ? "<" + AstUtil.joinNodes(myTypes, COMMA_WITH_SPACE) + ">" : EMPTY;
+        return myReference.toKotlin() + typesIfNeeded;
+    }
 }

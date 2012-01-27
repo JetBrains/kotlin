@@ -6,15 +6,15 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ParenthesizedExpression extends Expression {
-  private final Expression myExpression;
+    private final Expression myExpression;
 
-  public ParenthesizedExpression(Expression expression) {
-    myExpression = expression;
-  }
+    public ParenthesizedExpression(Expression expression) {
+        myExpression = expression;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return "(" + myExpression.toKotlin() + ")";
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return "(" + myExpression.toKotlin() + ")";
+    }
 }

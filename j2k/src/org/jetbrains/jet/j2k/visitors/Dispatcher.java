@@ -4,17 +4,17 @@ package org.jetbrains.jet.j2k.visitors;
  * @author ignatov
  */
 public class Dispatcher {
-  private ExpressionVisitor myExpressionVisitor;
+    private ExpressionVisitor myExpressionVisitor;
 
-  public void setExpressionVisitor(final ExpressionVisitor expressionVisitor) {
-    this.myExpressionVisitor = expressionVisitor;
-  }
+    public void setExpressionVisitor(final ExpressionVisitor expressionVisitor) {
+        this.myExpressionVisitor = expressionVisitor;
+    }
 
-  public Dispatcher() {
-    myExpressionVisitor = new ExpressionVisitor();
-  }
+    public Dispatcher() {
+        myExpressionVisitor = new ExpressionVisitor();
+    }
 
-  public ExpressionVisitor getExpressionVisitor() {
-    return myExpressionVisitor;
-  }
+    public ExpressionVisitor getExpressionVisitor() {
+        return myExpressionVisitor;
+    }
 }

@@ -6,15 +6,15 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ThrowStatement extends Expression {
-  private final Expression myExpression;
+    private final Expression myExpression;
 
-  public ThrowStatement(Expression expression) {
-    myExpression = expression;
-  }
+    public ThrowStatement(Expression expression) {
+        myExpression = expression;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return "throw" + SPACE + myExpression.toKotlin();
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return "throw" + SPACE + myExpression.toKotlin();
+    }
 }

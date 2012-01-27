@@ -8,16 +8,16 @@ import java.util.Set;
  * @author ignatov
  */
 public class Initializer extends Member {
-  private final Block myBlock;
+    private final Block myBlock;
 
-  public Initializer(Block block, Set<String> modifiers) {
-    myBlock = block;
-    myModifiers = modifiers;
-  }
+    public Initializer(Block block, Set<String> modifiers) {
+        myBlock = block;
+        myModifiers = modifiers;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return myBlock.toKotlin();
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return myBlock.toKotlin();
+    }
 }

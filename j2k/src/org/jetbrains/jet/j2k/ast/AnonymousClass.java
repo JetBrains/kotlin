@@ -9,20 +9,20 @@ import java.util.List;
  * @author ignatov
  */
 public class AnonymousClass extends Class {
-  public AnonymousClass(List<Member> members) {
-    super(new IdentifierImpl("anonClass"),
-      Collections.<String>emptySet(),
-      Collections.<Element>emptyList(),
-      Collections.<Type>emptyList(),
-      Collections.<Expression>emptyList(),
-      Collections.<Type>emptyList(),
-      getMembers(members)
-    );
-  }
+    public AnonymousClass(List<Member> members) {
+        super(new IdentifierImpl("anonClass"),
+              Collections.<String>emptySet(),
+              Collections.<Element>emptyList(),
+              Collections.<Type>emptyList(),
+              Collections.<Expression>emptyList(),
+              Collections.<Type>emptyList(),
+              getMembers(members)
+        );
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return bodyToKotlin();
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return bodyToKotlin();
+    }
 }

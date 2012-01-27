@@ -10,31 +10,31 @@ import java.util.List;
  * @author ignatov
  */
 public class DeclarationStatement extends Statement {
-  private final List<Element> myElements;
+    private final List<Element> myElements;
 
-  public DeclarationStatement(List<Element> elements) {
-    myElements = elements;
-  }
-
-  @NotNull
-  private static List<String> toStringList(@NotNull List<Element> elements) {
-    List<String> result = new LinkedList<String>();
-    for (Element e : elements) {
-      if (e instanceof LocalVariable) {
-        LocalVariable v = (LocalVariable) e;
-
-        final String varKeyword = v.hasModifier(Modifier.FINAL) ? "val" : "var";
-        result.add(
-          varKeyword + SPACE + e.toKotlin()
-        );
-      }
+    public DeclarationStatement(List<Element> elements) {
+        myElements = elements;
     }
-    return result;
-  }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    return AstUtil.join(toStringList(myElements), N);
-  }
+    @NotNull
+    private static List<String> toStringList(@NotNull List<Element> elements) {
+        List<String> result = new LinkedList<String>();
+        for (Element e : elements) {
+            if (e instanceof LocalVariable) {
+                LocalVariable v = (LocalVariable) e;
+
+                final String varKeyword = v.hasModifier(Modifier.FINAL) ? "val" : "var";
+                result.add(
+                        varKeyword + SPACE + e.toKotlin()
+                );
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return AstUtil.join(toStringList(myElements), N);
+    }
 }

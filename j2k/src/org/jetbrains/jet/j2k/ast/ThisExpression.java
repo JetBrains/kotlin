@@ -6,17 +6,18 @@ import org.jetbrains.annotations.NotNull;
  * @author ignatov
  */
 public class ThisExpression extends Expression {
-  private final Identifier myIdentifier;
+    private final Identifier myIdentifier;
 
-  public ThisExpression(Identifier identifier) {
-    myIdentifier = identifier;
-  }
+    public ThisExpression(Identifier identifier) {
+        myIdentifier = identifier;
+    }
 
-  @NotNull
-  @Override
-  public String toKotlin() {
-    if (myIdentifier.isEmpty())
-      return "this";
-    return "this" + AT + myIdentifier.toKotlin();
-  }
+    @NotNull
+    @Override
+    public String toKotlin() {
+        if (myIdentifier.isEmpty()) {
+            return "this";
+        }
+        return "this" + AT + myIdentifier.toKotlin();
+    }
 }
