@@ -447,7 +447,7 @@ public class FunctionCodegen {
         Method method = state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
         Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
         if(differentMethods(method, overriden)) {
-            int flags = ACC_PUBLIC; // TODO.
+            int flags = ACC_PUBLIC | ACC_BRIDGE; // TODO.
 
             final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);
             if (v.generateCode()) {
