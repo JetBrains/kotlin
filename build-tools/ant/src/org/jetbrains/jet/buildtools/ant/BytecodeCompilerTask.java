@@ -2,7 +2,10 @@ package org.jetbrains.jet.buildtools.ant;
 
 import static org.jetbrains.jet.buildtools.core.Util.*;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
+import org.jetbrains.jet.compiler.CompileEnvironmentException;
 
 import java.io.File;
 
@@ -12,7 +15,8 @@ import java.io.File;
  *
  * See
  * http://evgeny-goldin.org/javadoc/ant/tutorial-writing-tasks.html
- * http://evgeny-goldin.org/javadoc/ant/Tasks/javac.html - attribute names should be similar to {@code <javac>}.
+ * http://evgeny-goldin.org/javadoc/ant/develop.html
+ * http://svn.apache.org/viewvc/ant/core/trunk/src/main/org/apache/tools/ant/taskdefs/Javac.java?view=markup.
  */
 public class BytecodeCompilerTask extends Task {
 
@@ -21,6 +25,7 @@ public class BytecodeCompilerTask extends Task {
     private File    stdlib;
     private File    src;
     private File    module;
+    private Path    compileClasspath;
     private boolean includeRuntime = true;
 
     public void setOutput         ( File output            ) { this.output         = output;         }
@@ -31,15 +36,44 @@ public class BytecodeCompilerTask extends Task {
     public void setIncludeRuntime ( boolean includeRuntime ) { this.includeRuntime = includeRuntime; }
 
 
+    /**
+     * Set the classpath to be used for this compilation.
+     *
+     * @param classpath an Ant Path object containing the compilation classpath.
+     */
+    public void setClasspath ( Path classpath ) {
+        if ( this.compileClasspath == null ) {
+            this.compileClasspath = classpath;
+        }
+        else {
+            this.compileClasspath.append( classpath );
+        }
+    }
+
+
+    /**
+     * Adds a reference to a classpath defined elsewhere.
+     * @param ref a reference to a classpath.
+     */
+    public void setClasspathRef( Reference ref ) {
+        if ( this.compileClasspath == null ) {
+            this.compileClasspath  = new Path( getProject());
+        }
+        this.compileClasspath.createPath().setRefid( ref );
+    }
+
+
     @Override
     public void execute() {
 
-        final BytecodeCompiler compiler = new BytecodeCompiler( this.stdlib != null ? getPath( this.stdlib ) : null );
+        final BytecodeCompiler compiler   = new BytecodeCompiler();
+        final String           stdlibPath = ( this.stdlib           != null ? getPath( this.stdlib )       : null );
+        final String[]         classpath  = ( this.compileClasspath != null ? this.compileClasspath.list() : null );
 
         if ( this.src != null ) {
 
             if (( this.output == null ) && ( this.jar == null )) {
-                throw new RuntimeException( "\"output\" or \"jar\" should be specified" );
+                throw new CompileEnvironmentException( "\"output\" or \"jar\" should be specified" );
             }
 
             String source      = getPath( this.src );
@@ -48,25 +82,25 @@ public class BytecodeCompilerTask extends Task {
             log( String.format( "[%s] => [%s]", source, destination ));
 
             if ( this.output != null ) {
-                compiler.sourcesToDir( source, destination );
+                compiler.sourcesToDir( source, destination, stdlibPath, classpath );
             }
             else {
-                compiler.sourcesToJar( source, destination, this.includeRuntime );
+                compiler.sourcesToJar( source, destination, this.includeRuntime, stdlibPath, classpath );
             }
         }
         else if ( this.module != null ) {
 
             if ( this.output != null ) {
-                throw new RuntimeException( "Module compilation is only supported for jar destination" );
+                throw new CompileEnvironmentException( "Module compilation is only supported for jar destination" );
             }
 
             String modulePath = getPath( this.module );
             String jarPath    = ( this.jar != null ? getPath( this.jar ) : null );
 
-            compiler.moduleToJar( modulePath, jarPath, this.includeRuntime );
+            compiler.moduleToJar( modulePath, jarPath, this.includeRuntime, stdlibPath, classpath );
         }
         else {
-            throw new RuntimeException( "\"src\" or \"module\" should be specified" );
+            throw new CompileEnvironmentException( "\"src\" or \"module\" should be specified" );
         }
     }
 }

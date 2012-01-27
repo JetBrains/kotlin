@@ -335,19 +335,39 @@ public class CompileEnvironment {
         }
     }
 
-    public void setStdlib(String stdlib) {
-        File path = new File(stdlib);
-        if (!path.exists()) {
-            throw new CompileEnvironmentException("'" + stdlib + "' does not exist");
+
+    /**
+     * Add path specified to the compilation environment.
+     * @param paths paths to add
+     */
+    public void addToClasspath(File ... paths) {
+        for (File path : paths) {
+            if ( ! path.exists()) {
+                throw new CompileEnvironmentException("'" + path + "' does not exist");
+            }
+            myEnvironment.addToClasspath(path);
         }
+    }
+
+    /**
+     * Add path specified to the compilation environment.
+     * @param paths paths to add
+     */
+    public void addToClasspath(String ... paths) {
+        for (String path : paths) {
+            addToClasspath( new File(path));
+        }
+    }
+
+    public void setStdlib(String stdlib) {
+        File file = new File(stdlib);
+        addToClasspath(file);
 
         try {
-            myStdlib = path.toURL();
+            myStdlib = file.toURL();
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-
-        myEnvironment.addToClasspath(path);
     }
 }

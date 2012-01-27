@@ -1,6 +1,7 @@
 package org.jetbrains.jet.buildtools.core;
 
 import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironmentException;
 
 
 /**
@@ -8,18 +9,31 @@ import org.jetbrains.jet.compiler.CompileEnvironment;
  */
 public class BytecodeCompiler {
 
-    private final CompileEnvironment ENV;
+
+    public BytecodeCompiler () {
+    }
 
 
     /**
-     * Initializes an instance of this bytecode compiler.
-     * @param stdlib "stdlib" compiler argument, path to "kotlin-runtime.jar", allowed to be <code>null</code> or empty.
+     * Creates new instance of {@link CompileEnvironment} instance using the arguments specified.
+     *
+     * @param stdlib    path to "kotlin-runtime.jar", only used if not null and not empty
+     * @param classpath compilation classpath, only used if not null and not empty
+     *
+     * @return compile environment instance
      */
-    public BytecodeCompiler ( String stdlib ) {
-        ENV = new CompileEnvironment();
+    private CompileEnvironment env( String stdlib, String[] classpath ) {
+        CompileEnvironment env = new CompileEnvironment();
+
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
-            ENV.setStdlib( stdlib );
+            env.setStdlib( stdlib );
         }
+
+        if (( classpath != null ) && ( classpath.length > 0 )) {
+            env.addToClasspath( classpath );
+        }
+
+        return env;
     }
 
 
@@ -36,13 +50,15 @@ public class BytecodeCompiler {
     /**
      * {@code CompileEnvironment#compileBunchOfSources} wrapper.
      *
-     * @param source        compilation source (directory or file)
-     * @param destination   compilation destination
+     * @param src       compilation source (directory or file)
+     * @param output    compilation destination directory
+     * @param stdlib    "kotlin-runtime.jar" path
+     * @param classpath compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToDir ( String source, String destination ) {
-        boolean success = ENV.compileBunchOfSources( source, null, destination, true );
+    public void sourcesToDir ( String src, String output, String stdlib, String[] classpath ) {
+        boolean success = env( stdlib, classpath ).compileBunchOfSources( src, null, output, true /* Last arg is ignored anyway */ );
         if ( ! success ) {
-            throw new RuntimeException( compilationError( source ));
+            throw new CompileEnvironmentException( compilationError( src ));
         }
     }
 
@@ -50,14 +66,16 @@ public class BytecodeCompiler {
     /**
      * {@code CompileEnvironment#compileBunchOfSources} wrapper.
      *
-     * @param source         compilation source (directory or file)
+     * @param src            compilation source (directory or file)
      * @param jar            compilation destination jar
      * @param includeRuntime whether Kotlin runtime library is included in destination jar
+     * @param stdlib         "kotlin-runtime.jar" path
+     * @param classpath      compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToJar ( String source, String jar, boolean includeRuntime ) {
-        boolean success = ENV.compileBunchOfSources( source, jar, null, includeRuntime );
+    public void sourcesToJar ( String src, String jar, boolean includeRuntime, String stdlib, String[] classpath ) {
+        boolean success = env( stdlib, classpath ).compileBunchOfSources( src, jar, null, includeRuntime );
         if ( ! success ) {
-            throw new RuntimeException( compilationError( source ));
+            throw new CompileEnvironmentException( compilationError( src ));
         }
     }
 
@@ -65,11 +83,13 @@ public class BytecodeCompiler {
     /**
      * {@code CompileEnvironment#compileModuleScript} wrapper.
      *
-     * @param moduleFile     compilation module file
+     * @param module         compilation module file
      * @param jar            compilation destination jar
      * @param includeRuntime whether Kotlin runtime library is included in destination jar
+     * @param stdlib         "kotlin-runtime.jar" path
+     * @param classpath      compilation classpath, can be <code>null</code> or empty
      */
-    public void moduleToJar ( String moduleFile, String jar, boolean includeRuntime ) {
-        ENV.compileModuleScript( moduleFile, jar, includeRuntime );
+    public void moduleToJar ( String module, String jar, boolean includeRuntime, String stdlib, String[] classpath ) {
+        env( stdlib, classpath ).compileModuleScript( module, jar, includeRuntime );
     }
 }
