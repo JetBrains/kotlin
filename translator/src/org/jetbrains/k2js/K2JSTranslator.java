@@ -1,7 +1,6 @@
 package org.jetbrains.k2js;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -10,8 +9,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.GenerationUtils;
+import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,10 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNames
  */
 public final class K2JSTranslator {
 
+    public static void translatePsiFile(@NotNull JetFile file, @NotNull String outputFile) throws Exception {
+        (new K2JSTranslator()).generateAndSaveProgram(file, outputFile);
+    }
+
     @Nullable
     private BindingContext bindingContext = null;
 
@@ -35,7 +40,11 @@ public final class K2JSTranslator {
 
     public void translateFile(@NotNull String inputFile, @NotNull String outputFile) throws Exception {
         JetFile psiFile = JetFileUtils.loadPsiFile(inputFile);
-        // includeRtJar();
+        generateAndSaveProgram(psiFile, outputFile);
+    }
+
+    private void generateAndSaveProgram(@NotNull JetFile psiFile,
+                                        @NotNull String outputFile) throws IOException {
         JsProgram program = generateProgram(Arrays.asList(psiFile));
         CodeGenerator generator = new CodeGenerator();
         generator.generateToFile(program, new File(outputFile));
@@ -75,12 +84,13 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    private JsProgram generateProgram(@NotNull List<JetFile> files) {
+    public JsProgram generateProgram(@NotNull List<JetFile> files) {
         bindingContext = Analyzer.analyzeFiles(files);
-        for (PsiFile file : files) {
+        for (JetFile file : files) {
             AnalyzingUtils.checkForSyntacticErrors(file);
             AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         }
+
         assert bindingContext != null;
         JetFile file = files.iterator().next();
         return Translation.generateAst(bindingContext, file, file.getProject());

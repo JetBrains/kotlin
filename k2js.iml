@@ -10,8 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="library" name="rhino" level="project" />
-    <orderEntry type="library" name="junit" level="project" />
   </component>
 </module>
 

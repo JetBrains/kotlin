@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +25,9 @@ public final class Analyzer {
 
     //TODO: provide some generic way to access
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsSupport.jet",
-            "C:\\Dev\\Projects\\Kotlin\\jet\\stdlib\\ktSrc\\jssupport\\JsDeclarations.kt"
+            "jslib\\src\\jquery\\common.kt",
+            "jslib\\src\\core\\javautil.kt",
+            "jslib\\src\\core\\core.kt"
     );
 
     @NotNull
@@ -72,7 +74,7 @@ public final class Analyzer {
         };
     }
 
-    private static class JsConfiguration implements Configuration {
+    private static final class JsConfiguration implements Configuration {
 
         @NotNull
         private Project project;

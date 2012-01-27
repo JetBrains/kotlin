@@ -27,9 +27,13 @@ public class MiscTest extends AbstractExpressionTest {
         testFooBoxIsTrue("intRange.kt");
     }
 
-
     @Test
     public void safecallComputesExpressionOnlyOnce() throws Exception {
         testFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
+    }
+
+    @Test
+    public void jquery() throws Exception {
+        testFooBoxIsTrue("jquery.kt");
     }
 }

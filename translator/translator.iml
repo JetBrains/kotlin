@@ -12,9 +12,21 @@
     <orderEntry type="module" module-name="js" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="cli" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="idea-full" level="project" />
+    <orderEntry type="library" name="guava-10.0.1" level="application" />
+    <orderEntry type="library" name="junit-4.10" level="application" />
+    <orderEntry type="library" name="js" level="application" />
   </component>
 </module>
 

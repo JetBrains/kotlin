@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="library" name="guava-10.0.1" level="application" />
   </component>
 </module>
 

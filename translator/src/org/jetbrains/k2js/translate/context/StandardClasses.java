@@ -104,7 +104,7 @@ public final class StandardClasses {
     private static void declareJQuery(@NotNull StandardClasses standardClasses) {
         standardClasses.declare().forFQ("jquery.JQuery").externalClass("jQuery")
                 .methods("addClass", "attr", "hasClass");
-        standardClasses.declare().forFQ("jquery").externalFunction("jq");
+        standardClasses.declare().forFQ("jquery.jq").externalFunction("jQuery");
     }
 
     //TODO: test all the methods
@@ -157,7 +157,10 @@ public final class StandardClasses {
     private final JsScope rootScope;
 
     @NotNull
-    private final Map<String, JsName> nameMap = new HashMap<String, JsName>();
+    private final Map<String, JsName> standardObjects = new HashMap<String, JsName>();
+
+    @NotNull
+    private final Map<String, JsName> externalObjects = new HashMap<String, JsName>();
 
     @NotNull
     private final Map<String, JsScope> scopeMap = new HashMap<String, JsScope>();
@@ -167,20 +170,20 @@ public final class StandardClasses {
         this.kotlinScope = kotlinScope;
     }
 
-    private void declareTopLevelObjectInScope(@NotNull JsScope scope,
+    private void declareTopLevelObjectInScope(@NotNull JsScope scope, @NotNull Map<String, JsName> map,
                                               @NotNull String fullQualifiedName, @NotNull String name) {
         JsName declaredName = scope.declareName(name);
         declaredName.setObfuscatable(false);
-        nameMap.put(fullQualifiedName, declaredName);
+        map.put(fullQualifiedName, declaredName);
         scopeMap.put(fullQualifiedName, new JsScope(scope, "scope for " + name));
     }
 
     private void declareKotlinObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
-        declareTopLevelObjectInScope(kotlinScope, fullQualifiedName, kotlinLibName);
+        declareTopLevelObjectInScope(kotlinScope, standardObjects, fullQualifiedName, kotlinLibName);
     }
 
     private void declareExternalTopLevelObject(@NotNull String fullQualifiedName, @NotNull String externalObjectName) {
-        declareTopLevelObjectInScope(rootScope, fullQualifiedName, externalObjectName);
+        declareTopLevelObjectInScope(rootScope, externalObjects, fullQualifiedName, externalObjectName);
     }
 
     private void declareInner(@NotNull String fullQualifiedClassName,
@@ -191,7 +194,7 @@ public final class StandardClasses {
         String fullQualifiedMethodName = fullQualifiedClassName + "." + shortMethodName;
         JsName declaredName = classScope.declareName(javascriptName);
         declaredName.setObfuscatable(false);
-        nameMap.put(fullQualifiedMethodName, declaredName);
+        standardObjects.put(fullQualifiedMethodName, declaredName);
     }
 
     private void declareMethods(@NotNull String classFQName,
@@ -210,12 +213,21 @@ public final class StandardClasses {
     }
 
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        return nameMap.containsKey(getFQName(descriptor));
+        return standardObjects.containsKey(getFQName(descriptor));
+    }
+
+    public boolean isExternalObject(@NotNull DeclarationDescriptor descriptor) {
+        return externalObjects.containsKey(getFQName(descriptor));
+    }
+
+    @NotNull
+    public JsName getExternalObjectName(@NotNull DeclarationDescriptor descriptor) {
+        return externalObjects.get(getFQName(descriptor));
     }
 
     @NotNull
     public JsName getStandardObjectName(@NotNull DeclarationDescriptor descriptor) {
-        return nameMap.get(getFQName(descriptor));
+        return standardObjects.get(getFQName(descriptor));
     }
 
     @NotNull

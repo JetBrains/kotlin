@@ -1,4 +1,4 @@
-package org.jetbrains.k2js;
+package org.jetbrains.k2js.utils;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
@@ -47,7 +47,7 @@ public final class JetFileUtils {
     }
 
     @NotNull
-    protected static JetFile loadPsiFile(@NotNull String name) {
+    public static JetFile loadPsiFile(@NotNull String name) {
         try {
             return createPsiFile(name, loadFile(name));
         } catch (IOException e) {

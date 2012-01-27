@@ -42,7 +42,9 @@ public final class ReferenceTranslator {
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                              @NotNull TranslationContext context) {
 
-        if (referencedDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+        //TODO: prove correctness
+        if ((referencedDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor)
+                && (context.hasQualifierForDescriptor(referencedDescriptor))) {
             assert context.hasQualifierForDescriptor(referencedDescriptor) : referencedDescriptor;
             return translateAsFQReference(referencedDescriptor, context);
         }

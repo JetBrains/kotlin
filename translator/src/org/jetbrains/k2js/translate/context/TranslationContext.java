@@ -106,6 +106,9 @@ public final class TranslationContext {
         if (aliaser().hasAliasForDeclaration(descriptor)) {
             return aliaser().getAliasForDeclaration(descriptor);
         }
+        if (standardClasses().isExternalObject(descriptor)) {
+            return standardClasses().getExternalObjectName(descriptor);
+        }
         if (standardClasses().isStandardObject(descriptor)) {
             return standardClasses().getStandardObjectName(descriptor);
         }
