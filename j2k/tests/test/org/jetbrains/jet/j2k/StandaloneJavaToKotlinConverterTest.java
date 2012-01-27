@@ -60,7 +60,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         }
         else if (javaFile.getParent().endsWith("/comp")) actual = fileToFileWithCompatibilityImport(javaCode);
 
-        assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression";
+        assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression: " + actual;
 
         final File tmp = new File(kotlinPath + ".tmp");
         if (!expected.equals(actual)) FileUtil.writeToFile(tmp, actual);
