@@ -11,6 +11,10 @@ public class BytecodeCompiler {
     private final CompileEnvironment ENV;
 
 
+    /**
+     * Initializes an instance of this bytecode compiler.
+     * @param stdlib "stdlib" compiler argument, path to "kotlin-runtime.jar", allowed to be <code>null</code> or empty.
+     */
     public BytecodeCompiler ( String stdlib ) {
         ENV = new CompileEnvironment();
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {

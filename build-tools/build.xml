@@ -74,32 +74,19 @@
 
     <!-- Runs <kotlinc> create a *.class files in directory -->
     <macrodef name="kotlinc-dir">
-        <attribute name="file"           default=""/>
-        <attribute name="srcdir"         default=""/>
-        <attribute name="includeRuntime" default="true"/>
-        <attribute name="stdlib"         default=""/>
+        <attribute name="src"/>
+        <attribute name="stdlib" default=""/>
 
         <sequential>
-
             <cleanup/>
-
-            <if>
-                <equals arg1="@{file}" arg2=""/>
-                <then>
-                    <kotlinc srcdir = "@{srcdir}" destdir = "${tests-dir}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
-                </then>
-                <else>
-                    <kotlinc file   = "@{file}"   destdir = "${tests-dir}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
-                </else>
-            </if>
+            <kotlinc src = "@{src}" output = "${tests-dir}" stdlib = "@{stdlib}"/>
         </sequential>
     </macrodef>
 
 
     <!-- Runs <kotlinc> to create a *.class files in a jar -->
     <macrodef name="kotlinc-jar">
-        <attribute name="file"           default=""/>
-        <attribute name="srcdir"         default=""/>
+        <attribute name="src"            default=""/>
         <attribute name="module"         default=""/>
         <attribute name="includeRuntime" default="true"/>
         <attribute name="stdlib"         default=""/>
@@ -108,30 +95,12 @@
             <cleanup/>
 
             <if>
-                <not>
-                    <equals arg1="@{file}" arg2=""/>
-                </not>
+                <equals arg1="@{module}" arg2=""/>
                 <then>
-                    <kotlinc file = "@{file}" destjar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
+                    <kotlinc src    = "@{src}"    jar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                 </then>
-                <elseif>
-                    <not>
-                        <equals arg1="@{srcdir}" arg2=""/>
-                    </not>
-                    <then>
-                        <kotlinc srcdir = "@{srcdir}" destjar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
-                    </then>
-                </elseif>
-                <elseif>
-                    <not>
-                        <equals arg1="@{module}" arg2=""/>
-                    </not>
-                    <then>
-                        <kotlinc module = "@{module}" destjar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
-                    </then>
-                </elseif>
                 <else>
-                    <fail message="One of 'file', 'srcdir', or 'module' should be specified"/>
+                    <kotlinc module = "@{module}" jar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
                 </else>
             </if>
         </sequential>
@@ -203,16 +172,16 @@
         <attribute name="args" default=""/>
         <attribute name="out"/>
         <sequential>
-            <kotlinc-dir file   = "@{root}/Hello.kt"/>
+            <kotlinc-dir src    = "@{root}/Hello.kt"/>
             <run-java    args   = "@{args}" out = "@{out}"/>
 
-            <kotlinc-dir srcdir = "@{root}"/>
+            <kotlinc-dir src    = "@{root}"/>
             <run-java    args   = "@{args}" out = "@{out}"/>
 
-            <kotlinc-jar file   = "@{root}/Hello.kt"/>
+            <kotlinc-jar src    = "@{root}/Hello.kt"/>
             <run-java    args   = "@{args}" out = "@{out}" run-jar="true"/>
 
-            <kotlinc-jar srcdir = "@{root}"/>
+            <kotlinc-jar src    = "@{root}"/>
             <run-java    args   = "@{args}" out = "@{out}" run-jar="true"/>
         </sequential>
     </macrodef>
@@ -234,14 +203,14 @@
     <!-- Compiles, runs and verifies the output of web demo longer examples -->
     <macrodef name="longer-examples-tests">
         <sequential>
-            <kotlinc-dir srcdir = "${basedir}/build-tools/test/longer-examples"/>
+            <kotlinc-dir src    = "${basedir}/build-tools/test/longer-examples"/>
 
             <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>
             <run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>
             <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
             <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
 
-            <kotlinc-jar srcdir = "${basedir}/build-tools/test/longer-examples"/>
+            <kotlinc-jar src    = "${basedir}/build-tools/test/longer-examples"/>
 
             <run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>
             <run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>
@@ -255,13 +224,13 @@
     <!-- Currently disabled, see "buildToolsTest" -->
     <macrodef name="testlib-tests">
         <sequential>
-            <kotlinc-dir file   = "${basedir}/testlib/test/CollectionTest.kt"/>
-            <kotlinc-dir file   = "${basedir}/testlib/test/Test.kt"/>
-            <kotlinc-dir srcdir = "${basedir}/testlib/test"/>
+            <kotlinc-dir src    = "${basedir}/testlib/test/CollectionTest.kt"/>
+            <kotlinc-dir src    = "${basedir}/testlib/test/Test.kt"/>
+            <kotlinc-dir src    = "${basedir}/testlib/test"/>
 
-            <kotlinc-jar file   = "${basedir}/testlib/test/CollectionTest.kt"/>
-            <kotlinc-jar file   = "${basedir}/testlib/test/Test.kt"/>
-            <kotlinc-jar srcdir = "${basedir}/testlib/test"/>
+            <kotlinc-jar src    = "${basedir}/testlib/test/CollectionTest.kt"/>
+            <kotlinc-jar src    = "${basedir}/testlib/test/Test.kt"/>
+            <kotlinc-jar src    = "${basedir}/testlib/test"/>
             <kotlinc-jar module = "${basedir}/build-tools/test/modules/Testlib.kts"/>
         </sequential>
     </macrodef>
@@ -283,7 +252,7 @@
             <trycatch property="error-message" reference="bar">
                 <try>
                     <!-- Should fail -->
-                    <kotlinc-dir srcdir = "${basedir}/build-tools/test/compilation-fail"/>
+                    <kotlinc-dir src = "${basedir}/build-tools/test/compilation-fail"/>
                 </try>
                 <catch>
                     <var name="failed" value="true"/>
@@ -301,7 +270,7 @@
             <trycatch property="error-message" reference="bar">
                 <try>
                     <!-- Should fail -->
-                    <kotlinc-jar srcdir = "${basedir}/build-tools/test/compilation-fail"/>
+                    <kotlinc-jar src = "${basedir}/build-tools/test/compilation-fail"/>
                 </try>
                 <catch>
                     <var name="failed" value="true"/>

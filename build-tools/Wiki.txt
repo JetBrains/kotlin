@@ -12,30 +12,35 @@ To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} e
 </taskdef>
 {code}
 
+
+Alternatively, you can copy all jar files from Kotlin distribution to Ant's {{"lib"}} folder.
+
+
 h2. {{*<kotlinc>*}} attributes
 
 
 || {align:center}Name{align} || {align:center}Description{align} || {align:center}Required{align} || {align:center}Default Value{align} ||
-| {align:center}{{*file*}}{align} | Kotlin source file to compile | {{"file"}}, {{"srcdir"}}, or {{"module"}} needs to be specified |  &nbsp; |
-| {align:center}{{*srcdir*}}{align} | Kotlin source directory to compile | {{"file"}}, {{"srcdir"}}, or {{"module"}} needs to be specified |  &nbsp; |
-| {align:center}{{*module*}}{align} | Kotlin [module|http://confluence.jetbrains.net/display/Kotlin/Modules+and+Compilation] to compile, can only be used with {{*"destjar"*}}.| {{"file"}}, {{"srcdir"}}, or {{"module"}} needs to be specified |  &nbsp; |
-| {align:center}{{*destdir*}}{align} | Destination directory | {{"destdir"}} or {{"destjar"}} needs to be specified |  &nbsp; |
-| {align:center}{{*destjar*}}{align} | Destination jar file | {{"destdir"}} or {{"destjar"}} needs to be specified |  &nbsp; |
+| {align:center}{{*src*}}{align} | Kotlin source file or directory to compile | {{"src"}} or {{"module"}} needs to be specified |  &nbsp; |
+| {align:center}{{*module*}}{align} | Kotlin [module|http://confluence.jetbrains.net/display/Kotlin/Modules+and+Compilation] to compile | {{"src"}} or {{"module"}} needs to be specified |  &nbsp; |
+| {align:center}{{*output*}}{align} | Destination directory | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified |  &nbsp; |
+| {align:center}{{*jar*}}{align} | Destination jar file | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified
+If {{"module"}} is used - only {{"jar"}} can be specified or it can be omitted | {align:center}{{"moduleName.jar"}}{align} |
 | {align:center}{{*stdlib*}}{align} | Path to {{"kotlin-runtime.jar"}} | {align:center}{{false}}{align} |  {align:center}{{""}}{align} |
-| {align:center}{{*includeRuntime*}}{align} | Whether Kotlin runtime library  is included in compilation | {align:center}{{false}}{align} | {align:center}{{true}}{align} |
+| {align:center}{{*includeRuntime*}}{align} | If {{"jar"}} is used - whether Kotlin runtime library is included | {align:center}{{false}}{align} | {align:center}{{true}}{align} |
 
 
 h2. Examples
 
 
 {code}
-<kotlinc file   = "test/longer-examples/Bottles.kt" destdir = "dist"/>
-<kotlinc srcdir = "test/longer-examples"            destdir = "dist"/>
+<kotlinc src = "test/longer-examples/Bottles.kt" output = "dist"/>
+<kotlinc src = "test/longer-examples"            output = "dist"/>
 
-<kotlinc file   = "test/longer-examples/Bottles.kt" destjar = "dist.jar"/>
-<kotlinc srcdir = "test/longer-examples"            destjar = "dist.jar"/>
+<kotlinc src = "test/longer-examples/Bottles.kt" jar = "dist.jar"/>
+<kotlinc src = "test/longer-examples"            jar = "dist.jar"/>
 
-<kotlinc module = "test/modules/smoke/Smoke.kts"    destjar = "dist.jar"/>
+<kotlinc module = "test/modules/smoke/Smoke.kts" jar = "dist.jar"/>
+<kotlinc module = "test/modules/smoke/Smoke.kts"/>
 {code}
 
 {{"Smoke.kts"}}:

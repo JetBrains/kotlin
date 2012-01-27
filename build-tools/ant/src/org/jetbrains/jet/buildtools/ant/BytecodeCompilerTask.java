@@ -16,62 +16,57 @@ import java.io.File;
  */
 public class BytecodeCompilerTask extends Task {
 
-    private boolean includeRuntime = true;
-    private String  stdlib;
-
+    private File    output;
+    private File    jar;
+    private File    stdlib;
+    private File    src;
     private File    module;
-    private File    srcdir;
-    private File    file;
-    private File    destdir;
-    private File    destjar;
+    private boolean includeRuntime = true;
 
-
-    public void setStdlib  ( String stdlib ) { this.stdlib  = stdlib;  }
-    public void setModule  ( File module   ) { this.module  = module;  }
-    public void setSrcdir  ( File srcdir   ) { this.srcdir  = srcdir;  }
-    public void setFile    ( File file     ) { this.file    = file;    }
-    public void setDestdir ( File destdir  ) { this.destdir = destdir; }
-    public void setDestjar ( File destjar  ) { this.destjar = destjar; }
-
+    public void setOutput         ( File output            ) { this.output         = output;         }
+    public void setJar            ( File jar               ) { this.jar            = jar;            }
+    public void setStdlib         ( File stdlib            ) { this.stdlib         = stdlib;         }
+    public void setSrc            ( File src               ) { this.src            = src;            }
+    public void setModule         ( File module            ) { this.module         = module;         }
     public void setIncludeRuntime ( boolean includeRuntime ) { this.includeRuntime = includeRuntime; }
 
 
     @Override
     public void execute() {
 
-        final BytecodeCompiler compiler = new BytecodeCompiler( this.stdlib );
+        final BytecodeCompiler compiler = new BytecodeCompiler( this.stdlib != null ? getPath( this.stdlib ) : null );
 
-        if (( this.srcdir != null ) || ( this.file != null )) {
+        if ( this.src != null ) {
 
-            if (( this.destdir == null ) && ( this.destjar == null )) {
-                throw new RuntimeException( "\"destdir\" or \"destjar\" should be specified" );
+            if (( this.output == null ) && ( this.jar == null )) {
+                throw new RuntimeException( "\"output\" or \"jar\" should be specified" );
             }
 
-            String src  = getPath( this.srcdir  != null ? this.srcdir  : this.file    );
-            String dest = getPath( this.destdir != null ? this.destdir : this.destjar );
+            String source      = getPath( this.src );
+            String destination = getPath( this.output != null ? this.output : this.jar );
 
-            log( String.format( "[%s] => [%s]", src, dest ));
+            log( String.format( "[%s] => [%s]", source, destination ));
 
-            if ( this.destdir != null ) {
-                compiler.sourcesToDir( src, dest );
+            if ( this.output != null ) {
+                compiler.sourcesToDir( source, destination );
             }
             else {
-                compiler.sourcesToJar( src, dest, this.includeRuntime );
+                compiler.sourcesToJar( source, destination, this.includeRuntime );
             }
         }
         else if ( this.module != null ) {
 
-            if ( this.destdir != null ) {
+            if ( this.output != null ) {
                 throw new RuntimeException( "Module compilation is only supported for jar destination" );
             }
 
             String modulePath = getPath( this.module );
-            String jarPath    = ( this.destjar != null ? getPath( this.destjar ) : null );
+            String jarPath    = ( this.jar != null ? getPath( this.jar ) : null );
 
             compiler.moduleToJar( modulePath, jarPath, this.includeRuntime );
         }
         else {
-            throw new RuntimeException( "This operation is not supported" );
+            throw new RuntimeException( "\"src\" or \"module\" should be specified" );
         }
     }
 }
