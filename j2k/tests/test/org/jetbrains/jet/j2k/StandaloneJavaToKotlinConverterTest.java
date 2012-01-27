@@ -43,24 +43,25 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         final String javaCode = FileUtil.loadFile(javaFile);
 
         String actual = "";
-        if (javaFile.getParent().endsWith("/expression")) {
+        String parentFileName = javaFile.getParentFile().getName();
+        if (parentFileName.equals("expression")) {
             actual = expressionToKotlin(javaCode);
         }
-        else if (javaFile.getParent().endsWith("/statement")) {
+        else if (parentFileName.equals("statement")) {
             actual = statementToKotlin(javaCode);
         }
-        else if (javaFile.getParent().endsWith("/method")) {
+        else if (parentFileName.equals("method")) {
             actual = methodToKotlin(javaCode);
         }
-        else if (javaFile.getParent().endsWith("/class")) {
+        else if (parentFileName.equals("class")) {
             actual = fileToKotlin(javaCode);
         }
-        else if (javaFile.getParent().endsWith("/file")) {
+        else if (parentFileName.equals("file")) {
             actual = fileToKotlin(javaCode);
         }
-        else if (javaFile.getParent().endsWith("/comp")) actual = fileToFileWithCompatibilityImport(javaCode);
+        else if (parentFileName.equals("comp")) actual = fileToFileWithCompatibilityImport(javaCode);
 
-        assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression: " + javaPath;
+        assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression: " + javaPath + " parent: " + parentFileName;
 
         final File tmp = new File(kotlinPath + ".tmp");
         if (!expected.equals(actual)) FileUtil.writeToFile(tmp, actual);
