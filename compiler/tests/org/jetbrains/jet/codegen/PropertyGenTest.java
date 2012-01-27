@@ -172,4 +172,8 @@ public class PropertyGenTest extends CodegenTestCase {
     public void testKt1168() throws Exception {
         blackBoxFile("regressions/kt1168.kt");
     }
+
+    public void testKt1170() throws Exception {
+        blackBoxFile("regressions/kt1170.kt");
+    }
 }
