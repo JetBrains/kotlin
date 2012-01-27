@@ -442,8 +442,6 @@ class NamespaceComparator {
                 new Serializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
             }
 
-            // TODO: constructors
-
             sb.append(" {\n");
 
             List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
