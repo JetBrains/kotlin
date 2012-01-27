@@ -308,7 +308,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         //noinspection AssignmentToForLoopParameter
                         reg += argType.getSize();
                     }
-                    if(original.getVisibility() == Visibility.PRIVATE)
+                    if(original.getVisibility() == Visibility.PRIVATE && original.getModality() == Modality.FINAL)
                         iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
                     else
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
@@ -879,7 +879,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if(propertyDescriptor.getOutType().isNullable())
                             type = JetTypeMapper.boxType(type);
                         codegen.gen(initializer, type);
-                        codegen.intermediateValueForProperty(propertyDescriptor, false, null).store(iv);
+                        // @todo write directly to the field. Fix test excloset.jet::test6
+                        String owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                        StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(propertyDescriptor.getOutType()), false, false, false, null, null).store(iv);
                     }
 
                 }
