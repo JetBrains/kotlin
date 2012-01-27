@@ -51,6 +51,10 @@ public abstract class StackValue {
     public void dupReceiver(InstructionAdapter v) {
     }
 
+    public int receiverSize() {
+        return 0;
+    }
+
     public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
         if (this.type == Type.BOOLEAN_TYPE) {
             put(Type.BOOLEAN_TYPE, v);
@@ -491,6 +495,10 @@ public abstract class StackValue {
         public void dupReceiver(InstructionAdapter v) {
             v.dup2();   // array and index
         }
+
+        public int receiverSize() {
+            return 2;
+        }
     }
 
     private static class CollectionElement extends StackValue {
@@ -545,6 +553,15 @@ public abstract class StackValue {
             }
             else
                 ((IntrinsicMethod)setter).generate(codegen, v, null, null, null, null);
+        }
+
+        public int receiverSize() {
+            if(isStandardStack(resolvedGetCall) && isStandardStack(resolvedSetCall)) {
+                return 2;
+            }
+            else {
+                return -1;
+            }
         }
 
         @Override
@@ -686,6 +703,9 @@ public abstract class StackValue {
         }
 
         private boolean isStandardStack(ResolvedCall call) {
+            if(call == null)
+                return true;
+
             for (TypeParameterDescriptor typeParameterDescriptor : call.getResultingDescriptor().getTypeParameters()) {
                 if(typeParameterDescriptor.isReified())
                     return false;
@@ -734,6 +754,10 @@ public abstract class StackValue {
             if (!isStatic) {
                 v.dup();
             }
+        }
+
+        public int receiverSize() {
+            return isStatic ? 0 : 1;
         }
 
         @Override
@@ -800,6 +824,10 @@ public abstract class StackValue {
             if (!isStatic) {
                 v.dup();
             }
+        }
+
+        public int receiverSize() {
+            return isStatic ? 0 : 1;
         }
     }
 
@@ -902,6 +930,10 @@ public abstract class StackValue {
         @Override
         public void dupReceiver(InstructionAdapter v) {
             v.dup();
+        }
+
+        public int receiverSize() {
+            return 1;
         }
 
         @Override
