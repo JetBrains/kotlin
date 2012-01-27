@@ -3,16 +3,20 @@
  */
 package org.jetbrains.jet;
 
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 public interface JetNodeTypes {
     IFileElementType JET_FILE = new IFileElementType(JetLanguage.INSTANCE);
 
-    JetNodeType CLASS      = new JetNodeType("CLASS", JetClass.class);
+    IElementType CLASS     = JetStubElementTypes.CLASS;
+    IElementType FUN       = JetStubElementTypes.FUNCTION;
+
     JetNodeType PROPERTY   = new JetNodeType("PROPERTY", JetProperty.class);
-    JetNodeType FUN        = new JetNodeType("FUN", JetNamedFunction.class);
+
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
     JetNodeType OBJECT_DECLARATION = new JetNodeType("OBJECT_DECLARATION", JetObjectDeclaration.class);
     JetNodeType OBJECT_DECLARATION_NAME = new JetNodeType("OBJECT_DECLARATION_NAME", JetObjectDeclarationName.class);

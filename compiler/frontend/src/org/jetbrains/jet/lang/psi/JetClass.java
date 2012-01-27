@@ -1,9 +1,13 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -12,10 +16,19 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClass extends JetTypeParameterListOwner implements JetClassOrObject, JetModifierListOwner {
+public class JetClass extends JetTypeParameterListOwner
+        implements JetClassOrObject, JetModifierListOwner, StubBasedPsiElement<PsiJetClassStub<?>> {
+
+    private PsiJetClassStub stub;
+
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }
+
+    // TODO (stubs)
+//    public JetClass(final PsiJetClassStub stub) {
+//        this.stub = stub;
+//    }
 
     @Override
     public List<JetDeclaration> getDeclarations() {
@@ -111,5 +124,17 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
 
     public boolean isTrait() {
         return findChildByType(JetTokens.TRAIT_KEYWORD) != null;
+    }
+
+    @Override
+    public IStubElementType getElementType() {
+        // TODO (stubs)
+        return JetStubElementTypes.CLASS;
+    }
+
+    @Override
+    public PsiJetClassStub<?> getStub() {
+        // TODO (stubs)
+        return null;
     }
 }

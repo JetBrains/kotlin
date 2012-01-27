@@ -2,13 +2,17 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
  */
-public class JetNamedFunction extends JetFunction {
+public class JetNamedFunction extends JetFunction implements StubBasedPsiElement<PsiJetFunctionStub<?>> {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);
     }
@@ -62,4 +66,14 @@ public class JetNamedFunction extends JetFunction {
         return this;
     }
 
+    @Override
+    public IStubElementType getElementType() {
+        return JetStubElementTypes.FUNCTION;
+    }
+
+    @Override
+    public PsiJetFunctionStub<?> getStub() {
+        // TODO (stubs)
+        return null;
+    }
 }

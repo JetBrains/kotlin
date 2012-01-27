@@ -220,7 +220,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         usedSet.removeAll(opSet);
 
-        assert usedSet.isEmpty() : "" + usedSet;
+        assert usedSet.isEmpty() : usedSet.toString();
     }
 
 
@@ -239,9 +239,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             Precedence precedence = Precedence.ELVIS;
             while (precedence != null) {
                 IElementType[] types = precedence.getOperations().getTypes();
-                for (IElementType type : types) {
-                    elvisFollow.add(type);
-                }
+                Collections.addAll(elvisFollow, types);
                 precedence = precedence.higher;
             }
             decomposerExpressionFollow = TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(elvisFollow.toArray(new IElementType[elvisFollow.size()])));
@@ -1052,7 +1050,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         JetParsing.TokenDetector enumDetector = new JetParsing.TokenDetector(ENUM_KEYWORD);
         myJetParsing.parseModifierList(MODIFIER_LIST, enumDetector, false);
 
-        JetNodeType declType = parseLocalDeclarationRest(enumDetector.isDetected());
+        IElementType declType = parseLocalDeclarationRest(enumDetector.isDetected());
 
         if (declType != null) {
             decl.done(declType);
@@ -1369,9 +1367,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : object
      *   ;
      */
-    private JetNodeType parseLocalDeclarationRest(boolean isEnum) {
+    private IElementType parseLocalDeclarationRest(boolean isEnum) {
          IElementType keywordToken = tt();
-         JetNodeType declType = null;
+         IElementType declType = null;
          if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
              declType = myJetParsing.parseClass(isEnum);
          }

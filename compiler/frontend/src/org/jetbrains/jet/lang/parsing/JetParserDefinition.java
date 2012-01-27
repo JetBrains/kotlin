@@ -3,11 +3,11 @@
  */
 package org.jetbrains.jet.lang.parsing;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
@@ -18,10 +18,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetFakeStubElementFactory;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementFactory;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetParserDefinition implements ParserDefinition {
+
+    // TODO (stubs):
+    private static JetStubElementFactory stubElementFactory = new JetFakeStubElementFactory();
+
+    public static void setStubFactory(JetStubElementFactory factory) {
+        stubElementFactory = factory;
+    }
+
+    public static JetStubElementFactory getStubElementTypeFactory() {
+        return stubElementFactory;
+    }
+
+    public JetParserDefinition() {
+        if (!ApplicationManager.getApplication().isCommandLine()) {
+        }
+    }
+
     @NotNull
     public Lexer createLexer(Project project) {
         return new JetLexer();
@@ -32,7 +52,9 @@ public class JetParserDefinition implements ParserDefinition {
     }
 
     public IFileElementType getFileNodeType() {
+        // TODO (stubs)
         return JetNodeTypes.JET_FILE;
+        // return JetStubElementTypes.FILE;
     }
 
     @NotNull
@@ -52,6 +74,10 @@ public class JetParserDefinition implements ParserDefinition {
 
     @NotNull
     public PsiElement createElement(ASTNode astNode) {
+        if (astNode.getElementType() instanceof JetStubElementType) {
+            return ((JetStubElementType) astNode.getElementType()).createPsiFromAst(astNode);
+        }
+
         return ((JetNodeType) astNode.getElementType()).createPsi(astNode);
     }
 
