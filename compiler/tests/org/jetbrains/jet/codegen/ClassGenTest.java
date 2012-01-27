@@ -254,15 +254,19 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/selfcreate.kt");
     }
 
-    public void testkt1134() throws Exception {
+    public void testKt1134() throws Exception {
         blackBoxFile("regressions/kt1134.kt");
     }
 
-    public void testkt1157() throws Exception {
+    public void testKt1157() throws Exception {
         blackBoxFile("regressions/kt1157.kt");
     }
 
-    public void testkt471() throws Exception {
+    public void testKt471() throws Exception {
         blackBoxFile("regressions/kt471.kt");
+    }
+
+    public void testKt1165() throws Exception {
+        blackBoxFile("regressions/kt1165.kt");
     }
 }
