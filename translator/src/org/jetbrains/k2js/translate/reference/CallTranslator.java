@@ -33,6 +33,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
  */
 //TODO: write tests on calling backing fields as functions
 //TODO: constructor receives too many parameters
+//TODO: reorder methods properly
 public final class CallTranslator extends AbstractTranslator {
 
     private static final class Builder {
@@ -235,17 +236,18 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression extensionFunctionLiteralCall() {
+        receiver = getExtensionFunctionCallReceiver();
+        List<JsExpression> callArguments = generateExtensionCallArgumentList();
+        JsInvocation callMethodInvocation = generateCallMethodInvocation();
+        callMethodInvocation.setArguments(callArguments);
+        return callMethodInvocation;
+    }
 
-        List<JsExpression> callArguments = new ArrayList<JsExpression>();
-        assert receiver != null;
-        callArguments.add(thisObject());
-        callArguments.addAll(arguments);
-        receiver = null;
+    private JsInvocation generateCallMethodInvocation() {
         JsNameRef callMethodNameRef = AstUtil.newQualifiedNameRef("call");
         JsInvocation callMethodInvocation = new JsInvocation();
         callMethodInvocation.setQualifier(callMethodNameRef);
         AstUtil.setQualifier(callMethodInvocation, calleeReference());
-        callMethodInvocation.setArguments(callArguments);
         return callMethodInvocation;
     }
 
@@ -259,8 +261,6 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression extensionFunctionCall() {
         receiver = getExtensionFunctionCallReceiver();
         List<JsExpression> argumentList = generateExtensionCallArgumentList();
-        //Now the rest of the code can work as if it was simple method invocation
-        receiver = null;
         return AstUtil.newInvocation(calleeReference(), argumentList);
     }
 
@@ -269,6 +269,8 @@ public final class CallTranslator extends AbstractTranslator {
         List<JsExpression> argumentList = new ArrayList<JsExpression>();
         argumentList.add(receiver);
         argumentList.addAll(arguments);
+        //Now the rest of the code can work as if it was simple method invocation
+        receiver = null;
         return argumentList;
     }
 
