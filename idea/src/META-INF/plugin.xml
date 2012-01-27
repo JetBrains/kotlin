@@ -31,6 +31,11 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
+     <action id="ConvertJavaToKotlin" class="org.jetbrains.jet.plugin.actions.JavaToKotlinAction"
+             text="Convert Java File to Kotlin File">
+         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
+         <add-to-group group-id="CodeMenu" anchor="last"/>
+     </action>
      <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
              text="Toggle Error Reporting">
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
