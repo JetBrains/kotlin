@@ -18,11 +18,11 @@ fun A.plus(<warning>a</warning> : Any) {
   1.foo()
   true.<error>foo</error>()
 
-  1
+  <warning>1</warning>
 }
 
 fun A.plus(<warning>a</warning> : Int) {
-  1
+  <warning>1</warning>
 }
 
 fun <T> T.minus(<warning>t</warning> : T) : Int = 1

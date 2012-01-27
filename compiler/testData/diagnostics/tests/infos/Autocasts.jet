@@ -116,12 +116,12 @@ fun f13(a : A?) {
   }
 
   if (!(a is val c is B) || !(a is val x is C)) {
-    <!UNRESOLVED_REFERENCE!>x<!>
-    <!UNRESOLVED_REFERENCE!>c<!>
+    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>x<!>
+    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>c<!>
   }
   else {
-    <!UNRESOLVED_REFERENCE!>x<!>
-    <!UNRESOLVED_REFERENCE!>c<!>
+    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>x<!>
+    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>c<!>
   }
 
   if (!(a is val c is B) || !(a is val c is C)) {

@@ -7,5 +7,5 @@ fun aaa() =
 
 fun bbb() {
   aaa()
-  1 // Stupid error: unreachable code
+  <!UNUSED_EXPRESSION!>1<!> // Stupid error: unreachable code
 }

@@ -62,7 +62,7 @@ fun testCoercionToUnit() {
         when(i) {
             is 1 -> {
                 val d = 34
-                "1"
+                <!UNUSED_EXPRESSION!>"1"<!>
                 doSmth(d)
 
             }

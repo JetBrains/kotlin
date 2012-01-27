@@ -143,7 +143,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitWhenConditionExpression(JetWhenConditionWithExpression condition) {
+            public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
                 JetPattern pattern = condition.getPattern();
                 if (pattern != null) {
                     newDataFlowInfo[0] = checkPatternType(pattern, subjectType, subjectExpression == null, scopeToExtend, context, subjectVariables);

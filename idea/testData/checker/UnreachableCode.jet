@@ -108,7 +108,7 @@ fun t7() : Int {
     <error>2</error>
   }
   catch (e : Any) {
-    2
+    <warning>2</warning>
   }
   return 1 // this is OK, like in Java
 }
@@ -143,8 +143,8 @@ fun failtest(<warning>a</warning> : Int) : Int {
 }
 
 fun foo(a : Nothing) : Unit {
-  1
-  a
+  <warning>1</warning>
+  <warning>a</warning>
   <error>2</error>
 }
 

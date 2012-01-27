@@ -110,7 +110,7 @@ fun t7() : Int {
     <!UNREACHABLE_CODE!>2<!>
   }
   catch (e : Any) {
-    2
+    <!UNUSED_EXPRESSION!>2<!>
   }
   return 1 // this is OK, like in Java
 }
@@ -145,8 +145,8 @@ fun failtest(<!UNUSED_PARAMETER!>a<!> : Int) : Int {
 }
 
 fun foo(a : Nothing) : Unit {
-  1
-  a
+  <!UNUSED_EXPRESSION!>1<!>
+  <!UNUSED_EXPRESSION!>a<!>
   <!UNREACHABLE_CODE!>2<!>
 }
 

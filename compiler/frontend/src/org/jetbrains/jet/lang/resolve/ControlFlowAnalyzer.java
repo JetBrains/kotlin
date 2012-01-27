@@ -81,5 +81,7 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.markUninitializedVariables(function.asElement(), context.isDeclaredLocally());
 
         flowInformationProvider.markUnusedVariables(function.asElement());
+
+        flowInformationProvider.markUnusedLiteralsInBlock(function.asElement());
     }
 }

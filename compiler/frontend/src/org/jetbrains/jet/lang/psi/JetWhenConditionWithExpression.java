@@ -20,7 +20,7 @@ public class JetWhenConditionWithExpression extends JetWhenCondition {
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitWhenConditionExpression(this);
+        visitor.visitWhenConditionWithExpression(this);
     }
 
     @Override

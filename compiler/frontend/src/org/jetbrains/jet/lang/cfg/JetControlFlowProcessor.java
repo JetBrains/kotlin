@@ -82,7 +82,7 @@ public class JetControlFlowProcessor {
             }
 
             @Override
-            public void visitWhenConditionExpression(JetWhenConditionWithExpression condition) {
+            public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
                 JetExpressionPattern pattern = condition.getPattern();
                 if (pattern != null) {
                     pattern.accept(patternVisitor);

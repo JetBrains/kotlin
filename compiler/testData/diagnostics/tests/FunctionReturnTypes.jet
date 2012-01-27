@@ -36,7 +36,7 @@ fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
 fun intBlock() : Int {return 1}
-fun intBlock1() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>1<!>}
+fun intBlock1() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, UNUSED_EXPRESSION!>1<!>}
 
 fun intString(): Int = <!TYPE_MISMATCH!>"s"<!>
 fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>

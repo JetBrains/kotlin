@@ -1,7 +1,7 @@
 fun f(<!UNUSED_PARAMETER!>i<!>: Int) {
     for (j in 1..100) {
-        {
+        <!UNUSED_FUNCTION_LITERAL!>{
             var <!NAME_SHADOWING!>i<!> = 12
-        }
+        }<!>
     }
 }
