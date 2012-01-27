@@ -103,8 +103,9 @@ public final class StandardClasses {
 
     private static void declareJQuery(@NotNull StandardClasses standardClasses) {
         standardClasses.declare().forFQ("jquery.JQuery").externalClass("jQuery")
-                .methods("addClass", "attr", "hasClass", "append");
+                .methods("addClass", "attr", "hasClass", "append", "text", "ready");
         standardClasses.declare().forFQ("jquery.jq").externalFunction("jQuery");
+        standardClasses.declare().forFQ("jquery.get-document").externalObject("document");
     }
 
     //TODO: test all the methods
@@ -142,6 +143,8 @@ public final class StandardClasses {
 
         standardClasses.declare().forFQ("jet.String").kotlinClass("String").
                 properties("length");
+
+        standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
     }
 
     private static void declareTopLevelFunctions(@NotNull StandardClasses standardClasses) {

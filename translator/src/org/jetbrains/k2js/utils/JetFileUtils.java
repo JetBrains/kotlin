@@ -1,5 +1,6 @@
 package org.jetbrains.k2js.utils;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -10,6 +11,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -21,13 +23,13 @@ import java.io.IOException;
  */
 public final class JetFileUtils {
 
-//    @NotNull
-//    private static JetCoreEnvironment testOnlyEnvironment = new JetCoreEnvironment(new Disposable() {
-//
-//        @Override
-//        public void dispose() {
-//        }
-//    });
+    @NotNull
+    private static JetCoreEnvironment testOnlyEnvironment = new JetCoreEnvironment(new Disposable() {
+
+        @Override
+        public void dispose() {
+        }
+    });
 
     @NotNull
     public static String loadFile(@NotNull String path) throws IOException {
@@ -63,7 +65,8 @@ public final class JetFileUtils {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         Project realProject = project;
         if (realProject == null) {
-            throw new RuntimeException();
+            realProject = testOnlyEnvironment.getProject();
+            //throw new RuntimeException();
         }
         PsiFile result = ((PsiFileFactoryImpl) PsiFileFactory.getInstance(realProject))
                 .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);

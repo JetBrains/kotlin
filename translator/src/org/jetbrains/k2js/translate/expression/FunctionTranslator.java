@@ -1,5 +1,6 @@
 package org.jetbrains.k2js.translate.expression;
 
+
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -195,7 +196,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        return DescriptorUtils.isExtensionFunction(descriptor);
+        return DescriptorUtils.isExtensionFunction(descriptor) && !isLiteral();
     }
 
     private boolean isLiteral() {

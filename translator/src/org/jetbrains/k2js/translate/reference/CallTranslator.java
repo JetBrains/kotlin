@@ -2,6 +2,7 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -129,7 +130,6 @@ public final class CallTranslator extends AbstractTranslator {
     public static JsExpression translate(@Nullable JsExpression receiver,
                                          @NotNull CallableDescriptor descriptor,
                                          @NotNull TranslationContext context) {
-        //TODO: HACK!
         return translate(receiver, Collections.<JsExpression>emptyList(),
                 ResolvedCallImpl.create(descriptor), null, context);
     }
@@ -224,10 +224,35 @@ public final class CallTranslator extends AbstractTranslator {
         if (isConstructor()) {
             return constructorCall();
         }
+        if (isExtensionFunctionLiteral()) {
+            return extensionFunctionLiteralCall();
+        }
         if (isExtensionFunction()) {
             return extensionFunctionCall();
         }
         return methodCall();
+    }
+
+    @NotNull
+    private JsExpression extensionFunctionLiteralCall() {
+
+        List<JsExpression> callArguments = new ArrayList<JsExpression>();
+        assert receiver != null;
+        callArguments.add(thisObject());
+        callArguments.addAll(arguments);
+        receiver = null;
+        JsNameRef callMethodNameRef = AstUtil.newQualifiedNameRef("call");
+        JsInvocation callMethodInvocation = new JsInvocation();
+        callMethodInvocation.setQualifier(callMethodNameRef);
+        AstUtil.setQualifier(callMethodInvocation, calleeReference());
+        callMethodInvocation.setArguments(callArguments);
+        return callMethodInvocation;
+    }
+
+    private boolean isExtensionFunctionLiteral() {
+        boolean isLiteral = descriptor instanceof VariableAsFunctionDescriptor
+                || descriptor instanceof ExpressionAsFunctionDescriptor;
+        return isExtensionFunction() && isLiteral;
     }
 
     @NotNull
@@ -257,8 +282,10 @@ public final class CallTranslator extends AbstractTranslator {
         return getThisObject(context(), expectedReceiverDescriptor);
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private boolean isExtensionFunction() {
-        return resolvedCall.getReceiverArgument().exists();
+        boolean hasReceiver = resolvedCall.getReceiverArgument().exists();
+        return hasReceiver;
     }
 
     @NotNull

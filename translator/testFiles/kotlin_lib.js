@@ -902,6 +902,9 @@ Kotlin.StringBuilder = Kotlin.Class.create(
     }
 );
 
+Kotlin.toString = function(obj) {
+    return obj.toString();
+};
 
 /**
  * Copyright 2010 Tim Down.
