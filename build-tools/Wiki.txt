@@ -39,8 +39,8 @@ h2. Examples
 <kotlinc src = "test/longer-examples/Bottles.kt" jar = "dist.jar"/>
 <kotlinc src = "test/longer-examples"            jar = "dist.jar"/>
 
-<kotlinc module = "test/modules/smoke/Smoke.kts" jar = "dist.jar"/>
-<kotlinc module = "test/modules/smoke/Smoke.kts"/>
+<kotlinc module = "test/modules/smoke/Smoke.kts" jar =  "dist.jar"/>
+<kotlinc module = "test/modules/smoke/Smoke.kts"/>   => "smoke.jar"
 {code}
 
 {{"Smoke.kts"}}:
