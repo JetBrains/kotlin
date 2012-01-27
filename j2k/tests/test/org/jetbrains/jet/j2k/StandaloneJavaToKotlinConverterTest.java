@@ -31,7 +31,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        String javaPath = "j2k/tests/testData" + File.separator + getTestFilePath();
+        String javaPath = "j2k/tests/testData/" + getTestFilePath();
         String kotlinPath = javaPath.replace(".jav", ".kt");
 
         final File kotlinFile = new File(kotlinPath);
@@ -74,7 +74,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
     @NotNull
     String getTestFilePath() {
-        return myDataPath + File.separator + myName + ".jav";
+        return myDataPath + "/" + myName + ".jav";
     }
 
 
