@@ -1,0 +1,59 @@
+h1. Ant
+
+To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} environment variable and reference it in your Ant build:
+
+{code}
+<property environment="env"/>
+<taskdef resource    = "org/jetbrains/jet/buildtools/ant/antlib.xml">
+    <classpath>
+        <fileset dir = "${env.KOTLIN_HOME}/lib" includes = "*.jar"/>
+    </classpath>
+</taskdef>
+{code}
+
+h2. {{*<kotlinc>*}} attributes:
+
+
+|| {align:center}Name{align} || {align:center}Description{align} || {align:center}Required{align} || {align:center}Default Value{align} ||
+| {align:center}{{*file*}}{align} | Kotlin source file to compile | {{"file"}}, {{"srcdir"}}, or {{"module"}} needs to be specified |  &nbsp; |
+| {align:center}{{*srcdir*}}{align} | Kotlin source directory to compile | {{"file"}}, {{"srcdir"}}, or {{"module"}} needs to be specified |  &nbsp; |
+| {align:center}{{*module*}}{align} | Kotlin [module|http://confluence.jetbrains.net/display/Kotlin/Modules+and+Compilation] to compile, can only be used with {{*"destjar"*}}.| {{"file"}}, {{"srcdir"}}, or {{"module"}} needs to be specified |  &nbsp; |
+| {align:center}{{*destdir*}}{align} | Destination directory | {{"destdir"}} or {{"destjar"}} needs to be specified |  &nbsp; |
+| {align:center}{{*destjar*}}{align} | Destination jar file | {{"destdir"}} or {{"destjar"}} needs to be specified |  &nbsp; |
+| {align:center}{{*stdlib*}}{align} | Path to {{"kotlin-runtime.jar"}} | {align:center}{{false}}{align} |  {align:center}{{""}}{align} |
+| {align:center}{{*includeRuntime*}}{align} | Whether Kotlin runtime library  is included in compilation | {align:center}{{false}}{align} | {align:center}{{true}}{align} |
+
+
+h2. Examples
+
+
+{code}
+<kotlinc file   = "test/longer-examples/Bottles.kt" destdir = "dist"/>
+<kotlinc srcdir = "test/longer-examples"            destdir = "dist"/>
+
+<kotlinc file   = "test/longer-examples/Bottles.kt" destjar = "dist.jar"/>
+<kotlinc srcdir = "test/longer-examples"            destjar = "dist.jar"/>
+
+<kotlinc module = "test/modules/smoke/Smoke.kts"    destjar = "dist.jar"/>
+{code}
+
+{{"Smoke.kts"}}:
+
+{code}
+import kotlin.modules.*
+
+fun project() {
+    module("smoke") {
+        sources += "Smoke.kt"
+    }
+}
+{code}
+{{"Smoke.kt"}}:
+
+{code}
+package Smoke
+
+fun main(args: Array<String>) {
+    print("${args[0]}|${args[1]}|${args[2]}")
+}
+{code}
