@@ -25,6 +25,7 @@
             <include name="frontend.java/src"/>
             <include name="backend/src"/>
             <include name="cli/src"/>
+            <include name="util/src"/>
 <!--
             <include name="jet.as.java.psi/src"/>
 -->
