@@ -579,7 +579,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
         if (selectorExpression instanceof JetCallExpression) {
             JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-            return context.resolveCall(receiver, callOperationNode, callExpression);
+            FunctionDescriptor functionDescriptor = context.resolveCall(receiver, callOperationNode, callExpression);
+            checkSuper(receiver, functionDescriptor, context.trace, selectorExpression);
+            return functionDescriptor != null ? functionDescriptor.getReturnType() : null;
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) selectorExpression;
@@ -588,7 +590,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             OverloadResolutionResults<VariableDescriptor> resolutionResult = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
             if (resolutionResult.isSuccess()) {
                 temporaryTrace.commit();
-                return resolutionResult.getResultingDescriptor().getOutType();
+                VariableDescriptor resultingDescriptor = resolutionResult.getResultingDescriptor();
+                checkSuper(receiver, resultingDescriptor, context.trace, selectorExpression);
+                return resultingDescriptor.getOutType();
             }
             if (resolutionResult.isAmbiguity()) {
                 temporaryTrace.commit();
@@ -615,10 +619,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         return null;
     }
+    
+    private static void checkSuper(@NotNull ReceiverDescriptor receiverDescriptor, @Nullable DeclarationDescriptor member, @NotNull BindingTrace trace, @NotNull JetExpression expression) {
+        if (!(receiverDescriptor instanceof ExpressionReceiver)) return;
+        JetExpression receiver = ((ExpressionReceiver) receiverDescriptor).getExpression();
+        if (receiver instanceof JetSuperExpression && member instanceof MemberDescriptor) {
+            if (((MemberDescriptor) member).getModality() == Modality.ABSTRACT) {
+                trace.report(ABSTRACT_SUPER_CALL.on(expression));
+            }
+        }
+    }
 
     @Override
     public JetType visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
-        JetType expressionType = context.resolveCall(NO_RECEIVER, null, expression);
+        FunctionDescriptor functionDescriptor = context.resolveCall(NO_RECEIVER, null, expression);
+        JetType expressionType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
         return DataFlowUtils.checkType(expressionType, expression, context);
     }
 

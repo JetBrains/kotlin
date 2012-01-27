@@ -201,6 +201,7 @@ public interface Errors {
     SimpleDiagnosticFactory NO_THIS = SimpleDiagnosticFactory.create(ERROR, "'this' is not defined in this context");
     SimpleDiagnosticFactory SUPER_NOT_AVAILABLE = SimpleDiagnosticFactory.create(ERROR, "No supertypes are accessible in this context");
     SimpleDiagnosticFactory AMBIGUOUS_SUPER = SimpleDiagnosticFactory.create(ERROR, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'");
+    SimpleDiagnosticFactory ABSTRACT_SUPER_CALL = SimpleDiagnosticFactory.create(ERROR, "Abstarct member cannot be accessed directly");
     SimpleDiagnosticFactory NOT_A_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "Not a supertype");
     SimpleDiagnosticFactory TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER = SimpleDiagnosticFactory.create(WARNING, "Type arguments do not need to be specified in a 'super' qualifier");
     SimpleDiagnosticFactory NO_WHEN_ENTRIES = SimpleDiagnosticFactory.create(ERROR, "Entries are required for when-expression"); // TODO : Scope, and maybe this should not be an error
