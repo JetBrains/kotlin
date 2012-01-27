@@ -4,6 +4,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,5 +56,14 @@ public class PsiClassWrapper {
     @NotNull
     public PsiClass getPsiClass() {
         return psiClass;
+    }
+    
+    private JetClassAnnotation jetClass;
+    @NotNull
+    public JetClassAnnotation getJetClass() {
+        if (jetClass == null) {
+            jetClass = JetClassAnnotation.get(psiClass);
+        }
+        return jetClass;
     }
 }

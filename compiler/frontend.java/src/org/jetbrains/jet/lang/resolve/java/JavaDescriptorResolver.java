@@ -236,7 +236,7 @@ public class JavaDescriptorResolver {
         initializeTypeParameters(psiClass);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
-        supertypes.addAll(getSupertypes(psiClass));
+        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.classDescriptor.getTypeConstructor().getParameters()));
 
         if (psiClass.isInterface()) {
             //classData.classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
@@ -579,16 +579,60 @@ public class JavaDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    private Collection<? extends JetType> getSupertypes(PsiClass psiClass) {
-        List<JetType> result = new ArrayList<JetType>();
-        result.add(JetStandardClasses.getAnyType());
-        transformSupertypeList(result, psiClass.getExtendsListTypes());
-        transformSupertypeList(result, psiClass.getImplementsListTypes());
+    private Collection<? extends JetType> getSupertypes(PsiClassWrapper psiClass, List<TypeParameterDescriptor> typeParameters) {
+        final List<JetType> result = new ArrayList<JetType>();
+
+        if (psiClass.getJetClass().signature().length() > 0) {
+            final TypeParameterListTypeVariableResolver typeVariableResolver = new TypeParameterListTypeVariableResolver(typeParameters);
+            
+            new JetSignatureReader(psiClass.getJetClass().signature()).accept(new JetSignatureExceptionsAdapter() {
+                @Override
+                public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {
+                    // TODO: collect
+                    return new JetSignatureAdapter();
+                }
+
+                @Override
+                public JetSignatureVisitor visitSuperclass() {
+                    return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+                        @Override
+                        protected void done(@NotNull JetType jetType) {
+                            if (!jetType.equals(JetStandardClasses.getAnyType())) {
+                                result.add(jetType);
+                            }
+                        }
+                    };
+                }
+
+                @Override
+                public JetSignatureVisitor visitInterface() {
+                    return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+                        @Override
+                        protected void done(@NotNull JetType jetType) {
+                            if (!jetType.equals(JetStandardClasses.getAnyType())) {
+                                result.add(jetType);
+                            }
+                        }
+                    };
+                }
+            });
+        } else {
+            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes());
+            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes());
+        }
+        if (result.isEmpty()) {
+            result.add(JetStandardClasses.getAnyType());
+        }
         return result;
     }
 
     private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes) {
         for (PsiClassType type : extendsListTypes) {
+            PsiClass resolved = type.resolve();
+            if (resolved != null && resolved.getQualifiedName().equals(JvmStdlibNames.JET_OBJECT.getFqName())) {
+                continue;
+            }
+            
             JetType transform = semanticServices.getTypeTransformer().transformToType(type);
 
             result.add(TypeUtils.makeNotNullable(transform));

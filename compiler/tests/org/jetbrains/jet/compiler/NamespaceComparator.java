@@ -436,8 +436,12 @@ class NamespaceComparator {
                 serializeCommaSeparated(klass.getTypeConstructor().getParameters());
                 sb.append(">");
             }
+            
+            if (!klass.getTypeConstructor().getSupertypes().isEmpty()) {
+                sb.append(" : ");
+                new Serializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
+            }
 
-            // TODO: supers
             // TODO: constructors
 
             sb.append(" {\n");

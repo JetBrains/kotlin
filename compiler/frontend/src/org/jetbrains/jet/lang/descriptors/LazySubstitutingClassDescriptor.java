@@ -41,7 +41,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         }
         return newSubstitutor;
     }
-    
+
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
