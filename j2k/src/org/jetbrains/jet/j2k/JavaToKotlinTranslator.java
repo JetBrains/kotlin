@@ -129,13 +129,16 @@ public class JavaToKotlinTranslator {
 
     @Nullable
     private static File findAnnotations() {
-        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-        if (systemClassLoader instanceof URLClassLoader) {
-            URLClassLoader loader = (URLClassLoader) systemClassLoader;
-            for (URL url : loader.getURLs())
-                if ("file".equals(url.getProtocol()) && url.getFile().endsWith("/annotations.jar")) {
-                    return new File(url.getFile());
-                }
+        ClassLoader classLoader = JavaToKotlinTranslator.class.getClassLoader();
+        while (classLoader != null) {
+            if (classLoader instanceof URLClassLoader) {
+                URLClassLoader loader = (URLClassLoader) classLoader;
+                for (URL url : loader.getURLs())
+                    if ("file".equals(url.getProtocol()) && url.getFile().endsWith("/annotations.jar")) {
+                        return new File(url.getFile());
+                    }
+            }
+            classLoader = classLoader.getParent();
         }
         return null;
     }
