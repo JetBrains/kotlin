@@ -14,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-import static org.jetbrains.jet.j2k.TestCaseBuilder.getTestDataPathBase;
-
 /**
  * @author ignatov
  */
@@ -33,7 +31,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        String javaPath = "testData" + File.separator + getTestFilePath();
+        String javaPath = "j2k/testData" + File.separator + getTestFilePath();
         String kotlinPath = javaPath.replace(".jav", ".kt");
 
         final File kotlinFile = new File(kotlinPath);
@@ -89,7 +87,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
     @NotNull
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(TestCaseBuilder.suiteForDirectory(getTestDataPathBase(), "/ast", new TestCaseBuilder.NamedTestFactory() {
+        suite.addTest(TestCaseBuilder.suiteForDirectory("j2k/testData", "/ast", new TestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
