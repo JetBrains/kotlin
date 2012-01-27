@@ -232,7 +232,7 @@ public class JetParsing extends AbstractJetParsing {
         parseModifierList(MODIFIER_LIST, detector, true);
 
         IElementType keywordToken = tt();
-        JetNodeType declType = null;
+        IElementType declType = null;
 //        if (keywordToken == PACKAGE_KEYWORD) {
 //            declType = parseNamespaceBlock();
 //        }
@@ -385,7 +385,7 @@ public class JetParsing extends AbstractJetParsing {
      *       (classBody? | enumClassBody)
      *   ;
      */
-    public JetNodeType parseClass(boolean enumClass) {
+    public IElementType parseClass(boolean enumClass) {
         assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
         advance(); // CLASS_KEYWORD or TRAIT_KEYWORD
 
@@ -558,7 +558,7 @@ public class JetParsing extends AbstractJetParsing {
         TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
         parseModifierList(MODIFIER_LIST, enumDetector, true);
 
-        JetNodeType declType = parseMemberDeclarationRest(enumDetector.isDetected());
+        IElementType declType = parseMemberDeclarationRest(enumDetector.isDetected());
 
         if (declType == null) {
             errorAndAdvance("Expecting member declaration");
@@ -569,9 +569,9 @@ public class JetParsing extends AbstractJetParsing {
         }
     }
 
-    private JetNodeType parseMemberDeclarationRest(boolean isEnum) {
+    private IElementType parseMemberDeclarationRest(boolean isEnum) {
         IElementType keywordToken = tt();
-        JetNodeType declType = null;
+        IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD) {
             if (lookahead(1) == OBJECT_KEYWORD) {
                 declType = parseClassObject();
@@ -925,7 +925,7 @@ public class JetParsing extends AbstractJetParsing {
      *       functionBody?
      *   ;
      */
-    public JetNodeType parseFunction() {
+    public IElementType parseFunction() {
         assert _at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD

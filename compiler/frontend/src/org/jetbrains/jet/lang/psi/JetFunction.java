@@ -14,7 +14,9 @@ import java.util.List;
 /**
  * @author abreslav
  */
-abstract public class JetFunction extends JetTypeParameterListOwner implements JetDeclarationWithBody, JetModifierListOwner {
+abstract public class JetFunction extends JetTypeParameterListOwner
+        implements JetDeclarationWithBody, JetModifierListOwner {
+
     public JetFunction(@NotNull ASTNode node) {
         super(node);
     }
