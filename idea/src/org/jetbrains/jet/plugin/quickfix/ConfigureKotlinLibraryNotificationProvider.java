@@ -33,7 +33,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.compiler.CompilerUtil;
+import org.jetbrains.jet.plugin.compiler.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
@@ -95,7 +95,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         final Library kotlinRuntime = table.getLibraryByName("KotlinRuntime");
         if (kotlinRuntime != null) return null;
 
-        File runtimePath = CompilerUtil.getDefaultRuntimePath();
+        File runtimePath = PathUtil.getDefaultRuntimePath();
         if (runtimePath == null) {
             Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.", "No Runtime Found");
             return null;

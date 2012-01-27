@@ -16,6 +16,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" filepath="$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" />
       <module fileurl="file://$PROJECT_DIR$/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/stdlib/stdlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/testlib/testlib.iml" filepath="$PROJECT_DIR$/testlib/testlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
     </modules>
   </component>
 </project>

@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -124,6 +125,7 @@ public class JavaDescriptorResolver {
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
     protected final JavaSemanticServices semanticServices;
+    private final AltClassFinder altClassFinder;
 
     public JavaDescriptorResolver(Project project, JavaSemanticServices semanticServices) {
         this.javaFacade = JavaPsiFacade.getInstance(project);
@@ -141,6 +143,7 @@ public class JavaDescriptorResolver {
             }
         };
         this.semanticServices = semanticServices;
+        altClassFinder = new AltClassFinder(project);
     }
 
     public static boolean isInJdkHeaders(VirtualFile file) {
@@ -656,6 +659,8 @@ public class JavaDescriptorResolver {
     }
 
     private PsiClass findClass(String qualifiedName) {
+        PsiClass altClass = altClassFinder.findClass(qualifiedName);
+        if (altClass != null) return altClass;
         return javaFacade.findClass(qualifiedName, javaSearchScope);
     }
 
