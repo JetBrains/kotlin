@@ -1,12 +1,14 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -85,11 +87,12 @@ public class JetPsiUtil {
 
         if (quoted.startsWith("`") && quoted.endsWith("`") && quoted.length() >= 2) {
             return quoted.substring(1, quoted.length() - 1);
-        } else {
+        }
+        else {
             return quoted;
         }
     }
-    
+
     @NotNull
     public static String unquoteIdentifierOrFieldReference(@NotNull String quoted) {
         if (quoted.indexOf('`') < 0) {
@@ -98,7 +101,8 @@ public class JetPsiUtil {
 
         if (quoted.startsWith("$")) {
             return "$" + unquoteIdentifier(quoted.substring(1));
-        } else {
+        }
+        else {
             return unquoteIdentifier(quoted);
         }
     }
@@ -167,4 +171,51 @@ public class JetPsiUtil {
         }
         return false;
     }
+
+    @Nullable
+    public static <T extends PsiElement> T getDirectParentOfTypeForBlock(@NotNull JetBlockExpression block, @NotNull Class<T> aClass) {
+        T parent = PsiTreeUtil.getParentOfType(block, aClass);
+        if (parent instanceof JetIfExpression) {
+            JetIfExpression ifExpression = (JetIfExpression) parent;
+            if (ifExpression.getElse() == block || ifExpression.getThen() == block) {
+                return parent;
+            }
+        }
+        if (parent instanceof JetWhenExpression) {
+            JetWhenExpression whenExpression = (JetWhenExpression) parent;
+            for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
+                if (whenEntry.getExpression() == block) {
+                    return parent;
+                }
+            }
+        }
+        if (parent instanceof JetFunctionLiteral) {
+            JetFunctionLiteral functionLiteral = (JetFunctionLiteral) parent;
+            if (functionLiteral.getBodyExpression() == block) {
+                return parent;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isImplicitlyUsed(@NotNull JetElement element) {
+        PsiElement parent = element.getParent();
+        if (!(parent instanceof JetBlockExpression)) return true;
+        JetBlockExpression block = (JetBlockExpression) parent;
+        List<JetElement> statements = block.getStatements();
+        if (statements.get(statements.size() - 1) == element) {
+            JetExpression expression = getDirectParentOfTypeForBlock(block, JetIfExpression.class);
+            if (expression == null) {
+                expression = getDirectParentOfTypeForBlock(block, JetWhenExpression.class);
+            }
+            if (expression == null) {
+                expression = getDirectParentOfTypeForBlock(block, JetFunctionLiteral.class);
+            }
+            if (expression != null) {
+                return isImplicitlyUsed(expression);
+            }
+        }
+        return false;
+    }
+
 }

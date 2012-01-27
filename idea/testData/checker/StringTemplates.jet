@@ -7,15 +7,17 @@ fun demo() {
   fun buzz(f : () -> Any?) : Int  = 1
   val sdf = 1
   val foo = 3;
-    "$abc"
-    "$"
-    "$.$.asdf$\t"
-    "asd\$"
-    "asd$a<error>\x</error>"
-    "asd$a$asd$ $<error>xxx</error>"
-    "fosdfasdo${1 + bar + 100}}sdsdfgdsfsdf"
-    "foo${bar + map {foo}}sdfsdf"
-    "foo${bar + map { "foo" }}sdfsdf"
-    "foo${bar + map {
-      "foo$sdf${ buzz{}}" }}sdfsdf"
+    use("$abc")
+    use("$")
+    use("$.$.asdf$\t")
+    use("asd\$")
+    use("asd$a<error>\x</error>")
+    use("asd$a$asd$ $<error>xxx</error>")
+    use("fosdfasdo${1 + bar + 100}}sdsdfgdsfsdf")
+    use("foo${bar + map {foo}}sdfsdf")
+    use("foo${bar + map { "foo" }}sdfsdf")
+    use("foo${bar + map {
+      "foo$sdf${ buzz{}}" }}sdfsdf")
 }
+
+fun use(<warning>s</warning>: String) {}

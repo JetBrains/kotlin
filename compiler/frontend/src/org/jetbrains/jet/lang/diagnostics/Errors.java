@@ -167,6 +167,8 @@ public interface Errors {
             return argument.getText();
         }
     };
+    SimpleDiagnosticFactory UNUSED_EXPRESSION = SimpleDiagnosticFactory.create(WARNING, "The expression is unused");
+    SimplePsiElementOnlyDiagnosticFactory<JetFunctionLiteralExpression> UNUSED_FUNCTION_LITERAL = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "The function literal is unused. If you mean block, you can use 'run { ... }'");
 
     PsiElementOnlyDiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Val can not be reassigned", NAME);
     PsiElementOnlyDiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_BEFORE_DECLARATION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable cannot be initialized before declaration", NAME);

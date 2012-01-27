@@ -642,6 +642,39 @@ public class JetFlowInformationProvider {
     }
 
 ////////////////////////////////////////////////////////////////////////////////
+//  "Unused literals" in block
+    
+    public void markUnusedLiteralsInBlock(@NotNull JetElement subroutine) {
+        Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+        assert pseudocode != null;
+        JetControlFlowGraphTraverser<Void> traverser = JetControlFlowGraphTraverser.create(pseudocode, true, true);
+        traverser.traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
+            @Override
+            public void execute(@NotNull Instruction instruction, @Nullable Void enterData, @Nullable Void exitData) {
+                if (!(instruction instanceof ReadValueInstruction)) return;
+                JetElement element = ((ReadValueInstruction) instruction).getElement();
+                if (!(element instanceof JetFunctionLiteralExpression
+                      || element instanceof JetConstantExpression
+                      || element instanceof JetStringTemplateExpression
+                      || element instanceof JetSimpleNameExpression)) {
+                    return;
+                }
+                PsiElement parent = element.getParent();
+                if (parent instanceof JetBlockExpression) {
+                    if (!JetPsiUtil.isImplicitlyUsed(element)) {
+                        if (element instanceof JetFunctionLiteralExpression) {
+                            trace.report(Errors.UNUSED_FUNCTION_LITERAL.on((JetFunctionLiteralExpression) element));
+                        }
+                        else {
+                            trace.report(Errors.UNUSED_EXPRESSION.on(element));
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+////////////////////////////////////////////////////////////////////////////////
 //  Util methods                                                                                                              7
 
     @Nullable

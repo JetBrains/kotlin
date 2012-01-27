@@ -22,11 +22,11 @@ fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
   1.foo()
   true.<!NONE_APPLICABLE!>foo<!>()
 
-  1
+  <!UNUSED_EXPRESSION!>1<!>
 }
 
 fun A.plus(<!UNUSED_PARAMETER!>a<!> : Int) {
-  1
+  <!UNUSED_EXPRESSION!>1<!>
 }
 
 fun <T> T.minus(<!UNUSED_PARAMETER!>t<!> : T) : Int = 1

@@ -65,3 +65,7 @@ Add iterated elements to java.util.TreeSet
 */
 inline fun <T> Iterator<T>.toTreeSet() = to(TreeSet<T>())
 
+/*
+Run function f
+*/
+inline fun <T> run(f: () -> T) = f()
