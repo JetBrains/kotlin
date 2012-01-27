@@ -1,3 +1,4 @@
+{toc:style=disc|indent=20px}
 h1. Ant
 
 To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} environment variable and reference it in your Ant build:
@@ -11,7 +12,7 @@ To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} e
 </taskdef>
 {code}
 
-h2. {{*<kotlinc>*}} attributes:
+h2. {{*<kotlinc>*}} attributes
 
 
 || {align:center}Name{align} || {align:center}Description{align} || {align:center}Required{align} || {align:center}Default Value{align} ||
