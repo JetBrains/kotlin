@@ -1,0 +1,1 @@
+final class Entry<K, V> {}

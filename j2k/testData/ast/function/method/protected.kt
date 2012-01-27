@@ -1,0 +1,2 @@
+protected fun test() : Unit {
+}

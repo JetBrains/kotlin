@@ -1,0 +1,2 @@
+trait CommandHandler<T : Command?> {
+}

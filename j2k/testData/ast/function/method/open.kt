@@ -1,0 +1,3 @@
+fun getString() : String? {
+return ""
+}

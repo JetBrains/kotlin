@@ -1,0 +1,2 @@
+private open class Test() {
+}

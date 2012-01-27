@@ -1,0 +1,1 @@
+var a : IntArray? = intArray(1, 2, 3)

@@ -1,0 +1,2 @@
+class Comparable<T>() {
+}
