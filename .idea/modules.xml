@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/jslib/jslib.iml" filepath="$PROJECT_DIR$/jslib/jslib.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/translator/translator.iml" filepath="$PROJECT_DIR$/translator/translator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/util/util.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/util/util.iml" />
     </modules>
   </component>
 </project>
