@@ -23,7 +23,8 @@ h2. {{*<kotlinc>*}} attributes
 | {align:center}{{*src*}}{align} | Kotlin source file or directory to compile | {{"src"}} or {{"module"}} needs to be specified |  &nbsp; |
 | {align:center}{{*module*}}{align} | Kotlin [module|http://confluence.jetbrains.net/display/Kotlin/Modules+and+Compilation] to compile | {{"src"}} or {{"module"}} needs to be specified |  &nbsp; |
 | {align:center}{{*output*}}{align} | Destination directory | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified |  &nbsp; |
-| {align:center}{{*jar*}}{align} | Destination jar file | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified |  &nbsp; |
+| {align:center}{{*jar*}}{align} | Destination jar file | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified
+If {{"module"}} is used - only {{"jar"}} can be specified or it can be omitted | {align:center}{{"moduleName.jar"}}{align} |
 | {align:center}{{*classpath*}}{align} | Compilation class path | {align:center}{{false}}{align} | &nbsp; |
 | {align:center}{{*classpathref*}}{align} | Compilation class path reference | {align:center}{{false}}{align} | &nbsp; |
 | {align:center}{{*stdlib*}}{align} | Path to {{"kotlin-runtime.jar"}} | {align:center}{{false}}{align} |  {align:center}{{""}}{align} |
