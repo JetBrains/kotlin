@@ -63,6 +63,16 @@ public class BytecodeCompilerTask extends Task {
     }
 
 
+    /**
+     * Set the nested {@code <classpath>} to be used for this compilation.
+     *
+     * @param classpath an Ant Path object containing the compilation classpath.
+     */
+    public void addConfiguredClasspath( Path classpath ) {
+        setClasspath( classpath );
+    }
+
+
     @Override
     public void execute() {
 

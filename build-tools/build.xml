@@ -4,9 +4,11 @@
     <property name="kotlin-home"      location="${output}/ant-test/kotlin-home"/>
     <property name="tests-jar"        location="${tests-dir}/out.jar"/>
     <property name="bootstrap-dir"    location="${basedir}/bootstrap.compiler"/>
+    <property name="junit-jar"        location="${basedir}/testlib/lib/junit-4.9.jar"/>
     <property name="failonerror"      value="true"/> <!-- Whether invoking compiled classes should file on error -->
 
 
+    <!-- http://ant-contrib.sourceforge.net/tasks/tasks/index.html -->
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="${basedir}/build-tools/lib/ant-contrib-1.0b3.jar"/>
@@ -15,7 +17,7 @@
 
 
     <path id="junit-jar">
-        <fileset file="${basedir}/testlib/lib/junit-4.9.jar"/>
+        <fileset file="${junit-jar}"/>
     </path>
 
 
@@ -25,7 +27,7 @@
 
             <if>
                 <not>
-                    <available file="${kotlin-home}" type="dir"/>
+                    <available file="${kotlin-home}/lib" type="dir"/>
                 </not>
                 <then>
                     <mkdir  dir = "${kotlin-home}"/>
@@ -103,16 +105,24 @@
             <if>
                 <equals arg1="@{module}" arg2=""/>
                 <then>
-                    <kotlinc src = "@{src}" jar = "@{jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
+                    <kotlinc src = "@{src}" jar = "@{jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}">
+                        <classpath>
+                            <path refid="junit-jar"/>
+                        </classpath>
+                    </kotlinc>
                 </then>
                 <elseif>
                     <equals arg1="@{jar}" arg2=""/>
                     <then>
-                        <kotlinc module = "@{module}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
+                        <kotlinc module = "@{module}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}">
+                            <classpath>
+                                <fileset file="${junit-jar}"/>
+                            </classpath>
+                        </kotlinc>
                     </then>
                 </elseif>
                 <else>
-                    <kotlinc module = "@{module}" jar = "@{jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
+                    <kotlinc module = "@{module}" jar = "@{jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpath="${junit-jar}"/>
                 </else>
             </if>
         </sequential>

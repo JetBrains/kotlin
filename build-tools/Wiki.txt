@@ -1,5 +1,5 @@
 {toc:style=disc|indent=20px}
-h1. Ant
+h1. Ant - <kotlinc> task
 
 To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} environment variable and reference it in your Ant build:
 
@@ -23,10 +23,14 @@ h2. {{*<kotlinc>*}} attributes
 | {align:center}{{*src*}}{align} | Kotlin source file or directory to compile | {{"src"}} or {{"module"}} needs to be specified |  &nbsp; |
 | {align:center}{{*module*}}{align} | Kotlin [module|http://confluence.jetbrains.net/display/Kotlin/Modules+and+Compilation] to compile | {{"src"}} or {{"module"}} needs to be specified |  &nbsp; |
 | {align:center}{{*output*}}{align} | Destination directory | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified |  &nbsp; |
-| {align:center}{{*jar*}}{align} | Destination jar file | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified
-If {{"module"}} is used - only {{"jar"}} can be specified or it can be omitted | {align:center}{{"moduleName.jar"}}{align} |
+| {align:center}{{*jar*}}{align} | Destination jar file | If {{"src"}} is used - {{"output"}} or {{"jar"}} needs to be specified |  &nbsp; |
+| {align:center}{{*classpath*}}{align} | Compilation class path | {align:center}{{false}}{align} | &nbsp; |
+| {align:center}{{*classpathref*}}{align} | Compilation class path reference | {align:center}{{false}}{align} | &nbsp; |
 | {align:center}{{*stdlib*}}{align} | Path to {{"kotlin-runtime.jar"}} | {align:center}{{false}}{align} |  {align:center}{{""}}{align} |
 | {align:center}{{*includeRuntime*}}{align} | If {{"jar"}} is used - whether Kotlin runtime library is included | {align:center}{{false}}{align} | {align:center}{{true}}{align} |
+
+
+{{<kotlinc>}} accepts a nested {{<classpath>}} element, similarly to [{{<javac>}}|http://evgeny-goldin.org/javadoc/ant/Tasks/javac.html].
 
 
 h2. Examples
@@ -62,4 +66,30 @@ package Smoke
 fun main(args: Array<String>) {
     print("${args[0]}|${args[1]}|${args[2]}")
 }
+{code}
+
+
+h3. Classpath examples
+
+
+{code}
+<path id="junit-jar">
+    <fileset file="lib/junit.jar"/>
+</path>
+
+<kotlinc src = "src/unit-tests" jar = "tests.jar" classpath    = "lib/junit.jar"/>
+
+<kotlinc src = "src/unit-tests" jar = "tests.jar" classpathref = "junit-jar"/>
+
+<kotlinc src = "src/unit-tests" jar = "tests.jar">
+    <classpath>
+        <path refid="junit-jar"/>
+    </classpath>
+</kotlinc>
+
+<kotlinc src = "src/unit-tests" jar = "tests.jar">
+    <classpath>
+        <fileset file="lib/junit.jar"/>
+    </classpath>
+</kotlinc>
 {code}
