@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public final class DescriptorUtils {
         return (functionDescriptor.getName().equals(OperatorConventions.COMPARE_TO));
     }
 
-    public static boolean isConstructorDescriptor(@NotNull FunctionDescriptor descriptor) {
+    public static boolean isConstructorDescriptor(@NotNull CallableDescriptor descriptor) {
         return (descriptor instanceof ConstructorDescriptor);
     }
 
@@ -71,7 +72,8 @@ public final class DescriptorUtils {
                                                        @NotNull String name) {
         Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
         assert functionDescriptors.size() == 1 :
-                "In scope " + scope + " supposed to be exactly one " + name + " function.";
+                "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
+                        "Found: " + functionDescriptors.size();
         //noinspection LoopStatementThatDoesntLoop
         for (FunctionDescriptor descriptor : functionDescriptors) {
             return descriptor;
@@ -80,6 +82,7 @@ public final class DescriptorUtils {
                 + " supposed to be exactly one " + name + " function.");
     }
 
+    //TODO: some stange stuff happening to this method
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
@@ -87,6 +90,9 @@ public final class DescriptorUtils {
         if (variable == null) {
             variable = scope.getPropertyByFieldReference("$" + name);
         }
+        Set<VariableDescriptor> variables = scope.getProperties(name);
+        assert variables.size() == 1 : "Actual size: " + variables.size();
+        variable = variables.iterator().next();
         PropertyDescriptor descriptor = (PropertyDescriptor) variable;
         assert descriptor != null : "Must have a descriptor.";
         return descriptor;
@@ -122,7 +128,7 @@ public final class DescriptorUtils {
         return containing;
     }
 
-    public static boolean isExtensionFunction(@NotNull FunctionDescriptor functionDescriptor) {
+    public static boolean isExtensionFunction(@NotNull CallableDescriptor functionDescriptor) {
         return (functionDescriptor.getReceiverParameter().exists());
     }
 
@@ -135,4 +141,47 @@ public final class DescriptorUtils {
         }
         return name;
     }
+
+    //TODO: why callable descriptor
+    @Nullable
+    public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
+        ReceiverDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
+        if (!expectedThisObject.exists()) {
+            return null;
+        }
+        return getDeclarationDescriptorForReceiver(expectedThisObject);
+    }
+
+    @NotNull
+    public static DeclarationDescriptor getDeclarationDescriptorForReceiver
+            (@NotNull ReceiverDescriptor receiverParameter) {
+        DeclarationDescriptor declarationDescriptor =
+                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
+        //TODO: WHY assert?
+        assert declarationDescriptor != null;
+        return declarationDescriptor.getOriginal();
+    }
+
+    @Nullable
+    public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor callableDescriptor) {
+        ReceiverDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        if (!receiverParameter.exists()) {
+            return null;
+        }
+        return getDeclarationDescriptorForReceiver(receiverParameter);
+    }
+
+    //TODO: maybe we have similar routine
+    @Nullable
+    public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        while (containing != null) {
+            if (containing instanceof ClassDescriptor) {
+                return (ClassDescriptor) containing;
+            }
+            containing = containing.getContainingDeclaration();
+        }
+        return null;
+    }
+
 }

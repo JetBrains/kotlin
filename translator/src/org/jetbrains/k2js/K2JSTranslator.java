@@ -122,6 +122,10 @@ public final class K2JSTranslator {
         JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
         String name = namespaceHeader.getName();
         assert name != null : "NamespaceHeader must have a name";
+        //TODO: ensapsulate anonymous logic somewhere
+        if (name.equals("")) {
+            return "Anonymous";
+        }
         return name;
     }
 

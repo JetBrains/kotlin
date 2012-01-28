@@ -10,22 +10,13 @@
   </component>
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/translator/testFiles/propertyAccess/cases/safeCallReturnsNullIfFails.kt" line="3" />
-    <bookmark url="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" line="155" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Config.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/IDEAConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/TestConfig.java" />
+    <list default="true" id="f02ef53d-47a4-4f5e-a1aa-3df68aae9b20" name="Default" comment="added different configs for idea and test environment">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jslib/src/core/javautil.kt" afterPath="$PROJECT_DIR$/jslib/src/core/javautil.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jslib/src/jquery/common.kt" afterPath="$PROJECT_DIR$/jslib/src/jquery/common.kt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslatorApplet.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslatorApplet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/JetFileUtils.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/JetFileUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" afterPath="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" afterPath="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" />
     </list>
     <ignored path="k2js.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -295,10 +286,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Analyzer.java" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="Analyzer.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="43" column="78" selection-start="1650" selection-end="1650" vertical-scroll-proportion="0.8982387">
+                <state line="41" column="41" selection-start="1500" selection-end="1500" vertical-scroll-proportion="0.86912066">
                   <folding />
                 </state>
               </provider>
@@ -307,7 +298,7 @@
           <file leaf-file-name="kotlin_lib.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/testFiles/kotlin_lib.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="890" column="44" selection-start="25843" selection-end="25843" vertical-scroll-proportion="0.0">
+                <state line="891" column="44" selection-start="25849" selection-end="25849" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -389,44 +380,69 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Config.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Config.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="9" column="0" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="IDEAConfig.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/IDEAConfig.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="13" column="11" selection-start="261" selection-end="261" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="TestConfig.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/TestConfig.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="11" column="19" selection-start="306" selection-end="306" vertical-scroll-proportion="0.0">
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="K2JSTranslator.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="31" column="0" selection-start="938" selection-end="938" vertical-scroll-proportion="-2.5038168">
+                <state line="126" column="44" selection-start="5251" selection-end="5251" vertical-scroll-proportion="0.6175869">
                   <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="GenerationUtils.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/GenerationUtils.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="19" column="44" selection-start="636" selection-end="636" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="AppletTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/AppletTest.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="34" column="26" selection-start="990" selection-end="990" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="FunctionTest.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="53" column="33" selection-start="1293" selection-end="1293" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="TranslationUtils.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/TranslationUtils.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="17" column="0" selection-start="667" selection-end="667" vertical-scroll-proportion="0.0">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="CallTranslator.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="281" column="59" selection-start="12614" selection-end="12614" vertical-scroll-proportion="0.0">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DescriptorUtils.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="21" column="66" selection-start="587" selection-end="587" vertical-scroll-proportion="-13.076923">
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -443,34 +459,7 @@
           <file leaf-file-name="K2JSTranslatorApplet.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslatorApplet.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="38" column="51" selection-start="1190" selection-end="1190" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="TranslationTest.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="94" column="25" selection-start="3080" selection-end="3080" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="StandardClasses.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="24" column="44" selection-start="683" selection-end="683" vertical-scroll-proportion="0.0">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="JsInvocation.java" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/js/src/com/google/dart/compiler/backend/js/ast/JsInvocation.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="18" column="11" selection-start="594" selection-end="594" vertical-scroll-proportion="0.0">
+                <state line="38" column="74" selection-start="1213" selection-end="1213" vertical-scroll-proportion="0.0">
                   <folding />
                 </state>
               </provider>
@@ -486,7 +475,7 @@
     </FindUsagesManager>
   </component>
   <component name="Git.Push.Settings">
-    <option name="myUpdateMethod" value="REBASE" />
+    <option name="myUpdateMethod" />
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
@@ -501,9 +490,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/MiscTest.java" />
-        <option value="$PROJECT_DIR$/translator/testFiles/kotlin_lib.js" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/expression/FunctionTranslator.java" />
         <option value="$PROJECT_DIR$/translator/testFiles/extensionFunction/out/extensionLiteralPassedToFunction.js" />
         <option value="$PROJECT_DIR$/translator/testFiles/extensionFunction/out/extensionInsideFunctionLiteral.js" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java" />
@@ -511,11 +497,14 @@
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Config.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/IDEAConfig.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/TestConfig.java" />
-        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" />
         <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/TranslationTest.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/JetFileUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/generate/CodeGenerator.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslatorApplet.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java" />
+        <option value="$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java" />
+        <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/GenerationUtils.java" />
         <option value="$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java" />
       </list>
     </option>
@@ -918,6 +907,793 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="org.jetbrains.k2js.test.examples" />
     </key>
+  </component>
+  <component name="RestoreUpdateTree">
+    <UpdateInfo date="Moments ago" ActionInfo="_Update">
+      <UpdatedFiles>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated from server" />
+          <option name="myStatusName" value="Changed on server" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CHANGED_ON_SERVER" />
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Updated" />
+            <option name="myStatusName" value="Changed" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="UPDATED" />
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/artifacts/WebViewApplet_jar.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/artifacts/WebViewServer_jar.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/annotations.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/commons_lang_2_4.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/json.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/TestModule.iml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/src/ResponseTest.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/testData/errors/verifyError.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebView.iml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/WebViewApplet.iml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/com/intellij/core/CoreJavaFileManager.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/com/intellij/openapi/vfs/impl/jar/VirtualJarFile.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/WebViewServer.iml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/login.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/logs.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/META-INF/MANIFEST.MF</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/log4j.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/authorization/UserAuthenticator.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/config.properties</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Basic syntax walk-through/Use ranges and in.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Basic syntax walk-through/order.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Hello, world!/A multi-language Hello.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Hello, world!/An object-oriented Hello.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/helpExamples.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/order.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/expression/ExpressionVisitor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/translator/testFiles/kotlin_lib.js</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Created" />
+            <option name="myStatusName" value="Created" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="CREATED" />
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/artifacts/WebDemo.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/facebook.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/jetty.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/junit_4_7.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/kotlinLibrary.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/openid4java_0_9_6.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/org_eclipse_jetty_jetty_jmx_8_0_1_v20110908.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/org_mozilla_rhino_1_7R3.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/scribe_1_3_0.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/.idea/libraries/selenium.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/libs/selenium-2.17.0/selenium-java-2.17.0-srcs.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/libs/selenium-2.17.0/selenium-java-2.17.0.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/src/SeleniumTest.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/testData/examples/99 Bottles of Beer.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/testData/examples/HTML Builder.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/testData/examples/Life.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/TestModule/testData/examples/Maze.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/module_webviewapplet.xml</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/org/jetbrains/demo/ukhorskaya/AppletUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/org/jetbrains/demo/ukhorskaya/ErrorWriterInApplet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/org/jetbrains/demo/ukhorskaya/InitializerApplet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/org/jetbrains/demo/ukhorskaya/MainApplet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/index.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/CommandRunner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/ErrorWriterOnServer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/Initializer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/Main.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/RequestParameters.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/Statistics.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/authorization/AuthorizationFacebookHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/authorization/AuthorizationGoogleHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/authorization/AuthorizationOpenIdHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/database/MongoDBConnector.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/examplesLoader/ExamplesList.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/examplesLoader/ExamplesLoader.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/handlers/ServerHandler.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/help/HelpLoader.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/log/LogDownloader.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/responseHelpers/CompileAndRunExecutor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/responseHelpers/JavaConverterRunner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/responseHelpers/JavaRunner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/responseHelpers/JsConverter.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/server/KotlinHttpServer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/servlet/KotlinHttpServlet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/org/jetbrains/demo/ukhorskaya/sessions/HttpSession.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/authorization/AuthorizationHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/authorization/AuthorizationTwitterHelper.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/clearhtml.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/LICENSE</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/css/docs.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/codemirror-2.16.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/codemirror.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/codemirror.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/complete.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/overlay.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/runmode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/dialog.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/dialog.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/foldcode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/javascript-hint.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/overlay.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/runmode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/search.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/searchcursor.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/simple-hint.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/lib/util/simple-hint.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/mode/clike/clike.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/mode/clike/kotlin.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/codemirror/theme/default.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/components/common.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/components/components.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/components/components.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/components/help.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/favicon.ico</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/class.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/compile.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/delete.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/error.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/execute.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/executeJava.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/executeJavaB.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/executeJavaScript.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/executeJavaScriptB.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/genericValue.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/help.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/information.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/javatokotlin.PNG</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/leftSide.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/link.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/markAll.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/method.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/property.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/refresh.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/removeAllGutters.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/save.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/togglel.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/toggler.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/icons/warning.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/ajax-loader.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/clientActive.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/jblogo.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/kotlinlogo2.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/loading.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/loading2.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/nohighlightingActive.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/refreshButtonHelp.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/serverActive.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/switch.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/switch2.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/toogleShortcuts.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/toogleShortcutsOpen.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/wavyline-green.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/images/wavyline-red.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/index.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_flat_0_aaaaaa_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_flat_75_ffffff_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_glass_55_fbf9ee_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_glass_65_ffffff_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_glass_75_dadada_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_glass_95_fef1ec_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-icons_222222_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-icons_2e83ff_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-icons_454545_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-icons_888888_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/images/ui-icons_cd0a0a_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/css/smoothness/jquery-ui-1.8.16.custom.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/AUTHORS.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/GPL-LICENSE.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/MIT-LICENSE.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/external/jquery.bgiframe-2.1.2.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/external/jquery.cookie.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/external/jquery.metadata.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/external/qunit.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/external/qunit.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/jquery-1.6.2.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_flat_75_ffffff_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_glass_65_ffffff_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_glass_75_dadada_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-icons_222222_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-icons_2e83ff_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-icons_454545_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-icons_888888_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.accordion.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.all.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.autocomplete.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.base.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.button.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.core.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.datepicker.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.dialog.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.progressbar.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.resizable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.selectable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.slider.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.tabs.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/base/jquery.ui.theme.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_flat_0_aaaaaa_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_flat_75_ffffff_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_55_fbf9ee_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_65_ffffff_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_95_fef1ec_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-icons_222222_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-icons_2e83ff_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-icons_454545_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-icons_888888_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/images/ui-icons_cd0a0a_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery-ui-1.8.16.custom.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.accordion.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.all.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.autocomplete.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.base.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.button.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.core.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.datepicker.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.dialog.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.progressbar.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.resizable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.selectable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.selectmenu.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.slider.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.tabs.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/themes/smoothness/jquery.ui.theme.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery-ui-i18n.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-af.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ar-DZ.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ar.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-az.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-bg.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-bs.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ca.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-cs.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-da.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-de.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-el.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-en-AU.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-en-GB.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-en-NZ.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-eo.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-es.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-et.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-eu.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fa.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fi.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fo.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr-CH.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-gl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-he.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-hr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-hu.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-hy.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-id.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-is.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-it.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ja.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ko.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-kz.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-lt.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-lv.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ml.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ms.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-nl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-no.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-pl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-pt-BR.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-pt.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-rm.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ro.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ru.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sk.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sq.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sr-SR.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sv.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ta.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-th.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-tj.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-tr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-uk.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-vi.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-zh-CN.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-zh-HK.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-zh-TW.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery-ui-1.8.16.custom.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.blind.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.bounce.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.clip.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.core.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.drop.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.explode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.fade.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.fold.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.highlight.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.pulsate.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.scale.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.shake.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.slide.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.effects.transfer.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.accordion.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.autocomplete.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.button.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.core.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.datepicker.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.dialog.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.draggable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.droppable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.mouse.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.position.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.progressbar.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.resizable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.selectable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.selectmenu.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.slider.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.sortable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.tabs.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/jquery.ui.widget.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.blind.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.bounce.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.clip.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.core.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.drop.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.explode.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.fade.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.fold.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.highlight.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.pulsate.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.scale.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.shake.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.slide.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.effects.transfer.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.accordion.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.autocomplete.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.button.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.core.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.datepicker.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.dialog.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.draggable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.droppable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.mouse.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.position.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.progressbar.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.resizable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.selectable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.slider.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.sortable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.tabs.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/ui/minified/jquery.ui.widget.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/development-bundle/version.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/index.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/jquery-1.3.2.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/jquery-1.7.1.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/jquery.keynav.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/jquery.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/js/jquery-1.6.2.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/js/jquery-ui-1.8.16.custom.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/jquery/test.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/kotlin_lib.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/login.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/static/messages/JavaErrorMessages.properties</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Longer examples/99 Bottles of Beer.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Problems/Index of Maximum.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Problems/Sum.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/jetty-jmx-8.0.1.v20110908-javadoc.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/jetty-jmx-8.0.1.v20110908-sources.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/jetty-jmx-8.0.1.v20110908.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/jetty-util-8.0.1.v20110908-javadoc.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/jetty-util-8.0.1.v20110908-sources.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/jetty-util-8.0.1.v20110908.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/lib/rhino-1.7R3.jar</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/ErrorWriter.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/Interval.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/MyDeclarationDescriptorVisitor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/ResponseUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/TimeManager.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/errorsDescriptors/ErrorAnalyzer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/errorsDescriptors/ErrorDescriptor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/exceptions/KotlinCoreException.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/responseHelpers/JsonResponseForCompletion.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/responseHelpers/JsonResponseForHighlighting.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/server/ServerSettings.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/session/SessionInfo.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/demo/ukhorskaya/session/UserInfo.java</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Deleted" />
+            <option name="myStatusName" value="Deleted" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="true" />
+            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/web/view/ukhorskaya/AppletUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/web/view/ukhorskaya/ErrorWriterInApplet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/web/view/ukhorskaya/InitializerApplet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewApplet/src/web/view/ukhorskaya/MainApplet.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/clearhtml.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/LICENSE</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/css/docs.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/codemirror-2.16.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/codemirror.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/codemirror.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/complete.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/overlay.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/runmode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/dialog.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/dialog.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/foldcode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/javascript-hint.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/overlay.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/runmode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/search.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/searchcursor.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/simple-hint.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/lib/util/simple-hint.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/mode/clike/clike.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/mode/clike/kotlin.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/codemirror/theme/default.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/components/common.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/components/components.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/components/components.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/components/help.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/favicon.ico</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/header.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/class.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/compile.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/error.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/execute.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/executeJava.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/executeJavaScript.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/genericValue.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/information.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/javatokotlin.PNG</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/leftSide.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/markAll.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/method.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/property.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/togglel.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/toggler.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/icons/warning.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/images/ajax-loader.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/images/jblogo.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/images/kotlinlogo2.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/images/switch.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/images/wavyline-green.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/images/wavyline-red.gif</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_flat_0_aaaaaa_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_flat_75_ffffff_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_glass_55_fbf9ee_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_glass_65_ffffff_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_glass_75_dadada_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_glass_95_fef1ec_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-icons_222222_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-icons_2e83ff_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-icons_454545_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-icons_888888_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/images/ui-icons_cd0a0a_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/css/smoothness/jquery-ui-1.8.16.custom.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/AUTHORS.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/GPL-LICENSE.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/MIT-LICENSE.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/external/jquery.bgiframe-2.1.2.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/external/jquery.cookie.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/external/jquery.metadata.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/external/qunit.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/external/qunit.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/jquery-1.6.2.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_flat_75_ffffff_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_glass_65_ffffff_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_glass_75_dadada_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-icons_222222_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-icons_2e83ff_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-icons_454545_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-icons_888888_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.accordion.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.all.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.autocomplete.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.base.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.button.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.core.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.datepicker.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.dialog.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.progressbar.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.resizable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.selectable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.slider.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.tabs.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/base/jquery.ui.theme.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_flat_0_aaaaaa_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_flat_75_ffffff_40x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_55_fbf9ee_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_65_ffffff_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_glass_95_fef1ec_1x400.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-icons_222222_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-icons_2e83ff_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-icons_454545_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-icons_888888_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/images/ui-icons_cd0a0a_256x240.png</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery-ui-1.8.16.custom.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.accordion.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.all.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.autocomplete.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.base.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.button.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.core.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.datepicker.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.dialog.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.progressbar.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.resizable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.selectable.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.selectmenu.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.slider.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.tabs.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/themes/smoothness/jquery.ui.theme.css</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery-ui-i18n.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-af.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ar-DZ.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ar.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-az.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-bg.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-bs.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ca.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-cs.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-da.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-de.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-el.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-en-AU.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-en-GB.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-en-NZ.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-eo.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-es.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-et.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-eu.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fa.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fi.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fo.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr-CH.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-gl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-he.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-hr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-hu.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-hy.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-id.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-is.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-it.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ja.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ko.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-kz.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-lt.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-lv.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ml.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ms.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-nl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-no.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-pl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-pt-BR.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-pt.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-rm.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ro.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ru.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sk.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sl.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sq.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sr-SR.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-sv.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-ta.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-th.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-tj.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-tr.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-uk.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-vi.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-zh-CN.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-zh-HK.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-zh-TW.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery-ui-1.8.16.custom.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.blind.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.bounce.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.clip.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.core.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.drop.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.explode.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.fade.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.fold.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.highlight.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.pulsate.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.scale.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.shake.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.slide.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.effects.transfer.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.accordion.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.autocomplete.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.button.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.core.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.datepicker.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.dialog.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.draggable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.droppable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.mouse.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.position.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.progressbar.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.resizable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.selectable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.selectmenu.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.slider.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.sortable.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.tabs.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/jquery.ui.widget.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.blind.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.bounce.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.clip.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.core.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.drop.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.explode.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.fade.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.fold.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.highlight.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.pulsate.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.scale.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.shake.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.slide.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.effects.transfer.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.accordion.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.autocomplete.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.button.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.core.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.datepicker.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.dialog.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.draggable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.droppable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.mouse.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.position.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.progressbar.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.resizable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.selectable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.slider.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.sortable.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.tabs.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/ui/minified/jquery.ui.widget.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/development-bundle/version.txt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/index.html</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/jquery-1.3.2.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/jquery.keynav.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/jquery.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/js/jquery-1.6.2.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/js/jquery-ui-1.8.16.custom.min.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/jquery/test.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/resources/kotlin_lib.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/CommandRunner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/ErrorWriterOnServer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/Initializer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/Main.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/Statistics.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/examplesLoader/ExamplesList.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/examplesLoader/ExamplesLoader.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/handlers/ServerHandler.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/help/HelpLoader.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/log/LogDownloader.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/responseHelpers/CompileAndRunExecutor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/responseHelpers/JavaConverterRunner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/responseHelpers/JavaRunner.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/responseHelpers/JsConverter.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/server/KotlinHttpServer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/WebViewServer/src/web/view/ukhorskaya/sessions/HttpSession.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/examples/Basic syntax walk-through/Use pattern-matching.kt</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/fce_spiadmin_rolling.log</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/jet/lang/resolve/scopes/WritableScopeImpl.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/org/jetbrains/jet/lang/resolve/scopes/WriteThroughScope.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/ErrorWriter.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/Interval.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/MyDeclarationDescriptorVisitor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/ResponseUtils.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/TimeManager.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/errorsDescriptors/ErrorAnalyzer.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/errorsDescriptors/ErrorDescriptor.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/exceptions/KotlinCoreException.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/responseHelpers/JsonResponseForCompletion.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/responseHelpers/JsonResponseForHighlighting.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/server/ServerSettings.java</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/../WebView/src/web/view/ukhorskaya/session/SessionInfo.java</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Restored" />
+            <option name="myStatusName" value="Will be restored" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="RESTORED" />
+          </FILE-GROUP>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Modified" />
+          <option name="myStatusName" value="Modified" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MODIFIED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Skipped" />
+          <option name="myStatusName" value="Skipped" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SKIPPED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with conflicts" />
+          <option name="myStatusName" value="Will be merged with conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_CONFLICTS" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with tree conflicts" />
+          <option name="myStatusName" value="Merged with tree conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged" />
+          <option name="myStatusName" value="Will be merged" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Not in repository" />
+          <option name="myStatusName" value="Not in repository" />
+          <option name="mySupportsDeletion" value="true" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UNKNOWN" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally added" />
+          <option name="myStatusName" value="Locally added" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_ADDED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally removed" />
+          <option name="myStatusName" value="Locally removed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_REMOVED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Switched" />
+          <option name="myStatusName" value="Switched" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SWITCHED" />
+        </FILE-GROUP>
+      </UpdatedFiles>
+    </UpdateInfo>
   </component>
   <component name="RunManager" selected="JUnit.All in jetTests">
     <configuration default="false" name="MiscTest.jquery" type="JUnit" factoryName="JUnit" temporary="true">
@@ -1331,14 +2107,14 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29682997" sideWeight="0.14323892" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.6705091" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32853025" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949087" sideWeight="0.0" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22382325" sideWeight="0.41956174" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32949087" sideWeight="0.49599144" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32756963" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20363443" sideWeight="0.7588857" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977018" sideWeight="0.6570605" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997862" sideWeight="0.6705998" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22928914" sideWeight="0.55043226" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22928914" sideWeight="0.55043226" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44956774" sideWeight="0.8530198" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CodeWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.0908605" sideWeight="0.7146974" order="2" side_tool="false" content_ui="combo" />
@@ -1386,7 +2162,7 @@
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
     <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="added different configs for idea and test environment" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1399,7 +2175,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Fixed bug where standard methods names may become obfuscated." />
     <MESSAGE value="fixed arrayList tests." />
     <MESSAGE value="KT-962: Function is called two times &#10;safecall expression now compute receiver only once." />
     <MESSAGE value="refactor and TODO clean-up" />
@@ -1424,6 +2199,7 @@
     <MESSAGE value="changes to make action work" />
     <MESSAGE value="reimplemented extension literal definition and calls to comply with jquery conventions" />
     <MESSAGE value="refactor changes" />
+    <MESSAGE value="added different configs for idea and test environment" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1433,50 +2209,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/extensionFunction/cases/extensionLiteralPassedToFunction.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/extensionFunction/out/extensionLiteralPassedToFunction.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/testFiles/extensionFunction/out/extensionInsideFunctionLiteral.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/ExtensionFunctionTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="16" selection-start="1275" selection-end="1275" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/context/StandardClasses.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="44" selection-start="683" selection-end="683" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Config.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/TestConfig.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="19" selection-start="306" selection-end="306" vertical-scroll-proportion="0.0">
@@ -1530,23 +2262,69 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="41" selection-start="1500" selection-end="1500" vertical-scroll-proportion="0.86912066">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/FunctionTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="33" selection-start="1293" selection-end="1293" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/TranslationUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="0" selection-start="667" selection-end="667" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/reference/CallTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="281" column="59" selection-start="12614" selection-end="12614" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/translate/utils/DescriptorUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="66" selection-start="587" selection-end="587" vertical-scroll-proportion="-13.076923">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/test/org/jetbrains/k2js/test/AppletTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="26" selection-start="990" selection-end="990" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/utils/GenerationUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="44" selection-start="636" selection-end="636" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslatorApplet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="51" selection-start="1190" selection-end="1190" vertical-scroll-proportion="0.0">
+        <state line="38" column="74" selection-start="1213" selection-end="1213" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/K2JSTranslator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="0" selection-start="938" selection-end="938" vertical-scroll-proportion="-2.5038168">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translator/src/org/jetbrains/k2js/Analyzer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="78" selection-start="1650" selection-end="1650" vertical-scroll-proportion="0.8982387">
+        <state line="126" column="44" selection-start="5251" selection-end="5251" vertical-scroll-proportion="0.6175869">
           <folding />
         </state>
       </provider>
