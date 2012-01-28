@@ -79,7 +79,7 @@ public class BytecodeCompilerTask extends Task {
             String source      = getPath( this.src );
             String destination = getPath( this.output != null ? this.output : this.jar );
 
-            log( String.format( "[%s] => [%s]", source, destination ));
+            log( String.format( "Compiling [%s] => [%s]", source, destination ));
 
             if ( this.output != null ) {
                 compiler.sourcesToDir( source, destination, stdlibPath, classpath );
@@ -96,6 +96,9 @@ public class BytecodeCompilerTask extends Task {
 
             String modulePath = getPath( this.module );
             String jarPath    = ( this.jar != null ? getPath( this.jar ) : null );
+
+            log( jarPath != null ? String.format( "Compiling [%s] => [%s]", modulePath, jarPath ) :
+                                   String.format( "Compiling [%s]", modulePath ));
 
             compiler.moduleToJar( modulePath, jarPath, this.includeRuntime, stdlibPath, classpath );
         }

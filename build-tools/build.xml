@@ -14,6 +14,11 @@
     </taskdef>
 
 
+    <path id="junit-jar">
+        <fileset file="${basedir}/testlib/lib/junit-4.9.jar"/>
+    </path>
+
+
     <!-- Creates ${kotlin-home} and defines <kotlin> task -->
     <macrodef name="define-kotlinc">
         <sequential>
@@ -79,7 +84,7 @@
 
         <sequential>
             <cleanup/>
-            <kotlinc src = "@{src}" output = "${tests-dir}" stdlib = "@{stdlib}"/>
+            <kotlinc src = "@{src}" output = "${tests-dir}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
         </sequential>
     </macrodef>
 
@@ -90,6 +95,7 @@
         <attribute name="module"         default=""/>
         <attribute name="includeRuntime" default="true"/>
         <attribute name="stdlib"         default=""/>
+        <attribute name="jar"            default="${tests-jar}"/>
         <sequential>
 
             <cleanup/>
@@ -97,10 +103,16 @@
             <if>
                 <equals arg1="@{module}" arg2=""/>
                 <then>
-                    <kotlinc src    = "@{src}"    jar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
+                    <kotlinc src = "@{src}" jar = "@{jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
                 </then>
+                <elseif>
+                    <equals arg1="@{jar}" arg2=""/>
+                    <then>
+                        <kotlinc module = "@{module}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
+                    </then>
+                </elseif>
                 <else>
-                    <kotlinc module = "@{module}" jar = "${tests-jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}"/>
+                    <kotlinc module = "@{module}" jar = "@{jar}" includeRuntime = "@{includeRuntime}" stdlib = "@{stdlib}" classpathref="junit-jar"/>
                 </else>
             </if>
         </sequential>
@@ -112,20 +124,21 @@
         <attribute name="out"/>
         <attribute name="classname" default="namespace"/>
         <attribute name="args"      default=""/>
-        <attribute name="equals"    default="true"/>  <!-- Whether strict equality of output to @{out} required -->
-        <attribute name="run-jar"   default="false"/> <!-- Whether to run compiled classes or a jar file -->
+        <attribute name="equals"    default="true"/>         <!-- Whether strict equality of output to @{out} required -->
+        <attribute name="run-jar"   default="false"/>        <!-- Whether to run compiled classes or a jar file        -->
+        <attribute name="jar"       default="${tests-jar}"/> <!-- Jar to use for classpath if "run-jar" is "true"      -->
         <sequential>
             <var name = "java-out" unset = "true"/>
 
             <if>
                 <istrue value="@{run-jar}"/>
                 <then>
-                    <echo>Running [@{classname}], classpath = "${tests-jar}"</echo>
+                    <echo>Running [@{classname}], classpath = "@{jar}"</echo>
                     <java outputproperty = "java-out"
                           classname      = "@{classname}"
                           failonerror    = "${failonerror}">
                         <classpath>
-                            <pathelement path = "${tests-jar}"/>
+                            <pathelement path = "@{jar}"/>
                         </classpath>
                         <arg line = "@{args}"/>
                     </java>
@@ -220,27 +233,121 @@
     </macrodef>
 
 
-    <!-- Compiles "testlib" Kotlin tests (file, dir, module => dir/jar) -->
-    <!-- Currently disabled, see "buildToolsTest" -->
-    <macrodef name="testlib-tests">
+    <!-- Compiles and runs a Kotlin module -->
+    <macrodef name="module-tests">
         <sequential>
-            <kotlinc-dir src    = "${basedir}/testlib/test/CollectionTest.kt"/>
-            <kotlinc-dir src    = "${basedir}/testlib/test/Test.kt"/>
-            <kotlinc-dir src    = "${basedir}/testlib/test"/>
+            <!-- Module => Explicit Jar -->
+            <kotlinc-jar module="${basedir}/build-tools/test/modules/smoke/Smoke.kts"/>
+            <run-java classname = "Smoke.namespace" run-jar = "true" args = "1 2 3" out = "1|2|3"/>
 
-            <kotlinc-jar src    = "${basedir}/testlib/test/CollectionTest.kt"/>
-            <kotlinc-jar src    = "${basedir}/testlib/test/Test.kt"/>
-            <kotlinc-jar src    = "${basedir}/testlib/test"/>
-            <kotlinc-jar module = "${basedir}/build-tools/test/modules/Testlib.kts"/>
+            <!-- Module => Default Jar -->
+            <kotlinc-jar module="${basedir}/build-tools/test/modules/smoke/Smoke.kts" jar=""/>
+            <move file="${basedir}/build-tools/test/modules/smoke/smoke.jar" todir="${tests-dir}"/>
+            <run-java classname = "Smoke.namespace" run-jar = "true" args = "1 2 3" out = "1|2|3" jar="${tests-dir}/smoke.jar"/>
         </sequential>
     </macrodef>
 
 
-    <!-- Compiles and runs a Kotlin module -->
-    <macrodef name="module-tests">
+    <!-- Runs JUnit single test or batch tests -->
+    <macrodef name="run-junit">
+        <attribute name="classpath"/>
+        <attribute name="test"  default=""/>
         <sequential>
-            <kotlinc-jar module="${basedir}/build-tools/test/modules/smoke/Smoke.kts"/>
-            <run-java classname = "Smoke.namespace" run-jar = "true" args = "1 2 3" out = "1|2|3"/>
+
+            <path id="junit-classpath">
+                <path refid="junit-jar"/>
+                <pathelement location="@{classpath}"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
+            </path>
+
+            <if>
+                <equals arg1="@{test}" arg2=""/>
+                <then>
+                    <!-- Batch tests -->
+                    <if>
+                        <matches string="@{classpath}" pattern="\.jar$"/>
+                        <then>
+                            <!-- Batch tests from a jar -->
+                            <echo>Running JUnit: classpath = "@{classpath}" (Jar)</echo>
+                            <junit haltonfailure="true">
+                                <classpath>
+                                    <path refid="junit-classpath"/>
+                                </classpath>
+                                <formatter type="plain" usefile="false"/>
+                                <batchtest>
+                                    <zipfileset src="@{classpath}" includes="**/*Test.class" excludes="**/BuiltTest.class"/>
+                                </batchtest>
+                            </junit>
+                        </then>
+                        <else>
+                            <!-- Batch tests from a dir -->
+                            <echo>Running JUnit: classpath = "@{classpath}" (Dir)</echo>
+                            <junit haltonfailure="true">
+                                <classpath>
+                                    <path refid="junit-classpath"/>
+                                </classpath>
+                                <formatter type="plain" usefile="false"/>
+                                <batchtest>
+                                    <fileset dir="@{classpath}" includes="**/*Test.class" excludes="**/BuiltTest.class"/>
+                                </batchtest>
+                            </junit>
+                        </else>
+                    </if>
+                </then>
+                <else>
+                    <!-- Single test -->
+                    <echo>Running JUnit: test = "@{test}", classpath = "@{classpath}"</echo>
+                    <junit haltonfailure="true">
+                        <classpath>
+                            <path refid="junit-classpath"/>
+                        </classpath>
+                        <formatter type="plain" usefile="false"/>
+                        <test name="@{test}"/>
+                    </junit>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Runs all JUnit tests, first each test separately and then all of them in a batch mode -->
+    <macrodef name="testlib-junit-tests">
+        <attribute name="classpath"/>
+        <sequential>
+            <run-junit classpath="@{classpath}" test="test.collections.CollectionTest"/>
+            <run-junit classpath="@{classpath}" test="test.collections.IoTest"/>
+            <run-junit classpath="@{classpath}" test="test.collections.ListTest"/>
+            <run-junit classpath="@{classpath}" test="test.collections.MapTest"/>
+            <run-junit classpath="@{classpath}" test="test.collections.OldStdlibTest"/>
+            <run-junit classpath="@{classpath}" test="test.collections.SetTest"/>
+            <run-junit classpath="@{classpath}" test="test.collections.StandardCollectionTest"/>
+            <run-junit classpath="@{classpath}" test="test.stdlib.issues.StdLibIssuesTest"/>
+            <run-junit classpath="@{classpath}" test="testString.StringTest"/>
+
+            <run-junit classpath="@{classpath}"/>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Compiles "testlib" Kotlin tests (dir/module => dir/jar) and runs all JUnit tests resulted -->
+    <macrodef name="testlib-tests">
+        <sequential>
+            <!-- Dir => Dir -->
+            <kotlinc-dir         src       = "${basedir}/testlib/test"/>
+            <testlib-junit-tests classpath = "${tests-dir}"/>
+
+            <!-- Dir => Jar -->
+            <kotlinc-jar         src       = "${basedir}/testlib/test"/>
+            <testlib-junit-tests classpath = "${tests-jar}"/>
+
+            <!-- Module => Explicit Jar -->
+            <kotlinc-jar         module    = "${basedir}/build-tools/test/modules/Testlib.kts"/>
+            <testlib-junit-tests classpath = "${tests-jar}"/>
+
+            <!-- Module => Default Jar -->
+            <kotlinc-jar         module    = "${basedir}/build-tools/test/modules/Testlib.kts" jar=""/>
+            <move file="${basedir}/build-tools/test/modules/Testlib.jar" todir="${tests-dir}"/>
+            <testlib-junit-tests classpath = "${tests-dir}/Testlib.jar"/>
         </sequential>
     </macrodef>
 
@@ -318,7 +425,7 @@
         <hello-tests/>
         <longer-examples-tests/>
         <module-tests/>
-        <!--<testlib-tests/>-->
+        <testlib-tests/>
         <compilation-fail-test/>
     </target>
 </project>
