@@ -1118,7 +1118,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             //noinspection ConstantConditions
-            if (isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault())) {
+            if (isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault() && propertyDescriptor.getGetter().getModality() == Modality.FINAL)) {
                 getter = null;
             }
             else {
@@ -1148,7 +1148,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             }
             //noinspection ConstantConditions
-            if (isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())) {
+            if (isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault() && propertyDescriptor.getSetter().getModality() == Modality.FINAL)) {
                 setter = null;
             }
             else {
