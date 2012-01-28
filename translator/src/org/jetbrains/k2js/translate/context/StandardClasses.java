@@ -103,9 +103,11 @@ public final class StandardClasses {
 
     private static void declareJQuery(@NotNull StandardClasses standardClasses) {
         standardClasses.declare().forFQ("jquery.JQuery").externalClass("jQuery")
-                .methods("addClass", "attr", "hasClass", "append", "text", "ready");
+                .methods("addClass", "attr", "hasClass", "append",
+                        "text", "ready", "click", "hover", "slideUp",
+                        "removeClass");
         standardClasses.declare().forFQ("jquery.jq").externalFunction("jQuery");
-        standardClasses.declare().forFQ("jquery.get-document").externalObject("document");
+        //standardClasses.declare().forFQ("jquery.get-document").externalObject("document");
     }
 
     //TODO: test all the methods

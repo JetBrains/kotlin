@@ -41,11 +41,7 @@ public final class Analyzer {
 
     @NotNull
     public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
-                                              @Nullable Project externalProject) {
-        Project project = externalProject;
-        if (project == null) {
-            project = getProject(files);
-        }
+                                              @NotNull Project project) {
         final List<JetFile> jsLibFiles = getJsSupportStdLib(project);
         List<JetFile> allFiles = allFiles(files, jsLibFiles);
         return AnalyzingUtils.analyzeFiles(project, JsConfiguration.jsLibConfiguration(project),

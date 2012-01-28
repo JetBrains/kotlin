@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.utils;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -10,26 +9,18 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
  */
 public final class JetFileUtils {
-
-    @NotNull
-    private static JetCoreEnvironment testOnlyEnvironment = new JetCoreEnvironment(new Disposable() {
-
-        @Override
-        public void dispose() {
-        }
-    });
 
     @NotNull
     public static String loadFile(@NotNull String path) throws IOException {
@@ -46,12 +37,12 @@ public final class JetFileUtils {
     @NotNull
     public static JetFile createPsiFile(@NotNull String name,
                                         @NotNull String text,
-                                        @Nullable Project project) {
+                                        @NotNull Project project) {
         return (JetFile) createFile(name + ".jet", text, project);
     }
 
     @NotNull
-    public static JetFile loadPsiFile(@NotNull String name, @Nullable Project project) {
+    public static JetFile loadPsiFile(@NotNull String name, @NotNull Project project) {
         try {
             return createPsiFile(name, loadFile(name), project);
         } catch (IOException e) {
@@ -60,18 +51,23 @@ public final class JetFileUtils {
     }
 
     @NotNull
-    private static PsiFile createFile(@NotNull String name, @NotNull String text, @Nullable Project project) {
+    private static PsiFile createFile(@NotNull String name, @NotNull String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        Project realProject = project;
-        if (realProject == null) {
-            realProject = testOnlyEnvironment.getProject();
-            //throw new RuntimeException();
-        }
-        PsiFile result = ((PsiFileFactoryImpl) PsiFileFactory.getInstance(realProject))
+        PsiFile result = ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project))
                 .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
         assert result != null;
         return result;
     }
 
+
+    @NotNull
+    public static List<JetFile> createPsiFileList(@NotNull List<String> inputFiles,
+                                                  @NotNull Project project) {
+        List<JetFile> psiFiles = new ArrayList<JetFile>();
+        for (String inputFile : inputFiles) {
+            psiFiles.add(JetFileUtils.loadPsiFile(inputFile, project));
+        }
+        return psiFiles;
+    }
 }

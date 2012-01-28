@@ -58,13 +58,16 @@ public trait List<E> : Collection<E> {
     open public fun get(index : Int) : E
     open public fun set(index : Int, element : E) : E
     open public fun add(index : Int, element : E) : Unit
+    js_name("remove_foo")
     open public fun remove(index : Int) : E?
     open public fun indexOf(o : Any?) : Int
     open public fun lastIndexOf(o : Any?) : Int
     open public fun subList(fromIndex : Int, toIndex : Int) : List<E?>?
+    js_name("remove_foo")
     override public fun remove(o : Any?) : Boolean
 }
 
+annotation class js_name(s : String)
 
 trait Set<E> : Collection<E>
 

@@ -36,7 +36,7 @@ public final class K2JSTranslatorApplet extends Applet {
 
     @NotNull
     private String generateJSCode(@NotNull String code, @NotNull String arguments) {
-        String generatedCode = (new K2JSTranslator()).translateStringWithCallToMain(code, arguments);
+        String generatedCode = (new K2JSTranslator(new TestConfig())).translateStringWithCallToMain(code, arguments);
         System.out.println("GENERATED JAVASCRIPT CODE:\n-----------------------------------\n");
         System.out.println(generatedCode);
         return generatedCode;
