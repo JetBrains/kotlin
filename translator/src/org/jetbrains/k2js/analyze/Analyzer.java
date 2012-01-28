@@ -1,4 +1,4 @@
-package org.jetbrains.k2js;
+package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
@@ -12,10 +12,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.k2js.utils.JetFileUtils;
+import org.jetbrains.k2js.config.Config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,43 +22,32 @@ import java.util.List;
  */
 public final class Analyzer {
 
-    //TODO: provide some generic way to access
-    private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\jquery\\common.kt",
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\javautil.kt",
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\core.kt"
-    );
-
     @NotNull
-    public static List<JetFile> getJsSupportStdLib(@Nullable Project project) {
-        List<JetFile> libFiles = new ArrayList<JetFile>();
-        for (String libFileName : LIB_FILE_NAMES) {
-            libFiles.add(JetFileUtils.loadPsiFile(libFileName, project));
-        }
-        return libFiles;
-    }
-
-    @NotNull
-    public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
-                                              @NotNull Project project) {
-        final List<JetFile> jsLibFiles = getJsSupportStdLib(project);
-        List<JetFile> allFiles = allFiles(files, jsLibFiles);
-        return AnalyzingUtils.analyzeFiles(project, JsConfiguration.jsLibConfiguration(project),
+    public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
+                                                            @NotNull Config config) {
+        final List<JetFile> jsLibFiles = config.getLibFiles();
+        List<JetFile> allFiles = withJsLibAdded(files, config);
+        BindingContext bindingContext = AnalyzingUtils.analyzeFiles(config.getProject(),
+                JsConfiguration.jsLibConfiguration(config.getProject()),
                 allFiles, notLibFiles(jsLibFiles), JetControlFlowDataTraceFactory.EMPTY);
+        checkForErrors(allFiles, bindingContext);
+        return bindingContext;
     }
 
-    @NotNull
-    private static Project getProject(@NotNull List<JetFile> files) {
-        assert !files.isEmpty();
-        return files.iterator().next().getProject();
+    private static void checkForErrors(@NotNull List<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+        for (JetFile file : allFiles) {
+            AnalyzingUtils.checkForSyntacticErrors(file);
+            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+        }
     }
 
+    //TODO: use some mechanism to avoid this
+    //TODO: move method somewhere
     @NotNull
-    private static List<JetFile> allFiles(@NotNull List<JetFile> files,
-                                          @NotNull List<JetFile> jsLibFiles) {
+    public static List<JetFile> withJsLibAdded(@NotNull List<JetFile> files, @NotNull Config config) {
         List<JetFile> allFiles = new ArrayList<JetFile>();
         allFiles.addAll(files);
-        allFiles.addAll(jsLibFiles);
+        allFiles.addAll(config.getLibFiles());
         return allFiles;
     }
 
@@ -69,7 +57,8 @@ public final class Analyzer {
             @Override
             public boolean apply(@Nullable PsiFile file) {
                 assert file instanceof JetFile;
-                return (!jsLibFiles.contains(file));
+                boolean notLibFile = !jsLibFiles.contains(file);
+                return notLibFile;
             }
         };
     }

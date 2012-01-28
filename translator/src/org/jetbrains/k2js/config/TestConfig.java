@@ -1,4 +1,4 @@
-package org.jetbrains.k2js;
+package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -9,7 +9,7 @@ import org.jetbrains.jet.compiler.JetCoreEnvironment;
 /**
  * @author Pavel Talanov
  */
-public final class TestConfig implements Config {
+public final class TestConfig extends Config {
 
     @NotNull
     private static JetCoreEnvironment getTestEnvironment() {

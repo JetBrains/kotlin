@@ -1,14 +1,19 @@
-package org.jetbrains.k2js;
+package org.jetbrains.k2js.facade;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.analyze.Analyzer;
+import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.IDEAConfig;
+import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.utils.GenerationUtils;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
@@ -88,16 +93,14 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    private JsProgram generateProgram(@NotNull List<JetFile> files) {
-        BindingContext bindingContext = Analyzer.analyzeFiles(files, config.getProject());
-        for (JetFile file : files) {
-            AnalyzingUtils.checkForSyntacticErrors(file);
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        }
-
-        JetFile file = files.iterator().next();
-        return Translation.generateAst(bindingContext, file, file.getProject());
+    private JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
+        BindingContext bindingContext = Analyzer.analyzeFilesAndCheckErrors(filesToTranslate, config);
+        JetFile file = filesToTranslate.iterator().next();
+        NamespaceDescriptor namespaceDescriptor = BindingUtils.getNamespaceDescriptor(bindingContext, file);
+        return Translation.generateAst(bindingContext, namespaceDescriptor,
+                Analyzer.withJsLibAdded(filesToTranslate, config), getProject());
     }
+
 
     @NotNull
     public String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
@@ -122,7 +125,7 @@ public final class K2JSTranslator {
         JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
         String name = namespaceHeader.getName();
         assert name != null : "NamespaceHeader must have a name";
-        //TODO: ensapsulate anonymous logic somewhere
+        //TODO: encapsulate anonymous logic somewhere
         if (name.equals("")) {
             return "Anonymous";
         }

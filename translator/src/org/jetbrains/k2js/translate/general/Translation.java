@@ -20,7 +20,8 @@ import org.jetbrains.k2js.translate.expression.PatternTranslator;
 import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
+
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -90,17 +91,18 @@ public final class Translation {
     }
 
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
-                                        @NotNull JetFile namespace, @NotNull Project project) {
+                                        @NotNull NamespaceDescriptor namespaceToTranslate,
+                                        @NotNull List<JetFile> files,
+                                        @NotNull Project project) {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
-        NamespaceDescriptor descriptor = BindingUtils.getNamespaceDescriptor(bindingContext, namespace);
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
         staticContext.getDeclarations().
                 extractStandardLibrary(standardLibrary, staticContext.getNamer().kotlinObject());
-        staticContext.getDeclarations().extractDeclarations(descriptor);
+        staticContext.getDeclarations().extractDeclarationsFromFiles(files, bindingContext);
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        block.addStatement(Translation.translateNamespace(descriptor, context));
+        block.addStatement(Translation.translateNamespace(namespaceToTranslate, context));
 
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());

@@ -49,7 +49,10 @@ public final class BindingUtils {
     @NotNull
     public static NamespaceDescriptor getNamespaceDescriptor(@NotNull BindingContext context,
                                                              @NotNull JetFile declaration) {
-        return getDescriptorForExpression(context, declaration, NamespaceDescriptor.class);
+        NamespaceDescriptor namespaceDescriptor =
+                context.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetPsiUtil.getFQName(declaration));
+        assert namespaceDescriptor != null : "File should have a namespace descriptor.";
+        return namespaceDescriptor;
     }
 
     @NotNull

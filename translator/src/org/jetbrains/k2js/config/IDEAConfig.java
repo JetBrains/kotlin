@@ -1,4 +1,4 @@
-package org.jetbrains.k2js;
+package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Pavel Talanov
  */
-public final class IDEAConfig implements Config {
+public final class IDEAConfig extends Config {
 
     @NotNull
     private final Project project;

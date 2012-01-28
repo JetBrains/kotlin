@@ -1,4 +1,4 @@
-package js
+package js;
 
 fun println()
 fun println(s : Any?)

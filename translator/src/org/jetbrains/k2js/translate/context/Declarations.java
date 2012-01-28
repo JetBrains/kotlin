@@ -1,14 +1,21 @@
 package org.jetbrains.k2js.translate.context;
 
+import com.google.common.collect.Sets;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -33,9 +40,19 @@ public final class Declarations {
         this.rootScope = scope;
     }
 
-    public void extractDeclarations(@NotNull DeclarationDescriptor descriptor) {
+    public void extractDeclarationsFromNamespace(@NotNull NamespaceDescriptor descriptor) {
         DeclarationVisitor visitor = new DeclarationVisitor(this, true);
-        descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, null));
+        visitor.traverseNamespace(descriptor, DeclarationContext.rootContext(rootScope, null));
+    }
+
+    public void extractDeclarationsFromFiles(@NotNull List<JetFile> files, @NotNull BindingContext context) {
+        Set<NamespaceDescriptor> namespaces = Sets.newHashSet();
+        for (JetFile file : files) {
+            namespaces.add(BindingUtils.getNamespaceDescriptor(context, file));
+        }
+        for (NamespaceDescriptor namespace : namespaces) {
+            extractDeclarationsFromNamespace(namespace);
+        }
     }
 
     public void extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary,
@@ -78,17 +95,20 @@ public final class Declarations {
     }
 
     /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull NamingScope scope) {
-        assert !descriptorToScopeMap.containsKey(descriptor) : "Already contains that key!";
+        assert !descriptorToScopeMap.containsKey(descriptor)
+                : "Already contains that key!\n" + descriptor;
         descriptorToScopeMap.put(descriptor, scope);
     }
 
     /*package*/ void putName(@NotNull DeclarationDescriptor descriptor, @NotNull JsName name) {
-        assert !descriptorToNameMap.containsKey(descriptor) : "Already contains that key!";
+        assert !descriptorToNameMap.containsKey(descriptor)
+                : "Already contains that key!\n" + descriptor;
         descriptorToNameMap.put(descriptor, name);
     }
 
     /*package*/ void putQualifier(@NotNull DeclarationDescriptor descriptor, @Nullable JsNameRef qualifier) {
-        assert !descriptorToQualifierMap.containsKey(descriptor) : "Already contains that key!";
+        assert !descriptorToQualifierMap.containsKey(descriptor)
+                : "Already contains that key!";
         descriptorToQualifierMap.put(descriptor, qualifier);
     }
 }

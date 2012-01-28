@@ -1,7 +1,7 @@
 package org.jetbrains.k2js.utils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.K2JSTranslatorApplet;
+import org.jetbrains.k2js.facade.K2JSTranslatorApplet;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

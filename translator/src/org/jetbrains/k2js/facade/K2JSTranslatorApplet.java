@@ -1,7 +1,8 @@
-package org.jetbrains.k2js;
+package org.jetbrains.k2js.facade;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.utils.ErrorSender;
 
 import java.applet.Applet;

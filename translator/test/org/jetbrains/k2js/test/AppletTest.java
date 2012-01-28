@@ -1,6 +1,6 @@
 package org.jetbrains.k2js.test;
 
-import org.jetbrains.k2js.K2JSTranslatorApplet;
+import org.jetbrains.k2js.facade.K2JSTranslatorApplet;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mozilla.javascript.Context;

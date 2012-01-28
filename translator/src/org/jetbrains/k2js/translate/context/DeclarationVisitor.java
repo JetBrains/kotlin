@@ -132,9 +132,13 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
 
     @Override
     public Void visitNamespaceDescriptor(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
+        /* do not traverse inner namespaces */
+        return null;
+    }
+
+    public void traverseNamespace(NamespaceDescriptor descriptor, DeclarationContext context) {
         DeclarationContext namespaceContext = extractNamespaceDeclaration(descriptor, context);
         declareMembers(descriptor, namespaceContext);
-        return null;
     }
 
     @NotNull

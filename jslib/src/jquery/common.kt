@@ -1,10 +1,11 @@
 package jquery;
 
-fun fail() : Nothing = throw RuntimeException();
+import js.annotations.*;
+
 fun JQuery.toString() = ""
 
-class JQuery() {
-    fun addClass(className : String) : JQuery = fail();
+JavascriptNativeClass class JQuery() {
+    fun addClass(className : String) : JQuery = this;
     fun attr(attrName : String) = ""
     fun attr(attrName : String, value : String) = this
     fun hasClass(className : String) = true
@@ -28,9 +29,9 @@ open class DomElement() {
 
 //val document = object : DomElement() {}
 
-fun jq(selector : String) = JQuery();
-fun jq(selector : String, context : DomElement) = JQuery();
-fun jq(callback : () -> Unit) = JQuery();
-fun jq(obj : JQuery) = JQuery();
-fun jq(el : DomElement) = JQuery();
-fun jq() = JQuery();
+JavascriptNativeFunction("$") fun jq(selector : String) = JQuery();
+JavascriptNativeFunction("$") fun jq(selector : String, context : DomElement) = JQuery();
+JavascriptNativeFunction("$") fun jq(callback : () -> Unit) = JQuery();
+JavascriptNativeFunction("$") fun jq(obj : JQuery) = JQuery();
+JavascriptNativeFunction("$") fun jq(el : DomElement) = JQuery();
+JavascriptNativeFunction("$") fun jq() = JQuery();
