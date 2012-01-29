@@ -162,11 +162,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     @Override
-    public StackValue visitNamedFunction(JetNamedFunction function, StackValue data) {
-        throw new UnsupportedOperationException("Codegen for local functions is not yet implemented");
-    }
-
-    @Override
     public StackValue visitSuperExpression(JetSuperExpression expression, StackValue data) {
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
@@ -713,6 +708,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     @Override
+    public StackValue visitNamedFunction(JetNamedFunction function, StackValue data) {
+        assert data == StackValue.none();
+        StackValue closure = genClosure(function);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
+        int index = myFrameMap.getIndex(descriptor);
+        closure.put(TYPE_OBJECT, v);
+        v.store(index, TYPE_OBJECT);
+        return StackValue.none();
+    }
+
+    @Override
     public StackValue visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, StackValue receiver) {
         //noinspection ConstantConditions
         if (bindingContext.get(BindingContext.BLOCK, expression)) {
@@ -720,38 +726,42 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
-            ClosureCodegen closureCodegen = new ClosureCodegen(state, this, context);
-            final GeneratedAnonymousClassDescriptor closure = closureCodegen.gen(expression);
-
-            if(closureCodegen.isConst()) {
-                v.invokestatic(closure.getClassname(), "$getInstance", "()L" + closure.getClassname() + ";");
-            }
-            else {
-                v.anew(Type.getObjectType(closure.getClassname()));
-                v.dup();
-
-                final Method cons = closure.getConstructor();
-
-                int k = 0;
-                if (closure.isCaptureThis()) {
-                    k++;
-                    v.load(0, TYPE_OBJECT);
-                }
-
-                if (closure.isCaptureReceiver() != null) {
-                    k++;
-                    v.load(context.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor ? 0: 1, closure.isCaptureReceiver());
-                }
-
-                for (int i = 0; i < closure.getArgs().size(); i++) {
-                    StackValue arg = closure.getArgs().get(i);
-                    arg.put(cons.getArgumentTypes()[i+k], v);
-                }
-
-                v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
-            }
-            return StackValue.onStack(Type.getObjectType(closure.getClassname()));
+            return genClosure(expression);
         }
+    }
+
+    private StackValue genClosure(JetExpression expression) {
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, this, context);
+        final GeneratedAnonymousClassDescriptor closure = closureCodegen.gen(expression);
+
+        if(closureCodegen.isConst()) {
+            v.invokestatic(closure.getClassname(), "$getInstance", "()L" + closure.getClassname() + ";");
+        }
+        else {
+            v.anew(Type.getObjectType(closure.getClassname()));
+            v.dup();
+
+            final Method cons = closure.getConstructor();
+
+            int k = 0;
+            if (closure.isCaptureThis()) {
+                k++;
+                v.load(0, TYPE_OBJECT);
+            }
+
+            if (closure.isCaptureReceiver() != null) {
+                k++;
+                v.load(context.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor ? 0: 1, closure.isCaptureReceiver());
+            }
+
+            for (int i = 0; i < closure.getArgs().size(); i++) {
+                StackValue arg = closure.getArgs().get(i);
+                arg.put(cons.getArgumentTypes()[i+k], v);
+            }
+
+            v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
+        }
+        return StackValue.onStack(Type.getObjectType(closure.getClassname()));
     }
 
     @Override
@@ -811,6 +821,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getOutType());
                 myFrameMap.enter(variableDescriptor, type.getSize());
             }
+            
+            if(statement instanceof JetNamedFunction) {
+                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, statement);
+                myFrameMap.enter(descriptor, 1);
+            }
         }
 
         StackValue answer = StackValue.none();
@@ -831,6 +846,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.mark(blockEnd);
 
         for (JetElement statement : statements) {
+            if(statement instanceof JetNamedFunction) {
+                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, statement);
+                myFrameMap.leave(descriptor);
+            }
+
             if (statement instanceof JetProperty) {
                 JetProperty var = (JetProperty) statement;
                 VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
@@ -946,13 +966,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         int index = lookupLocal(descriptor);
         if (index >= 0) {
-            Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-            final JetType outType = ((VariableDescriptor) descriptor).getOutType();
-            if(sharedVarType != null) {
-                return StackValue.shared(index, asmType(outType));
+            if(descriptor instanceof VariableDescriptor) {
+                Type sharedVarType = typeMapper.getSharedVarType(descriptor);
+                final JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                if(sharedVarType != null) {
+                    return StackValue.shared(index, asmType(outType));
+                }
+                else {
+                    return StackValue.local(index, asmType(outType));
+                }
             }
             else {
-                return StackValue.local(index, asmType(outType));
+                return StackValue.local(index, TYPE_OBJECT);
             }
         }
         else if (descriptor instanceof PropertyDescriptor) {
@@ -1266,8 +1291,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             assert !superCall;
             callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         }
-        else if (fd instanceof ExpressionAsFunctionDescriptor) {
-            NamedFunctionDescriptor invoke = CodegenUtil.createInvoke((ExpressionAsFunctionDescriptor) fd);
+        else if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof NamedFunctionDescriptor && fd.getContainingDeclaration() instanceof FunctionDescriptor)) {
+            NamedFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
             callableMethod = ClosureCodegen.asCallableMethod(invoke);
         }
         else if (fd instanceof FunctionDescriptor) {

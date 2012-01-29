@@ -83,7 +83,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return state.getTypeMapper().mapSignature("invoke", fd);
     }
 
-    public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
+    public GeneratedAnonymousClassDescriptor gen(JetExpression fun) {
         final Pair<String, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(fun);
 
         final FunctionDescriptor funDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, fun);
@@ -115,7 +115,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
 
         generateBridge(name, funDescriptor, fun, cv);
-        captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
+        captureThis = generateBody(funDescriptor, cv, (JetDeclarationWithBody) fun);
         ClassDescriptor thisDescriptor = context.getThisDescriptor();
         final Type enclosingType = thisDescriptor == null ? null : state.getTypeMapper().mapType(thisDescriptor.getDefaultType());
         if (enclosingType == null)
