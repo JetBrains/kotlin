@@ -1,11 +1,13 @@
-<project name="build-tools" default="buildToolsJar">
+<project name="build-tools" default="buildToolsJar" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property name="tests-dir"        location="${output}/ant-test/build-tools-test"/>
     <property name="kotlin-home"      location="${output}/ant-test/kotlin-home"/>
     <property name="tests-jar"        location="${tests-dir}/out.jar"/>
     <property name="bootstrap-dir"    location="${basedir}/bootstrap.compiler"/>
     <property name="junit-jar"        location="${basedir}/testlib/lib/junit-4.9.jar"/>
-    <property name="failonerror"      value="true"/> <!-- Whether invoking compiled classes should file on error -->
+    <property name="failonerror"      value="true"/>  <!-- Whether invoking compiled classes should file on error -->
+    <property name="use-ivy"          value="false"/> <!-- Whether Ivy should be used to define "kotlin.classpath" and <kotlinc> task -->
+                                                      <!-- Override with "-Duse-ivy=true" -->
 
 
     <!-- http://ant-contrib.sourceforge.net/tasks/tasks/index.html -->
@@ -21,17 +23,15 @@
     </path>
 
 
-    <!-- Creates ${kotlin-home} and defines <kotlin> task -->
-    <macrodef name="define-kotlinc">
+    <!-- Defines "kotlin.classpath" using ${kotlin-home} -->
+    <macrodef name="kotlin-home-setup">
         <sequential>
-
             <if>
                 <not>
                     <available file="${kotlin-home}/lib" type="dir"/>
                 </not>
                 <then>
                     <mkdir  dir = "${kotlin-home}"/>
-
                     <if>
                         <available file="${bootstrap-dir}/kotlinc" type="dir"/>
                         <then>
@@ -54,20 +54,44 @@
                             <mkdir  dir="${bootstrap-dir}"/>
                             <copy file="${output}/${output.name}.zip" todir="${bootstrap-dir}"/>
                             <ant antfile="${basedir}/bootstrap.xml"/>
-                            <define-kotlinc/> <!-- Recursive invocation, will use bootstrapped compiler this time -->
+                            <kotlin-home-setup/> <!-- Recursive invocation, will use ${bootstrap-dir} this time -->
                         </else>
                     </if>
                 </then>
             </if>
 
-            <taskdef resource    = "org/jetbrains/jet/buildtools/ant/antlib.xml">
+            <path id="kotlin.classpath">
+                <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
+            </path>
+        </sequential>
+    </macrodef>
+
+
+    <!-- Defines "kotlin.classpath" and <kotlinc> task -->
+    <macrodef name="define-kotlinc">
+        <sequential>
+            <if>
+                <istrue value="${use-ivy}"/>
+                <then>
+                    <!-- Defining "kotlin.classpath" with Ivy -->
+                    <taskdef uri="antlib:org.apache.ivy.ant" resource="org/apache/ivy/ant/antlib.xml"/>
+                    <ivy:configure file="${basedir}/build-tools/ivyconf.xml"/>
+                    <ivy:resolve   file="${basedir}/build-tools/ivy.xml"/>
+                    <ivy:cachepath pathid="kotlin.classpath" organisation="org" revision="latest.lastSuccessful"/>
+                </then>
+                <else>
+                    <!-- Defining "kotlin.classpath" with ${kotlin-home} -->
+                    <kotlin-home-setup/>
+                </else>
+            </if>
+
+            <taskdef resource = "org/jetbrains/jet/buildtools/ant/antlib.xml">
                 <classpath>
-                    <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
+                    <path refid="kotlin.classpath"/>
                 </classpath>
             </taskdef>
         </sequential>
     </macrodef>
-
 
     <!-- Deletes all previously compiled files -->
     <macrodef name="cleanup">
@@ -154,13 +178,13 @@
                     </java>
                 </then>
                 <else>
-                    <echo>Running [@{classname}], classpath = "${tests-dir};${kotlin-home}/lib/kotlin-runtime.jar"</echo>
+                    <echo>Running [@{classname}], classpath = "${tests-dir}"</echo>
                     <java outputproperty = "java-out"
                           classname      = "@{classname}"
                           failonerror    = "${failonerror}">
                         <classpath>
-                            <pathelement path = "${tests-dir}"/>
-                            <fileset     file = "${kotlin-home}/lib/kotlin-runtime.jar"/>
+                            <pathelement path  = "${tests-dir}"/>
+                            <path        refid = "kotlin.classpath"/>
                         </classpath>
                         <arg line = "@{args}"/>
                     </java>
@@ -266,8 +290,8 @@
 
             <path id="junit-classpath">
                 <path refid="junit-jar"/>
+                <path refid="kotlin.classpath"/>
                 <pathelement location="@{classpath}"/>
-                <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
             </path>
 
             <if>

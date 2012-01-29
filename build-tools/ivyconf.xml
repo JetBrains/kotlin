@@ -1,0 +1,29 @@
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- Configuring Ant to work with TeamCity Ivy repo: http://goo.gl/foaTg -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<ivysettings>
+    <property name='ivy.checksums' value=''/>
+    <caches defaultCache="${user.home}/.ivy/cache"/>
+    <settings defaultResolver="sonatype-repo"/>
+    <statuses>
+        <status name='integration' integration='true'/>
+    </statuses>
+    <resolvers>
+        <url name="sonatype-repo" m2compatible="true">
+            <artifact pattern="https://oss.sonatype.org/content/repositories/central/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+        </url>
+        <url name='kotlin-repo' alwaysCheckExactRevision='yes' checkmodified='true'>
+            <ivy      pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
+            <artifact pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
+        </url>
+        <url name='idea-repo'   alwaysCheckExactRevision='yes' checkmodified='true'>
+            <ivy      pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
+            <artifact pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
+        </url>
+    </resolvers>
+    <modules>
+        <module organisation='org' name='bt2'   matcher='regexp' resolver='kotlin-repo'/>
+        <module organisation='org' name='bt343' matcher='regexp' resolver='idea-repo'/>
+    </modules>
+</ivysettings>
