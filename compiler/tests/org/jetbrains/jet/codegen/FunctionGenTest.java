@@ -48,4 +48,8 @@ public class FunctionGenTest extends CodegenTestCase {
     public void testFunction () throws InvocationTargetException, IllegalAccessException {
         blackBoxFile("functions/functionExpression.jet");
     }
+
+    public void testLocalFunction () throws InvocationTargetException, IllegalAccessException {
+        blackBoxFile("functions/localFunction.kt");
+    }
 }
