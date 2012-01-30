@@ -446,7 +446,7 @@
                 <fileset dir = "${ant.home}/lib" includes="*.jar"/>
             </classpath>
         </javac>
-        <jar destfile="${kotlinc}/lib/kotlin-build-tools.jar">
+        <jar destfile="${kotlin-home}/lib/kotlin-build-tools.jar">
             <fileset dir = "${output}/classes/buildTools"/>
             <fileset dir = "${basedir}/build-tools/ant/src" includes="**/*.xml"/>
         </jar>
