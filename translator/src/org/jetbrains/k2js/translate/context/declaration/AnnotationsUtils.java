@@ -1,12 +1,14 @@
 package org.jetbrains.k2js.translate.context.declaration;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -14,75 +16,40 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 public final class AnnotationsUtils {
 
     @NotNull
-    private static final String NATIVE_FUNCTION_ANNOTATION_FQNAME = "js.annotations.NativeFun";
+    public static final String NATIVE_FUNCTION_ANNOTATION_FQNAME = "js.annotations.NativeFun";
     @NotNull
-    private static final String NATIVE_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
+    public static final String NATIVE_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
+    @NotNull
+    public static final String LIBRARY_FUNCTION_ANNOTATION_FQNAME = "js.annotations.NativeFun";
+    @NotNull
+    public static final String LIBRARY_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
+    @NotNull
+    public static Set<String> INTERNAL_ANNOTATIONS_FQNAMES = Sets.newHashSet(
+            NATIVE_CLASS_ANNOTATION_FQNAME, NATIVE_FUNCTION_ANNOTATION_FQNAME,
+            LIBRARY_CLASS_ANNOTATION_FQNAME, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
 
     private AnnotationsUtils() {
     }
 
-    @NotNull
-    public static String getNativeName(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof FunctionDescriptor) {
-            return getNativeNameForFunction((FunctionDescriptor) descriptor);
+    public static boolean doesNotHaveInternalAnnotations(@NotNull DeclarationDescriptor descriptor) {
+        for (String annotationFQNAme : INTERNAL_ANNOTATIONS_FQNAMES) {
+            if (hasAnnotation(descriptor, annotationFQNAme)) {
+                return false;
+            }
         }
-        if (descriptor instanceof ClassDescriptor) {
-            return getNativeNameForClass((ClassDescriptor) descriptor);
-        }
-        throw new AssertionError("Use isNativeDeclaration to check");
+        return true;
     }
 
-    @NotNull
-    private static String getNativeNameForFunction(@NotNull FunctionDescriptor descriptor) {
-        if (hasNativeFunctionAnnotation(descriptor)) {
-            return getNativeFunctionName(descriptor);
-        }
-        if (declaredInNativeClass(descriptor)) {
-            return descriptor.getName();
-        }
-        throw new AssertionError("Use isNativeFunction to check");
+    private static boolean hasAnnotation(@NotNull DeclarationDescriptor descriptor,
+                                         @NotNull String annotationFQNAme) {
+        return getAnnotationByName(descriptor, annotationFQNAme) != null;
     }
 
     @NotNull
-    private static String getNativeNameForClass(@NotNull ClassDescriptor descriptor) {
-        if (hasNativeClassAnnotation(descriptor)) {
-            return descriptor.getName();
-        }
-        throw new AssertionError("Use isNativeClass to check");
-    }
-
-    public static boolean isNativeDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return hasNativeClassAnnotation(descriptor) || hasNativeFunctionAnnotation(descriptor)
-                || declaredInNativeClass(descriptor);
-    }
-
-    public static boolean isNativeFunction(@NotNull FunctionDescriptor functionDescriptor) {
-        return hasNativeFunctionAnnotation(functionDescriptor) || declaredInNativeClass(functionDescriptor);
-    }
-
-    public static boolean isNativeClass(@NotNull ClassDescriptor classDescriptor) {
-        return hasNativeClassAnnotation(classDescriptor);
-    }
-
-    private static boolean declaredInNativeClass(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof ClassDescriptor)) return false;
-        return hasNativeClassAnnotation(containingDeclaration);
-    }
-
-    //TODO: constants
-    private static boolean hasNativeFunctionAnnotation(@NotNull DeclarationDescriptor descriptor) {
-        return (getAnnotationByName(descriptor, NATIVE_FUNCTION_ANNOTATION_FQNAME) != null);
-    }
-
-    private static boolean hasNativeClassAnnotation(@NotNull DeclarationDescriptor descriptor) {
-        return (getAnnotationByName(descriptor, NATIVE_CLASS_ANNOTATION_FQNAME) != null);
-    }
-
-    @NotNull
-    private static String getNativeFunctionName(@NotNull FunctionDescriptor declarationDescriptor) {
+    public static String annotationStringParameter(@NotNull FunctionDescriptor declarationDescriptor,
+                                                   @NotNull String annotationFQName) {
         AnnotationDescriptor annotationDescriptor =
-                getAnnotationByName(declarationDescriptor, NATIVE_FUNCTION_ANNOTATION_FQNAME);
+                getAnnotationByName(declarationDescriptor, annotationFQName);
         assert annotationDescriptor != null;
         Object value = annotationDescriptor.getValueArguments().iterator().next().getValue();
         assert value instanceof String : "Native function annotation should have one String parameter";
@@ -90,8 +57,8 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
-                                                            @NotNull String FQName) {
+    public static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
+                                                           @NotNull String FQName) {
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             String annotationClassFQName = getAnnotationClassFQName(annotationDescriptor);
             if (annotationClassFQName.equals(FQName)) {

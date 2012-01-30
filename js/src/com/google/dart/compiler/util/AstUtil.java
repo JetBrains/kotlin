@@ -353,6 +353,8 @@ public class AstUtil {
         public JsNode mutate(JsNode node);
     }
 
+
+    //TODO: move somewhere
     //TODO: refactor and review
     public static JsNode mutateLastExpression(JsNode node, Mutator mutator) {
         if (node instanceof JsBlock) {
