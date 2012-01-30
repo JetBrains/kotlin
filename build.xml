@@ -1,14 +1,15 @@
 <project name="Kotlin" default="dist">
 
     <property name="output" value="${basedir}/dist"/>
+    <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
     <property name="output.name" value="kotlin-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 
     <import file="build-tools/build.xml" optional="false"/>
 
+
     <path id="classpath">
-        <fileset dir="${idea.sdk}" includes="*.jar"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${basedir}/lib" includes="*.jar"/>
         <pathelement path="${output}/classes/runtime"/>
@@ -32,7 +33,13 @@
         </dirset>
     </path>
 
-    <target name="compileRT">
+    <target name="init" depends="clean">
+        <mkdir dir="${kotlin-home}"/>
+        <mkdir dir="${kotlin-home}/lib"/>
+        <mkdir dir="${kotlin-home}/lib/alt"/>
+    </target>
+
+    <target name="compileRT" depends="init">
         <mkdir dir="${output}/classes/runtime"/>
         <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src path="${basedir}/stdlib/src"/>
@@ -45,7 +52,7 @@
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">
             <classpath>
                 <path refid="classpath"/>
-                <pathelement location="${output}/kotlin-compiler.jar"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>
@@ -59,7 +66,7 @@
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">
             <classpath>
                 <path refid="classpath"/>
-                <pathelement location="${output}/kotlin-compiler.jar"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
             <arg value="-src"/>
             <arg value="${basedir}/jdk-headers/src"/>
@@ -70,15 +77,14 @@
     </target>
 
     <target name="jarRT" depends="compile,compileStdlib">
-        <jar destfile="${output}/kotlin-runtime.jar">
+        <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
         </jar>
     </target>
 
     <target name="jarJDKHeaders" depends="compile,compileJDKHeaders">
-        <mkdir dir="${output}/alt"/>
-        <jar destfile="${output}/alt/kotlin-jdk-headers.jar">
+        <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">
             <fileset dir="${output}/classes/jdk-headers"/>
         </jar>
     </target>
@@ -93,7 +99,7 @@
     </target>
 
     <target name="jar" depends="compile">
-        <jar destfile="${output}/kotlin-compiler.jar">
+        <jar destfile="${kotlin-home}/lib//kotlin-compiler.jar">
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
         </jar>
@@ -104,16 +110,20 @@
         <delete dir="${basedir}/bootstrap.compiler"/>
     </target>
 
-    <target name="dist" depends="clean,jarRT,jarJDKHeaders,jar,buildToolsJar">
-        <echo file="${output}/build.txt" message="${build.number}"/>
+    <target name="dist" depends="init,jarRT,jarJDKHeaders,jar,buildToolsJar">
+        <copy todir="${kotlin-home}/lib">
+            <fileset dir="${idea.sdk}/core" includes="*.jar"/>
+            <fileset dir="${basedir}/lib" includes="*.jar"/>
+        </copy>
+    </target>
+
+    <target name="zip" depends="dist">
+        <echo file="${kotlin-home}/build.txt" message="${build.number}"/>
         <zip destfile="${output}/${output.name}.zip">
+            <zipfileset prefix="kotlinc" dir="${kotlin-home}"/>
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
             <zipfileset prefix="kotlinc/license" dir="${basedir}/license"/>
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="kotlinc/lib/alt" dir="${output}/alt" includes="*.jar"/>
-            <zipfileset prefix="kotlinc/lib" dir="${idea.sdk}"/>
-            <zipfileset prefix="kotlinc/lib" dir="${basedir}/lib"/>
-            <zipfileset prefix="kotlinc/lib" dir="${output}" includes="*.jar"/>
             <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>
         </zip>
     </target>
