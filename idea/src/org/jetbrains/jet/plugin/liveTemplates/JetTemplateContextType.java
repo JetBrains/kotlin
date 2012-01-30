@@ -2,7 +2,6 @@ package org.jetbrains.jet.plugin.liveTemplates;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -10,9 +9,7 @@ import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
@@ -66,6 +63,21 @@ public abstract class JetTemplateContextType extends TemplateContextType {
                 e = e.getParent();
             }
             return true;
+        }
+    }
+
+    public static class Expression extends JetTemplateContextType {
+        public Expression() {
+            super("KOTLIN_EXPRESSION", "Expression", Generic.class);
+        }
+
+        @Override
+        protected boolean isInContext(@NotNull PsiElement element) {
+            PsiElement parent = element.getParent();
+            if (parent instanceof JetSimpleNameExpression) {
+                parent = parent.getParent();
+            }
+            return parent instanceof JetBlockExpression;
         }
     }
 }
