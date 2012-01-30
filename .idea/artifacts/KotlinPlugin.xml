@@ -8,7 +8,7 @@
       </options>
     </properties>
     <properties id="ant-preprocessing">
-      <options enabled="true">
+      <options>
         <file>file://$PROJECT_DIR$/plugin_pre_build.xml</file>
         <target>writeVersionToPluginXml</target>
       </options>
