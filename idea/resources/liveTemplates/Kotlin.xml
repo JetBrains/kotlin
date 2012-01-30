@@ -28,4 +28,11 @@
             <option name="KOTLIN_STATEMENT" value="true" />
         </context>
     </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.soutp"
+              name="soutp" toReformat="true" toShortenFQNames="true" value="println($FORMAT$)">
+        <variable alwaysStopAt="false" defaultValue="" expression="groovyScript(&quot;'\&quot;' + _1.collect { it + ' = [${' + it + '}]'}.join(', ') + '\&quot;'&quot;, functionParameters())" name="FORMAT" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+        </context>
+    </template>
 </templateSet>
