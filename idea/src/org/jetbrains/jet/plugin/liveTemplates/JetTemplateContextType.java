@@ -26,7 +26,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(JetLanguage.INSTANCE)) {
             PsiElement element = file.findElementAt(offset);
             if (element instanceof PsiWhiteSpace) {
-
+                return false;
             }
             return element != null && isInContext(element);
         }
@@ -66,9 +66,9 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         }
     }
 
-    public static class Expression extends JetTemplateContextType {
-        public Expression() {
-            super("KOTLIN_EXPRESSION", "Expression", Generic.class);
+    public static class Statement extends JetTemplateContextType {
+        public Statement() {
+            super("KOTLIN_STATEMENT", "Statement", Generic.class);
         }
 
         @Override
