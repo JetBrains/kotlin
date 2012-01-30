@@ -46,6 +46,11 @@ public final class PatternMatchingTest extends TranslationTest {
 //    }
 
     @Test
+    public void whenWithIf() throws Exception {
+        testFooBoxIsTrue("whenWithIf.kt");
+    }
+
+    @Test
     public void multipleCases() throws Exception {
         testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
     }
