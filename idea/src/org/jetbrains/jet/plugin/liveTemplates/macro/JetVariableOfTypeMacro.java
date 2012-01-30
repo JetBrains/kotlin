@@ -1,0 +1,110 @@
+package org.jetbrains.jet.plugin.liveTemplates.macro;
+
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.template.Expression;
+import com.intellij.codeInsight.template.ExpressionContext;
+import com.intellij.codeInsight.template.Macro;
+import com.intellij.codeInsight.template.Result;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiNamedElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author Evgeny Gerashchenko
+ * @since 1/30/12
+ */
+public class JetVariableOfTypeMacro extends Macro {
+    @Override
+    public String getName() {
+        return "kotlinVariableOfType";
+    }
+
+    @Override
+    public String getPresentableName() {
+        return JetBundle.message("macro.variable.of.type");
+    }
+
+    @Override
+    public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+        final JetNamedDeclaration[] vars = getVariables(params, context);
+        if (vars == null || vars.length == 0) return null;
+        return new JetPsiElementResult(vars[0]);
+    }
+
+    @Override
+    public LookupElement[] calculateLookupItems(@NotNull Expression[] params, ExpressionContext context) {
+        final PsiNamedElement[] vars = getVariables(params, context);
+        if (vars == null || vars.length < 2) return null;
+        final Set<LookupElement> set = new LinkedHashSet<LookupElement>();
+        for (PsiNamedElement var : vars) {
+            set.add(LookupElementBuilder.create(var));
+        }
+        return set.toArray(new LookupElement[set.size()]);
+    }
+
+    @Nullable
+    private static JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
+        if (params.length != 1) return null;
+        final Result result = params[0].calculateResult(context);
+        if (result == null) return null;
+
+        Project project = context.getProject();
+        PsiDocumentManager.getInstance(project).commitAllDocuments();
+
+        PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
+        if (!(psiFile instanceof JetFile)) return null;
+        
+        JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
+        if (contextExpression == null) return null;
+
+        BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+        JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
+        if (scope == null) {
+            return null;
+        }
+
+        List<JetNamedDeclaration> elements = new ArrayList<JetNamedDeclaration>();
+
+        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
+            PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+            assert declaration == null || declaration instanceof PsiNamedElement;
+
+            if (declaration instanceof JetProperty) {
+                elements.add((JetProperty) declaration);
+            } else if (declaration instanceof JetParameter) {
+                elements.add((JetParameter) declaration);
+            }
+        }
+
+        return elements.toArray(new JetNamedDeclaration[elements.size()]);
+    }
+    
+    @Nullable
+    private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {
+        PsiElement e = psiFile.findElementAt(startOffset);
+        while (e != null) {
+            if (e instanceof JetExpression) {
+                return (JetExpression) e;
+            }
+            e = e.getParent();
+        }
+        return null;
+    }
+}
+                          
