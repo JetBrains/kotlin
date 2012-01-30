@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="Kotlin">
-    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fm"
-              name="fm" toReformat="true" toShortenFQNames="true" value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.main"
+              name="main" toReformat="true" toShortenFQNames="true" value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
         <context>
             <option name="KOTLIN_NAMESPACE" value="true" />
         </context>
