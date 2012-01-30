@@ -30,6 +30,14 @@ public class PathUtil {
             File answer = lib.getParentFile();
             return answer.exists() ? answer : null;
         }
+        
+        File current = new File("").getAbsoluteFile(); // CWD
+
+        do {
+            File atDevHome = new File(current, "dist/kotlinc");
+            if (atDevHome.exists()) return atDevHome;
+            current = current.getParentFile();
+        } while (current != null);
 
         return null;
     }
