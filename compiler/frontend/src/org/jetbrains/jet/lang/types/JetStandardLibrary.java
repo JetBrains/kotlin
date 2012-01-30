@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
@@ -31,6 +32,8 @@ public class JetStandardLibrary {
 
     // TODO : consider releasing this memory
     private static JetStandardLibrary cachedLibrary = null;
+    // A temporary try to find a reason of KT-224
+    private static int wasProcessCanceledException = 0;
     //    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
 
     // TODO : double checked locking
@@ -117,6 +120,9 @@ public class JetStandardLibrary {
             initStdClasses();
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } catch (ProcessCanceledException e) {
+            wasProcessCanceledException++;
+            throw e;
         }
     }
 
