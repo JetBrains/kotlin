@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.k2js.translate.context.NamingScope;
 
+import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.isNativeDeclaration;
+
 /**
  * @author Pavel Talanov
  */
@@ -39,6 +41,6 @@ public final class KotlinDeclarationVisitor extends AbstractDeclarationVisitor {
 
     @Override
     protected boolean accept(@NotNull DeclarationDescriptor descriptor) {
-        return true;
+        return (!isNativeDeclaration(descriptor));
     }
 }

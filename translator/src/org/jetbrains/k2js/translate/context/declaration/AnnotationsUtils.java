@@ -11,13 +11,29 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 /**
  * @author Pavel Talanov
  */
-public final class JsAnnotationsUtils {
+public final class AnnotationsUtils {
 
-    private JsAnnotationsUtils() {
+    @NotNull
+    private static final String NATIVE_FUNCTION_ANNOTATION_FQNAME = "js.annotations.NativeFun";
+    @NotNull
+    private static final String NATIVE_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
+
+    private AnnotationsUtils() {
     }
 
     @NotNull
-    public static String getNativeName(@NotNull FunctionDescriptor descriptor) {
+    public static String getNativeName(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof FunctionDescriptor) {
+            return getNativeNameForFunction((FunctionDescriptor) descriptor);
+        }
+        if (descriptor instanceof ClassDescriptor) {
+            return getNativeNameForClass((ClassDescriptor) descriptor);
+        }
+        throw new AssertionError("Use isNativeDeclaration to check");
+    }
+
+    @NotNull
+    private static String getNativeNameForFunction(@NotNull FunctionDescriptor descriptor) {
         if (hasNativeFunctionAnnotation(descriptor)) {
             return getNativeFunctionName(descriptor);
         }
@@ -25,6 +41,19 @@ public final class JsAnnotationsUtils {
             return descriptor.getName();
         }
         throw new AssertionError("Use isNativeFunction to check");
+    }
+
+    @NotNull
+    private static String getNativeNameForClass(@NotNull ClassDescriptor descriptor) {
+        if (hasNativeClassAnnotation(descriptor)) {
+            return descriptor.getName();
+        }
+        throw new AssertionError("Use isNativeClass to check");
+    }
+
+    public static boolean isNativeDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        return hasNativeClassAnnotation(descriptor) || hasNativeFunctionAnnotation(descriptor)
+                || declaredInNativeClass(descriptor);
     }
 
     public static boolean isNativeFunction(@NotNull FunctionDescriptor functionDescriptor) {
@@ -38,21 +67,22 @@ public final class JsAnnotationsUtils {
     private static boolean declaredInNativeClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return false;
-        return hasNativeClassAnnotation((ClassDescriptor) containingDeclaration);
+        return hasNativeClassAnnotation(containingDeclaration);
     }
 
-    private static boolean hasNativeFunctionAnnotation(@NotNull FunctionDescriptor annotationDescriptor) {
-        return (getAnnotationByName(annotationDescriptor, "js.annotations.JavascriptNativeFunction") != null);
+    //TODO: constants
+    private static boolean hasNativeFunctionAnnotation(@NotNull DeclarationDescriptor descriptor) {
+        return (getAnnotationByName(descriptor, NATIVE_FUNCTION_ANNOTATION_FQNAME) != null);
     }
 
-    private static boolean hasNativeClassAnnotation(@NotNull ClassDescriptor descriptor) {
-        return (getAnnotationByName(descriptor, "JavascriptNativeClass") != null);
+    private static boolean hasNativeClassAnnotation(@NotNull DeclarationDescriptor descriptor) {
+        return (getAnnotationByName(descriptor, NATIVE_CLASS_ANNOTATION_FQNAME) != null);
     }
 
     @NotNull
-    private static String getNativeFunctionName(@NotNull DeclarationDescriptor declarationDescriptor) {
+    private static String getNativeFunctionName(@NotNull FunctionDescriptor declarationDescriptor) {
         AnnotationDescriptor annotationDescriptor =
-                getAnnotationByName(declarationDescriptor, "js.annotations.JavascriptNativeFunction");
+                getAnnotationByName(declarationDescriptor, NATIVE_FUNCTION_ANNOTATION_FQNAME);
         assert annotationDescriptor != null;
         Object value = annotationDescriptor.getValueArguments().iterator().next().getValue();
         assert value instanceof String : "Native function annotation should have one String parameter";

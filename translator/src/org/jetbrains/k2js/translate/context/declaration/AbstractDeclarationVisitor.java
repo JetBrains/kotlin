@@ -161,7 +161,7 @@ public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVi
         return null;
     }
 
-    public void traverseNamespace(NamespaceDescriptor descriptor, DeclarationContext context) {
+    public void traverseNamespace(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
         if (!accept(descriptor)) {
             return;
         }
@@ -178,7 +178,7 @@ public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVi
         return context.innerDeclaration(namespaceScope, namespaceName);
     }
 
-    private void declareMembers(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
+    protected void declareMembers(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
         for (DeclarationDescriptor memberDescriptor :
                 descriptor.getMemberScope().getAllDescriptors()) {
             memberDescriptor.accept(this, context);

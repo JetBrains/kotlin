@@ -78,8 +78,12 @@ public final class DeclarationFacade {
     //TODO: decide if is public
     public void extractDeclarationsFromNamespace(@NotNull NamespaceDescriptor descriptor,
                                                  @Nullable JsNameRef namespaceQualifier) {
-        KotlinDeclarationVisitor visitor = new KotlinDeclarationVisitor(kotlinDeclarations, true);
-        visitor.traverseNamespace(descriptor, DeclarationContext.rootContext(rootScope, namespaceQualifier));
+        KotlinDeclarationVisitor kotlinDeclarationVisitor = new KotlinDeclarationVisitor(kotlinDeclarations, true);
+        kotlinDeclarationVisitor.traverseNamespace
+                (descriptor, DeclarationContext.rootContext(rootScope, namespaceQualifier));
+        NativeDeclarationVisitor nativeDeclarationVisitor = new NativeDeclarationVisitor(nativeDeclarations);
+        nativeDeclarationVisitor.traverseNamespace
+                (descriptor, DeclarationContext.rootContext(rootScope, null));
     }
 
     public void extractDeclarationsFromFiles(@NotNull List<JetFile> files, @NotNull BindingContext context) {

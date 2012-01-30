@@ -8,6 +8,9 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.NamingScope;
 
+import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.isNativeClass;
+import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.isNativeFunction;
+
 /**
  * @author Pavel Talanov
  */
@@ -21,16 +24,20 @@ public final class NativeDeclarationVisitor extends AbstractDeclarationVisitor {
     @Override
     protected NamingScope doDeclareScope(@NotNull DeclarationDescriptor descriptor, @NotNull DeclarationContext context,
                                          @NotNull String recommendedName) {
-        //TODO: probably we do
-        /*we dont need to declare any scopes for native declarations*/
-        return context.getScope();
+        //TODO: probably need to keep track
+        if (!(descriptor instanceof ClassDescriptor)) {
+            return context.getScope();
+        }
+        NamingScope innerScope = context.getScope().innerScope(recommendedName);
+        declarations().putScope(descriptor, innerScope);
+        return innerScope;
     }
 
     @NotNull
     @Override
     protected JsName doDeclareName(@NotNull DeclarationDescriptor descriptor, @NotNull DeclarationContext context,
                                    @NotNull String recommendedName) {
-        String nativeName = JsAnnotationsUtils.getNativeName((FunctionDescriptor) descriptor);
+        String nativeName = AnnotationsUtils.getNativeName(descriptor);
         JsName jsName = context.getScope().
                 declareVariable(descriptor, nativeName, false);
         jsName.setObfuscatable(false);
@@ -45,12 +52,17 @@ public final class NativeDeclarationVisitor extends AbstractDeclarationVisitor {
             return true;
         }
         if (descriptor instanceof FunctionDescriptor) {
-            return JsAnnotationsUtils.isNativeFunction((FunctionDescriptor) descriptor);
+            return isNativeFunction((FunctionDescriptor) descriptor);
         }
         if (descriptor instanceof ClassDescriptor) {
-            return JsAnnotationsUtils.isNativeClass((ClassDescriptor) descriptor);
+            return isNativeClass((ClassDescriptor) descriptor);
         }
-        throw new AssertionError();
+        return false;
+    }
+
+    @Override
+    public void traverseNamespace(@NotNull NamespaceDescriptor namespace, @NotNull DeclarationContext context) {
+        declareMembers(namespace, context);
     }
 
 

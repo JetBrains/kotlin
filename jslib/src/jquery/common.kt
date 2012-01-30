@@ -4,8 +4,10 @@ import js.annotations.*;
 
 fun JQuery.toString() = ""
 
-JavascriptNativeClass class JQuery() {
+NativeClass
+class JQuery() {
     fun addClass(className : String) : JQuery = this;
+    fun addClass(f : DomElement.(Int, String)->String) = this;
     fun attr(attrName : String) = ""
     fun attr(attrName : String, value : String) = this
     fun hasClass(className : String) = true
@@ -29,9 +31,15 @@ open class DomElement() {
 
 //val document = object : DomElement() {}
 
-JavascriptNativeFunction("$") fun jq(selector : String) = JQuery();
-JavascriptNativeFunction("$") fun jq(selector : String, context : DomElement) = JQuery();
-JavascriptNativeFunction("$") fun jq(callback : () -> Unit) = JQuery();
-JavascriptNativeFunction("$") fun jq(obj : JQuery) = JQuery();
-JavascriptNativeFunction("$") fun jq(el : DomElement) = JQuery();
-JavascriptNativeFunction("$") fun jq() = JQuery();
+NativeFun("$")
+fun jq(selector : String) = JQuery();
+NativeFun("$")
+fun jq(selector : String, context : DomElement) = JQuery();
+NativeFun("$")
+fun jq(callback : () -> Unit) = JQuery();
+NativeFun("$")
+fun jq(obj : JQuery) = JQuery();
+NativeFun("$")
+fun jq(el : DomElement) = JQuery();
+NativeFun("$")
+fun jq() = JQuery();

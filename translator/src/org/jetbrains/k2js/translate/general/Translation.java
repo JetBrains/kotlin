@@ -107,7 +107,6 @@ public final class Translation {
 
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());
-
         return context.program();
     }
 
