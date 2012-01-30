@@ -56,6 +56,14 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         protected boolean isInContext(@NotNull PsiElement element) {
             PsiElement e = element;
             while (e != null) {
+                if (e instanceof JetModifierList) {
+                    // skip property/function/class or object which is owner of modifier list
+                    e = e.getParent();
+                    if (e != null) {
+                        e = e.getParent();
+                    }
+                    continue;
+                }
                 if (e instanceof JetProperty || e instanceof JetNamedFunction
                     || e instanceof JetClassOrObject) {
                     return false;
