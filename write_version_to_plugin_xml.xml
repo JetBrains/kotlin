@@ -1,17 +1,22 @@
 <project name="Write Plugin Version to plugin.xml">
 
     <property name="build.number" value="snapshot"/>
+    <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
+    <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
 
     <target name="writeVersionToPluginXml">
-        <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
-        <copy file="${plugin.xml}" tofile="${plugin.xml}-version">
+        <copy file="${plugin.xml}" tofile="${plugin.xml.bk}"/>
+        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true">
             <filterchain>
                 <replacetokens>
                     <token key="snapshot" value="${build.number}"/>
                 </replacetokens>
             </filterchain>
         </copy>
-        <copy file="${plugin.xml}-version" tofile="${plugin.xml}" overwrite="true"/>
-        <delete file="${plugin.xml}-version" quiet="true"/>
+    </target>
+
+    <target name="cleanup">
+        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+        <delete file="${plugin.xml.bk}" quiet="true"/>
     </target>
 </project>
