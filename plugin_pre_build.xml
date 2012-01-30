@@ -3,7 +3,7 @@
     <property name="artifact.output.path" value="${basedir}/out/artifacts/KotlinPlugin"/>
 
     <target name="cleanup">
-        <delete verbose="true">
+        <delete verbose="true" quiet="true">
             <fileset dir="${artifact.output.path}" includes="*"/>
         </delete>
     </target>
