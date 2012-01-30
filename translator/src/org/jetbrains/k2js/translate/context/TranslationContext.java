@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.translate.context.declaration.DeclarationFacade;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
@@ -61,7 +62,8 @@ public final class TranslationContext {
 
     @NotNull
     public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        NamingScope declarationScope = staticContext.getDeclarations().getScope(descriptor);
+        //TODO: chained call on static context suspicious
+        NamingScope declarationScope = staticContext.getDeclarationFacade().getKotlinDeclarations().getScope(descriptor);
         return contextWithScope(declarationScope);
     }
 
@@ -126,12 +128,12 @@ public final class TranslationContext {
         if (standardClasses().isStandardObject(descriptor)) {
             return namer().kotlinObject();
         }
-        return declarations().getQualifier(descriptor);
+        return staticContext.getQualifier(descriptor);
     }
 
 
     public boolean hasQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return (declarations().hasQualifier(descriptor) ||
+        return (staticContext.hasQualifier(descriptor) ||
                 standardClasses().isStandardObject(descriptor));
     }
 
@@ -169,11 +171,6 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public Declarations declarations() {
-        return staticContext.getDeclarations();
-    }
-
-    @NotNull
     public Intrinsics intrinsics() {
         return staticContext.getIntrinsics();
     }
@@ -191,5 +188,10 @@ public final class TranslationContext {
     @NotNull
     public JsScope jsScope() {
         return dynamicContext.jsScope();
+    }
+
+    @NotNull
+    private DeclarationFacade declarationFacade() {
+        return staticContext.getDeclarationFacade();
     }
 }

@@ -98,7 +98,7 @@ public final class TranslationUtils {
     @NotNull
     public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
                                                   @NotNull DeclarationDescriptor descriptor) {
-        JsName name = context.declarations().getName(descriptor);
+        JsName name = context.getNameForDescriptor(descriptor);
         JsNameRef reference = name.makeRef();
         if (context.hasQualifierForDescriptor(descriptor)) {
             JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);

@@ -1,9 +1,11 @@
-package org.jetbrains.k2js.translate.context;
+package org.jetbrains.k2js.translate.context.declaration;
 
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.context.NamingScope;
 
 import java.util.Set;
 
