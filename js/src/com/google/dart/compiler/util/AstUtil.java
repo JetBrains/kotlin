@@ -7,6 +7,7 @@ package com.google.dart.compiler.util;
 import com.google.dart.compiler.InternalCompilerException;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.common.SourceInfo;
+import com.sun.istack.internal.NotNull;
 
 import java.util.List;
 
@@ -357,6 +358,9 @@ public class AstUtil {
         if (node instanceof JsBlock) {
             JsBlock block = (JsBlock) node;
             List<JsStatement> statements = block.getStatements();
+
+            if (statements.isEmpty()) return block;
+
             int size = statements.size();
             statements.set(size - 1,
                     AstUtil.convertToStatement(mutateLastExpression(statements.get(size - 1), mutator)));
@@ -375,5 +379,24 @@ public class AstUtil {
             return AstUtil.convertToStatement(mutateLastExpression(((JsExprStmt) node).getExpression(), mutator));
         }
         return mutator.mutate(node);
+    }
+
+
+    public static final class SaveLastExpressionMutator implements Mutator {
+
+        @NotNull
+        private final JsExpression toAssign;
+
+        public SaveLastExpressionMutator(@NotNull JsExpression toAssign) {
+            this.toAssign = toAssign;
+        }
+
+        @Override
+        public JsNode mutate(JsNode node) {
+            if (!(node instanceof JsExpression)) {
+                return node;
+            }
+            return AstUtil.assignment(toAssign, (JsExpression) node);
+        }
     }
 }

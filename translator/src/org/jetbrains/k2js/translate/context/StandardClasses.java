@@ -153,6 +153,7 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("js.parseInt").kotlinFunction("parseInt");
         standardClasses.declare().forFQ("js.println").kotlinFunction("println");
         standardClasses.declare().forFQ("js.print").kotlinFunction("print");
+        standardClasses.declare().forFQ("js.Exception").kotlinClass("Exception");
     }
 
     @NotNull

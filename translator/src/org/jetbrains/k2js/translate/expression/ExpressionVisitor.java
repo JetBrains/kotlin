@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
@@ -18,7 +19,6 @@ import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
@@ -122,12 +122,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitIfExpression(@NotNull JetIfExpression expression, @NotNull TranslationContext context) {
-        boolean isStatement = BindingUtils.isStatement(context.bindingContext(), expression);
-        if (isStatement) {
-            return translateAsIfStatement(expression, context);
-        } else {
-            return translateAsConditionalExpression(expression, context);
-        }
+        TemporaryVariable result = context.declareTemporary(context.program().getNullLiteral());
+        AstUtil.SaveLastExpressionMutator saveResultToTemporaryMutator =
+                new AstUtil.SaveLastExpressionMutator(result.nameReference());
+        JsNode mutatedIfStatement = AstUtil.mutateLastExpression(translateAsIfStatement(expression, context),
+                saveResultToTemporaryMutator);
+        JsStatement resultingStatement = AstUtil.convertToStatement(mutatedIfStatement);
+        context.jsBlock().addStatement(resultingStatement);
+        return result.nameReference();
     }
 
     @Override
@@ -156,16 +158,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return null;
         }
         return AstUtil.convertToStatement(jetElse.accept(this, context));
-    }
-
-    @NotNull
-    private JsConditional translateAsConditionalExpression(@NotNull JetIfExpression expression,
-                                                           @NotNull TranslationContext context) {
-        JsConditional result = new JsConditional();
-        result.setTestExpression(translateConditionExpression(expression.getCondition(), context));
-        result.setThenExpression(translateNullableExpression(expression.getThen(), context));
-        result.setElseExpression(translateNullableExpression(expression.getElse(), context));
-        return result;
     }
 
     @NotNull
@@ -353,5 +345,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             result.getExpressions().add(Translation.translateAsExpression(entry, context));
         }
         return result;
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitThrowExpression(@NotNull JetThrowExpression expression,
+                                       @NotNull TranslationContext context) {
+        JetExpression thrownExpression = expression.getThrownExpression();
+        assert thrownExpression != null : "Thrown expression must not be null";
+        return new JsThrow(translateAsExpression(thrownExpression, context));
     }
 }

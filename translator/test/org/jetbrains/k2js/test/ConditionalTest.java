@@ -1,6 +1,7 @@
 package org.jetbrains.k2js.test;
 
 import org.junit.Test;
+import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Pavel Talanov
@@ -24,9 +25,13 @@ public class ConditionalTest extends AbstractExpressionTest {
         testFunctionOutput("if.kt", "foo", "box", 5);
     }
 
-    //TODO: test fails due to isStatement issue, include when issue is solved or implement another solution
     @Test
     public void ifElseIf() throws Exception {
         testFunctionOutput("elseif.kt", "foo", "box", 5);
+    }
+
+    @Test(expected = JavaScriptException.class)
+    public void ifElseAsExpressionWithThrow() throws Exception {
+        testFooBoxIsTrue("ifAsExpressionWithThrow.kt");
     }
 }

@@ -250,6 +250,7 @@ Kotlin.equals = function (obj1, obj2) {
 };
 
 Kotlin.Exceptions = {}
+Kotlin.Exception = Kotlin.Class.create();
 Kotlin.Exceptions.IndexOutOfBounds = {}
 Kotlin.array = function (len) {
     return new Kotlin.Array(len, function () {
@@ -902,7 +903,7 @@ Kotlin.StringBuilder = Kotlin.Class.create(
     }
 );
 
-Kotlin.toString = function(obj) {
+Kotlin.toString = function (obj) {
     return obj.toString();
 };
 

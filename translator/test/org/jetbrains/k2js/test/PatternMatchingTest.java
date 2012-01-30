@@ -39,11 +39,10 @@ public final class PatternMatchingTest extends TranslationTest {
         testFooBoxIsTrue("whenNotValue.kt");
     }
 
-    //TODO: fails due to analyzing bug
-//    @Test
-//    public void whenValueOrType() throws Exception {
-//        testFooBoxIsTrue("whenValueOrType.kt");
-//    }
+    @Test
+    public void whenValueOrType() throws Exception {
+        testFooBoxIsTrue("whenValueOrType.kt");
+    }
 
     @Test
     public void whenWithIf() throws Exception {
@@ -63,5 +62,10 @@ public final class PatternMatchingTest extends TranslationTest {
     @Test
     public void whenAsExpression() throws Exception {
         testFooBoxIsTrue("whenAsExpression.kt");
+    }
+
+    @Test(expected = org.mozilla.javascript.JavaScriptException.class)
+    public void whenAsExpressionWithThrow() throws Exception {
+        testFooBoxIsTrue("whenAsExpressionWithThrow.kt");
     }
 }

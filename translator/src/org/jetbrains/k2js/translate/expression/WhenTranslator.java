@@ -16,7 +16,6 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-//TODO: look into using temporary variable for counter
 public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
@@ -102,16 +101,9 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     JsStatement withReturnValueCaptured(@NotNull JsNode node) {
-        AstUtil.Mutator lastExpressionCapturer = new AstUtil.Mutator() {
-            @Override
-            public JsNode mutate(JsNode node) {
-                if (!(node instanceof JsExpression)) {
-                    return node;
-                }
-                return AstUtil.assignment(result.nameReference(), (JsExpression) node);
-            }
-        };
-        return AstUtil.convertToStatement(AstUtil.mutateLastExpression(node, lastExpressionCapturer));
+
+        return AstUtil.convertToStatement(AstUtil.mutateLastExpression(node,
+                new AstUtil.SaveLastExpressionMutator(result.nameReference())));
     }
 
     @NotNull

@@ -16,10 +16,12 @@ fun box() : Boolean {
     is null -> c = 10;
     is B -> c = 10000
     is A  -> c = 20;
+    else -> c = 1000
   }
   when(b) {
     is null -> c += 5
     is B -> c += 100
+    else -> c = 1000
   }
   return (c == 25)
 }
