@@ -14,7 +14,7 @@
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.serr"
-              name="serr" toReformat="true" toShortenFQNames="true" value="System.out?.println($END$)">
+              name="serr" toReformat="true" toShortenFQNames="true" value="System.err?.println($END$)">
         <context>
             <option name="KOTLIN_STATEMENT" value="true" />
         </context>
