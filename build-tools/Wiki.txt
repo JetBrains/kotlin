@@ -1,9 +1,12 @@
 {toc:style=disc|indent=20px}
-h1. Ant - <kotlinc> task
+h1. Ant
 
-To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} environment variable and reference it in your Ant build:
 
-{code}
+h2. Defining {{*<kotlinc>*}} task using local Kotlin setup
+
+One way to define Ant's {{*<kotlinc>*}} task is by using your local Kotlin setup and {{*KOTLIN_HOME*}} environment variable:
+
+{code:xml}
 <property environment="env"/>
 <taskdef resource    = "org/jetbrains/jet/buildtools/ant/antlib.xml">
     <classpath>
@@ -15,6 +18,76 @@ To define an Ant's {{*<kotlinc>*}} task you need to define a {{*KOTLIN_HOME*}} e
 
 Alternatively, you can copy all jar files from Kotlin distribution to Ant's {{"lib"}} folder.
 
+
+h2. Defining {{*<kotlinc>*}} task using Ivy
+
+Another way to define Ant's {{*<kotlinc>*}} task is by using Ivy:
+
+{{"ivyconf.xml"}}:
+
+{code:xml}
+<ivysettings>
+    <property name='ivy.checksums' value=''/>
+    <caches defaultCache="${user.home}/.ivy/cache"/>
+    <settings defaultResolver="sonatype-repo"/>
+    <statuses>
+        <status name='integration' integration='true'/>
+    </statuses>
+    <resolvers>
+        <url name="sonatype-repo" m2compatible="true">
+            <artifact pattern="https://oss.sonatype.org/content/repositories/central/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+        </url>
+        <url name='kotlin-repo' alwaysCheckExactRevision='yes' checkmodified='true'>
+            <!-- Temporary URL until Kotlin artifacts become available in http://teamcity.jetbrains.com -->
+            <ivy      pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
+            <artifact pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
+        </url>
+        <url name='idea-repo'   alwaysCheckExactRevision='yes' checkmodified='true'>
+            <ivy      pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
+            <artifact pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
+        </url>
+    </resolvers>
+    <modules>
+        <module organisation='org' name='bt2'   matcher='regexp' resolver='kotlin-repo'/>
+        <module organisation='org' name='bt343' matcher='regexp' resolver='idea-repo'/>
+    </modules>
+</ivysettings>
+{code}
+
+{{"ivy.xml"}}:
+
+{code:xml}
+<ivy-module version="1.3">
+    <info organisation="com.jetbrains" module="kotlin"/>
+    <dependencies>
+        <dependency org="org" name="bt2" rev="latest.lastSuccessful">
+            <include ext="jar" matcher="exactOrRegexp"/>
+        </dependency>
+        <!-- http://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt343 -->
+        <!-- http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/latest.lastSuccessful/teamcity-ivy.xml -->
+        <dependency org="org" name="bt343" rev="latest.lastSuccessful">
+            <include name="core/.*" ext="jar" matcher="exactOrRegexp"/>
+        </dependency>
+        <dependency org="asm" name="asm-util" rev="3.3.1"/>
+    </dependencies>
+</ivy-module>
+{code}
+
+{{"build.xml"}}:
+
+{code:xml}
+<!-- Copy Ivy jar and all its dependencies to Ant's "lib": http://www.apache.org/dist/ant/ivy/2.2.0/apache-ivy-2.2.0-bin-with-deps.zip -->
+<taskdef uri="antlib:org.apache.ivy.ant" resource="org/apache/ivy/ant/antlib.xml"/>
+<ivy:configure file="${basedir}/ivyconf.xml"/>
+<ivy:resolve   file="${basedir}/ivy.xml"/>
+<ivy:cachepath pathid="kotlin.classpath" organisation="org" revision="latest.lastSuccessful"/>
+
+<taskdef resource = "org/jetbrains/jet/buildtools/ant/antlib.xml">
+    <classpath>
+        <path refid="kotlin.classpath"/>
+    </classpath>
+</taskdef>
+{code}
 
 h2. {{*<kotlinc>*}} attributes
 
@@ -37,7 +110,7 @@ If {{"module"}} is used - only {{"jar"}} can be specified or it can be omitted |
 h2. Examples
 
 
-{code}
+{code:xml}
 <kotlinc src = "test/longer-examples/Bottles.kt" output = "dist"/>
 <kotlinc src = "test/longer-examples"            output = "dist"/>
 
@@ -73,7 +146,7 @@ fun main(args: Array<String>) {
 h3. Classpath examples
 
 
-{code}
+{code:xml}
 <path id="junit-jar">
     <fileset file="lib/junit.jar"/>
 </path>
