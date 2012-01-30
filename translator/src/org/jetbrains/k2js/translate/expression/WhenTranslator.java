@@ -5,15 +5,13 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.dart.compiler.util.AstUtil.convertToStatement;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 
 /**
  * @author Pavel Talanov
@@ -32,18 +30,18 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private final JsExpression expressionToMatch;
     @NotNull
-    private final JsName dummyCounterName;
+    private final TemporaryVariable dummyCounter;
+    @NotNull
+    private final TemporaryVariable result;
+
     private int currentEntryNumber = 0;
 
     private WhenTranslator(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         super(context);
         this.whenExpression = expression;
         this.expressionToMatch = translateExpressionToMatch(whenExpression);
-        this.dummyCounterName = context.jsScope().declareTemporary();
-    }
-
-    boolean shouldWrapInFunction() {
-        return !isStatement(context().bindingContext(), whenExpression);
+        this.dummyCounter = context.declareTemporary(context().program().getNumberLiteral(0));
+        this.result = context.declareTemporary(program().getNullLiteral());
     }
 
     @NotNull
@@ -51,16 +49,8 @@ public class WhenTranslator extends AbstractTranslator {
         JsFor resultingFor = generateDummyFor();
         List<JsStatement> entries = translateEntries();
         resultingFor.setBody(AstUtil.newBlock(entries));
-        return mayBeWrapInFunction(resultingFor);
-    }
-
-    @NotNull
-    private JsNode mayBeWrapInFunction(@NotNull JsFor resultingFor) {
-        if (!shouldWrapInFunction()) return resultingFor;
-
-        JsFunction dummyFunction = JsFunction.getAnonymousFunctionWithScope(context().jsScope());
-        dummyFunction.setBody(AstUtil.convertToBlock(resultingFor));
-        return AstUtil.newInvocation(dummyFunction);
+        context().jsBlock().addStatement(resultingFor);
+        return result.nameReference();
     }
 
     @NotNull
@@ -75,7 +65,7 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
         JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
-                dummyCounterName.makeRef(), context().program().getNumberLiteral(currentEntryNumber));
+                dummyCounter.nameReference(), context().program().getNumberLiteral(currentEntryNumber));
         currentEntryNumber++;
         return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }
@@ -83,31 +73,26 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsFor generateDummyFor() {
         JsFor result = new JsFor();
-        result.setInitVars(generateInitStatement());
+        result.setInitExpr(dummyCounter.assignmentExpression());
         result.setIncrExpr(generateIncrementStatement());
         result.setCondition(generateConditionStatement());
         return result;
     }
 
     @NotNull
-    private JsVars generateInitStatement() {
-        return AstUtil.newVar(dummyCounterName, context().program().getNumberLiteral(0));
-    }
-
-    @NotNull
     private JsBinaryOperation generateConditionStatement() {
         JsNumberLiteral entriesNumber = program().getNumberLiteral(whenExpression.getEntries().size());
-        return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounterName.makeRef(), entriesNumber);
+        return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounter.nameReference(), entriesNumber);
     }
 
     @NotNull
     private JsPrefixOperation generateIncrementStatement() {
-        return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounterName.makeRef());
+        return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounter.nameReference());
     }
 
     @NotNull
     private JsStatement translateEntry(@NotNull JetWhenEntry entry) {
-        JsStatement statementToExecute = mayBeWrapWithReturn(translateEntryExpression(entry));
+        JsStatement statementToExecute = withReturnValueCaptured(translateEntryExpression(entry));
         if (entry.isElse()) {
             return statementToExecute;
         }
@@ -116,14 +101,17 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsStatement mayBeWrapWithReturn(@NotNull JsNode node) {
-        if (shouldWrapInFunction()) {
-            assert node instanceof JsExpression :
-                    "Statements are not supported in when clauses which are themselves expressions";
-            return new JsReturn((JsExpression) node);
-        } else {
-            return convertToStatement(node);
-        }
+    JsStatement withReturnValueCaptured(@NotNull JsNode node) {
+        AstUtil.Mutator lastExpressionCapturer = new AstUtil.Mutator() {
+            @Override
+            public JsNode mutate(JsNode node) {
+                if (!(node instanceof JsExpression)) {
+                    return node;
+                }
+                return AstUtil.assignment(result.nameReference(), (JsExpression) node);
+            }
+        };
+        return AstUtil.convertToStatement(AstUtil.mutateLastExpression(node, lastExpressionCapturer));
     }
 
     @NotNull

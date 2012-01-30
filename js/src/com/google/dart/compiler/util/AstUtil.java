@@ -328,6 +328,10 @@ public class AstUtil {
         return equals(expression, program.getTrueLiteral());
     }
 
+    public static JsExpression assignment(JsExpression left, JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
+    }
+
     public static JsBinaryOperation sum(JsExpression left, JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ADD, left, right);
     }
@@ -342,5 +346,34 @@ public class AstUtil {
 
     public static JsBinaryOperation typeof(JsExpression expression, JsStringLiteral string) {
         return equals(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
+    }
+
+    public static interface Mutator {
+        public JsNode mutate(JsNode node);
+    }
+
+    //TODO: refactor and review
+    public static JsNode mutateLastExpression(JsNode node, Mutator mutator) {
+        if (node instanceof JsBlock) {
+            JsBlock block = (JsBlock) node;
+            List<JsStatement> statements = block.getStatements();
+            int size = statements.size();
+            statements.set(size - 1,
+                    AstUtil.convertToStatement(mutateLastExpression(statements.get(size - 1), mutator)));
+            return block;
+        }
+        if (node instanceof JsIf) {
+            JsIf ifExpr = (JsIf) node;
+            ifExpr.setThenStmt(AstUtil.convertToStatement(mutateLastExpression(ifExpr.getThenStmt(), mutator)));
+            JsStatement elseStmt = ifExpr.getElseStmt();
+            if (elseStmt != null) {
+                ifExpr.setElseStmt(AstUtil.convertToStatement(mutateLastExpression(elseStmt, mutator)));
+            }
+            return ifExpr;
+        }
+        if (node instanceof JsExprStmt) {
+            return AstUtil.convertToStatement(mutateLastExpression(((JsExprStmt) node).getExpression(), mutator));
+        }
+        return mutator.mutate(node);
     }
 }

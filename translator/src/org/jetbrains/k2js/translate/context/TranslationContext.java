@@ -191,6 +191,11 @@ public final class TranslationContext {
     }
 
     @NotNull
+    public JsBlock jsBlock() {
+        return dynamicContext.jsBlock();
+    }
+
+    @NotNull
     private DeclarationFacade declarationFacade() {
         return staticContext.getDeclarationFacade();
     }

@@ -1,11 +1,14 @@
 package org.jetbrains.k2js.config;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,13 +18,29 @@ import java.util.List;
  */
 public abstract class Config {
 
+    @NotNull
+    private static final String PATH_TO_JS_LIB_SRC = getPathToJsLibSrc();
+
     //TODO: provide some generic way to access
+    @NotNull
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\annotations.kt",
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\jquery\\common.kt",
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\javautil.kt",
-            "C:\\Dev\\Projects\\jet-contrib\\k2js\\jslib\\src\\core\\core.kt"
+            PATH_TO_JS_LIB_SRC + "\\core\\annotations.kt",
+            PATH_TO_JS_LIB_SRC + "\\jquery\\common.kt",
+            PATH_TO_JS_LIB_SRC + "\\core\\javautil.kt",
+            PATH_TO_JS_LIB_SRC + "\\core\\core.kt"
     );
+
+
+    @NotNull
+    private static String getPathToJsLibSrc() {
+        try {
+            File file = new File("config.txt");
+            List<String> lines = Files.readLines(file, Charsets.UTF_8);
+            return lines.get(0);
+        } catch (Exception ex) {
+            return "jslib\\src";
+        }
+    }
 
     @NotNull
     private static List<JetFile> initLibFiles(@NotNull Project project) {
