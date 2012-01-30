@@ -12,7 +12,6 @@ import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.
  */
 public final class KotlinDeclarationVisitor extends AbstractDeclarationVisitor {
 
-    @NotNull
     private final boolean shouldObfuscate;
 
     /*package*/ KotlinDeclarationVisitor(@NotNull Declarations declarations, boolean obfuscateNames) {

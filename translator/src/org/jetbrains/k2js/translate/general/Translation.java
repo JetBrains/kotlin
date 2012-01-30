@@ -100,7 +100,7 @@ public final class Translation {
         staticContext.getDeclarationFacade().
                 extractStandardLibrary(standardLibrary, staticContext.getNamer().kotlinObject());
         staticContext.getDeclarationFacade().
-                extractDeclarationsFromFiles(files, bindingContext);
+                extractDeclarationsFromFiles(files, bindingContext, staticContext.getNamer());
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
         block.addStatement(Translation.translateNamespace(namespaceToTranslate, context));

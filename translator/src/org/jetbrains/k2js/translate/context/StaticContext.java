@@ -113,7 +113,7 @@ public class StaticContext {
 
     @NotNull
     public Declarations getLibraryDeclarations() {
-        return declarationFacade.getLibraryDeclarations();
+        return declarationFacade.getJetLibraryDeclarations();
     }
 
     @NotNull

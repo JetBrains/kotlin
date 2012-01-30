@@ -36,19 +36,6 @@ public final class StandardClasses {
             return this;
         }
 
-        @NotNull
-        public Builder externalClass(@NotNull String nativeName) {
-            externalObject(nativeName);
-            constructor();
-            return this;
-        }
-
-        @NotNull
-        public Builder externalFunction(@NotNull String nativeName) {
-            externalObject(nativeName);
-            return this;
-        }
-
         private void externalObject(@NotNull String nativeName) {
             currentObjectName = nativeName;
             assert currentFQName != null;
@@ -95,40 +82,7 @@ public final class StandardClasses {
                                                       @NotNull JsScope rootScope) {
         StandardClasses standardClasses = new StandardClasses(kotlinObjectScope, rootScope);
         declareJetObjects(standardClasses);
-        declareJavaUtilObjects(standardClasses);
-        declareTopLevelFunctions(standardClasses);
-        //  declareJQuery(standardClasses);
         return standardClasses;
-    }
-
-    private static void declareJQuery(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("jquery.JQuery").externalClass("jQuery")
-                .methods("addClass", "attr", "hasClass", "append",
-                        "text", "ready", "click", "hover", "slideUp",
-                        "removeClass");
-        standardClasses.declare().forFQ("jquery.jq").externalFunction("jQuery");
-        //standardClasses.declare().forFQ("jquery.get-document").externalObject("document");
-    }
-
-    //TODO: test all the methods
-    private static void declareJavaUtilObjects(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("java.util.ArrayList").kotlinClass("ArrayList")
-                .methods("size", "add", "get", "isEmpty", "set", "remove", "addAll", "contains", "clear", "iterator");
-
-        standardClasses.declare().forFQ("java.util.Collection").kotlinClass("Collection")
-                .methods("iterator");
-
-        standardClasses.declare().forFQ("java.util.HashMap").kotlinClass("HashMap")
-                .methods("size", "put", "get", "isEmpty", "remove", "addAll", "clear", "keySet");
-
-        standardClasses.declare().forFQ("java.util.StringBuilder").kotlinClass("StringBuilder")
-                .methods("append", "toString");
-
-        standardClasses.declare().forFQ("java.util.Map").kotlinClass("Map")
-                .methods("size", "put", "get", "isEmpty", "remove", "addAll", "clear", "keySet");
-
-        standardClasses.declare().forFQ("Integer").kotlinClass("Integer")
-                .methods("parseInt");
     }
 
     private static void declareJetObjects(@NotNull StandardClasses standardClasses) {
@@ -149,12 +103,6 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
     }
 
-    private static void declareTopLevelFunctions(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("js.parseInt").kotlinFunction("parseInt");
-        standardClasses.declare().forFQ("js.println").kotlinFunction("println");
-        standardClasses.declare().forFQ("js.print").kotlinFunction("print");
-        standardClasses.declare().forFQ("js.Exception").kotlinClass("Exception");
-    }
 
     @NotNull
     private final JsScope kotlinScope;

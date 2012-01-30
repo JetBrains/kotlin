@@ -20,9 +20,9 @@ public final class AnnotationsUtils {
     @NotNull
     public static final String NATIVE_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
     @NotNull
-    public static final String LIBRARY_FUNCTION_ANNOTATION_FQNAME = "js.annotations.NativeFun";
+    public static final String LIBRARY_FUNCTION_ANNOTATION_FQNAME = "js.annotations.LibraryFun";
     @NotNull
-    public static final String LIBRARY_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
+    public static final String LIBRARY_CLASS_ANNOTATION_FQNAME = "js.annotations.LibraryClass";
     @NotNull
     public static Set<String> INTERNAL_ANNOTATIONS_FQNAMES = Sets.newHashSet(
             NATIVE_CLASS_ANNOTATION_FQNAME, NATIVE_FUNCTION_ANNOTATION_FQNAME,

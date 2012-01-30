@@ -3,12 +3,12 @@ package org.jetbrains.k2js.translate.context.declaration;
 import com.google.common.collect.Sets;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.NamingScope;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
@@ -18,6 +18,8 @@ import java.util.Set;
 /**
  * @author Pavel Talanov
  */
+//TODO: decide to maybe not to use different declaration objects
+//TODO: methods receiver too many parameters and also unneccessary information like rootScope is stored inside
 public final class DeclarationFacade {
 
     @NotNull
@@ -26,7 +28,7 @@ public final class DeclarationFacade {
     }
 
     @NotNull
-    private final Declarations libraryDeclarations;
+    private final Declarations jetLibraryDeclarations;
 
     @NotNull
     private final Declarations kotlinDeclarations;
@@ -35,18 +37,22 @@ public final class DeclarationFacade {
     private final Declarations nativeDeclarations;
 
     @NotNull
+    private final Declarations jsLibraryDeclarations;
+
+    @NotNull
     private final NamingScope rootScope;
 
     private DeclarationFacade(@NotNull NamingScope rootScope) {
         this.rootScope = rootScope;
-        this.libraryDeclarations = Declarations.newInstance();
+        this.jetLibraryDeclarations = Declarations.newInstance();
         this.kotlinDeclarations = Declarations.newInstance();
         this.nativeDeclarations = Declarations.newInstance();
+        this.jsLibraryDeclarations = Declarations.newInstance();
     }
 
     @NotNull
-    public Declarations getLibraryDeclarations() {
-        return libraryDeclarations;
+    public Declarations getJetLibraryDeclarations() {
+        return jetLibraryDeclarations;
     }
 
     @NotNull
@@ -61,13 +67,13 @@ public final class DeclarationFacade {
 
     @NotNull
     public Set<Declarations> getAllDeclarations() {
-        return Sets.newHashSet(libraryDeclarations, kotlinDeclarations, nativeDeclarations);
+        return Sets.newHashSet(jetLibraryDeclarations, kotlinDeclarations, nativeDeclarations, jsLibraryDeclarations);
     }
 
     @NotNull
     public DeclarationFacade extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary,
                                                     @NotNull JsNameRef standardLibraryObjectName) {
-        KotlinDeclarationVisitor visitor = new KotlinDeclarationVisitor(libraryDeclarations, false);
+        KotlinDeclarationVisitor visitor = new KotlinDeclarationVisitor(jetLibraryDeclarations, false);
         for (DeclarationDescriptor descriptor :
                 standardLibrary.getLibraryScope().getAllDescriptors()) {
             descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, standardLibraryObjectName));
@@ -77,18 +83,23 @@ public final class DeclarationFacade {
 
     //TODO: decide if is public
     public void extractDeclarationsFromNamespace(@NotNull NamespaceDescriptor descriptor,
-                                                 @Nullable JsNameRef namespaceQualifier) {
+                                                 @NotNull Namer namer) {
         KotlinDeclarationVisitor kotlinDeclarationVisitor = new KotlinDeclarationVisitor(kotlinDeclarations, true);
         kotlinDeclarationVisitor.traverseNamespace
-                (descriptor, DeclarationContext.rootContext(rootScope, namespaceQualifier));
+                (descriptor, DeclarationContext.rootContext(rootScope, null));
         NativeDeclarationVisitor nativeDeclarationVisitor = new NativeDeclarationVisitor(nativeDeclarations);
         nativeDeclarationVisitor.traverseNamespace
                 (descriptor, DeclarationContext.rootContext(rootScope, null));
+        LibraryDeclarationVisitor libraryDeclarationVisitor = new LibraryDeclarationVisitor(jsLibraryDeclarations);
+        libraryDeclarationVisitor.traverseNamespace
+                (descriptor, DeclarationContext.rootContext(rootScope, namer.kotlinObject()));
     }
 
-    public void extractDeclarationsFromFiles(@NotNull List<JetFile> files, @NotNull BindingContext context) {
+    public void extractDeclarationsFromFiles(@NotNull List<JetFile> files,
+                                             @NotNull BindingContext context,
+                                             @NotNull Namer namer) {
         for (NamespaceDescriptor namespace : getAllNamespaces(files, context)) {
-            extractDeclarationsFromNamespace(namespace, null);
+            extractDeclarationsFromNamespace(namespace, namer);
         }
     }
 
