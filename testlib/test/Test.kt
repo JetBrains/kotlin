@@ -30,11 +30,11 @@ protected class BuiltTest<T>(name: String, val builder: TestBuilder<T>, val test
 }
 
 open class TestBuilder<T>(name: String) {
-    val mySuite = TestSuite(name)
+    val mySuite : TestSuite = TestSuite(name)
 
-    var setUp : BuiltTest<T>.() -> Unit = {}
+    public var setUp : BuiltTest<T>.() -> Unit = {}
 
-    var tearDown : BuiltTest<T>.() -> Unit = {}
+    public var tearDown : BuiltTest<T>.() -> Unit = {}
 
     fun String.minus(test: BuiltTest<T>.() -> Unit) {
         mySuite.addTest(BuiltTest<T>(this, this@TestBuilder, test))
