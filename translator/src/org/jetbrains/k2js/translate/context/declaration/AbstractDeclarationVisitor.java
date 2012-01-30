@@ -15,55 +15,74 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getOwnDeclarati
 /**
  * @author Pavel Talanov
  */
-public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void, DeclarationContext> {
+public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVisitor<Void, DeclarationContext> {
 
     @NotNull
     private final Declarations declarations;
-    private final boolean shouldObfuscate;
 
-    /*package*/ DeclarationVisitor(@NotNull Declarations declarations, boolean obfuscateNames) {
+    /*package*/ AbstractDeclarationVisitor(@NotNull Declarations declarations) {
         this.declarations = declarations;
-        this.shouldObfuscate = obfuscateNames;
     }
+
+    abstract protected NamingScope doDeclareScope(@NotNull DeclarationDescriptor descriptor,
+                                                  @NotNull DeclarationContext context,
+                                                  @NotNull String recommendedName);
 
     @NotNull
-    private DeclarationContext declareClass(@NotNull ClassDescriptor descriptor,
-                                            @NotNull DeclarationContext context) {
-        NamingScope classScope = declareScope(descriptor, context, "class " + descriptor.getName());
-        JsName className = declareName(descriptor, context);
-        return context.innerDeclaration(classScope, className);
-    }
+    abstract protected JsName doDeclareName(@NotNull DeclarationDescriptor descriptor,
+                                            @NotNull DeclarationContext context,
+                                            @NotNull String recommendedName);
 
-    private NamingScope declareScope(@NotNull DeclarationDescriptor descriptor, @NotNull DeclarationContext context,
-                                     @NotNull String scopeName) {
-        NamingScope innerScope = context.getScope().innerScope(scopeName);
-        declarations.putScope(descriptor, innerScope);
-        return innerScope;
-    }
+    abstract protected boolean accept(@NotNull DeclarationDescriptor descriptor);
 
     @NotNull
-    private JsName declareName(@NotNull DeclarationDescriptor descriptor, @NotNull DeclarationContext context,
-                               @NotNull String name) {
-        JsName jsName = context.getScope().declareVariable(descriptor, name, shouldObfuscate);
-        jsName.setObfuscatable(false);
-        declarations.putName(descriptor, jsName);
-        declarations.putQualifier(descriptor, context.getQualifier());
-        return jsName;
+    protected Declarations declarations() {
+        return declarations;
     }
 
-    @NotNull
+    @Nullable
     private JsName declareName(@NotNull DeclarationDescriptor descriptor,
                                @NotNull DeclarationContext context) {
         return declareName(descriptor, context, descriptor.getName());
     }
 
+    @Nullable
+    private JsName declareName(@NotNull DeclarationDescriptor descriptor,
+                               @NotNull DeclarationContext context,
+                               @NotNull String name) {
+        if (!accept(descriptor)) {
+            return null;
+        }
+        return doDeclareName(descriptor, context, name);
+    }
+
+    @Nullable
+    private NamingScope declareScope(@NotNull DeclarationDescriptor descriptor,
+                                     @NotNull DeclarationContext context,
+                                     @NotNull String name) {
+        if (!accept(descriptor)) {
+            return null;
+        }
+        return doDeclareScope(descriptor, context, name);
+    }
 
     @Override
     public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @NotNull DeclarationContext context) {
+        if (!accept(descriptor)) {
+            return null;
+        }
         DeclarationContext classContext = declareClass(descriptor, context);
         declareClassConstructor(descriptor, context);
         declareClassMembers(descriptor, classContext);
         return null;
+    }
+
+    @NotNull
+    private DeclarationContext declareClass(@NotNull ClassDescriptor descriptor,
+                                            @NotNull DeclarationContext context) {
+        NamingScope classScope = doDeclareScope(descriptor, context, "class " + descriptor.getName());
+        JsName className = doDeclareName(descriptor, context, descriptor.getName());
+        return context.innerDeclaration(classScope, className);
     }
 
     private void declareClassMembers(@NotNull ClassDescriptor descriptor, @NotNull DeclarationContext context) {
@@ -81,6 +100,9 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     @Override
     public Void visitConstructorDescriptor(@NotNull ConstructorDescriptor descriptor,
                                            @NotNull DeclarationContext context) {
+        if (!accept(descriptor)) {
+            return null;
+        }
         JsName alreadyDeclaredClassName = declarations.getName(descriptor.getContainingDeclaration());
         //already defined in
         declarations.putName(descriptor, alreadyDeclaredClassName);
@@ -134,11 +156,15 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
 
     @Override
     public Void visitNamespaceDescriptor(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
+        //TODO: traverse
         /* do not traverse inner namespaces */
         return null;
     }
 
     public void traverseNamespace(NamespaceDescriptor descriptor, DeclarationContext context) {
+        if (!accept(descriptor)) {
+            return;
+        }
         DeclarationContext namespaceContext = extractNamespaceDeclaration(descriptor, context);
         declareMembers(descriptor, namespaceContext);
     }
@@ -146,8 +172,9 @@ public final class DeclarationVisitor extends DeclarationDescriptorVisitor<Void,
     @NotNull
     private DeclarationContext extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
                                                            @NotNull DeclarationContext context) {
-        JsName namespaceName = declareName(descriptor, context, getNameForNamespace(descriptor));
-        NamingScope namespaceScope = declareScope(descriptor, context, "namespace " + namespaceName.getIdent());
+        String nameForNamespace = getNameForNamespace(descriptor);
+        JsName namespaceName = doDeclareName(descriptor, context, nameForNamespace);
+        NamingScope namespaceScope = doDeclareScope(descriptor, context, "namespace " + namespaceName.getIdent());
         return context.innerDeclaration(namespaceScope, namespaceName);
     }
 

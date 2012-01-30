@@ -67,7 +67,7 @@ public final class DeclarationFacade {
     @NotNull
     public DeclarationFacade extractStandardLibrary(@NotNull JetStandardLibrary standardLibrary,
                                                     @NotNull JsNameRef standardLibraryObjectName) {
-        DeclarationVisitor visitor = new DeclarationVisitor(libraryDeclarations, false);
+        KotlinDeclarationVisitor visitor = new KotlinDeclarationVisitor(libraryDeclarations, false);
         for (DeclarationDescriptor descriptor :
                 standardLibrary.getLibraryScope().getAllDescriptors()) {
             descriptor.accept(visitor, DeclarationContext.rootContext(rootScope, standardLibraryObjectName));
@@ -78,7 +78,7 @@ public final class DeclarationFacade {
     //TODO: decide if is public
     public void extractDeclarationsFromNamespace(@NotNull NamespaceDescriptor descriptor,
                                                  @Nullable JsNameRef namespaceQualifier) {
-        DeclarationVisitor visitor = new DeclarationVisitor(kotlinDeclarations, true);
+        KotlinDeclarationVisitor visitor = new KotlinDeclarationVisitor(kotlinDeclarations, true);
         visitor.traverseNamespace(descriptor, DeclarationContext.rootContext(rootScope, namespaceQualifier));
     }
 

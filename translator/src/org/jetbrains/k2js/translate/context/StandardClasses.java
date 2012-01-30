@@ -97,7 +97,7 @@ public final class StandardClasses {
         declareJetObjects(standardClasses);
         declareJavaUtilObjects(standardClasses);
         declareTopLevelFunctions(standardClasses);
-        declareJQuery(standardClasses);
+        //  declareJQuery(standardClasses);
         return standardClasses;
     }
 
