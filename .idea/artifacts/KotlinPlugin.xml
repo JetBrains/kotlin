@@ -7,6 +7,12 @@
         <target>renamePluginZip</target>
       </options>
     </properties>
+    <properties id="ant-preprocessing">
+      <options enabled="true">
+        <file>file://$PROJECT_DIR$/plugin_pre_build.xml</file>
+        <target>writeVersionToPluginXml</target>
+      </options>
+    </properties>
     <root id="archive" name="KotlinPlugin.zip">
       <element id="directory" name="Kotlin">
         <element id="directory" name="lib">

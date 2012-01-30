@@ -5,7 +5,6 @@
 
     <target name="renamePluginZip">
         <!-- Rename the zip to kotlin-plugin-${build}.zip-->
-        <echo message="${artifact.output.path}"/>
         <move file="${artifact.output.path}/KotlinPlugin.zip" tofile="${artifact.output.path}/kotlin-plugin-${build.number}.zip">
         </move>
     </target>

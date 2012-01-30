@@ -1,0 +1,24 @@
+<project name="Kotlin Plugin Pre-build Step">
+
+    <property name="artifact.output.path" value="${basedir}/out/artifacts/KotlinPlugin"/>
+    <property name="build.number" value="snapshot"/>
+
+    <!-- Sets ${running.locally} to true if the ${build.number} is "snapshot" -->
+    <target name="checkLocal">
+        <condition property="running.locally">
+            <equals arg1="${build.number}" arg2="snapshot"/>
+        </condition>
+    </target>
+
+    <target name="writeVersionToPluginXml" depends="checkLocal" unless="running.locally">
+        <copy file="idea/src/META-INF/plugin.xml" tofile="idea/src/META-INF/plugin.xml-version">
+            <filterchain>
+                <replacetokens>
+                    <token key="snapshot" value="${build.number}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <copy file="idea/src/META-INF/plugin.xml-version" tofile="idea/src/META-INF/plugin.xml" overwrite="true"/>
+        <delete file="idea/src/META-INF/plugin.xml-version" quiet="true"/>
+    </target>
+</project>
