@@ -35,17 +35,23 @@ public class CompileEnvironment {
     private JetCoreEnvironment myEnvironment;
     private final Disposable myRootDisposable;
     private PrintStream myErrorStream = System.out;
+    private final FileNameTransformer myFileNameTransformer;
     private URL myStdlib;
 
     private boolean ignoreErrors = false;
 
     public CompileEnvironment() {
+        this(FileNameTransformer.IDENTITY);
+    }
+
+    public CompileEnvironment(FileNameTransformer fileNameTransformer) {
         myRootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
         myEnvironment = new JetCoreEnvironment(myRootDisposable);
+        myFileNameTransformer = fileNameTransformer;
     }
 
     public void setErrorStream(PrintStream errorStream) {
@@ -148,7 +154,7 @@ public class CompileEnvironment {
     }
 
     public List<Module> loadModuleScript(String moduleFile) {
-        CompileSession scriptCompileSession = new CompileSession(myEnvironment);
+        CompileSession scriptCompileSession = new CompileSession(myEnvironment, myFileNameTransformer);
         scriptCompileSession.addSources(moduleFile);
         ensureRuntime();
 
@@ -289,7 +295,7 @@ public class CompileEnvironment {
     }
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
-        CompileSession session = new CompileSession(myEnvironment);
+        CompileSession session = new CompileSession(myEnvironment, myFileNameTransformer);
         session.addSources(sourceFileOrDir);
 
         String mainClass = null;

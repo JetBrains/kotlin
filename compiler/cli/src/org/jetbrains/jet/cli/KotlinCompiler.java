@@ -2,8 +2,10 @@ package org.jetbrains.jet.cli;
 
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.compiler.FileNameTransformer;
 
 import java.io.PrintStream;
 
@@ -13,6 +15,14 @@ import java.io.PrintStream;
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class KotlinCompiler {
+    private static final FileNameTransformer ANY_EXTENSION_TO_JAVA = new FileNameTransformer() {
+        @NotNull
+        @Override
+        public String transformFileName(@NotNull String fileName) {
+            return fileName.replaceFirst("\\.\\w+$", ".java");
+        }
+    };
+
     private KotlinCompiler() {
     }
 
@@ -40,6 +50,9 @@ public class KotlinCompiler {
 
         @Argument(value = "ignoreErrors", description = "Emit byte code even if there are compilation errors (not recommended)")
         public boolean ignoreErrors;
+
+        @Argument(value = "transformNamesToJava", description = "Transform Kotlin file names to *.java. This option is needed for compiling kotlinized Java library headers")
+        public boolean transformNamesToJava;
     }
 
     private static void usage(PrintStream target) {
@@ -79,7 +92,7 @@ public class KotlinCompiler {
             return 0;
         }
 
-        CompileEnvironment environment = new CompileEnvironment();
+        CompileEnvironment environment = new CompileEnvironment(arguments.transformNamesToJava ? ANY_EXTENSION_TO_JAVA : FileNameTransformer.IDENTITY);
         environment.setIgnoreErrors(arguments.ignoreErrors);
 
         if (arguments.stdlib != null) {

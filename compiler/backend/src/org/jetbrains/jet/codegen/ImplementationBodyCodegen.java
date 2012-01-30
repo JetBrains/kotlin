@@ -14,7 +14,6 @@ import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
@@ -91,7 +90,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                       signature.getSuperclassName(),
                       signature.getInterfaces().toArray(new String[0])
         );
-        v.visitSource(myClass.getContainingFile().getName(), null);
+        v.visitSource(state.transformFileName(myClass.getContainingFile().getName()), null);
 
         ClassDescriptor container = getContainingClassDescriptor(descriptor);
         if(container != null) {

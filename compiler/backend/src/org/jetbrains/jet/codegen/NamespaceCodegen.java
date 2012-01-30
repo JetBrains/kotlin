@@ -41,7 +41,7 @@ public class NamespaceCodegen {
                       new String[0]
         );
         // TODO figure something out for a namespace that spans multiple files
-        v.visitSource(sourceFile.getName(), null);
+        v.visitSource(state.transformFileName(sourceFile.getName()), null);
     }
 
     public void generate(JetFile file) {

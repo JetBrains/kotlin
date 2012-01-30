@@ -29,6 +29,7 @@ public class CompileSession {
     private final JetCoreEnvironment myEnvironment;
     private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
     private final List<JetFile> myLibrarySourceFiles = new ArrayList<JetFile>();
+    private final FileNameTransformer myFileNameTransformer;
     private List<String> myErrors = new ArrayList<String>();
 
     public BindingContext getMyBindingContext() {
@@ -38,7 +39,12 @@ public class CompileSession {
     private BindingContext myBindingContext;
 
     public CompileSession(JetCoreEnvironment environment) {
+        this(environment, FileNameTransformer.IDENTITY);
+    }
+
+    public CompileSession(JetCoreEnvironment environment, FileNameTransformer fileNameTransformer) {
         myEnvironment = environment;
+        myFileNameTransformer = fileNameTransformer;
     }
     
     public void addSources(String path) {
@@ -115,13 +121,13 @@ public class CompileSession {
 
     @NotNull
     public ClassFileFactory generate() {
-        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES);
+        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES, myFileNameTransformer);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
         return generationState.getFactory();
     }
 
     public String generateText() {
-        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.TEXT);
+        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.TEXT, myFileNameTransformer);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
         return generationState.createText();
     }

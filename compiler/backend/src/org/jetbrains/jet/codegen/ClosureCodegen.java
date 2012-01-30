@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -112,7 +111,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                        funClass,
                        new String[0]
         );
-        cv.visitSource(fun.getContainingFile().getName(), null);
+        cv.visitSource(state.transformFileName(fun.getContainingFile().getName()), null);
 
 
         generateBridge(name, funDescriptor, fun, cv);

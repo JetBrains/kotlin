@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.compiler.FileNameTransformer;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
@@ -33,11 +34,18 @@ public class GenerationState {
     private final JetStandardLibrary standardLibrary;
     private final IntrinsicMethods intrinsics;
 
+    private final FileNameTransformer fileNameTransformer;
+
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
+        this(project, builderFactory, FileNameTransformer.IDENTITY);
+    }
+
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, FileNameTransformer fileNameTransformer) {
         this.project = project;
         this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
+        this.fileNameTransformer = fileNameTransformer;
     }
 
     @NotNull
@@ -185,5 +193,10 @@ public class GenerationState {
         }
 
         return answer.toString();
+    }
+
+    @NotNull
+    public String transformFileName(@NotNull String fileName) {
+        return fileNameTransformer.transformFileName(fileName);
     }
 }

@@ -73,6 +73,7 @@
             <arg value="-output"/>
             <arg value="${output}/classes/jdk-headers"/>
             <arg value="-ignoreErrors"/>
+            <arg value="-transformNamesToJava"/>
         </java>
     </target>
 
