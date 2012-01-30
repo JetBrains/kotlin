@@ -8,9 +8,9 @@
       </options>
     </properties>
     <properties id="ant-preprocessing">
-      <options>
+      <options enabled="true">
         <file>file://$PROJECT_DIR$/plugin_pre_build.xml</file>
-        <target>writeVersionToPluginXml</target>
+        <target>cleanup</target>
       </options>
     </properties>
     <root id="archive" name="KotlinPlugin.zip">
