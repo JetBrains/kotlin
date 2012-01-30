@@ -1,5 +1,12 @@
+fun IntRange.forEach(body : (Int) -> Unit) {
+    for(i in this) {
+        body(i)
+    }
+}
+
 fun box() : String {
     var seed = 0
+
     fun local(x: Int) {
         fun deep() {
             seed += x
@@ -26,6 +33,14 @@ fun box() : String {
         (-i).iter()
     }
 
+    fun local2(y: Int) {
+        seed += y
+    }
 
-    return if(seed == 15) "OK" else seed.toString()
+    (1..5).forEach {
+            local2(it)
+    }
+
+
+    return if(seed == 30) "OK" else seed.toString()
 }

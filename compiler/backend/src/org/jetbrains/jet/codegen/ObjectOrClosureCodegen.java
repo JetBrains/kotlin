@@ -2,6 +2,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -51,6 +53,28 @@ public class ObjectOrClosureCodegen {
             StackValue innerValue = sharedVarType != null ? StackValue.fieldForSharedVar(localType, name, fieldName) : StackValue.field(type, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
+
+            answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
+            closure.put(d, answer);
+
+            return innerValue;
+        }
+
+        if(d instanceof NamedFunctionDescriptor && d.getContainingDeclaration() instanceof FunctionDescriptor) {
+            FunctionDescriptor vd = (FunctionDescriptor) d;
+
+            final int idx = exprContext.lookupLocal(vd);
+            if (idx < 0) return null;
+
+            JetElement expression = (JetElement) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
+            String cn = state.getTypeMapper().classNameForAnonymousClass(expression);
+            Type localType = Type.getObjectType(cn);
+
+            StackValue outerValue = StackValue.local(idx, localType);
+            final String fieldName = "$" + vd.getName();
+            StackValue innerValue = StackValue.field(localType, name, fieldName, false);
+
+            cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, localType.getDescriptor(), null, null);
 
             answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
             closure.put(d, answer);

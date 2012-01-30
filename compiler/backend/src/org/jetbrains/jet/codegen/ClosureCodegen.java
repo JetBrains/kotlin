@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -139,6 +140,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
                 answer.addArg(valueDescriptor.getOuterValue());
             }
+            else if(descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+                final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
+                answer.addArg(valueDescriptor.getOuterValue());
+            }
         }
         return answer;
     }
@@ -230,12 +235,16 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         int argCount = captureThis ? 1 : 0;
         argCount += (captureReceiver != null ? 1 : 0);
 
-        ArrayList<VariableDescriptor> variableDescriptors = new ArrayList<VariableDescriptor>();
+        ArrayList<DeclarationDescriptor> variableDescriptors = new ArrayList<DeclarationDescriptor>();
         
         for (DeclarationDescriptor descriptor : closure.keySet()) {
             if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 argCount++;
-                variableDescriptors.add((VariableDescriptor) descriptor);
+                variableDescriptors.add(descriptor);
+            }
+            else if(descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+                argCount++;
+                variableDescriptors.add(descriptor);
             }
             else if(descriptor instanceof FunctionDescriptor) {
                 assert captureReceiver != null;
@@ -257,6 +266,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 final Type sharedVarType = exprContext.getTypeMapper().getSharedVarType(descriptor);
                 final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+                argTypes[i++] = type;
+            }
+            else if(descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+                final Type type = Type.getObjectType(state.getTypeMapper().classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)));
                 argTypes[i++] = type;
             }
         }
@@ -286,7 +299,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                         fieldName = "receiver$0";
                     }
                     else {
-                        VariableDescriptor removed = variableDescriptors.remove(0);
+                        DeclarationDescriptor removed = variableDescriptors.remove(0);
                         fieldName = "$" + removed.getName();
                     }
                 }
