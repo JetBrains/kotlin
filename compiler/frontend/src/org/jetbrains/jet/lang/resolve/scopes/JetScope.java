@@ -32,6 +32,9 @@ public interface JetScope {
     @Nullable
     ClassDescriptor getObjectDescriptor(@NotNull String name);
 
+    @NotNull
+    Set<ClassDescriptor> getObjectDescriptors();
+
     @Nullable
     NamespaceDescriptor getNamespace(@NotNull String name);
 

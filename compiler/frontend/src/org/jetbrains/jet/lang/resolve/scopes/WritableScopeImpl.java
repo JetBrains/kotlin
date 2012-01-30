@@ -130,7 +130,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @NotNull
-    public Map<String, ClassDescriptor> getObjectDescriptors() {
+    private Map<String, ClassDescriptor> getObjectDescriptorsMap() {
         if (objectDescriptors == null) {
             objectDescriptors = Maps.newHashMap();
         }
@@ -299,7 +299,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
         checkMayWrite();
         
-        getObjectDescriptors().put(objectDescriptor.getName(), objectDescriptor);
+        getObjectDescriptorsMap().put(objectDescriptor.getName(), objectDescriptor);
     }
 
     @Override
@@ -373,7 +373,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull String name) {
-        return getObjectDescriptors().get(name);
+        return getObjectDescriptorsMap().get(name);
+    }
+
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getObjectDescriptors() {
+        return Sets.newHashSet(getObjectDescriptorsMap().values());
     }
 
     @Override

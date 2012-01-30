@@ -5,10 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -39,6 +36,16 @@ public class ChainedScope implements JetScope {
             if (objectDescriptor != null) return objectDescriptor;
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getObjectDescriptors() {
+        Set<ClassDescriptor> objectDescriptors = Sets.newHashSet();
+        for (JetScope scope : scopeChain) {
+            objectDescriptors.addAll(scope.getObjectDescriptors());
+        }
+        return objectDescriptors;
     }
 
     @Override

@@ -10,11 +10,8 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -64,6 +61,12 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull String name) {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getObjectDescriptors() {
+        return Collections.emptySet();
     }
 
     @NotNull

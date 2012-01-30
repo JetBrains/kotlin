@@ -4,10 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
 * @author abreslav
@@ -21,6 +18,12 @@ public abstract class JetScopeImpl implements JetScope {
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull String name) {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getObjectDescriptors() {
+        return Collections.emptySet();
     }
 
     @NotNull

@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
 
@@ -31,6 +31,12 @@ public class ErrorUtils {
         @Override
         public ClassDescriptor getObjectDescriptor(@NotNull String name) {
             return ERROR_CLASS;
+        }
+
+        @NotNull
+        @Override
+        public Set<ClassDescriptor> getObjectDescriptors() {
+            return Collections.emptySet();
         }
 
         @NotNull

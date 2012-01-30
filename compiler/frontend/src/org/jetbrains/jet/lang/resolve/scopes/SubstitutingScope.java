@@ -83,6 +83,12 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
+    public Set<ClassDescriptor> getObjectDescriptors() {
+        return substitute(workerScope.getObjectDescriptors());
+    }
+
+    @NotNull
+    @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
         return substitute(workerScope.getFunctions(name));
     }

@@ -762,8 +762,6 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitWhenExpression(JetWhenExpression expression) {
-            // TODO : no more than one else
-            // TODO : else must be the last
             JetExpression subjectExpression = expression.getSubjectExpression();
             if (subjectExpression != null) {
                 value(subjectExpression, inCondition);
@@ -815,7 +813,8 @@ public class JetControlFlowProcessor {
                 }
             }
             builder.bindLabel(doneLabel);
-            if (!hasElseOrIrrefutableBranch) {
+            boolean isWhenExhaust = WhenChecker.isWhenExhaust(expression, trace);
+            if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
             builder.stopAllowDead();
