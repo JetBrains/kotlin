@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="Kotlin">
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fm"
+              name="fm" toReformat="true" toShortenFQNames="true" value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
+        <context>
+            <option name="KOTLIN" value="true" />
+        </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.sout"
+              name="sout" toReformat="true"
+              ShortenFQNames="true" value="println($END$)">
+        <context>
+            <option name="KOTLIN" value="true" />
+        </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.serr"
+              name="serr" toReformat="true" toShortenFQNames="true" value="System.out?.println($END$)">
+        <context>
+            <option name="KOTLIN" value="true" />
+        </context>
+    </template>
+</templateSet>

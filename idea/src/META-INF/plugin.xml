@@ -65,6 +65,9 @@
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor"/>
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
+      <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType"/>
+      <defaultLiveTemplatesProvider implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplatesProvider"/>
+
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.SoftKeywordsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
