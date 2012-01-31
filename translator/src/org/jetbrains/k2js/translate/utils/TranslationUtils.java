@@ -49,9 +49,7 @@ public final class TranslationUtils {
     @NotNull
     private static JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
         JetExpression jetExpression = argument.getArgumentExpression();
-        if (jetExpression == null) {
-            throw new AssertionError("Argument with no expression encountered!");
-        }
+        assert jetExpression != null : "Argument with no expression";
         return Translation.translateAsExpression(jetExpression, context);
     }
 
@@ -148,6 +146,7 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(baseExpression, context);
     }
 
+    //TODO:
     @NotNull
     public static JsExpression translateReceiver(@NotNull TranslationContext context,
                                                  @NotNull JetDotQualifiedExpression expression) {

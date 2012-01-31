@@ -23,10 +23,6 @@ public enum ArrayGetIntrinsic implements FunctionIntrinsic {
         assert receiver != null;
         assert arguments.size() == 1 : "Array get expression must have one argument.";
         JsExpression indexExpression = arguments.get(0);
-//        TemporaryVariable arrayExpression = context.declareTemporary(receiver);
-//        JsConditional indexInBoundsCheck =
-//                IntrinsicArrayUtils.indexInBoundsCheck(indexExpression, arrayExpression, context);
-//        return AstUtil.newSequence(arrayExpression.assignmentExpression(), AstUtil.newArrayAccess(receiver, indexExpression));
         return new JsArrayAccess(receiver, indexExpression);
     }
 }

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -99,6 +98,7 @@ public final class BindingUtils {
                                                               @NotNull DeclarationDescriptor descriptor) {
         PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         if (result == null) {
+            //TODO: never get there
             return null;
         }
         assert result instanceof JetDeclaration : "Descriptor should correspond to an element.";
@@ -207,6 +207,8 @@ public final class BindingUtils {
         return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
 
+
+    //TODO: check where we use there, suspicious
     public static boolean isOwnedByNamespace(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) {
             DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
@@ -310,15 +312,4 @@ public final class BindingUtils {
         assert hasNextDescriptor != null : "Range expression must have a descriptor for hasNext function or property.";
         return hasNextDescriptor;
     }
-
-    public static boolean isExpressionAsFunction(@NotNull BindingContext context,
-                                                 @NotNull JetExpression calleeExpression) {
-        DeclarationDescriptor declarationDescriptor =
-                context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, calleeExpression);
-        if (declarationDescriptor == null) {
-            return false;
-        }
-        return (declarationDescriptor instanceof ExpressionAsFunctionDescriptor);
-    }
-
 }

@@ -81,12 +81,4 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
         }
         return initializerStatements;
     }
-
-    @NotNull
-    public List<JsStatement> traverse(@NotNull JetDeclaration declaration, @NotNull TranslationContext context) {
-        if (declaration instanceof JetClass) {
-            return traverseClass((JetClass) declaration, context);
-        }
-        throw new AssertionError("Cannot traverse anything else.");
-    }
 }

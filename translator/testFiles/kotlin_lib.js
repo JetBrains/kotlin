@@ -519,6 +519,16 @@
         return obj.toString();
     };
 
+    Kotlin.jsonFromTuples = function(pairArr) {
+        var i = pairArr.length;
+        var res = {};
+        while (i > 0) {
+            --i;
+            res[pairArr[i][0]] = pairArr[i][1];
+        }
+        return res;
+    };
+
 
     /**
      * Copyright 2010 Tim Down.

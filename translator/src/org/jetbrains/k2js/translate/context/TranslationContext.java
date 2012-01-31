@@ -105,11 +105,9 @@ public final class TranslationContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        //TODO: rewrite
         if (aliaser().hasAliasForDeclaration(descriptor)) {
             return aliaser().getAliasForDeclaration(descriptor);
-        }
-        if (standardClasses().isExternalObject(descriptor)) {
-            return standardClasses().getExternalObjectName(descriptor);
         }
         if (standardClasses().isStandardObject(descriptor)) {
             return standardClasses().getStandardObjectName(descriptor);
@@ -195,6 +193,7 @@ public final class TranslationContext {
         return dynamicContext.jsBlock();
     }
 
+    //TODO: deletE?
     @NotNull
     private DeclarationFacade declarationFacade() {
         return staticContext.getDeclarationFacade();

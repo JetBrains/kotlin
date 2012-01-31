@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate.context.declaration;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.NamingScope;
 
 import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.doesNotHaveInternalAnnotations;
@@ -41,5 +42,11 @@ public final class KotlinDeclarationVisitor extends AbstractDeclarationVisitor {
     @Override
     protected boolean accept(@NotNull DeclarationDescriptor descriptor) {
         return (doesNotHaveInternalAnnotations(descriptor));
+    }
+
+    @Override
+    public void traverseNamespace(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
+        DeclarationContext namespaceContext = extractNamespaceDeclaration(descriptor, context);
+        declareMembers(descriptor, namespaceContext);
     }
 }

@@ -35,6 +35,8 @@ public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVi
 
     abstract protected boolean accept(@NotNull DeclarationDescriptor descriptor);
 
+    abstract public void traverseNamespace(@NotNull NamespaceDescriptor namespace, @NotNull DeclarationContext context);
+
     @NotNull
     protected Declarations declarations() {
         return declarations;
@@ -100,9 +102,7 @@ public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVi
     @Override
     public Void visitConstructorDescriptor(@NotNull ConstructorDescriptor descriptor,
                                            @NotNull DeclarationContext context) {
-        if (!accept(descriptor)) {
-            return null;
-        }
+        assert accept(descriptor) : "Must accept constructor fot he class we accepted";
         JsName alreadyDeclaredClassName = declarations.getName(descriptor.getContainingDeclaration());
         //already defined in
         declarations.putName(descriptor, alreadyDeclaredClassName);
@@ -161,17 +161,10 @@ public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVi
         return null;
     }
 
-    public void traverseNamespace(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
-        if (!accept(descriptor)) {
-            return;
-        }
-        DeclarationContext namespaceContext = extractNamespaceDeclaration(descriptor, context);
-        declareMembers(descriptor, namespaceContext);
-    }
 
     @NotNull
-    private DeclarationContext extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
-                                                           @NotNull DeclarationContext context) {
+    protected DeclarationContext extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
+                                                             @NotNull DeclarationContext context) {
         String nameForNamespace = getNameForNamespace(descriptor);
         JsName namespaceName = doDeclareName(descriptor, context, nameForNamespace);
         NamingScope namespaceScope = doDeclareScope(descriptor, context, "namespace " + namespaceName.getIdent());

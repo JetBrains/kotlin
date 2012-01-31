@@ -5,7 +5,6 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -41,13 +40,7 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                              @NotNull TranslationContext context) {
-
         //TODO: prove correctness
-        if ((referencedDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor)
-                && (context.hasQualifierForDescriptor(referencedDescriptor))) {
-            assert context.hasQualifierForDescriptor(referencedDescriptor) : referencedDescriptor;
-            return translateAsFQReference(referencedDescriptor, context);
-        }
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
         return referencedName.makeRef();
     }

@@ -36,12 +36,6 @@ public final class StandardClasses {
             return this;
         }
 
-        private void externalObject(@NotNull String nativeName) {
-            currentObjectName = nativeName;
-            assert currentFQName != null;
-            declareExternalTopLevelObject(currentFQName, nativeName);
-        }
-
         private void kotlinTopLevelObject(@NotNull String kotlinName) {
             assert currentFQName != null;
             currentObjectName = kotlinName;
@@ -78,9 +72,8 @@ public final class StandardClasses {
     }
 
     @NotNull
-    public static StandardClasses bindImplementations(@NotNull JsScope kotlinObjectScope,
-                                                      @NotNull JsScope rootScope) {
-        StandardClasses standardClasses = new StandardClasses(kotlinObjectScope, rootScope);
+    public static StandardClasses bindImplementations(@NotNull JsScope kotlinObjectScope) {
+        StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
         declareJetObjects(standardClasses);
         return standardClasses;
     }
@@ -93,9 +86,6 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "size", "end", "reversed");
 
-//        standardClasses.declare().forFQ("jet.String").kotlinClass("String").
-//                properties("length");
-
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
     }
 
@@ -103,20 +93,14 @@ public final class StandardClasses {
     @NotNull
     private final JsScope kotlinScope;
 
-    @NotNull
-    private final JsScope rootScope;
 
     @NotNull
     private final Map<String, JsName> standardObjects = new HashMap<String, JsName>();
 
     @NotNull
-    private final Map<String, JsName> externalObjects = new HashMap<String, JsName>();
-
-    @NotNull
     private final Map<String, JsScope> scopeMap = new HashMap<String, JsScope>();
 
-    private StandardClasses(@NotNull JsScope kotlinScope, @NotNull JsScope rootScope) {
-        this.rootScope = rootScope;
+    private StandardClasses(@NotNull JsScope kotlinScope) {
         this.kotlinScope = kotlinScope;
     }
 
@@ -130,10 +114,6 @@ public final class StandardClasses {
 
     private void declareKotlinObject(@NotNull String fullQualifiedName, @NotNull String kotlinLibName) {
         declareTopLevelObjectInScope(kotlinScope, standardObjects, fullQualifiedName, kotlinLibName);
-    }
-
-    private void declareExternalTopLevelObject(@NotNull String fullQualifiedName, @NotNull String externalObjectName) {
-        declareTopLevelObjectInScope(rootScope, externalObjects, fullQualifiedName, externalObjectName);
     }
 
     private void declareInner(@NotNull String fullQualifiedClassName,
@@ -163,15 +143,6 @@ public final class StandardClasses {
 
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
         return standardObjects.containsKey(getFQName(descriptor));
-    }
-
-    public boolean isExternalObject(@NotNull DeclarationDescriptor descriptor) {
-        return externalObjects.containsKey(getFQName(descriptor));
-    }
-
-    @NotNull
-    public JsName getExternalObjectName(@NotNull DeclarationDescriptor descriptor) {
-        return externalObjects.get(getFQName(descriptor));
     }
 
     @NotNull

@@ -26,9 +26,6 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldRe
  */
 public final class PropertyAccessTranslator extends AccessTranslator {
 
-    private static final String MESSAGE = "Cannot be accessor call. Use canBeProperty*Call to ensure this method " +
-            "can be called safely.";
-
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
                                                             @NotNull TranslationContext context) {
@@ -76,6 +73,7 @@ public final class PropertyAccessTranslator extends AccessTranslator {
                                                   @NotNull TranslationContext context) {
         JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
         if (selector == null) {
+            //TODO: never get there. review
             return false;
         }
         return canBePropertyGetterCall(selector, context);

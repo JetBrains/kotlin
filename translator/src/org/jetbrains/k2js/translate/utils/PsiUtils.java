@@ -17,12 +17,18 @@ public final class PsiUtils {
 
     @Nullable
     public static JetSimpleNameExpression getSelectorAsSimpleName(@NotNull JetQualifiedExpression expression) {
-        JetExpression selectorExpression = expression.getSelectorExpression();
-        assert selectorExpression != null : "Selector should not be null.";
+        JetExpression selectorExpression = getSelector(expression);
         if (!(selectorExpression instanceof JetSimpleNameExpression)) {
             return null;
         }
         return (JetSimpleNameExpression) selectorExpression;
+    }
+
+    @NotNull
+    public static JetExpression getSelector(@NotNull JetQualifiedExpression expression) {
+        JetExpression selectorExpression = expression.getSelectorExpression();
+        assert selectorExpression != null : "Selector should not be null.";
+        return selectorExpression;
     }
 
     @NotNull

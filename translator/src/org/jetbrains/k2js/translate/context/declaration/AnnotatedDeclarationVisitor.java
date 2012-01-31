@@ -106,11 +106,6 @@ public class AnnotatedDeclarationVisitor extends AbstractDeclarationVisitor {
         throw new AssertionError("Use isAnnotatedClass to check");
     }
 
-    public boolean isAnnotatedDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return hasClassAnnotation(descriptor) || hasFunctionAnnotation(descriptor)
-                || declaredInAnnotatedClass(descriptor);
-    }
-
     public boolean isAnnotatedFunction(@NotNull FunctionDescriptor functionDescriptor) {
         return hasFunctionAnnotation(functionDescriptor) || declaredInAnnotatedClass(functionDescriptor);
     }

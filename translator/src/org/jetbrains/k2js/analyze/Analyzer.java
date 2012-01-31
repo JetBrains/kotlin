@@ -22,6 +22,9 @@ import java.util.List;
  */
 public final class Analyzer {
 
+    private Analyzer() {
+    }
+
     @NotNull
     public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
                                                             @NotNull Config config) {
@@ -57,7 +60,7 @@ public final class Analyzer {
             @Override
             public boolean apply(@Nullable PsiFile file) {
                 assert file instanceof JetFile;
-                boolean notLibFile = !jsLibFiles.contains(file);
+                @SuppressWarnings("UnnecessaryLocalVariable") boolean notLibFile = !jsLibFiles.contains(file);
                 return notLibFile;
             }
         };
@@ -87,8 +90,5 @@ public final class Analyzer {
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
                                          @NotNull WritableScope namespaceMemberScope) {
         }
-    }
-
-    private Analyzer() {
     }
 }

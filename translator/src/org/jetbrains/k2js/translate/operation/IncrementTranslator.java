@@ -87,6 +87,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
                 variableReassignment, t2.nameReference());
     }
 
+    //TODO: TEST
     @NotNull
     private JsExpression asPostfixWithNoReassignment() {
         // code fragment: expr(a++)

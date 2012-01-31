@@ -56,6 +56,15 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (value instanceof Boolean) {
             return context.program().getBooleanLiteral((Boolean) value);
         }
+
+        //TODO: test
+        if (value instanceof Float) {
+            return context.program().getNumberLiteral((Float) value);
+        }
+        if (value instanceof Double) {
+            return context.program().getNumberLiteral((Double) value);
+        }
+        //TODO: all values
         throw new AssertionError("Unsupported constant expression" + expression.toString());
     }
 

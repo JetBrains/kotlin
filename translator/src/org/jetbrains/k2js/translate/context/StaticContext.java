@@ -26,7 +26,7 @@ public class StaticContext {
         DeclarationFacade declarations = DeclarationFacade.createFacade(scope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
         StandardClasses standardClasses =
-                StandardClasses.bindImplementations(namer.getKotlinScope(), jsRootScope);
+                StandardClasses.bindImplementations(namer.getKotlinScope());
         return new StaticContext(program, bindingContext, declarations, aliaser,
                 namer, intrinsics, standardClasses, scope);
     }
@@ -109,21 +109,6 @@ public class StaticContext {
     @NotNull
     public StandardClasses getStandardClasses() {
         return standardClasses;
-    }
-
-    @NotNull
-    public Declarations getLibraryDeclarations() {
-        return declarationFacade.getJetLibraryDeclarations();
-    }
-
-    @NotNull
-    public Declarations getNativeDeclarations() {
-        return declarationFacade.getKotlinDeclarations();
-    }
-
-    @NotNull
-    public Declarations getKotlinDeclarations() {
-        return declarationFacade.getKotlinDeclarations();
     }
 
     //TODO: helper method outdated

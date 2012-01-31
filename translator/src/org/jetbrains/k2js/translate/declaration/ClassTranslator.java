@@ -15,7 +15,6 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
@@ -107,9 +106,8 @@ public final class ClassTranslator extends AbstractTranslator {
         // in future it might change
         if (aliaser().hasAliasForDeclaration(superClassDescriptor)) {
             return context().aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
-        } else {
-            return ReferenceTranslator.translateAsFQReference(superClassDescriptor, context());
         }
+        throw new AssertionError("Inherited from unknown class");
     }
 
     @Nullable

@@ -75,7 +75,8 @@ public final class Intrinsics {
     }
 
     private void declareNullConstructorIntrinsic() {
-        FunctionDescriptor nullArrayConstructor = getFunctionByName(library.getLibraryScope(), "Array");
+        //TODO:
+        FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions("Array").iterator().next();
         functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
     }
 

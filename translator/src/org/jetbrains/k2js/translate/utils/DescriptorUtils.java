@@ -61,13 +61,6 @@ public final class DescriptorUtils {
     }
 
     @NotNull
-    public static FunctionDescriptor getFunctionByName(@NotNull ClassDescriptor classDescriptor,
-                                                       @NotNull String name) {
-        JetScope scope = classDescriptor.getDefaultType().getMemberScope();
-        return getFunctionByName(scope, name);
-    }
-
-    @NotNull
     public static FunctionDescriptor getFunctionByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
         Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);

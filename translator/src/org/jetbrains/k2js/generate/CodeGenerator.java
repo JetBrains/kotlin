@@ -19,12 +19,6 @@ public final class CodeGenerator {
     private final TextOutput output = new DefaultTextOutput(false);
 
     public CodeGenerator() {
-
-    }
-
-    public void generateToConsole(@NotNull JsProgram program) {
-        generateCode(program);
-        System.out.println(output.toString());
     }
 
     public void generateToFile(@NotNull JsProgram program, @NotNull File file) throws IOException {

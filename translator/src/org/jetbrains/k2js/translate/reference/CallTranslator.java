@@ -86,19 +86,6 @@ public final class CallTranslator extends AbstractTranslator {
             return new CallTranslator(receiver, callee, arguments, resolvedCall, null, context);
         }
 
-        //TODO: inspect dead code
-        @Nullable
-        private JsExpression translateCalleeIfExpressionAsFunction(@NotNull JetCallExpression callExpression) {
-            //TODO: util
-            JetExpression calleeExpression = callExpression.getCalleeExpression();
-            assert calleeExpression != null;
-            JsExpression callee = null;
-            if (isExpressionAsFunction(context.bindingContext(), calleeExpression)) {
-                callee = Translation.translateAsExpression(calleeExpression, context);
-            }
-            return callee;
-        }
-
         @NotNull
         private List<JsExpression> translateArgumentsForCallExpression(@NotNull JetCallExpression callExpression,
                                                                        @NotNull TranslationContext context) {
