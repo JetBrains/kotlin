@@ -7,9 +7,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.array.ArrayNullConstructorIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.*;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
@@ -55,14 +53,23 @@ public final class Intrinsics {
         declareArrayIntrinsics();
     }
 
+    //TODO: provide generic mechanism or refactor
     private void declareArrayIntrinsics() {
         JetScope arrayMemberScope = library.getArray().getDefaultType().getMemberScope();
         FunctionDescriptor setFunction = getFunctionByName(arrayMemberScope, "set");
         functionIntrinsics.put(setFunction, ArraySetIntrinsic.INSTANCE);
         FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, "get");
         functionIntrinsics.put(getFunction, ArrayGetIntrinsic.INSTANCE);
+        PropertyDescriptor sizeProperty = getPropertyByName(arrayMemberScope, "size");
+        functionIntrinsics.put(sizeProperty.getGetter(), ArraySizeIntrinsic.INSTANCE);
+        PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, "indices");
+        functionIntrinsics.put(indicesProperty.getGetter(), ArrayIndicesIntrinsic.INSTANCE);
         FunctionDescriptor nullArrayConstructor = getFunctionByName(library.getLibraryScope(), "Array");
         functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
+        FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, "iterator");
+        functionIntrinsics.put(iteratorFunction, ArrayIteratorIntrinsic.INSTANCE);
+        ConstructorDescriptor arrayConstructor = library.getArray().getConstructors().iterator().next();
+        functionIntrinsics.put(arrayConstructor, ArrayFunctionConstructorIntrinsic.INSTANCE);
     }
 
     private void declareTuplesIntrinsics() {

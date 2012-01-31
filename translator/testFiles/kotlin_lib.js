@@ -254,46 +254,6 @@
     Kotlin.Exceptions = {}
     Kotlin.Exception = Kotlin.Class.create();
     Kotlin.Exceptions.IndexOutOfBounds = {}
-    Kotlin.array = function (len) {
-        return new Kotlin.Array(len, function () {
-            return null
-        });
-    }
-    Kotlin.Array = Class.create({
-        initialize:function (len, f) {
-            this.array = [];
-            var i = 0;
-            while (i < len) {
-                this.array.push(f(i));
-                ++i;
-            }
-        },
-        get:function (index) {
-            if ((index < 0) || (index >= this.array.length)) {
-                throw Kotlin.Exceptions.IndexOutOfBounds;
-            }
-            return (this.array)[index];
-        },
-        set:function (index, value) {
-            if ((index < 0) || (index >= this.array.length)) {
-                throw Kotlin.Exceptions.IndexOutOfBounds;
-            }
-            (this.array)[index] = value;
-        },
-        size:function () {
-            return this.array.length;
-        },
-        //TODO: remove duplicated methods
-        get_size:function () {
-            return this.array.length;
-        },
-        iterator:function () {
-            return new Kotlin.ArrayIterator(this);
-        },
-        get_indices:function () {
-            return new Kotlin.NumberRange(0, this.size(), false);
-        }
-    });
 
 
     Kotlin.ArrayList = Class.create({
@@ -351,19 +311,6 @@
         }
     });
 
-
-    Kotlin.ArrayIterator = Class.create({
-        initialize:function (array) {
-            this.array = array;
-            this.index = 0;
-        },
-        next:function () {
-            return this.array.get(this.index++);
-        },
-        hasNext:function () {
-            return (this.array.size() > this.index);
-        }
-    });
 
     Kotlin.parseInt =
         function (str) {
@@ -502,9 +449,9 @@
 
     Kotlin.Comparator = Kotlin.Class.create(
         {
-            initialize:function() {
+            initialize:function () {
             },
-            compare:function() {
+            compare:function () {
                 throw new Kotlin.AbstractFunctionInvokationError();
             }
         }
@@ -523,6 +470,50 @@
             }
         }
     );
+
+    Kotlin.nullArray = function (size) {
+        var res = [];
+        var i = size;
+        while (i > 0) {
+            res[--i] = null;
+        }
+        return res;
+    };
+
+    Kotlin.arrayFromFun = function (size, initFun) {
+        var res = [];
+        var i = size;
+        while (i > 0) {
+            res[--i] = initFun(i);
+        }
+        return res;
+    };
+
+    Kotlin.arrayIndices = function (arr) {
+        return new Kotlin.NumberRange(0, arr.length);
+    };
+
+    var intrinsicArrayIterator = Kotlin.Class.create(
+        Kotlin.Iterator,
+        {
+            initialize:function (arr) {
+                this.arr = arr;
+                this.len = arr.length;
+                this.i = 0;
+            },
+            hasNext:function () {
+                return (this.i < this.len);
+            },
+            next:function () {
+                return this.arr[this.i++];
+            },
+            get_hasNext:function() { return this.hasNext()}
+        }
+    );
+
+    Kotlin.arrayIterator = function (arr) {
+        return new intrinsicArrayIterator(arr);
+    };
 
     Kotlin.toString = function (obj) {
         return obj.toString();

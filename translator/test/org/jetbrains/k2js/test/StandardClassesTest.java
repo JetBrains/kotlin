@@ -1,7 +1,6 @@
 package org.jetbrains.k2js.test;
 
 import org.junit.Test;
-import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Pavel Talanov
@@ -39,10 +38,12 @@ public class StandardClassesTest extends TranslationTest {
         testFooBoxIsTrue("arraySize.kt");
     }
 
-    @Test(expected = JavaScriptException.class)
-    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
-        testFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
-    }
+    //TODO: this feature in not supported for some time
+    //TODO: support it. Probably confugurable.
+//    @Test(expected = JavaScriptException.class)
+//    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
+//        testFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
+//    }
 
     @Test
     public void arraysIterator() throws Exception {

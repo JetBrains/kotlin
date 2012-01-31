@@ -105,7 +105,6 @@ public final class K2JSTranslator {
     @NotNull
     public String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
         String namespaceName = getRootNamespaceName(file);
-
         List<String> arguments = parseString(argumentString);
         return GenerationUtils.generateCallToMain(namespaceName, arguments);
     }

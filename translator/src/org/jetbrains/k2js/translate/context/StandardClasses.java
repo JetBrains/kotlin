@@ -86,19 +86,15 @@ public final class StandardClasses {
     }
 
     private static void declareJetObjects(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("jet.Array").kotlinClass("Array")
-                .properties("size", "indices");
 
-        standardClasses.declare().forFQ("jet.Array").kotlinFunction("array");
-
-        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("ArrayIterator")
-                .methods("next", "hasNext");
+        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("ArrayIteratorIntrinsic")
+                .methods("next").properties("hasNext");
 
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "size", "end", "reversed");
 
-        standardClasses.declare().forFQ("jet.String").kotlinClass("String").
-                properties("length");
+//        standardClasses.declare().forFQ("jet.String").kotlinClass("String").
+//                properties("length");
 
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
     }
@@ -162,7 +158,6 @@ public final class StandardClasses {
                                            @NotNull String... propertyNames) {
         for (String propertyName : propertyNames) {
             declareInner(classFQName, propertyName, propertyName);
-
         }
     }
 

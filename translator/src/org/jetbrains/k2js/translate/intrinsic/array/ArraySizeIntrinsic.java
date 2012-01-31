@@ -13,19 +13,20 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public enum ArrayNullConstructorIntrinsic implements FunctionIntrinsic {
+public enum ArraySizeIntrinsic implements FunctionIntrinsic {
 
     INSTANCE;
 
-    //TODO: implement function passing to array constructor
+
     @NotNull
     @Override
     public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
-        assert receiver == null;
-        assert arguments.size() == 1;
-        //TODO: provide better mechanism
-        JsNameRef nullArrayFunName = AstUtil.newQualifiedNameRef("Kotlin.nullArray");
-        return AstUtil.newInvocation(nullArrayFunName, arguments);
+        assert receiver != null;
+        assert arguments.isEmpty() : "Length expression must have zero arguments.";
+        //TODO: provide better way
+        JsNameRef lengthProperty = AstUtil.newQualifiedNameRef("length");
+        AstUtil.setQualifier(lengthProperty, receiver);
+        return lengthProperty;
     }
 }
