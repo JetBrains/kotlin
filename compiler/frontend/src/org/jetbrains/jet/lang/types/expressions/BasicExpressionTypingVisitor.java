@@ -30,8 +30,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
@@ -662,8 +661,26 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "visitUnaryExpression"));
             return null;
         }
-        ExpressionReceiver receiver = getExpressionReceiver(facade, baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(context.scope));
-        if (receiver == null) return null;
+        JetType type = null;
+
+        if ((operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) && baseExpression instanceof JetArrayAccessExpression) {
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+            JetType expressionType = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(temporaryTrace));
+            if (expressionType != null) {
+                JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), expressionType, context.trace);
+                type = resolveArrayAccessToLValue((JetArrayAccessExpression) baseExpression, stubExpression, context, true);
+            }
+            else {
+                temporaryTrace.commit();
+                context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
+            }
+        }
+        else {
+            type = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        }
+        if (type == null) return null;
+
+        ExpressionReceiver receiver = new ExpressionReceiver(baseExpression, type);
 
         OverloadResolutionResults<FunctionDescriptor> functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, expression),
@@ -891,6 +908,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 return DataFlowUtils.checkType(results.getResultingDescriptor().getReturnType(), expression, contextWithExpectedType);
             }
         }
+        context.trace.report(NO_GET_METHOD.on(expression.getIndicesNode()));
         return null;
     }
 
@@ -980,5 +998,46 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitJetElement(JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
         return null;
+    }
+    
+    /*package*/ JetType resolveArrayAccessToLValue(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull JetExpression right, @NotNull ExpressionTypingContext context, final boolean getterNeeded) {
+        ExpressionReceiver receiver = getExpressionReceiver(facade, arrayAccessExpression.getArrayExpression(), context.replaceExpectedType(NO_EXPECTED_TYPE));
+        if (receiver == null) return null;
+
+        OverloadResolutionResults<FunctionDescriptor> getFunctionResults = null;
+        if (getterNeeded) {
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+            getFunctionResults = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceBindingTrace(temporaryTrace).resolveCallWithGivenName(
+                    CallMaker.makeArrayGetCall(receiver, arrayAccessExpression),
+                    arrayAccessExpression,
+                    "get");
+            if (!getFunctionResults.isSuccess()) {
+                temporaryTrace.commit();
+                context.trace.report(NO_GET_METHOD.on(arrayAccessExpression.getIndicesNode()));
+                return null;
+            }
+            context.trace.record(INDEXED_LVALUE_GET, arrayAccessExpression, getFunctionResults.getResultingCall());
+        }
+
+        Call call = CallMaker.makeArraySetCall(receiver, arrayAccessExpression, right);
+        OverloadResolutionResults<FunctionDescriptor> setFunctionResults = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
+                call,
+                arrayAccessExpression,
+                "set");
+        if (!setFunctionResults.isSuccess()) {
+            context.trace.report(NO_SET_METHOD.on(arrayAccessExpression.getIndicesNode()));
+            if (getterNeeded) {
+                return getFunctionResults.getResultingDescriptor().getReturnType();
+            }
+            return null;
+        }
+        FunctionDescriptor setFunctionDescriptor = setFunctionResults.getResultingDescriptor();
+        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunctionResults.getResultingCall());
+
+        if (getterNeeded) {
+            return getFunctionResults.getResultingDescriptor().getReturnType();
+        }
+
+        return setFunctionDescriptor.getReturnType();
     }
 }

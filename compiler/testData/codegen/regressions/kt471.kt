@@ -37,7 +37,7 @@ fun test4() : Boolean {
     return true
 }
 
-fun test5() : Boolean {
+/*fun test5() : Boolean {
     var mnr  = Array<MyNumber>(2,{MyNumber(42)})
     mnr[0]++
     if (mnr[0].i  != 43) return false
@@ -52,7 +52,6 @@ fun test6() : Boolean {
     return true
 }
 
-/*
 fun test7() : Boolean {
     var mnr  = ArrayList<MyNumber>()
     mnr.add(MyNumber(42))
@@ -79,9 +78,9 @@ fun box() : String {
     if (!test2()) return "fail test 2"
     if (!test3()) return "fail test 3"
     if (!test4()) return "fail test 4"
+/*
     if (!test5()) return "fail test 5"
     if (!test6()) return "fail test 6"
-/*
     if (!test7()) return "fail test 7"
     if (!test8()) return "fail test 8"
 

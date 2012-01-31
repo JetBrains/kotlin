@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +11,10 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -20,20 +23,22 @@ import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.RESULT_TYPE_MISMATCH;
-import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * @author abreslav
  */
 public class ExpressionTypingUtils {
+    
+    @Nullable
+    protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
+        if (type == null) return null;
+        return new ExpressionReceiver(expression, type);
+    }
 
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        JetType type = facade.getType(expression, context);
-        if (type == null) {
-            return null;
-        }
-        return new ExpressionReceiver(expression, type);
+        return getExpressionReceiver(expression, facade.getType(expression, context));
     }
 
     @NotNull
@@ -112,5 +117,13 @@ public class ExpressionTypingUtils {
                 context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
             }
         }
+    }
+    
+    @NotNull
+    public static JetExpression createStubExpressionOfNecessaryType(@NotNull Project project, @NotNull JetType type, @NotNull BindingTrace trace) {
+        JetExpression expression = JetPsiFactory.createExpression(project, "$e");
+        trace.record(PROCESSED, expression);
+        trace.record(EXPRESSION_TYPE, expression, type);
+        return expression;
     }
 }

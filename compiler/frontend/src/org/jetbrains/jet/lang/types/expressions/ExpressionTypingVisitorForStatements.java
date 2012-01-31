@@ -10,20 +10,15 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.calls.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE_REASSIGNMENT;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.getExpressionReceiver;
 
 /**
  * @author abreslav
@@ -161,7 +156,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
             if (left instanceof JetArrayAccessExpression) {
                 JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-                resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), operationSign, context);
+                basic.resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), context.replaceScope(scope), false);
             }
             assignmentOperationType = basic.getTypeForBinaryCall(scope, counterpartName, context, expression);
             if (assignmentOperationType != null) {
@@ -201,7 +196,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-            JetType assignmentType = resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
+            JetType assignmentType = basic.resolveArrayAccessToLValue(arrayAccessExpression, right, context.replaceScope(scope), false); //todo
             basic.checkLValue(context.trace, arrayAccessExpression);
             return checkAssignmentType(assignmentType, expression, contextWithExpectedType);
         }
@@ -218,33 +213,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         return DataFlowUtils.checkStatementType(expression, contextWithExpectedType);
     }
 
-    private JetType resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign, ExpressionTypingContext context) {
-        ExpressionReceiver receiver = getExpressionReceiver(facade, arrayAccessExpression.getArrayExpression(), context.replaceScope(scope));
-        if (receiver == null) return null;
-
-        Call call = CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide);
-        OverloadResolutionResults<FunctionDescriptor> setFunctionResults = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
-                call,
-                arrayAccessExpression,
-                "set");
-        if (!setFunctionResults.isSuccess()) return null;
-        FunctionDescriptor setFunctionDescriptor = setFunctionResults.getResultingDescriptor();
-
-        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunctionResults.getResultingCall());
-
-//        if (getterNeeded) {
-//            ResolvedCall<FunctionDescriptor> getFunctionCall = context.replaceScope(scope).replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
-//                    CallMaker.makeArrayGetCall(receiver, arrayAccessExpression),
-//                    arrayAccessExpression,
-//                    "get");
-//            if (getFunctionCall == null) return null;
-//            context.trace.record(INDEXED_LVALUE_GET, arrayAccessExpression, getFunctionCall);
-//        }
-//        else {
-//            context.trace.record(REFERENCE_TARGET, operationSign, setFunctionDescriptor);
-//        }
-        return setFunctionDescriptor.getReturnType();
-    }
 
     @Override
     public JetType visitExpression(JetExpression expression, ExpressionTypingContext context) {

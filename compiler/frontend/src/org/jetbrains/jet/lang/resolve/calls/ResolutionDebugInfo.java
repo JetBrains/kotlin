@@ -28,10 +28,6 @@ public class ResolutionDebugInfo {
     public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, ConstraintSystemSolution> SOLUTION = Slices.createSimpleSlice();
     public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Collection<TypeParameterDescriptor>> UNKNOWNS = Slices.createSimpleSlice();
 
-    static {
-        BasicWritableSlice.initSliceDebugNames(ResolutionDebugInfo.class);
-    }
-    
     public static boolean RESOLUTION_DEBUG_INFO_ENABLED = false;
 
     public static boolean isResolutionDebugEnabled() {
@@ -112,5 +108,9 @@ public class ResolutionDebugInfo {
         if (isResolutionDebugEnabled()) {
             System.out.println(message);
         }
+    }
+
+    static {
+        BasicWritableSlice.initSliceDebugNames(ResolutionDebugInfo.class);
     }
 }
