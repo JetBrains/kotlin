@@ -1,6 +1,6 @@
 package java.util
-import java.io.*
-public open class LinkedHashMap<erased K, erased V>(m : java.util.Map<out K, out V>) : java.util.HashMap<K, V>(), java.util.Map<K, V>, java.lang.Object {
+
+public open class LinkedHashMap<erased K, erased V>(m : java.util.Map<out K, out V>) : java.util.HashMap<K, V>(), java.util.Map<K, V> {
     public this(initialCapacity : Int, loadFactor : Float) {}
     public this(initialCapacity : Int) {}
     public this() {}

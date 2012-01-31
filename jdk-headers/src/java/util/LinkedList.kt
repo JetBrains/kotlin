@@ -3,8 +3,7 @@ public open class LinkedList<erased E>(c : java.util.Collection<out E>) : java.u
                                     java.util.List<E>,
                                     java.util.Deque<E>,
                                     java.lang.Cloneable,
-                                    java.io.Serializable,
-                                    java.lang.Object {
+                                    java.io.Serializable {
     public this() {}
 
     override public fun getFirst() : E {}

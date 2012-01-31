@@ -1,6 +1,6 @@
 package java.util
 
-abstract public open class AbstractMap<erased K, erased V> protected () : java.util.Map<K, V>, java.lang.Object {
+abstract public open class AbstractMap<erased K, erased V> protected () : java.util.Map<K, V> {
     override public fun size() : Int {}
     override public fun isEmpty() : Boolean {}
     override public fun containsValue(value : Any?) : Boolean {}

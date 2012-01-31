@@ -2,8 +2,7 @@ package java.util
 public open class HashSet<erased E>(c : java.util.Collection<out E>) : java.util.AbstractSet<E>(),
                                                                        java.util.Set<E>,
                                                                        java.lang.Cloneable,
-                                                                       java.io.Serializable,
-                                                                       java.lang.Object {
+                                                                       java.io.Serializable {
     public this() {}
     public this(initialCapacity : Int) {}
     public this(initialCapacity : Int, loadFactor : Float) {}
