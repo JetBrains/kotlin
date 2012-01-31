@@ -1,7 +1,5 @@
 package java.util
 
-import java.util.Map.Entry
-
 abstract public open class AbstractMap<erased K, erased V> protected () : java.util.Map<K, V>, java.lang.Object {
     override public fun size() : Int {}
     override public fun isEmpty() : Boolean {}

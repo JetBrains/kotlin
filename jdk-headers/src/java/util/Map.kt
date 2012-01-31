@@ -12,17 +12,15 @@ public trait Map<erased K, erased V> {
     open fun clear() : Unit
     open fun keySet() : java.util.Set<K>
     open fun values() : java.util.Collection<V>
-    open fun entrySet() : java.util.Set<java.util.Map.Entry<K, V>>
+    open fun entrySet() : java.util.Set<Entry<K, V>>
 //    open fun equals(o : Any?) : Boolean
 //    open fun hashCode() : Int
 
-    class object {
-        trait Entry<K, V> {
-            open fun getKey() : K
-            open fun getValue() : V
-            open fun setValue(value : V) : V
+    trait Entry<K, V> {
+        open fun getKey() : K
+        open fun getValue() : V
+        open fun setValue(value : V) : V
 //            open fun equals(o : Any?) : Boolean
 //            open fun hashCode() : Int
-        }
     }
 }
