@@ -8,6 +8,8 @@ class TypeInfo<out T> {
 fun typeinfo<T>() : TypeInfo<T>
 fun typeinfo<T>(expression : T) : TypeInfo<T>
 
+annotation class volatile
+
 fun <R> synchronized(lock: Any, block : () -> R) : R
 
 fun Any?.identityEquals(other : Any?) : Boolean // = this === other

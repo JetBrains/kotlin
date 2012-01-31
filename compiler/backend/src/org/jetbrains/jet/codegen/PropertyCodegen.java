@@ -76,6 +76,9 @@ public class PropertyCodegen {
             if (!propertyDescriptor.isVar()) {
                 modifiers |= Opcodes.ACC_FINAL;
             }
+            if(state.getStandardLibrary().isVolatile(propertyDescriptor)) {
+                modifiers |= Opcodes.ACC_VOLATILE;
+            }
             v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
         }
     }

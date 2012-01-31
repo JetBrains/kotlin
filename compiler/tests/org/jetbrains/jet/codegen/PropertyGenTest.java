@@ -149,6 +149,15 @@ public class PropertyGenTest extends CodegenTestCase {
         assertNotNull(aClass.getMethod("getX"));
     }
 
+    public void testVolatileProperty() throws Exception {
+        loadText("abstract class Foo { public volatile var x: String = \"\"; }");
+        System.out.println(generateToText());
+        final ClassFileFactory codegens = generateClassesInFile();
+        final Class aClass = loadClass("Foo", codegens);
+        Field x = aClass.getDeclaredField("x");
+        assertTrue((x.getModifiers() & Modifier.VOLATILE) != 0);
+    }
+
     public void testKt257 () throws Exception {
         blackBoxFile("regressions/kt257.jet");
 //        System.out.println(generateToText());

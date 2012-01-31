@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -61,8 +62,10 @@ public class JetStandardLibrary {
     private ClassDescriptor iterableClass;
     private ClassDescriptor typeInfoClass;
     private ClassDescriptor comparableClass;
+    private ClassDescriptor volatileClass;
 
     private JetType stringType;
+    private JetType volatileType;
     private JetType nullableStringType;
     private JetType charSequenceType;
     private JetType nullableCharSequenceType;
@@ -138,6 +141,7 @@ public class JetStandardLibrary {
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier("CharSequence");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
+            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier("volatile");
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier("Comparable");
@@ -149,6 +153,7 @@ public class JetStandardLibrary {
             this.charSequenceType = new JetTypeImpl(getCharSequence());
             this.nullableCharSequenceType = TypeUtils.makeNullable(charSequenceType);
             this.nullableStringType = TypeUtils.makeNullable(stringType);
+            this.volatileType = new JetTypeImpl(getVolatile());
 
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
             this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
@@ -445,4 +450,22 @@ public class JetStandardLibrary {
         return primitiveTypeToNullableArrayJetType.get(primitiveType);
     }
 
+    public ClassDescriptor getVolatile() {
+        return volatileClass;
+    }
+
+    public JetType getVolatileType() {
+        return volatileType;
+    }
+
+    public final boolean isVolatile(PropertyDescriptor descriptor) {
+        List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
+        if(annotations != null) {
+            for(AnnotationDescriptor d: annotations) {
+                if(d.getType().equals(getVolatileType()))
+                    return true;
+            }
+        }
+        return false;
+    }
 }
