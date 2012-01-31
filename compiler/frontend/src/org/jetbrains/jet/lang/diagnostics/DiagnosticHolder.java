@@ -4,6 +4,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
 * @author abreslav
 */
@@ -18,8 +20,8 @@ public interface DiagnosticHolder {
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
                 PsiFile psiFile = diagnostic.getFactory().getPsiFile(diagnostic);
-                TextRange textRange = diagnostic.getFactory().getTextRange(diagnostic);
-                throw new IllegalStateException(diagnostic.getMessage() + DiagnosticUtils.atLocation(psiFile, textRange));
+                List<TextRange> textRanges = diagnostic.getFactory().getTextRanges(diagnostic);
+                throw new IllegalStateException(diagnostic.getMessage() + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
             }
         }
     };

@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceService;
@@ -8,6 +10,7 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +53,14 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
         return PsiTreeUtil.getChildrenOfTypeAsList(container, JetExpression.class);
     }
 
+    @NotNull
     public JetContainerNode getIndicesNode() {
         return (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
+    }
+    
+    public List<TextRange> getBracketRanges() {
+        TextRange lBracket = getIndicesNode().findChildByType(JetTokens.LBRACKET).getTextRange();
+        TextRange rBracket = getIndicesNode().findChildByType(JetTokens.RBRACKET).getTextRange();
+        return Lists.newArrayList(lBracket, rBracket);
     }
 }

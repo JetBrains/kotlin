@@ -8,6 +8,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
 * @author abreslav
 */
@@ -38,22 +41,22 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
 
     @NotNull
     @Override
-    public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
+    public List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic) {
         PsiElement redeclaration = ((RedeclarationDiagnostic) diagnostic).getPsiElement();
         if (redeclaration instanceof JetNamedDeclaration) {
             PsiElement nameIdentifier = ((JetNamedDeclaration) redeclaration).getNameIdentifier();
             if (nameIdentifier != null) {
-                return nameIdentifier.getTextRange();
+                return Collections.singletonList(nameIdentifier.getTextRange());
             }
         }
         else if (redeclaration instanceof JetFile) {
             JetFile file = (JetFile) redeclaration;
             PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
             if (nameIdentifier != null) {
-                return nameIdentifier.getTextRange();
+                return Collections.singletonList(nameIdentifier.getTextRange());
             }
         }
-        return redeclaration.getTextRange();
+        return Collections.singletonList(redeclaration.getTextRange());
     }
 
     @NotNull

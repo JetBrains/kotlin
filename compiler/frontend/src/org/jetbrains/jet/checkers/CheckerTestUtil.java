@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -26,16 +25,26 @@ public class CheckerTestUtil {
     public static final Comparator<Diagnostic> DIAGNOSTIC_COMPARATOR = new Comparator<Diagnostic>() {
         @Override
         public int compare(Diagnostic o1, Diagnostic o2) {
-            TextRange range1 = getTextRange(o1);
-            TextRange range2 = getTextRange(o2);
-            int startOffset1 = range1.getStartOffset();
-            int startOffset2 = range2.getStartOffset();
-            if (startOffset1 != startOffset2) {
-                // Start early -- go first
-                return startOffset1 - range2.getStartOffset();
+            List<TextRange> ranges1 = getTextRanges(o1);
+            List<TextRange> ranges2 = getTextRanges(o2);
+            if (ranges1.size() != ranges2.size()) return ranges1.size() - ranges2.size();
+            for (int i = 0; i < ranges1.size(); i++) {
+                TextRange range1 = ranges1.get(i);
+                TextRange range2 = ranges2.get(i);
+                int startOffset1 = range1.getStartOffset();
+                int startOffset2 = range2.getStartOffset();
+                if (startOffset1 != startOffset2) {
+                    // Start early -- go first
+                    return startOffset1 - range2.getStartOffset();
+                }
+                int endOffset1 = range1.getEndOffset();
+                int endOffset2 = range2.getEndOffset();
+                if (endOffset1 != endOffset2) {
+                    // start at the same offset, the one who end later is the outer, i.e. goes first
+                    return endOffset2 - endOffset1;
+                }
             }
-            // start at the same offset, the one who end later is the outer, i.e. goes first
-            return range2.getEndOffset() - range1.getEndOffset();
+            return 0;
         }
     };
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!\\w+(,\\s*\\w+)*!>)|(<!>)");
@@ -132,8 +141,10 @@ public class CheckerTestUtil {
     private static void unexpectedDiagnostics(List<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
         for (Diagnostic diagnostic : actual) {
             if (!diagnostic.getFactory().getPsiFile(diagnostic).equals(callbacks.getFile())) continue;
-            TextRange textRange = getTextRange(diagnostic);
-            callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
+            List<TextRange> textRanges = getTextRanges(diagnostic);
+            for (TextRange textRange : textRanges) {
+                callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
+            }
         }
     }
 
@@ -272,8 +283,8 @@ public class CheckerTestUtil {
 
         @NotNull
         @Override
-        public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
-            return ((SyntaxErrorDiagnostic) diagnostic).textRange;
+        public List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic) {
+            return Collections.singletonList(((SyntaxErrorDiagnostic) diagnostic).textRange);
         }
 
         @NotNull
@@ -337,7 +348,7 @@ public class CheckerTestUtil {
         List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
         DiagnosticDescriptor currentDiagnosticDescriptor = null;
         for (Diagnostic diagnostic : list) {
-            TextRange textRange = getTextRange(diagnostic);
+            TextRange textRange = getTextRanges(diagnostic).get(0);
             if (currentDiagnosticDescriptor != null && currentDiagnosticDescriptor.equalRange(textRange)) {
                 currentDiagnosticDescriptor.diagnostics.add(diagnostic);
             }
@@ -349,8 +360,8 @@ public class CheckerTestUtil {
         return diagnosticDescriptors;
     }
 
-    private static TextRange getTextRange(Diagnostic currentDiagnostic) {
-        return currentDiagnostic.getFactory().getTextRange(currentDiagnostic);
+    private static List<TextRange> getTextRanges(Diagnostic currentDiagnostic) {
+        return currentDiagnostic.getFactory().getTextRanges(currentDiagnostic);
     }
 
     private static class DiagnosticDescriptor {

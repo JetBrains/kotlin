@@ -4,12 +4,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
 * @author abreslav
 */
 public interface DiagnosticFactory {
     @NotNull
-    TextRange getTextRange(@NotNull Diagnostic diagnostic);
+    List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic);
 
     @NotNull
     PsiFile getPsiFile(@NotNull Diagnostic diagnostic);

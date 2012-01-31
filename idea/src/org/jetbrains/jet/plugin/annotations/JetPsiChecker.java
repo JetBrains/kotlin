@@ -29,6 +29,7 @@ import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -141,6 +142,7 @@ public class JetPsiChecker implements Annotator {
             @NotNull Set<PsiElement> redeclarations,
             @NotNull final AnnotationHolder holder
     ) {
+        List<TextRange> textRanges = diagnostic.getFactory().getTextRanges(diagnostic);
         if (diagnostic.getSeverity() == Severity.ERROR) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
                 UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
@@ -159,9 +161,11 @@ public class JetPsiChecker implements Annotator {
                     }
                 }
                 else {
-                    Annotation annotation = holder.createErrorAnnotation(referenceExpression, diagnostic.getMessage());
-                    registerQuickFix(annotation, diagnostic);
-                    annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                    for (TextRange textRange : textRanges) {
+                        Annotation annotation = holder.createErrorAnnotation(textRange, diagnostic.getMessage());
+                        registerQuickFix(annotation, diagnostic);
+                        annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                    }
                 }
 
                 return;
@@ -174,17 +178,19 @@ public class JetPsiChecker implements Annotator {
             }
 
             // Generic annotation
-            Annotation errorAnnotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
-            registerQuickFix(
-                    errorAnnotation,
-                    diagnostic);
+            for (TextRange textRange : textRanges) {
+                Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getMessage(diagnostic));
+                registerQuickFix(errorAnnotation, diagnostic);
+            }
         }
         else if (diagnostic.getSeverity() == Severity.WARNING) {
-            Annotation annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
-            registerQuickFix(annotation, diagnostic);
+            for (TextRange textRange : textRanges) {
+                Annotation annotation = holder.createWarningAnnotation(textRange, getMessage(diagnostic));
+                registerQuickFix(annotation, diagnostic);
 
-            if (diagnostic.getFactory() instanceof UnusedElementDiagnosticFactory) {
-                annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                if (diagnostic.getFactory() instanceof UnusedElementDiagnosticFactory) {
+                    annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                }
             }
         }
     }
@@ -234,7 +240,7 @@ public class JetPsiChecker implements Annotator {
     @Nullable
     private Annotation markRedeclaration(@NotNull Set<PsiElement> redeclarations, @NotNull RedeclarationDiagnostic diagnostic, @NotNull AnnotationHolder holder) {
         if (!redeclarations.add(diagnostic.getPsiElement())) return null;
-        return holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
+        return holder.createErrorAnnotation(diagnostic.getFactory().getTextRanges(diagnostic).get(0), getMessage(diagnostic));
     }
 
 

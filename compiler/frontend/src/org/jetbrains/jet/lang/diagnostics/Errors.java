@@ -15,7 +15,9 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
@@ -193,6 +195,9 @@ public interface Errors {
     SimpleDiagnosticFactory LOCAL_VARIABLE_WITH_GETTER = SimpleDiagnosticFactory.create(ERROR, "Local variables are not allowed to have getters");
     SimpleDiagnosticFactory LOCAL_VARIABLE_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR, "Local variables are not allowed to have setters");
     SimplePsiElementOnlyDiagnosticFactory<JetProperty> VAL_WITH_SETTER = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "A 'val'-property cannot have a setter");
+    
+    SimpleDiagnosticFactory NO_GET_METHOD = SimpleDiagnosticFactory.create(ERROR, "No get method providing array access");
+    SimpleDiagnosticFactory NO_SET_METHOD = SimpleDiagnosticFactory.create(ERROR, "No set method providing array access");
 
     SimpleDiagnosticFactory EQUALS_MISSING = SimpleDiagnosticFactory.create(ERROR, "No method 'equals(Any?) : Boolean' available");
     SimpleDiagnosticFactory ASSIGNMENT_IN_EXPRESSION_CONTEXT = SimpleDiagnosticFactory.create(ERROR, "Assignments are not expressions, and only expressions are allowed in this context");
@@ -362,7 +367,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory2<CallableMemberDescriptor, CallableMemberDescriptor> RETURN_TYPE_MISMATCH_ON_OVERRIDE = new ParameterizedDiagnosticFactory2<CallableMemberDescriptor, CallableMemberDescriptor>(ERROR, "Return type of {0} is not a subtype of the return type overridden member {1}") {
         @NotNull
         @Override
-        public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
+        public List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic) {
             PsiElement psiElement = ((DiagnosticWithPsiElement) diagnostic).getPsiElement();
             JetTypeReference returnTypeRef = null;
             ASTNode nameNode = null;
@@ -381,9 +386,9 @@ public interface Errors {
                 returnTypeRef = accessor.getReturnTypeReference();
                 nameNode = accessor.getNamePlaceholder().getNode();
             }
-            if (returnTypeRef != null) return returnTypeRef.getTextRange();
-            if (nameNode != null) return nameNode.getTextRange();
-            return super.getTextRange(diagnostic);
+            if (returnTypeRef != null) return Collections.singletonList(returnTypeRef.getTextRange());
+            if (nameNode != null) return Collections.singletonList(nameNode.getTextRange());
+            return super.getTextRanges(diagnostic);
         }
 
         private ASTNode getNameNode(JetNamedDeclaration function) {

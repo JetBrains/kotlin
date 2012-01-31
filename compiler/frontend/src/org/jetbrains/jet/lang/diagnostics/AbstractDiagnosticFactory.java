@@ -4,6 +4,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author abreslav
  */
@@ -22,8 +25,8 @@ public class AbstractDiagnosticFactory implements DiagnosticFactory {
 
     @NotNull
     @Override
-    public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
-        return ((DiagnosticWithTextRange) diagnostic).getTextRange();
+    public List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic) {
+        return Collections.singletonList(((DiagnosticWithTextRange) diagnostic).getTextRange());
     }
 
     @NotNull
