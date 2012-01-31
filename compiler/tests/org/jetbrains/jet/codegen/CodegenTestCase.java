@@ -199,7 +199,8 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
     protected static void assertIsCurrentTime(long returnValue) {
         long currentTime = System.currentTimeMillis();
-        assertTrue(Math.abs(returnValue - currentTime) <= 1L);
+        long diff = Math.abs(returnValue - currentTime);
+        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)", diff <= 1L);
     }
 
     protected Class loadImplementationClass(@NotNull ClassFileFactory codegens, final String name) {
