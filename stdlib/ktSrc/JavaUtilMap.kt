@@ -1,7 +1,9 @@
 package std.util
 
 import java.util.Map as JMap
-import java.util.Map.Entry as JEntry
+
+// Temporary workaround: commenting out
+//import java.util.Map.Entry as JEntry
 
 // Map APIs
 
@@ -16,13 +18,16 @@ val JMap<*,*>.empty : Boolean
 /** Provides [] access to maps */
 fun <K, V> JMap<K, V>.set(key : K, value : V) = this.put(key, value)
 
+
 /** Returns the key of the entry */
-val <K,V> JEntry<K,V>.key : K
-    get() = getKey().sure()
+// Temporary workaround: commenting out
+//val <K,V> JEntry<K,V>.key : K
+//    get() = getKey().sure()
 
 /** Returns the value of the entry */
-val <K,V> JEntry<K,V>.value : V
-    get() = getValue().sure()
+// Temporary workaround: commenting out
+//val <K,V> JEntry<K,V>.value : V
+//    get() = getValue().sure()
 
 /** Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key */
 inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
