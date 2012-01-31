@@ -1,9 +1,6 @@
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +86,7 @@ public final class CallTranslator extends AbstractTranslator {
             return new CallTranslator(receiver, callee, arguments, resolvedCall, null, context);
         }
 
+        //TODO: inspect dead code
         @Nullable
         private JsExpression translateCalleeIfExpressionAsFunction(@NotNull JetCallExpression callExpression) {
             //TODO: util
@@ -102,28 +100,43 @@ public final class CallTranslator extends AbstractTranslator {
         }
 
         @NotNull
-        private static List<JsExpression> translateArgumentsForCallExpression(@NotNull JetCallExpression callExpression,
-                                                                              @NotNull TranslationContext context) {
+        private List<JsExpression> translateArgumentsForCallExpression(@NotNull JetCallExpression callExpression,
+                                                                       @NotNull TranslationContext context) {
             List<JsExpression> result = new ArrayList<JsExpression>();
             ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), callExpression);
             Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments = resolvedCall.getValueArguments();
             for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
-                JetExpression argument = getActualArgument(formalToActualArguments, parameterDescriptor, context);
-                result.add(Translation.translateAsExpression(argument, context));
+                ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
+                result.add(translateSingleArgument(actualArgument, parameterDescriptor));
             }
             return result;
         }
 
+
+        //TODO: refactor
         @NotNull
-        private static JetExpression getActualArgument(
-                @NotNull Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments,
-                @NotNull ValueParameterDescriptor parameterDescriptor, @NotNull TranslationContext context) {
-            ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
-            if (actualArgument instanceof DefaultValueArgument) {
-                return getDefaultArgument(context.bindingContext(), parameterDescriptor);
-            } else {
-                return getExpressionArgument(actualArgument);
+        private JsExpression translateSingleArgument(@NotNull ResolvedValueArgument actualArgument,
+                                                     @NotNull ValueParameterDescriptor parameterDescriptor) {
+            List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
+            if (actualArgument instanceof VarargValueArgument) {
+                return translateVarargArgument(argumentExpressions);
             }
+            if (actualArgument instanceof DefaultValueArgument) {
+                JetExpression defaultArgument = getDefaultArgument(context.bindingContext(), parameterDescriptor);
+                return Translation.translateAsExpression(defaultArgument, context);
+            }
+            assert actualArgument instanceof ExpressionValueArgument;
+            assert argumentExpressions.size() == 1;
+            return Translation.translateAsExpression(argumentExpressions.get(0), context);
+        }
+
+        @NotNull
+        private JsExpression translateVarargArgument(@NotNull List<JetExpression> arguments) {
+            JsArrayLiteral varargArgument = new JsArrayLiteral();
+            for (JetExpression argument : arguments) {
+                varargArgument.getExpressions().add(Translation.translateAsExpression(argument, context));
+            }
+            return varargArgument;
         }
     }
 

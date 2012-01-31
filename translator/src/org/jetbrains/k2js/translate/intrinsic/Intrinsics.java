@@ -1,11 +1,14 @@
 package org.jetbrains.k2js.translate.intrinsic;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.intrinsic.array.*;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
@@ -15,6 +18,7 @@ import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
@@ -53,9 +57,31 @@ public final class Intrinsics {
         declareArrayIntrinsics();
     }
 
+    private void declareTuplesIntrinsics() {
+        for (int tupleSize = 0; tupleSize < JetStandardClasses.TUPLE_COUNT; ++tupleSize) {
+            declareTupleIntrinsics(tupleSize);
+        }
+    }
+
     //TODO: provide generic mechanism or refactor
     private void declareArrayIntrinsics() {
-        JetScope arrayMemberScope = library.getArray().getDefaultType().getMemberScope();
+
+        List<JetType> arrayTypes = getLibraryArrayTypes();
+
+        for (JetType arrayType : arrayTypes) {
+            declareIntrinsicsForArrayType(arrayType);
+        }
+        declareNullConstructorIntrinsic();
+    }
+
+    private void declareNullConstructorIntrinsic() {
+        FunctionDescriptor nullArrayConstructor = getFunctionByName(library.getLibraryScope(), "Array");
+        functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
+    }
+
+    //TODO: some dangerous operation unchecked here
+    private void declareIntrinsicsForArrayType(@NotNull JetType arrayType) {
+        JetScope arrayMemberScope = arrayType.getMemberScope();
         FunctionDescriptor setFunction = getFunctionByName(arrayMemberScope, "set");
         functionIntrinsics.put(setFunction, ArraySetIntrinsic.INSTANCE);
         FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, "get");
@@ -64,18 +90,20 @@ public final class Intrinsics {
         functionIntrinsics.put(sizeProperty.getGetter(), ArraySizeIntrinsic.INSTANCE);
         PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, "indices");
         functionIntrinsics.put(indicesProperty.getGetter(), ArrayIndicesIntrinsic.INSTANCE);
-        FunctionDescriptor nullArrayConstructor = getFunctionByName(library.getLibraryScope(), "Array");
-        functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
         FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, "iterator");
         functionIntrinsics.put(iteratorFunction, ArrayIteratorIntrinsic.INSTANCE);
-        ConstructorDescriptor arrayConstructor = library.getArray().getConstructors().iterator().next();
+        ConstructorDescriptor arrayConstructor =
+                ((ClassDescriptor) arrayMemberScope.getContainingDeclaration()).getConstructors().iterator().next();
         functionIntrinsics.put(arrayConstructor, ArrayFunctionConstructorIntrinsic.INSTANCE);
     }
 
-    private void declareTuplesIntrinsics() {
-        for (int tupleSize = 0; tupleSize < JetStandardClasses.TUPLE_COUNT; ++tupleSize) {
-            declareTupleIntrinsics(tupleSize);
+    private List<JetType> getLibraryArrayTypes() {
+        List<JetType> arrayTypes = Lists.newArrayList();
+        for (PrimitiveType type : PrimitiveType.values()) {
+            arrayTypes.add(library.getPrimitiveArrayJetType(type));
         }
+        arrayTypes.add(library.getArray().getDefaultType());
+        return arrayTypes;
     }
 
     private void declareTupleIntrinsics(int tupleSize) {
