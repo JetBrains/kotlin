@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
+import org.jetbrains.jet.plugin.completion.handlers.JetTemplateInsertHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -146,6 +147,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
 
+        private static final JetTemplateInsertHandler TEMPLATE_INSERT_HANDLER = new JetTemplateInsertHandler();
         private final Collection<LookupElement> elements;
 
         public KeywordsCompletionProvider(String ...keywords) {
@@ -154,6 +156,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 @Override
                 public LookupElement apply(String keyword) {
                     final LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(keyword).setBold();
+
+                    if (keyword.contains("<#<")) {
+                        return lookupElementBuilder.setInsertHandler(TEMPLATE_INSERT_HANDLER);
+                    }
 
                     if (!FUNCTION_KEYWORDS.contains(keyword)) {
                         return lookupElementBuilder.setInsertHandler(KEYWORDS_INSERT_HANDLER);
@@ -169,6 +175,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                       @NotNull CompletionResultSet result) {
             result.addAllElements(elements);
         }
+
     }
 
     public JetKeywordCompletionContributor() {
@@ -211,6 +218,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
+
+        extend(CompletionType.BASIC, getPlacePattern(new InNonClassBlockFilter()), new KeywordsCompletionProvider(
+                "if (<#<condition>#>) {\n\n}"
+        ));
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, JetToken... keywords) {
@@ -231,4 +242,5 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         return PlatformPatterns.psiElement().and(
                 new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
     }
+
 }
