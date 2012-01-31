@@ -18,8 +18,6 @@ fun main(args : Array<String>) {
     al.addAll(al1) : Boolean
     al.addAll(0, al1) : Boolean
     al.get(0) : Int
-    al.clone() : Object // A type mismatch on this line means that alt-headers were not loaded
-    al.toArray(Array<Int>(3, {1})) : Array<Int> // ^^^ same for this line
     val m = HashMap<String, Int>()
     m.put("", 1)
     test(al, m)

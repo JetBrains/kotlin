@@ -1,0 +1,10 @@
+// +JDK
+
+package std1
+
+import java.util.*
+
+fun main(args : Array<String>) {
+    val al : ArrayList<Int> = ArrayList<Int>
+    al.clone() : Object // A type mismatch on this line means that alt-headers were not loaded
+}
