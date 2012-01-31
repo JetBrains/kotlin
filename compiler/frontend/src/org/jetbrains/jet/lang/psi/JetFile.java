@@ -7,6 +7,8 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
@@ -57,5 +59,20 @@ public class JetFile extends PsiFileBase {
         else {
             visitor.visitFile(this);
         }
+    }
+
+    @Override
+    public StubElement getStub() {
+        return super.getStub();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public StubTree calcStubTree() {
+        return super.calcStubTree();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public StubTree getStubTree() {
+        return super.getStubTree();    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

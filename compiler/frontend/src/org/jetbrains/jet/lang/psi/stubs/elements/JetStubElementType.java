@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.StubPsiFactory;
@@ -10,7 +9,7 @@ import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
  * @author Nikolay Krasko
@@ -18,11 +17,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class JetStubElementType<StubT extends StubElement, PsiT extends PsiElement>
         extends ILightStubElementType<StubT, PsiT> {
 
-    public JetStubElementType(@NotNull @NonNls String debugName, @Nullable Language language) {
-        super(debugName, language);
+    public JetStubElementType(@NotNull @NonNls String debugName) {
+        super(debugName, JetLanguage.INSTANCE);
     }
-
-
 
     public abstract PsiT createPsiFromAst(@NotNull ASTNode node);
 

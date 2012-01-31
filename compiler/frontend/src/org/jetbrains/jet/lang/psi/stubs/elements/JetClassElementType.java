@@ -13,17 +13,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.IOException;
 
 /**
  * @author Nikolay Krasko
  */
-public abstract class JetClassElementType extends JetStubElementType<PsiJetClassStub, JetClass> {
+public class JetClassElementType extends JetStubElementType<PsiJetClassStub, JetClass> {
 
     public JetClassElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetLanguage.INSTANCE);
+        super(debugName);
     }
 
     @Override
@@ -33,7 +32,6 @@ public abstract class JetClassElementType extends JetStubElementType<PsiJetClass
 
     @Override
     public JetClass createPsi(@NotNull PsiJetClassStub stub) {
-        // TODO: Don't work for kotlin classes
         // return getPsiFactory(stub).createClass(stub);
         return null;
     }
@@ -45,7 +43,7 @@ public abstract class JetClassElementType extends JetStubElementType<PsiJetClass
 
     @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, psi.getName(), psi.getName());
     }
 
     @Override
@@ -66,5 +64,7 @@ public abstract class JetClassElementType extends JetStubElementType<PsiJetClass
     }
 
     @Override
-    public abstract void indexStub(PsiJetClassStub stub, IndexSink sink);
+    public void indexStub(PsiJetClassStub stub, IndexSink sink) {
+        StubIndexServiceFactory.getInstance().indexClass(stub, sink);
+    }
 }

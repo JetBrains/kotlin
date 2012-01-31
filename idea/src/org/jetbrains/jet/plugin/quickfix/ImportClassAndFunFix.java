@@ -1,6 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -23,27 +24,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Check possibility and perform fix for unresolved references.
  *
  * @author Nikolay Krasko
  */
-public class ImportClassFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
+public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
 
     @NotNull
     private final List<String> suggestions;
 
-    public ImportClassFix(@NotNull JetSimpleNameExpression element) {
+    public ImportClassAndFunFix(@NotNull JetSimpleNameExpression element) {
         super(element);
         suggestions = computeSuggestions(element);
     }
@@ -54,7 +53,39 @@ public class ImportClassFix extends JetHintAction<JetSimpleNameExpression> imple
             return Collections.emptyList();
         }
 
-        return getClassNames(element, file.getProject());
+        final ArrayList<String> result = new ArrayList<String>();
+        result.addAll(getClassNames(element, file.getProject()));
+        result.addAll(getJetTopLevelFunctions(element, file.getProject()));
+
+        return result;
+    }
+    
+    private static Collection<String> getJetTopLevelFunctions(@NotNull JetSimpleNameExpression expression, @NotNull Project project) {
+        final String referenceName = expression.getReferencedName();
+
+        if (referenceName == null) {
+            return Collections.emptyList();
+        }
+
+        final Collection<JetNamedFunction> namedFunctions =
+                JetCacheManager.getInstance(project).getNamesCache().getTopLevelFunctionsByName(
+                        referenceName, GlobalSearchScope.allScope(project));
+
+        final Collection<String> nullableNames =
+                Collections2.transform(Lists.newArrayList(namedFunctions), new Function<JetNamedFunction, String>() {
+                    @Nullable
+                    @Override
+                    public String apply(@Nullable JetNamedFunction jetFunction) {
+                        return jetFunction != null ? jetFunction.getQualifiedName() : null;
+                    }
+                });
+
+        return Collections2.filter(nullableNames, new Predicate<String>() {
+            @Override
+            public boolean apply(@Nullable String fqn) {
+                return fqn != null && !fqn.isEmpty();
+            }
+        });
     }
 
     /*
@@ -79,7 +110,7 @@ public class ImportClassFix extends JetHintAction<JetSimpleNameExpression> imple
     private static Collection<String> getJavaClasses(@NotNull final String typeName, @NotNull Project project, final GlobalSearchScope scope) {
         PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
 
-        PsiClass[] classes = cache.getClassesByName(typeName, new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+        PsiClass[] classes = cache.getClassesByName(typeName, new DelegatingGlobalSearchScope(scope) {
             @Override
             public boolean contains(@NotNull VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
@@ -166,7 +197,7 @@ public class ImportClassFix extends JetHintAction<JetSimpleNameExpression> imple
                 // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
                 if (diagnostic.getPsiElement() instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression psiElement = (JetSimpleNameExpression) diagnostic.getPsiElement();
-                    return new ImportClassFix(psiElement);
+                    return new ImportClassAndFunFix(psiElement);
                 }
 
                 return null;

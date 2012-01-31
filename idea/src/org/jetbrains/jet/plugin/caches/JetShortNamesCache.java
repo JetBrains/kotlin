@@ -16,8 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,6 +110,45 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             }
         });
     }
+    
+    public Collection<JetNamedFunction> getAllExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
+        return JetExtensionFunctionNameIndex.getInstance().get(name, project, scope);
+    }
+
+    @NotNull
+    public Collection<String> getAllTopLevelFunctionNames() {
+        return JetShortFunctionNameIndex.getInstance().getAllKeys(project);
+    }
+
+    public Collection<JetNamedFunction> getTopLevelFunctionsByName(final @NotNull String name, @NotNull GlobalSearchScope scope) {
+        return JetShortFunctionNameIndex.getInstance().get(name, project, scope);
+    }
+    
+//    private Collection<FunctionDescriptor> getTopLeveFunctions(@NotNull GlobalSearchScope scope) {
+//        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
+//        final Collection<String> keys = context.getKeys(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR);
+//
+//        final List<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
+//
+//        for (String namespaceKey : keys) {
+//            final NamespaceDescriptor namespace = context.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceKey);
+//            if (namespace != null) {
+//                final JetScope memberScope = namespace.getNamespaceType().getMemberScope();
+//                final Collection<DeclarationDescriptor> allDescriptors = memberScope.getAllDescriptors();
+//
+//                for (DeclarationDescriptor descriptor : allDescriptors) {
+//                    if (descriptor instanceof FunctionDescriptor) {
+//                        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+//                        if (functionDescriptor.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
+//                            result.add(functionDescriptor);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return result;
+//    }
 
     @NotNull
     @Override

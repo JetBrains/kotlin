@@ -20,7 +20,7 @@ import java.util.List;
 /**
 * @author yole
 */
-class JetSimpleNameReference extends JetPsiReference {
+public class JetSimpleNameReference extends JetPsiReference {
 
     private final JetSimpleNameExpression myExpression;
 

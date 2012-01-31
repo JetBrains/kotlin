@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -66,11 +67,37 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
         return this;
     }
 
+    /**
+     * Returns full qualified name for function "package_fqn.function_name"
+     * Not null for top level functions.
+     * @return
+     */
+    @Nullable
+    public String getQualifiedName() {
+        final PsiJetFunctionStub stub = getStub();
+        if (stub != null) {
+            // TODO (stubs): return stub.getQualifiedName();
+        }
+
+        PsiElement parent = getParent();
+        if (parent instanceof JetFile) {
+            JetFile jetFile = (JetFile) parent;
+            final String fileFQN = JetPsiUtil.getFQName(jetFile);
+            if (!fileFQN.isEmpty()) {
+                return fileFQN + "." + getName();
+            }
+
+            return getName();
+        }
+
+        return null;
+    }
+
     @Override
     public IStubElementType getElementType() {
         return JetStubElementTypes.FUNCTION;
     }
-
+    
     @Override
     public PsiJetFunctionStub<?> getStub() {
         // TODO (stubs)

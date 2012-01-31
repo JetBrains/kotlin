@@ -129,7 +129,7 @@ public class JetAddImportAction implements QuestionAction {
         };
     }
 
-    protected void addImport(final PsiElement element, final Project project, final String selectedImport) {
+    protected static void addImport(final PsiElement element, final Project project, final String selectedImport) {
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {

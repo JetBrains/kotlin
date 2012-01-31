@@ -3,29 +3,31 @@ package org.jetbrains.jet.lang.psi.stubs.elements;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LighterAST;
 import com.intellij.lang.LighterASTNode;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFunctionStubImpl;
 
 import java.io.IOException;
 
 /**
  * @author Nikolay Krasko
  */
-public abstract class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStub, JetFunction> {
+public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStub, JetNamedFunction> {
 
     public JetFunctionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetLanguage.INSTANCE);
+        super(debugName);
     }
 
     @Override
-    public JetFunction createPsiFromAst(@NotNull ASTNode node) {
+    public JetNamedFunction createPsiFromAst(@NotNull ASTNode node) {
         return new JetNamedFunction(node);
     }
 
@@ -35,22 +37,38 @@ public abstract class JetFunctionElementType extends JetStubElementType<PsiJetFu
     }
 
     @Override
-    public JetFunction createPsi(@NotNull PsiJetFunctionStub stub) {
+    public JetNamedFunction createPsi(@NotNull PsiJetFunctionStub stub) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public PsiJetFunctionStub createStub(@NotNull JetFunction psi, StubElement parentStub) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public PsiJetFunctionStub createStub(@NotNull JetNamedFunction psi, StubElement parentStub) {
+        final boolean isTopLevel = parentStub instanceof PsiJetFileStub;
+        final boolean isExtension = psi.getReceiverTypeRef() != null;
+
+        return new PsiJetFunctionStubImpl(
+                JetStubElementTypes.FUNCTION, parentStub, psi.getName(),
+                isTopLevel, isExtension);
     }
 
     @Override
     public void serialize(PsiJetFunctionStub stub, StubOutputStream dataStream) throws IOException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        dataStream.writeName(stub.getName());
+        dataStream.writeBoolean(stub.isTopLevel());
+        dataStream.writeBoolean(stub.isExtension());
     }
 
     @Override
     public PsiJetFunctionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        final StringRef name = dataStream.readName();
+        final boolean isTopLevel = dataStream.readBoolean();
+        final boolean isExtension = dataStream.readBoolean();
+
+        return new PsiJetFunctionStubImpl(JetStubElementTypes.FUNCTION, parentStub, name, isTopLevel, isExtension);
+    }
+
+    @Override
+    public void indexStub(PsiJetFunctionStub stub, IndexSink sink) {
+        StubIndexServiceFactory.getInstance().indexFunction(stub, sink);
     }
 }

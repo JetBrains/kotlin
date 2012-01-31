@@ -26,11 +26,8 @@ public class FunctionsHandlerTest extends LightCompletionTestCase {
         checkResultByFile("SingleBrackets.kt.after");
     }
 
-    // public void
-
     @Override
     protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/").getPath() +
-               File.separator;
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/").getPath() + File.separator;
     }
 }

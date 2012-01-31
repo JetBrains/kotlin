@@ -108,7 +108,7 @@ public class QuickFixes {
         add(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         add(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
 
-        JetIntentionActionFactory<JetSimpleNameExpression> unresolvedReferenceFactory = ImportClassFix.createFactory();
+        JetIntentionActionFactory<JetSimpleNameExpression> unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
         add(Errors.UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
         add(Errors.SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToInvocationFix.createFactory());

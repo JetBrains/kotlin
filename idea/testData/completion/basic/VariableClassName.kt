@@ -1,3 +1,5 @@
+package some;
+
 open class MyClass() {
 }
 

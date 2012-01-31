@@ -1,7 +1,5 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.StubBuilder;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
@@ -33,21 +31,6 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     @Override
     public int getStubVersion() {
         return STUB_VERSION;
-    }
-
-    @Override
-    public boolean shouldBuildStubFor(final VirtualFile file) {
-        // TODO:
-        return true;
-
-//        final VirtualFile dir = file.getParent();
-//        return dir == null || dir.getUserData(LanguageLevel.KEY) != null;
-    }
-
-    @Override
-    public ASTNode createNode(final CharSequence text) {
-        // TODO (stub):
-        return super.createNode(text);
     }
 
     @Override

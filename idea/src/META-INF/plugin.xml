@@ -4,9 +4,6 @@
   <version>@snapshot@</version>
   <vendor>JetBrains</vendor>
 
-  <application-components>
-  </application-components>
-
   <project-components>
       <component>
           <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
@@ -44,6 +41,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+      <applicationService serviceInterface="org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService"
+                          serviceImplementation="org.jetbrains.jet.plugin.stubindex.StubIndexServiceImpl" />
+
       <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
       <internalFileTemplate name="Kotlin File"/>
@@ -57,13 +57,18 @@
       <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
       <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
       <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
-      <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
       <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 
+      <completion.contributor language="jet" id="JetKeywordCompletionContributor" order="first"
+                              implementationClass="org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor"/>
+
+      <completion.contributor language="jet" id="JetCompletionContributor"
+                              implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
+
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.GlobalMemberCompletionContributor"/>
-      <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor"/>
-      <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
+
+      <psi.referenceContributor language="jet" order="after JetCompletionContributor" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
       <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Generic"/>
       <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Namespace"/>
@@ -90,6 +95,12 @@
 
       <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
       <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
+
+      <stubElementTypeHolder class="org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
 
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 

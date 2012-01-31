@@ -1110,7 +1110,8 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull DeclarationDescriptor descriptor, @NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull DeclarationDescriptor descriptor, @NotNull PsiClass psiClass,
+                                                        @NotNull String methodName, boolean staticMembers) {
 
         ResolverScopeData resolverScopeData = getResolverScopeData(descriptor, new PsiClassWrapper(psiClass));
 

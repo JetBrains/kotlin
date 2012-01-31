@@ -16,26 +16,13 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetFakeStubElementFactory;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementFactory;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetParserDefinition implements ParserDefinition {
-
-    // TODO (stubs):
-    private static JetStubElementFactory stubElementFactory = new JetFakeStubElementFactory();
-
-    public static void setStubFactory(JetStubElementFactory factory) {
-        stubElementFactory = factory;
-    }
-
-    public static JetStubElementFactory getStubElementTypeFactory() {
-        return stubElementFactory;
-    }
 
     public JetParserDefinition() {
         if (!ApplicationManager.getApplication().isCommandLine()) {
@@ -52,9 +39,7 @@ public class JetParserDefinition implements ParserDefinition {
     }
 
     public IFileElementType getFileNodeType() {
-        // TODO (stubs)
-        return JetNodeTypes.JET_FILE;
-        // return JetStubElementTypes.FILE;
+        return JetStubElementTypes.FILE;
     }
 
     @NotNull

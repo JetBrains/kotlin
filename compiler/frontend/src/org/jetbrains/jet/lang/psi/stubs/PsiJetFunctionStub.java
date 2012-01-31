@@ -12,11 +12,17 @@ public interface PsiJetFunctionStub <T extends JetFunction> extends StubElement<
     @Nullable
     String getName();
 
-    boolean isDeclaration();
+    /**
+     * Is function defined in directly in package.
+     * @return
+     */
+    boolean isTopLevel();
+
+    /**
+     * Does function extends some type.
+     */
+    boolean isExtension();
 
     @NotNull
     String[] getAnnotations();
-
-    @NotNull
-    String getReturnTypeText();
 }

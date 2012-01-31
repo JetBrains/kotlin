@@ -17,7 +17,7 @@ public class JetFileStubBuilder  extends DefaultStubBuilder {
         if (!(file instanceof JetFile)) return super.createStubForFile(file);
 
         JetFile jetFile = (JetFile) file;
-        
+
         // TODO (stubs):
         String packageName = "default";
 
