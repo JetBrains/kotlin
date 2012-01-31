@@ -25,7 +25,7 @@
             <get src="${tc}/core/asm.jar" dest="${core}"/>
             <get src="${tc}/core/asm-commons.jar" dest="${core}"/>
             <get src="${tc}/core/cli-10.jar" dest="${core}"/>
-            <get src="${tc}/core/guava-r09.jar" dest="${core}"/>
+            <get src="${tc}/core/guava-11.0.1.jar" dest="${core}"/>
             <get src="${tc}/core/picocontainer.jar" dest="${core}"/>
             <get src="${tc}/core/trove4j.jar" dest="${core}"/>
     
