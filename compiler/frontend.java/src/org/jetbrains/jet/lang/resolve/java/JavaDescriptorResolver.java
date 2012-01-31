@@ -646,7 +646,7 @@ public class JavaDescriptorResolver {
         return resolveNamespace(psiPackage);
     }
 
-    private PsiClass findClass(String qualifiedName) {
+    public PsiClass findClass(String qualifiedName) {
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
         if (altClass != null) return altClass;
         return javaFacade.findClass(qualifiedName, javaSearchScope);
