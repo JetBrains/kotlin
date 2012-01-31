@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor {
+public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrNamespaceDescriptor {
 
     @NotNull
     JetScope getMemberScope(List<TypeProjection> typeArguments);

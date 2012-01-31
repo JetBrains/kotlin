@@ -6,6 +6,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -14,6 +15,8 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.*;
 
 /**
+ * Class static of instance members.
+ *
  * @author abreslav
  */
 public class JavaClassMembersScope extends JavaClassOrPackageScope {
@@ -23,7 +26,7 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     private Collection<DeclarationDescriptor> allDescriptors;
 
     public JavaClassMembersScope(
-            @NotNull DeclarationDescriptor classOrNamespaceDescriptor,
+            @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor,
             @NotNull PsiClass psiClass,
             @NotNull JavaSemanticServices semanticServices,
             boolean staticMembers) {

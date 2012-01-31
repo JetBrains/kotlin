@@ -1,8 +1,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -17,10 +17,10 @@ import java.util.Set;
 public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
-    protected final DeclarationDescriptor descriptor;
+    protected final ClassOrNamespaceDescriptor descriptor;
     protected final JavaSemanticServices semanticServices;
 
-    protected JavaClassOrPackageScope(@NotNull DeclarationDescriptor descriptor, @NotNull JavaSemanticServices semanticServices) {
+    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices) {
         this.descriptor = descriptor;
         this.semanticServices = semanticServices;
     }

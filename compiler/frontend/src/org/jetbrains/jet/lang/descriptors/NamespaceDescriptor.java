@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.types.NamespaceType;
 /**
  * @author abreslav
  */
-public interface NamespaceDescriptor extends Annotated, Named, DeclarationDescriptor {
+public interface NamespaceDescriptor extends Annotated, Named, ClassOrNamespaceDescriptor {
     @NotNull
     JetScope getMemberScope();
 

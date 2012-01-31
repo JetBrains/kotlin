@@ -22,7 +22,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     public JavaPackageScope(
             @NotNull String packageFQN,
-            @NotNull DeclarationDescriptor containingDescriptor,
+            @NotNull NamespaceDescriptor containingDescriptor,
             @NotNull JavaSemanticServices semanticServices) {
         super(containingDescriptor, semanticServices);
         this.packageFQN = packageFQN;
