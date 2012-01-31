@@ -6,6 +6,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
@@ -27,7 +28,7 @@ public final class PrimitiveRangeToIntrinsic implements FunctionIntrinsic {
 
     @NotNull
     @Override
-    public JsExpression apply(@NotNull JsExpression rangeStart, @NotNull List<JsExpression> arguments,
+    public JsExpression apply(@Nullable JsExpression rangeStart, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert arguments.size() == 1 : "RangeTo must have one argument.";
         JsExpression rangeEnd = arguments.get(0);

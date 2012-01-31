@@ -7,6 +7,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.ArrayNullConstructorIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
@@ -17,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
 
 /**
@@ -48,6 +52,17 @@ public final class Intrinsics {
         declareOperatorIntrinsics();
         declareStringIntrinsics();
         declareTuplesIntrinsics();
+        declareArrayIntrinsics();
+    }
+
+    private void declareArrayIntrinsics() {
+        JetScope arrayMemberScope = library.getArray().getDefaultType().getMemberScope();
+        FunctionDescriptor setFunction = getFunctionByName(arrayMemberScope, "set");
+        functionIntrinsics.put(setFunction, ArraySetIntrinsic.INSTANCE);
+        FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, "get");
+        functionIntrinsics.put(getFunction, ArrayGetIntrinsic.INSTANCE);
+        FunctionDescriptor nullArrayConstructor = getFunctionByName(library.getLibraryScope(), "Array");
+        functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
     }
 
     private void declareTuplesIntrinsics() {

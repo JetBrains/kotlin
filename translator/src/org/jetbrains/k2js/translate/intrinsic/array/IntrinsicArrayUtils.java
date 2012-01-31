@@ -8,6 +8,8 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.zeroLiteral;
 
+//TODO: decide if needed
+
 /**
  * @author Pavel Talanov
  */

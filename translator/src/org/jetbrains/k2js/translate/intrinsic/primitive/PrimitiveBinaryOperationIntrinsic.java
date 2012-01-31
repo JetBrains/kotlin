@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
@@ -31,7 +32,7 @@ public final class PrimitiveBinaryOperationIntrinsic implements FunctionIntrinsi
 
     @NotNull
     @Override
-    public JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
+    public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert arguments.size() == 1 : "Binary operator should have a receiver and one argument";
         return new JsBinaryOperation(operator, receiver, arguments.get(0));

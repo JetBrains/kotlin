@@ -4,6 +4,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsPrefixOperation;
 import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
@@ -31,8 +32,9 @@ public final class PrimitiveUnaryOperationIntrinsic implements FunctionIntrinsic
 
     @NotNull
     @Override
-    public JsExpression apply(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments,
+    public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
+        assert receiver != null;
         assert arguments.size() == 0 : "Unary operator should not have arguments.";
         //NOTE: cannot use this for increment/decrement
         return new JsPrefixOperation(operator, receiver);
