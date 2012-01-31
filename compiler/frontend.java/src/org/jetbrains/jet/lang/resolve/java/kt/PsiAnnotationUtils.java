@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve.java.kt;
 
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,10 +29,12 @@ public class PsiAnnotationUtils {
         if (annotation == null) {
             return defaultValue;
         } else {
-            PsiLiteralExpression attributeValue = (PsiLiteralExpression) annotation.findAttributeValue(field);
-            if (attributeValue != null) {
+            PsiAnnotationMemberValue value = annotation.findAttributeValue(field);
+            if (value instanceof PsiLiteralExpression) {
+                PsiLiteralExpression attributeValue = (PsiLiteralExpression) value;
                 return (T) attributeValue.getValue();
-            } else {
+            }
+            else {
                 return defaultValue;
             }
         }
