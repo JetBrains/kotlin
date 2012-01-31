@@ -2,7 +2,6 @@ package org.jetbrains.k2js.test;
 
 import org.junit.Test;
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 
 import java.util.Arrays;
@@ -38,29 +37,6 @@ public class KotlinLibTest extends TranslationTest {
 
     //TODO: refactor
 
-    @Test
-    public void classObjectHasCreateMethod() throws Exception {
-        final Map<String, Class<? extends Scriptable>> propertyToType
-                = new HashMap<String, Class<? extends Scriptable>>();
-        propertyToType.put("create", Function.class);
-        runPropertyTypeCheck("Class", propertyToType);
-    }
-
-    @Test
-    public void namespaceObjectHasCreateMethod() throws Exception {
-        final Map<String, Class<? extends Scriptable>> propertyToType
-                = new HashMap<String, Class<? extends Scriptable>>();
-        propertyToType.put("create", Function.class);
-        runPropertyTypeCheck("Namespace", propertyToType);
-    }
-
-    @Test
-    public void traitObjectHasCreateMethod() throws Exception {
-        final Map<String, Class<? extends Scriptable>> propertyToType
-                = new HashMap<String, Class<? extends Scriptable>>();
-        propertyToType.put("create", Function.class);
-        runPropertyTypeCheck("Trait", propertyToType);
-    }
 
     @Test
     public void createdTraitIsJSObject() throws Exception {

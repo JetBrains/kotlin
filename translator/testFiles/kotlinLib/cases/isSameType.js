@@ -1,6 +1,6 @@
-var A = Class.create();
+var A = Kotlin.Class.create();
 var a = new A;
 
 test = function() {
-    return isType(a, A);
+    return Kotlin.isType(a, A);
 }

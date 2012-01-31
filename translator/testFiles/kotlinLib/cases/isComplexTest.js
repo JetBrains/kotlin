@@ -1,22 +1,22 @@
-var A = Class.create();
-var B = Class.create(A);
+var A = Kotlin.Class.create();
+var B = Kotlin.Class.create(A);
 var b = new B;
-var C = Class.create(B);
+var C = Kotlin.Class.create(B);
 var c = new C;
-var E = Class.create(A)
+var E = Kotlin.Class.create(A)
 var e = new E;
 
 test1 = function() {
     b2 = b
-    return (isType(b, A) && isType(b, B));
+    return (Kotlin.isType(b, A) && Kotlin.isType(b, B));
 }
 
 test2 = function() {
-    return (isType(c, C) && isType(c, B) && isType(c, A) && (!isType(c, E)));
+    return (Kotlin.isType(c, C) && Kotlin.isType(c, B) && Kotlin.isType(c, A) && (!Kotlin.isType(c, E)));
 }
 
 test3 = function() {
-    return isType(e, E) && !isType(e, B) && !isType(e, C) && isType(e, A)
+    return Kotlin.isType(e, E) && !Kotlin.isType(e, B) && !Kotlin.isType(e, C) && Kotlin.isType(e, A)
 }
 
 test = function() {

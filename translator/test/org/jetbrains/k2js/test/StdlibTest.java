@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -13,9 +11,9 @@ public final class StdlibTest extends TranslationTest {
         return MAIN;
     }
 
-    //TODO: test!
-    @Test
-    public void filter() throws Exception {
-        // testFooBoxIsTrue("Filter.kt");
-    }
+    //TODO: cant do due to big java dependencies
+//    @Test
+//    public void filter() throws Exception {
+//         testFooBoxIsTrue("Filter.kt");
+//    }
 }

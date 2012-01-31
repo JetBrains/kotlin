@@ -1,6 +1,6 @@
-var A = Class.create();
-var B = Class.create(A);
-var C = Class.create();
+var A = Kotlin.Class.create();
+var B = Kotlin.Class.create(A);
+var C = Kotlin.Class.create();
 var c = new C;
 
 test = function() {

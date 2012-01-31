@@ -20,7 +20,7 @@ public final class WebDemoExamples2Test extends TranslationTest {
         testWithMain("bottles", "");
     }
 
-    //TODO: a couple of classes not supported
+    //TODO: a couple of classes not supported and objects
 //    @Test
 //    public void life() throws Exception {
 //        testWithMain("life", "", "2");
@@ -31,4 +31,10 @@ public final class WebDemoExamples2Test extends TranslationTest {
         testWithMain("builder", "");
         testWithMain("builder", "1", "over9000");
     }
+
+    //TODO: comparator dependencies
+//    @Test
+//    public void maze() throws Exception {
+//        testWithMain("maze", "");
+//    }
 }

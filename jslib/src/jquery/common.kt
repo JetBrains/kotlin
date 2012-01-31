@@ -2,17 +2,21 @@ package jquery;
 
 import js.annotations.*;
 
-fun JQuery.toString() = ""
-
 NativeClass
 class JQuery() {
     fun addClass(className : String) : JQuery = this;
     fun addClass(f : DomElement.(Int, String)->String) = this;
-    fun attr(attrName : String) = ""
-    fun attr(attrName : String, value : String) = this
+
+    fun attr(attrName : String) = "";
+    fun attr(attrName : String, value : String) = this;
+
+    fun html() : String = "";
+    fun html(s : String) = this;
+    fun html(f : DomElement.(Int, String)->String) = this;
+
+
     fun hasClass(className : String) = true
     fun removeClass(className : String) = this
-    fun html() : String = ""
     fun height() = 0
     fun width() = 0
     fun click() = this;

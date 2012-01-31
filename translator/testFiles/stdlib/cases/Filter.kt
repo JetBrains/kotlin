@@ -1,19 +1,17 @@
-package foo
+package std
 
-import js.*
 import java.util.*
-
-class NoSuchElementException() : Exception() {}
+import java.lang.Iterable
 
 /*
 Filters given iterator
 */
-inline fun <T> Iterator<T>.filter(f: (T)-> Boolean) : Iterator<T> = FilterIterator<T>(this, f)
+inline fun <T> java.util.Iterator<T>.filter(f: (T)-> Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, f)
 
 /*
 Adds filtered elements in to given container
 */
-inline fun <T,U : Collection<in T>> Iterable<T>.filterTo(var container: U, filter: (T)->Boolean) : U {
+inline fun <T,U : Collection<in T>> java.lang.Iterable<T>.filterTo(var container: U, filter: (T)->Boolean) : U {
    for(element in this) {
       if(filter(element))
         container.add(element)
@@ -25,37 +23,38 @@ inline fun <T,U : Collection<in T>> Iterable<T>.filterTo(var container: U, filte
 Create iterator filtering given java.lang.Iterable
 */
 /*
-inline fun <T> Iterable<T>.filter(f: (T)->Boolean) : Iterator<T> = (iterator() as Iterator<T>).filter(f)
+inline fun <T> java.lang.Iterable<T>.filter(f: (T)->Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
 */
 
-private class FilterIterator<T>(val original: Iterator<T>, val filter: (T)-> Boolean) : Iterator<T> {
+private class FilterIterator<T>(val original: java.util.Iterator<T>, val filter: (T)-> Boolean) : java.util.Iterator<T> {
     var state = 0
     var nextElement: T? = null
 
-    override val hasNext: Boolean
-    get() {
-      if (state == 1) {
-          return true;
-      }
-      if (state == 2) {
-          return false;
-      }
-      while(original.hasNext) {
-         val candidate = original.next()
-          if((filter)(candidate)) {
-              nextElement = candidate
-              state = 1;
-              return true;
-          }
-      }
-        state = 2;
-        return false;
-    }
+    override fun hasNext(): Boolean =
+        when(state) {
+                1 -> true  // checked and next present
+                2 -> false // checked and next not present
+                else -> {
+                    while(original.hasNext()) {
+                        val candidate = original.next()
+                        if((filter)(candidate)) {
+                            nextElement = candidate
+                            state = 1
+                            true
+                        }
+                    }
+                    state = 2
+                    false
+                }
+        }
 
-    override fun next(): T {
+    override fun next(): T =
+        if(state != 1)
+            throw java.util.NoSuchElementException()
+        else {
             val res = nextElement as T
             nextElement = null
             state = 0
-            return res
+            res
         }
 }

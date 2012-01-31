@@ -1,4 +1,4 @@
-foo = Namespace.create({initialize:function(){
+foo = Kotlin.Namespace.create({initialize:function(){
 }
 , box:function(){
   return !false;
