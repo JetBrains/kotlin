@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.J2KConverterFlags;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
@@ -81,7 +82,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
         if (psiClass != null) {
             String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName != null) {
-                if (!qualifiedName.equals("java.lang.Object") && Converter.hasSetting("fqn")) {
+                if (!qualifiedName.equals("java.lang.Object") && Converter.hasFlag(J2KConverterFlags.FULLY_QUALIFIED_TYPE_NAMES)) {
                     return new IdentifierImpl(qualifiedName);
                 }
                 if (qualifiedName.equals(JAVA_LANG_ITERABLE)) {

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.j2k;
 
+import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,17 +36,17 @@ public class Converter {
     private static PsiType ourMethodReturnType = null;
 
     @NotNull
-    private static Set<String> settings = new HashSet<String>();
+    private static Set<J2KConverterFlags> flags = Sets.newHashSet();
 
     private Converter() {
     }
 
-    public static boolean addSetting(@NotNull String value) {
-        return settings.add(value);
+    public static boolean addFlag(@NotNull J2KConverterFlags flag) {
+        return flags.add(flag);
     }
 
-    public static boolean hasSetting(@NotNull String value) {
-        return settings.contains(value);
+    public static boolean hasFlag(@NotNull J2KConverterFlags flag) {
+        return flags.contains(flag);
     }
 
     public static void setClassIdentifiers(@NotNull Set<String> identifiers) {
@@ -394,7 +395,7 @@ public class Converter {
 
         final IdentifierImpl identifier = new IdentifierImpl(method.getName());
         final Type returnType = typeToType(method.getReturnType(), ConverterUtil.isAnnotatedAsNotNull(method.getModifierList()));
-        final Block body = hasSetting("declarations-only")
+        final Block body = hasFlag(J2KConverterFlags.SKIP_BODIES)
                            ? Block.EMPTY_BLOCK
                            : blockToBlock(method.getBody(), notEmpty); // #TODO
         final Element params = createFunctionParameters(method);

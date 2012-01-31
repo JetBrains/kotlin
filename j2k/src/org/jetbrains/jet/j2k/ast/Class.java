@@ -3,6 +3,7 @@ package org.jetbrains.jet.j2k.ast;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.J2KConverterFlags;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class Class extends Member {
 
     static List<Member> getMembers(List<Member> members) {
         List<Member> withoutPrivate = new LinkedList<Member>();
-        if (Converter.hasSetting("public-only")) {
+        if (Converter.hasFlag(J2KConverterFlags.SKIP_NON_PUBLIC_MEMBERS)) {
             for (Member m : members) {
                 if (m.accessModifier().equals("public") || m.accessModifier().equals("protected")) {
                     withoutPrivate.add(m);

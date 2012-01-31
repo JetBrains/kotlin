@@ -50,7 +50,7 @@
 //        String to = commandLine.getOptionValue("to");
 //
 //        for (Option o : commandLine.getOptions()) {
-//          Converter.addSetting(o.getLongOpt());
+//          Converter.addFlag(o.getLongOpt());
 //        }
 //
 //        if (!from.isEmpty() && !to.isEmpty())
