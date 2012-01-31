@@ -84,7 +84,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             IDENTIFIER, // SimpleName
             FIELD_IDENTIFIER, // Field reference
 
-            PACKAGE_KEYWORD // for absolute qualified names
+            PACKAGE_KEYWORD, // for absolute qualified names
+            IDE_TEMPLATE_START
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -102,7 +103,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     );
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
+            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET, IDE_TEMPLATE_END
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -505,6 +506,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (at(LPAR)) {
             parseParenthesizedExpression();
+        }
+        else if (at(IDE_TEMPLATE_START)) {
+            parseIdeTemplate();
         }
         else if (at(HASH)) {
             parseTupleExpression();
@@ -1830,6 +1834,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         parseExpression();
         argument.done(VALUE_ARGUMENT);
+    }
+    
+    /*
+     * "<#<" expression ">#>"
+     */
+    private void parseIdeTemplate() {
+        PsiBuilder.Marker placeholder = mark();
+        
+        advance();
+        if (at(IDE_TEMPLATE_END)) {
+            error("Expecting IDE template");
+        } else {
+            parseExpression();
+        }
+        expect(IDE_TEMPLATE_END, "");
+        placeholder.done(PARENTHESIZED);
     }
 
     public void parseObjectLiteral() {
