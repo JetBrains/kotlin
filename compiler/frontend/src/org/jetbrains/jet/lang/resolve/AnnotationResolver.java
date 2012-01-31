@@ -5,22 +5,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -30,15 +32,21 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class AnnotationResolver {
 
     private final BindingTrace trace;
-//    private final JetTypeInferrer typeInferrer;
+    private final JetSemanticServices semanticServices;
     private final CallResolver callResolver;
-//    private final JetTypeInferrer.Services services;
 
     public AnnotationResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.trace = trace;
-//        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
-//        this.services = typeInferrer.getServices(this.trace);
         this.callResolver = new CallResolver(semanticServices, DataFlowInfo.EMPTY);
+        this.semanticServices = semanticServices;
+    }
+
+    @NotNull
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @Nullable JetModifierList modifierList) {
+        if (modifierList == null) {
+            return Collections.emptyList();
+        }
+        return resolveAnnotations(scope, modifierList.getAnnotationEntries());
     }
 
     @NotNull
@@ -53,57 +61,95 @@ public class AnnotationResolver {
         return result;
     }
 
-    public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement, @NotNull AnnotationDescriptor descriptor) {
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCall(trace, scope, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement), NO_EXPECTED_TYPE);
-        if (results.isSuccess()) {
-            descriptor.setAnnotationType(results.getResultingDescriptor().getReturnType());
-        }
-        else {
-            descriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
-        }
+    public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement,
+                                      @NotNull AnnotationDescriptor descriptor) {
+        OverloadResolutionResults<FunctionDescriptor> results = resolveType(scope, entryElement, descriptor);
+        resolveArguments(results, descriptor);
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @Nullable JetModifierList modifierList) {
+    private OverloadResolutionResults<FunctionDescriptor> resolveType(@NotNull JetScope scope,
+                                                                      @NotNull JetAnnotationEntry entryElement,
+                                                                      @NotNull AnnotationDescriptor descriptor) {
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCall(trace, scope, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement), NO_EXPECTED_TYPE);
+        JetType annotationType = results.getResultingDescriptor().getReturnType();
+        if (results.isSuccess()) {
+            descriptor.setAnnotationType(annotationType);
+        } else {
+            descriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
+        }
+        return results;
+    }
+
+    private void resolveArguments(@NotNull OverloadResolutionResults<FunctionDescriptor> results,
+                                  @NotNull AnnotationDescriptor descriptor) {
+        List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
+                results.getResultingCall().getValueArguments().entrySet()) {
+            // TODO: are varargs supported here?
+            List<JetExpression> argumentExpressions = descriptorToArgument.getValue().getArgumentExpressions();
+            ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
+            for (JetExpression argument : argumentExpressions) {
+                arguments.add(resolveAnnotationArgument(argument, parameterDescriptor.getOutType()));
+            }
+        }
+        descriptor.setValueArguments(arguments);
+    }
+
+    @Nullable
+    public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull final JetType expectedType) {
+        JetVisitor<CompileTimeConstant<?>, Void> visitor = new JetVisitor<CompileTimeConstant<?>, Void>() {
+            @Override
+            public CompileTimeConstant<?> visitConstantExpression(JetConstantExpression expression, Void nothing) {
+                ExpressionTypingServices typeInferrerServices = semanticServices.getTypeInferrerServices(trace);
+                JetType type = typeInferrerServices.getType(JetScope.EMPTY, expression, expectedType, DataFlowInfo.EMPTY);
+                if (type == null) {
+                    // TODO:
+                    //  trace.report(ANNOTATION_PARAMETER_SHOULD_BE_CONSTANT.on(expression));
+                }
+                return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+            }
+
+
+            // @Override
+//            public CompileTimeConstant visitAnnotation(JetAnnotation annotation, Void nothing) {
+//                super.visitAnnotation(annotation, null); // TODO
+//            }
+//
+//            @Override
+//            public CompileTimeConstant visitAnnotationEntry(JetAnnotationEntry annotationEntry, Void nothing) {
+//                return super.visitAnnotationEntry(annotationEntry, null); // TODO
+//            }
+
+            @Override
+            public CompileTimeConstant<?> visitParenthesizedExpression(JetParenthesizedExpression expression, Void nothing) {
+                JetExpression innerExpression = expression.getExpression();
+                if (innerExpression == null) return null;
+                return innerExpression.accept(this, null);
+            }
+
+            @Override
+            public CompileTimeConstant<?> visitStringTemplateExpression(JetStringTemplateExpression expression,
+                                                                        Void nothing) {
+                return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+            }
+
+            @Override
+            public CompileTimeConstant<?> visitJetElement(JetElement element, Void nothing) {
+                // TODO:
+                //trace.report(ANNOTATION_PARAMETER_SHOULD_BE_CONSTANT.on(element));
+                return null;
+            }
+        };
+        return expression.accept(visitor, null);
+    }
+
+    @NotNull
+    public List<AnnotationDescriptor> createAnnotationStubs(@Nullable JetModifierList modifierList) {
         if (modifierList == null) {
             return Collections.emptyList();
         }
-        return resolveAnnotations(scope, modifierList.getAnnotationEntries());
-    }
-
-    public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull JetType expectedType) {
-        final CompileTimeConstant<?>[] result = new CompileTimeConstant<?>[1];
-//        expression.accept(new JetVisitorVoid() {
-//            @Override
-//            public void visitConstantExpression(JetConstantExpression expression) {
-//                JetType type = typeInferrer.getType(JetScope.EMPTY, expression, false, expectedType);
-//                if (type != null) {
-//                    Object value = expression.getValue();
-//
-//                }
-//            }
-//
-//            @Override
-//            public void visitAnnotation(JetAnnotation annotation) {
-//                super.visitAnnotation(annotation); // TODO
-//            }
-//
-//            @Override
-//            public void visitAnnotationEntry(JetAnnotationEntry annotationEntry) {
-//                super.visitAnnotationEntry(annotationEntry); // TODO
-//            }
-//
-//            @Override
-//            public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
-//                expression.getExpression().accept(this);
-//            }
-//
-//            @Override
-//            public void visitJetElement(JetElement element) {
-//                trace.getErrorHandler().genericError(element.getNode(), "Not allowed as an annotation argument");
-//            }
-//        });
-        return result[0];
+        return createAnnotationStubs(modifierList.getAnnotationEntries());
     }
 
     @NotNull
@@ -115,13 +161,5 @@ public class AnnotationResolver {
             trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
         }
         return result;
-    }
-
-    @NotNull
-    public List<AnnotationDescriptor> createAnnotationStubs(@Nullable JetModifierList modifierList) {
-        if (modifierList == null) {
-            return Collections.emptyList();
-        }
-        return createAnnotationStubs(modifierList.getAnnotationEntries());
     }
 }
