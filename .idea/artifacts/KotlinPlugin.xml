@@ -26,8 +26,9 @@
             <element id="module-output" name="stdlib" />
           </element>
         </element>
-        <element id="file-copy" path="$PROJECT_DIR$/out/build.txt" />
-        <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
+        <element id="directory" name="kotlinc">
+          <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
+        </element>
       </element>
     </root>
   </artifact>
