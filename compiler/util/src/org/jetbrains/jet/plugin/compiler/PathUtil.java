@@ -4,9 +4,13 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PathUtil {
     private PathUtil() {}
@@ -63,5 +67,19 @@ public class PathUtil {
     public static String getJarPathForClass(@NotNull Class aClass) {
         String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
         return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
+    }
+
+    public static List<VirtualFile> getAltHeadersRoots() {
+        List<VirtualFile> roots = new ArrayList<VirtualFile>();
+
+        File alts = getAltHeadersPath();
+
+        if (alts != null) {
+            for (File root : alts.listFiles()) {
+                VirtualFile jarRoot = VirtualFileManager.getInstance().findFileByUrl("jar://" + root.getPath() + "!/");
+                roots.add(jarRoot);
+            }
+        }
+        return roots;
     }
 }

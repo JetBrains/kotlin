@@ -4,8 +4,10 @@ import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.compiler.PathUtil;
 
 /**
  * @author yole
@@ -26,6 +28,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 .registerExtension(new JavaElementFinder(myProject));
 */
 
+        for (VirtualFile root : PathUtil.getAltHeadersRoots()) {
+            addLibraryRoot(root);
+        }
     }
 
     public MockApplication getApplication() {
