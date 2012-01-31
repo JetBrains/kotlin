@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import jet.typeinfo.TypeInfoVariance;
@@ -647,9 +648,16 @@ public class JavaDescriptorResolver {
     }
 
     public PsiClass findClass(String qualifiedName) {
+        PsiClass original = javaFacade.findClass(qualifiedName, javaSearchScope);
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
-        if (altClass != null) return altClass;
-        return javaFacade.findClass(qualifiedName, javaSearchScope);
+        if (altClass != null) {
+            if (altClass instanceof ClsClassImpl) {
+                altClass.putUserData(ClsClassImpl.DELEGATE_KEY, original);
+            }
+
+            return altClass;
+        }
+        return original;
     }
 
     /*package*/ PsiPackage findPackage(String qualifiedName) {
