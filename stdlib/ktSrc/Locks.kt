@@ -42,15 +42,9 @@ Returns result of the calculation
 */
 inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {
     val rl = readLock().sure()
-    var upgradeCount = getWriteHoldCount()
-    if(upgradeCount == 0) {
-        upgradeCount = getReadHoldCount()
-        if(upgradeCount > 0)
-            rl.unlock(upgradeCount)
-    }
-    else {
-        upgradeCount = 0
-    }
+
+    val readCount = if (getWriteHoldCount() == 0) getReadHoldCount() else 0
+    readCount times { rl.unlock() }
 
     val wl = writeLock().sure()
     wl.lock()
@@ -58,25 +52,7 @@ inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {
         return action()
     }
     finally {
-        if(upgradeCount > 0) {
-            rl.lock(upgradeCount)
-        }
+        readCount times { rl.lock() }
         wl.unlock()
-    }
-}
-
-inline private fun ReadLock.lock(readCount: Int) {
-    if(readCount > 0) {
-        for(j in 1..readCount) {
-            lock()
-        }
-    }
-}
-
-inline private fun ReadLock.unlock(readCount: Int) {
-    if(readCount > 0) {
-        for(j in 1..readCount) {
-            unlock()
-        }
     }
 }
