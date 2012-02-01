@@ -15,6 +15,7 @@ import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.filters.position.PositionElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
@@ -219,7 +220,11 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
 
         // templates
+        registerScopeKeywordsCompletion(new InTopFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
+        registerScopeKeywordsCompletion(new InClassBodyFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(), "if (<#<condition>#>) {\n  \n}", "if (<#<condition>#>) {\n  \n} else {\n  \n}");
+        registerScopeKeywordsCompletion(new InPropertyFilter(), "if (<#<condition>#>) {\n  \n} else {\n  \n}", "if (<#<condition>#>) {\n  \n}");
+        registerScopeKeywordsCompletion(new InParametersFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
