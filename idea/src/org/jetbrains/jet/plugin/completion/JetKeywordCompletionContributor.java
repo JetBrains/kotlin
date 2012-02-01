@@ -52,7 +52,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private static final String IF_TEMPLATE = "if (<#<condition>#>) {\n  \n}";
     private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n  \n} else {\n  \n}";
-//    private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<return>#> {\n  \n}";
+    private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<returnType>#> {\n  \n}";
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -185,7 +185,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     public JetKeywordCompletionContributor() {
         registerScopeKeywordsCompletion(new InTopFilter(),
                 ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
-                FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
+                FINAL_KEYWORD, GET_KEYWORD,
                 IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
                 PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
@@ -194,7 +194,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                 ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
-                FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
+                FINAL_KEYWORD, GET_KEYWORD,
                 INLINE_KEYWORD, INTERNAL_KEYWORD, OBJECT_KEYWORD,
                 OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                 PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
@@ -206,7 +206,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 CATCH_KEYWORD, CLASS_KEYWORD, CONTINUE_KEYWORD,
                 DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
                 FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD,
-                FUN_KEYWORD, GET_KEYWORD,
+                GET_KEYWORD,
                 IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
                 PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
@@ -224,9 +224,9 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
 
         // templates
-        registerScopeKeywordsCompletion(new InTopFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
-        registerScopeKeywordsCompletion(new InClassBodyFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
-        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), IF_TEMPLATE, IF_ELSE_TEMPLATE);
+        registerScopeKeywordsCompletion(new InTopFilter(), FUN_TEMPLATE);
+        registerScopeKeywordsCompletion(new InClassBodyFilter(), FUN_TEMPLATE);
+        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), IF_TEMPLATE, IF_ELSE_TEMPLATE, FUN_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyFilter(), IF_ELSE_TEMPLATE, IF_TEMPLATE);
         registerScopeKeywordsCompletion(new InParametersFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
     }
