@@ -7,7 +7,8 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author abreslav
  */
-public abstract class JetLabelQualifiedInstanceExpression extends JetLabelQualifiedExpression {
+public abstract class JetLabelQualifiedInstanceExpression extends JetLabelQualifiedExpression
+        implements JetStatementExpression {
 
     public JetLabelQualifiedInstanceExpression(@NotNull ASTNode node) {
         super(node);

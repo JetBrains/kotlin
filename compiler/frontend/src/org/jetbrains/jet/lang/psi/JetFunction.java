@@ -81,4 +81,9 @@ abstract public class JetFunction extends JetTypeParameterListOwner
     public JetElement asElement() {
         return this;
     }
+
+    public boolean isLocal() {
+        PsiElement parent = getParent();
+        return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
+    }
 }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author max
  */
-public class JetBreakExpression extends JetLabelQualifiedExpression {
+public class JetBreakExpression extends JetLabelQualifiedExpression implements JetStatementExpression {
     public JetBreakExpression(@NotNull ASTNode node) {
         super(node);
     }

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetBlockExpression extends JetExpression {
+public class JetBlockExpression extends JetExpression implements JetStatementExpression {
     public JetBlockExpression(@NotNull ASTNode node) {
         super(node);
     }

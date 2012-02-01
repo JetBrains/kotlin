@@ -70,7 +70,8 @@ public class JetParsingTest extends ParsingTestCase {
         Method[] methods = elem.getClass().getDeclaredMethods();
         for (Method method : methods) {
             String methodName = method.getName();
-            if (!methodName.startsWith("get") && !methodName.startsWith("find") || methodName.equals("getReference") || methodName.equals("getReferences")) continue;
+            if (!methodName.startsWith("get") && !methodName.startsWith("find") || methodName.equals("getReference") ||
+                methodName.equals("getReferences") || methodName.equals("getUseScope")) continue;
             if (method.getParameterTypes().length > 0) continue;
             Class<?> declaringClass = method.getDeclaringClass();
             if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;

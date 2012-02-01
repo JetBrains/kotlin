@@ -11,7 +11,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public abstract class JetNamedDeclaration extends JetDeclaration implements PsiNameIdentifierOwner {
+public abstract class JetNamedDeclaration extends JetDeclaration implements PsiNameIdentifierOwner, JetStatementExpression {
     public JetNamedDeclaration(@NotNull ASTNode node) {
         super(node);
     }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author max
  */
-public class JetClassInitializer extends JetDeclaration {
+public class JetClassInitializer extends JetDeclaration implements JetStatementExpression {
     public JetClassInitializer(@NotNull ASTNode node) {
         super(node);
     }

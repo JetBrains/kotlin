@@ -25,8 +25,10 @@ import org.jetbrains.jet.lexer.JetTokens;
 public class JetParserDefinition implements ParserDefinition {
 
     public JetParserDefinition() {
-        if (!ApplicationManager.getApplication().isCommandLine()) {
-        }
+        //todo: ApplicationManager.getApplication() is null during JetParsingTest setting up
+
+        /*if (!ApplicationManager.getApplication().isCommandLine()) {
+        }*/
     }
 
     @NotNull

@@ -8,7 +8,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetClassObject extends JetDeclaration {
+public class JetClassObject extends JetDeclaration implements JetStatementExpression {
     public JetClassObject(@NotNull ASTNode node) {
         super(node);
     }

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetSecondaryConstructor extends JetDeclaration implements JetDeclarationWithBody {
+public class JetSecondaryConstructor extends JetDeclaration implements JetDeclarationWithBody, JetStatementExpression {
     public JetSecondaryConstructor(@NotNull ASTNode node) {
         super(node);
     }

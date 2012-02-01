@@ -2,6 +2,8 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -37,6 +39,21 @@ public class JetProperty extends JetTypeParameterListOwner implements JetModifie
 
     public boolean isVar() {
         return getNode().findChildByType(JetTokens.VAR_KEYWORD) != null;
+    }
+
+    public boolean isLocal() {
+        PsiElement parent = getParent();
+        return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        if (isLocal()) {
+            PsiElement block = PsiTreeUtil.getParentOfType(this, JetBlockExpression.class, JetClassInitializer.class);
+            if (block == null) return super.getUseScope();
+            else return new LocalSearchScope(block);
+        }   else return super.getUseScope();
     }
 
     @Nullable
