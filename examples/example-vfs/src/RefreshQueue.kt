@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.ArrayList
 
 import std.util.*
+import std.concurrent.*
 import java.util.Timer
 import java.util.TimerTask
 
@@ -16,18 +17,22 @@ import org.jetbrains.jet.samples.vfs.utils.*
  * Singleton which creates thread for periodically checking if there are changes in
  * file system and notifying file system listeners.
  */
-internal object RefreshQueue : Runnable {
-    private val taskQueue = LinkedBlockingQueue<List<VirtualFile>>()
-    private val workerThread: Thread = Thread(this)
-    private val fullRefreshScheduler = Timer(true);
+internal object RefreshQueue {
+    private val taskQueue = LinkedBlockingQueue<List<VirtualFile>>();
 
     {
-        workerThread.setDaemon(true)
-        workerThread.start()
+        thread(daemon=true, name="refresher thread") {
+            while (!currentThread.isInterrupted()) {
+                try {
+                    takeAndRefreshFiles()
+                } catch (e : InterruptedException) {
+                }
+            }
+        }
 
-        fullRefreshScheduler.scheduleAtFixedRate(createTimerTask {
+        fixedRateTimer(daemon=true, name="refresher timer", period=5000.lng) {
             scheduleRefresh(FileSystem.watchedDirectories)
-        }, 0, 5000)
+        }
     }
 
     private fun takeAndRefreshFiles() {
@@ -113,26 +118,5 @@ internal object RefreshQueue : Runnable {
 
         // taskQueue.put(ArrayList<VirtualFile>(files.map{ it }))
         // taskQueue.put(files.map{ it }.toList())
-    }
-
-    // FIXME RefreshQueue implements Runnable because of error on accessing
-    // private fields and methods from anonymous class (KT-1157 & KT-1159) (
-    override fun run() {
-        while (!workerThread.isInterrupted()) {
-            try {
-                takeAndRefreshFiles()
-            } catch (e : InterruptedException) {
-            }
-        }
-    }
-}
-
-// FIXME this method is used because of error on accessing
-// private  methods from anonymous class (KT-1157) (
-private fun createTimerTask(task : () -> Unit) : TimerTask {
-    return object : TimerTask() {
-        override fun run() {
-            task()
-        }
     }
 }

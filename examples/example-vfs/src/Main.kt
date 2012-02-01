@@ -16,20 +16,18 @@ fun main(args : Array<String>) {
 
     // add watched directory
     FileSystem.write {
-        for (val arg in args) {
+        for (arg in args) {
             FileSystem.addWatchedDirectory(FileSystem.getFileByPath(arg))
         }
     }
 
     // add listener which prints out everything
-    FileSystem.addVirtualFileListener(object : VirtualFileListener {
-        override fun eventHappened(event: VirtualFileEvent) {
+    FileSystem.addVirtualFileListener{ event ->
             println(event)
             if (event is VirtualFileChangedEvent) {
                 println("new file size is ${event.file.size()}")
             }
-        }
-    })
+    }
 
     // wait for 1 minute
     Thread.sleep(60000)

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.samples.vfs;
 
+import std.concurrent.*
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.jetbrains.jet.samples.vfs.utils.*;
@@ -12,6 +13,7 @@ import java.util.Arrays
 import java.util.Map
 
 import std.util.*
+import java.util.TimerTask
 
 /**
  * File system singleton. To work with virtual file system, read/write locks should be
@@ -52,14 +54,14 @@ public object FileSystem {
      * Runs function with read lock.
      */
     public inline fun read<T>(task : () -> T) : T {
-        return locked(lock.readLock().sure(), task)
+        return lock.read<T>(task)
     }
 
     /**
      * Runs function with write lock.
      */
     public inline fun write<T>(task : () -> T) : T {
-        return locked(lock.writeLock().sure(), task)
+        return lock.write(task)
     }
 
     /**
@@ -100,6 +102,19 @@ public object FileSystem {
      */
     public fun addVirtualFileListener(listener : VirtualFileListener) {
         listeners.add(listener)
+    }
+
+    /**
+     * Adds file system listener which should be notified about changing of file system.
+     */
+    public fun addVirtualFileListener(listener : VirtualFileListener.(VirtualFileEvent)->Unit) : VirtualFileListener {
+        val vfl = object: VirtualFileListener{
+            override fun eventHappened(event: VirtualFileEvent) {
+                listener(event)
+            }
+        }
+        addVirtualFileListener(vfl)
+        return vfl
     }
 
     /**
