@@ -130,7 +130,7 @@ public class CompileEnvironment {
         return null;
     }
 
-    public void compileModuleScript(String moduleFile, String jarPath, boolean jarRuntime) {
+    public void compileModuleScript(String moduleFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
         final List<Module> modules = loadModuleScript(moduleFile);
 
         if (modules == null) {
@@ -144,11 +144,16 @@ public class CompileEnvironment {
         final String directory = new File(moduleFile).getParent();
         for (Module moduleBuilder : modules) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
-            final String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
-            try {
-                writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
-            } catch (FileNotFoundException e) {
-                throw new CompileEnvironmentException("Invalid jar path " + path, e);
+            if (outputDir != null) {
+                writeToOutputDirectory(moduleFactory, outputDir);
+            }
+            else {
+                String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+                try {
+                    writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
+                } catch (FileNotFoundException e) {
+                    throw new CompileEnvironmentException("Invalid jar path " + path, e);
+                }
             }
         }
     }

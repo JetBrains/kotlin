@@ -100,7 +100,7 @@ public class KotlinCompiler {
         }
 
         if (arguments.module != null) {
-            environment.compileModuleScript(arguments.module, arguments.jar, arguments.includeRuntime);
+            environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             return 0;
         }
         else {
