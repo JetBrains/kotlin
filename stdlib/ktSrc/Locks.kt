@@ -35,7 +35,9 @@ inline fun <erased T> ReentrantReadWriteLock.read(action: ()->T) : T {
 }
 
 /*
-Executes given calculation under write lock doing upgrade from read lock if needed
+Executes given calculation under write lock.
+The method does upgrade from read to write lock if needed
+If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races
 Returns result of the calculation
 */
 inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {
@@ -45,6 +47,9 @@ inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {
         upgradeCount = getReadHoldCount()
         if(upgradeCount > 0)
             rl.unlock(upgradeCount)
+    }
+    else {
+        upgradeCount = 0
     }
 
     val wl = writeLock().sure()
