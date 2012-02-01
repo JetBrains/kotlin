@@ -4,9 +4,9 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.Set;
 
@@ -16,16 +16,14 @@ import java.util.Set;
 public final class AnnotationsUtils {
 
     @NotNull
-    public static final String NATIVE_FUNCTION_ANNOTATION_FQNAME = "js.annotations.NativeFun";
-    @NotNull
-    public static final String NATIVE_CLASS_ANNOTATION_FQNAME = "js.annotations.NativeClass";
+    public static final String NATIVE_ANNOTATION_FQNAME = "js.annotations.Native";
     @NotNull
     public static final String LIBRARY_FUNCTION_ANNOTATION_FQNAME = "js.annotations.LibraryFun";
     @NotNull
     public static final String LIBRARY_CLASS_ANNOTATION_FQNAME = "js.annotations.LibraryClass";
     @NotNull
     public static Set<String> INTERNAL_ANNOTATIONS_FQNAMES = Sets.newHashSet(
-            NATIVE_CLASS_ANNOTATION_FQNAME, NATIVE_FUNCTION_ANNOTATION_FQNAME,
+            NATIVE_ANNOTATION_FQNAME,
             LIBRARY_CLASS_ANNOTATION_FQNAME, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
 
     private AnnotationsUtils() {
@@ -46,12 +44,21 @@ public final class AnnotationsUtils {
     }
 
     @NotNull
-    public static String annotationStringParameter(@NotNull FunctionDescriptor declarationDescriptor,
+    public static String annotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
                                                    @NotNull String annotationFQName) {
         AnnotationDescriptor annotationDescriptor =
                 getAnnotationByName(declarationDescriptor, annotationFQName);
         assert annotationDescriptor != null;
-        Object value = annotationDescriptor.getValueArguments().iterator().next().getValue();
+        //TODO: this is a quick fix for unsupported default args problem
+        if (annotationDescriptor.getValueArguments().isEmpty()) {
+            return "";
+        }
+        CompileTimeConstant<?> constant = annotationDescriptor.getValueArguments().iterator().next();
+        //TODO: this is a quick fix for unsupported default args problem
+        if (constant == null) {
+            return "";
+        }
+        Object value = constant.getValue();
         assert value instanceof String : "Native function annotation should have one String parameter";
         return (String) value;
     }

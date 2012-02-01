@@ -122,8 +122,9 @@
         ;
         function create() {
             var parent = null, properties = $A(arguments);
-            if (typeof (properties[0]) == "function")
+            if (typeof (properties[0]) == "function") {
                 parent = properties.shift();
+            }
 
             function klass() {
                 this.initializing = klass;
@@ -160,8 +161,9 @@
             for (var i = 0, length = properties.length; i < length; i++)
                 klass.addMethods(properties[i]);
 
-            if (!klass.prototype.initialize)
+            if (!klass.prototype.initialize) {
                 klass.prototype.initialize = emptyFunction;
+            }
 
             klass.prototype.constructor = klass;
             return klass;
@@ -313,9 +315,9 @@
 
 
     Kotlin.parseInt =
-        function (str) {
-            return parseInt(str);
-        }
+    function (str) {
+        return parseInt(str);
+    }
     ;
 
     Kotlin.System = function () {
@@ -325,7 +327,8 @@
             if (obj !== undefined) {
                 if (obj == null || typeof obj != "object") {
                     output += obj;
-                } else {
+                }
+                else {
                     output += obj.toString();
                 }
             }
@@ -507,7 +510,9 @@
             next:function () {
                 return this.arr[this.i++];
             },
-            get_hasNext:function() { return this.hasNext()}
+            get_hasNext:function () {
+                return this.hasNext()
+            }
         }
     );
 
@@ -519,7 +524,7 @@
         return obj.toString();
     };
 
-    Kotlin.jsonFromTuples = function(pairArr) {
+    Kotlin.jsonFromTuples = function (pairArr) {
         var i = pairArr.length;
         var res = {};
         while (i > 0) {
@@ -527,6 +532,14 @@
             res[pairArr[i][0]] = pairArr[i][1];
         }
         return res;
+    };
+
+    Kotlin.jsonSet = function (obj, attrName, value) {
+        obj[attrName] = value;
+    };
+
+    Kotlin.jsonGet = function (obj, attrName) {
+        return obj[attrName];
     };
 
 
@@ -570,7 +583,8 @@
                 var itemsAfterDeleted, i, len;
                 if (idx === arr.length - 1) {
                     arr.length = idx;
-                } else {
+                }
+                else {
                     itemsAfterDeleted = arr.slice(idx + 1);
                     arr.length = idx;
                     for (i = 0, len = itemsAfterDeleted.length; i < len; ++i) {
@@ -589,7 +603,8 @@
                 return (typeof hashCode == "string") ? hashCode : hashObject(hashCode);
             } else if (typeof obj.toString == FUNCTION) {
                 return obj.toString();
-            } else {
+            }
+            else {
                 try {
                     return String(obj);
                 } catch (ex) {
@@ -759,11 +774,13 @@
                         // This bucket entry is the current mapping of key to value, so replace old value and we're done.
                         oldValue = bucketEntry[1];
                         bucketEntry[1] = value;
-                    } else {
+                    }
+                    else {
                         // The bucket does not contain an entry for this key, so add one
                         bucket.addEntry(key, value);
                     }
-                } else {
+                }
+                else {
                     // No bucket exists for the key, so create one and put our key/value mapping in
                     bucket = new Bucket(hash, key, value, equalityFunction);
                     buckets[buckets.length] = bucket;

@@ -1,8 +1,6 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -13,32 +11,57 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import java.util.Arrays;
-
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
 /**
  * @author Pavel Talanov
  */
-public final class PropertyAccessTranslator extends AccessTranslator {
+public abstract class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
-    private static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
-                                                            @NotNull TranslationContext context) {
+    public static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
+                                                       @NotNull ResolvedCall<?> resolvedCall,
+                                                       @NotNull TranslationContext context) {
+        if (isNativeProperty(descriptor, context)) {
+            return new NativePropertyAccessTranslator(descriptor, /*qualifier = */ null, context);
+        } else {
+            return new KotlinPropertyAccessTranslator(descriptor, /*qualifier = */ null, /*backingFieldAccess = */ false,
+                    resolvedCall, context);
+        }
+    }
+
+    @NotNull
+    public static PropertyAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+                                                       @Nullable JsExpression qualifier,
+                                                       @NotNull TranslationContext context) {
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
+        if (isNativeProperty(propertyDescriptor, context)) {
+            return new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
+        }
+        ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
+        boolean backingFieldAccess = isBackingFieldReference(expression);
+        return new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier,
+                backingFieldAccess, resolvedCall, context);
+    }
+
+    @NotNull
+    /*package*/ static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
+                                                                @NotNull TranslationContext context) {
         DeclarationDescriptor descriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert descriptor instanceof PropertyDescriptor : "Must be a property descriptor.";
         return (PropertyDescriptor) descriptor;
     }
 
+
     @NotNull
-    public static JsExpression translateAsPropertyGetterCall(@NotNull PropertyDescriptor descriptor,
-                                                             @NotNull ResolvedCall<?> resolvedCall,
-                                                             @NotNull TranslationContext context) {
+    /*package*/
+    static JsExpression translateAsPropertyGetterCall(@NotNull PropertyDescriptor descriptor,
+                                                      @NotNull ResolvedCall<?> resolvedCall,
+                                                      @NotNull TranslationContext context) {
         return (newInstance(descriptor, resolvedCall, context))
                 .translateAsGet();
     }
@@ -51,23 +74,6 @@ public final class PropertyAccessTranslator extends AccessTranslator {
                 .translateAsGet();
     }
 
-    @NotNull
-    private static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
-                                                        @NotNull ResolvedCall<?> resolvedCall,
-                                                        @NotNull TranslationContext context) {
-        return new PropertyAccessTranslator(descriptor, null, false, resolvedCall, context);
-    }
-
-    @NotNull
-    public static PropertyAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
-                                                       @Nullable JsExpression qualifier,
-                                                       @NotNull TranslationContext context) {
-        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
-        ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
-        boolean backingFieldAccess = isBackingFieldReference(expression);
-        return new PropertyAccessTranslator(propertyDescriptor, qualifier,
-                backingFieldAccess, resolvedCall, context);
-    }
 
     public static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
                                                   @NotNull TranslationContext context) {
@@ -101,65 +107,13 @@ public final class PropertyAccessTranslator extends AccessTranslator {
         return canBePropertyGetterCall(expression, context);
     }
 
-    @Nullable
-    private final JsExpression qualifier;
-    @NotNull
-    private final PropertyDescriptor propertyDescriptor;
-    private final boolean isBackingFieldAccess;
-    @NotNull
-    ResolvedCall<?> resolvedCall;
+    private static boolean isNativeProperty(@NotNull PropertyDescriptor propertyDescriptor,
+                                            @NotNull TranslationContext context) {
+        return context.declarationFacade().getNativeDeclarations().hasDeclaredName(propertyDescriptor);
+    }
 
-    private PropertyAccessTranslator(@NotNull PropertyDescriptor descriptor,
-                                     @Nullable JsExpression qualifier,
-                                     boolean isBackingFieldAccess,
-                                     @NotNull ResolvedCall<?> resolvedCall,
-                                     @NotNull TranslationContext context) {
+    protected PropertyAccessTranslator(@NotNull TranslationContext context) {
         super(context);
-        this.qualifier = qualifier;
-        this.propertyDescriptor = descriptor.getOriginal();
-        this.isBackingFieldAccess = isBackingFieldAccess;
-        this.resolvedCall = resolvedCall;
     }
 
-    @Override
-    @NotNull
-    public JsExpression translateAsGet() {
-        if (isBackingFieldAccess) {
-            return backingFieldGet();
-        } else {
-            return getterCall();
-        }
-    }
-
-    @NotNull
-    private JsExpression backingFieldGet() {
-        return backingFieldReference(context(), propertyDescriptor);
-    }
-
-    @NotNull
-    private JsExpression getterCall() {
-        return CallTranslator.translate(qualifier, resolvedCall, propertyDescriptor.getGetter(), context());
-    }
-
-    @Override
-    @NotNull
-    public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        if (isBackingFieldAccess) {
-            return backingFieldAssignment(toSetTo);
-        } else {
-            return setterCall(toSetTo);
-        }
-    }
-
-    @NotNull
-    private JsExpression setterCall(@NotNull JsExpression toSetTo) {
-        return CallTranslator.translate(qualifier, Arrays.asList(toSetTo),
-                resolvedCall, propertyDescriptor.getSetter(), context());
-    }
-
-    @NotNull
-    private JsExpression backingFieldAssignment(@NotNull JsExpression toSetTo) {
-        JsNameRef backingFieldReference = backingFieldReference(context(), propertyDescriptor);
-        return AstUtil.newAssignment(backingFieldReference, toSetTo);
-    }
 }

@@ -2,7 +2,7 @@ package jquery;
 
 import js.annotations.*;
 
-NativeClass
+Native
 class JQuery() {
     fun addClass(className : String) : JQuery = this;
     fun addClass(f : DomElement.(Int, String)->String) = this;
@@ -35,15 +35,15 @@ open class DomElement() {
 
 //val document = object : DomElement() {}
 
-NativeFun("$")
+Native("$")
 fun jq(selector : String) = JQuery();
-NativeFun("$")
+Native("$")
 fun jq(selector : String, context : DomElement) = JQuery();
-NativeFun("$")
+Native("$")
 fun jq(callback : () -> Unit) = JQuery();
-NativeFun("$")
+Native("$")
 fun jq(obj : JQuery) = JQuery();
-NativeFun("$")
+Native("$")
 fun jq(el : DomElement) = JQuery();
-NativeFun("$")
+Native("$")
 fun jq() = JQuery();

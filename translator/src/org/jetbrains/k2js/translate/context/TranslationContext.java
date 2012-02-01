@@ -193,9 +193,8 @@ public final class TranslationContext {
         return dynamicContext.jsBlock();
     }
 
-    //TODO: deletE?
     @NotNull
-    private DeclarationFacade declarationFacade() {
+    public DeclarationFacade declarationFacade() {
         return staticContext.getDeclarationFacade();
     }
 }

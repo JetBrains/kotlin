@@ -4,7 +4,6 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.NamingScope;
 
@@ -20,14 +19,14 @@ public class AnnotatedDeclarationVisitor extends AbstractDeclarationVisitor {
     private final String classAnnotationFQName;
 
     @NotNull
-    private final String funAnnotationFQName;
+    private final String memberAnnotationFQName;
 
     /*package*/ AnnotatedDeclarationVisitor(@NotNull Declarations declarations,
                                             @NotNull String classAnnotationFQName,
-                                            @NotNull String funAnnotationFQName) {
+                                            @NotNull String memberAnnotationFQName) {
         super(declarations);
         this.classAnnotationFQName = classAnnotationFQName;
-        this.funAnnotationFQName = funAnnotationFQName;
+        this.memberAnnotationFQName = memberAnnotationFQName;
     }
 
     @NotNull
@@ -61,13 +60,11 @@ public class AnnotatedDeclarationVisitor extends AbstractDeclarationVisitor {
         if (descriptor instanceof NamespaceDescriptor) {
             return true;
         }
-        if (descriptor instanceof FunctionDescriptor) {
-            return isAnnotatedFunction((FunctionDescriptor) descriptor);
-        }
         if (descriptor instanceof ClassDescriptor) {
             return isAnnotatedClass((ClassDescriptor) descriptor);
         }
-        return false;
+
+        return isAnnotatedMember(descriptor);
     }
 
     @Override
@@ -76,38 +73,28 @@ public class AnnotatedDeclarationVisitor extends AbstractDeclarationVisitor {
     }
 
 
+    //TODO: refactor
     @NotNull
     public String getName(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof FunctionDescriptor) {
-            return getNameForFunction((FunctionDescriptor) descriptor);
-        }
-        if (descriptor instanceof ClassDescriptor) {
-            return getNameForClass((ClassDescriptor) descriptor);
-        }
-        throw new AssertionError();
-    }
-
-    @NotNull
-    private String getNameForFunction(@NotNull FunctionDescriptor descriptor) {
-        if (hasFunctionAnnotation(descriptor)) {
-            return annotationStringParameter(descriptor, funAnnotationFQName);
+        if (hasMemberAnnotation(descriptor)) {
+            String name = annotationStringParameter(descriptor, memberAnnotationFQName);
+            if (!(name.isEmpty())) {
+                return name;
+            }
+            return descriptor.getName();
         }
         if (declaredInAnnotatedClass(descriptor)) {
+            return descriptor.getName();
+        }
+        if (hasClassAnnotation(descriptor)) {
             return descriptor.getName();
         }
         throw new AssertionError("Use isAnnotatedFunction to check");
     }
 
-    @NotNull
-    private String getNameForClass(@NotNull ClassDescriptor descriptor) {
-        if (hasClassAnnotation(descriptor)) {
-            return descriptor.getName();
-        }
-        throw new AssertionError("Use isAnnotatedClass to check");
-    }
 
-    public boolean isAnnotatedFunction(@NotNull FunctionDescriptor functionDescriptor) {
-        return hasFunctionAnnotation(functionDescriptor) || declaredInAnnotatedClass(functionDescriptor);
+    public boolean isAnnotatedMember(@NotNull DeclarationDescriptor descriptor) {
+        return hasMemberAnnotation(descriptor) || declaredInAnnotatedClass(descriptor);
     }
 
     public boolean isAnnotatedClass(@NotNull ClassDescriptor classDescriptor) {
@@ -121,8 +108,8 @@ public class AnnotatedDeclarationVisitor extends AbstractDeclarationVisitor {
     }
 
 
-    private boolean hasFunctionAnnotation(@NotNull DeclarationDescriptor descriptor) {
-        return (getAnnotationByName(descriptor, funAnnotationFQName) != null);
+    private boolean hasMemberAnnotation(@NotNull DeclarationDescriptor descriptor) {
+        return (getAnnotationByName(descriptor, memberAnnotationFQName) != null);
     }
 
     private boolean hasClassAnnotation(@NotNull DeclarationDescriptor descriptor) {

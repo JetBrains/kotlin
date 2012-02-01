@@ -21,8 +21,9 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
  */
 public final class ArrayAccessTranslator extends AccessTranslator {
 
-    public static ArrayAccessTranslator newInstance(@NotNull JetArrayAccessExpression expression,
-                                                    @NotNull TranslationContext context) {
+    /*package*/
+    static ArrayAccessTranslator newInstance(@NotNull JetArrayAccessExpression expression,
+                                             @NotNull TranslationContext context) {
         return new ArrayAccessTranslator(expression, context);
     }
 

@@ -13,12 +13,10 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 public final class ReferenceAccessTranslator extends AccessTranslator {
 
     @NotNull
-    public static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
-                                                        @NotNull TranslationContext context) {
+    /*package*/ static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+                                                             @NotNull TranslationContext context) {
         return new ReferenceAccessTranslator(expression, context);
     }
-
-    //TODO: condider evaluating only once
 
     @NotNull
     private final JetSimpleNameExpression expression;
@@ -32,12 +30,14 @@ public final class ReferenceAccessTranslator extends AccessTranslator {
     @Override
     @NotNull
     public JsExpression translateAsGet() {
+        //TODO: consider evaluating only once
         return ReferenceTranslator.translateSimpleName(expression, context());
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
+        //TODO: consider evaluating only once
         JsExpression reference = ReferenceTranslator.translateSimpleName(expression, context());
         assert reference instanceof JsNameRef;
         return AstUtil.newAssignment((JsNameRef) reference, toSetTo);
