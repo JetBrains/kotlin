@@ -52,6 +52,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private static final String IF_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n}";
     private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n} else {\n<#<block>#>\n}";
+    private static final String IF_ELSE_ONELINE_TEMPLATE = "if (<#<condition>#>) <#<value>#> else <#<value>#>";
     private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<returnType>#> {\n<#<body>#>\n}";
 
     private static class CommentFilter implements ElementFilter {
@@ -226,8 +227,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         // templates
         registerScopeKeywordsCompletion(new InTopFilter(), FUN_TEMPLATE);
         registerScopeKeywordsCompletion(new InClassBodyFilter(), FUN_TEMPLATE);
-        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), IF_TEMPLATE, IF_ELSE_TEMPLATE, FUN_TEMPLATE);
-        registerScopeKeywordsCompletion(new InPropertyFilter(), IF_ELSE_TEMPLATE, IF_TEMPLATE);
+        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE, FUN_TEMPLATE);
+        registerScopeKeywordsCompletion(new InPropertyFilter(), IF_ELSE_ONELINE_TEMPLATE);
         registerScopeKeywordsCompletion(new InParametersFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
     }
 
