@@ -147,7 +147,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
 
-        private static final JetTemplateInsertHandler TEMPLATE_INSERT_HANDLER = new JetTemplateInsertHandler();
         private final Collection<LookupElement> elements;
 
         public KeywordsCompletionProvider(String ...keywords) {
@@ -158,7 +157,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                     final LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(keyword).setBold();
 
                     if (keyword.contains("<#<")) {
-                        return lookupElementBuilder.setInsertHandler(TEMPLATE_INSERT_HANDLER);
+                        return JetTemplateInsertHandler.lookup(keyword);
                     }
 
                     if (!FUNCTION_KEYWORDS.contains(keyword)) {
@@ -202,7 +201,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 CATCH_KEYWORD, CLASS_KEYWORD, CONTINUE_KEYWORD,
                 DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
                 FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD,
-                FUN_KEYWORD, GET_KEYWORD, IF_KEYWORD,
+                FUN_KEYWORD, GET_KEYWORD,
                 IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
                 PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
@@ -214,19 +213,22 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 WHILE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InPropertyFilter(),
-                ELSE_KEYWORD, FALSE_KEYWORD, IF_KEYWORD,
+                ELSE_KEYWORD, FALSE_KEYWORD,
                 NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
 
-        extend(CompletionType.BASIC, getPlacePattern(new InNonClassBlockFilter()), new KeywordsCompletionProvider(
-                "if (<#<condition>#>) {\n\n}"
-        ));
+        // templates
+        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), "if (<#<condition>#>) {\n  \n}", "if (<#<condition>#>) {\n  \n} else {\n  \n}");
+    }
+
+    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter),
+               new KeywordsCompletionProvider(keywords));
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, JetToken... keywords) {
-        extend(CompletionType.BASIC, getPlacePattern(placeFilter),
-               new KeywordsCompletionProvider(convertTokensToStrings(keywords)));
+        registerScopeKeywordsCompletion(placeFilter, convertTokensToStrings(keywords));
     }
 
     private static String[] convertTokensToStrings(JetToken... keywords) {
