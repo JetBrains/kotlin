@@ -50,9 +50,9 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
 
-    private static final String IF_TEMPLATE = "if (<#<condition>#>) {\n  \n}";
-    private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n  \n} else {\n  \n}";
-    private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<returnType>#> {\n  \n}";
+    private static final String IF_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n}";
+    private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n} else {\n<#<block>#>\n}";
+    private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<returnType>#> {\n<#<body>#>\n}";
 
     private static class CommentFilter implements ElementFilter {
         @Override
