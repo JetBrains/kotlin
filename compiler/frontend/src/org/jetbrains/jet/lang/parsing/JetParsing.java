@@ -965,7 +965,9 @@ public class JetParsing extends AbstractJetParsing {
         if (at(COLON)) {
             advance(); // COLON
 
-            parseTypeRef();
+            if (!parseIdeTemplate()) {
+                parseTypeRef();
+            }
         }
 
         parseTypeConstraintsGuarded(typeParameterListOccurred);
@@ -992,16 +994,23 @@ public class JetParsing extends AbstractJetParsing {
                 expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
             }
         } else {
-            createTruncatedBuilder(lastDot).parseTypeRef();
-
-            if (atSet(RECEIVER_TYPE_TERMINATORS)) {
-                advance(); // expectation
+            if (parseIdeTemplate()) {
+                expect(DOT, "Expecting '.' after receiver template");
             }
             else {
-                errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
+                createTruncatedBuilder(lastDot).parseTypeRef();
+
+                if (atSet(RECEIVER_TYPE_TERMINATORS)) {
+                    advance(); // expectation
+                }
+                else {
+                    errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
+                }
             }
 
-            expect(IDENTIFIER, "Expecting " + title + " name", nameFollow);
+            if (!parseIdeTemplate()) {
+                expect(IDENTIFIER, "Expecting " + title + " name", nameFollow);
+            }
         }
     }
 
@@ -1537,29 +1546,32 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.disableNewlines();
         expect(LPAR, "Expecting '(", recoverySet);
 
-        if (!at(RPAR) && !atSet(recoverySet)) {
-            while (true) {
-                if (at(COMMA)) {
-                    errorAndAdvance("Expecting a parameter declaration");
-                }
-                else if (at(RPAR)) {
-                    error("Expecting a parameter declaration");
-                    break;
-                }
-                if (isFunctionTypeContents) {
-                    if (!tryParseValueParameter()) {
-                        PsiBuilder.Marker valueParameter = mark();
-                        parseModifierList(MODIFIER_LIST, false); // lazy, out, ref
-                        parseTypeRef();
-                        valueParameter.done(VALUE_PARAMETER);
+        if (!parseIdeTemplate()) {
+            if (!at(RPAR) && !atSet(recoverySet)) {
+                while (true) {
+                    if (at(COMMA)) {
+                        errorAndAdvance("Expecting a parameter declaration");
                     }
-                } else {
-                    parseValueParameter();
+                    else if (at(RPAR)) {
+                        error("Expecting a parameter declaration");
+                        break;
+                    }
+                    if (isFunctionTypeContents) {
+                        if (!tryParseValueParameter()) {
+                            PsiBuilder.Marker valueParameter = mark();
+                            parseModifierList(MODIFIER_LIST, false); // lazy, out, ref
+                            parseTypeRef();
+                            valueParameter.done(VALUE_PARAMETER);
+                        }
+                    } else {
+                        parseValueParameter();
+                    }
+                    if (!at(COMMA)) break;
+                    advance(); // COMMA
                 }
-                if (!at(COMMA)) break;
-                advance(); // COMMA
             }
         }
+        
         expect(RPAR, "Expecting ')'", recoverySet);
         myBuilder.restoreNewlinesState();
 
