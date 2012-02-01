@@ -1,6 +1,7 @@
 package std.concurrent
 
 import java.lang.*
+import java.util.concurrent.Executor
 
 inline val currentThread = Thread.currentThread().sure()
 
@@ -40,4 +41,12 @@ fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: C
     if(start)
         thread.start()
     return thread
+}
+
+inline fun Executor.execute(action: ()->Unit) {
+    execute(object: Runnable{
+        override fun run() {
+            action()
+        }
+    })
 }
