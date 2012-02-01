@@ -1,4 +1,12 @@
 <idea-plugin version="2">
+    <actions>
+        <action id="NextSelectorParameter" class="org.jetbrains.jet.plugin.completion.NextPrevParameterAction$Next" text="Next Parameter">
+            <keyboard-shortcut first-keystroke="ctrl alt TAB" keymap="$default"/>
+        </action>
+        <action id="PrevSelectorParameter" class="org.jetbrains.jet.plugin.completion.NextPrevParameterAction$Prev" text="Previous Parameter">
+            <keyboard-shortcut first-keystroke="ctrl alt shift TAB" keymap="$default"/>
+        </action>
+    </actions>
   <name>Kotlin</name>
   <description>Kotlin language support</description>
   <version>@snapshot@</version>
@@ -14,6 +22,12 @@
   </project-components>
 
   <actions>
+      <group>
+          <reference id="NextSelectorParameter"/>
+          <reference id="PrevSelectorParameter"/>
+          <add-to-group group-id="EditMenu" anchor="last"/>
+      </group>
+
      <action id="Kotlin.NewFile" class="org.jetbrains.jet.plugin.actions.NewKotlinFileAction">
         <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
      </action>
