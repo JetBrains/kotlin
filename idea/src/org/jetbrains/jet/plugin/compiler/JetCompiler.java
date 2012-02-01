@@ -1,31 +1,38 @@
 package org.jetbrains.jet.plugin.compiler;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.SimpleJavaParameters;
+import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
+import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.JavaSdkType;
+import com.intellij.openapi.projectRoots.JdkUtil;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.Chunk;
+import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
@@ -61,96 +68,105 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                VirtualFile[] allFiles = compileContext.getCompileScope().getFiles(null, true);
+        File kotlinHome = PathUtil.getDefaultCompilerPath();
+        if (kotlinHome == null) {
+            compileContext.addMessage(ERROR, "Cannot file kotlinc home. Make sure plugin is properly installed", "", -1, -1);
+            return;
+        }
+        
+        
+        StringBuilder script = new StringBuilder();
 
-                GenerationState generationState = new GenerationState(compileContext.getProject(), ClassBuilderFactory.BINARIES);
-                List<JetFile> files = Lists.newArrayList();
-                for (VirtualFile virtualFile : allFiles) {
-                    PsiFile psiFile = PsiManager.getInstance(compileContext.getProject()).findFile(virtualFile);
-                    if (psiFile instanceof JetFile) {
-                        files.add(((JetFile) psiFile));
-                    }
-                }
+        script.append("import kotlin.modules.*\n");
+        script.append("fun project() {\n");
+        script.append("module(\"" + moduleChunk.getNodes().iterator().next().getName() + "\") {\n");
 
-                BindingContext bindingContext =
-                    AnalyzerFacade.analyzeFilesWithJavaIntegration(compileContext.getProject(), files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        for (VirtualFile sourceFile : virtualFiles) {
+            script.append("sources += \"" + path(sourceFile) + "\"\n");
+        }
 
-                boolean errors = false;
-                for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-                    switch (diagnostic.getSeverity()) {
-                        case ERROR:
-                            errors = true;
-                            report(diagnostic, CompilerMessageCategory.ERROR, compileContext);
-                            break;
-                        case INFO:
-                            report(diagnostic, CompilerMessageCategory.INFORMATION, compileContext);                            
-                            break;
-                        case WARNING:
-                            report(diagnostic, CompilerMessageCategory.WARNING, compileContext);                            
-                            break;
-                    }
-                }
-                
-                if (!errors) {
-                    generationState.compileCorrectFiles(bindingContext, files, new CompilationErrorHandler() {
-                        @Override
-                        public void reportException(Throwable exception, String fileUrl) {
-                            if (exception instanceof CompilationException) {
-                                report((CompilationException) exception, compileContext);
-                            }
-                            else {
-                                compileContext.addMessage(CompilerMessageCategory.ERROR, exception.getClass().getCanonicalName() + ": " + exception.getMessage(), fileUrl, 0, 0);
-                            }
-                        }
-                    });
-///////////
-//                    GenerationState generationState2 = new GenerationState(compileContext.getProject(), ClassBuilderFactory.TEXT);
-//                    generationState2.compileCorrectFiles(bindingContext, namespaces);
-//                    StringBuilder answer = new StringBuilder();
-//
-//                    final ClassFileFactory factory2 = generationState2.getFactory();
-//                    List<String> files2 = factory2.files();
-//                    for (String file : files2) {
-//                        answer.append("@").append(file).append('\n');
-//                        answer.append(factory2.asText(file));
-//                    }
-//                    System.out.println(answer.toString());
-///////////
+        ModuleChunk chunk = new ModuleChunk((CompileContextEx) compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
+
+        // TODO: have a bootclasspath in script API
+        for (VirtualFile root : chunk.getCompilationBootClasspathFiles()) {
+            script.append("classpath += \"" + path(root) + "\"\n");
+        }
+
+        for (VirtualFile root : chunk.getCompilationClasspathFiles()) {
+            script.append("classpath += \"" + path(root) + "\"\n");
+        }
+
+        script.append("}\n");
+        script.append("}\n");
+
+        File scriptFile = new File(path(outputDir), "script.kts");
+        try {
+            FileUtil.writeToFile(scriptFile, script.toString());
+        } catch (IOException e) {
+            compileContext.addMessage(ERROR, "[Internal Error] Cannot write script to " + scriptFile.getAbsolutePath(), "", -1, -1);
+            return;
+        }
 
 
-                    final ClassFileFactory factory = generationState.getFactory();
-                    List<String> filesNames = factory.files();
-                    for (String file : filesNames) {
-                        File target = new File(outputDir.getPath(), file);
-                        try {
-                            FileUtil.writeToFile(target, factory.asBytes(file));
-                        } catch (IOException e) {
-                            compileContext.addMessage(ERROR, e.getMessage(), null, 0, 0);
-                        }
-                    }
+        final SimpleJavaParameters params = new SimpleJavaParameters();
+        params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
+        params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
+        params.getProgramParametersList().add("-module", scriptFile.getAbsolutePath());
+        params.getProgramParametersList().add("-output", path(outputDir));
+
+        File libs = new File(kotlinHome, "lib");
+
+        if (!libs.exists() || libs.isFile()) {
+            compileContext.addMessage(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", "", -1, -1);
+            return;
+        }
+
+        File[] jars = libs.listFiles();
+        if (jars != null) {
+            for (File jar : jars) {
+                if (jar.isFile() && jar.getName().endsWith(".jar")) {
+                    params.getClassPath().add(jar);
                 }
             }
-        });
+        }
         
-//        Map<Module, ModuleCompileState> moduleMap = new HashMap<Module, ModuleCompileState>();
-//
-//        for (VirtualFile virtualFile : virtualFiles) {
-//            Module module = compileContext.getModuleByFile(virtualFile);
-//            ModuleCompileState state = moduleMap.get(module);
-//            if (state == null) {
-//                state = new ModuleCompileState(compileContext, module, outputSink);
-//                moduleMap.put(module, state);
-//            }
-//            state.compile(virtualFile);
-//        }
-//
-//        for (ModuleCompileState state : moduleMap.values()) {
-//            state.done();
-//        }
+        params.getVMParametersList().addParametersString("-Djava.awt.headless=true -Xmx512m");
+        
+        
+        Sdk sdk = params.getJdk();
 
+        final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
+                ((JavaSdkType) sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
+        try {
+            final OSProcessHandler processHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString()) {
+              @Override
+              public Charset getCharset() {
+                return commandLine.getCharset();
+              }
+            };
+
+            processHandler.addProcessListener(new ProcessAdapter() {
+                @Override
+                public void onTextAvailable(ProcessEvent event, Key outputType) {
+                    System.out.println(event.getText());
+                }
+            });
+
+            processHandler.startNotify();
+            processHandler.waitFor();
+        } catch (Exception e) {
+            compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
+            return;
+        }
+    }
+
+    private static String path(VirtualFile root) {
+        String path = root.getPath();
+        if (path.endsWith("!/")) {
+            return path.substring(0, path.length() - 2);
+        }
+
+        return path;
     }
 
     private void report(Diagnostic diagnostic, CompilerMessageCategory severity, CompileContext compileContext) {
