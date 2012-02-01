@@ -26,7 +26,7 @@ public class TypeVariableByPsiResolverImpl implements TypeVariableByPsiResolver 
     @Override
     public TypeParameterDescriptor getTypeVariable(@NotNull PsiTypeParameter psiTypeParameter) {
         for (JavaDescriptorResolver.TypeParameterDescriptorInitialization typeParameter : typeParameters) {
-            if (typeParameter.psiTypeParameter == psiTypeParameter) {
+            if (JavaDescriptorResolver.equal(typeParameter.psiTypeParameter, psiTypeParameter)) {
                 return typeParameter.descriptor;
             }
         }
