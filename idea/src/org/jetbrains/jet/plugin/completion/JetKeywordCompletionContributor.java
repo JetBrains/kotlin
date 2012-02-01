@@ -50,6 +50,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
 
+    private static final String IF_TEMPLATE = "if (<#<condition>#>) {\n  \n}";
+    private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n  \n} else {\n  \n}";
+//    private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<return>#> {\n  \n}";
+
     private static class CommentFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
@@ -222,8 +226,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         // templates
         registerScopeKeywordsCompletion(new InTopFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
         registerScopeKeywordsCompletion(new InClassBodyFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
-        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), "if (<#<condition>#>) {\n  \n}", "if (<#<condition>#>) {\n  \n} else {\n  \n}");
-        registerScopeKeywordsCompletion(new InPropertyFilter(), "if (<#<condition>#>) {\n  \n} else {\n  \n}", "if (<#<condition>#>) {\n  \n}");
+        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), IF_TEMPLATE, IF_ELSE_TEMPLATE);
+        registerScopeKeywordsCompletion(new InPropertyFilter(), IF_ELSE_TEMPLATE, IF_TEMPLATE);
         registerScopeKeywordsCompletion(new InParametersFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
     }
 
@@ -241,8 +245,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         for (JetToken keyword : keywords) {
             strings.add(keyword.toString());
         }
-        
-        return strings.toArray(new String[strings.size()]);
+
+        return ArrayUtil.toStringArray(strings);
     }
 
     private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter) {
