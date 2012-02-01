@@ -2,6 +2,8 @@ package std.concurrent
 
 import java.lang.*
 
+inline val currentThread = Thread.currentThread().sure()
+
 inline var Thread.name : String
     get() = getName().sure()
     set(name: String) { setName(name) }
