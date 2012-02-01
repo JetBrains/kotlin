@@ -508,7 +508,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseParenthesizedExpression();
         }
         else if (at(IDE_TEMPLATE_START)) {
-            parseIdeTemplate();
+            myJetParsing.parseIdeTemplate();
         }
         else if (at(HASH)) {
             parseTupleExpression();
@@ -1836,22 +1836,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         argument.done(VALUE_ARGUMENT);
     }
     
-    /*
-     * "<#<" expression ">#>"
-     */
-    private void parseIdeTemplate() {
-        PsiBuilder.Marker placeholder = mark();
-        
-        advance();
-        if (at(IDE_TEMPLATE_END)) {
-            error("Expecting IDE template");
-        } else {
-            parseExpression();
-        }
-        expect(IDE_TEMPLATE_END, "");
-        placeholder.done(PARENTHESIZED);
-    }
-
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();

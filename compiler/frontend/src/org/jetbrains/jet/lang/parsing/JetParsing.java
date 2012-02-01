@@ -987,7 +987,10 @@ public class JetParsing extends AbstractJetParsing {
     private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
         if (lastDot == -1) { // There's no explicit receiver type specified
             parseAnnotations(false);
-            expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
+
+            if (!parseIdeTemplate()) {
+                expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
+            }
         } else {
             createTruncatedBuilder(lastDot).parseTypeRef();
 
@@ -1616,6 +1619,20 @@ public class JetParsing extends AbstractJetParsing {
             myExpressionParsing.parseExpression();
         }
         return true;
+    }
+
+    /*
+    * "<#<" expression ">#>"
+    */
+    boolean parseIdeTemplate() {
+        if (at(IDE_TEMPLATE_START)) {
+            advance();
+            expect(IDENTIFIER, "Expecting identifier inside template");
+            expect(IDE_TEMPLATE_END, "Expecting IDE template end after identifier");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
