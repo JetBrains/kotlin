@@ -1222,7 +1222,7 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    private FunctionDescriptor resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethodWrapper method) {
+    private FunctionDescriptor resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, final PsiMethodWrapper method) {
         
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
@@ -1329,7 +1329,7 @@ public class JavaDescriptorResolver {
                         return typeParameter.descriptor;
                     }
                 }
-                throw new IllegalStateException("unresolved PsiTypeParameter: " + psiTypeParameter.getName()); // TODO: report properly
+                throw new IllegalStateException("unresolved PsiTypeParameter " + psiTypeParameter.getName() + " in method " + method.getName() + " in class " + psiClass.getQualifiedName()); // TODO: report properly
             }
 
             @NotNull
