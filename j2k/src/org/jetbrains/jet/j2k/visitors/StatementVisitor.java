@@ -21,6 +21,10 @@ import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 public class StatementVisitor extends ElementVisitor {
     private Statement myResult = Statement.EMPTY_STATEMENT;
 
+    public StatementVisitor(@NotNull Converter converter) {
+        super(converter);
+    }
+
     @NotNull
     @Override
     public Statement getResult() {
@@ -31,8 +35,8 @@ public class StatementVisitor extends ElementVisitor {
     public void visitAssertStatement(@NotNull PsiAssertStatement statement) {
         super.visitAssertStatement(statement);
         myResult = new AssertStatement(
-                expressionToExpression(statement.getAssertCondition()),
-                expressionToExpression(statement.getAssertDescription())
+                getConverter().expressionToExpression(statement.getAssertCondition()),
+                getConverter().expressionToExpression(statement.getAssertDescription())
         );
     }
 
@@ -40,7 +44,7 @@ public class StatementVisitor extends ElementVisitor {
     public void visitBlockStatement(@NotNull PsiBlockStatement statement) {
         super.visitBlockStatement(statement);
         myResult = new Block(
-                statementsToStatementList(statement.getCodeBlock().getStatements()),
+                getConverter().statementsToStatementList(statement.getCodeBlock().getStatements()),
                 true
         );
     }
@@ -75,7 +79,7 @@ public class StatementVisitor extends ElementVisitor {
     public void visitDeclarationStatement(@NotNull PsiDeclarationStatement statement) {
         super.visitDeclarationStatement(statement);
         myResult = new DeclarationStatement(
-                elementsToElementList(statement.getDeclaredElements())
+                getConverter().elementsToElementList(statement.getDeclaredElements())
         );
     }
 
@@ -85,25 +89,25 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
         Expression expression = condition != null && condition.getType() != null ?
-                                createSureCallOnlyForChain(condition, condition.getType()) :
-                                expressionToExpression(condition);
+                                getConverter().createSureCallOnlyForChain(condition, condition.getType()) :
+                                getConverter().expressionToExpression(condition);
         myResult = new DoWhileStatement(
                 expression,
-                statementToStatement(statement.getBody())
+                getConverter().statementToStatement(statement.getBody())
         );
     }
 
     @Override
     public void visitExpressionStatement(@NotNull PsiExpressionStatement statement) {
         super.visitExpressionStatement(statement);
-        myResult = expressionToExpression(statement.getExpression());
+        myResult = getConverter().expressionToExpression(statement.getExpression());
     }
 
     @Override
     public void visitExpressionListStatement(@NotNull PsiExpressionListStatement statement) {
         super.visitExpressionListStatement(statement);
         myResult =
-                new ExpressionListStatement(expressionsToExpressionList(statement.getExpressionList().getExpressions()));
+                new ExpressionListStatement(getConverter().expressionsToExpressionList(statement.getExpressionList().getExpressions()));
     }
 
     @Override
@@ -143,25 +147,25 @@ public class StatementVisitor extends ElementVisitor {
                 && firstChild.getNameIdentifier() != null
                 && onceWritableIterator
                 ) {
-            final Expression end = expressionToExpression(((PsiBinaryExpression) condition).getROperand());
+            final Expression end = getConverter().expressionToExpression(((PsiBinaryExpression) condition).getROperand());
             final Expression endExpression = operationTokenType == JavaTokenType.LT ?
                                              new BinaryExpression(end, new IdentifierImpl("1"), "-") :
                                              end;
             myResult = new ForeachWithRangeStatement(
                     new IdentifierImpl(firstChild.getName()),
-                    expressionToExpression(firstChild.getInitializer()),
+                    getConverter().expressionToExpression(firstChild.getInitializer()),
                     endExpression,
-                    statementToStatement(body)
+                    getConverter().statementToStatement(body)
             );
         }
         else { // common case: while loop instead of for loop
             List<Statement> forStatements = new LinkedList<Statement>();
-            forStatements.add(statementToStatement(initialization));
+            forStatements.add(getConverter().statementToStatement(initialization));
             forStatements.add(new WhileStatement(
-                    expressionToExpression(condition),
+                    getConverter().expressionToExpression(condition),
                     new Block(
-                            Arrays.asList(statementToStatement(body),
-                                          new Block(Arrays.asList(statementToStatement(update)))))));
+                            Arrays.asList(getConverter().statementToStatement(body),
+                                          new Block(Arrays.asList(getConverter().statementToStatement(update)))))));
             myResult = new Block(forStatements);
         }
     }
@@ -175,9 +179,9 @@ public class StatementVisitor extends ElementVisitor {
     public void visitForeachStatement(@NotNull PsiForeachStatement statement) {
         super.visitForeachStatement(statement);
         myResult = new ForeachStatement(
-                parameterToParameter(statement.getIterationParameter()),
-                expressionToExpression(statement.getIteratedValue()),
-                statementToStatement(statement.getBody())
+                getConverter().parameterToParameter(statement.getIterationParameter()),
+                getConverter().expressionToExpression(statement.getIteratedValue()),
+                getConverter().statementToStatement(statement.getBody())
         );
     }
 
@@ -187,12 +191,12 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
         Expression expression = condition != null && condition.getType() != null ?
-                                createSureCallOnlyForChain(condition, condition.getType()) :
-                                expressionToExpression(condition);
+                                getConverter().createSureCallOnlyForChain(condition, condition.getType()) :
+                                getConverter().expressionToExpression(condition);
         myResult = new IfStatement(
                 expression,
-                statementToStatement(statement.getThenBranch()),
-                statementToStatement(statement.getElseBranch())
+                getConverter().statementToStatement(statement.getThenBranch()),
+                getConverter().statementToStatement(statement.getElseBranch())
         );
     }
 
@@ -201,7 +205,7 @@ public class StatementVisitor extends ElementVisitor {
         super.visitLabeledStatement(statement);
         myResult = new LabelStatement(
                 identifierToIdentifier(statement.getLabelIdentifier()),
-                statementToStatement(statement.getStatement())
+                getConverter().statementToStatement(statement.getStatement())
         );
     }
 
@@ -210,20 +214,20 @@ public class StatementVisitor extends ElementVisitor {
         super.visitSwitchLabelStatement(statement);
         myResult = statement.isDefaultCase() ?
                    new DefaultSwitchLabelStatement() :
-                   new SwitchLabelStatement(expressionToExpression(statement.getCaseValue()));
+                   new SwitchLabelStatement(getConverter().expressionToExpression(statement.getCaseValue()));
     }
 
     @Override
     public void visitSwitchStatement(@NotNull PsiSwitchStatement statement) {
         super.visitSwitchStatement(statement);
         myResult = new SwitchContainer(
-                expressionToExpression(statement.getExpression()),
+                getConverter().expressionToExpression(statement.getExpression()),
                 switchBodyToCases(statement.getBody())
         );
     }
 
     @NotNull
-    private static List<CaseContainer> switchBodyToCases(@Nullable final PsiCodeBlock body) {
+    private List<CaseContainer> switchBodyToCases(@Nullable final PsiCodeBlock body) {
         final List<List<PsiStatement>> cases = splitToCases(body);
         final List<PsiStatement> allSwitchStatements = body != null
                                                        ? Arrays.asList(body.getStatements())
@@ -240,25 +244,25 @@ public class StatementVisitor extends ElementVisitor {
             assert allSwitchStatements.get(i) == label : "not a right index";
 
             if (ls.size() > 1) {
-                pendingLabels.add(statementToStatement(label));
+                pendingLabels.add(getConverter().statementToStatement(label));
                 List<PsiStatement> slice = ls.subList(1, ls.size());
 
                 if (!containsBreak(slice)) {
-                    List<Statement> statements = statementsToStatementList(slice);
+                    List<Statement> statements = getConverter().statementsToStatementList(slice);
                     statements.addAll(
-                            statementsToStatementList(getAllToNextBreak(allSwitchStatements, i + ls.size()))
+                            getConverter().statementsToStatementList(getAllToNextBreak(allSwitchStatements, i + ls.size()))
                     );
                     result.add(new CaseContainer(pendingLabels, statements));
                     pendingLabels = new LinkedList<Statement>();
                 }
                 else {
-                    result.add(new CaseContainer(pendingLabels, statementsToStatementList(slice)));
+                    result.add(new CaseContainer(pendingLabels, getConverter().statementsToStatementList(slice)));
                     pendingLabels = new LinkedList<Statement>();
                 }
             }
             else // ls.size() == 1
             {
-                pendingLabels.add(statementToStatement(label));
+                pendingLabels.add(getConverter().statementToStatement(label));
             }
             i += ls.size();
         }
@@ -315,8 +319,8 @@ public class StatementVisitor extends ElementVisitor {
     public void visitSynchronizedStatement(@NotNull PsiSynchronizedStatement statement) {
         super.visitSynchronizedStatement(statement);
         myResult = new SynchronizedStatement(
-                expressionToExpression(statement.getLockExpression()),
-                blockToBlock(statement.getBody())
+                getConverter().expressionToExpression(statement.getLockExpression()),
+                getConverter().blockToBlock(statement.getBody())
         );
     }
 
@@ -324,7 +328,7 @@ public class StatementVisitor extends ElementVisitor {
     public void visitThrowStatement(@NotNull PsiThrowStatement statement) {
         super.visitThrowStatement(statement);
         myResult = new ThrowStatement(
-                expressionToExpression(statement.getException())
+                getConverter().expressionToExpression(statement.getException())
         );
     }
 
@@ -335,15 +339,15 @@ public class StatementVisitor extends ElementVisitor {
         List<CatchStatement> catches = new LinkedList<CatchStatement>();
         for (int i = 0; i < statement.getCatchBlocks().length; i++) {
             catches.add(new CatchStatement(
-                    parameterToParameter(statement.getCatchBlockParameters()[i]),
-                    blockToBlock(statement.getCatchBlocks()[i], true)
+                    getConverter().parameterToParameter(statement.getCatchBlockParameters()[i]),
+                    getConverter().blockToBlock(statement.getCatchBlocks()[i], true)
             ));
         }
 
         myResult = new TryStatement(
-                blockToBlock(statement.getTryBlock(), true),
+                getConverter().blockToBlock(statement.getTryBlock(), true),
                 catches,
-                blockToBlock(statement.getFinallyBlock(), true)
+                getConverter().blockToBlock(statement.getFinallyBlock(), true)
         );
     }
 
@@ -353,11 +357,11 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
         Expression expression = condition != null && condition.getType() != null ?
-                                createSureCallOnlyForChain(condition, condition.getType()) :
-                                expressionToExpression(condition);
+                                getConverter().createSureCallOnlyForChain(condition, condition.getType()) :
+                                getConverter().expressionToExpression(condition);
         myResult = new WhileStatement(
                 expression,
-                statementToStatement(statement.getBody())
+                getConverter().statementToStatement(statement.getBody())
         );
     }
 
@@ -365,10 +369,10 @@ public class StatementVisitor extends ElementVisitor {
     public void visitReturnStatement(@NotNull PsiReturnStatement statement) {
         super.visitReturnStatement(statement);
         PsiExpression returnValue = statement.getReturnValue();
-        PsiType methodReturnType = Converter.getMethodReturnType();
+        PsiType methodReturnType = getConverter().getMethodReturnType();
         Expression expression = returnValue != null && methodReturnType != null ?
-                                createSureCallOnlyForChain(returnValue, methodReturnType) :
-                                expressionToExpression(returnValue);
+                                getConverter().createSureCallOnlyForChain(returnValue, methodReturnType) :
+                                getConverter().expressionToExpression(returnValue);
         myResult = new ReturnStatement(
                 expression
         );

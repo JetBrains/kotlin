@@ -1,5 +1,6 @@
 package org.jetbrains.jet.j2k;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -21,54 +22,55 @@ import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
  */
 public class Converter {
     @NotNull
-    final static Set<String> NOT_NULL_ANNOTATIONS = new HashSet<String>() {
-        {
-            add("org.jetbrains.annotations.NotNull");
-            add("com.sun.istack.internal.NotNull");
-            add("javax.annotation.Nonnull");
-        }
-    };
+    public static final Set<String> NOT_NULL_ANNOTATIONS = ImmutableSet.of(
+        "org.jetbrains.annotations.NotNull",
+        "com.sun.istack.internal.NotNull",
+        "javax.annotation.Nonnull"
+    );
+
     @NotNull
-    private static Set<String> ourClassIdentifiers = new HashSet<String>();
+    private Set<String> classIdentifiers = Sets.newHashSet();
+
     @NotNull
-    private static final Dispatcher ourDispatcher = new Dispatcher();
+    private final Dispatcher dispatcher = new Dispatcher(this);
+
     @Nullable
-    private static PsiType ourMethodReturnType = null;
+    private PsiType methodReturnType = null;
 
     @NotNull
-    private static Set<J2KConverterFlags> flags = Sets.newHashSet();
+    private final Set<J2KConverterFlags> flags = Sets.newHashSet();
 
-    private Converter() {
+    public Converter() {
     }
 
-    public static boolean addFlag(@NotNull J2KConverterFlags flag) {
+    public boolean addFlag(@NotNull J2KConverterFlags flag) {
         return flags.add(flag);
     }
 
-    public static boolean hasFlag(@NotNull J2KConverterFlags flag) {
+    public boolean hasFlag(@NotNull J2KConverterFlags flag) {
         return flags.contains(flag);
     }
 
-    public static void setClassIdentifiers(@NotNull Set<String> identifiers) {
-        ourClassIdentifiers = identifiers;
+    public void setClassIdentifiers(@NotNull Set<String> identifiers) {
+        classIdentifiers = identifiers;
     }
 
     @NotNull
-    public static Set<String> getClassIdentifiers() {
-        return new HashSet<String>(ourClassIdentifiers);
+    public Set<String> getClassIdentifiers() {
+        return Collections.unmodifiableSet(classIdentifiers);
     }
 
     @Nullable
-    public static PsiType getMethodReturnType() {
-        return ourMethodReturnType;
+    public PsiType getMethodReturnType() {
+        return methodReturnType;
     }
 
-    public static void clearClassIdentifiers() {
-        ourClassIdentifiers.clear();
+    public void clearClassIdentifiers() {
+        classIdentifiers.clear();
     }
 
     @NotNull
-    public static String elementToKotlin(@NotNull PsiElement element) {
+    public String elementToKotlin(@NotNull PsiElement element) {
         if (element instanceof PsiJavaFile) {
             return fileToFile((PsiJavaFile) element).toKotlin();
         }
@@ -98,17 +100,17 @@ public class Converter {
     }
 
     @NotNull
-    public static File fileToFile(@NotNull PsiJavaFile javaFile) {
+    public File fileToFile(@NotNull PsiJavaFile javaFile) {
         return fileToFile(javaFile, Collections.<String>emptyList());
     }
 
     @NotNull
-    public static File fileToFileWithCompatibilityImport(@NotNull PsiJavaFile javaFile) {
+    public File fileToFileWithCompatibilityImport(@NotNull PsiJavaFile javaFile) {
         return fileToFile(javaFile, Collections.singletonList("std.compatibility.*"));
     }
 
     @NotNull
-    private static File fileToFile(PsiJavaFile javaFile, List<String> additionalImports) {
+    private File fileToFile(PsiJavaFile javaFile, List<String> additionalImports) {
         final PsiImportList importList = javaFile.getImportList();
         List<Import> imports = importList == null
                                ? Collections.<Import>emptyList()
@@ -127,19 +129,19 @@ public class Converter {
     }
 
     @NotNull
-    private static List<Class> classesToClassList(@NotNull PsiClass[] classes) {
+    private List<Class> classesToClassList(@NotNull PsiClass[] classes) {
         List<Class> result = new LinkedList<Class>();
         for (PsiClass t : classes) result.add(classToClass(t));
         return result;
     }
 
     @NotNull
-    public static AnonymousClass anonymousClassToAnonymousClass(@NotNull PsiAnonymousClass anonymousClass) {
-        return new AnonymousClass(getMembers(anonymousClass));
+    public AnonymousClass anonymousClassToAnonymousClass(@NotNull PsiAnonymousClass anonymousClass) {
+        return new AnonymousClass(this, getMembers(anonymousClass));
     }
 
     @NotNull
-    private static List<Member> getMembers(@NotNull PsiClass psiClass) {
+    private List<Member> getMembers(@NotNull PsiClass psiClass) {
         List<Member> members = new LinkedList<Member>();
         for (PsiElement e : psiClass.getChildren()) {
             if (e instanceof PsiMethod) {
@@ -198,7 +200,7 @@ public class Converter {
     }
 
     @NotNull
-    private static Class classToClass(@NotNull PsiClass psiClass) {
+    private Class classToClass(@NotNull PsiClass psiClass) {
         final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
         final List<Field> fields = fieldsToFieldList(psiClass.getFields(), psiClass);
         final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
@@ -285,16 +287,16 @@ public class Converter {
         }
 
         if (psiClass.isInterface()) {
-            return new Trait(name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, members);
+            return new Trait(this, name, modifiers, typeParameters, extendsTypes, Collections.<Expression>emptyList(), implementsTypes, members);
         }
         if (psiClass.isEnum()) {
-            return new Enum(name, modifiers, typeParameters, Collections.<Type>emptyList(), Collections.<Expression>emptyList(), implementsTypes, members);
+            return new Enum(this, name, modifiers, typeParameters, Collections.<Type>emptyList(), Collections.<Expression>emptyList(), implementsTypes, members);
         }
-        return new Class(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members);
+        return new Class(this, name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members);
     }
 
     @NotNull
-    private static Initializer initializerToInitializer(@NotNull PsiClassInitializer i) {
+    private Initializer initializerToInitializer(@NotNull PsiClassInitializer i) {
         return new Initializer(
                 blockToBlock(i.getBody(), true),
                 modifiersListToModifiersSet(i.getModifierList())
@@ -317,14 +319,14 @@ public class Converter {
     }
 
     @NotNull
-    private static List<Field> fieldsToFieldList(@NotNull PsiField[] fields, PsiClass psiClass) {
+    private List<Field> fieldsToFieldList(@NotNull PsiField[] fields, PsiClass psiClass) {
         List<Field> result = new LinkedList<Field>();
         for (PsiField f : fields) result.add(fieldToField(f, psiClass));
         return result;
     }
 
     @NotNull
-    private static Field fieldToField(@NotNull PsiField field, PsiClass psiClass) {
+    private Field fieldToField(@NotNull PsiField field, PsiClass psiClass) {
         Set<String> modifiers = modifiersListToModifiersSet(field.getModifierList());
         if (field instanceof PsiEnumConstant) // TODO: remove instanceof
         {
@@ -378,20 +380,20 @@ public class Converter {
     }
 
     @NotNull
-    private static Function methodToFunction(@NotNull PsiMethod method) {
+    private Function methodToFunction(@NotNull PsiMethod method) {
         return methodToFunction(method, true);
     }
 
     @NotNull
-    private static Function methodToFunction(@NotNull PsiMethod method, boolean notEmpty) {
+    private Function methodToFunction(@NotNull PsiMethod method, boolean notEmpty) {
         if (isOverrideObjectDirect(method)) {
-            ourDispatcher.setExpressionVisitor(new ExpressionVisitorForDirectObjectInheritors());
+            dispatcher.setExpressionVisitor(new ExpressionVisitorForDirectObjectInheritors(this));
         }
         else {
-            ourDispatcher.setExpressionVisitor(new ExpressionVisitor());
+            dispatcher.setExpressionVisitor(new ExpressionVisitor(this));
         }
 
-        ourMethodReturnType = method.getReturnType();
+        methodReturnType = method.getReturnType();
 
         final IdentifierImpl identifier = new IdentifierImpl(method.getName());
         final Type returnType = typeToType(method.getReturnType(), ConverterUtil.isAnnotatedAsNotNull(method.getModifierList()));
@@ -435,7 +437,7 @@ public class Converter {
     }
 
     @NotNull
-    private static ParameterList createFunctionParameters(@NotNull PsiMethod method) {
+    private ParameterList createFunctionParameters(@NotNull PsiMethod method) {
         List<Parameter> result = new LinkedList<Parameter>();
         for (PsiParameter parameter : method.getParameterList().getParameters()) {
             result.add(new Parameter(
@@ -457,7 +459,7 @@ public class Converter {
         return false;
     }
 
-    private static boolean isOverrideAnyMethodExceptMethodsFromObject(@NotNull PsiMethod method) {
+    private boolean isOverrideAnyMethodExceptMethodsFromObject(@NotNull PsiMethod method) {
         boolean counter = normalCase(method);
         if (counter) {
             return true;
@@ -468,7 +470,7 @@ public class Converter {
         return false;
     }
 
-    private static boolean caseForObject(@NotNull PsiMethod method) {
+    private boolean caseForObject(@NotNull PsiMethod method) {
         PsiClass containing = method.getContainingClass();
         if (containing != null) {
             for (PsiClassType s : containing.getSuperTypes()) {
@@ -518,85 +520,85 @@ public class Converter {
     }
 
     @NotNull
-    public static Block blockToBlock(@Nullable PsiCodeBlock block, boolean notEmpty) {
+    public Block blockToBlock(@Nullable PsiCodeBlock block, boolean notEmpty) {
         if (block == null) return Block.EMPTY_BLOCK;
         return new Block(statementsToStatementList(block.getStatements()), notEmpty);
     }
 
     @NotNull
-    public static Block blockToBlock(@Nullable PsiCodeBlock block) {
+    public Block blockToBlock(@Nullable PsiCodeBlock block) {
         return blockToBlock(block, true);
     }
 
     @NotNull
-    public static List<Statement> statementsToStatementList(@NotNull PsiStatement[] statements) {
+    public List<Statement> statementsToStatementList(@NotNull PsiStatement[] statements) {
         List<Statement> result = new LinkedList<Statement>();
         for (PsiStatement t : statements) result.add(statementToStatement(t));
         return result;
     }
 
     @NotNull
-    public static List<Statement> statementsToStatementList(@NotNull List<PsiStatement> statements) {
+    public List<Statement> statementsToStatementList(@NotNull List<PsiStatement> statements) {
         List<Statement> result = new LinkedList<Statement>();
         for (PsiStatement t : statements) result.add(statementToStatement(t));
         return result;
     }
 
     @NotNull
-    public static Statement statementToStatement(@Nullable PsiStatement s) {
+    public Statement statementToStatement(@Nullable PsiStatement s) {
         if (s == null) return Statement.EMPTY_STATEMENT;
-        final StatementVisitor statementVisitor = new StatementVisitor();
+        final StatementVisitor statementVisitor = new StatementVisitor(this);
         s.accept(statementVisitor);
         return statementVisitor.getResult();
     }
 
     @NotNull
-    public static List<Expression> expressionsToExpressionList(@NotNull PsiExpression[] expressions) {
+    public List<Expression> expressionsToExpressionList(@NotNull PsiExpression[] expressions) {
         List<Expression> result = new LinkedList<Expression>();
         for (PsiExpression e : expressions) result.add(expressionToExpression(e));
         return result;
     }
 
     @NotNull
-    public static Expression expressionToExpression(@Nullable PsiExpression e) {
+    public Expression expressionToExpression(@Nullable PsiExpression e) {
         if (e == null) return Expression.EMPTY_EXPRESSION;
-        final ExpressionVisitor expressionVisitor = ourDispatcher.getExpressionVisitor();
+        final ExpressionVisitor expressionVisitor = dispatcher.getExpressionVisitor();
         e.accept(expressionVisitor);
         return expressionVisitor.getResult();
     }
 
     @NotNull
-    public static Element elementToElement(@Nullable PsiElement e) {
+    public Element elementToElement(@Nullable PsiElement e) {
         if (e == null) return Element.EMPTY_ELEMENT;
-        final ElementVisitor elementVisitor = new ElementVisitor();
+        final ElementVisitor elementVisitor = new ElementVisitor(this);
         e.accept(elementVisitor);
         return elementVisitor.getResult();
     }
 
     @NotNull
-    public static List<Element> elementsToElementList(@NotNull PsiElement[] elements) {
+    public List<Element> elementsToElementList(@NotNull PsiElement[] elements) {
         List<Element> result = new LinkedList<Element>();
         for (PsiElement e : elements) result.add(elementToElement(e));
         return result;
     }
 
     @NotNull
-    public static Type typeToType(@Nullable PsiType type) {
+    public Type typeToType(@Nullable PsiType type) {
         if (type == null) return Type.EMPTY_TYPE;
-        TypeVisitor typeVisitor = new TypeVisitor();
+        TypeVisitor typeVisitor = new TypeVisitor(this);
         type.accept(typeVisitor);
         return typeVisitor.getResult();
     }
 
     @NotNull
-    public static List<Type> typesToTypeList(@NotNull PsiType[] types) {
+    public List<Type> typesToTypeList(@NotNull PsiType[] types) {
         List<Type> result = new LinkedList<Type>();
         for (PsiType t : types) result.add(typeToType(t));
         return result;
     }
 
     @NotNull
-    public static Type typeToType(PsiType type, boolean notNull) {
+    public Type typeToType(PsiType type, boolean notNull) {
         Type result = typeToType(type);
         if (notNull) {
             result.convertedToNotNull();
@@ -605,7 +607,7 @@ public class Converter {
     }
 
     @NotNull
-    private static List<Type> typesToNotNullableTypeList(@NotNull PsiType[] types) {
+    private List<Type> typesToNotNullableTypeList(@NotNull PsiType[] types) {
         List<Type> result = new LinkedList<Type>(typesToTypeList(types));
         for (Type p : result) p.convertedToNotNull();
         return result;
@@ -634,14 +636,14 @@ public class Converter {
     }
 
     @NotNull
-    public static List<Parameter> parametersToParameterList(@NotNull PsiParameter[] parameters) {
+    public List<Parameter> parametersToParameterList(@NotNull PsiParameter[] parameters) {
         List<Parameter> result = new LinkedList<Parameter>();
         for (PsiParameter t : parameters) result.add(parameterToParameter(t));
         return result;
     }
 
     @NotNull
-    public static Parameter parameterToParameter(@NotNull PsiParameter parameter) {
+    public Parameter parameterToParameter(@NotNull PsiParameter parameter) {
         return new Parameter(
                 new IdentifierImpl(parameter.getName()),
                 typeToType(parameter.getType(), ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList()))
@@ -670,7 +672,7 @@ public class Converter {
     }
 
     @NotNull
-    public static List<String> createConversions(@NotNull PsiCallExpression expression) {
+    public List<String> createConversions(@NotNull PsiCallExpression expression) {
         PsiExpressionList argumentList = expression.getArgumentList();
         PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
         List<String> conversions = new LinkedList<String>();
@@ -699,7 +701,7 @@ public class Converter {
     }
 
     @NotNull
-    public static List<String> createConversions(@NotNull PsiPolyadicExpression expression, PsiType expectedType) {
+    public List<String> createConversions(@NotNull PsiPolyadicExpression expression, PsiType expectedType) {
         PsiExpression[] arguments = expression.getOperands();
         int length = arguments.length;
         List<String> conversions = new LinkedList<String>();
@@ -719,7 +721,7 @@ public class Converter {
     }
 
     @NotNull
-    private static String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
+    private String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
         String conversion = "";
         if (expression != null) {
             PsiType actualType = expression.getType();
@@ -792,7 +794,7 @@ public class Converter {
 //  }
 
     @NotNull
-    public static SureCallChainExpression createSureCallOnlyForChain(@Nullable PsiExpression expression, @NotNull PsiType type) {
+    public SureCallChainExpression createSureCallOnlyForChain(@Nullable PsiExpression expression, @NotNull PsiType type) {
         String conversion = (expression != null && (expression instanceof PsiReferenceExpression || expression instanceof PsiMethodCallExpression))
                             ?
                             createConversionForExpression(expression, type)

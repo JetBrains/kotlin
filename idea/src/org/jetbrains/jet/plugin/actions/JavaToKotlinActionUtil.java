@@ -22,13 +22,11 @@ import java.util.*;
  * @author ignatov
  */
 public class JavaToKotlinActionUtil {
-    private JavaToKotlinActionUtil() {
-    }
 
-    static void setClassIdentifiers(@NotNull PsiFile psiFile) {
+    static void setClassIdentifiers(@NotNull Converter converter, @NotNull PsiFile psiFile) {
         ClassVisitor c = new ClassVisitor();
         psiFile.accept(c);
-        Converter.setClassIdentifiers(c.getClassIdentifiers());
+        converter.setClassIdentifiers(c.getClassIdentifiers());
     }
 
     @NotNull
@@ -75,13 +73,13 @@ public class JavaToKotlinActionUtil {
     }
 
     @NotNull
-    static List<VirtualFile> performFiles(List<PsiFile> allJavaFilesNear) {
+    static List<VirtualFile> convertFiles(final Converter converter, List<PsiFile> allJavaFilesNear) {
         final List<VirtualFile> result = new LinkedList<VirtualFile>();
         for (final PsiFile f : allJavaFilesNear) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
-                    VirtualFile vf = performOneFile(f);
+                    VirtualFile vf = convertOneFile(converter, f);
                     if (vf != null) {
                         result.add(vf);
                     }
@@ -110,13 +108,13 @@ public class JavaToKotlinActionUtil {
     }
 
     @Nullable
-    private static VirtualFile performOneFile(PsiFile psiFile) {
+    private static VirtualFile convertOneFile(Converter converter, PsiFile psiFile) {
         try {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             if (psiFile instanceof PsiJavaFile && virtualFile != null) {
                 String result = "";
                 try {
-                    result = Converter.fileToFile((PsiJavaFile) psiFile).toKotlin();
+                    result = converter.fileToFile((PsiJavaFile) psiFile).toKotlin();
                 } catch (Exception e) {
                     //noinspection CallToPrintStackTrace
                     e.printStackTrace();

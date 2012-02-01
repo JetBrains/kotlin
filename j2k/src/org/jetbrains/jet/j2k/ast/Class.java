@@ -26,7 +26,7 @@ public class Class extends Member {
     private final List<Type> myExtendsTypes;
     private final List<Type> myImplementsTypes;
 
-    public Class(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
+    public Class(Converter converter, Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
                  List<Expression> baseClassParams, List<Type> implementsTypes, List<Member> members) {
         myName = name;
         myBaseClassParams = baseClassParams;
@@ -34,12 +34,12 @@ public class Class extends Member {
         myTypeParameters = typeParameters;
         myExtendsTypes = extendsTypes;
         myImplementsTypes = implementsTypes;
-        myMembers = getMembers(members);
+        myMembers = getMembers(members, converter);
     }
 
-    static List<Member> getMembers(List<Member> members) {
+    /*package*/ static List<Member> getMembers(List<Member> members, Converter converter) {
         List<Member> withoutPrivate = new LinkedList<Member>();
-        if (Converter.hasFlag(J2KConverterFlags.SKIP_NON_PUBLIC_MEMBERS)) {
+        if (converter.hasFlag(J2KConverterFlags.SKIP_NON_PUBLIC_MEMBERS)) {
             for (Member m : members) {
                 if (m.accessModifier().equals("public") || m.accessModifier().equals("protected")) {
                     withoutPrivate.add(m);

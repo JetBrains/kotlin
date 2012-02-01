@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
 
 import java.util.Collections;
@@ -18,6 +19,10 @@ import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
 public class ExpressionVisitor extends StatementVisitor {
     @NotNull
     Expression myResult = Expression.EMPTY_EXPRESSION;
+
+    public ExpressionVisitor(@NotNull Converter converter) {
+        super(converter);
+    }
 
     @Override
     public void visitExpression(final PsiExpression expression) {
@@ -34,8 +39,8 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitArrayAccessExpression(@NotNull PsiArrayAccessExpression expression) {
         super.visitArrayAccessExpression(expression);
         myResult = new ArrayAccessExpression(
-                expressionToExpression(expression.getArrayExpression()),
-                expressionToExpression(expression.getIndexExpression())
+                getConverter().expressionToExpression(expression.getArrayExpression()),
+                getConverter().expressionToExpression(expression.getIndexExpression())
         );
     }
 
@@ -43,8 +48,8 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitArrayInitializerExpression(@NotNull PsiArrayInitializerExpression expression) {
         super.visitArrayInitializerExpression(expression);
         myResult = new ArrayInitializerExpression(
-                typeToType(expression.getType()),
-                expressionsToExpressionList(expression.getInitializers())
+                getConverter().typeToType(expression.getType()),
+                getConverter().expressionsToExpressionList(expression.getInitializers())
         );
     }
 
@@ -67,10 +72,10 @@ public class ExpressionVisitor extends StatementVisitor {
         if (!secondOp.isEmpty()) // if not Kotlin operators
         {
             myResult = new AssignmentExpression(
-                    expressionToExpression(expression.getLExpression()),
+                    getConverter().expressionToExpression(expression.getLExpression()),
                     new BinaryExpression(
-                            expressionToExpression(expression.getLExpression()),
-                            expressionToExpression(expression.getRExpression()),
+                            getConverter().expressionToExpression(expression.getLExpression()),
+                            getConverter().expressionToExpression(expression.getRExpression()),
                             secondOp
                     ),
                     "="
@@ -78,8 +83,8 @@ public class ExpressionVisitor extends StatementVisitor {
         }
         else {
             myResult = new AssignmentExpression(
-                    expressionToExpression(expression.getLExpression()),
-                    expressionToExpression(expression.getRExpression()),
+                    getConverter().expressionToExpression(expression.getLExpression()),
+                    getConverter().expressionToExpression(expression.getRExpression()),
                     expression.getOperationSign().getText() // TODO
             );
         }
@@ -120,17 +125,17 @@ public class ExpressionVisitor extends StatementVisitor {
 
         if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT) {
             myResult = new DummyMethodCallExpression(
-                    expressionToExpression(expression.getLOperand()),
+                    getConverter().expressionToExpression(expression.getLOperand()),
                     "ushr",
-                    expressionToExpression(expression.getROperand()));
+                    getConverter().expressionToExpression(expression.getROperand()));
         }
         else {
             myResult =
                     new BinaryExpression(
-                            expressionToExpression(expression.getLOperand()),
-                            expressionToExpression(expression.getROperand()),
+                            getConverter().expressionToExpression(expression.getLOperand()),
+                            getConverter().expressionToExpression(expression.getROperand()),
                             getOperatorString(expression.getOperationSign().getTokenType()),
-                            createConversions(expression, PsiType.BOOLEAN)
+                            getConverter().createConversions(expression, PsiType.BOOLEAN)
                     );
         }
     }
@@ -138,7 +143,7 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitClassObjectAccessExpression(@NotNull PsiClassObjectAccessExpression expression) {
         super.visitClassObjectAccessExpression(expression);
-        myResult = new ClassObjectAccessExpression(elementToElement(expression.getOperand()));
+        myResult = new ClassObjectAccessExpression(getConverter().elementToElement(expression.getOperand()));
     }
 
     @Override
@@ -147,13 +152,13 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiExpression condition = expression.getCondition();
         PsiType type = condition.getType();
         Expression e = type != null ?
-                       createSureCallOnlyForChain(condition, type) :
-                       expressionToExpression(condition);
+                       getConverter().createSureCallOnlyForChain(condition, type) :
+                       getConverter().expressionToExpression(condition);
         myResult = new ParenthesizedExpression(
                 new IfStatement(
                         e,
-                        expressionToExpression(expression.getThenExpression()),
-                        expressionToExpression(expression.getElseExpression())
+                        getConverter().expressionToExpression(expression.getThenExpression()),
+                        getConverter().expressionToExpression(expression.getElseExpression())
                 )
         );
     }
@@ -161,15 +166,15 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitExpressionList(@NotNull PsiExpressionList list) {
         super.visitExpressionList(list);
-        myResult = new ExpressionList(expressionsToExpressionList(list.getExpressions()));
+        myResult = new ExpressionList(getConverter().expressionsToExpressionList(list.getExpressions()));
     }
 
     @Override
     public void visitInstanceOfExpression(@NotNull PsiInstanceOfExpression expression) {
         super.visitInstanceOfExpression(expression);
         myResult = new IsOperator(
-                expressionToExpression(expression.getOperand()),
-                elementToElement(expression.getCheckType()));
+                getConverter().expressionToExpression(expression.getOperand()),
+                getConverter().elementToElement(expression.getCheckType()));
     }
 
     @Override
@@ -213,11 +218,11 @@ public class ExpressionVisitor extends StatementVisitor {
         if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
             myResult = // TODO: not resolved
                     new MethodCallExpression(
-                            expressionToExpression(expression.getMethodExpression()),
-                            expressionsToExpressionList(expression.getArgumentList().getExpressions()),
-                            createConversions(expression),
-                            typeToType(expression.getType()).isNullable(),
-                            typesToTypeList(expression.getTypeArguments())
+                            getConverter().expressionToExpression(expression.getMethodExpression()),
+                            getConverter().expressionsToExpressionList(expression.getArgumentList().getExpressions()),
+                            getConverter().createConversions(expression),
+                            getConverter().typeToType(expression.getType()).isNullable(),
+                            getConverter().typesToTypeList(expression.getTypeArguments())
                     );
         }
     }
@@ -243,53 +248,53 @@ public class ExpressionVisitor extends StatementVisitor {
     }
 
     @NotNull
-    private static Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
+    private Expression createNewClassExpression(@NotNull PsiNewExpression expression) {
         final PsiAnonymousClass anonymousClass = expression.getAnonymousClass();
         final PsiMethod constructor = expression.resolveMethod();
         PsiJavaCodeReferenceElement classReference = expression.getClassOrAnonymousClassReference();
-        final boolean isNotConvertedClass = classReference != null && !getClassIdentifiers().contains(classReference.getQualifiedName());
+        final boolean isNotConvertedClass = classReference != null && !getConverter().getClassIdentifiers().contains(classReference.getQualifiedName());
         PsiExpressionList argumentList = expression.getArgumentList();
         PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
         if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
             return new NewClassExpression(
-                    expressionToExpression(expression.getQualifier()),
-                    elementToElement(classReference),
-                    expressionsToExpressionList(arguments),
-                    createConversions(expression),
-                    anonymousClass != null ? anonymousClassToAnonymousClass(anonymousClass) : null
+                    getConverter().expressionToExpression(expression.getQualifier()),
+                    getConverter().elementToElement(classReference),
+                    getConverter().expressionsToExpressionList(arguments),
+                    getConverter().createConversions(expression),
+                    anonymousClass != null ? getConverter().anonymousClassToAnonymousClass(anonymousClass) : null
             );
         }
         // is constructor secondary
         final PsiJavaCodeReferenceElement reference = expression.getClassReference();
         final List<Type> typeParameters = reference != null
-                                          ? typesToTypeList(reference.getTypeParameters())
+                                          ? getConverter().typesToTypeList(reference.getTypeParameters())
                                           : Collections.<Type>emptyList();
         return new CallChainExpression(
                 new IdentifierImpl(constructor.getName(), false),
                 new MethodCallExpression(
                         new IdentifierImpl("init"),
-                        expressionsToExpressionList(arguments),
+                        getConverter().expressionsToExpressionList(arguments),
                         typeParameters));
     }
 
     @NotNull
-    private static Expression createNewEmptyArrayWithoutInitialization(@NotNull PsiNewExpression expression) {
+    private Expression createNewEmptyArrayWithoutInitialization(@NotNull PsiNewExpression expression) {
         return new ArrayWithoutInitializationExpression(
-                typeToType(expression.getType(), true),
-                expressionsToExpressionList(expression.getArrayDimensions())
+                getConverter().typeToType(expression.getType(), true),
+                getConverter().expressionsToExpressionList(expression.getArrayDimensions())
         );
     }
 
     @NotNull
-    private static Expression createNewEmptyArray(@NotNull PsiNewExpression expression) {
-        return expressionToExpression(expression.getArrayInitializer());
+    private Expression createNewEmptyArray(@NotNull PsiNewExpression expression) {
+        return getConverter().expressionToExpression(expression.getArrayInitializer());
     }
 
     @Override
     public void visitParenthesizedExpression(@NotNull PsiParenthesizedExpression expression) {
         super.visitParenthesizedExpression(expression);
         myResult = new ParenthesizedExpression(
-                expressionToExpression(expression.getExpression())
+                getConverter().expressionToExpression(expression.getExpression())
         );
     }
 
@@ -298,7 +303,7 @@ public class ExpressionVisitor extends StatementVisitor {
         super.visitPostfixExpression(expression);
         myResult = new PostfixOperator(
                 getOperatorString(expression.getOperationSign().getTokenType()),
-                expressionToExpression(expression.getOperand())
+                getConverter().expressionToExpression(expression.getOperand())
         );
     }
 
@@ -307,13 +312,13 @@ public class ExpressionVisitor extends StatementVisitor {
         super.visitPrefixExpression(expression);
         if (expression.getOperationTokenType() == JavaTokenType.TILDE) {
             myResult = new DummyMethodCallExpression(
-                    new ParenthesizedExpression(expressionToExpression(expression.getOperand())), "inv", Expression.EMPTY_EXPRESSION
+                    new ParenthesizedExpression(getConverter().expressionToExpression(expression.getOperand())), "inv", Expression.EMPTY_EXPRESSION
             );
         }
         else {
             myResult = new PrefixOperator(
                     getOperatorString(expression.getOperationSign().getTokenType()),
-                    expressionToExpression(expression.getOperand())
+                    getConverter().expressionToExpression(expression.getOperand())
             );
         }
     }
@@ -326,7 +331,7 @@ public class ExpressionVisitor extends StatementVisitor {
         final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
         final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
         final boolean isThis = isThisExpression(expression);
-        final boolean isNullable = typeToType(expression.getType()).isNullable();
+        final boolean isNullable = getConverter().typeToType(expression.getType()).isNullable();
         final String className = getClassNameWithConstructor(expression);
 
         Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
@@ -340,7 +345,7 @@ public class ExpressionVisitor extends StatementVisitor {
         }
 
         myResult = new CallChainExpression(
-                expressionToExpression(expression.getQualifierExpression()),
+                getConverter().expressionToExpression(expression.getQualifierExpression()),
                 identifier // TODO: if type exists so identifier is nullable
         );
     }
@@ -466,8 +471,8 @@ public class ExpressionVisitor extends StatementVisitor {
         final PsiTypeElement castType = expression.getCastType();
         if (castType != null) {
             myResult = new TypeCastExpression(
-                    typeToType(castType.getType()),
-                    expressionToExpression(expression.getOperand())
+                    getConverter().typeToType(castType.getType()),
+                    getConverter().expressionToExpression(expression.getOperand())
             );
         }
     }
@@ -476,9 +481,9 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitPolyadicExpression(@NotNull PsiPolyadicExpression expression) {
         super.visitPolyadicExpression(expression);
         myResult = new PolyadicExpression(
-                expressionsToExpressionList(expression.getOperands()),
+                getConverter().expressionsToExpressionList(expression.getOperands()),
                 getOperatorString(expression.getOperationTokenType()),
-                createConversions(expression, PsiType.BOOLEAN)
+                getConverter().createConversions(expression, PsiType.BOOLEAN)
         );
     }
 }

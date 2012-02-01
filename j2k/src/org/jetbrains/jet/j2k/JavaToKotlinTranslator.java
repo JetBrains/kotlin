@@ -41,6 +41,8 @@ public class JavaToKotlinTranslator {
     private JavaToKotlinTranslator() {
     }
 
+    private static final Converter CONVERTER = new Converter();
+
     @Nullable
     private static PsiFile createFile(@NotNull String text) {
         JavaCoreEnvironment javaCoreEnvironment = setUpJavaCoreEnvironment();
@@ -174,19 +176,19 @@ public class JavaToKotlinTranslator {
         return null;
     }
 
-    static void setClassIdentifiers(@NotNull PsiElement psiFile) {
+    static void setClassIdentifiers(@NotNull Converter converter, @NotNull PsiElement psiFile) {
         ClassVisitor c = new ClassVisitor();
         psiFile.accept(c);
-        Converter.clearClassIdentifiers();
-        Converter.setClassIdentifiers(c.getClassIdentifiers());
+        converter.clearClassIdentifiers();
+        converter.setClassIdentifiers(c.getClassIdentifiers());
     }
 
     @NotNull
     static String generateKotlinCode(@NotNull String javaCode) {
         PsiFile file = createFile(javaCode);
         if (file != null && file instanceof PsiJavaFile) {
-            setClassIdentifiers(file);
-            return prettify(Converter.fileToFile((PsiJavaFile) file).toKotlin());
+            setClassIdentifiers(CONVERTER, file);
+            return prettify(CONVERTER.fileToFile((PsiJavaFile) file).toKotlin());
         }
         return "";
     }
@@ -195,8 +197,8 @@ public class JavaToKotlinTranslator {
     static String generateKotlinCodeWithCompatibilityImport(@NotNull String javaCode) {
         PsiFile file = createFile(javaCode);
         if (file != null && file instanceof PsiJavaFile) {
-            setClassIdentifiers(file);
-            return prettify(Converter.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
+            setClassIdentifiers(CONVERTER, file);
+            return prettify(CONVERTER.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
         }
         return "";
     }

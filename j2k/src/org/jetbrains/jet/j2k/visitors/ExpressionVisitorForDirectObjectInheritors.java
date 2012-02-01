@@ -13,13 +13,17 @@ import static org.jetbrains.jet.j2k.visitors.TypeVisitor.JAVA_LANG_OBJECT;
  * @author ignatov
  */
 public class ExpressionVisitorForDirectObjectInheritors extends ExpressionVisitor {
+    public ExpressionVisitorForDirectObjectInheritors(@NotNull Converter converter) {
+        super(converter);
+    }
+
     @Override
     public void visitMethodCallExpression(@NotNull final PsiMethodCallExpression expression) {
         if (superMethodInvocation(expression.getMethodExpression(), "hashCode")) {
             myResult = new DummyMethodCallExpression(new IdentifierImpl("System"), "identityHashCode", new IdentifierImpl("this"));
         }
         else if (superMethodInvocation(expression.getMethodExpression(), "equals")) {
-            myResult = new DummyMethodCallExpression(new IdentifierImpl("this"), "identityEquals", Converter.elementToElement(expression.getArgumentList()));
+            myResult = new DummyMethodCallExpression(new IdentifierImpl("this"), "identityEquals", getConverter().elementToElement(expression.getArgumentList()));
         }
         else if (superMethodInvocation(expression.getMethodExpression(), "toString")) {
             myResult = new DummyStringExpression(String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())", getClassName(expression.getMethodExpression())));

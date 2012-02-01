@@ -1,17 +1,18 @@
 package org.jetbrains.jet.j2k.visitors;
 
+import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author ignatov
  */
 public class ThisVisitor extends JavaRecursiveElementVisitor {
     @NotNull
-    private final HashSet<PsiMethod> myResolvedConstructors = new HashSet<PsiMethod>();
+    private final Set<PsiMethod> myResolvedConstructors = Sets.newLinkedHashSet();
 
     @Override
     public void visitReferenceExpression(@NotNull PsiReferenceExpression expression) {

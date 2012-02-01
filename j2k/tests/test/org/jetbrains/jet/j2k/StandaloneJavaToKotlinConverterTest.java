@@ -31,6 +31,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
+        Converter converter = new Converter();
         String javaPath = "j2k/tests/testData/" + getTestFilePath();
         String kotlinPath = javaPath.replace(".jav", ".kt");
 
@@ -45,19 +46,19 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         String actual = "";
         String parentFileName = javaFile.getParentFile().getName();
         if (parentFileName.equals("expression")) {
-            actual = expressionToKotlin(javaCode);
+            actual = expressionToKotlin(converter, javaCode);
         }
         else if (parentFileName.equals("statement")) {
-            actual = statementToKotlin(javaCode);
+            actual = statementToKotlin(converter, javaCode);
         }
         else if (parentFileName.equals("method")) {
-            actual = methodToKotlin(javaCode);
+            actual = methodToKotlin(converter, javaCode);
         }
         else if (parentFileName.equals("class")) {
-            actual = fileToKotlin(javaCode);
+            actual = fileToKotlin(converter, javaCode);
         }
         else if (parentFileName.equals("file")) {
-            actual = fileToKotlin(javaCode);
+            actual = fileToKotlin(converter, javaCode);
         }
         else if (parentFileName.equals("comp")) actual = fileToFileWithCompatibilityImport(javaCode);
 
@@ -88,6 +89,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
     @NotNull
     public static Test suite() {
         TestSuite suite = new TestSuite();
+//        suite.addTest(new StandaloneJavaToKotlinConverterTest("ast/class/file", "kt-639"));
         suite.addTest(TestCaseBuilder.suiteForDirectory("j2k/tests/testData", "/ast", new TestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
@@ -104,38 +106,38 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
     }
 
     @NotNull
-    private String fileToKotlin(@NotNull String text) {
-        return generateKotlinCode(JavaToKotlinTranslator.createFile(myJavaCoreEnvironment, text));
+    private String fileToKotlin(Converter converter, @NotNull String text) {
+        return generateKotlinCode(converter, JavaToKotlinTranslator.createFile(myJavaCoreEnvironment, text));
     }
 
     @NotNull
-    private static String generateKotlinCode(@Nullable PsiFile file) {
+    private static String generateKotlinCode(@NotNull Converter converter, @Nullable PsiFile file) {
         if (file != null && file instanceof PsiJavaFile) {
-            JavaToKotlinTranslator.setClassIdentifiers(file);
-            return prettify(Converter.elementToKotlin(file));
+            JavaToKotlinTranslator.setClassIdentifiers(converter, file);
+            return prettify(converter.elementToKotlin(file));
         }
         return "";
     }
 
     @NotNull
-    private String methodToKotlin(String text) throws IOException {
-        String result = fileToKotlin("final class C {" + text + "}")
+    private String methodToKotlin(Converter converter, String text) throws IOException {
+        String result = fileToKotlin(converter, "final class C {" + text + "}")
                 .replaceAll("class C\\(\\) \\{", "");
         result = result.substring(0, result.lastIndexOf("}"));
         return prettify(result);
     }
 
     @NotNull
-    private String statementToKotlin(String text) throws Exception {
-        String result = methodToKotlin("void main() {" + text + "}");
+    private String statementToKotlin(Converter converter, String text) throws Exception {
+        String result = methodToKotlin(converter, "void main() {" + text + "}");
         int pos = result.lastIndexOf("}");
         result = result.substring(0, pos).replaceFirst("fun main\\(\\) : Unit \\{", "");
         return prettify(result);
     }
 
     @NotNull
-    private String expressionToKotlin(String code) throws Exception {
-        String result = statementToKotlin("Object o =" + code + "}");
+    private String expressionToKotlin(Converter converter, String code) throws Exception {
+        String result = statementToKotlin(converter, "Object o =" + code + "}");
         result = result.replaceFirst("var o : Any\\? =", "");
         return prettify(result);
     }

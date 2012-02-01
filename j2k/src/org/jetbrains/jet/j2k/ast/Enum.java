@@ -1,6 +1,7 @@
 package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
@@ -10,9 +11,9 @@ import java.util.Set;
  * @author ignatov
  */
 public class Enum extends Class {
-    public Enum(Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
+    public Enum(Converter converter, Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
                 List<Expression> baseClassParams, List<Type> implementsTypes, List<Member> members) {
-        super(name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, getMembers(members));
+        super(converter, name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, getMembers(members, converter));
     }
 
     String primaryConstructorSignatureToKotlin() {

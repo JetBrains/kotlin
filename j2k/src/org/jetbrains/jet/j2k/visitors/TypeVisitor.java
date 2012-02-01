@@ -11,13 +11,10 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jetbrains.jet.j2k.Converter.typeToType;
-import static org.jetbrains.jet.j2k.Converter.typesToTypeList;
-
 /**
  * @author ignatov
  */
-public class TypeVisitor extends PsiTypeVisitor<Type> {
+public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
     public static final String JAVA_LANG_BYTE = "java.lang.Byte";
     public static final String JAVA_LANG_CHARACTER = "java.lang.Character";
     public static final String JAVA_LANG_DOUBLE = "java.lang.Double";
@@ -30,7 +27,12 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     public static final String JAVA_LANG_STRING = "java.lang.String";
     private static final String JAVA_LANG_ITERABLE = "java.lang.Iterable";
     private static final String JAVA_UTIL_ITERATOR = "java.util.Iterator";
+    private final Converter myConverter;
     private Type myResult = Type.EMPTY_TYPE;
+
+    public TypeVisitor(@NotNull Converter myConverter) {
+        this.myConverter = myConverter;
+    }
 
     @NotNull
     public Type getResult() {
@@ -57,7 +59,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     @Override
     public Type visitArrayType(@NotNull PsiArrayType arrayType) {
         if (myResult == Type.EMPTY_TYPE) {
-            myResult = new ArrayType(typeToType(arrayType.getComponentType()));
+            myResult = new ArrayType(getConverter().typeToType(arrayType.getComponentType()));
         }
         return super.visitArrayType(arrayType);
     }
@@ -71,18 +73,18 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
             myResult = new ClassType(identifier, resolvedClassTypeParams);
         }
         else {
-            myResult = new ClassType(identifier, typesToTypeList(classType.getParameters()));
+            myResult = new ClassType(identifier, getConverter().typesToTypeList(classType.getParameters()));
         }
         return super.visitClassType(classType);
     }
 
     @NotNull
-    private static IdentifierImpl constructClassTypeIdentifier(@NotNull PsiClassType classType) {
+    private IdentifierImpl constructClassTypeIdentifier(@NotNull PsiClassType classType) {
         final PsiClass psiClass = classType.resolve();
         if (psiClass != null) {
             String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName != null) {
-                if (!qualifiedName.equals("java.lang.Object") && Converter.hasFlag(J2KConverterFlags.FULLY_QUALIFIED_TYPE_NAMES)) {
+                if (!qualifiedName.equals("java.lang.Object") && getConverter().hasFlag(J2KConverterFlags.FULLY_QUALIFIED_TYPE_NAMES)) {
                     return new IdentifierImpl(qualifiedName);
                 }
                 if (qualifiedName.equals(JAVA_LANG_ITERABLE)) {
@@ -122,7 +124,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     }
 
     @NotNull
-    private static List<Type> createRawTypesForResolvedReference(@NotNull PsiClassType classType) {
+    private List<Type> createRawTypesForResolvedReference(@NotNull PsiClassType classType) {
         final List<Type> typeParams = new LinkedList<Type>();
         if (classType instanceof PsiClassReferenceType) {
             final PsiJavaCodeReferenceElement reference = ((PsiClassReferenceType) classType).getReference();
@@ -133,7 +135,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
                 {
                     for (PsiTypeParameter p : ((PsiClass) resolve).getTypeParameters()) {
                         Type boundType = p.getSuperTypes().length > 0 ?
-                                         new ClassType(new IdentifierImpl(getClassTypeName(p.getSuperTypes()[0])), typesToTypeList(p.getSuperTypes()[0].getParameters()), true)
+                                         new ClassType(new IdentifierImpl(getClassTypeName(p.getSuperTypes()[0])), getConverter().typesToTypeList(p.getSuperTypes()[0].getParameters()), true)
                                                                       :
                                          new StarProjectionType();
 
@@ -163,10 +165,10 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     @Override
     public Type visitWildcardType(@NotNull PsiWildcardType wildcardType) {
         if (wildcardType.isExtends()) {
-            myResult = new OutProjectionType(typeToType(wildcardType.getExtendsBound()));
+            myResult = new OutProjectionType(getConverter().typeToType(wildcardType.getExtendsBound()));
         }
         else if (wildcardType.isSuper()) {
-            myResult = new InProjectionType(typeToType(wildcardType.getSuperBound()));
+            myResult = new InProjectionType(getConverter().typeToType(wildcardType.getSuperBound()));
         }
         else {
             myResult = new StarProjectionType();
@@ -176,7 +178,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
 
     @Override
     public Type visitEllipsisType(@NotNull PsiEllipsisType ellipsisType) {
-        myResult = new VarArg(typeToType(ellipsisType.getComponentType()));
+        myResult = new VarArg(getConverter().typeToType(ellipsisType.getComponentType()));
         return super.visitEllipsisType(ellipsisType);
     }
 
@@ -188,6 +190,12 @@ public class TypeVisitor extends PsiTypeVisitor<Type> {
     @Override
     public Type visitDisjunctionType(PsiDisjunctionType disjunctionType) {
         return super.visitDisjunctionType(disjunctionType);
+    }
+
+    @NotNull
+    @Override
+    public Converter getConverter() {
+        return myConverter;
     }
 }
 

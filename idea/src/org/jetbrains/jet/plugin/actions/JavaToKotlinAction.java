@@ -10,10 +10,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.jet.j2k.Converter;
 
 import java.util.List;
 
-import static org.jetbrains.jet.j2k.Converter.clearClassIdentifiers;
 import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.*;
 
 /**
@@ -22,6 +22,7 @@ import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.*;
 public class JavaToKotlinAction extends AnAction {
     @Override
     public void actionPerformed(final AnActionEvent e) {
+        final Converter converter = new Converter();
         VirtualFile[] virtualFiles = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
         final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
         assert virtualFiles != null;
@@ -33,10 +34,10 @@ public class JavaToKotlinAction extends AnAction {
         final boolean finalRemoveIt = needToRemoveFiles(result);
         final List<PsiFile> allJavaFiles = getAllJavaFiles(virtualFiles, project);
 
-        clearClassIdentifiers();
+        converter.clearClassIdentifiers();
         for (PsiFile f : allJavaFiles) {
             if (f.getFileType() instanceof JavaFileType) {
-                setClassIdentifiers(f);
+                setClassIdentifiers(converter, f);
             }
         }
 
@@ -46,7 +47,7 @@ public class JavaToKotlinAction extends AnAction {
                 new Runnable() {
                     @Override
                     public void run() {
-                        final List<VirtualFile> newFiles = performFiles(allJavaFilesNear);
+                        final List<VirtualFile> newFiles = convertFiles(converter, allJavaFilesNear);
                         if (finalRemoveIt) {
                             deleteFiles(allJavaFilesNear);
                         }
