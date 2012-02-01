@@ -301,7 +301,8 @@ public class CompileEnvironment {
         String mainClass = null;
         for (JetFile file : session.getSourceFileNamespaces()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {
-                mainClass = JetPsiUtil.getFQName(file) + "." + JvmAbi.PACKAGE_CLASS;
+                String fqName = JetPsiUtil.getFQName(file);
+                mainClass = fqName.length() > 0 ? fqName + "." + JvmAbi.PACKAGE_CLASS : JvmAbi.PACKAGE_CLASS;
                 break;
             }
         }
