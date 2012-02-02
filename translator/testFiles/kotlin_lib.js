@@ -460,6 +460,10 @@
         }
     );
 
+    Kotlin.collectionsMax = function(col, comp) {
+
+    };
+
     Kotlin.StringBuilder = Kotlin.Class.create(
         {
             initialize:function () {
