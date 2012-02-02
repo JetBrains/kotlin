@@ -2,6 +2,7 @@ package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
@@ -11,10 +12,10 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.context.declaration.DeclarationFacade;
+import org.jetbrains.k2js.translate.context.generator.Generator;
+import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 /**
  * @author Pavel Talanov
@@ -25,6 +26,14 @@ public final class TranslationContext {
     private final DynamicContext dynamicContext;
     @NotNull
     private final StaticContext staticContext;
+    @NotNull
+    private final Generator<DeclarationDescriptor, JsName> names =
+            nameGenerator();
+
+
+    @NotNull
+    private final Generator<DeclarationDescriptor, NamingScope> scopes =
+            new Generator<DeclarationDescriptor, NamingScope>();
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
@@ -104,24 +113,6 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        //TODO: rewrite
-        if (aliaser().hasAliasForDeclaration(descriptor)) {
-            return aliaser().getAliasForDeclaration(descriptor);
-        }
-        if (standardClasses().isStandardObject(descriptor)) {
-            return standardClasses().getStandardObjectName(descriptor);
-        }
-        if (dynamicContext.isDeclared(descriptor)) {
-            return dynamicContext.getLocalName(descriptor);
-        }
-        if (staticContext.isDeclared(descriptor)) {
-            return staticContext.getGlobalName(descriptor);
-        }
-        throw new AssertionError("Undefined descriptor: " + getFQName(descriptor));
-    }
-
-    @NotNull
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (standardClasses().isStandardObject(descriptor)) {
             return namer().kotlinObject();
@@ -197,4 +188,56 @@ public final class TranslationContext {
     public DeclarationFacade declarationFacade() {
         return staticContext.getDeclarationFacade();
     }
+
+    @NotNull
+    public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        return names.get(descriptor);
+    }
+
+    @NotNull
+    private Generator<DeclarationDescriptor, JsName> nameGenerator() {
+        Generator<DeclarationDescriptor, JsName> nameGenerator = new Generator<DeclarationDescriptor, JsName>();
+        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+            @Override
+            @Nullable
+            public JsName apply(@NotNull DeclarationDescriptor data) {
+                if (aliaser().hasAliasForDeclaration(data)) {
+                    return aliaser().getAliasForDeclaration(data);
+                }
+                return null;
+            }
+        });
+        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+            @Override
+            @Nullable
+            public JsName apply(@NotNull DeclarationDescriptor data) {
+                if (!standardClasses().isStandardObject(data)) {
+                    return null;
+                }
+                return standardClasses().getStandardObjectName(data);
+            }
+        });
+        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+            @Override
+            @Nullable
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                if (dynamicContext.isDeclared(descriptor)) {
+                    return dynamicContext.getLocalName(descriptor);
+                }
+                return null;
+            }
+        });
+        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+            @Override
+            @Nullable
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                if (staticContext.isDeclared(descriptor)) {
+                    return staticContext.getGlobalName(descriptor);
+                }
+                return null;
+            }
+        });
+        return nameGenerator;
+    }
+
 }
