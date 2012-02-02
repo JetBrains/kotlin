@@ -18,9 +18,13 @@ public final class ExtensionPropertyTest extends TranslationTest {
         testFooBoxIsTrue("simplePropertyWithGetter.kt");
     }
 
-
     @Test
     public void propertyWithGetterAndSetter() throws Exception {
         testFooBoxIsTrue("propertyWithGetterAndSetter.kt");
+    }
+
+    @Test
+    public void absExtension() throws Exception {
+        testFooBoxIsTrue("absExtension.kt");
     }
 }

@@ -31,10 +31,10 @@ import java.util.*
 fun findPath(maze : Maze) : List<#(Int, Int)>? {
     val previous = HashMap<#(Int, Int), #(Int, Int)>
 
-    val queue = LinkedList<#(Int, Int)>
+    val queue = ArrayList<#(Int, Int)>
     val visited = HashSet<#(Int, Int)>
 
-    queue.offer(maze.start)
+    queue.add(maze.start)
     visited.add(maze.start)
     while (!queue.isEmpty()) {
       val cell = queue.poll()

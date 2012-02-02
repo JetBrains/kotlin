@@ -2,16 +2,13 @@ package java.util
 
 import js.annotations.*;
 
-//LibraryClass
-//public trait Comparator<T> {
-//    fun compare(obj1 : T, obj2 : T) : Int;
-//}
-//
-//LibraryFun("comparator")
-//public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> {}
-//
-//LibraryFun("max")
-//public fun max<T>(col : Collection<T>, comp : Comparator<T>) {}
+LibraryClass
+public trait Comparator<T> {
+    fun compare(obj1 : T, obj2 : T) : Int;
+}
+
+LibraryFun("comparator")
+public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> {}
 
 
 LibraryClass

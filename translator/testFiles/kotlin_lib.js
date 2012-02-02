@@ -109,16 +109,15 @@
             current = current.superclass;
         }
         return true;
-    }
+    };
 
     var emptyFunction = function () {
-    }
+    };
 
     var Class = (function () {
 
         function subclass() {
         }
-
         ;
         function create() {
             var parent = null, properties = $A(arguments);
@@ -203,7 +202,7 @@
     var Trait = (function () {
 
         function add(object, source) {
-            properties = Object.keys(source);
+            var properties = Object.keys(source);
             for (var i = 0, length = properties.length; i < length; i++) {
                 var property = properties[i];
                 var value = source[property];
@@ -238,7 +237,17 @@
         };
     })();
 
-    Kotlin = {}
+    var object = (function () {
+        function create() {
+            var singletonClass = Class.create.apply(Class, arguments);
+            return new singletonClass;
+        }
+        return {
+            create:create
+        };
+    })();
+
+    Kotlin = {};
     Kotlin.Class = Class;
     Kotlin.Namespace = Namespace;
     Kotlin.Trait = Trait;
@@ -315,9 +324,9 @@
 
 
     Kotlin.parseInt =
-    function (str) {
-        return parseInt(str);
-    }
+        function (str) {
+            return parseInt(str);
+        }
     ;
 
     Kotlin.System = function () {
@@ -454,14 +463,26 @@
         {
             initialize:function () {
             },
-            compare:function () {
+            compare:function (el1, el2) {
                 throw new Kotlin.AbstractFunctionInvokationError();
             }
         }
     );
 
-    Kotlin.collectionsMax = function(col, comp) {
-
+    Kotlin.collectionsMax = function (col, comp) {
+        var it = col.iterator();
+        if (col.isEmpty()) {
+            //TODO: which exception?
+            throw Kotlin.Exception();
+        }
+        var max = it.next();
+        while (it.hasNext()) {
+            var el = it.next();
+            if (comp.compare(max, el) < 0) {
+                max = el;
+            }
+        }
+        return max;
     };
 
     Kotlin.StringBuilder = Kotlin.Class.create(

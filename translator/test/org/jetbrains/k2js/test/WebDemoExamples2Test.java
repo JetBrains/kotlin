@@ -32,7 +32,7 @@ public final class WebDemoExamples2Test extends TranslationTest {
         testWithMain("builder", "1", "over9000");
     }
 
-    //TODO: comparator dependencies
+    //TODO: comparator LinkedList dependencies
 //    @Test
 //    public void maze() throws Exception {
 //        testWithMain("maze", "");
