@@ -83,4 +83,23 @@
             <option name="KOTLIN_NAMESPACE" value="true"/>
         </context>
     </template>
+
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.interface"
+              name="interface" toReformat="true" toShortenFQNames="true" value="trait $NAME$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_CLASS" value="true"/>
+            <option name="KOTLIN_NAMESPACE" value="true"/>
+        </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.singleton"
+              name="singleton" toReformat="true" toShortenFQNames="true" value="object $NAME$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_CLASS" value="true"/>
+            <option name="KOTLIN_NAMESPACE" value="true"/>
+        </context>
+    </template>
 </templateSet>
