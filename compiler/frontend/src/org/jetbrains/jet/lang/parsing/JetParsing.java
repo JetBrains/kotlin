@@ -622,7 +622,9 @@ public class JetParsing extends AbstractJetParsing {
 
         if (named) {
             PsiBuilder.Marker propertyDeclaration = mark();
-            expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
+            if (!parseIdeTemplate()) {
+                expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
+            }
             propertyDeclaration.done(OBJECT_DECLARATION_NAME);
         }
         else {
