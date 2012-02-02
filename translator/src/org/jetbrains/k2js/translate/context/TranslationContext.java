@@ -17,6 +17,8 @@ import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getContainingDeclaration;
+
 /**
  * @author Pavel Talanov
  */
@@ -27,13 +29,10 @@ public final class TranslationContext {
     @NotNull
     private final StaticContext staticContext;
     @NotNull
-    private final Generator<DeclarationDescriptor, JsName> names =
-            nameGenerator();
-
-
+    private final Generator<JsName> names = nameGenerator();
     @NotNull
-    private final Generator<DeclarationDescriptor, NamingScope> scopes =
-            new Generator<DeclarationDescriptor, NamingScope>();
+    private final Generator<NamingScope> scopes = scopeGenerator();
+
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
@@ -104,12 +103,13 @@ public final class TranslationContext {
 
     @NotNull
     public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return staticContext.getScopeForDescriptor(descriptor);
+        return scopes.get(descriptor);
     }
 
     @NotNull
     public NamingScope getScopeForElement(@NotNull JetElement element) {
-        return staticContext.getScopeForElement(element);
+        DeclarationDescriptor descriptorForElement = BindingUtils.getDescriptorForElement(bindingContext(), element);
+        return getScopeForDescriptor(descriptorForElement);
     }
 
     @NotNull
@@ -195,9 +195,9 @@ public final class TranslationContext {
     }
 
     @NotNull
-    private Generator<DeclarationDescriptor, JsName> nameGenerator() {
-        Generator<DeclarationDescriptor, JsName> nameGenerator = new Generator<DeclarationDescriptor, JsName>();
-        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+    private Generator<JsName> nameGenerator() {
+        Generator<JsName> nameGenerator = new Generator<JsName>();
+        nameGenerator.addRule(new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor data) {
@@ -207,7 +207,7 @@ public final class TranslationContext {
                 return null;
             }
         });
-        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+        nameGenerator.addRule(new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor data) {
@@ -217,7 +217,7 @@ public final class TranslationContext {
                 return standardClasses().getStandardObjectName(data);
             }
         });
-        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+        nameGenerator.addRule(new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor descriptor) {
@@ -227,7 +227,7 @@ public final class TranslationContext {
                 return null;
             }
         });
-        nameGenerator.addRule(new Rule<DeclarationDescriptor, JsName>() {
+        nameGenerator.addRule(new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor descriptor) {
@@ -238,6 +238,35 @@ public final class TranslationContext {
             }
         });
         return nameGenerator;
+    }
+
+    @NotNull
+    private Generator<NamingScope> scopeGenerator() {
+        Generator<NamingScope> scopeGenerator = new Generator<NamingScope>();
+        Rule<NamingScope> generateNewScopesForNamespaceDescriptors = new Rule<NamingScope>() {
+            @Override
+            public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!(descriptor instanceof NamespaceDescriptor)) {
+                    return null;
+                }
+                return staticContext.getRootScope().innerScope("Namespace " + descriptor.getName());
+            }
+        };
+        Rule<NamingScope> generateInnerScopesForFunctions = new Rule<NamingScope>() {
+            @Override
+            public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
+//                if (!(descriptor instanceof FunctionDescriptor)) {
+//                    return null;
+//                }
+                DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
+                NamingScope enclosingScope = getScopeForDescriptor(containingDeclaration);
+                return enclosingScope.innerScope("scope for member " + descriptor.getName());
+            }
+        };
+        scopeGenerator.addRule(generateNewScopesForNamespaceDescriptors);
+        scopeGenerator.addRule(generateInnerScopesForFunctions);
+
+        return scopeGenerator;
     }
 
 }

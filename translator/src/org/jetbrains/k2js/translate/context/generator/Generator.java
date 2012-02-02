@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate.context.generator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.List;
 import java.util.Map;
@@ -10,36 +11,36 @@ import java.util.Map;
 /**
  * @author Pavel Talanov
  */
-public final class Generator<K, V> {
+public final class Generator<V> {
 
 
     @NotNull
-    private final Map<K, V> values = Maps.newHashMap();
+    private final Map<DeclarationDescriptor, V> values = Maps.newHashMap();
     @NotNull
-    private final List<Rule<K, V>> rules = Lists.newArrayList();
+    private final List<Rule<V>> rules = Lists.newArrayList();
 
-    public void addRule(@NotNull Rule<K, V> rule) {
+    public void addRule(@NotNull Rule<V> rule) {
         rules.add(rule);
     }
 
     @NotNull
-    public V get(@NotNull K data) {
-        V result = values.get(data);
+    public V get(@NotNull DeclarationDescriptor descriptor) {
+        V result = values.get(descriptor);
         if (result != null) {
             return result;
         }
-        return generate(data);
+        return generate(descriptor);
     }
 
     @NotNull
-    private V generate(@NotNull K data) {
+    private V generate(@NotNull DeclarationDescriptor descriptor) {
         V result = null;
-        for (Rule<K, V> rule : rules) {
-            result = rule.apply(data);
+        for (Rule<V> rule : rules) {
+            result = rule.apply(descriptor);
             if (result != null) {
                 return result;
             }
         }
-        throw new AssertionError("No rule applicable to generate result for " + data.toString());
+        throw new AssertionError("No rule applicable to generate result for " + descriptor.toString());
     }
 }

@@ -6,13 +6,11 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.backend.js.ast.JsRootScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.declaration.DeclarationFacade;
 import org.jetbrains.k2js.translate.context.declaration.Declarations;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 public class StaticContext {
 
@@ -109,18 +107,6 @@ public class StaticContext {
     @NotNull
     public StandardClasses getStandardClasses() {
         return standardClasses;
-    }
-
-    //TODO: helper method outdated
-    @NotNull
-    public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return declarationFacade.getKotlinDeclarations().getScope(descriptor);
-    }
-
-    @NotNull
-    public NamingScope getScopeForElement(@NotNull JetElement element) {
-        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForElement(bindingContext, element);
-        return getScopeForDescriptor(descriptor);
     }
 
     //TODO: consider using nullable return value instead
