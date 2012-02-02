@@ -61,7 +61,7 @@ public class DiagnosticUtils {
             int lineStartOffset = document.getLineStartOffset(lineNumber);
             int column = offset - lineStartOffset;
 
-            return "' at line " + (lineNumber + 1) + ":" + column + pathSuffix;
+            return "' at line " + (lineNumber + 1) + ":" + (column + 1) + pathSuffix;
         }
         else {
             return "' at offset " + offset + " (line unknown)" + pathSuffix;
@@ -78,7 +78,7 @@ public class DiagnosticUtils {
             int lineStartOffset = document.getLineStartOffset(lineNumber);
             int column = offset - lineStartOffset;
 
-            position = "(" + (lineNumber + 1) + "," + column + ")";
+            position = "(" + (lineNumber + 1) + "," + (column + 1) + ")";
         }
         else {
             position = "(offset: " + offset + " line unknown)";
