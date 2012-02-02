@@ -91,10 +91,14 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         ClassFileFactory codegens = generateClassesInFile();
         GeneratedClassLoader loader = new GeneratedClassLoader(codegens);
 
-        String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
-        Class<?> namespaceClass = loader.loadClass(fqName);
-        Method method = namespaceClass.getMethod("box");
-        return (String) method.invoke(null);
+        try {
+            String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
+            Class<?> namespaceClass = loader.loadClass(fqName);
+            Method method = namespaceClass.getMethod("box");
+            return (String) method.invoke(null);
+        } finally {
+           loader.dispose();
+        }
     }
 
     protected String generateToText() {

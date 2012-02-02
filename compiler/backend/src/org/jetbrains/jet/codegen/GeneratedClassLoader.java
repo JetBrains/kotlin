@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 * @author yole
 */
 public class GeneratedClassLoader extends ClassLoader {
-    private final ClassFileFactory state;
+    private ClassFileFactory state;
 
     public GeneratedClassLoader(@NotNull ClassFileFactory state) {
         this(state, GeneratedClassLoader.class.getClassLoader());
@@ -25,5 +25,9 @@ public class GeneratedClassLoader extends ClassLoader {
             return defineClass(name, bytes, 0, bytes.length);
         }
         return super.findClass(name);
+    }
+
+    public void dispose() {
+        state = null;
     }
 }

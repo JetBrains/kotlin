@@ -4,6 +4,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.TestCase;
+import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -74,13 +75,19 @@ public class TestlibTest extends CodegenTestCase {
 
             ClassFileFactory classFileFactory = session.generate();
 
-            GeneratedClassLoader loader = new GeneratedClassLoader(
+            final GeneratedClassLoader loader = new GeneratedClassLoader(
                     classFileFactory,
                     new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
-            TestSuite suite = new TestSuite("StandardLibrary");
+            TestSuite suite = new TestSuite("StandardLibrary") {
+                @Override
+                public void run(TestResult result) {
+                    super.run(result);
+                    loader.dispose();
+                }
+            };
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
