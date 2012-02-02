@@ -388,7 +388,9 @@ public class JetParsing extends AbstractJetParsing {
         assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
         advance(); // CLASS_KEYWORD or TRAIT_KEYWORD
 
-        expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
+        if (!parseIdeTemplate()) {
+            expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
+        }
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
@@ -446,29 +448,31 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         advance(); // LBRACE
 
-        while (!eof() && !at(RBRACE)) {
-            PsiBuilder.Marker entryOrMember = mark();
+        if (!parseIdeTemplate()) {
+            while (!eof() && !at(RBRACE)) {
+                PsiBuilder.Marker entryOrMember = mark();
 
-            TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
-            int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
-            TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector, false);
+                TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
+                int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
+                TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
+                createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector, false);
 
-            IElementType type;
-            if (at(IDENTIFIER)) {
-                parseEnumEntry();
-                type = ENUM_ENTRY;
-            }
-            else {
-                type = parseMemberDeclarationRest(enumDetector.isDetected());
-            }
+                IElementType type;
+                if (at(IDENTIFIER)) {
+                    parseEnumEntry();
+                    type = ENUM_ENTRY;
+                }
+                else {
+                    type = parseMemberDeclarationRest(enumDetector.isDetected());
+                }
 
-            if (type == null) {
-                errorAndAdvance("Expecting an enum entry or member declaration");
-                entryOrMember.drop();
-            }
-            else {
-                entryOrMember.done(type);
+                if (type == null) {
+                    errorAndAdvance("Expecting an enum entry or member declaration");
+                    entryOrMember.drop();
+                }
+                else {
+                    entryOrMember.done(type);
+                }
             }
         }
 
@@ -522,11 +526,13 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         expect(LBRACE, "Expecting a class body", TokenSet.create(LBRACE));
 
-        while (!eof()) {
-            if (at(RBRACE)) {
-                break;
+        if (!parseIdeTemplate()) {
+            while (!eof()) {
+                if (at(RBRACE)) {
+                    break;
+                }
+                parseMemberDeclaration();
             }
-            parseMemberDeclaration();
         }
         expect(RBRACE, "Missing '}");
         myBuilder.restoreNewlinesState();
