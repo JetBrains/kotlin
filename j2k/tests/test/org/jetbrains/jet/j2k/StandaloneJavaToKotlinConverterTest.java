@@ -21,12 +21,11 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
     private final String myDataPath;
     private final String myName;
     @NotNull
-    private final JavaCoreEnvironment myJavaCoreEnvironment;
+    private final static JavaCoreEnvironment myJavaCoreEnvironment = JavaToKotlinTranslator.setUpJavaCoreEnvironment();
 
     public StandaloneJavaToKotlinConverterTest(String dataPath, String name) {
         myDataPath = dataPath;
         myName = name;
-        myJavaCoreEnvironment = JavaToKotlinTranslator.setUpJavaCoreEnvironment();
     }
 
     @Override
