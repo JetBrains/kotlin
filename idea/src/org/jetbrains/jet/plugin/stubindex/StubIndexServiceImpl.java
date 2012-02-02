@@ -16,6 +16,11 @@ public class StubIndexServiceImpl implements StubIndexService {
         if (name != null) {
             sink.occurrence(JetIndexKeys.SHORT_NAME_KEY, name);
         }
+        
+        String fqn = stub.getQualifiedName();
+        if (fqn != null) {
+            sink.occurrence(JetIndexKeys.FQN_KEY, fqn);
+        }
     }
 
     @Override

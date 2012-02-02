@@ -13,8 +13,11 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetUserType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
@@ -57,9 +60,13 @@ public class JetCompletionContributor extends CompletionContributor {
                                }
                            }
 
+//                           final JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
+//                           final GlobalSearchScope scope = GlobalSearchScope.allScope(parameters.getPosition().getProject());
+//                           final Collection<String> functionNames = namesCache.getAllJetExtensionFunctionsNames(scope);
+
                            if (shouldRunClassNameCompletion(parameters)) {
                                addJavaClasses(parameters, result);
-                               addJetClasses(result, position);
+                               // addJetClasses(result, position);
                            }
 
                            if (shouldRunFunctionNameCompletion(parameters)) {
@@ -92,38 +99,42 @@ public class JetCompletionContributor extends CompletionContributor {
 
             for (String name : functionNames) {
                 if (name.contains(actualPrefix)) {
-                    for (JetNamedFunction function : namesCache.getTopLevelFunctionsByName(name, scope)) {
-                        String functionName = function.getName();
-                        String qualifiedName = function.getQualifiedName();
-                        assert functionName != null;
-                        
-                        final LookupElementBuilder lookup = LookupElementBuilder.create(
-                                new LookupPositionObject(function), functionName);
-
-                        if (qualifiedName != null) {
-                            lookup.setTailText(qualifiedName);
-                        }
-
-                        addCompletionToResult(result, lookup);
+                    for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
+                        addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, function, null));
                     }
+                    
+//                    for (JetNamedFunction function : namesCache.getTopLevelFunctionsByName(name, scope)) {
+//                        String functionName = function.getName();
+//                        String qualifiedName = function.getQualifiedName();
+//                        assert functionName != null;
+//
+//                        final LookupElementBuilder lookup = LookupElementBuilder.create(
+//                                new LookupPositionObject(function), functionName);
+//
+//                        if (qualifiedName != null) {
+//                            lookup.setTailText(qualifiedName);
+//                        }
+//
+//                        addCompletionToResult(result, lookup);
+//                    }
                 }
             }
         }
     }
 
-    private void addJetClasses(@NotNull CompletionResultSet result, @NotNull PsiElement position) {
-        String actualPrefix = getActualCompletionPrefix(position);
-        if (actualPrefix != null) {
-            final Collection<ClassDescriptor> classDescriptors =
-                    JetCacheManager.getInstance(position.getProject()).getNamesCache().getClassDescriptors();
-
-            for (ClassDescriptor descriptor : classDescriptors) {
-                if (descriptor.getName().startsWith(actualPrefix)) {
-                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, descriptor, null));
-                }
-            }
-        }
-    }
+//    private void addJetClasses(@NotNull CompletionResultSet result, @NotNull PsiElement position) {
+//        String actualPrefix = getActualCompletionPrefix(position);
+//        if (actualPrefix != null) {
+//            final Collection<ClassDescriptor> classDescriptors =
+//                    JetCacheManager.getInstance(position.getProject()).getNamesCache().getClassDescriptors();
+//
+//            for (ClassDescriptor descriptor : classDescriptors) {
+//                if (descriptor.getName().startsWith(actualPrefix)) {
+//                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, descriptor, null));
+//                }
+//            }
+//        }
+//    }
 
     @Nullable
     private static String getActualCompletionPrefix(@NotNull PsiElement position) {
@@ -203,9 +214,6 @@ public class JetCompletionContributor extends CompletionContributor {
                     }
                 }
             }
-//            if (reference == null && parent instanceof CompositeElement) {
-//                reference = ((CompositeElement) parent).getPsi().getReference();
-//            }
         }
 
         return null;

@@ -80,7 +80,9 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
                 for (PsiPackage psiSubPackage : javaPackage.getSubPackages()) {
-                    allDescriptors.add(descriptorResolver.resolveNamespace(psiSubPackage.getQualifiedName()));
+                    if (semanticServices.getKotlinNamespaceDescriptor(psiSubPackage.getQualifiedName()) == null) {
+                        allDescriptors.add(descriptorResolver.resolveNamespace(psiSubPackage.getQualifiedName()));
+                    }
                 }
 
                 for (PsiClass psiClass : javaPackage.getClasses()) {

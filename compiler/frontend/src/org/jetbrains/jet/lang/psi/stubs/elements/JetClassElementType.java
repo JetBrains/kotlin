@@ -11,6 +11,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
 
@@ -43,7 +44,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
-        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, psi.getName(), psi.getName());
+        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, JetPsiUtil.getFQName(psi), psi.getName());
     }
 
     @Override

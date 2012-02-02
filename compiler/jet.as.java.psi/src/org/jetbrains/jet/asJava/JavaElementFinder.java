@@ -146,12 +146,29 @@ public class JavaElementFinder extends PsiElementFinder {
         final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
 
         for (JetFile psiFile : psiFiles) {
-            if (qualifiedName.equals(JetPsiUtil.getFQName(psiFile))) {
+            if (JetPsiUtil.getFQName(psiFile).startsWith(qualifiedName)) {
                 return new PsiPackageImpl(psiFile.getManager(), qualifiedName);
             }
         }
 
         return null;
+    }
+
+    @NotNull
+    @Override
+    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
+
+        Set<PsiPackage> answer = new HashSet<PsiPackage>();
+
+        for (JetFile psiFile : psiFiles) {
+            String jetRootNamespace = JetPsiUtil.getFQName(psiFile);
+            if (isInPackage(psiPackage.getQualifiedName(), jetRootNamespace)) {
+                answer.add(new JetLightPackage(psiFile.getManager(), jetRootNamespace));
+            }
+        }
+
+        return answer.toArray(new PsiPackage[answer.size()]);
     }
 
     @NotNull
@@ -172,6 +189,24 @@ public class JavaElementFinder extends PsiElementFinder {
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
+    }
+
+    private static boolean isInPackage(String packageName, String fqn) {
+        return fqn.startsWith(packageName + ".");
+    }
+
+    private static String subPackageName(String packageName, String packageFQN) {
+        if (!isInPackage(packageName, packageFQN)) {
+            return null;
+        }
+
+        int nextDotIndex = packageFQN.indexOf('.', (packageName + ".").length());
+
+        if (nextDotIndex != -1) {
+            return packageFQN.substring((packageName + ".").length(), nextDotIndex);
+        }
+
+        return packageFQN.substring((packageName + ".").length());
     }
 
     private synchronized void invalidateJetFilesCache() {
