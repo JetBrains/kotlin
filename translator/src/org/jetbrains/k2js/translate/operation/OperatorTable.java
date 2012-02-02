@@ -40,6 +40,7 @@ public final class OperatorTable {
         binaryOperatorsMap.put(JetTokens.LTEQ, JsBinaryOperator.LTE);
         binaryOperatorsMap.put(JetTokens.EQEQ, JsBinaryOperator.REF_EQ);
         binaryOperatorsMap.put(JetTokens.ANDAND, JsBinaryOperator.AND);
+        binaryOperatorsMap.put(JetTokens.OROR, JsBinaryOperator.OR);
         binaryOperatorsMap.put(JetTokens.EXCLEQ, JsBinaryOperator.NEQ);
         binaryOperatorsMap.put(JetTokens.PERC, JsBinaryOperator.MOD);
         binaryOperatorsMap.put(JetTokens.PLUSEQ, JsBinaryOperator.ASG_ADD);
