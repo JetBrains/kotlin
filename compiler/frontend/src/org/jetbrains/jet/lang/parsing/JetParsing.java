@@ -810,7 +810,9 @@ public class JetParsing extends AbstractJetParsing {
 
         if (at(COLON)) {
             advance(); // COLON
-            parseTypeRef();
+            if (!parseIdeTemplate()) {
+                parseTypeRef();
+            }
         }
 
         parseTypeConstraintsGuarded(typeParametersDeclared);

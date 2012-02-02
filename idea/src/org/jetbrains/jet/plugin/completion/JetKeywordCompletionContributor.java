@@ -54,6 +54,12 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n} else {\n<#<block>#>\n}";
     private static final String IF_ELSE_ONELINE_TEMPLATE = "if (<#<condition>#>) <#<value>#> else <#<value>#>";
     private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<returnType>#> {\n<#<body>#>\n}";
+    private static final String VAL_SIMPLE_TEMPLATE = "val <#<name>#> = <#<value>#>";
+    private static final String VAL_WITH_TYPE_TEMPLATE = "val <#<name>#> : <#<valType>#> = <#<value>#>";
+    private static final String VAL_WITH_GETTER_TEMPLATE = "val <#<name>#> : <#<valType>#>\nget() {\n<#<body>#>\n}";
+    private static final String VAR_SIMPLE_TEMPLATE = "var <#<name>#> = <#<value>#>";
+    private static final String VAR_WITH_TYPE_TEMPLATE = "var <#<name>#> : <#<varType>#> = <#<initial>#>";
+    private static final String VAR_WITH_GETTER_AND_SETTER_TEMPLATE = "var <#<name>#> : <#<varType>#>\nget() {\n<#<body>#>\n}\nset(value) {\n<#<body>#>\n}";
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -190,8 +196,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
                 PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
-                TRAIT_KEYWORD, TYPE_KEYWORD, VAL_KEYWORD,
-                VAR_KEYWORD);
+                TRAIT_KEYWORD, TYPE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                 ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
@@ -199,8 +204,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 INLINE_KEYWORD, INTERNAL_KEYWORD, OBJECT_KEYWORD,
                 OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                 PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
-                TRAIT_KEYWORD, TYPE_KEYWORD, VAL_KEYWORD,
-                VAR_KEYWORD);
+                TRAIT_KEYWORD, TYPE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                 AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
@@ -214,7 +218,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
                 CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
                 TRAIT_KEYWORD, TRUE_KEYWORD, TRY_KEYWORD,
-                TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+                TYPE_KEYWORD,
                 VARARG_KEYWORD, WHEN_KEYWORD, WHERE_KEYWORD,
                 WHILE_KEYWORD);
 
@@ -225,11 +229,17 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
 
         // templates
-        registerScopeKeywordsCompletion(new InTopFilter(), FUN_TEMPLATE);
-        registerScopeKeywordsCompletion(new InClassBodyFilter(), FUN_TEMPLATE);
-        registerScopeKeywordsCompletion(new InNonClassBlockFilter(), IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE, FUN_TEMPLATE);
-        registerScopeKeywordsCompletion(new InPropertyFilter(), IF_ELSE_ONELINE_TEMPLATE);
-        registerScopeKeywordsCompletion(new InParametersFilter(), ArrayUtil.EMPTY_STRING_ARRAY);
+        registerScopeKeywordsCompletion(new InTopFilter(),
+                                        FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
+                                        VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE);
+        registerScopeKeywordsCompletion(new InClassBodyFilter(),
+                                        FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
+                                        VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE);
+        registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
+                                        IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
+                                        FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE);
+        registerScopeKeywordsCompletion(new InPropertyFilter(),
+                                        IF_ELSE_ONELINE_TEMPLATE);
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
