@@ -65,6 +65,9 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String OBJECT_NAMED_TEMPLATE = "object <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_OBJECT_TEMPLATE = "class object {\n<#<body>#>\n}";
     private static final String FOR_TEMPLATE = "for (<#<i>#> in <#<elements>#>) {\n<#<body>#>\n}";
+    private static final String WHEN_TEMPLATE = "when (<#<expression>#>) {\n<#<condition>#> -> <#<value>#>\n" +
+                                                "else -> <#<elseValue>#>\n}";
+    private static final String WHEN_ENTRY_TEMPLATE = "<#<condition>#> -> <#<value>#>";
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -162,6 +165,18 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
+    private static class InWhenFilter implements ElementFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            return PsiTreeUtil.getParentOfType(context, JetWhenExpression.class, false) != null;
+        }
+
+        @Override
+        public boolean isClassAcceptable(Class hintClass) {
+            return true;
+        }
+    }
+
     public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
 
         private final Collection<LookupElement> elements;
@@ -224,7 +239,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
                 TRUE_KEYWORD, TRY_KEYWORD,
                 TYPE_KEYWORD,
-                VARARG_KEYWORD, WHEN_KEYWORD, WHERE_KEYWORD,
+                VARARG_KEYWORD, WHERE_KEYWORD,
                 WHILE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InPropertyFilter(),
@@ -234,6 +249,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
 
         // templates
+        registerScopeKeywordsCompletion(new InWhenFilter(),
+                                        WHEN_ENTRY_TEMPLATE);
         registerScopeKeywordsCompletion(new InTopFilter(),
                                         FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
                                         VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE,
@@ -245,9 +262,9 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                                         IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
-                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, FOR_TEMPLATE);
+                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, FOR_TEMPLATE, WHEN_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyFilter(),
-                                        IF_ELSE_ONELINE_TEMPLATE);
+                                        IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {

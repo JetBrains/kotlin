@@ -793,11 +793,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * : whenCondition{","} "=>" element SEMI
      */
     private void parseWhenEntryNotElse() {
-        while (true) {
-            while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
-            parseWhenCondition();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
+        if (!myJetParsing.parseIdeTemplate()) {
+            while (true) {
+                while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
+                parseWhenCondition();
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
         }
         expect(ARROW, "Expecting '->' or 'when'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
