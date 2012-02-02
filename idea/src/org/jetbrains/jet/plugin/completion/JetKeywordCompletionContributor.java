@@ -64,6 +64,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String CLASS_TEMPLATE = "class <#<name>#> {\n<#<body>#>\n}";
     private static final String OBJECT_NAMED_TEMPLATE = "object <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_OBJECT_TEMPLATE = "class object {\n<#<body>#>\n}";
+    private static final String FOR_TEMPLATE = "for (<#<i>#> in <#<elements>#>) {\n<#<body>#>\n}";
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -214,7 +215,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
                 CATCH_KEYWORD, CONTINUE_KEYWORD,
                 DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
-                FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD,
+                FALSE_KEYWORD, FINALLY_KEYWORD,
                 GET_KEYWORD,
                 IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 IS_KEYWORD, NULL_KEYWORD,
@@ -244,7 +245,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                                         IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
-                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE);
+                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, FOR_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyFilter(),
                                         IF_ELSE_ONELINE_TEMPLATE);
     }

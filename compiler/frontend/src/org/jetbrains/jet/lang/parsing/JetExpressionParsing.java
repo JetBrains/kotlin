@@ -1454,7 +1454,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker parameter = mark();
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
-        expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
+        if (!myJetParsing.parseIdeTemplate()) {
+            expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
+        }
         if (at(COLON)) {
             advance(); // COLON
             myJetParsing.parseTypeRef();
