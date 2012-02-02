@@ -68,6 +68,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String WHEN_TEMPLATE = "when (<#<expression>#>) {\n<#<condition>#> -> <#<value>#>\n" +
                                                 "else -> <#<elseValue>#>\n}";
     private static final String WHEN_ENTRY_TEMPLATE = "<#<condition>#> -> <#<value>#>";
+    private static final String WHILE_TEMPLATE = "while (<#<condition>#>) {\n<#<body>#>\n}";
+    private static final String DO_WHILE_TEMPLATE = "do {\n<#<body>#>\n} while (<#<condition>#>)";
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -229,7 +231,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                 AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
                 CATCH_KEYWORD, CONTINUE_KEYWORD,
-                DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
+                ELSE_KEYWORD, ENUM_KEYWORD,
                 FALSE_KEYWORD, FINALLY_KEYWORD,
                 GET_KEYWORD,
                 IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
@@ -239,8 +241,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
                 TRUE_KEYWORD, TRY_KEYWORD,
                 TYPE_KEYWORD,
-                VARARG_KEYWORD, WHERE_KEYWORD,
-                WHILE_KEYWORD);
+                VARARG_KEYWORD, WHERE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InPropertyFilter(),
                 ELSE_KEYWORD, FALSE_KEYWORD,
@@ -262,7 +263,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                                         IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
-                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, FOR_TEMPLATE, WHEN_TEMPLATE);
+                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, FOR_TEMPLATE,
+                                        WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyFilter(),
                                         IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
     }
