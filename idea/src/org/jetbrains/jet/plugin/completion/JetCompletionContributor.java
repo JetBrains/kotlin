@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.psi.JetUserType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
@@ -31,8 +32,7 @@ import java.util.HashSet;
  */
 public class JetCompletionContributor extends CompletionContributor {
 
-    // A hack to avoid doubling of completion
-    final HashSet<LookupPositionObject> positions = new HashSet<LookupPositionObject>();
+
 
     public JetCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(),
@@ -41,54 +41,47 @@ public class JetCompletionContributor extends CompletionContributor {
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                                  final @NotNull CompletionResultSet result) {
 
-                       synchronized (positions) {
-                           positions.clear();
+                       final HashSet<LookupPositionObject> positions = new HashSet<LookupPositionObject>();
 
-                           if (result.getPrefixMatcher().getPrefix().isEmpty()) {
-                               return;
-                           }
-
-                           final PsiElement position = parameters.getPosition();
-                           if (!(position.getContainingFile() instanceof JetFile)) {
-                               return;
-                           }
-
-                           final JetSimpleNameReference jetReference = getJetReference(parameters);
-                           if (jetReference != null) {
-                               for (Object variant : jetReference.getVariants()) {
-                                   addReferenceVariant(result, variant);
-                               }
-                           }
-
-//                           final JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
-//                           final GlobalSearchScope scope = GlobalSearchScope.allScope(parameters.getPosition().getProject());
-//                           final Collection<String> functionNames = namesCache.getAllJetExtensionFunctionsNames(scope);
-
-                           if (shouldRunClassNameCompletion(parameters)) {
-                               addJavaClasses(parameters, result);
-                               // addJetClasses(result, position);
-                           }
-
-                           if (shouldRunFunctionNameCompletion(parameters)) {
-                               addJetTopLevelFunctions(result, position);
-                           }
-
-                           result.stopHere();
+                       if (result.getPrefixMatcher().getPrefix().isEmpty()) {
+                           return;
                        }
+
+                       final PsiElement position = parameters.getPosition();
+                       if (!(position.getContainingFile() instanceof JetFile)) {
+                           return;
+                       }
+
+                       final JetSimpleNameReference jetReference = getJetReference(parameters);
+                       if (jetReference != null) {
+                           for (Object variant : jetReference.getVariants()) {
+                               addReferenceVariant(result, variant, positions);
+                           }
+                       }
+
+                       if (shouldRunTopLevelCompletion(parameters)) {
+                           // Jet classes will be added as java completions for unification
+                           addClasses(parameters, result, positions);
+                           addJetTopLevelFunctions(result, position, positions);
+                       }
+
+                       result.stopHere();
                    }
                });
     }
 
-    private void addReferenceVariant(@NotNull CompletionResultSet result, @NotNull Object variant) {
+    private static void addReferenceVariant(@NotNull CompletionResultSet result, @NotNull Object variant,
+                                            @NotNull final HashSet<LookupPositionObject> positions) {
         if (variant instanceof LookupElement) {
-            addCompletionToResult(result, (LookupElement) variant);
+            addCompletionToResult(result, (LookupElement) variant, positions);
         }
         else {
-            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()));
+            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), positions);
         }
     }
 
-    private void addJetTopLevelFunctions(@NotNull CompletionResultSet result, @NotNull PsiElement position) {
+    private static void addJetTopLevelFunctions(@NotNull CompletionResultSet result, @NotNull PsiElement position,
+                                                @NotNull final HashSet<LookupPositionObject> positions) {
         String actualPrefix = getActualCompletionPrefix(position);
         if (actualPrefix != null) {
             final Project project = position.getProject();
@@ -100,41 +93,12 @@ public class JetCompletionContributor extends CompletionContributor {
             for (String name : functionNames) {
                 if (name.contains(actualPrefix)) {
                     for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
-                        addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, function, null));
+                        addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, function, null), positions);
                     }
-                    
-//                    for (JetNamedFunction function : namesCache.getTopLevelFunctionsByName(name, scope)) {
-//                        String functionName = function.getName();
-//                        String qualifiedName = function.getQualifiedName();
-//                        assert functionName != null;
-//
-//                        final LookupElementBuilder lookup = LookupElementBuilder.create(
-//                                new LookupPositionObject(function), functionName);
-//
-//                        if (qualifiedName != null) {
-//                            lookup.setTailText(qualifiedName);
-//                        }
-//
-//                        addCompletionToResult(result, lookup);
-//                    }
                 }
             }
         }
     }
-
-//    private void addJetClasses(@NotNull CompletionResultSet result, @NotNull PsiElement position) {
-//        String actualPrefix = getActualCompletionPrefix(position);
-//        if (actualPrefix != null) {
-//            final Collection<ClassDescriptor> classDescriptors =
-//                    JetCacheManager.getInstance(position.getProject()).getNamesCache().getClassDescriptors();
-//
-//            for (ClassDescriptor descriptor : classDescriptors) {
-//                if (descriptor.getName().startsWith(actualPrefix)) {
-//                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, descriptor, null));
-//                }
-//            }
-//        }
-//    }
 
     @Nullable
     private static String getActualCompletionPrefix(@NotNull PsiElement position) {
@@ -157,25 +121,28 @@ public class JetCompletionContributor extends CompletionContributor {
         return null;
     }
 
-    private void addJavaClasses(@NotNull CompletionParameters parameters, @NotNull final CompletionResultSet result) {
-
+    private static void addClasses(@NotNull CompletionParameters parameters, @NotNull final CompletionResultSet result, final HashSet<LookupPositionObject> positions) {
         CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
 
-        JavaClassNameCompletionContributor.addAllClasses(parameters, JavaCompletionSorting.addJavaSorting(
-                parameters, tempResult), parameters.getInvocationCount() <= 1, new Consumer<LookupElement>() {
+        JavaClassNameCompletionContributor.addAllClasses(
+                parameters,
+                JavaCompletionSorting.addJavaSorting(parameters, tempResult),
+                parameters.getInvocationCount() <= 2,
+                new Consumer<LookupElement>() {
+                    @Override
+                    public void consume(@NotNull LookupElement element) {
+                        // Redefine standard java insert handler which is going to insert fqn
+                        if (element instanceof JavaPsiClassReferenceElement) {
+                            JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) element;
+                            javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
+                        }
 
-            @Override
-            public void consume(@NotNull LookupElement element) {
-                addCompletionToResult(result, element);
-            }
-        });
+                        addCompletionToResult(result, element, positions);
+                    }
+                });
     }
 
-    private static boolean shouldRunFunctionNameCompletion(@NotNull CompletionParameters parameters) {
-        return shouldRunClassNameCompletion(parameters);
-    }
-
-    private static boolean shouldRunClassNameCompletion(@NotNull CompletionParameters parameters) {
+    private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters) {
         final PsiElement element = parameters.getPosition();
 
         if (parameters.getInvocationCount() > 1) {
@@ -219,7 +186,7 @@ public class JetCompletionContributor extends CompletionContributor {
         return null;
     }
 
-    private void addCompletionToResult(@NotNull final CompletionResultSet result, LookupElement element) {
+    private static void addCompletionToResult(@NotNull final CompletionResultSet result, LookupElement element, HashSet<LookupPositionObject> positions) {
         if (element.getObject() instanceof LookupPositionObject) {
             final LookupPositionObject positionObject = (LookupPositionObject) element.getObject();
 
