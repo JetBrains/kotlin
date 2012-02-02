@@ -1,4 +1,4 @@
-package org.jetbrains.examples.actors
+package actors
 
 import std.concurrent.*
 import std.util.*

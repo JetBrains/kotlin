@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/build-tools/build-tools.iml" filepath="$PROJECT_DIR$/build-tools/build-tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/compiler/cli/cli.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/examples/example-actors/example-actors.iml" filepath="$PROJECT_DIR$/examples/example-actors/example-actors.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/example-vfs/example-vfs.iml" filepath="$PROJECT_DIR$/examples/example-vfs/example-vfs.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/examples.iml" filepath="$PROJECT_DIR$/examples/examples.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" />
