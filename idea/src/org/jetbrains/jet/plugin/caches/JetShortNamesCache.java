@@ -78,9 +78,11 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            final PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
-            if (psiClass != null) {
-                result.add(psiClass);
+            if (fqnToShortName(fqName).equals(name)) {
+                final PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
+                if (psiClass != null) {
+                    result.add(psiClass);
+                }
             }
         }
 
