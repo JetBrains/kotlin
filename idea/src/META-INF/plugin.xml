@@ -82,7 +82,9 @@
                               implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.GlobalMemberCompletionContributor"/>
+      <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor" id="liveTemplates" order="first"/>
       <completion.confidence language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionConfidence"/>
+      <completion.skip implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper" id="skipLiveTemplate"/>
 
       <psi.referenceContributor language="jet" order="after JetCompletionContributor" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
