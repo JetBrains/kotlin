@@ -63,6 +63,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String TRAIT_TEMPLATE = "trait <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_TEMPLATE = "class <#<name>#> {\n<#<body>#>\n}";
     private static final String OBJECT_NAMED_TEMPLATE = "object <#<name>#> {\n<#<body>#>\n}";
+    private static final String CLASS_OBJECT_TEMPLATE = "class object {\n<#<body>#>\n}";
 
     private static class CommentFilter implements ElementFilter {
         @Override
@@ -239,7 +240,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                                         FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
                                         VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE,
-                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE);
+                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, CLASS_OBJECT_TEMPLATE);
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                                         IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
