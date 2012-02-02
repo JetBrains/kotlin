@@ -117,6 +117,14 @@
             <option name="KOTLIN_EXPRESSION" value="true"/>
         </context>
     </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.anonymous"
+              name="anonymous" toReformat="true" toShortenFQNames="true" value="object : $SUPERTYPE$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="SUPERTYPE" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_EXPRESSION" value="true"/>
+        </context>
+    </template>
 
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.exfun"
               name="exfun" toReformat="true" toShortenFQNames="true"
