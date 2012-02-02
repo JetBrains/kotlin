@@ -38,7 +38,7 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
             ASTNode next = node.getTreeNext();
             if (next != null) {
                 ASTNode nextNext = next.getTreeNext();
-                if (nextNext.getElementType() == JetTokens.IDE_TEMPLATE_END) {
+                if (nextNext != null && nextNext.getElementType() == JetTokens.IDE_TEMPLATE_END) {
                     TextRange range = new TextRange(node.getStartOffset(), nextNext.getStartOffset() + nextNext.getTextLength());
                     descriptors.add(new FoldingDescriptor(next, range, null, Collections.<Object>emptySet(), true));
                 }
