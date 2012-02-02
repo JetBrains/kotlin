@@ -114,4 +114,15 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             return parent instanceof JetBlockExpression;
         }
     }
+
+    public static class Expression extends JetTemplateContextType {
+        public Expression() {
+            super("KOTLIN_EXPRESSION", "Expression", Generic.class);
+        }
+
+        @Override
+        protected boolean isInContext(@NotNull PsiElement element) {
+            return element.getParent() instanceof JetExpression;
+        }
+    }
 }
