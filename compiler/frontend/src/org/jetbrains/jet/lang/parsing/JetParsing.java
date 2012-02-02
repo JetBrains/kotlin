@@ -566,7 +566,7 @@ public class JetParsing extends AbstractJetParsing {
         IElementType declType = parseMemberDeclarationRest(enumDetector.isDetected());
 
         if (declType == null) {
-            errorAndAdvance("Expecting member declaration");
+            errorWithRecovery("Expecting member declaration", TokenSet.create(RBRACE));
             decl.drop();
         }
         else {
