@@ -17,7 +17,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
  * @since 1/27/12
  */
 public abstract class JetTemplateContextType extends TemplateContextType {
-    protected JetTemplateContextType(@NotNull @NonNls String id, @NotNull String presentableName, @Nullable Class<? extends TemplateContextType> baseContextType) {
+    protected JetTemplateContextType(@NotNull @NonNls String id, @NotNull String presentableName, @Nullable java.lang.Class<? extends TemplateContextType> baseContextType) {
         super(id, presentableName, baseContextType);
     }
 
@@ -66,6 +66,32 @@ public abstract class JetTemplateContextType extends TemplateContextType {
                 }
                 if (e instanceof JetProperty || e instanceof JetNamedFunction
                     || e instanceof JetClassOrObject) {
+                    return false;
+                }
+                e = e.getParent();
+            }
+            return true;
+        }
+    }
+
+    public static class Class extends JetTemplateContextType {
+        public Class() {
+            super("KOTLIN_CLASS", "Class", Generic.class);
+        }
+
+        @Override
+        protected boolean isInContext(@NotNull PsiElement element) {
+            PsiElement e = element;
+            while (e != null && !(e instanceof JetClassOrObject)) {
+                if (e instanceof JetModifierList) {
+                    // skip property/function/class or object which is owner of modifier list
+                    e = e.getParent();
+                    if (e != null) {
+                        e = e.getParent();
+                    }
+                    continue;
+                }
+                if (e instanceof JetProperty || e instanceof JetNamedFunction) {
                     return false;
                 }
                 e = e.getParent();
