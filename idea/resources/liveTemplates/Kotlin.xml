@@ -6,6 +6,7 @@
             <option name="KOTLIN_NAMESPACE" value="true" />
         </context>
     </template>
+
     <template resource-bundle="messages.CodeInsightBundle" key="livetemplate.description.sout"
               name="sout" toReformat="true"
               ShortenFQNames="true" value="println($END$)">
@@ -33,6 +34,53 @@
         <variable alwaysStopAt="false" defaultValue="" expression="groovyScript(&quot;'\&quot;' + _1.collect { it + ' = [${' + it + '}]'}.join(', ') + '\&quot;'&quot;, functionParameters())" name="FORMAT" />
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.void"
+              name="void" toReformat="true" toShortenFQNames="true" value="fun $NAME$($PARAMS$) {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="PARAMS" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_CLASS" value="true"/>
+            <option name="KOTLIN_NAMESPACE" value="true"/>
+        </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fun0"
+              name="fun0" toReformat="true" toShortenFQNames="true" value="fun $NAME$() : $RETURN$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Unit&quot;" expression="" name="RETURN" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_CLASS" value="true"/>
+            <option name="KOTLIN_NAMESPACE" value="true"/>
+        </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fun1"
+              name="fun1" toReformat="true" toShortenFQNames="true" value="fun $NAME$($PARAM1$ : $PARAM1TYPE$) : $RETURN$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
+        <variable alwaysStopAt="true" defaultValue="&quot;x&quot;" expression="" name="PARAM1" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Any&quot;" expression="" name="PARAM1TYPE" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Unit&quot;" expression="" name="RETURN" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_CLASS" value="true"/>
+            <option name="KOTLIN_NAMESPACE" value="true"/>
+        </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fun2"
+              name="fun2" toReformat="true" toShortenFQNames="true" value="fun $NAME$($PARAM1$ : $PARAM1TYPE$, $PARAM2$ : $PARAM2TYPE$) : $RETURN$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
+        <variable alwaysStopAt="true" defaultValue="&quot;x&quot;" expression="" name="PARAM1" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Any&quot;" expression="" name="PARAM1TYPE" />
+        <variable alwaysStopAt="true" defaultValue="&quot;y&quot;" expression="" name="PARAM2" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Any&quot;" expression="" name="PARAM2TYPE" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Unit&quot;" expression="" name="RETURN" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_CLASS" value="true"/>
+            <option name="KOTLIN_NAMESPACE" value="true"/>
         </context>
     </template>
 </templateSet>
