@@ -102,4 +102,14 @@
             <option name="KOTLIN_NAMESPACE" value="true"/>
         </context>
     </template>
+
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.closure"
+              name="closure" toReformat="true" toShortenFQNames="true" value="{$PARAM$ -> $PARAM_COPY$}">
+        <variable alwaysStopAt="true" defaultValue="&quot;x&quot;" expression="" name="PARAM" />
+        <variable alwaysStopAt="true" defaultValue="" expression="PARAM" name="PARAM_COPY" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_EXPRESSION" value="true"/>
+        </context>
+    </template>
 </templateSet>
