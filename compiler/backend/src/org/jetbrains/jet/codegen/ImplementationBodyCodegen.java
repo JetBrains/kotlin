@@ -207,6 +207,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateSyntheticParts() {
+        generateGetTypeInfo();
+
         generateFieldForObjectInstance();
         generateFieldForClassObject();
 
@@ -219,8 +221,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         catch(RuntimeException e) {
             throw new RuntimeException("Error generating primary constructor of class " + myClass.getName() + " with kind " + kind, e);
         }
-
-        generateGetTypeInfo();
 
         generateAccessors();
     }

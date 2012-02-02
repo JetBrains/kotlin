@@ -9,6 +9,7 @@ fun typeinfo<T>() : TypeInfo<T>
 fun typeinfo<T>(expression : T) : TypeInfo<T>
 
 annotation class volatile
+annotation class atomic
 
 fun <R> synchronized(lock: Any, block : () -> R) : R
 

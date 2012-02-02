@@ -3,7 +3,8 @@ package std.concurrent
 import java.lang.*
 import java.util.concurrent.Executor
 
-inline val currentThread = Thread.currentThread().sure()
+inline val currentThread : Thread
+    get() = Thread.currentThread().sure()
 
 inline var Thread.name : String
     get() = getName().sure()

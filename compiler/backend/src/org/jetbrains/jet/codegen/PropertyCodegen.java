@@ -71,7 +71,7 @@ public class PropertyCodegen {
                 modifiers = access | Opcodes.ACC_STATIC;
             }
             else {
-                modifiers = Opcodes.ACC_PRIVATE;
+                modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
             }
             if (!propertyDescriptor.isVar()) {
                 modifiers |= Opcodes.ACC_FINAL;

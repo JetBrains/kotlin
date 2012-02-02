@@ -679,7 +679,7 @@ public class JetTypeMapper {
         return new CallableMethod(owner, method, INVOKESPECIAL);
     }
 
-    static int getAccessModifiers(DeclarationDescriptorWithVisibility p, int defaultFlags) {
+    public static int getAccessModifiers(DeclarationDescriptorWithVisibility p, int defaultFlags) {
         DeclarationDescriptor declaration = p.getContainingDeclaration();
         if(CodegenUtil.isInterface(declaration)) {
             return ACC_PUBLIC;
