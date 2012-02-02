@@ -40,11 +40,11 @@ class ErrorCollector {
     void report(final PrintStream out) {
         if(!maps.isEmpty()) {
             for (PsiFile psiFile : maps.keySet()) {
-                out.println(psiFile.getVirtualFile().getPath());
+                String path = psiFile.getVirtualFile().getPath();
                 Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
                 for (DiagnosticWithTextRange diagnosticWithTextRange : diagnosticWithTextRanges) {
                     String position = DiagnosticUtils.formatPosition(diagnosticWithTextRange);
-                    out.println("\t" + diagnosticWithTextRange.getSeverity().toString() + ": " + position + " " + diagnosticWithTextRange.getMessage());
+                    out.println(diagnosticWithTextRange.getSeverity().toString() + ": " + path + ":" + position + " " + diagnosticWithTextRange.getMessage());
                 }
             }
         }

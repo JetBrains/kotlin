@@ -11,31 +11,30 @@ import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.CompilationException;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
+import static com.intellij.openapi.compiler.CompilerMessageCategory.*;
 
 /**
  * @author yole
@@ -131,8 +130,8 @@ public class JetCompiler implements TranslatingCompiler {
         }
         
         params.getVMParametersList().addParametersString("-Djava.awt.headless=true -Xmx512m");
-        
-        
+        //params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
+
         Sdk sdk = params.getJdk();
 
         final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
@@ -148,7 +147,35 @@ public class JetCompiler implements TranslatingCompiler {
             processHandler.addProcessListener(new ProcessAdapter() {
                 @Override
                 public void onTextAvailable(ProcessEvent event, Key outputType) {
-                    System.out.println(event.getText());
+                    String text = event.getText();
+                    String levelCode = parsePrefix(text);
+                    if (levelCode != null) {
+                        CompilerMessageCategory category = categories.get(levelCode);
+                        text = text.substring(levelCode.length());
+
+                        String path = "";
+                        int line = -1;
+                        int column = -1;
+                        int colonIndex = text.indexOf(':');
+                        if (colonIndex > 0) {
+                            path = "file://" + text.substring(0, colonIndex).trim();
+                            text = text.substring(colonIndex + 1);
+
+                            Pattern position = Pattern.compile("\\((\\d+),\\s*(\\d+)\\)");
+
+                            Matcher matcher = position.matcher(text);
+                            if (matcher.find()) {
+                                line = Integer.parseInt(matcher.group(1));
+                                column = Integer.parseInt(matcher.group(2));
+                                text = text.substring(matcher.group(0).length());
+                            }
+                        }
+
+                        compileContext.addMessage(category, text, path, line, column);
+                    }
+                    else {
+                        compileContext.addMessage(INFORMATION, text, "", -1, -1);
+                    }
                 }
             });
 
@@ -160,6 +187,21 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
+    private static String[] messagePrefixes = new String[] {"ERROR:", "WARNING:", "INFO:"} ;
+    private static Map<String, CompilerMessageCategory> categories = new HashMap<String, CompilerMessageCategory>();
+    static {
+        categories.put("ERROR:", ERROR);
+        categories.put("WARNING:", WARNING);
+        categories.put("INFORMATION:", INFORMATION);
+    }
+
+    private static String parsePrefix(String message) {
+        for (String prefix : messagePrefixes) {
+            if (message.startsWith(prefix)) return prefix;
+        }
+        return null;
+    }
+    
     private static String path(VirtualFile root) {
         String path = root.getPath();
         if (path.endsWith("!/")) {
@@ -168,97 +210,4 @@ public class JetCompiler implements TranslatingCompiler {
 
         return path;
     }
-
-    private void report(Diagnostic diagnostic, CompilerMessageCategory severity, CompileContext compileContext) {
-        PsiFile psiFile = diagnostic.getFactory().getPsiFile(diagnostic);
-        TextRange textRange = diagnostic.getFactory().getTextRange(diagnostic);
-        Document document = psiFile.getViewProvider().getDocument();
-        int line;
-        int col;
-        if (document != null) {
-            line = document.getLineNumber(textRange.getStartOffset());
-            col = textRange.getStartOffset() - document.getLineStartOffset(line) + 1;
-        }
-        else {
-            line = -1;
-            col = -1;
-        }
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (virtualFile == null) {
-            compileContext.addMessage(ERROR, "[Internal Error] No virtual file for PsiFile. Diagnostic: " + diagnostic.getMessage(), "", -1, -1);
-        }
-        else {
-            compileContext.addMessage(severity, diagnostic.getMessage(), virtualFile.getUrl(), line + 1, col);
-        }
-    }
-
-    private void report(CompilationException diagnostic, CompileContext compileContext) {
-        PsiFile psiFile = diagnostic.getElement().getContainingFile();
-        TextRange textRange = diagnostic.getElement().getTextRange();
-        Document document = psiFile.getViewProvider().getDocument();
-        int line;
-        int col;
-        if (document != null) {
-            line = document.getLineNumber(textRange.getStartOffset());
-            col = textRange.getStartOffset() - document.getLineStartOffset(line) + 1;
-        }
-        else {
-            line = -1;
-            col = -1;
-        }
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (virtualFile == null) {
-            compileContext.addMessage(ERROR, "[Internal Error] No virtual file for PsiFile. Diagnostic: " + diagnostic.getMessage(), "", -1, -1);
-        }
-        else {
-            compileContext.addMessage(ERROR, diagnostic.getMessage(), virtualFile.getUrl(), line + 1, col);
-        }
-    }
-
-//    private static class ModuleCompileState {
-//        private final GenerationState state;
-//        private final CompileContext compileContext;
-//        private final Module module;
-//        private final OutputSink outputSink;
-//
-//        public ModuleCompileState(final CompileContext compileContext, Module module, OutputSink outputSink) {
-//            this.compileContext = compileContext;
-//            this.module = module;
-//            this.outputSink = outputSink;
-//            state = ApplicationManager.getApplication().runReadAction(new Computable<GenerationState>() {
-//                @Override
-//                public GenerationState compute() {
-//                    return new GenerationState(compileContext.getProject(), false);
-//                }
-//            });
-//        }
-//
-//
-//
-//        public void compile(final VirtualFile virtualFile) {
-//            ApplicationManager.getApplication().runReadAction(new Runnable() {
-//                @Override
-//                public void run() {
-//                    PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(virtualFile);
-//                    if (psiFile instanceof JetFile) {
-//                        state.compile((JetFile) psiFile);
-//                    }
-//                }
-//            });
-//        }
-//
-//        public void done() {
-//            VirtualFile outputDir = compileContext.getModuleOutputDirectory(module);
-//            final ClassFileFactory factory = state.getFactory();
-//            List<String> files = factory.files();
-//            for (String file : files) {
-//                File target = new File(outputDir.getPath(), file);
-//                try {
-//                    FileUtil.writeToFile(target, factory.asBytes(file));
-//                } catch (IOException e) {
-//                    compileContext.addMessage(ERROR, e.getMessage(), null, 0, 0);
-//                }
-//            }
-//        }
-//    }
 }
