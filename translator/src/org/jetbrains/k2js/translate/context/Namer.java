@@ -16,6 +16,7 @@ public final class Namer {
     private static final String CLASS_OBJECT_NAME = "Class";
     private static final String TRAIT_OBJECT_NAME = "Trait";
     private static final String NAMESPACE_OBJECT_NAME = "Namespace";
+    private static final String OBJECT_OBJECT_NAME = "object";
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
@@ -76,6 +77,8 @@ public final class Namer {
     private final JsName traitName;
     @NotNull
     private final JsName namespaceName;
+    @NotNull
+    private final JsName objectName;
 
     private Namer(@NotNull JsScope rootScope) {
         kotlinName = rootScope.declareName(KOTLIN_OBJECT_NAME);
@@ -83,6 +86,7 @@ public final class Namer {
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
         namespaceName = kotlinScope.declareName(NAMESPACE_OBJECT_NAME);
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
+        objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
     }
 
     @NotNull
@@ -98,6 +102,11 @@ public final class Namer {
     @NotNull
     public JsNameRef namespaceCreationMethodReference() {
         return kotlin(createMethodReference(namespaceName));
+    }
+
+    @NotNull
+    public JsNameRef objectCreationMethodReference() {
+        return kotlin(createMethodReference(objectName));
     }
 
     @NotNull
