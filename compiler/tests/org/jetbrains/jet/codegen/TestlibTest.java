@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
@@ -27,7 +28,7 @@ import java.util.Set;
  */
 public class TestlibTest extends CodegenTestCase {
 
-    public static TestSuite suite() {
+    public static Test suite() {
         return new TestlibTest().buildSuite();
     }
 
