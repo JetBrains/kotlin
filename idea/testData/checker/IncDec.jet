@@ -35,12 +35,12 @@ class UnitIncDec() {
 
 fun testUnitIncDec() {
   var x = UnitIncDec()
-  x++
-  ++x
-  x--
-  --x
-  x = <error>x++</error>
-  x = <error>x--</error>
-  x = <error>++x</error>
-  x = <error>--x</error>
+  x<error>++</error>
+  <error>++</error>x
+  x<error>--</error>
+  <error>--</error>x
+  x = <warning>x<error>++</error></warning>
+  x = <warning>x<error>--</error></warning>
+  x = <error>++</error>x
+  x = <warning><error>--</error>x</warning>
 }

@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import javax.naming.ldap.ExtendedResponse;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -661,24 +663,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "visitUnaryExpression"));
             return null;
         }
-        JetType type = null;
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+        BindingTrace initialTrace = context.trace;
+        context = context.replaceBindingTrace(temporaryTrace);
+        JetType type = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        if (type == null) {
+            temporaryTrace.commit();
+            return null;
+        }
 
         if ((operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) && baseExpression instanceof JetArrayAccessExpression) {
-            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-            JetType expressionType = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(temporaryTrace));
-            if (expressionType != null) {
-                JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), expressionType, context.trace);
-                type = resolveArrayAccessToLValue((JetArrayAccessExpression) baseExpression, stubExpression, context, true);
-            }
-            else {
-                temporaryTrace.commit();
-                context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
-            }
+            JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), type, context.trace);
+            resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression, stubExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(TemporaryBindingTrace.create(initialTrace)), context.trace);
         }
-        else {
-            type = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        }
-        if (type == null) return null;
 
         ExpressionReceiver receiver = new ExpressionReceiver(baseExpression, type);
 
@@ -687,12 +684,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression.getOperationReference(),
                 name);
 
-        if (!functionDescriptor.isSuccess()) return null;
+        if (!functionDescriptor.isSuccess()) {
+            temporaryTrace.commit();
+            return null;
+        }
         JetType returnType = functionDescriptor.getResultingDescriptor().getReturnType();
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             if (context.semanticServices.getTypeChecker().isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
                 result = JetStandardClasses.getUnitType();
+                context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
                 JetType receiverType = receiver.getType();
@@ -712,7 +713,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             result = returnType;
         }
-
+        temporaryTrace.commit();
         return DataFlowUtils.checkType(result, expression, context);
     }
 
@@ -849,13 +850,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
         String name = "contains";
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        OverloadResolutionResults<FunctionDescriptor> functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
+        OverloadResolutionResults<FunctionDescriptor> resolutionResult = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
                 operationSign,
                 name);
-        JetType containsType = functionDescriptor.isSuccess() ? functionDescriptor.getResultingDescriptor().getReturnType() : null;
+        JetType containsType = OverloadResolutionResultsUtil.getResultType(resolutionResult);
         ensureBooleanResult(operationSign, name, containsType, context);
-        return functionDescriptor.isSuccess();
+        return resolutionResult.isSuccess();
     }
 
     private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {
@@ -892,38 +893,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetType visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
-        JetExpression arrayExpression = expression.getArrayExpression();
-        ExpressionReceiver receiver = getExpressionReceiver(facade, arrayExpression, context.replaceScope(context.scope));
-
-        if (receiver != null) {
-            OverloadResolutionResults<FunctionDescriptor> results = context.resolveCallWithGivenName(
-                    CallMaker.makeCallWithExpressions(expression, receiver, null, expression, expression.getIndexExpressions()),
-                    expression,
-                    "get"
-            );
-            if (results.isSuccess()) {
-                context.trace.record(INDEXED_LVALUE_GET, expression, results.getResultingCall());
-                return DataFlowUtils.checkType(results.getResultingDescriptor().getReturnType(), expression, contextWithExpectedType);
-            }
-        }
-        context.trace.report(NO_GET_METHOD.on(expression.getIndicesNode()));
-        return null;
+    public JetType visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
+        return resolveArrayAccessGetMethod(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
     }
 
     @Nullable
     public JetType getTypeForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
-        OverloadResolutionResults<FunctionDescriptor> results = context.replaceScope(scope).resolveCallWithGivenNameToDescriptor(
+        return OverloadResolutionResultsUtil.getResultType(getResolutionResultsForBinaryCall(scope, name, context, binaryExpression, receiver));
+    }
+
+    @NotNull
+    /*package*/ OverloadResolutionResults<FunctionDescriptor> getResolutionResultsForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression, ExpressionReceiver receiver) {
+//        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
+        return context.replaceScope(scope).resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, binaryExpression),
                 binaryExpression.getOperationReference(),
                 name
         );
-        if (results.isSuccess()) {
-            return results.getResultingDescriptor().getReturnType();
-        }
-        return null;
     }
 
     @Override
@@ -999,45 +986,38 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
         return null;
     }
-    
-    /*package*/ JetType resolveArrayAccessToLValue(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull JetExpression right, @NotNull ExpressionTypingContext context, final boolean getterNeeded) {
-        ExpressionReceiver receiver = getExpressionReceiver(facade, arrayAccessExpression.getArrayExpression(), context.replaceExpectedType(NO_EXPECTED_TYPE));
-        if (receiver == null) return null;
 
-        OverloadResolutionResults<FunctionDescriptor> getFunctionResults = null;
-        if (getterNeeded) {
-            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-            getFunctionResults = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceBindingTrace(temporaryTrace).resolveCallWithGivenName(
-                    CallMaker.makeArrayGetCall(receiver, arrayAccessExpression),
-                    arrayAccessExpression,
-                    "get");
-            if (!getFunctionResults.isSuccess()) {
-                temporaryTrace.commit();
-                context.trace.report(NO_GET_METHOD.on(arrayAccessExpression.getIndicesNode()));
-                return null;
-            }
-            context.trace.record(INDEXED_LVALUE_GET, arrayAccessExpression, getFunctionResults.getResultingCall());
-        }
+    @Nullable
+    /*package*/ JetType resolveArrayAccessSetMethod(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull JetExpression rightHandSide, @NotNull ExpressionTypingContext context, @NotNull BindingTrace traceForResolveResult) {
+        return resolveArrayAccessSpecialMethod(arrayAccessExpression, rightHandSide, context, traceForResolveResult, false);
+    }
 
-        Call call = CallMaker.makeArraySetCall(receiver, arrayAccessExpression, right);
-        OverloadResolutionResults<FunctionDescriptor> setFunctionResults = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).resolveCallWithGivenName(
-                call,
+    @Nullable
+    /*package*/ JetType resolveArrayAccessGetMethod(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull ExpressionTypingContext context) {
+        return resolveArrayAccessSpecialMethod(arrayAccessExpression, null, context, context.trace, true);
+    }
+
+    @Nullable
+    private JetType resolveArrayAccessSpecialMethod(@NotNull JetArrayAccessExpression arrayAccessExpression,
+                                                    @Nullable JetExpression rightHandSide, //only for 'set' method
+                                                    @NotNull ExpressionTypingContext context,
+                                                    @NotNull BindingTrace traceForResolveResult,
+                                                    boolean isGet) {
+        JetType arrayType = facade.getType(arrayAccessExpression.getArrayExpression(), context);
+        if (arrayType == null) return null;
+
+        ExpressionReceiver receiver = new ExpressionReceiver(arrayAccessExpression.getArrayExpression(), arrayType);
+        if (!isGet) assert rightHandSide != null;
+        OverloadResolutionResults<FunctionDescriptor> functionResults = context.resolveCallWithGivenName(
+                isGet ? CallMaker.makeArrayGetCall(receiver, arrayAccessExpression) : CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide),
                 arrayAccessExpression,
-                "set");
-        if (!setFunctionResults.isSuccess()) {
-            context.trace.report(NO_SET_METHOD.on(arrayAccessExpression.getIndicesNode()));
-            if (getterNeeded) {
-                return getFunctionResults.getResultingDescriptor().getReturnType();
-            }
+                isGet ? "get" : "set");
+        if (!functionResults.isSuccess()) {
+            JetContainerNode indicesNode = arrayAccessExpression.getIndicesNode();
+            traceForResolveResult.report(isGet ? NO_GET_METHOD.on(indicesNode) : NO_SET_METHOD.on(indicesNode));
             return null;
         }
-        FunctionDescriptor setFunctionDescriptor = setFunctionResults.getResultingDescriptor();
-        context.trace.record(INDEXED_LVALUE_SET, arrayAccessExpression, setFunctionResults.getResultingCall());
-
-        if (getterNeeded) {
-            return getFunctionResults.getResultingDescriptor().getReturnType();
-        }
-
-        return setFunctionDescriptor.getReturnType();
+        traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());
+        return functionResults.getResultingDescriptor().getReturnType();
     }
 }

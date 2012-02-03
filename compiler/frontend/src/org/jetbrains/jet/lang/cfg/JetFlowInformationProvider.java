@@ -310,6 +310,16 @@ public class JetFlowInformationProvider {
                         hasReassignMethodReturningUnit = true;
                     }
                 }
+                if (descriptor == null) {
+                    Collection<? extends DeclarationDescriptor> descriptors = trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, operationReference);
+                    if (descriptors != null) {
+                        for (DeclarationDescriptor referenceDescriptor : descriptors) {
+                            if (JetStandardClasses.isUnit(((FunctionDescriptor) referenceDescriptor).getReturnType())) {
+                                hasReassignMethodReturningUnit = true;
+                            }
+                        }
+                    }
+                }
             }
             if (!hasReassignMethodReturningUnit) {
                 trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor));

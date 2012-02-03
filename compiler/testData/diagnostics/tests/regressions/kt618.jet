@@ -20,9 +20,9 @@ class B() {
 
 fun main(args : Array<String>) {
     var c = B()
-    <!TYPE_MISMATCH!>c += B()<!>
-    <!TYPE_MISMATCH!>c *= B()<!>
-    <!TYPE_MISMATCH!>c /= B()<!>
-    <!TYPE_MISMATCH!>c -= B()<!>
-    <!TYPE_MISMATCH!>c %= B()<!>
+    c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>+=<!> B()
+    c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>*=<!> B()
+    c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>/=<!> B()
+    c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>-=<!> B()
+    c <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>%=<!> B()
 }

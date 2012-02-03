@@ -35,12 +35,12 @@ class UnitIncDec() {
 
 fun testUnitIncDec() {
   var x = UnitIncDec()
-  x++
-  ++x
-  x--
-  --x
-  x = <!TYPE_MISMATCH, UNUSED_CHANGED_VALUE!>x++<!>
-  x = <!TYPE_MISMATCH, UNUSED_CHANGED_VALUE!>x--<!>
-  x = <!TYPE_MISMATCH!>++x<!>
-  x = <!TYPE_MISMATCH, UNUSED_VALUE!>--x<!>
+  x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
+  <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
+  x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>
+  <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
+  x = <!UNUSED_CHANGED_VALUE!>x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!><!>
+  x = <!UNUSED_CHANGED_VALUE!>x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!><!>
+  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
+  x = <!UNUSED_VALUE!><!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x<!>
 }

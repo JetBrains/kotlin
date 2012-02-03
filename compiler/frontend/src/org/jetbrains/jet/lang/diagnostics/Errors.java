@@ -199,6 +199,15 @@ public interface Errors {
     SimpleDiagnosticFactory NO_GET_METHOD = SimpleDiagnosticFactory.create(ERROR, "No get method providing array access");
     SimpleDiagnosticFactory NO_SET_METHOD = SimpleDiagnosticFactory.create(ERROR, "No set method providing array access");
 
+    SimpleDiagnosticFactory INC_DEC_SHOULD_NOT_RETURN_UNIT = SimpleDiagnosticFactory.create(ERROR, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --");
+    ParameterizedDiagnosticFactory2<DeclarationDescriptor, JetSimpleNameExpression> ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT = new ParameterizedDiagnosticFactory2<DeclarationDescriptor, JetSimpleNameExpression>(ERROR, "Function ''{0}'' should return Unit to be used by corresponding operator ''{1}''", NAME) {
+        @Override
+        protected String makeMessageForB(@NotNull JetSimpleNameExpression expression) {
+            return expression.getText();
+        }
+    };
+    AmbiguousDescriptorDiagnosticFactory ASSIGN_OPERATOR_AMBIGUITY = AmbiguousDescriptorDiagnosticFactory.create("Assignment operators ambiguity: {0}");
+
     SimpleDiagnosticFactory EQUALS_MISSING = SimpleDiagnosticFactory.create(ERROR, "No method 'equals(Any?) : Boolean' available");
     SimpleDiagnosticFactory ASSIGNMENT_IN_EXPRESSION_CONTEXT = SimpleDiagnosticFactory.create(ERROR, "Assignments are not expressions, and only expressions are allowed in this context");
     SimpleDiagnosticFactory NAMESPACE_IS_NOT_AN_EXPRESSION = SimpleDiagnosticFactory.create(ERROR, "'namespace' is not an expression, it can only be used on the left-hand side of a dot ('.')");

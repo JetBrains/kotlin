@@ -556,7 +556,7 @@ public abstract class StackValue {
         }
 
         public int receiverSize() {
-            if(isStandardStack(resolvedGetCall) && isStandardStack(resolvedSetCall)) {
+            if(isStandardStack(resolvedGetCall, 1) && isStandardStack(resolvedSetCall, 2)) {
                 return 2;
             }
             else {
@@ -566,7 +566,7 @@ public abstract class StackValue {
 
         @Override
         public void dupReceiver(InstructionAdapter v) {
-            if(isStandardStack(resolvedGetCall) && isStandardStack(resolvedSetCall)) {
+            if(isStandardStack(resolvedGetCall, 1) && isStandardStack(resolvedSetCall, 2)) {
                 v.dup2();   // collection and index
             }
             else {
@@ -702,7 +702,7 @@ public abstract class StackValue {
             }
         }
 
-        private boolean isStandardStack(ResolvedCall call) {
+        private boolean isStandardStack(ResolvedCall call, int valueParamsSize) {
             if(call == null)
                 return true;
 
@@ -710,12 +710,15 @@ public abstract class StackValue {
                 if(typeParameterDescriptor.isReified())
                     return false;
             }
-            
-            if(call.getResultingDescriptor().getValueParameters().size() != 1)
+
+            List<ValueParameterDescriptor> valueParameters = call.getResultingDescriptor().getValueParameters();
+            if(valueParameters.size() != valueParamsSize)
                 return false;
 
-            if(codegen.typeMapper.mapType(call.getResultingDescriptor().getValueParameters().get(0).getOutType()).getSize() != 1)
-                return false;
+            for (ValueParameterDescriptor valueParameter : valueParameters) {
+                if (codegen.typeMapper.mapType(valueParameter.getOutType()).getSize() != 1)
+                    return false;
+            }
 
             if(call.getThisObject().exists()) {
                 if(call.getReceiverArgument().exists())
