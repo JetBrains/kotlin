@@ -151,6 +151,9 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory1<JetModifierList, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing", DescriptorRenderer.TEXT);
     PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
+    ParameterizedDiagnosticFactory1<ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = ParameterizedDiagnosticFactory1.create(ERROR, "Missing delegation specifier ''{0}''", NAME);
+    ParameterizedDiagnosticFactory1<ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = ParameterizedDiagnosticFactory1.create(ERROR, "The type constructor of enum entry should be ''{0}''", NAME);
+
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Variable ''{0}'' must be initialized", NAME);
     PsiElementOnlyDiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Parameter ''{0}'' is uninitialized here", NAME);
     UnusedElementDiagnosticFactory<JetProperty, VariableDescriptor> UNUSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, "Variable ''{0}'' is never used", NAME);
