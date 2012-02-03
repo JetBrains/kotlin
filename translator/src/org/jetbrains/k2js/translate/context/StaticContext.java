@@ -185,14 +185,14 @@ public class StaticContext {
             public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                 //TODO: refactor
                 String name = null;
-                AnnotationDescriptor annotation = getAnnotationByName(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
+                AnnotationDescriptor annotation = getAnnotationByName(descriptor, LIBRARY_ANNOTATION_FQNAME);
                 if (annotation != null) {
-                    name = AnnotationsUtils.getAnnotationStringParameter(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
+                    name = AnnotationsUtils.getAnnotationStringParameter(descriptor, LIBRARY_ANNOTATION_FQNAME);
                     name = (!name.isEmpty()) ? name : descriptor.getName();
                 } else {
                     ClassDescriptor containingClass = getContainingClass(descriptor);
                     if (containingClass == null) return null;
-                    if (getAnnotationByName(containingClass, LIBRARY_CLASS_ANNOTATION_FQNAME) != null) {
+                    if (getAnnotationByName(containingClass, LIBRARY_ANNOTATION_FQNAME) != null) {
                         name = descriptor.getName();
                     }
                 }
@@ -334,10 +334,10 @@ public class StaticContext {
             //TODO: refactor by removing one annotation
             @Override
             public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_FUNCTION_ANNOTATION_FQNAME) != null) {
+                if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_ANNOTATION_FQNAME) != null) {
                     return namer.kotlinObject();
                 }
-                if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_CLASS_ANNOTATION_FQNAME) != null) {
+                if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_ANNOTATION_FQNAME) != null) {
                     return namer.kotlinObject();
                 }
                 return null;
@@ -350,7 +350,7 @@ public class StaticContext {
                 if (containingClass == null) {
                     return null;
                 }
-                if (getAnnotationByName(descriptor, LIBRARY_CLASS_ANNOTATION_FQNAME) != null) {
+                if (getAnnotationByName(descriptor, LIBRARY_ANNOTATION_FQNAME) != null) {
                     return namer.kotlinObject();
                 }
                 return null;
