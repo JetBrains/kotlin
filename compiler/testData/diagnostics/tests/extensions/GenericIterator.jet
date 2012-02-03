@@ -1,0 +1,27 @@
+import java.util.Enumeration
+
+fun a(e : java.util.Enumeration<Int>) {
+    for (i in e) {
+        i : Int
+    }
+}
+
+fun <T : Any> T?.iterator() = object {
+    var hasNext = this@iterator != null
+      private set
+
+    fun next() : T {
+        if (hasNext) {
+            hasNext = false
+            return this@iterator.sure()
+        }
+        throw java.util.NoSuchElementException()
+    }
+}
+
+fun main(args : Array<String>) {
+  val i : Int? = 1
+  for (x in i) {
+    println(x)
+  }
+}
