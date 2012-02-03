@@ -21,7 +21,7 @@ public abstract class Config {
     @NotNull
     private static final String PATH_TO_JS_LIB_SRC = getPathToJsLibSrc();
 
-    //TODO: provide some generic way to access
+    //TODO: provide some generic way to get the files of the project
     @NotNull
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
             PATH_TO_JS_LIB_SRC + "\\core\\annotations.kt",

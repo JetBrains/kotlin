@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author Pavel Talanov
  */
-public final class Generator<V> {
+public class Generator<V> {
 
 
     @NotNull

@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Pavel Talanov
@@ -12,29 +11,25 @@ public final class NamingScope {
 
     @NotNull
     public static NamingScope rootScope(@NotNull JsScope rootScope) {
-        return new NamingScope(rootScope, null);
+        return new NamingScope(rootScope);
     }
 
     @NotNull
     private final JsScope scope;
 
-    @Nullable
-    private final NamingScope parent;
-
-    private NamingScope(@NotNull JsScope correspondingScope, @Nullable NamingScope parent) {
+    private NamingScope(@NotNull JsScope correspondingScope) {
         this.scope = correspondingScope;
-        this.parent = parent;
     }
 
     @NotNull
     public NamingScope innerScope(@NotNull String scopeName) {
         JsScope innerJsScope = new JsScope(jsScope(), scopeName);
-        return new NamingScope(innerJsScope, this);
+        return new NamingScope(innerJsScope);
     }
 
     @NotNull
     public NamingScope innerScope(@NotNull JsScope correspondingScope) {
-        return new NamingScope(correspondingScope, this);
+        return new NamingScope(correspondingScope);
     }
 
     @NotNull
