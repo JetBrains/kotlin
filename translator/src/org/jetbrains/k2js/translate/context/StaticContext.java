@@ -354,12 +354,8 @@ public class StaticContext {
             };
             Rule<JsNameRef> libraryObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
 
-                //TODO: refactor by removing one annotation
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_ANNOTATION_FQNAME) != null) {
-                        return namer.kotlinObject();
-                    }
                     if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_ANNOTATION_FQNAME) != null) {
                         return namer.kotlinObject();
                     }
