@@ -90,13 +90,7 @@ public class TestlibTest extends CodegenTestCase {
                                        TestCase.class.getClassLoader()));
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
-            TestSuite suite = new TestSuite("StandardLibrary") {
-                @Override
-                public void run(TestResult result) {
-                    super.run(result);
-                    loader.dispose();
-                }
-            };
+            TestSuite suite = new MyTestSuite(loader);
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
@@ -148,5 +142,20 @@ public class TestlibTest extends CodegenTestCase {
     public void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithFullJdk();
+    }
+
+    private static class MyTestSuite extends TestSuite {
+        private final GeneratedClassLoader loader;
+
+        public MyTestSuite(GeneratedClassLoader loader) {
+            super("StandardLibrary");
+            this.loader = loader;
+        }
+
+        @Override
+        public void run(TestResult result) {
+            super.run(result);
+            loader.dispose();
+        }
     }
 }
