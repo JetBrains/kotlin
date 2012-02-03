@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -22,17 +22,17 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
     private final boolean sealed;
 
     @Nullable
-    private final DeclarationDescriptor declarationDescriptor;
+    private final ClassifierDescriptor classifierDescriptor;
 
     public TypeConstructorImpl(
-            @Nullable DeclarationDescriptor declarationDescriptor,
+            @Nullable ClassifierDescriptor classifierDescriptor,
             @NotNull List<AnnotationDescriptor> annotations,
             boolean sealed,
             @NotNull String debugName,
             @NotNull List<TypeParameterDescriptor> parameters,
             @NotNull Collection<JetType> supertypes) {
         super(annotations);
-        this.declarationDescriptor = declarationDescriptor;
+        this.classifierDescriptor = classifierDescriptor;
         this.sealed = sealed;
         this.debugName = debugName;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
@@ -63,7 +63,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
 
     @Override
     @Nullable
-    public DeclarationDescriptor getDeclarationDescriptor() {
-        return declarationDescriptor;
+    public ClassifierDescriptor getDeclarationDescriptor() {
+        return classifierDescriptor;
     }
 }

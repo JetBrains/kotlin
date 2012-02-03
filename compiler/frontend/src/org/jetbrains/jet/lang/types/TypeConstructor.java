@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -22,5 +23,5 @@ public interface TypeConstructor extends Annotated {
     boolean isSealed();
 
     @Nullable
-    DeclarationDescriptor getDeclarationDescriptor();
+    ClassifierDescriptor getDeclarationDescriptor();
 }
