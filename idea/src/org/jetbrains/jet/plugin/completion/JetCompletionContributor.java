@@ -31,9 +31,6 @@ import java.util.HashSet;
  * @author Nikolay Krasko
  */
 public class JetCompletionContributor extends CompletionContributor {
-
-
-
     public JetCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(),
                new CompletionProvider<CompletionParameters>() {
@@ -82,43 +79,22 @@ public class JetCompletionContributor extends CompletionContributor {
 
     private static void addJetTopLevelFunctions(@NotNull CompletionResultSet result, @NotNull PsiElement position,
                                                 @NotNull final HashSet<LookupPositionObject> positions) {
-        String actualPrefix = getActualCompletionPrefix(position);
-        if (actualPrefix != null) {
-            final Project project = position.getProject();
+        
+        String actualPrefix = result.getPrefixMatcher().getPrefix();
 
-            final JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
-            final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-            final Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
+        final Project project = position.getProject();
 
-            for (String name : functionNames) {
-                if (name.contains(actualPrefix)) {
-                    for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
-                        addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, function, null), positions);
-                    }
+        final JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
+        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        final Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
+
+        for (String name : functionNames) {
+            if (name.contains(actualPrefix)) {
+                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
+                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, function, null), positions);
                 }
             }
         }
-    }
-
-    @Nullable
-    private static String getActualCompletionPrefix(@NotNull PsiElement position) {
-        if (position.getParent() instanceof JetSimpleNameExpression) {
-            final JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) position.getParent();
-
-            // Should be checked before call completion as pre-condition
-            assert (PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class) == null);
-
-            final String referencedName = nameExpression.getReferencedName();
-
-            if (referencedName != null && referencedName.endsWith(CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED)) {
-                int lastPrefixIndex = referencedName.length() -
-                                      CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED.length();
-
-                return referencedName.substring(0, lastPrefixIndex);
-            }
-        }
-
-        return null;
     }
 
     private static void addClasses(@NotNull CompletionParameters parameters, @NotNull final CompletionResultSet result, final HashSet<LookupPositionObject> positions) {

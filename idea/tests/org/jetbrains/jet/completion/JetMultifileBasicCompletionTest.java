@@ -7,8 +7,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
  */
 public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase {
 
-    // TODO: fix and uncomment
-    public void skiptestTopLevelFunction() throws Exception {
+    public void testTopLevelFunction() throws Exception {
         doFileTest();
     }
 
@@ -19,7 +18,7 @@ public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase 
 
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile";
+        return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile/";
     }
 
     @Override

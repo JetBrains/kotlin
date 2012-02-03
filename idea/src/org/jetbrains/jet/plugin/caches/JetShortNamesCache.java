@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
@@ -53,7 +53,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     /**
-     * Return fake java names form jet project sources which should be visible from java.
+     * Return class names form jet sources in given scope which should be visible as java classes.
      */
     @NotNull
     @Override
@@ -137,7 +137,13 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             }
         });
     }
-    
+
+    /**
+     * Get jet non-extension top-level function names. Method is allowed to give invalid names - all result should be
+     * checked with getTopLevelFunctionDescriptorsByName().
+     *
+     * @return
+     */
     @NotNull
     public Collection<String> getAllTopLevelFunctionNames() {
         final HashSet<String> functionNames = new HashSet<String>();
@@ -145,9 +151,27 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         functionNames.addAll(JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, GlobalSearchScope.allScope(project)));
         return functionNames;
     }
-    
-    public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(final @NotNull String name, @NotNull GlobalSearchScope scope) {
-        return new ArrayList<FunctionDescriptor>();
+
+    @NotNull
+    public Collection<NamedFunctionDescriptor> getTopLevelFunctionDescriptorsByName(final @NotNull String name,
+                                                                                    final @NotNull GlobalSearchScope scope) {
+
+        // TODO: Add jet function in jar-dependencies (those functions are missing in BindingContext and stubs)
+
+        final Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
+        
+        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
+
+        final HashSet<NamedFunctionDescriptor> result = new HashSet<NamedFunctionDescriptor>();
+
+        for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
+            final NamedFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
+            if (functionDescriptor != null) {
+                result.add(functionDescriptor);
+            }
+        }
+
+        return result;
     }
 
     public Collection<JetNamedFunction> getTopLevelFunctionsByName(final @NotNull String name, @NotNull GlobalSearchScope scope) {
@@ -156,6 +180,9 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     @NotNull
     public Collection<String> getAllJetExtensionFunctionsNames(@NotNull GlobalSearchScope scope) {
+        
+        
+        JetExtensionFunctionNameIndex.getInstance().getKey();
         return JetFromJavaDescriptorHelper.getTopExtensionFunctionNames(null, project, scope);
     }
 
