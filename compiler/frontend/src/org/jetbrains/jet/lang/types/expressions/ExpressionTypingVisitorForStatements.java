@@ -63,8 +63,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         TopDownAnalyzer.processObject(context.semanticServices, context.trace, scope, scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
-            PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
-            scope.addPropertyDescriptor(propertyDescriptor);
+            VariableDescriptor variableDescriptor = context.getDescriptorResolver()
+                    .resolveObjectDeclaration(scope.getContainingDeclaration(), declaration, classDescriptor);
+            scope.addVariableDescriptor(variableDescriptor);
         }
         return DataFlowUtils.checkStatementType(declaration, context);
     }

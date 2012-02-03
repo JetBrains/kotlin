@@ -162,7 +162,7 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-//    public void visitNewExpression(JetNewExpression expression) {
+    //    public void visitNewExpression(JetNewExpression expression) {
 //        visitExpression(expression);
 //    }
 //
@@ -387,6 +387,10 @@ public class JetVisitorVoid extends PsiElementVisitor {
     }
 
     public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+        visitNamedDeclaration(declaration);
+    }
+
+    public void visitObjectDeclarationName(JetObjectDeclarationName declaration) {
         visitNamedDeclaration(declaration);
     }
 

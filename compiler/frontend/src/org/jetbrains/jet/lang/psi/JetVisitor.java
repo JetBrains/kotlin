@@ -391,6 +391,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitObjectDeclaration(JetObjectDeclaration declaration, D data) {
         return visitNamedDeclaration(declaration, data);
     }
+    
+    public R visitObjectDeclarationName(JetObjectDeclarationName declarationName, D data) {
+        return visitNamedDeclaration(declarationName, data);
+    }
 
     public R visitBindingPattern(JetBindingPattern pattern, D data) {
         return visitPattern(pattern, data);
