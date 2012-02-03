@@ -10,12 +10,12 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 
-import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.*;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 public class StaticContext {

@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate.context.declaration;
+package org.jetbrains.k2js.translate.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +25,7 @@ public final class AnnotationsUtils {
     private AnnotationsUtils() {
     }
 
+    //TODO: make public, use when necessary
     private static boolean hasAnnotation(@NotNull DeclarationDescriptor descriptor,
                                          @NotNull String annotationFQNAme) {
         return getAnnotationByName(descriptor, annotationFQNAme) != null;
