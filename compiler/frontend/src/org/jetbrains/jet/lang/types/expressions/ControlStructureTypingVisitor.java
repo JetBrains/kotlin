@@ -8,9 +8,8 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -265,7 +264,20 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @Nullable
     private JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
         JetExpression loopRangeExpression = loopRange.getExpression();
-        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = context.resolveExactSignature(loopRange, "iterator", Collections.<JetType>emptyList());
+
+        // Make a fake call loopRange.iterator(), and try to resolve it
+        String iterator = "iterator";
+        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = resolveFakeCall(loopRange, context, iterator);
+
+        // We allow the loop range to be null (nothing happens), so we make the receiver type non-null
+        if (!iteratorResolutionResults.isSuccess()) {
+            ExpressionReceiver nonNullReceiver = new ExpressionReceiver(loopRange.getExpression(), TypeUtils.makeNotNullable(loopRange.getType()));
+            OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResultsWithNonNullReceiver = resolveFakeCall(nonNullReceiver, context, iterator);
+            if (iteratorResolutionResultsWithNonNullReceiver.isSuccess()) {
+                iteratorResolutionResults = iteratorResolutionResultsWithNonNullReceiver;
+            }
+        }
+        
         if (iteratorResolutionResults.isSuccess()) {
             FunctionDescriptor iteratorFunction = iteratorResolutionResults.getResultingCall().getResultingDescriptor();
 
@@ -312,6 +324,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         return null;
+    }
+
+    private OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(ExpressionReceiver receiver, ExpressionTypingContext context, String name) {
+        JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.getProject(), "fake");
+        BindingTrace fakeTrace = new BindingTraceContext();
+        Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
+        return context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);
     }
 
     @Nullable

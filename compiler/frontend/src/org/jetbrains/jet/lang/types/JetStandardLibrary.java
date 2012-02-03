@@ -52,6 +52,8 @@ public class JetStandardLibrary {
 //        return standardLibrary;
     }
 
+    private final Project project;
+    
     private JetScope libraryScope;
 
     private ClassDescriptor numberClass;
@@ -90,6 +92,8 @@ public class JetStandardLibrary {
     private Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
     private JetStandardLibrary(@NotNull Project project) {
+        this.project = project;
+
         // TODO : review
         List<String> libraryFiles = Arrays.asList(
                 "Library.jet",
@@ -127,6 +131,11 @@ public class JetStandardLibrary {
             wasProcessCanceledException++;
             throw e;
         }
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project;
     }
 
     public JetScope getLibraryScope() {

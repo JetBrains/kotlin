@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -54,9 +55,13 @@ public class JetPsiFactory {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);
     }
 
-    public static JetProperty createProperty(Project project, String name, String type, boolean isVar) {
-        String text = (isVar ? "var " : "val ") + name + (type != null ? ":" + type : "");
+    public static JetProperty createProperty(Project project, String name, String type, boolean isVar, @Nullable String initializer) {
+        String text = (isVar ? "var " : "val ") + name + (type != null ? ":" + type : "") + (initializer == null ? "" : " = " + initializer);
         return createProperty(project, text);
+    }
+
+    public static JetProperty createProperty(Project project, String name, String type, boolean isVar) {
+        return createProperty(project, name, type, isVar, null);
     }
 
     public static JetProperty createProperty(Project project, String text) {
@@ -74,6 +79,10 @@ public class JetPsiFactory {
 
     public static PsiElement createNameIdentifier(Project project, String name) {
         return createProperty(project, name, null, false).getNameIdentifier();
+    }
+
+    public static JetSimpleNameExpression createSimpleName(Project project, String name) {
+        return (JetSimpleNameExpression) createProperty(project, name, null, false, name).getInitializer();
     }
 
     public static JetNamedFunction createFunction(Project project, String funDecl) {
