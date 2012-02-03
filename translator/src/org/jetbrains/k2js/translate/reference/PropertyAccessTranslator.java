@@ -10,9 +10,8 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils;
 
-import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.getAnnotationByName;
+import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
@@ -27,7 +26,7 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     public static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
                                                        @NotNull ResolvedCall<?> resolvedCall,
                                                        @NotNull TranslationContext context) {
-        if (isNativeProperty(descriptor, context)) {
+        if (isNativeObject(descriptor)) {
             return new NativePropertyAccessTranslator(descriptor, /*qualifier = */ null, context);
         } else {
             return new KotlinPropertyAccessTranslator(descriptor, /*qualifier = */ null, /*backingFieldAccess = */ false,
@@ -40,7 +39,7 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
                                                        @Nullable JsExpression qualifier,
                                                        @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
-        if (isNativeProperty(propertyDescriptor, context)) {
+        if (isNativeObject(propertyDescriptor)) {
             return new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
         }
         ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
@@ -107,11 +106,6 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     public static boolean canBePropertyAccess(@NotNull JetExpression expression,
                                               @NotNull TranslationContext context) {
         return canBePropertyGetterCall(expression, context);
-    }
-
-    private static boolean isNativeProperty(@NotNull PropertyDescriptor propertyDescriptor,
-                                            @NotNull TranslationContext context) {
-        return getAnnotationByName(propertyDescriptor, AnnotationsUtils.NATIVE_ANNOTATION_FQNAME) != null;
     }
 
     protected PropertyAccessTranslator(@NotNull TranslationContext context) {

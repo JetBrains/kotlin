@@ -2,10 +2,13 @@ package org.jetbrains.k2js.translate.context.declaration;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getContainingClass;
 
 /**
  * @author Pavel Talanov
@@ -28,8 +31,8 @@ public final class AnnotationsUtils {
     }
 
     @NotNull
-    public static String annotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
-                                                   @NotNull String annotationFQName) {
+    public static String getAnnotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
+                                                      @NotNull String annotationFQName) {
         AnnotationDescriptor annotationDescriptor =
                 getAnnotationByName(declarationDescriptor, annotationFQName);
         assert annotationDescriptor != null;
@@ -65,5 +68,16 @@ public final class AnnotationsUtils {
                 annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
         assert annotationDeclaration != null : "Annotation supposed to have a declaration";
         return DescriptorUtils.getFQName(annotationDeclaration);
+    }
+
+    public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
+        if (getAnnotationByName(descriptor, NATIVE_ANNOTATION_FQNAME) != null) {
+            return true;
+        }
+        ClassDescriptor containingClass = getContainingClass(descriptor);
+        if (containingClass == null) {
+            return false;
+        }
+        return (getAnnotationByName(containingClass, NATIVE_ANNOTATION_FQNAME) != null);
     }
 }

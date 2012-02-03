@@ -180,14 +180,14 @@ public class StaticContext {
             }
         };
 
-        Rule<JsName> namesAnnotatedAsStandard = new Rule<JsName>() {
+        Rule<JsName> namesAnnotatedAsLibraryHasUnobfuscatableNames = new Rule<JsName>() {
             @Override
             public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                 //TODO: refactor
                 String name = null;
                 AnnotationDescriptor annotation = getAnnotationByName(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
                 if (annotation != null) {
-                    name = AnnotationsUtils.annotationStringParameter(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
+                    name = AnnotationsUtils.getAnnotationStringParameter(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
                     name = (!name.isEmpty()) ? name : descriptor.getName();
                 } else {
                     ClassDescriptor containingClass = getContainingClass(descriptor);
@@ -229,20 +229,43 @@ public class StaticContext {
             }
 
         };
+        Rule<JsName> namesForNativeObjectsAreUnobfuscatable = new Rule<JsName>() {
+            @Override
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                String name = null;
+                AnnotationDescriptor annotation = getAnnotationByName(descriptor, NATIVE_ANNOTATION_FQNAME);
+                if (annotation != null) {
+                    name = AnnotationsUtils.getAnnotationStringParameter(descriptor, NATIVE_ANNOTATION_FQNAME);
+                    name = (!name.isEmpty()) ? name : descriptor.getName();
+                } else {
+                    ClassDescriptor containingClass = getContainingClass(descriptor);
+                    if (containingClass == null) return null;
+                    if (getAnnotationByName(containingClass, NATIVE_ANNOTATION_FQNAME) != null) {
+                        name = descriptor.getName();
+                    }
+                }
+                if (name != null) {
+                    return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
+                }
+                return null;
+
+            }
+        };
         Generator<JsName> nameGenerator = new Generator<JsName>();
         nameGenerator.addRule(namesForStandardClasses);
         nameGenerator.addRule(aliasOverridesNames);
+        nameGenerator.addRule(constructorHasTheSameNameAsTheClass);
+        nameGenerator.addRule(namesAnnotatedAsLibraryHasUnobfuscatableNames);
+        nameGenerator.addRule(namesForNativeObjectsAreUnobfuscatable);
         nameGenerator.addRule(toStringHack);
         nameGenerator.addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
-        nameGenerator.addRule(constructorHasTheSameNameAsTheClass);
-        nameGenerator.addRule(namesAnnotatedAsStandard);
         nameGenerator.addRule(namespacesShouldBeDefinedInRootScope);
         nameGenerator.addRule(accessorsHasNamesWithSpecialPrefixes);
         nameGenerator.addRule(memberDeclarationsInsideParentsScope);
         return nameGenerator;
     }
 
-    private NamingScope getEnclosingScope(DeclarationDescriptor descriptor) {
+    private NamingScope getEnclosingScope(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
         return getScopeForDescriptor(containingDeclaration.getOriginal());
     }
@@ -275,7 +298,6 @@ public class StaticContext {
 
     @NotNull
     private Generator<JsNameRef> qualifierGenerator() {
-        Generator<JsNameRef> qualifierGenerator = new Generator<JsNameRef>();
         Rule<JsNameRef> namespacesHaveNoQualifiers = new Rule<JsNameRef>() {
             @Override
             public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
@@ -307,7 +329,7 @@ public class StaticContext {
                 return getQualifierForDescriptor(containingClass);
             }
         };
-        Rule<JsNameRef> annotatedObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
+        Rule<JsNameRef> libraryObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
 
             //TODO: refactor by removing one annotation
             @Override
@@ -334,7 +356,8 @@ public class StaticContext {
                 return null;
             }
         };
-        qualifierGenerator.addRule(annotatedObjectsHaveKotlinQualifier);
+        Generator<JsNameRef> qualifierGenerator = new Generator<JsNameRef>();
+        qualifierGenerator.addRule(libraryObjectsHaveKotlinQualifier);
         qualifierGenerator.addRule(membersOfAnnotatedClassesHaveKotlinQualifier);
         qualifierGenerator.addRule(constructorHaveTheSameQualifierAsTheClass);
         qualifierGenerator.addRule(namespacesHaveNoQualifiers);
@@ -352,6 +375,11 @@ public class StaticContext {
 
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        //TODO: hack!
+        if (AnnotationsUtils.isNativeObject(descriptor)) {
+            return null;
+        }
+
         return qualifiers.get(descriptor.getOriginal());
     }
 
