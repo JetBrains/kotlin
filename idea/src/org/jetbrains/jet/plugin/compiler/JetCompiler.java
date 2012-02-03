@@ -69,7 +69,7 @@ public class JetCompiler implements TranslatingCompiler {
 
         File kotlinHome = PathUtil.getDefaultCompilerPath();
         if (kotlinHome == null) {
-            compileContext.addMessage(ERROR, "Cannot file kotlinc home. Make sure plugin is properly installed", "", -1, -1);
+            compileContext.addMessage(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", "", -1, -1);
             return;
         }
         
