@@ -315,7 +315,7 @@ public class Pseudocode {
     }
     
     private void collectAllowedDeadInstructions(Instruction allowedDeadInstruction, Set<Instruction> instructionSet, Set<Instruction> stopAllowDeadInstructions) {
-        if (stopAllowDeadInstructions.contains(allowedDeadInstruction)) return;
+        if (instructionSet.contains(allowedDeadInstruction) || stopAllowDeadInstructions.contains(allowedDeadInstruction)) return;
         if (((InstructionImpl)allowedDeadInstruction).isDead()) {
             instructionSet.add(allowedDeadInstruction);
             for (Instruction instruction : allowedDeadInstruction.getNextInstructions()) {
