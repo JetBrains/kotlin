@@ -1,8 +1,8 @@
 package java.util.Collections;
 
-import js.annotations.LibraryFun
+import js.annotations.library
 import java.util.Collection
 import java.util.Comparator
 
-LibraryFun("collectionsMax")
+library("collectionsMax")
 public fun max<T>(col : Collection<T>, comp : Comparator<T>) {}

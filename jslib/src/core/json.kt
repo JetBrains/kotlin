@@ -1,17 +1,17 @@
 package js
 
 import java.util.*;
-import js.annotations.LibraryFun
+import js.annotations.library
 
 class Json() {
 
 }
 
-LibraryFun("jsonSet")
+library("jsonSet")
 fun Json.set(paramName : String, value : Any?) : Unit {}
-LibraryFun("jsonGet")
+library("jsonGet")
 fun Json.get(paramName : String) : Any? = null
 
 fun <K, V> Map<K, V>.toJson() : Json = Json()
-LibraryFun("jsonFromTuples")
+library("jsonFromTuples")
 fun json(vararg pairs : Tuple2<String, Any?>) = Json()

@@ -1,8 +1,8 @@
 package html5
 
-import js.annotations.Native
+import js.annotations.native
 
-Native
+native
 class Context() {
     fun save() {}
     fun restore() {}
@@ -46,18 +46,18 @@ class Context() {
     fun measureText(text : String)  : TextMetrics = TextMetrics();
 }
 
-Native
+native
 class TextMetrics() {
     val width : Int = 0
 }
 
-Native
+native
 fun getContext() : Context = Context();
 
-Native
+native
 fun random() : Double = 0.0
 
-Native
+native
 fun getCanvasWidth() : Double = 0.0
-Native
+native
 fun getCanvasHeight() : Double = 0.0

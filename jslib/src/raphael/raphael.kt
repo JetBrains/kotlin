@@ -3,7 +3,7 @@ package raphael
 import js.annotations.*;
 import js.*;
 
-Native
+native
 open class Element() {
 
     fun attr(name : String, value : Any?) : Element = this
@@ -24,12 +24,12 @@ open class Element() {
     //fun mouse
 }
 
-Native
+native
 class Set() : Element() {
     fun push(el : Element) {}
 }
 
-Native
+native
 class Paper() {
     fun path(pathString : String) : Element = Element();
     fun path() : Element = Element();
@@ -41,20 +41,20 @@ class Paper() {
     val customAttributes : Json = Json();
 }
 
-Native("Raphael")
+native("Raphael")
 fun Raphael(elementId : String, width : Int, height : Int) : Paper = Paper();
-Native("Raphael")
+native("Raphael")
 fun Raphael(elementId : String, width : Int, height : Int, initFun : Paper.() -> Unit) : Unit {}
 
-Native
+native
 fun getColor() : Color {}
-Native
+native
 fun resetColors() {}
 
-Native
+native
 class Color() {}
 
-Native
+native
 class Point() {
     val x = 0
     val y = 0

@@ -2,22 +2,22 @@ package java.util
 
 import js.annotations.*;
 
-LibraryClass
+library
 public trait Comparator<T> {
     fun compare(obj1 : T, obj2 : T) : Int;
 }
 
-LibraryFun("comparator")
+library("comparator")
 public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> {}
 
 
-LibraryClass
+library
 public open class Iterator<T>() {
     open fun next() : T {}
     open fun hasNext() : Boolean {}
 }
 
-LibraryClass
+library
 public open class ArrayList<erased E>() : java.util.List<E> {
     override public fun size() : Int {}
     override public fun isEmpty() : Boolean {}
@@ -38,7 +38,7 @@ public open class ArrayList<erased E>() : java.util.List<E> {
   //  override public fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean {}
 }
 
-LibraryClass
+library
 public trait Collection<erased E> : java.lang.Iterable<E> {
     open fun size() : Int
     open fun isEmpty() : Boolean
@@ -55,7 +55,7 @@ public trait Collection<erased E> : java.lang.Iterable<E> {
     open fun clear() : Unit
 }
 
-LibraryClass
+library
 public trait List<erased E> : java.util.Collection<E> {
     override fun size() : Int
     override fun isEmpty() : Boolean
@@ -80,7 +80,7 @@ public trait List<erased E> : java.util.Collection<E> {
    // open fun lastIndexOf(o : Any?) : Int
 }
 
-LibraryClass
+library
 public trait Set<erased E> : java.util.Collection<E> {
     override fun size() : Int
     override fun isEmpty() : Boolean
@@ -97,7 +97,7 @@ public trait Set<erased E> : java.util.Collection<E> {
     override fun clear() : Unit
 }
 
-LibraryClass
+library
 public open class HashSet<erased E>() : java.util.Set<E> {
     override public fun iterator() : java.util.Iterator<E> {}
     override public fun size() : Int {}
@@ -109,7 +109,7 @@ public open class HashSet<erased E>() : java.util.Set<E> {
     override fun addAll(c : java.util.Collection<out E>) : Boolean
 }
 
-LibraryClass
+library
 public trait Map<erased K, erased V> {
     open fun size() : Int
     open fun isEmpty() : Boolean
@@ -124,7 +124,7 @@ public trait Map<erased K, erased V> {
     open fun values() : java.util.Collection<V>
 }
 
-LibraryClass
+library
 public open class HashMap<erased K, erased V>() : java.util.Map<K, V> {
     override public fun size() : Int {}
     override public fun isEmpty() : Boolean {}
@@ -139,7 +139,7 @@ public open class HashMap<erased K, erased V>() : java.util.Map<K, V> {
     override public fun values() : java.util.Collection<V> {}
 }
 
-LibraryClass
+library
 public class StringBuilder() {
     public fun append(obj : Any) : StringBuilder
     public fun toString() : String

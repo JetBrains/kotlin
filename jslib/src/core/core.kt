@@ -1,26 +1,26 @@
 package js;
 
-import js.annotations.LibraryFun
-import js.annotations.LibraryClass
-import js.annotations.Native
+import js.annotations.library
+import js.annotations.library
+import js.annotations.native
 
-LibraryFun("println")
+library("println")
 fun println() {}
-LibraryFun("println")
+library("println")
 fun println(s : Any?) {}
-LibraryFun("print")
+library("print")
 fun print(s : Any?) {}
-LibraryFun("parseInt")
+library("parseInt")
 fun parseInt(s : String) : Int = 0
-LibraryClass
+library
 open class Exception() {}
-LibraryClass
+library
 class NumberFormatException() : Exception() {}
 
-Native
+native
 fun setTimeout(callback : ()-> Unit) {}
 
-Native
+native
 fun setInterval(callback : ()-> Unit, ms : Int) {}
-Native
+native
 fun setInterval(callback : ()-> Unit) {}
