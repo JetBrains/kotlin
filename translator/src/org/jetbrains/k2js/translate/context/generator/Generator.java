@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate.context.generator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public final class Generator<V> {
         rules.add(rule);
     }
 
-    @NotNull
+    @Nullable
     public V get(@NotNull DeclarationDescriptor descriptor) {
         V result = values.get(descriptor);
         if (result != null) {
@@ -32,7 +33,7 @@ public final class Generator<V> {
         return generate(descriptor);
     }
 
-    @NotNull
+    @Nullable
     private V generate(@NotNull DeclarationDescriptor descriptor) {
         V result = null;
         for (Rule<V> rule : rules) {
@@ -41,6 +42,6 @@ public final class Generator<V> {
                 return result;
             }
         }
-        throw new AssertionError("No rule applicable to generate result for " + descriptor.toString());
+        return result;
     }
 }

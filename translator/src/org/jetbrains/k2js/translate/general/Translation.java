@@ -97,10 +97,6 @@ public final class Translation {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
-        staticContext.getDeclarationFacade().
-                extractStandardLibrary(standardLibrary, staticContext.getNamer().kotlinObject());
-        staticContext.getDeclarationFacade().
-                extractDeclarationsFromFiles(files, bindingContext, staticContext.getNamer());
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
         block.addStatement(Translation.translateNamespace(namespaceToTranslate, context));

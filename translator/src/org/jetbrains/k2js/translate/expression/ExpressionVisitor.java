@@ -24,8 +24,7 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getCompileTimeValue;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 
 /**
@@ -117,7 +116,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        JsName jsPropertyName = context.declareLocalVariable(expression);
+        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), expression);
+        JsName jsPropertyName = context.getNameForDescriptor(descriptor);
         JsExpression jsInitExpression = translateInitializerForProperty(expression, context);
         return AstUtil.newVar(jsPropertyName, jsInitExpression);
     }

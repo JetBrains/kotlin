@@ -4,12 +4,10 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.NamingScope;
 
 import java.util.Set;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getNameForNamespace;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getOwnDeclarations;
 
 /**
@@ -133,49 +131,5 @@ public abstract class AbstractDeclarationVisitor extends DeclarationDescriptorVi
         return false;
     }
 
-    @Override
-    public Void visitPropertyDescriptor(@NotNull PropertyDescriptor descriptor, @NotNull DeclarationContext context) {
-        String propertyName = descriptor.getName();
-        String backingFieldName = Namer.getKotlinBackingFieldName(propertyName);
-        declareName(descriptor, context, backingFieldName);
-        extractAccessor(descriptor.getGetter(), true, propertyName, context);
-        if (descriptor.isVar()) {
-            extractAccessor(descriptor.getSetter(), false, propertyName, context);
-        }
-        return null;
-    }
-
-    public void extractAccessor(@Nullable PropertyAccessorDescriptor descriptor, boolean isGetter,
-                                @NotNull String propertyName, @NotNull DeclarationContext context) {
-        if (descriptor == null) return;
-
-        String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
-        declareName(descriptor, context, accessorName);
-        declareScope(descriptor, context, (isGetter ? "getter " : "setter ") + propertyName);
-    }
-
-    @Override
-    public Void visitNamespaceDescriptor(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
-        //TODO: traverse
-        /* do not traverse inner namespaces */
-        return null;
-    }
-
-
-    @NotNull
-    protected DeclarationContext extractNamespaceDeclaration(@NotNull NamespaceDescriptor descriptor,
-                                                             @NotNull DeclarationContext context) {
-        String nameForNamespace = getNameForNamespace(descriptor);
-        JsName namespaceName = doDeclareName(descriptor, context, nameForNamespace);
-        NamingScope namespaceScope = doDeclareScope(descriptor, context, "namespace " + namespaceName.getIdent());
-        return context.innerDeclaration(namespaceScope, namespaceName);
-    }
-
-    protected void declareMembers(@NotNull NamespaceDescriptor descriptor, @NotNull DeclarationContext context) {
-        for (DeclarationDescriptor memberDescriptor :
-                descriptor.getMemberScope().getAllDescriptors()) {
-            memberDescriptor.accept(this, context);
-        }
-    }
 
 }

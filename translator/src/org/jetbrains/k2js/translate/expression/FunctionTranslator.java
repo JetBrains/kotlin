@@ -181,7 +181,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsName declareParameter(@NotNull ValueParameterDescriptor valueParameter) {
-        return context().declareLocalVariable(valueParameter);
+        return context().getNameForDescriptor(valueParameter);
     }
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {

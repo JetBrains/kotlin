@@ -3,7 +3,6 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 public class DynamicContext {
 
@@ -41,27 +40,11 @@ public class DynamicContext {
     }
 
     @NotNull
-    public JsName getLocalName(@NotNull DeclarationDescriptor descriptor) {
-        JsName name = currentScope.getName(descriptor);
-        assert name != null : descriptor.getName() + " is not declared. Use isDeclared to check.";
-        return name;
-    }
-
-    public boolean isDeclared(@NotNull DeclarationDescriptor descriptor) {
-        return currentScope.isDeclared(descriptor);
-    }
-
-    @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
         JsName temporaryName = blockScope.declareTemporary();
         JsVars temporaryDeclaration = AstUtil.newVar(temporaryName, null);
         jsBlock().addVarDeclaration(temporaryDeclaration);
         return new TemporaryVariable(temporaryName, initExpression);
-    }
-
-    @NotNull
-    public JsName declareLocalVariable(@NotNull DeclarationDescriptor descriptor) {
-        return currentScope.declareVariable(descriptor, descriptor.getName());
     }
 
     @NotNull

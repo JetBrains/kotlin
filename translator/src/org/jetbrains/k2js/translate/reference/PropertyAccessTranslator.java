@@ -10,7 +10,9 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils;
 
+import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.getAnnotationByName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
@@ -109,7 +111,7 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
 
     private static boolean isNativeProperty(@NotNull PropertyDescriptor propertyDescriptor,
                                             @NotNull TranslationContext context) {
-        return context.declarationFacade().getNativeDeclarations().hasDeclaredName(propertyDescriptor);
+        return getAnnotationByName(propertyDescriptor, AnnotationsUtils.NATIVE_ANNOTATION_FQNAME) != null;
     }
 
     protected PropertyAccessTranslator(@NotNull TranslationContext context) {

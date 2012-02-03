@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.k2js.translate.context.NamingScope;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +21,6 @@ public final class Declarations {
     }
 
     @NotNull
-    private final Map<DeclarationDescriptor, NamingScope> descriptorToScopeMap = new HashMap<DeclarationDescriptor, NamingScope>();
-    @NotNull
     private final Map<DeclarationDescriptor, JsName> descriptorToNameMap = new HashMap<DeclarationDescriptor, JsName>();
     @NotNull
     private final Map<DeclarationDescriptor, JsNameRef> descriptorToQualifierMap = new HashMap<DeclarationDescriptor, JsNameRef>();
@@ -31,12 +28,6 @@ public final class Declarations {
     private Declarations() {
     }
 
-    @NotNull
-    public NamingScope getScope(@NotNull DeclarationDescriptor descriptor) {
-        NamingScope scope = descriptorToScopeMap.get(descriptor.getOriginal());
-        assert scope != null : "Unknown declaration";
-        return scope;
-    }
 
     @NotNull
     public JsName getName(@NotNull DeclarationDescriptor descriptor) {
@@ -58,12 +49,6 @@ public final class Declarations {
         JsNameRef qualifier = descriptorToQualifierMap.get(descriptor.getOriginal());
         assert qualifier != null : "Cannot be null. Use hasQualifier to check.";
         return qualifier;
-    }
-
-    /*package*/ void putScope(@NotNull DeclarationDescriptor descriptor, @NotNull NamingScope scope) {
-        assert !descriptorToScopeMap.containsKey(descriptor)
-                : "Already contains that key!\n" + descriptor;
-        descriptorToScopeMap.put(descriptor, scope);
     }
 
     /*package*/ void putName(@NotNull DeclarationDescriptor descriptor, @NotNull JsName name) {

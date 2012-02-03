@@ -29,18 +29,17 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                       @NotNull TranslationContext context) {
-        if (!context.hasQualifierForDescriptor(referencedDescriptor)) {
+        JsExpression qualifier = context.getQualifierForDescriptor(referencedDescriptor);
+        if (qualifier == null) {
             return translateAsLocalNameReference(referencedDescriptor, context);
         }
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
-        JsExpression qualifier = context.getQualifierForDescriptor(referencedDescriptor);
         return AstUtil.qualified(referencedName, qualifier);
     }
 
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                              @NotNull TranslationContext context) {
-        //TODO: prove correctness
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
         return referencedName.makeRef();
     }

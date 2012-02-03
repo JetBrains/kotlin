@@ -49,7 +49,7 @@ public final class ForTranslator extends AbstractTranslator {
     @NotNull
     private JsName declareParameter() {
         JetParameter loopParameter = getLoopParameter(expression);
-        return context().declareLocalVariable(loopParameter);
+        return context().getNameForElement(loopParameter);
     }
 
     @NotNull

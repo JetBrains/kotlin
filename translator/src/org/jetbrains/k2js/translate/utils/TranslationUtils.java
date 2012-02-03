@@ -98,8 +98,8 @@ public final class TranslationUtils {
                                                   @NotNull DeclarationDescriptor descriptor) {
         JsName name = context.getNameForDescriptor(descriptor);
         JsNameRef reference = name.makeRef();
-        if (context.hasQualifierForDescriptor(descriptor)) {
-            JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
+        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
+        if (qualifier != null) {
             AstUtil.setQualifier(reference, qualifier);
         }
         return reference;

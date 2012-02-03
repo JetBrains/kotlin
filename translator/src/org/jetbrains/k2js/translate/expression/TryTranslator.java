@@ -74,7 +74,7 @@ public final class TryTranslator extends AbstractTranslator {
         JetParameter catchParameter = catchClause.getCatchParameter();
         assert catchParameter != null : "Valid catch must have a parameter.";
 
-        JsName parameterName = context().declareLocalVariable(catchParameter);
+        JsName parameterName = context().getNameForElement(catchParameter);
         JsCatch result = new JsCatch(context().jsScope(), parameterName.getIdent());
         result.setBody(translateCatchBody(catchClause));
         return result;

@@ -3,21 +3,21 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.translate.context.declaration.DeclarationFacade;
+import org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getContainingDeclaration;
+import static org.jetbrains.k2js.translate.context.declaration.AnnotationsUtils.*;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -32,7 +32,8 @@ public final class TranslationContext {
     private final Generator<JsName> names = nameGenerator();
     @NotNull
     private final Generator<NamingScope> scopes = scopeGenerator();
-
+    @NotNull
+    private final Generator<JsNameRef> qualifiers = qualifierGenerator();
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
@@ -70,9 +71,7 @@ public final class TranslationContext {
 
     @NotNull
     public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        //TODO: chained call on static context suspicious
-        NamingScope declarationScope = staticContext.getDeclarationFacade().getKotlinDeclarations().getScope(descriptor);
-        return contextWithScope(declarationScope);
+        return contextWithScope(getScopeForDescriptor(descriptor));
     }
 
     @NotNull
@@ -103,27 +102,15 @@ public final class TranslationContext {
 
     @NotNull
     public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return scopes.get(descriptor);
+        NamingScope namingScope = scopes.get(descriptor);
+        assert namingScope != null : "Must have a scope for descriptor";
+        return namingScope;
     }
 
     @NotNull
     public NamingScope getScopeForElement(@NotNull JetElement element) {
         DeclarationDescriptor descriptorForElement = BindingUtils.getDescriptorForElement(bindingContext(), element);
         return getScopeForDescriptor(descriptorForElement);
-    }
-
-    @NotNull
-    public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        if (standardClasses().isStandardObject(descriptor)) {
-            return namer().kotlinObject();
-        }
-        return staticContext.getQualifier(descriptor);
-    }
-
-
-    public boolean hasQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return (staticContext.hasQualifier(descriptor) ||
-                standardClasses().isStandardObject(descriptor));
     }
 
     @NotNull
@@ -135,18 +122,6 @@ public final class TranslationContext {
     @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
-    }
-
-    @NotNull
-    public JsName declareLocalVariable(@NotNull DeclarationDescriptor descriptor) {
-        return dynamicContext.declareLocalVariable(descriptor);
-    }
-
-    @NotNull
-    public JsName declareLocalVariable(@NotNull JetElement element) {
-        DeclarationDescriptor declarationDescriptor =
-                BindingUtils.getDescriptorForElement(bindingContext(), element);
-        return dynamicContext.declareLocalVariable(declarationDescriptor);
     }
 
     @NotNull
@@ -185,19 +160,16 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public DeclarationFacade declarationFacade() {
-        return staticContext.getDeclarationFacade();
-    }
-
-    @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return names.get(descriptor);
+        JsName name = names.get(descriptor.getOriginal());
+        assert name != null : "Must have name for descriptor";
+        return name;
     }
 
     @NotNull
     private Generator<JsName> nameGenerator() {
-        Generator<JsName> nameGenerator = new Generator<JsName>();
-        nameGenerator.addRule(new Rule<JsName>() {
+
+        Rule<JsName> aliasOverridesNames = new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor data) {
@@ -206,8 +178,8 @@ public final class TranslationContext {
                 }
                 return null;
             }
-        });
-        nameGenerator.addRule(new Rule<JsName>() {
+        };
+        Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor data) {
@@ -216,28 +188,87 @@ public final class TranslationContext {
                 }
                 return standardClasses().getStandardObjectName(data);
             }
-        });
-        nameGenerator.addRule(new Rule<JsName>() {
+        };
+        Rule<JsName> namespacesShouldBeDefinedInRootScope = new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                if (dynamicContext.isDeclared(descriptor)) {
-                    return dynamicContext.getLocalName(descriptor);
+                if (!(descriptor instanceof NamespaceDescriptor)) {
+                    return null;
                 }
-                return null;
+                String nameForNamespace = getNameForNamespace((NamespaceDescriptor) descriptor);
+                return staticContext.getRootScope().declareUnobfuscatableName(nameForNamespace);
             }
-        });
-        nameGenerator.addRule(new Rule<JsName>() {
+        };
+        Rule<JsName> memberDeclarationsInsideParentsScope = new Rule<JsName>() {
             @Override
             @Nullable
             public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                if (staticContext.isDeclared(descriptor)) {
-                    return staticContext.getGlobalName(descriptor);
+                NamingScope namingScope = getEnclosingScope(descriptor);
+                return namingScope.declareObfuscatableName(descriptor.getName());
+            }
+        };
+        Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {
+            @Override
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!(descriptor instanceof ConstructorDescriptor)) {
+                    return null;
+                }
+                ClassDescriptor containingClass = getContainingClass(descriptor);
+                assert containingClass != null : "Can't have constructor without a class";
+                return getNameForDescriptor(containingClass);
+            }
+        };
+        Rule<JsName> accessorsHasNamesWithSpecialPrefixes = new Rule<JsName>() {
+            @Override
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!(descriptor instanceof PropertyAccessorDescriptor)) {
+                    return null;
+                }
+                boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
+                String propertyName = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().getName();
+                String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
+                NamingScope enclosingScope = getEnclosingScope(descriptor);
+                return enclosingScope.declareObfuscatableName(accessorName);
+            }
+        };
+
+        Rule<JsName> namesAnnotatedAsStandard = new Rule<JsName>() {
+            @Override
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                //TODO: refactor
+                String name = null;
+                AnnotationDescriptor annotation = getAnnotationByName(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
+                if (annotation != null) {
+                    name = AnnotationsUtils.annotationStringParameter(descriptor, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
+                    name = (!name.isEmpty()) ? name : descriptor.getName();
+                } else {
+                    ClassDescriptor containingClass = getContainingClass(descriptor);
+                    if (containingClass == null) return null;
+                    if (getAnnotationByName(containingClass, LIBRARY_CLASS_ANNOTATION_FQNAME) != null) {
+                        name = descriptor.getName();
+                    }
+                }
+                if (name != null) {
+                    return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
                 }
                 return null;
             }
-        });
+        };
+        Generator<JsName> nameGenerator = new Generator<JsName>();
+        nameGenerator.addRule(namesForStandardClasses);
+        nameGenerator.addRule(aliasOverridesNames);
+        nameGenerator.addRule(constructorHasTheSameNameAsTheClass);
+        nameGenerator.addRule(namesAnnotatedAsStandard);
+        nameGenerator.addRule(namespacesShouldBeDefinedInRootScope);
+        nameGenerator.addRule(accessorsHasNamesWithSpecialPrefixes);
+        nameGenerator.addRule(memberDeclarationsInsideParentsScope);
         return nameGenerator;
+    }
+
+    private NamingScope getEnclosingScope(DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
+        return getScopeForDescriptor(containingDeclaration.getOriginal());
     }
 
     @NotNull
@@ -252,21 +283,91 @@ public final class TranslationContext {
                 return staticContext.getRootScope().innerScope("Namespace " + descriptor.getName());
             }
         };
-        Rule<NamingScope> generateInnerScopesForFunctions = new Rule<NamingScope>() {
+        Rule<NamingScope> generateInnerScopesForMembers = new Rule<NamingScope>() {
             @Override
             public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
-//                if (!(descriptor instanceof FunctionDescriptor)) {
-//                    return null;
-//                }
-                DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
-                NamingScope enclosingScope = getScopeForDescriptor(containingDeclaration);
+                NamingScope enclosingScope = getEnclosingScope(descriptor);
                 return enclosingScope.innerScope("scope for member " + descriptor.getName());
             }
         };
         scopeGenerator.addRule(generateNewScopesForNamespaceDescriptors);
-        scopeGenerator.addRule(generateInnerScopesForFunctions);
+        scopeGenerator.addRule(generateInnerScopesForMembers);
 
         return scopeGenerator;
+    }
+
+    @Nullable
+    public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        return qualifiers.get(descriptor.getOriginal());
+    }
+
+    @NotNull
+    private Generator<JsNameRef> qualifierGenerator() {
+        Generator<JsNameRef> qualifierGenerator = new Generator<JsNameRef>();
+        Rule<JsNameRef> namespacesHaveNoQualifiers = new Rule<JsNameRef>() {
+            @Override
+            public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!standardClasses().isStandardObject(descriptor)) {
+                    return null;
+                }
+                return namer().kotlinObject();
+            }
+        };
+        Rule<JsNameRef> namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier = new Rule<JsNameRef>() {
+            @Override
+            public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
+                if (!(containingDeclaration instanceof NamespaceDescriptor)) {
+                    return null;
+                }
+                JsName containingDeclarationName = getNameForDescriptor(containingDeclaration);
+                return containingDeclarationName.makeRef();
+            }
+        };
+        Rule<JsNameRef> constructorHaveTheSameQualifierAsTheClass = new Rule<JsNameRef>() {
+            @Override
+            public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!(descriptor instanceof ConstructorDescriptor)) {
+                    return null;
+                }
+                ClassDescriptor containingClass = getContainingClass(descriptor);
+                assert containingClass != null : "Can't have constructor without a class";
+                return getQualifierForDescriptor(containingClass);
+            }
+        };
+        Rule<JsNameRef> annonatedObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
+
+            //TODO: refactor by removing one annotation
+            @Override
+            public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_FUNCTION_ANNOTATION_FQNAME) != null) {
+                    return namer().kotlinObject();
+                }
+                if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_CLASS_ANNOTATION_FQNAME) != null) {
+                    return namer().kotlinObject();
+                }
+                return null;
+            }
+        };
+        Rule<JsNameRef> membersOfAnnotatedClassesHaveKotlinQualifier = new Rule<JsNameRef>() {
+            @Override
+            public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
+                ClassDescriptor containingClass = getContainingClass(descriptor);
+                if (containingClass == null) {
+                    return null;
+                }
+                if (getAnnotationByName(descriptor, LIBRARY_CLASS_ANNOTATION_FQNAME) != null) {
+                    return namer().kotlinObject();
+                }
+                return null;
+            }
+        };
+        qualifierGenerator.addRule(annonatedObjectsHaveKotlinQualifier);
+        qualifierGenerator.addRule(membersOfAnnotatedClassesHaveKotlinQualifier);
+        qualifierGenerator.addRule(constructorHaveTheSameQualifierAsTheClass);
+        qualifierGenerator.addRule(namespacesHaveNoQualifiers);
+        qualifierGenerator.addRule(namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);
+        return qualifierGenerator;
     }
 
 }

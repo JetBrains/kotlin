@@ -1,14 +1,11 @@
 package org.jetbrains.k2js.translate.context.declaration;
 
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-
-import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -21,21 +18,8 @@ public final class AnnotationsUtils {
     public static final String LIBRARY_FUNCTION_ANNOTATION_FQNAME = "js.annotations.LibraryFun";
     @NotNull
     public static final String LIBRARY_CLASS_ANNOTATION_FQNAME = "js.annotations.LibraryClass";
-    @NotNull
-    public static Set<String> INTERNAL_ANNOTATIONS_FQNAMES = Sets.newHashSet(
-            NATIVE_ANNOTATION_FQNAME,
-            LIBRARY_CLASS_ANNOTATION_FQNAME, LIBRARY_FUNCTION_ANNOTATION_FQNAME);
 
     private AnnotationsUtils() {
-    }
-
-    public static boolean doesNotHaveInternalAnnotations(@NotNull DeclarationDescriptor descriptor) {
-        for (String annotationFQNAme : INTERNAL_ANNOTATIONS_FQNAMES) {
-            if (hasAnnotation(descriptor, annotationFQNAme)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static boolean hasAnnotation(@NotNull DeclarationDescriptor descriptor,
