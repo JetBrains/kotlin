@@ -14,6 +14,8 @@ inline fun String.indexOf(s : String) = (this as java.lang.String).indexOf(s)
 
 inline fun String.indexOf(p0 : String, p1 : Int) = (this as java.lang.String).indexOf(p0, p1)
 
+inline fun String.replace(s: Char, s1 : Char) = (this as java.lang.String).replace(s, s1).sure()
+
 inline fun String.replaceAll(s: String, s1 : String) = (this as java.lang.String).replaceAll(s, s1).sure()
 
 inline fun String.trim() = (this as java.lang.String).trim().sure()
@@ -41,6 +43,8 @@ inline fun String.startsWith(prefix: String) = (this as java.lang.String).starts
 inline fun String.startsWith(prefix: String, toffset: Int) = (this as java.lang.String).startsWith(prefix, toffset)
 
 inline fun String.contains(seq: CharSequence) : Boolean = (this as java.lang.String).contains(seq)
+
+inline fun String.endsWith(seq: String) : Boolean = (this as java.lang.String).endsWith(seq)
 
 inline val String.size : Int
     get() = length()
