@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -161,8 +163,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 }
             }
         };
-
-
+        
         List<JetFile> files = Collections.singletonList(file);
         final BindingContext context = AnalyzerFacade.shallowAnalyzeFiles(files);
         state.compileCorrectFiles(context, files);
@@ -174,5 +175,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     @Override
     public boolean isEquivalentTo(PsiElement another) {
         return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
+    }
+
+    @Override
+    public Icon getElementIcon(final int flags) {
+        return PsiClassImplUtil.getClassIcon(flags, this);
     }
 }

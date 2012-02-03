@@ -25,6 +25,11 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         doFileNewlineTest();
     }
 
+    // TODO: fix and uncomment
+    public void testFunctionBlock() {
+        // doFileNewlineTest();
+    }
+
     public void doFileNewlineTest() {
         configureByFile(getTestName(false) + ".kt");
         type('\n');
@@ -33,6 +38,7 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
 
     @Override
     protected String getTestDataPath() {
+
         final String testRelativeDir = "formatter/IndentationOnNewline";
         return new File(PluginTestCaseBase.getTestDataPathBase(), testRelativeDir).getPath() +
                File.separator;

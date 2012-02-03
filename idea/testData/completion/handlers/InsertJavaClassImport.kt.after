@@ -1,3 +1,9 @@
+package testing
+
+import java.util.SortedSet
+
 fun other() {
-    HashSe<caret>
+    SortedSet
 }
+
+// INSERT: SortedSet

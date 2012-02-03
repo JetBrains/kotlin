@@ -15,6 +15,11 @@ public class JetInJavaCompletionTest extends JetCompletionMultiTestBase {
         doFileTest();
     }
 
+    // TODO: fix and uncomment
+    public void skiptestTopLevelPackages() throws Exception {
+        doFileTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/completion/injava/";

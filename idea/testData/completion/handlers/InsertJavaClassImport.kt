@@ -1,5 +1,7 @@
+package testing
+
 fun other() {
-    HashSe<caret>
+    SortedS<caret>
 }
 
-// INSERT: HashSet
+// INSERT: SortedSet

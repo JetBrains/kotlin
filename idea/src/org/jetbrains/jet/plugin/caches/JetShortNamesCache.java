@@ -50,16 +50,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public String[] getAllClassNames() {
         final Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
         return classNames.toArray(new String[classNames.size()]);
-
-//        final Collection<String> fqNames = getALlJetClassFQNames();
-//
-//        return Collections2.transform(fqNames, new Function<String, String>() {
-//            @Override
-//            public String apply(@Nullable String fqName) {
-//                assert fqName != null;
-//                return fqnToShortName(fqName);
-//            }
-//        }).toArray(new String[fqNames.size()]);
     }
 
     /**
@@ -150,7 +140,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     
     @NotNull
     public Collection<String> getAllTopLevelFunctionNames() {
-        final ArrayList<String> functionNames = new ArrayList<String>();
+        final HashSet<String> functionNames = new HashSet<String>();
         functionNames.addAll(JetShortFunctionNameIndex.getInstance().getAllKeys(project));
         functionNames.addAll(JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, GlobalSearchScope.allScope(project)));
         return functionNames;
