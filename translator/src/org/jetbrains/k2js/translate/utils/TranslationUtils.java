@@ -74,6 +74,14 @@ public final class TranslationUtils {
         return AstUtil.qualified(backingFieldName, qualifier);
     }
 
+    @NotNull
+    public static JsStatement assignmentToBackingField(@NotNull TranslationContext context,
+                                                       @NotNull PropertyDescriptor descriptor,
+                                                       @NotNull JsExpression assignTo) {
+        JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
+        return AstUtil.newAssignmentStatement(backingFieldReference, assignTo);
+    }
+
     @Nullable
     public static JsExpression translateInitializerForProperty(@NotNull JetProperty declaration,
                                                                @NotNull TranslationContext context) {
@@ -83,14 +91,6 @@ public final class TranslationUtils {
             jsInitExpression = Translation.translateAsExpression(initializer, context);
         }
         return jsInitExpression;
-    }
-
-    @NotNull
-    public static JsStatement assignmentToBackingFieldFromParameter(@NotNull TranslationContext context,
-                                                                    @NotNull PropertyDescriptor descriptor,
-                                                                    @NotNull JsParameter parameter) {
-        JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
-        return AstUtil.newAssignmentStatement(backingFieldReference, parameter.getName().makeRef());
     }
 
     @NotNull

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 /**
@@ -113,9 +114,9 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         PropertyDescriptor propertyDescriptor =
                 getPropertyDescriptorForConstructorParameter(context().bindingContext(), jetParameter);
         if (propertyDescriptor != null) {
-            initializerStatements.add
-                    (TranslationUtils.assignmentToBackingFieldFromParameter
-                            (context(), propertyDescriptor, jsParameter));
+            JsStatement assignmentToBackingFieldExpression = assignmentToBackingField
+                    (context(), propertyDescriptor, jsParameter.getName().makeRef());
+            initializerStatements.add(assignmentToBackingFieldExpression);
         }
     }
 

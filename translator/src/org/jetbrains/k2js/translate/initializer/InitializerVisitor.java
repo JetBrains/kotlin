@@ -2,13 +2,14 @@ package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
     JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
                                          @NotNull TranslationContext context) {
 
-        return AstUtil.newAssignmentStatement(
-                TranslationUtils.backingFieldReference(context, property), initExpression);
+        PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), property);
+        return TranslationUtils.assignmentToBackingField(context, propertyDescriptor, initExpression);
     }
 
     @Override

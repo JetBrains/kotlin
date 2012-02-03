@@ -30,7 +30,9 @@ public final class Generator<V> {
         if (result != null) {
             return result;
         }
-        return generate(descriptor);
+        result = generate(descriptor);
+        values.put(descriptor, result);
+        return result;
     }
 
     @Nullable
