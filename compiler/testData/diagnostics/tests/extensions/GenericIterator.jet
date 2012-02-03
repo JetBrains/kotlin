@@ -1,4 +1,12 @@
+// +JDK
 import java.util.Enumeration
+
+inline fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
+  override val hasNext: Boolean
+    get() = hasMoreElements()
+
+  override fun next() = nextElement()
+}
 
 fun a(e : java.util.Enumeration<Int>) {
     for (i in e) {
@@ -22,6 +30,6 @@ fun <T : Any> T?.iterator() = object {
 fun main(args : Array<String>) {
   val i : Int? = 1
   for (x in i) {
-    println(x)
+    System.out?.println(x)
   }
 }
