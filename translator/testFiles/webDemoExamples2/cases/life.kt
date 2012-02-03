@@ -154,17 +154,7 @@ fun comparator<T> (f : (T, T) -> Int) : Comparator<T> = object : Comparator<T> {
     override fun compare(o1 : T, o2 : T) : Int = f(o1, o2)
 }
 
-fun println(message : Any?) {
-    System.out?.println(message)
-}
-
-fun print(message : Any?) {
-    System.out?.print(message)
-}
-
 val <T> Array<T>.isEmpty : Boolean get() = size == 0
-
-fun String.split(s : String)  = (this as java.lang.String).split(s)
 
 val String.size : Int
   get() = length

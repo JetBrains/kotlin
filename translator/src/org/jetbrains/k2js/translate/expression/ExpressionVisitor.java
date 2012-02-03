@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
@@ -368,5 +369,26 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JetExpression thrownExpression = expression.getThrownExpression();
         assert thrownExpression != null : "Thrown expression must not be null";
         return new JsThrow(translateAsExpression(thrownExpression, context));
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression,
+                                               @NotNull TranslationContext context) {
+        return ClassTranslator.generateClassCreationExpression(expression.getObjectDeclaration(), context);
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitObjectDeclaration(@NotNull JetObjectDeclaration expression,
+                                         @NotNull TranslationContext context) {
+        //TODO: util
+        JetObjectDeclarationName nameAsDeclaration = expression.getNameAsDeclaration();
+        assert nameAsDeclaration != null;
+        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(),
+                nameAsDeclaration);
+        JsName propertyName = context.getNameForDescriptor(descriptor);
+        JsExpression value = ClassTranslator.generateClassCreationExpression(expression, context);
+        return AstUtil.newVar(propertyName, value);
     }
 }

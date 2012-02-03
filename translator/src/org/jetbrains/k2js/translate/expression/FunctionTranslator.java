@@ -156,16 +156,11 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private TranslationContext functionBodyContext() {
-        if (functionDeclaration instanceof JetNamedFunction) {
-            return context().newFunctionDeclaration((JetNamedFunction) functionDeclaration);
-        }
-        if (functionDeclaration instanceof JetPropertyAccessor) {
-            return context().newPropertyAccess((JetPropertyAccessor) functionDeclaration);
-        }
         if (isLiteral()) {
             return context().innerJsScope(functionObject.getScope());
+        } else {
+            return context().newDeclaration(functionDeclaration);
         }
-        throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
     @NotNull

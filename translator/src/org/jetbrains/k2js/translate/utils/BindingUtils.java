@@ -41,7 +41,8 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static ClassDescriptor getClassDescriptor(@NotNull BindingContext context, @NotNull JetClass declaration) {
+    public static ClassDescriptor getClassDescriptor(@NotNull BindingContext context,
+                                                     @NotNull JetClassOrObject declaration) {
         return getDescriptorForExpression(context, declaration, ClassDescriptor.class);
     }
 
@@ -114,13 +115,6 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull BindingContext context,
-                                                                 @NotNull JetClass classDeclaration) {
-        ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
-        return getSuperclassDescriptors(classDescriptor);
-    }
-
-    @NotNull
     public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
         Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
@@ -142,8 +136,9 @@ public final class BindingUtils {
         return (ClassDescriptor) superClassDescriptor;
     }
 
-    public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClass classDeclaration) {
-        List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(context, classDeclaration);
+    public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClassOrObject classDeclaration) {
+        ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
+        List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(classDescriptor);
         return (DescriptorUtils.findAncestorClass(superclassDescriptors) != null);
     }
 
@@ -264,7 +259,7 @@ public final class BindingUtils {
 
     @NotNull
     public static DeclarationDescriptor getDescriptorForElement(@NotNull BindingContext context,
-                                                                @NotNull JetElement element) {
+                                                                @NotNull PsiElement element) {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         assert descriptor != null : element + " doesn't have a descriptor.";
         return descriptor;
@@ -311,5 +306,13 @@ public final class BindingUtils {
         CallableDescriptor hasNextDescriptor = context.get(BindingContext.LOOP_RANGE_HAS_NEXT, rangeExpression);
         assert hasNextDescriptor != null : "Range expression must have a descriptor for hasNext function or property.";
         return hasNextDescriptor;
+    }
+
+    @NotNull
+    public static PropertyDescriptor getPropertyDescriptorForObjectDeclaration(@NotNull BindingContext context,
+                                                                               @NotNull JetObjectDeclarationName name) {
+        PropertyDescriptor propertyDescriptor = context.get(BindingContext.OBJECT_DECLARATION, name);
+        assert propertyDescriptor != null;
+        return propertyDescriptor;
     }
 }

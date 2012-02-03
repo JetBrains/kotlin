@@ -130,7 +130,7 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     @NotNull
     private TranslationContext propertyAccessContext(@NotNull PropertySetterDescriptor propertySetterDescriptor) {
-        return context().newPropertyAccess(propertySetterDescriptor);
+        return context().newDeclaration(propertySetterDescriptor);
     }
 
     @NotNull

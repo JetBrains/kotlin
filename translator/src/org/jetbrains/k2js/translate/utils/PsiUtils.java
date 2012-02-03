@@ -1,11 +1,15 @@
 package org.jetbrains.k2js.translate.utils;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -96,5 +100,22 @@ public final class PsiUtils {
         JetParameter loopParameter = expression.getLoopParameter();
         assert loopParameter != null;
         return loopParameter;
+    }
+
+    @NotNull
+    public static List<JetParameter> getPrimaryConstructorParameters(@NotNull JetClassOrObject classDeclaration) {
+        if (classDeclaration instanceof JetClass) {
+            return ((JetClass) classDeclaration).getPrimaryConstructorParameters();
+        }
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    public static JetObjectDeclaration getObjectDeclarationForName(@NotNull JetObjectDeclarationName name) {
+        PsiElement parent = name.getParent();
+        assert parent instanceof JetObjectDeclaration :
+                "ObjectDeclarationName should have a parent of type ObjectDeclaration.";
+        return (JetObjectDeclaration) parent;
+
     }
 }

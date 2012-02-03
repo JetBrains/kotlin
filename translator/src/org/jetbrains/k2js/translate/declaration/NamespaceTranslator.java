@@ -32,7 +32,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     }
 
     private NamespaceTranslator(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
-        super(context.newNamespace(namespace));
+        super(context.newDeclaration(namespace));
         this.namespace = namespace;
         this.namespaceName = context.getNameForDescriptor(namespace);
         this.classDeclarationTranslator = new ClassDeclarationTranslator(context(), namespace);

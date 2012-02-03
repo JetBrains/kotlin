@@ -1,27 +1,24 @@
 package org.jetbrains.k2js.translate.declaration;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.findAncestorClass;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 
 /**
  * @author Pavel Talanov
@@ -29,7 +26,16 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.findAncestorCla
 public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
-    public static JsInvocation translateClass(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+    public static JsPropertyInitializer translateAsProperty(@NotNull JetClassOrObject classDeclaration,
+                                                            @NotNull TranslationContext context) {
+        JsInvocation classCreationExpression = generateClassCreationExpression(classDeclaration, context);
+        JsName className = context.getNameForElement(classDeclaration);
+        return new JsPropertyInitializer(className.makeRef(), classCreationExpression);
+    }
+
+    @NotNull
+    public static JsInvocation generateClassCreationExpression(@NotNull JetClassOrObject classDeclaration,
+                                                               @NotNull TranslationContext context) {
         return (new ClassTranslator(classDeclaration, context)).translateClass();
     }
 
@@ -37,10 +43,14 @@ public final class ClassTranslator extends AbstractTranslator {
     private final DeclarationBodyVisitor declarationBodyVisitor = new DeclarationBodyVisitor();
 
     @NotNull
-    private final JetClass classDeclaration;
+    private final JetClassOrObject classDeclaration;
 
-    private ClassTranslator(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
-        super(context.newClass(classDeclaration));
+    @NotNull
+    private final ClassDescriptor descriptor;
+
+    private ClassTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
+        super(context.newDeclaration(classDeclaration));
+        this.descriptor = getClassDescriptor(context.bindingContext(), classDeclaration);
         this.classDeclaration = classDeclaration;
     }
 
@@ -54,11 +64,21 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private JsInvocation classCreateMethodInvocation() {
-        if (classDeclaration.isTrait()) {
+        if (isObject()) {
+            return AstUtil.newInvocation(context().namer().objectCreationMethodReference());
+        } else if (isTrait()) {
             return AstUtil.newInvocation(context().namer().traitCreationMethodReference());
         } else {
             return AstUtil.newInvocation(context().namer().classCreationMethodReference());
         }
+    }
+
+    private boolean isObject() {
+        return descriptor.getKind().equals(ClassKind.OBJECT);
+    }
+
+    private boolean isTrait() {
+        return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
     private void addClassOwnDeclarations(@NotNull JsInvocation jsClassDeclaration) {
@@ -75,8 +95,7 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private List<JsExpression> getSuperclassNameReferences() {
         List<JsExpression> superclassReferences = new ArrayList<JsExpression>();
-        List<ClassDescriptor> superclassDescriptors =
-                BindingUtils.getSuperclassDescriptors(context().bindingContext(), classDeclaration);
+        List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(descriptor);
         addAncestorClass(superclassReferences, superclassDescriptors);
         addTraits(superclassReferences, superclassDescriptors);
         return superclassReferences;
@@ -120,7 +139,7 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsObjectLiteral translateClassDeclarations() {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-        if (!classDeclaration.isTrait()) {
+        if (!isTrait()) {
             propertyList.add(Translation.generateClassInitializerMethod(classDeclaration, context()));
         }
         propertyList.addAll(translatePropertiesAsConstructorParameters());
@@ -131,7 +150,7 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private List<JsPropertyInitializer> translatePropertiesAsConstructorParameters() {
         List<JsPropertyInitializer> result = new ArrayList<JsPropertyInitializer>();
-        for (JetParameter parameter : classDeclaration.getPrimaryConstructorParameters()) {
+        for (JetParameter parameter : getPrimaryConstructorParameters(classDeclaration)) {
             PropertyDescriptor descriptor =
                     getPropertyDescriptorForConstructorParameter(context().bindingContext(), parameter);
             if (descriptor != null) {

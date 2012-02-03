@@ -1,18 +1,14 @@
 package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 
 /**
  * @author Pavel Talanov
@@ -54,33 +50,13 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext newNamespace(@NotNull NamespaceDescriptor namespace) {
-        return newDeclaration(namespace);
-    }
-
-    @NotNull
     public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor) {
         return contextWithScope(getScopeForDescriptor(descriptor));
     }
 
     @NotNull
-    public TranslationContext newClass(@NotNull JetClass declaration) {
-        return newDeclaration(BindingUtils.getClassDescriptor(staticContext.getBindingContext(), declaration));
-    }
-
-    @NotNull
-    public TranslationContext newPropertyAccess(@NotNull JetPropertyAccessor declaration) {
-        return newDeclaration(BindingUtils.getPropertyAccessorDescriptor(staticContext.getBindingContext(), declaration));
-    }
-
-    @NotNull
-    public TranslationContext newPropertyAccess(@NotNull PropertyAccessorDescriptor descriptor) {
-        return newDeclaration(descriptor);
-    }
-
-    @NotNull
-    public TranslationContext newFunctionDeclaration(@NotNull JetNamedFunction declaration) {
-        return newDeclaration(BindingUtils.getFunctionDescriptor(staticContext.getBindingContext(), declaration));
+    public TranslationContext newDeclaration(@NotNull PsiElement element) {
+        return newDeclaration(getDescriptorForElement(bindingContext(), element));
     }
 
     @NotNull
@@ -88,21 +64,20 @@ public final class TranslationContext {
         return staticContext.getBindingContext();
     }
 
-
     @NotNull
     public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getScopeForDescriptor(descriptor);
     }
 
     @NotNull
-    public NamingScope getScopeForElement(@NotNull JetElement element) {
-        DeclarationDescriptor descriptorForElement = BindingUtils.getDescriptorForElement(bindingContext(), element);
+    public NamingScope getScopeForElement(@NotNull PsiElement element) {
+        DeclarationDescriptor descriptorForElement = getDescriptorForElement(bindingContext(), element);
         return getScopeForDescriptor(descriptorForElement);
     }
 
     @NotNull
-    public JsName getNameForElement(@NotNull JetElement element) {
-        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForElement(bindingContext(), element);
+    public JsName getNameForElement(@NotNull PsiElement element) {
+        DeclarationDescriptor descriptor = getDescriptorForElement(bindingContext(), element);
         return getNameForDescriptor(descriptor);
     }
 

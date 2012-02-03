@@ -252,6 +252,7 @@
     Kotlin.Namespace = Namespace;
     Kotlin.Trait = Trait;
     Kotlin.isType = isType;
+    Kotlin.object = object;
 
     Kotlin.equals = function (obj1, obj2) {
         if (typeof obj1 == "object") {
@@ -498,6 +499,10 @@
             }
         }
     );
+
+    Kotlin.splitString = function(str, regex) {
+        return str.split(regex);
+    };
 
     Kotlin.nullArray = function (size) {
         var res = [];

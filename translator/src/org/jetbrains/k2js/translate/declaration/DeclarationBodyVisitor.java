@@ -11,11 +11,11 @@ import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
 
 /**
  * @author Pavel Talanov
@@ -24,7 +24,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
 
 
     @NotNull
-    public List<JsPropertyInitializer> traverseClass(@NotNull JetClass jetClass,
+    public List<JsPropertyInitializer> traverseClass(@NotNull JetClassOrObject jetClass,
                                                      @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
         for (JetDeclaration declaration : jetClass.getDeclarations()) {
@@ -53,7 +53,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @NotNull
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression,
                                                           @NotNull TranslationContext context) {
-        return Arrays.asList(Translation.functionTranslator(expression, context).translateAsMethod());
+        return Collections.singletonList(Translation.functionTranslator(expression, context).translateAsMethod());
     }
 
     @Override
@@ -65,6 +65,21 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
         return PropertyTranslator.translateAccessors(propertyDescriptor, context);
     }
 
+    @Override
+    @NotNull
+    public List<JsPropertyInitializer> visitObjectDeclaration(@NotNull JetObjectDeclaration expression,
+                                                              @NotNull TranslationContext context) {
+        return Collections.singletonList(ClassTranslator.translateAsProperty(expression, context));
+    }
+
+    @Override
+    @NotNull
+    public List<JsPropertyInitializer> visitObjectDeclarationName(@NotNull JetObjectDeclarationName expression,
+                                                                  @NotNull TranslationContext context) {
+        PropertyDescriptor propertyDescriptor =
+                getPropertyDescriptorForObjectDeclaration(context.bindingContext(), expression);
+        return PropertyTranslator.translateAccessors(propertyDescriptor, context);
+    }
 
     @Override
     @NotNull

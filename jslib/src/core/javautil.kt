@@ -145,3 +145,7 @@ public class StringBuilder() {
     public fun toString() : String
 }
 
+library("splitString")
+public fun String.split(regex : String) : Array<String> {
+}
+

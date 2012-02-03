@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.PsiUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
@@ -27,11 +28,11 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithSc
 public final class ClassInitializerTranslator extends AbstractInitializerTranslator {
 
     @NotNull
-    private final JetClass classDeclaration;
+    private final JetClassOrObject classDeclaration;
     @NotNull
     private final List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
 
-    public ClassInitializerTranslator(@NotNull JetClass classDeclaration, @NotNull TranslationContext context) {
+    public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
         super(context.getScopeForElement(classDeclaration).innerScope
                 ("initializer " + classDeclaration.getName()), context);
         this.classDeclaration = classDeclaration;
@@ -91,7 +92,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
 
     @NotNull
     List<JsParameter> translatePrimaryConstructorParameters() {
-        List<JetParameter> parameterList = classDeclaration.getPrimaryConstructorParameters();
+        List<JetParameter> parameterList = PsiUtils.getPrimaryConstructorParameters(classDeclaration);
         List<JsParameter> result = new ArrayList<JsParameter>();
         for (JetParameter jetParameter : parameterList) {
             result.add(translateParameter(jetParameter));

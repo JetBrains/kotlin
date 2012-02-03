@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Pavel Talanov
  */
-public class ObjectTest extends TranslationTest {
+public final class ObjectTest extends TranslationTest {
 
     private static final String MAIN = "object/";
 
@@ -17,5 +17,15 @@ public class ObjectTest extends TranslationTest {
     @Test
     public void objectWithMethods() throws Exception {
         testFooBoxIsTrue("objectWithMethods.kt");
+    }
+
+    @Test
+    public void objectDeclaration() throws Exception {
+        testFooBoxIsTrue("objectDeclaration.kt");
+    }
+
+    @Test
+    public void objectInMethod() throws Exception {
+        testFooBoxIsTrue("objectInMethod.kt");
     }
 }

@@ -46,7 +46,7 @@ public final class Translation {
     @NotNull
     public static JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
                                                          @NotNull TranslationContext context) {
-        return ClassTranslator.translateClass(classDeclaration, context);
+        return ClassTranslator.generateClassCreationExpression(classDeclaration, context);
     }
 
     @NotNull
@@ -79,7 +79,7 @@ public final class Translation {
 
     //TODO: see if generate*Initializer methods fit somewhere else
     @NotNull
-    public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClass classDeclaration,
+    public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
                                                                        @NotNull TranslationContext context) {
         return (new ClassInitializerTranslator(classDeclaration, context)).generateInitializeMethod();
     }

@@ -21,10 +21,10 @@ public final class WebDemoExamples2Test extends TranslationTest {
     }
 
     //TODO: a couple of classes not supported and objects
-//    @Test
-//    public void life() throws Exception {
-//        testWithMain("life", "", "2");
-//    }
+    @Test
+    public void life() throws Exception {
+        testWithMain("life", "", "2");
+    }
 
     @Test
     public void builder() throws Exception {
