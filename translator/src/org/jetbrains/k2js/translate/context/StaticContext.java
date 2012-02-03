@@ -202,9 +202,38 @@ public class StaticContext {
                 return null;
             }
         };
+        Rule<JsName> propertiesCorrespondToSpeciallyTreatedBackingFieldNames = new Rule<JsName>() {
+            @Override
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!(descriptor instanceof PropertyDescriptor)) {
+                    return null;
+                }
+                NamingScope enclosingScope = getEnclosingScope(descriptor);
+                return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName()));
+            }
+        };
+        //TODO: hack!
+        Rule<JsName> toStringHack = new Rule<JsName>() {
+            @Override
+            public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                if (!(descriptor instanceof FunctionDescriptor)) {
+                    return null;
+                }
+                if (!descriptor.getName().equals("toString")) {
+                    return null;
+                }
+                if (((FunctionDescriptor) descriptor).getValueParameters().isEmpty()) {
+                    return getEnclosingScope(descriptor).declareUnobfuscatableName("toString");
+                }
+                return null;
+            }
+
+        };
         Generator<JsName> nameGenerator = new Generator<JsName>();
         nameGenerator.addRule(namesForStandardClasses);
         nameGenerator.addRule(aliasOverridesNames);
+        nameGenerator.addRule(toStringHack);
+        nameGenerator.addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
         nameGenerator.addRule(constructorHasTheSameNameAsTheClass);
         nameGenerator.addRule(namesAnnotatedAsStandard);
         nameGenerator.addRule(namespacesShouldBeDefinedInRootScope);
@@ -278,7 +307,7 @@ public class StaticContext {
                 return getQualifierForDescriptor(containingClass);
             }
         };
-        Rule<JsNameRef> annonatedObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
+        Rule<JsNameRef> annotatedObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
 
             //TODO: refactor by removing one annotation
             @Override
@@ -305,7 +334,7 @@ public class StaticContext {
                 return null;
             }
         };
-        qualifierGenerator.addRule(annonatedObjectsHaveKotlinQualifier);
+        qualifierGenerator.addRule(annotatedObjectsHaveKotlinQualifier);
         qualifierGenerator.addRule(membersOfAnnotatedClassesHaveKotlinQualifier);
         qualifierGenerator.addRule(constructorHaveTheSameQualifierAsTheClass);
         qualifierGenerator.addRule(namespacesHaveNoQualifiers);
