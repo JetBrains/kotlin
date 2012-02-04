@@ -2,6 +2,8 @@ package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -20,5 +22,16 @@ public class NamedFunctionDescriptorErrorImpl extends NamedFunctionDescriptorImp
     public NamedFunctionDescriptorErrorImpl(ErrorUtils.ErrorScope ownerScope) {
         super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");
         this.ownerScope = ownerScope;
+    }
+
+    @Override
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
+        return this;
+    }
+
+    @NotNull
+    @Override
+    public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+        return this;
     }
 }
