@@ -1,13 +1,11 @@
 <project name="build-tools" default="buildToolsJar" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <property name="tests-dir"        location="${output}/ant-test/build-tools-test"/>
-    <property name="kotlin-home"      location="${output}/ant-test/kotlin-home"/>
-    <property name="tests-jar"        location="${tests-dir}/out.jar"/>
-    <property name="bootstrap-dir"    location="${basedir}/bootstrap.compiler"/>
-    <property name="junit-jar"        location="${basedir}/testlib/lib/junit-4.9.jar"/>
-    <property name="failonerror"      value="true"/>  <!-- Whether invoking compiled classes should file on error -->
-    <property name="use-ivy"          value="false"/> <!-- Whether Ivy should be used to define "kotlin.classpath" and <kotlinc> task -->
-                                                      <!-- Override with "-Duse-ivy=true" -->
+    <property name="tests-dir"   location="${output}/ant-test/build-tools-test"/>
+    <property name="tests-jar"   location="${tests-dir}/out.jar"/>
+    <property name="junit-jar"   location="${basedir}/testlib/lib/junit-4.9.jar"/>
+    <property name="failonerror" value="true"/>  <!-- Whether invoking compiled classes should file on error -->
+    <property name="use-ivy"     value="false"/> <!-- Whether Ivy should be used to define "kotlin.classpath" and <kotlinc> task -->
+                                                 <!-- Override with "-Duse-ivy=true" -->
 
 
     <!-- http://ant-contrib.sourceforge.net/tasks/tasks/index.html -->
@@ -23,6 +21,31 @@
     </path>
 
 
+    <!-- Verifies file or directory specified exists -->
+    <macrodef name="verify-exists">
+        <attribute name="file"/>
+        <attribute name="type" default="dir"/>
+        <sequential>
+            <if>
+                <not>
+                    <available file="@{file}" type="@{type}"/>
+                </not>
+                <then>
+                    <if>
+                        <equals arg1="@{type}" arg2="dir"/>
+                        <then>
+                            <fail message="Directory [@{file}] is not found!"/>
+                        </then>
+                        <else>
+                            <fail message="File [@{file}] is not found!"/>
+                        </else>
+                    </if>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+
     <!-- Defines "kotlin.classpath" using ${kotlin-home} -->
     <macrodef name="kotlin-home-setup">
         <sequential>
@@ -31,32 +54,19 @@
                     <available file="${kotlin-home}/lib" type="dir"/>
                 </not>
                 <then>
-                    <mkdir  dir = "${kotlin-home}"/>
-                    <if>
-                        <available file="${bootstrap-dir}/kotlinc" type="dir"/>
-                        <then>
-                            <!-- Running in TeamCity environment -->
-                            <copy todir="${kotlin-home}">
-                                <fileset dir = "${bootstrap-dir}/kotlinc"/>
-                            </copy>
-                        </then>
-                        <else>
-                            <!-- Running in dev environment -->
-                            <if>
-                                <not>
-                                    <available file="${output}/${output.name}.zip"/>
-                                </not>
-                                <then>
-                                    <antcall target="dist"/>
-                                </then>
-                            </if>
-                            <delete dir="${bootstrap-dir}" failonerror="true"/>
-                            <mkdir  dir="${bootstrap-dir}"/>
-                            <copy file="${output}/${output.name}.zip" todir="${bootstrap-dir}"/>
-                            <ant antfile="${basedir}/bootstrap.xml"/>
-                            <kotlin-home-setup/> <!-- Recursive invocation, will use ${bootstrap-dir} this time -->
-                        </else>
-                    </if>
+                    <!-- Creating and unpacking the distribution archive to make sure it's Ok -->
+
+                    <antcall target = "zip"/>
+                    <verify-exists file="${output}/${output.name}.zip" type="file"/>
+
+                    <delete dir  = "${kotlin-home}" failonerror="true"/>
+                    <mkdir  dir  = "${kotlin-home}"/>
+
+                    <unzip  src  = "${output}/${output.name}.zip" dest="${output}"/>
+                    <verify-exists file="${kotlin-home}/lib"/>
+                    <verify-exists file="${kotlin-home}/lib/kotlin-build-tools.jar" type="file"/>
+
+                    <kotlin-home-setup/>
                 </then>
             </if>
 
@@ -253,14 +263,14 @@
             <kotlinc-dir src    = "${basedir}/build-tools/test/longer-examples"/>
 
             <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>
-            <run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>
+            <!--<run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>-->
             <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
             <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
 
             <kotlinc-jar src    = "${basedir}/build-tools/test/longer-examples"/>
 
             <run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>
-            <run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>
+            <!--<run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>-->
             <run-java classname = "life.namespace"    equals="false" run-jar="true" out="***  ** **  ***"/>
             <run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
         </sequential>
