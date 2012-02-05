@@ -475,6 +475,7 @@
         result.compare = function(el1, el2) {
             return f(el1, el2);
         };
+        return result;
     };
 
     Kotlin.collectionsMax = function (col, comp) {
