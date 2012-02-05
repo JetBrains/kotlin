@@ -5,7 +5,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -20,14 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
-
 /**
  * @author Pavel Talanov
  *         <p/>
  *         Generates a big block where are all the classes(objects representing them) are created.
  */
-//TODO: declaration translator receives NamespaceDescriptor while actually should receive all declarations in namespace
 public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     @NotNull
@@ -41,9 +37,9 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @Nullable
     private JsStatement declarationsStatement = null;
 
-    public ClassDeclarationTranslator(@NotNull TranslationContext context, @NotNull NamespaceDescriptor namespace) {
+    public ClassDeclarationTranslator(@NotNull TranslationContext context, @NotNull List<JetDeclaration> declarationList) {
         super(context);
-        this.namespaceDeclarations = getDeclarationsForNamespace(context.bindingContext(), namespace);
+        this.namespaceDeclarations = declarationList;
         this.localToGlobalClassName = new HashMap<JsName, JsName>();
         this.dummyFunctionScope = new JsScope(context().jsScope(), "class declaration function");
     }

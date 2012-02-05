@@ -24,6 +24,12 @@ public final class Namer {
     private static final String SUPER_METHOD_NAME = "super_init";
     private static final String KOTLIN_OBJECT_NAME = "Kotlin";
     private static final String ANONYMOUS_NAMESPACE = "Anonymous";
+    private static final String RECEIVER_PARAMETER_NAME = "receiver";
+
+    @NotNull
+    public static String getReceiverParameterName() {
+        return RECEIVER_PARAMETER_NAME;
+    }
 
     @NotNull
     public static String getAnonymousNamespaceName() {

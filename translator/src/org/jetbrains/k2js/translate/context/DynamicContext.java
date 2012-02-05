@@ -16,10 +16,13 @@ public class DynamicContext {
         return new DynamicContext(scope, scope, new JsBlock());
     }
 
+    //TODO: current/block scope logic unclear. is it necessary?
     @NotNull
     private NamingScope currentScope;
+
     @NotNull
     private NamingScope blockScope;
+
     @NotNull
     private JsBlock currentBlock;
 
@@ -35,6 +38,11 @@ public class DynamicContext {
     }
 
     @NotNull
+    public NamingScope getScope() {
+        return blockScope;
+    }
+
+    @NotNull
     public DynamicContext innerBlock(@NotNull JsBlock block) {
         return new DynamicContext(currentScope, currentScope, block);
     }
@@ -46,6 +54,7 @@ public class DynamicContext {
         jsBlock().addVarDeclaration(temporaryDeclaration);
         return new TemporaryVariable(temporaryName, initExpression);
     }
+
 
     @NotNull
     public JsScope jsScope() {

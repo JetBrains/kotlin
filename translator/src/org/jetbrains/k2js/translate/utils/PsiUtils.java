@@ -120,6 +120,14 @@ public final class PsiUtils {
     }
 
     @NotNull
+    public static JetObjectDeclarationName getObjectDeclarationName(@NotNull JetObjectDeclaration objectDeclaration) {
+        //TODO: util
+        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
+        assert nameAsDeclaration != null;
+        return nameAsDeclaration;
+    }
+
+    @NotNull
     public static String getNamespaceName(@NotNull JetFile psiFile) {
         JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
         String name = namespaceHeader.getName();

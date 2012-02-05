@@ -48,7 +48,7 @@ public class WhenTranslator extends AbstractTranslator {
         JsFor resultingFor = generateDummyFor();
         List<JsStatement> entries = translateEntries();
         resultingFor.setBody(AstUtil.newBlock(entries));
-        context().jsBlock().addStatement(resultingFor);
+        context().addStatementToCurrentBlock(resultingFor);
         return result.nameReference();
     }
 

@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -34,9 +35,6 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     //TODO: implement more generic and safe way
-    @NotNull
-    private static final String RECEIVER_PARAMETER_NAME = "receiver";
-
     @NotNull
     private final JetDeclarationWithBody functionDeclaration;
     @NotNull
@@ -105,7 +103,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction createFunctionObject() {
         if (isDeclaration()) {
-            return functionWithScope(context().getScopeForElement((JetDeclaration) functionDeclaration));
+            return functionWithScope(context().getScopeForElement(functionDeclaration));
         }
         if (isLiteral()) {
             //TODO: look into
@@ -130,25 +128,16 @@ public final class FunctionTranslator extends AbstractTranslator {
         return (!functionDeclaration.hasBlockBody()) && (!JetStandardClasses.isUnit(functionReturnType));
     }
 
-    //TODO: refactor
     @NotNull
     private JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
         if (!needsReturn) {
             return AstUtil.convertToBlock(body);
         }
-        if (body instanceof JsExpression) {
-            return AstUtil.convertToBlock(new JsReturn(AstUtil.convertToExpression(body)));
-        }
-        if (body instanceof JsBlock) {
-            JsBlock bodyBlock = (JsBlock) body;
-            addReturnToBlockStatement(bodyBlock);
-            return bodyBlock;
-        }
-        throw new AssertionError("Invalid node as functionDeclaration body");
+        return AstUtil.convertToBlock(lastExpressionReturned(body));
     }
 
-    private void addReturnToBlockStatement(@NotNull JsBlock bodyBlock) {
-        AstUtil.mutateLastExpression(bodyBlock, new AstUtil.Mutator() {
+    private JsNode lastExpressionReturned(@NotNull JsNode body) {
+        return AstUtil.mutateLastExpression(body, new AstUtil.Mutator() {
             @Override
             @NotNull
             public JsNode mutate(@NotNull JsNode node) {
@@ -187,8 +176,8 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
         if (isExtensionFunction()) {
-            //TODO: dont do this
-            JsName receiver = functionBodyContext.jsScope().declareName(RECEIVER_PARAMETER_NAME);
+            //TODO: don't do this
+            JsName receiver = functionBodyContext.jsScope().declareName(Namer.getReceiverParameterName());
             DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
             assert expectedReceiverDescriptor != null;
             context().aliaser().setAliasForThis(expectedReceiverDescriptor, receiver);

@@ -124,12 +124,16 @@ public final class TranslationContext {
     }
 
     @NotNull
+    public NamingScope getScope() {
+        return dynamicContext.getScope();
+    }
+
+    @NotNull
     public JsScope jsScope() {
         return dynamicContext.jsScope();
     }
 
-    @NotNull
-    public JsBlock jsBlock() {
-        return dynamicContext.jsBlock();
+    public void addStatementToCurrentBlock(@NotNull JsStatement statement) {
+        dynamicContext.jsBlock().addStatement(statement);
     }
 }

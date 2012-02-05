@@ -26,6 +26,7 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 
 /**
@@ -149,7 +150,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsNode mutatedIfStatement = AstUtil.mutateLastExpression(ifStatement,
                 saveResultToTemporaryMutator);
         JsStatement resultingStatement = AstUtil.convertToStatement(mutatedIfStatement);
-        context.jsBlock().addStatement(resultingStatement);
+        context.addStatementToCurrentBlock(resultingStatement);
         return result.nameReference();
     }
 
@@ -388,11 +389,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectDeclaration(@NotNull JetObjectDeclaration expression,
                                          @NotNull TranslationContext context) {
-        //TODO: util
-        JetObjectDeclarationName nameAsDeclaration = expression.getNameAsDeclaration();
-        assert nameAsDeclaration != null;
-        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(),
-                nameAsDeclaration);
+        JetObjectDeclarationName objectDeclarationName = getObjectDeclarationName(expression);
+        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), objectDeclarationName);
         JsName propertyName = context.getNameForDescriptor(descriptor);
         JsExpression value = ClassTranslator.generateClassCreationExpression(expression, context);
         return AstUtil.newVar(propertyName, value);
