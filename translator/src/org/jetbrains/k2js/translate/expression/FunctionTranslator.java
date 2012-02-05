@@ -34,7 +34,6 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new FunctionTranslator(function, context);
     }
 
-    //TODO: implement more generic and safe way
     @NotNull
     private final JetDeclarationWithBody functionDeclaration;
     @NotNull
@@ -51,16 +50,16 @@ public final class FunctionTranslator extends AbstractTranslator {
                                @NotNull TranslationContext context) {
         super(context);
         this.functionBody = new JsBlock();
+        this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
         this.functionDeclaration = functionDeclaration;
         this.functionObject = createFunctionObject();
         this.functionBodyContext = functionBodyContext().innerBlock(functionBody);
-        this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
     }
 
     @NotNull
     public JsPropertyInitializer translateAsMethod() {
         assert functionDeclaration instanceof JetElement;
-        JsName functionName = context().getNameForElement((JetElement) functionDeclaration);
+        JsName functionName = context().getNameForElement(functionDeclaration);
         JsFunction function = generateFunctionObject();
         return new JsPropertyInitializer(functionName.makeRef(), function);
     }
@@ -103,10 +102,11 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction createFunctionObject() {
         if (isDeclaration()) {
-            return functionWithScope(context().getScopeForElement(functionDeclaration));
+            return functionWithScope(context().getScopeForDescriptor(descriptor));
         }
         if (isLiteral()) {
-            //TODO: look into
+            //TODO: changing this piece of code to more natural "same as for declaration" results in life test failing
+            //TODO: must investigate
             return new JsFunction(context().jsScope());
         }
         throw new AssertionError("Unsupported type of functionDeclaration.");
@@ -176,7 +176,6 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
         if (isExtensionFunction()) {
-            //TODO: don't do this
             JsName receiver = functionBodyContext.jsScope().declareName(Namer.getReceiverParameterName());
             DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
             assert expectedReceiverDescriptor != null;
