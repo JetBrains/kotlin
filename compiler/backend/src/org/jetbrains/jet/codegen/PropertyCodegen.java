@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -79,7 +80,8 @@ public class PropertyCodegen {
             if(state.getStandardLibrary().isVolatile(propertyDescriptor)) {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
-            v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
+            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
+            AnnotationCodegen.forField(fieldVisitor).genAnnotations(propertyDescriptor, state.getTypeMapper());
         }
     }
 
@@ -146,6 +148,12 @@ public class PropertyCodegen {
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
+
+        if(propertyDescriptor.getGetter() != null) {
+            assert !propertyDescriptor.getGetter().hasBody();
+            AnnotationCodegen.forMethod(mv).genAnnotations(propertyDescriptor.getGetter(), state.getTypeMapper());
+        }
+
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -204,6 +212,12 @@ public class PropertyCodegen {
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
+
+        if(propertyDescriptor.getSetter() != null) {
+            assert !propertyDescriptor.getSetter().hasBody();
+            AnnotationCodegen.forMethod(mv).genAnnotations(propertyDescriptor.getSetter(), state.getTypeMapper());
+        }
+
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);

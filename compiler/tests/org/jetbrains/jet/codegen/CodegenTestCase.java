@@ -114,6 +114,11 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         return loadRootNamespaceClass(state);
     }
 
+    protected Class generateClass(String name) {
+        ClassFileFactory state = generateClassesInFile();
+        return loadClass(name, state);
+    }
+
     protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
         String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
         Map<String, Class> classMap = loadAllClasses(state);
