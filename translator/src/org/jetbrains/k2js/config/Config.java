@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Base class reprenting a configuration of translator.
  */
 public abstract class Config {
 

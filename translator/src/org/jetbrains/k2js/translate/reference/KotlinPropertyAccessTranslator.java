@@ -15,6 +15,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldRe
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         For properies /w accessors.
  */
 public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslator {
 

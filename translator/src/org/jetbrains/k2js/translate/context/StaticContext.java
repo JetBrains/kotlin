@@ -18,6 +18,11 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
+/**
+ * @author Pavel Talanov
+ *         <p/>
+ *         Aggregates all the static parts of the context.
+ */
 public class StaticContext {
 
     public static StaticContext generateStaticContext(@NotNull JetStandardLibrary library,

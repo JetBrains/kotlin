@@ -8,8 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Encapuslates different types of constants and naming conventions.
  */
-
 public final class Namer {
 
     private static final String INITIALIZE_METHOD_NAME = "initialize";
@@ -22,6 +23,12 @@ public final class Namer {
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "super_init";
     private static final String KOTLIN_OBJECT_NAME = "Kotlin";
+    private static final String ANONYMOUS_NAMESPACE = "Anonymous";
+
+    @NotNull
+    public static String getAnonymousNamespaceName() {
+        return ANONYMOUS_NAMESPACE;
+    }
 
     @NotNull
     public static JsNameRef initializeMethodReference() {

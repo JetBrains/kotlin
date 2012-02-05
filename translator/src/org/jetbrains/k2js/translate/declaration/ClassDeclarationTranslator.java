@@ -24,6 +24,8 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsFor
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Generates a big block where are all the classes(objects representing them) are created.
  */
 //TODO: declaration translator receives NamespaceDescriptor while actually should receive all declarations in namespace
 public final class ClassDeclarationTranslator extends AbstractTranslator {

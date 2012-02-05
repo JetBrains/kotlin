@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.analyze.Analyzer;
 import org.jetbrains.k2js.config.Config;
@@ -25,12 +24,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getNamespaceName;
 import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
 //TODO: clean up the code
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         An entry point of translator.
  */
 public final class K2JSTranslator {
 
@@ -104,7 +106,7 @@ public final class K2JSTranslator {
 
     @NotNull
     public String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
-        String namespaceName = getRootNamespaceName(file);
+        String namespaceName = getNamespaceName(file);
         List<String> arguments = parseString(argumentString);
         return GenerationUtils.generateCallToMain(namespaceName, arguments);
     }
@@ -119,17 +121,6 @@ public final class K2JSTranslator {
         return result;
     }
 
-    @NotNull
-    private String getRootNamespaceName(@NotNull JetFile psiFile) {
-        JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
-        String name = namespaceHeader.getName();
-        assert name != null : "NamespaceHeader must have a name";
-        //TODO: encapsulate anonymous logic somewhere
-        if (name.equals("")) {
-            return "Anonymous";
-        }
-        return name;
-    }
 
     @NotNull
     private Project getProject() {

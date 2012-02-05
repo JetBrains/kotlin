@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.k2js.translate.context.Namer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -125,12 +126,11 @@ public final class DescriptorUtils {
         return (functionDescriptor.getReceiverParameter().exists());
     }
 
-    //TODO: make "anonymous" a constant
     @NotNull
     public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
         String name = descriptor.getName();
         if (name.equals("")) {
-            return "Anonymous";
+            return Namer.getAnonymousNamespaceName();
         }
         return name;
     }

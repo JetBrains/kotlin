@@ -11,6 +11,8 @@ import java.net.URL;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Some util class for WebDemo module.
  */
 public final class ErrorSender {
 

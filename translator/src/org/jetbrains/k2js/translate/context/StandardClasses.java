@@ -13,6 +13,9 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Provides a mechanism to bind some of the kotlin/java declations with library implementations.
+ *         Makes sense only for those declaration that cannot be annotated. (Use library annotation in this case)
  */
 public final class StandardClasses {
 

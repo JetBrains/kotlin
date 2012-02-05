@@ -28,6 +28,8 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByNa
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Provides mechanism to substitute method calls /w native constucts directly.
  */
 public final class Intrinsics {
 

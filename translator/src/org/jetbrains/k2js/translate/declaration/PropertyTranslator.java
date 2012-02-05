@@ -22,6 +22,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Translates single property /w accessors.
  */
 public final class PropertyTranslator extends AbstractTranslator {
 

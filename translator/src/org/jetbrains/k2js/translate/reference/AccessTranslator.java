@@ -9,6 +9,8 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Abstract entity for language constructs that you can get/set. Also dispatches to the real implemntation.
  */
 public abstract class AccessTranslator extends AbstractTranslator {
 

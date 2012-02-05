@@ -12,6 +12,8 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForEl
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         All the info about the state of the translation process.
  */
 public final class TranslationContext {
 

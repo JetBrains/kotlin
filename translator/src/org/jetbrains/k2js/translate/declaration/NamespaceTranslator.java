@@ -14,9 +14,9 @@ import java.util.List;
 
 /**
  * @author Pavel.Talanov
+ *         <p/>
+ *         Translates single namespace.
  */
-//TODO: rework translator to translateAsLocalNameReference everything in the namespace not only in one file
-// TEST IT
 public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull

@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+//TODO: very thin class
+
 /**
  * @author Pavel Talanov
  */

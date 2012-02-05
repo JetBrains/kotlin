@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Base class for all intrinsics.
  */
 public interface Intrinsic {
 

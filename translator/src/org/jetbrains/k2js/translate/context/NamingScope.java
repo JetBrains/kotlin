@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Basically a wrapper around JsScope.
  */
 public final class NamingScope {
 
@@ -39,6 +41,11 @@ public final class NamingScope {
         return declaredName;
     }
 
+    @NotNull
+        /*package*/ JsName declareObfuscatableName(@NotNull String name) {
+        return scope.declareName(mayBeObfuscateName(name, true));
+    }
+
     //TODO: temporary solution
     @NotNull
     private String mayBeObfuscateName(@NotNull String name, boolean shouldObfuscate) {
@@ -62,11 +69,6 @@ public final class NamingScope {
             obfuscate++;
         }
         return result;
-    }
-
-    @NotNull
-        /*package*/ JsName declareObfuscatableName(@NotNull String name) {
-        return scope.declareName(mayBeObfuscateName(name, true));
     }
 
     public JsName declareTemporary() {

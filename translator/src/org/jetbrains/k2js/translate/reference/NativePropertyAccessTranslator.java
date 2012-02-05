@@ -14,6 +14,8 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThis
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         For native apis that use .property notation for access.
  */
 public final class NativePropertyAccessTranslator extends PropertyAccessTranslator {
 

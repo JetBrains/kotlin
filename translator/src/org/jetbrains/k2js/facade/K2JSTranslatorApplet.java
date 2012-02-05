@@ -11,6 +11,8 @@ import java.io.StringWriter;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Represents an applet API for WebDemo module.
  */
 public final class K2JSTranslatorApplet extends Applet {
 

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.context.Namer;
 
 import java.util.Collections;
 import java.util.List;
@@ -116,6 +117,16 @@ public final class PsiUtils {
         assert parent instanceof JetObjectDeclaration :
                 "ObjectDeclarationName should have a parent of type ObjectDeclaration.";
         return (JetObjectDeclaration) parent;
+    }
 
+    @NotNull
+    public static String getNamespaceName(@NotNull JetFile psiFile) {
+        JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
+        String name = namespaceHeader.getName();
+        assert name != null : "NamespaceHeader must have a name";
+        if (name.equals("")) {
+            return Namer.getAnonymousNamespaceName();
+        }
+        return name;
     }
 }
