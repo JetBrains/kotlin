@@ -18,6 +18,14 @@ public open class Iterator<T>() {
 }
 
 library
+val Collections = object {
+    library("max")
+    public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = f
+}
+
+private val f : Nothing
+
+library
 public open class ArrayList<erased E>() : java.util.List<E> {
     override public fun size() : Int {}
     override public fun isEmpty() : Boolean {}
@@ -56,7 +64,7 @@ public trait Collection<erased E> : java.lang.Iterable<E> {
 }
 
 library
-public trait List<erased E> : java.util.Collection<E> {
+public trait List<erased E> : Collection<E> {
     override fun size() : Int
     override fun isEmpty() : Boolean
     override fun contains(o : Any?) : Boolean
@@ -81,7 +89,7 @@ public trait List<erased E> : java.util.Collection<E> {
 }
 
 library
-public trait Set<erased E> : java.util.Collection<E> {
+public trait Set<erased E> : Collection<E> {
     override fun size() : Int
     override fun isEmpty() : Boolean
     override fun contains(o : Any?) : Boolean
@@ -144,8 +152,3 @@ public class StringBuilder() {
     public fun append(obj : Any) : StringBuilder
     public fun toString() : String
 }
-
-library("splitString")
-public fun String.split(regex : String) : Array<String> {
-}
-

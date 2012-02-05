@@ -2,9 +2,10 @@
  * This is a straightforward implementation of The Game of Life
  * See http://en.wikipedia.org/wiki/Conway's_Game_of_Life
  */
-package life
 
 import java.util.*
+import java.lang.split;
+import js.*;
 
 /*
  * A field where cells live. Effectively immutable
@@ -119,11 +120,24 @@ fun printField(s : String, steps : Int) {
   }
 }
 
+
+fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())
+
+val String?.size : Int
+get() = if (this != null) this.length else 0;
+
+fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
+    for (elem in this)
+        result.add(elem)
+    return result
+}
+
 fun makeField(s : String) : Field {
-  val lines = s.split("\n").sure()
-  val w = max<String?>(lines.toList(), comparator<String?> {o1, o2 ->
-          val l1 : Int = o1?.size ?: 0
-          val l2 = o2?.size ?: 0
+  val lines : Array<String> = s.split("\n")
+
+  val w = max<String>(lines.toList(), comparator<String> {o1, o2 ->
+          val l1 : Int = o1.size
+          val l2 = o2.size
           l1 - l2
   }).sure()
   val data = Array(lines.size) {Array(w.size) {false}}
@@ -137,7 +151,7 @@ fun makeField(s : String) : Field {
 
   for (line in lines.indices) {
     for (x in lines[line].indices) {
-      val c = lines[line].sure()[x]
+      val c = lines[line][x]
       data[line][x] = c == '*'
     }
   }
@@ -150,19 +164,4 @@ val String?.indices : IntRange get() = IntRange(0, this.sure().size)
 
 fun <K, V> Map<K, V>.set(k : K, v : V) { put(k, v) }
 
-fun comparator<T> (f : (T, T) -> Int) : Comparator<T> = object : Comparator<T> {
-    override fun compare(o1 : T, o2 : T) : Int = f(o1, o2)
-}
-
 val <T> Array<T>.isEmpty : Boolean get() = size == 0
-
-val String.size : Int
-  get() = length
-
-fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
-  for (elem in this)
-    result.add(elem)
-  return result
-}
-
-fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())

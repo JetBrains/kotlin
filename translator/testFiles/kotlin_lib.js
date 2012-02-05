@@ -470,6 +470,17 @@
         }
     );
 
+    Kotlin.comparator = function(f) {
+        var result = new Kotlin.Comparator;
+        result.compare = function(el1, el2) {
+            return f(el1, el2);
+        };
+    };
+
+    Kotlin.getChar = function(str, index) {
+        return str.charAt(index);
+    };
+
     Kotlin.collectionsMax = function (col, comp) {
         var it = col.iterator();
         if (col.isEmpty()) {
@@ -572,6 +583,10 @@
         return obj[attrName];
     };
 
+
+    Kotlin.sure = function(obj) {
+        return obj;
+    };
 
     /**
      * Copyright 2010 Tim Down.

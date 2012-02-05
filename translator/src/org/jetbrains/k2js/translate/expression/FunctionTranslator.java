@@ -130,6 +130,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         return (!functionDeclaration.hasBlockBody()) && (!JetStandardClasses.isUnit(functionReturnType));
     }
 
+    //TODO: refactor
     @NotNull
     private JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
         if (!needsReturn) {
@@ -147,11 +148,16 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private void addReturnToBlockStatement(@NotNull JsBlock bodyBlock) {
-        List<JsStatement> statements = bodyBlock.getStatements();
-        int lastIndex = statements.size() - 1;
-        JsStatement lastStatement = statements.get(lastIndex);
-        JsReturn returnStatement = new JsReturn(AstUtil.extractExpressionFromStatement(lastStatement));
-        statements.set(lastIndex, returnStatement);
+        AstUtil.mutateLastExpression(bodyBlock, new AstUtil.Mutator() {
+            @Override
+            @NotNull
+            public JsNode mutate(@NotNull JsNode node) {
+                if (!(node instanceof JsExpression)) {
+                    return node;
+                }
+                return new JsReturn((JsExpression) node);
+            }
+        });
     }
 
     @NotNull
