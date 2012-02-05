@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,83 +12,74 @@ public class FunctionTest extends AbstractExpressionTest {
         return MAIN;
     }
 
-    @Test
-    public void functionUsedBeforeDeclaration() throws Exception {
+    public void testFunctionUsedBeforeDeclaration() throws Exception {
         testFooBoxIsTrue("functionUsedBeforeDeclaration.kt");
     }
 
-    @Test
-    public void functionWithTwoParametersCall() throws Exception {
+    public void testFunctionWithTwoParametersCall() throws Exception {
         testFooBoxIsTrue("functionWithTwoParametersCall.kt");
     }
 
-    @Test
-    public void functionLiteral() throws Exception {
+    public void testFunctionLiteral() throws Exception {
         testFooBoxIsTrue("functionLiteral.kt");
     }
 
-    @Test
-    public void adderClosure() throws Exception {
+    public void testAdderClosure() throws Exception {
         testFooBoxIsTrue("adderClosure.kt");
     }
 
-    @Test
-    public void loopClosure() throws Exception {
+    public void testLoopClosure() throws Exception {
         testFooBoxIsTrue("loopClosure.kt");
     }
 
-    @Test
-    public void functionLiteralAsParameter() throws Exception {
+    public void testFunctionLiteralAsParameter() throws Exception {
         testFooBoxIsTrue("functionLiteralAsParameter.kt");
     }
 
-    @Test
-    public void closureWithParameter() throws Exception {
+    public void testClosureWithParameter() throws Exception {
         testFooBoxIsOk("closureWithParameter.kt");
     }
 
-    @Test
-    public void closureWithParameterAndBoxing() throws Exception {
+    public void testClosureWithParameterAndBoxing() throws Exception {
         testFooBoxIsOk("closureWithParameterAndBoxing.jet");
     }
 
-    @Test
-    public void enclosingThis() throws Exception {
+    public void testEnclosingThis() throws Exception {
         testFunctionOutput("enclosingThis.kt", "Anonymous", "box", "OK");
     }
 
-    @Test
-    public void implicitItParameter() throws Exception {
+
+    public void testImplicitItParameter() throws Exception {
         testFooBoxIsTrue("implicitItParameter.kt");
     }
 
-    @Test
-    public void defaultParameters() throws Exception {
+
+    public void testDefaultParameters() throws Exception {
         testFooBoxIsTrue("defaultParameters.kt");
     }
 
-    @Test
-    public void functionLiteralAsLastParameter() throws Exception {
+
+    public void testFunctionLiteralAsLastParameter() throws Exception {
         testFooBoxIsTrue("functionLiteralAsLastParameter.kt");
     }
 
-    @Test
-    public void namedArguments() throws Exception {
+
+    public void testNamedArguments() throws Exception {
         testFooBoxIsTrue("namedArguments.kt");
     }
 
-    @Test
-    public void expressionAsFunction() throws Exception {
+
+    public void testExpressionAsFunction() throws Exception {
         testFooBoxIsTrue("expressionAsFunction.kt");
     }
 
-    @Test
-    public void vararg() throws Exception {
+
+    public void testVararg() throws Exception {
         testFooBoxIsTrue("vararg.kt");
     }
 
-    @Test
-    public void kt921() throws Exception {
+
+    public void testkt921() throws Exception {
         try {
             checkOutput("KT-921.kt", "");
         } catch (Throwable e) {

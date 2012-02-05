@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,13 +12,12 @@ public class IntrinsicTest extends AbstractExpressionTest {
         return MAIN;
     }
 
-    @Test
-    public void intrinsicPlusAssign() throws Exception {
+    public void testIntrinsicPlusAssign() throws Exception {
         testFooBoxIsTrue("plusAssign.kt");
     }
 
-    @Test
-    public void minusAssignOnProperty() throws Exception {
+
+    public void testMinusAssignOnProperty() throws Exception {
         testFooBoxIsTrue("minusAssignOnProperty.kt");
     }
 

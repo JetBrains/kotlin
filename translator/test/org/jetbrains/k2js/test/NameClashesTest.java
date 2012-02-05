@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,8 +12,7 @@ public final class NameClashesTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void methodOverload() throws Exception {
+    public void testMethodOverload() throws Exception {
         testFooBoxIsTrue("methodOverload.kt");
     }
 }

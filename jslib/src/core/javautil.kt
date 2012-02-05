@@ -148,6 +148,25 @@ public open class HashMap<erased K, erased V>() : java.util.Map<K, V> {
 }
 
 library
+public open class LinkedList<erased E>() : List<E> {
+    override public fun iterator() : java.util.Iterator<E> {}
+    override public fun isEmpty() : Boolean {}
+    override public fun contains(o : Any?) : Boolean {}
+    override public fun size() : Int {}
+    override public fun add(e : E) : Boolean {}
+    override public fun remove(o : Any?) : Boolean {}
+    override public fun addAll(c : java.util.Collection<out E>) : Boolean {}
+    override public fun clear() : Unit {}
+    override public fun get(index : Int) : E {}
+    override public fun set(index : Int, element : E) : E {}
+    override public fun add(index : Int, element : E) : Unit {}
+    override public fun remove(index : Int) : E {}
+    public fun poll() : E? {}
+    public fun peek() : E? {}
+    public fun offer(e : E) : Boolean {}
+}
+
+library
 public class StringBuilder() {
     public fun append(obj : Any) : StringBuilder
     public fun toString() : String

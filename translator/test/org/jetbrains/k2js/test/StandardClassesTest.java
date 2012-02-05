@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -13,40 +11,40 @@ public class StandardClassesTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void array() throws Exception {
+
+    public void testArray() throws Exception {
         testFooBoxIsTrue("array.kt");
     }
 
-    @Test
-    public void arrayAccess() throws Exception {
+
+    public void testArrayAccess() throws Exception {
         testFooBoxIsTrue("arrayAccess.kt");
     }
 
-    @Test
-    public void arrayIsFilledWithNulls() throws Exception {
+
+    public void testArrayIsFilledWithNulls() throws Exception {
         testFooBoxIsTrue("arrayIsFilledWithNulls.kt");
     }
 
-    @Test
-    public void arrayFunctionConstructor() throws Exception {
+
+    public void testArrayFunctionConstructor() throws Exception {
         testFooBoxIsTrue("arrayFunctionConstructor.kt");
     }
 
-    @Test
-    public void arraySize() throws Exception {
+
+    public void testArraySize() throws Exception {
         testFooBoxIsTrue("arraySize.kt");
     }
 
     //TODO: this feature in not supported for some time
-    //TODO: support it. Probably confugurable.
-//    @Test(expected = JavaScriptException.class)
+    //TODO: support it. Probably configurable.
+//    (expected = JavaScriptException.class)
 //    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
 //        testFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
 //    }
 
-    @Test
-    public void arraysIterator() throws Exception {
+
+    public void testArraysIterator() throws Exception {
         testFooBoxIsTrue("arraysIterator.kt");
     }
 }

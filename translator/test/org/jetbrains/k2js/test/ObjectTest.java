@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,18 +12,18 @@ public final class ObjectTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void objectWithMethods() throws Exception {
+
+    public void testObjectWithMethods() throws Exception {
         testFooBoxIsTrue("objectWithMethods.kt");
     }
 
-    @Test
-    public void objectDeclaration() throws Exception {
+
+    public void testObjectDeclaration() throws Exception {
         testFooBoxIsTrue("objectDeclaration.kt");
     }
 
-    @Test
-    public void objectInMethod() throws Exception {
+
+    public void testObjectInMethod() throws Exception {
         testFooBoxIsTrue("objectInMethod.kt");
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public abstract class TranslationTest {
+public abstract class TranslationTest extends BaseTest {
 
     private final static String TEST_FILES = "translator/testFiles/";
     private static final String CASES = "cases/";

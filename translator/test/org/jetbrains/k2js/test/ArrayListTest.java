@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
@@ -15,38 +14,36 @@ public final class ArrayListTest extends JavaClassesTest {
         return MAIN;
     }
 
-    @Test
-    public void emptyList() throws Exception {
+    public void testEmptyList() throws Exception {
         testFooBoxIsTrue("emptyList.kt");
     }
 
-    @Test
-    public void access() throws Exception {
+    public void testAccess() throws Exception {
         testFooBoxIsTrue("access.kt");
     }
 
-    @Test
-    public void isEmpty() throws Exception {
+    public void testIsEmpty() throws Exception {
         testFooBoxIsTrue("isEmpty.kt");
     }
 
-    @Test
-    public void arrayAccess() throws Exception {
+    public void testArrayAccess() throws Exception {
         testFooBoxIsTrue("arrayAccess.kt");
     }
 
-    @Test
-    public void iterate() throws Exception {
+    public void testIterate() throws Exception {
         testFooBoxIsTrue("iterate.kt");
     }
 
-    @Test
-    public void remove() throws Exception {
+    public void testRemove() throws Exception {
         testFooBoxIsTrue("remove.kt");
     }
 
-    @Test(expected = JavaScriptException.class)
-    public void indexOOB() throws Exception {
-        testFooBoxIsTrue("indexOOB.kt");
+    public void testIndexOOB() throws Exception {
+        try {
+            testFooBoxIsTrue("indexOOB.kt");
+            fail();
+        } catch (JavaScriptException e) {
+
+        }
     }
 }

@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,13 +12,11 @@ public class RTTITest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void isSameClass() throws Exception {
+    public void testIsSameClass() throws Exception {
         testFooBoxIsTrue("isSameClass.kt");
     }
 
-    @Test
-    public void notIsOtherClass() throws Exception {
+    public void testNotIsOtherClass() throws Exception {
         testFooBoxIsTrue("notIsOtherClass.kt");
     }
 }

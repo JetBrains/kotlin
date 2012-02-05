@@ -1,11 +1,9 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
-public class OperatorOverloadingTest extends TranslationTest {
+public final class OperatorOverloadingTest extends TranslationTest {
 
     final private static String MAIN = "operatorOverloading/";
 
@@ -14,89 +12,87 @@ public class OperatorOverloadingTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void plusOverload() throws Exception {
+
+    public void testPlusOverload() throws Exception {
         testFooBoxIsTrue("plusOverload.kt");
     }
 
-    @Test
-    public void postfixInc() throws Exception {
+
+    public void testPostfixInc() throws Exception {
         testFooBoxIsTrue("postfixIncOverload.kt");
     }
 
-    @Test
-    public void prefixInc() throws Exception {
+
+    public void testPrefixInc() throws Exception {
         testFooBoxIsTrue("prefixDecOverload.kt");
     }
 
-    @Test
-    public void prefixIncReturnsCorrectValue() throws Exception {
+
+    public void testPrefixIncReturnsCorrectValue() throws Exception {
         testFooBoxIsTrue("prefixIncReturnsCorrectValue.kt");
     }
 
-    @Test
-    public void overloadedCallOnProperty() throws Exception {
+
+    public void testOverloadedCallOnProperty() throws Exception {
         testFooBoxIsTrue("overloadedCallOnProperty.kt");
     }
 
-    @Test
-    public void postfixOnProperty() throws Exception {
+
+    public void testPostfixOnProperty() throws Exception {
         testFooBoxIsTrue("postfixOnProperty.kt");
     }
 
-    @Test
-    public void operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() throws Exception {
+
+    public void testOperatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() throws Exception {
         testFooBoxIsTrue("operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce.kt");
     }
 
-    @Test
-    public void unaryOnIntProperty() throws Exception {
+
+    public void testUnaryOnIntProperty() throws Exception {
         testFooBoxIsTrue("unaryOnIntProperty.kt");
     }
 
-    @Test
-    public void unaryOnIntPropertyAsStatement() throws Exception {
+
+    public void testUnaryOnIntPropertyAsStatement() throws Exception {
         testFooBoxIsTrue("unaryOnIntProperty2.kt");
     }
 
-    @Test
-    public void binaryDivOverload() throws Exception {
+
+    public void testBinaryDivOverload() throws Exception {
         testFooBoxIsTrue("binaryDivOverload.kt");
     }
 
-    @Test
-    public void plusAssignNoReassign() throws Exception {
+
+    public void testPlusAssignNoReassign() throws Exception {
         testFooBoxIsTrue("plusAssignNoReassign.kt");
     }
 
-    @Test
-    public void plusAssignReassign() throws Exception {
+
+    public void testPlusAssignReassign() throws Exception {
         testFooBoxIsTrue("plusAssignReassign.kt");
     }
 
-    @Test
-    public void notOverload() throws Exception {
+
+    public void testNotOverload() throws Exception {
         testFooBoxIsTrue("notOverload.kt");
     }
 
-    @Test
-    public void compareTo() throws Exception {
+
+    public void testCompareTo() throws Exception {
         testFooBoxIsTrue("compareTo.kt");
     }
 
-    @Test
-    public void plusAndMinusAsAnExpression() throws Exception {
+
+    public void testPlusAndMinusAsAnExpression() throws Exception {
         testFooBoxIsTrue("plusAndMinusAsAnExpression.kt");
     }
 
-    @Test
-    public void usingModInCaseModAssignNotAvailable() throws Exception {
+
+    public void testUsingModInCaseModAssignNotAvailable() throws Exception {
         testFooBoxIsTrue("usingModInCaseModAssignNotAvailable.kt");
     }
 
-
-    @Test
-    public void overloadPlusAssignArrayList() throws Exception {
+    public void testOverloadPlusAssignArrayList() throws Exception {
         testFooBoxIsOk("overloadPlusAssignArrayList.kt");
     }
 }

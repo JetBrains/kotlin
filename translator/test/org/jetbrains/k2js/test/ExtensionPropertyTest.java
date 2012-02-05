@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -13,18 +11,15 @@ public final class ExtensionPropertyTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void simplePropertyWithGetter() throws Exception {
+    public void testSimplePropertyWithGetter() throws Exception {
         testFooBoxIsTrue("simplePropertyWithGetter.kt");
     }
 
-    @Test
-    public void propertyWithGetterAndSetter() throws Exception {
+    public void testPropertyWithGetterAndSetter() throws Exception {
         testFooBoxIsTrue("propertyWithGetterAndSetter.kt");
     }
 
-    @Test
-    public void absExtension() throws Exception {
+    public void testAbsExtension() throws Exception {
         testFooBoxIsTrue("absExtension.kt");
     }
 }

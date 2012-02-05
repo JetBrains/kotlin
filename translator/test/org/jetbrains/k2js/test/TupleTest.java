@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,13 +12,11 @@ public final class TupleTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void twoElements() throws Exception {
+    public void testTwoElements() throws Exception {
         testFooBoxIsTrue("twoElements.kt");
     }
 
-    @Test
-    public void multipleMembers() throws Exception {
+    public void testMultipleMembers() throws Exception {
         testFooBoxIsTrue("multipleMembers.kt");
     }
 

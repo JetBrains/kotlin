@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,45 +12,43 @@ public final class TraitTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void traitAddsFunctionsToClass() throws Exception {
+
+    public void testTraitAddsFunctionsToClass() throws Exception {
         testFooBoxIsTrue("traitAddsFunctionsToClass.kt");
     }
 
-    @Test
-    public void classDerivesFromClassAndTrait() throws Exception {
+
+    public void testClassDerivesFromClassAndTrait() throws Exception {
         testFooBoxIsTrue("classDerivesFromClassAndTrait.kt");
     }
 
-    @Test
-    public void classDerivesFromTraitAndClass() throws Exception {
+
+    public void testClassDerivesFromTraitAndClass() throws Exception {
         testFooBoxIsTrue("classDerivesFromTraitAndClass.kt");
     }
 
-    @Test
-    public void example() throws Exception {
+
+    public void testExample() throws Exception {
         testFooBoxIsTrue("example.kt");
     }
 
-    @Test
-    public void traitExtendsTrait() throws Exception {
+
+    public void testTraitExtendsTrait() throws Exception {
         testFooBoxIsTrue("traitExtendsTrait.kt");
     }
 
-    @Test
-    public void traitExtendsTwoTraits() throws Exception {
+
+    public void testTraitExtendsTwoTraits() throws Exception {
         testFooBoxIsTrue("traitExtendsTwoTraits.kt");
     }
 
-    @Test
-    public void funDelegation() throws Exception {
+
+    public void testFunDelegation() throws Exception {
         testFooBoxIsOk("funDelegation.jet");
     }
 
-    @Test
-    public void definitionOrder() throws Exception {
+
+    public void testDefinitionOrder() throws Exception {
         testFooBoxIsTrue("definitionOrder.kt");
     }
-
-
 }

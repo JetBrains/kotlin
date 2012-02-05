@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,59 +12,56 @@ public final class PropertyAccessTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void accessToInstanceProperty() throws Exception {
+
+    public void testAccessToInstanceProperty() throws Exception {
         testFooBoxIsTrue("accessToInstanceProperty.kt");
     }
 
-    @Test
-    public void twoClassesWithProperties() throws Exception {
+
+    public void testTwoClassesWithProperties() throws Exception {
         testFooBoxIsTrue("twoClassesWithProperties.kt");
     }
 
-    @Test
-    public void setter() throws Exception {
+
+    public void testSetter() throws Exception {
         testFunctionOutput("setter.kt", "foo", "f", 99.0);
     }
 
-    @Test
-    public void customGetter() throws Exception {
+
+    public void testCustomGetter() throws Exception {
         testFooBoxIsTrue("customGetter.kt");
     }
 
-    @Test
-    public void customSetter() throws Exception {
+
+    public void testCustomSetter() throws Exception {
         testFooBoxIsTrue("customSetter.kt");
     }
 
-    @Test
-    public void safeCall() throws Exception {
+
+    public void testSafeCall() throws Exception {
         testFooBoxIsTrue("safeCall.kt");
     }
 
-    @Test
-    public void safeCallReturnsNullIfFails() throws Exception {
+
+    public void testSafeCallReturnsNullIfFails() throws Exception {
         testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
     }
 
-    @Test
-    public void namespacePropertyInitializer() throws Exception {
+
+    public void testNamespacePropertyInitializer() throws Exception {
         testFooBoxIsTrue("namespacePropertyInitializer.kt");
     }
 
-    @Test
-    public void namespacePropertySet() throws Exception {
+
+    public void testNamespacePropertySet() throws Exception {
         testFooBoxIsTrue("namespacePropertySet.kt");
     }
 
-    //TODO test
-    @Test
-    public void namespaceCustomAccessors() throws Exception {
+    public void testNamespaceCustomAccessors() throws Exception {
         testFooBoxIsTrue("namespaceCustomAccessors.kt");
     }
 
 
-    @Test
     public void classUsesNamespaceProperties() throws Exception {
         testFooBoxIsTrue("classUsesNamespaceProperties.kt");
     }

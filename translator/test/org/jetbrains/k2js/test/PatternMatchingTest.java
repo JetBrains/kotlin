@@ -1,6 +1,6 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
+import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Pavel Talanov
@@ -14,58 +14,61 @@ public final class PatternMatchingTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void whenType() throws Exception {
+
+    public void testWhenType() throws Exception {
         testFooBoxIsTrue("whenType.kt");
     }
 
-    @Test
-    public void whenNotType() throws Exception {
+
+    public void testWhenNotType() throws Exception {
         testFooBoxIsTrue("whenNotType.kt");
     }
 
-    @Test
-    public void whenExecutesOnlyOnce() throws Exception {
+
+    public void testWhenExecutesOnlyOnce() throws Exception {
         testFooBoxIsTrue("whenExecutesOnlyOnce.kt");
     }
 
-    @Test
-    public void whenValue() throws Exception {
+
+    public void testWhenValue() throws Exception {
         testFooBoxIsTrue("whenValue.kt");
     }
 
-    @Test
-    public void whenNotValue() throws Exception {
+
+    public void testWhenNotValue() throws Exception {
         testFooBoxIsTrue("whenNotValue.kt");
     }
 
-    @Test
-    public void whenValueOrType() throws Exception {
+
+    public void testWhenValueOrType() throws Exception {
         testFooBoxIsTrue("whenValueOrType.kt");
     }
 
-    @Test
-    public void whenWithIf() throws Exception {
+
+    public void testWhenWithIf() throws Exception {
         testFooBoxIsTrue("whenWithIf.kt");
     }
 
-    @Test
-    public void multipleCases() throws Exception {
+
+    public void testMultipleCases() throws Exception {
         testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
     }
 
-    @Test
-    public void matchNullableType() throws Exception {
+
+    public void testMatchNullableType() throws Exception {
         testFooBoxIsTrue("matchNullableType.kt");
     }
 
-    @Test
-    public void whenAsExpression() throws Exception {
+
+    public void testWhenAsExpression() throws Exception {
         testFooBoxIsTrue("whenAsExpression.kt");
     }
 
-    @Test(expected = org.mozilla.javascript.JavaScriptException.class)
     public void whenAsExpressionWithThrow() throws Exception {
-        testFooBoxIsTrue("whenAsExpressionWithThrow.kt");
+        try {
+            testFooBoxIsTrue("whenAsExpressionWithThrow.kt");
+            fail();
+        } catch (JavaScriptException e) {
+        }
     }
 }

@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,13 +12,11 @@ public final class MultiFileTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void functionsVisibleFromOtherFile() throws Exception {
+    public void testFunctionsVisibleFromOtherFile() throws Exception {
         testFooBoxIsTrue("functionsVisibleFromOtherFile");
     }
 
-    @Test
-    public void classesInheritedFromOtherFile() throws Exception {
+    public void testClassesInheritedFromOtherFile() throws Exception {
         testFooBoxIsTrue("classesInheritedFromOtherFile");
     }
 

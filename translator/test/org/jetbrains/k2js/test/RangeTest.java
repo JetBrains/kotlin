@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,20 +12,19 @@ public final class RangeTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void explicitRange() throws Exception {
+
+    public void testExplicitRange() throws Exception {
         testFooBoxIsTrue("explicitRange.kt");
     }
 
-    @Test
-    public void rangeSugarSyntax() throws Exception {
+
+    public void testRangeSugarSyntax() throws Exception {
         testFooBoxIsTrue("rangeSugarSyntax.kt");
     }
 
-    @Test
-    public void intInRange() throws Exception {
+
+    public void testIntInRange() throws Exception {
         testFooBoxIsTrue("intInRange.kt");
     }
-
 
 }

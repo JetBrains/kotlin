@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
@@ -15,23 +14,24 @@ public class ConditionalTest extends AbstractExpressionTest {
         return MAIN;
     }
 
-    @Test
-    public void ifElseAsExpression() throws Exception {
+    public void testIfElseAsExpression() throws Exception {
         testFooBoxIsTrue("ifElseAsExpression.kt");
     }
 
-    @Test
-    public void ifElse() throws Exception {
+    public void testIfElse() throws Exception {
         testFunctionOutput("if.kt", "foo", "box", 5);
     }
 
-    @Test
-    public void ifElseIf() throws Exception {
+    public void testIfElseIf() throws Exception {
         testFunctionOutput("elseif.kt", "foo", "box", 5);
     }
 
-    @Test(expected = JavaScriptException.class)
-    public void ifElseAsExpressionWithThrow() throws Exception {
-        testFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+    public void testIfElseAsExpressionWithThrow() throws Exception {
+        try {
+            testFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+            fail();
+        } catch (JavaScriptException e) {
+
+        }
     }
 }

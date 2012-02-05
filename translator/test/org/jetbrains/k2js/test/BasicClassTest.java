@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,53 +12,44 @@ public class BasicClassTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void classInstantiation() throws Exception {
+
+    public void testClassInstantiation() throws Exception {
         testFooBoxIsTrue("classInstantiation.kt");
     }
 
-    @Test
-    public void methodDeclarationAndCall() throws Exception {
+    public void testMethodDeclarationAndCall() throws Exception {
         testFooBoxIsTrue("methodDeclarationAndCall.kt");
     }
 
-    @Test
-    public void constructorWithParameter() throws Exception {
+    public void testConstructorWithParameter() throws Exception {
         testFooBoxIsTrue("constructorWithParameter.kt");
     }
 
-    @Test
-    public void constructorWithPropertiesAsParameters() throws Exception {
+    public void testConstructorWithPropertiesAsParameters() throws Exception {
         testFooBoxIsTrue("constructorWithPropertiesAsParameters.kt");
     }
 
-    @Test
-    public void incrementProperty() throws Exception {
+    public void testIncrementProperty() throws Exception {
         testFunctionOutput("incrementProperty.kt", "foo", "box", "OK");
     }
 
-    @Test
-    public void SimpleInitializer() throws Exception {
+    public void testSimpleInitializer() throws Exception {
         testFooBoxIsTrue("simpleInitializer.kt");
     }
 
-    @Test
-    public void complexExpressionAsConstructorParameter() throws Exception {
+    public void testComplexExpressionAsConstructorParameter() throws Exception {
         testFooBoxIsTrue("complexExpressionAsConstructorParameter.kt");
     }
 
-    @Test
-    public void propertyAccess() throws Exception {
+    public void testPropertyAccess() throws Exception {
         testFooBoxIsTrue("propertyAccess.kt");
     }
 
-    @Test
-    public void propertiesAsParametersInitialized() throws Exception {
+    public void testPropertiesAsParametersInitialized() throws Exception {
         testFooBoxIsTrue("propertiesAsParametersInitialized.kt");
     }
 
-    @Test
-    public void classWithoutNamespace() throws Exception {
+    public void testClassWithoutNamespace() throws Exception {
         testFunctionOutput("classWithoutNamespace.kt", "Anonymous", "box", true);
     }
 }

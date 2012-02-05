@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -11,7 +10,7 @@ import java.util.Map;
 /**
  * @author Pavel Talanov
  */
-public class KotlinLibTest extends TranslationTest {
+public final class KotlinLibTest extends TranslationTest {
 
     final private static String MAIN = "kotlinLib/";
 
@@ -25,8 +24,8 @@ public class KotlinLibTest extends TranslationTest {
         runRhinoTest(Arrays.asList(kotlinLibraryPath()), new RhinoPropertyTypesChecker(objectName, propertyToType));
     }
 
-    @Test
-    public void kotlinJsLibRunsWithRhino() throws Exception {
+
+    public void testKotlinJsLibRunsWithRhino() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath()), new RhinoResultChecker() {
             @Override
             public void runChecks(Context context, Scriptable scope) throws Exception {
@@ -36,18 +35,15 @@ public class KotlinLibTest extends TranslationTest {
     }
 
     //TODO: refactor
-
-
-    @Test
-    public void createdTraitIsJSObject() throws Exception {
+    public void testCreatedTraitIsJSObject() throws Exception {
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("trait.js")),
                 new RhinoPropertyTypesChecker("foo", propertyToType));
     }
 
-    @Test
-    public void createdNamespaceIsJSObject() throws Exception {
+
+    public void testCreatedNamespaceIsJSObject() throws Exception {
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),
@@ -56,51 +52,49 @@ public class KotlinLibTest extends TranslationTest {
 
     //
     // TODO:Refactor calls to function result checker with test
-    @Test
-    public void namespaceHasDeclaredFunction() throws Exception {
+    public void testNamespaceHasDeclaredFunction() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
 
-    @Test
-    public void namespaceHasDeclaredClasses() throws Exception {
+    public void testNamespaceHasDeclaredClasses() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespaceWithClasses.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
-    @Test
-    public void isSameType() throws Exception {
+
+    public void testIsSameType() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isSameType.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
-    @Test
-    public void isAncestorType() throws Exception {
+
+    public void testIsAncestorType() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isAncestorType.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
-    @Test
-    public void isComplexTest() throws Exception {
+
+    public void testIsComplexTest() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isComplexTest.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
-    @Test
-    public void commaExpression() throws Exception {
+
+    public void testCommaExpression() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("commaExpression.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
-    @Test
-    public void array() throws Exception {
+
+    public void testArray() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("array.js")),
                 new RhinoFunctionResultChecker("test", true));
     }
 
-    @Test
-    public void hashMap() throws Exception {
+
+    public void testHashMap() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("hashMap.js")),
                 new RhinoFunctionResultChecker("test", true));
     }

@@ -1,3 +1,5 @@
+package org.jetbrains.k2js.test;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author abreslav
+ * @author PavelTalanov
  */
-public abstract class JetTestCaseBuilder {
+public abstract class TranslatorTestCaseBuilder {
     public static FilenameFilter emptyFilter = new FilenameFilter() {
         @Override
         public boolean accept(File file, String name) {

@@ -2,7 +2,6 @@ package org.jetbrains.k2js.test;
 
 import org.jetbrains.k2js.facade.K2JSTranslatorApplet;
 import org.junit.Assert;
-import org.junit.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -18,14 +17,12 @@ public final class AppletTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void simpleTest() throws Exception {
+    public void testSimple() throws Exception {
         evaluateCodeWithParameters("fun main(args : Array<String>) {}", " a 3 1   2134", "");
     }
 
 
-    @Test
-    public void systemOutTest() throws Exception {
+    public void testSystemOutTest() throws Exception {
         evaluateCodeWithParameters("class A() {} fun main(args : Array<String>) { var a = A();}", "", "");
     }
 

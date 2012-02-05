@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,38 +12,31 @@ public final class ClassInheritanceTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void initializersOfBasicClassExecute() throws Exception {
+    public void testInitializersOfBasicClassExecute() throws Exception {
         testFunctionOutput("initializersOfBasicClassExecute.kt", "foo", "box", 3);
     }
 
-    @Test
-    public void methodOverride() throws Exception {
+    public void testMethodOverride() throws Exception {
         testFooBoxIsTrue("methodOverride.kt");
     }
 
-    @Test
-    public void initializationOrder() throws Exception {
+    public void testInitializationOrder() throws Exception {
         testFooBoxIsTrue("initializationOrder.kt");
     }
 
-    @Test
-    public void complexInitializationOrder() throws Exception {
+    public void testComplexInitializationOrder() throws Exception {
         testFooBoxIsTrue("complexInitializationOrder.kt");
     }
 
-    @Test
-    public void valuePassedToAncestorConstructor() throws Exception {
+    public void testValuePassedToAncestorConstructor() throws Exception {
         testFooBoxIsTrue("valuePassedToAncestorConstructor.kt");
     }
 
-    @Test
-    public void baseClassDefinedAfterDerived() throws Exception {
+    public void testBaseClassDefinedAfterDerived() throws Exception {
         testFooBoxIsTrue("baseClassDefinedAfterDerived.kt");
     }
 
-    @Test
-    public void definitionOrder() throws Exception {
+    public void testDefinitionOrder() throws Exception {
         testFooBoxIsTrue("definitionOrder.kt");
     }
 }

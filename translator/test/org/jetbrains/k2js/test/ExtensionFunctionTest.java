@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -13,48 +11,39 @@ public final class ExtensionFunctionTest extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void intExtension() throws Exception {
+    public void testIntExtension() throws Exception {
         testFooBoxIsTrue("intExtension.kt");
     }
 
-    @Test
-    public void extensionWithImplicitReceiver() throws Exception {
+    public void testExtensionWithImplicitReceiver() throws Exception {
         testFooBoxIsTrue("extensionWithImplicitReceiver.kt");
     }
 
-    @Test
-    public void extensionFunctionOnExpression() throws Exception {
+    public void testExtensionFunctionOnExpression() throws Exception {
         testFooBoxIsTrue("extensionFunctionOnExpression.kt");
     }
 
-    @Test
-    public void extensionUsedInsideClass() throws Exception {
+    public void testExtensionUsedInsideClass() throws Exception {
         testFooBoxIsTrue("extensionUsedInsideClass.kt");
     }
 
-    @Test
-    public void virtualExtension() throws Exception {
+    public void testVirtualExtension() throws Exception {
         testFooBoxIsTrue("virtualExtension.kt");
     }
 
-    @Test
-    public void virtualExtensionOverride() throws Exception {
+    public void testVirtualExtensionOverride() throws Exception {
         testFooBoxIsTrue("virtualExtensionOverride.kt");
     }
 
-    @Test
-    public void extensionLiteralPassedToFunction() throws Exception {
+    public void testExtensionLiteralPassedToFunction() throws Exception {
         testFooBoxIsTrue("extensionLiteralPassedToFunction.kt");
     }
 
-    @Test
-    public void extensionInsideFunctionLiteral() throws Exception {
+    public void testExtensionInsideFunctionLiteral() throws Exception {
         testFooBoxIsTrue("extensionInsideFunctionLiteral.kt");
     }
 
-    @Test
-    public void genericExtension() throws Exception {
+    public void testGenericExtension() throws Exception {
         testFooBoxIsOk("generic.kt");
     }
 }

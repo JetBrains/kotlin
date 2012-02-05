@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,20 +12,16 @@ public final class WebDemoExamples2Test extends TranslationTest {
         return MAIN;
     }
 
-    @Test
-    public void bottles() throws Exception {
+    public void testBottles() throws Exception {
         testWithMain("bottles", "2", "2");
         testWithMain("bottles", "");
     }
 
-    //TODO: a couple of classes not supported and objects
-    @Test
-    public void life() throws Exception {
+    public void testLife() throws Exception {
         testWithMain("life", "", "2");
     }
 
-    @Test
-    public void builder() throws Exception {
+    public void testBuilder() throws Exception {
         testWithMain("builder", "");
         testWithMain("builder", "1", "over9000");
     }

@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -13,43 +11,38 @@ public final class WhileTest extends AbstractExpressionTest {
         return MAIN;
     }
 
-    @Test
-    public void whileSimpleTest() throws Exception {
+    public void testWhileSimpleTest() throws Exception {
         testFooBoxIsTrue("while.kt");
     }
 
-    @Test
-    public void doWhileSimpleTest() throws Exception {
+    public void testDoWhileSimpleTest() throws Exception {
         testFooBoxIsTrue("doWhile.kt");
     }
 
-    @Test
-    public void doWhileExecutesAtLeastOnce() throws Exception {
+    public void testDoWhileExecutesAtLeastOnce() throws Exception {
         testFooBoxIsTrue("doWhile2.kt");
     }
 
-    @Test
-    public void whileDoesntExecuteEvenOnceIfConditionIsFalse() throws Exception {
+    public void testWhileDoesntExecuteEvenOnceIfConditionIsFalse() throws Exception {
         testFooBoxIsTrue("while2.kt");
     }
 
-    @Test
-    public void breakWhile() throws Exception {
+    public void testBreakWhile() throws Exception {
         testFooBoxIsTrue("breakWhile.kt");
     }
 
-    @Test
-    public void breakDoWhile() throws Exception {
+
+    public void testBreakDoWhile() throws Exception {
         testFooBoxIsTrue("breakDoWhile.kt");
     }
 
-    @Test
-    public void continueWhile() throws Exception {
+
+    public void testContinueWhile() throws Exception {
         testFooBoxIsTrue("continueWhile.kt");
     }
 
-    @Test
-    public void continueDoWhile() throws Exception {
+
+    public void testContinueDoWhile() throws Exception {
         testFooBoxIsTrue("continueDoWhile.kt");
     }
 }

@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.test;
 
-import org.junit.Test;
-
 /**
  * @author Pavel Talanov
  */
@@ -14,13 +12,11 @@ public final class ForTest extends AbstractExpressionTest {
         return MAIN;
     }
 
-    @Test
-    public void forIteratesOverArray() throws Exception {
+    public void testForIteratesOverArray() throws Exception {
         testFooBoxIsTrue("forIteratesOverArray.kt");
     }
 
-    @Test
-    public void forOnEmptyArray() throws Exception {
+    public void testForOnEmptyArray() throws Exception {
         testFooBoxIsTrue("forOnEmptyArray.kt");
     }
 }
